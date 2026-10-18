@@ -1,0 +1,21 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a fractional wheel notch preserves trackpad precision
+PASS: manual wheel zoom is bounded at the upper edge
+PASS: manual wheel zoom is bounded at the lower edge
+PASS: person interaction exposes temporary camera focus
+PASS: interaction zoom moves smoothly toward the person
+PASS: temporary focus preserves the chosen manual zoom
+PASS: interaction frames the speaker and player
+PASS: walking away restores player framing and the previous zoom
+PASS: a short interaction returns after its speech finishes
+PASS: wheel up from a closeup zooms further in and keeps that view after the closeup ends
+PASS: opening the merchant focuses its person without changing manual zoom
+PASS: scrolling a service panel never zooms the courtyard behind it
+PASS: closing a person service restores the manual camera context
+PASS: pausing interrupts a temporary closeup
+PASS: a paused person service still settles its camera
+PASS: closing a paused service restores the camera and the courtyard
+PASS: Reduced Motion immediately restores the camera and suppresses automatic closeups
+PASS: Reduced Motion keeps service interactions at the chosen manual zoom
+HubCameraFocusTest: 18 passed, 0 failed

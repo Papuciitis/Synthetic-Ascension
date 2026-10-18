@@ -19,7 +19,6 @@ const MAJOR_CHOICE_SCENE := preload("res://ui/screens/MajorChoice.tscn")
 const INVENTORY_STASH_SCENE := preload("res://ui/screens/InventoryStash.tscn")
 const LIBRARY_SCRIPT := preload("res://ui/screens/HubLibrary.gd")
 const PAPERS_SCRIPT := preload("res://ui/screens/CityLorePapers.gd")
-const ChamberKit := preload("res://ui/widgets/chambers/ChamberKit.gd")
 const STATION_SCRIPT := preload("res://scenes/hub/HubStation.gd")
 const DECOR_SCRIPT := preload("res://scenes/hub/HubDecor.gd")
 const CROWD_SCRIPT := preload("res://scenes/hub/HubCrowd.gd")
@@ -30,6 +29,9 @@ const CELL := 64.0
 const HUB_ZOOM_MIN := 1.0
 const HUB_ZOOM_MAX := 3.0
 const HUB_ZOOM_STEP := 0.25
+const CONVERSATION_ZOOM := 1.85
+const CAMERA_SETTLE_SECONDS := 0.16
+const CONVERSATION_MOVE_LIMIT := 32.0
 ## Courtyard in cells: about 1.7 gameplay screens across the useful space.
 const WIDTH := 32
 const HEIGHT := 20
@@ -184,11 +186,20 @@ var hub_zoom: float = 1.0
 var _camera: Camera2D = null
 var _camera_base_zoom := Vector2.ONE
 var _camera_home := Vector2.ZERO
-var _beka_view := false
-var _zoom_controls: Control = null
-var _zoom_label: Label = null
-var _beka_view_button: Button = null
+var _conversation_speaker: Node2D = null
+var _conversation_left := 0.0
+var _conversation_origin := Vector2.ZERO
 var _pause_menu: CanvasLayer = null
+
+
+## Service panels can pause the square. Only camera settling continues while
+## they are open; crowd motion and player input keep their normal pause rules.
+class CameraDriver extends Node:
+	var hub: Node
+
+	func _process(delta: float) -> void:
+		if is_instance_valid(hub):
+			hub._update_camera_view(delta)
 
 
 func _ready() -> void:
@@ -225,7 +236,11 @@ func _ready() -> void:
 	crowd.name = "Crowd"
 	add_child(crowd)
 	crowd.setup(self, crowd_seed if crowd_seed >= 0 else randi(), Global.followers)
-	_build_zoom_controls()
+	var camera_driver := CameraDriver.new()
+	camera_driver.name = "ConversationCamera"
+	camera_driver.hub = self
+	camera_driver.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(camera_driver)
 	# The district left behind as the arrival notice, then Bren's dispatch.
 	StoryDirector.attach_hub(self)
 	_update_pending_cue()
@@ -770,8 +785,6 @@ func _prop(texture_name: String, at: Vector2, world_height: float, z: int = 0) -
 
 func _stations_enabled(enabled: bool) -> void:
 	_interact_enabled = enabled
-	if _zoom_controls != null:
-		_zoom_controls.visible = enabled
 	for station in _stations:
 		station.set_process_unhandled_input(enabled)
 
@@ -793,6 +806,7 @@ func _open_merchant() -> void:
 	_panel_layer.add_child(shop)
 	_open_panel = shop
 	_stations_enabled(false)
+	_focus_service("exchanger")
 	if shop.has_signal("embedded_closed"):
 		shop.connect("embedded_closed", _on_panel_closed)
 
@@ -810,6 +824,7 @@ func _open_gear() -> void:
 	_open_panel = screen
 	_gear_screen = screen
 	_stations_enabled(false)
+	_focus_service("quartermaster")
 	screen.connect("closed", func() -> void:
 		_gear_screen = null
 		_on_panel_closed())
@@ -829,12 +844,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton and event.pressed and not _panel_is_open():
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			if _zoom_controls != null and _zoom_controls.get_global_rect().has_point(event.position):
-				return
 			# A wheel notch reports factor 1 (or 0 where unsupported); a trackpad
 			# sends many fractional deltas, which would each jump a whole step.
 			var amount: float = clampf(event.factor, 0.0, 1.0) if event.factor > 0.0 else 1.0
-			set_hub_zoom(hub_zoom + HUB_ZOOM_STEP * amount * (1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1.0))
+			# Continue from what the player sees, including a settling closeup.
+			# Starting from the stored wider view would make wheel-up zoom out.
+			var displayed_zoom := _camera.zoom.x / _camera_base_zoom.x if _camera != null else hub_zoom
+			set_hub_zoom(displayed_zoom + HUB_ZOOM_STEP * amount * (1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1.0))
 			get_viewport().set_input_as_handled()
 			return
 	if _gear_screen == null:
@@ -859,6 +875,7 @@ func _open_ascension() -> void:
 	screen.open(false)
 	_open_panel = screen
 	_stations_enabled(false)
+	_focus_service("acolyte")
 	screen.closed.connect(func() -> void:
 		Global.ascension_refund_context_hub = false
 		_on_panel_closed())
@@ -870,6 +887,7 @@ func _open_library() -> void:
 	var library := LIBRARY_SCRIPT.new()
 	_open_panel = library
 	_stations_enabled(false)
+	_focus_service("chronicler")
 	library.closed.connect(_on_panel_closed)
 	add_child(library)
 
@@ -891,99 +909,69 @@ func _rest_a_moment() -> void:
 
 # ------------------------------------------------------------- camera view
 
-## Camera-only magnification. World labels follow the camera; menus and these
-## controls live on their own canvas and keep their screen size.
+## Wheel magnification belongs to the player. It also ends a temporary
+## closeup, so the next camera update cannot overwrite their adjustment.
 func set_hub_zoom(value: float) -> void:
+	_end_conversation_focus()
 	hub_zoom = clampf(value, HUB_ZOOM_MIN, HUB_ZOOM_MAX)
 	if _camera != null:
 		_camera.zoom = _camera_base_zoom * hub_zoom
-	if _zoom_label != null:
-		_zoom_label.text = "%d%%" % roundi(hub_zoom * 100.0)
 
 
-func _reset_hub_view() -> void:
-	_beka_view = false
-	if _camera != null:
-		_camera.position = _camera_home
-		_camera.reset_smoothing()
-	if _beka_view_button != null:
-		_beka_view_button.text = "View Beka"
-	set_hub_zoom(1.0)
-
-
-func _toggle_beka_view() -> void:
-	if _camera == null or crowd == null or not is_instance_valid(crowd.beka) or _panel_is_open():
+func _focus_service(key: String) -> void:
+	if crowd == null:
 		return
-	_beka_view = not _beka_view
-	if _beka_view:
-		set_hub_zoom(maxf(hub_zoom, 2.5))
-		_camera.global_position = crowd.beka.global_position
-	else:
-		_camera.position = _camera_home
-	_camera.reset_smoothing()
-	_beka_view_button.text = "Follow Player" if _beka_view else "View Beka"
+	for person in crowd.service:
+		if String(person["key"]) == key:
+			_focus_conversation(person["p"] as Node2D)
+			return
 
 
-func _build_zoom_controls() -> void:
-	var layer := CanvasLayer.new()
-	layer.name = "HubViewControls"
-	layer.layer = 20
-	add_child(layer)
-	var panel := PanelContainer.new()
-	panel.name = "ZoomControls"
-	panel.mouse_force_pass_scroll_events = false
-	panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	panel.offset_left = -620.0
-	panel.offset_top = 18.0
-	panel.offset_right = -18.0
-	panel.offset_bottom = 86.0
-	panel.theme = ChamberKit.THEME
-	panel.add_theme_stylebox_override("panel", ChamberKit.box(ChamberKit.PANEL, ChamberKit.GOLD_DIM, 1, 10.0))
-	layer.add_child(panel)
-	_zoom_controls = panel
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 4)
-	panel.add_child(column)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	column.add_child(row)
-	var minus := Button.new()
-	minus.text = "−"
-	minus.custom_minimum_size.x = 32
-	minus.tooltip_text = "Zoom out (mouse wheel down)"
-	minus.pressed.connect(func() -> void: set_hub_zoom(hub_zoom - HUB_ZOOM_STEP))
-	row.add_child(minus)
-	_zoom_label = Label.new()
-	_zoom_label.text = "100%"
-	_zoom_label.custom_minimum_size.x = 56
-	_zoom_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	row.add_child(_zoom_label)
-	var plus := Button.new()
-	plus.text = "+"
-	plus.custom_minimum_size.x = 32
-	plus.tooltip_text = "Zoom in (mouse wheel up)"
-	plus.pressed.connect(func() -> void: set_hub_zoom(hub_zoom + HUB_ZOOM_STEP))
-	row.add_child(plus)
-	var reset := Button.new()
-	reset.text = "Reset"
-	reset.tooltip_text = "Return to the player at the original zoom"
-	reset.pressed.connect(_reset_hub_view)
-	row.add_child(reset)
-	_beka_view_button = Button.new()
-	_beka_view_button.text = "View Beka"
-	_beka_view_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_beka_view_button.tooltip_text = "Follow Beka up close. Move to return to your character."
-	_beka_view_button.pressed.connect(_toggle_beka_view)
-	row.add_child(_beka_view_button)
-	# Enter/A also interact with stations. Each view adjustment hands input
-	# back to the courtyard; deliberate keyboard/controller focus still works.
-	for button: Button in [minus, plus, reset, _beka_view_button]:
-		button.pressed.connect(button.release_focus)
-	var hint := Label.new()
-	hint.text = "Mouse wheel to zoom · 100–300%"
-	hint.add_theme_font_size_override("font_size", 12)
-	hint.add_theme_color_override("font_color", ChamberKit.MUTED)
-	column.add_child(hint)
+## Explicit interactions alone focus the camera. Passing chatter never
+## changes the view. The speaker and player share the frame, including the
+## speech above the person's head; the saved wheel zoom stays untouched.
+func _focus_conversation(speaker: Node2D, seconds: float = INF) -> void:
+	if not is_instance_valid(speaker) or _player == null or HubText.reduced():
+		return
+	_conversation_speaker = speaker
+	_conversation_left = seconds
+	_conversation_origin = _player.global_position
+
+
+func _end_conversation_focus() -> void:
+	_conversation_speaker = null
+	_conversation_left = 0.0
+
+
+func _update_camera_view(delta: float) -> void:
+	if _camera == null or not is_instance_valid(_player):
+		return
+	var reduced := HubText.reduced()
+	if is_instance_valid(_conversation_speaker):
+		_conversation_left -= delta
+		var panel_ended := is_inf(_conversation_left) and not _panel_is_open()
+		var interrupted := _departing or (_player.global_position.distance_to(_conversation_origin) > CONVERSATION_MOVE_LIMIT)
+		interrupted = interrupted or (get_tree().paused and not _panel_is_open())
+		if reduced or panel_ended or interrupted or _conversation_left <= 0.0:
+			_end_conversation_focus()
+	var target_position := _camera_home
+	var target_zoom := _camera_base_zoom * hub_zoom
+	if is_instance_valid(_conversation_speaker):
+		var height: Variant = _conversation_speaker.get("head_height")
+		var head := float(height) if height != null else 40.0
+		var point := (_player.global_position + _conversation_speaker.global_position - Vector2(0.0, head * 0.65)) * 0.5
+		target_position = _player.to_local(point)
+		target_zoom = _camera_base_zoom * maxf(hub_zoom, CONVERSATION_ZOOM)
+	var snap_smoothing := reduced and not _camera.position.is_equal_approx(target_position)
+	var blend := 1.0 if reduced else 1.0 - exp(-delta / CAMERA_SETTLE_SECONDS)
+	_camera.position = _camera.position.lerp(target_position, blend)
+	_camera.zoom = _camera.zoom.lerp(target_zoom, blend)
+	if _camera.position.distance_squared_to(target_position) < 0.0025:
+		_camera.position = target_position
+	if _camera.zoom.distance_squared_to(target_zoom) < 0.000001:
+		_camera.zoom = target_zoom
+	if snap_smoothing:
+		_camera.reset_smoothing()
 
 
 # ---------------------------------------------------------------- interaction
@@ -1028,6 +1016,7 @@ func interact() -> bool:
 		(_focus as HubStation).activated.emit()
 	elif _focus.has_method("pet"):
 		_focus.call("pet")
+		_focus_conversation(_focus as Node2D, 1.8)
 	return true
 
 
@@ -1057,6 +1046,7 @@ func _on_major_choice_closed() -> void:
 
 
 func _on_panel_closed() -> void:
+	_end_conversation_focus()
 	if _open_panel != null and is_instance_valid(_open_panel):
 		_open_panel.queue_free()
 	_open_panel = null
@@ -1101,13 +1091,6 @@ func _try_depart() -> void:
 
 func _process(delta: float) -> void:
 	_clock += delta
-	if _beka_view and _camera != null:
-		if not _panel_is_open() and not Input.get_vector(&"move_left", &"move_right", &"move_up", &"move_down").is_zero_approx():
-			_beka_view = false
-			_camera.position = _camera_home
-			_beka_view_button.text = "View Beka"
-		elif crowd != null and is_instance_valid(crowd.beka):
-			_camera.global_position = crowd.beka.global_position
 	_update_focus()
 	if not _braziers.is_empty():
 		_flicker_clock += delta

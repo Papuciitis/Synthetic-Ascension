@@ -1,0 +1,113 @@
+{
+  "scope": "Hub view controls, explicit interaction camera and readable hardware cursors",
+  "tests": [
+    {
+      "name": "HubCameraFocusTest",
+      "passed": 18,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "wheel-closeup-green.log"
+    },
+    {
+      "name": "HubLibraryTest",
+      "passed": 216,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "HubLibraryTest-final.log"
+    },
+    {
+      "name": "HubWorldTest",
+      "passed": 54,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "HubWorldTest-final.log"
+    },
+    {
+      "name": "HubCrowdTest",
+      "passed": 38,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "HubCrowdTest-final.log"
+    }
+  ],
+  "red_evidence": [
+    "hub-camera-red.log: expected missing temporary-focus behavior, native exit1",
+    "wheel-closeup-red.log: expected wheel-up direction failure during closeup, native exit1"
+  ],
+  "renders": [
+    {
+      "size": "1280x720",
+      "log": "native-normal.log",
+      "status": "All4PNG captures completed with clean renderer log; --stay process intentionally stopped after unsuccessful Windows hardware cursor capture"
+    },
+    {
+      "size": "960x540",
+      "log": "native-small-fresh.log",
+      "native_exit": 0,
+      "status": "All4PNG captures completed with clean renderer log"
+    }
+  ],
+  "visual_files": [
+    "hub-clean-1280x720.png",
+    "beka-interaction-1280x720.png",
+    "beka-return-1280x720.png",
+    "cursor-native-size-samples-1280x720.png",
+    "hub-clean-960x540.png",
+    "beka-interaction-960x540.png",
+    "beka-return-960x540.png",
+    "cursor-native-size-samples-960x540.png"
+  ],
+  "limitations": [
+    "Existing service panels cover the courtyard while focused; timed Beka interaction visibly demonstrates the smooth closeup and restoration.",
+    "Cursor samples show the exact assets rendered at native size on bright, dark and painted-game ground; OS hardware cursor screenshot inclusion could not be verified because the Windows capture returned a different foreground surface.",
+    "First960attempt native-small.log encountered GL shader initialization errors under overlapping native captures and was intentionally stopped; fresh isolated sequential retry is clean.",
+    "Initial import logged first-load SVG preload errors before importing the new SVG assets; subsequent native runtime and all focused tests compile without these errors.",
+    "No human busy-combat tracking assessment or exported-build test was performed."
+  ],
+  "sources": [
+    {
+      "path": "scenes/hub/HubWorld.gd",
+      "sha256": "CF0219080E957D3093825BC22AC9C46434F642409476F83FF0579DE526860923"
+    },
+    {
+      "path": "project.godot",
+      "sha256": "4EF9E853D293D77856207FBF5A046C95E330968B50D8B0DA740E2A206F112AE5"
+    },
+    {
+      "path": "ui/cursor/CursorManager.gd",
+      "sha256": "DF32E8C8D29BD2996CB5FE718CB636FF468E6E0323C161F5A424CC331D96A024"
+    },
+    {
+      "path": "ui/cursor/arrow.svg",
+      "sha256": "6C633ABF2BDCFA83AC7215E428CB4F5B0332191AB4A7C82216A12A2D21EC288D"
+    },
+    {
+      "path": "ui/cursor/point.svg",
+      "sha256": "319902749475CB816F13B5F015A59E7371FA415B223FB55D16D7CB3E98004852"
+    },
+    {
+      "path": "ui/cursor/cross.svg",
+      "sha256": "6611BE23BD6CAC9627721DC54D7F71B077155D5FC991072ACDE38BF35D67E787"
+    },
+    {
+      "path": "tools/tests/HubCameraFocusTest.gd",
+      "sha256": "6B41CEF0146312B94016D06B8D3DC8B9DAA30D70064549F14588B1B69E886D56"
+    },
+    {
+      "path": "tools/tests/HubCameraFocusTest.tscn",
+      "sha256": "E711C5124D8190FFAD46EE0AC61BA723FCC7C45A4D104A9BD8A3D4115F798F97"
+    },
+    {
+      "path": "tools/tests/HubLibraryTest.gd",
+      "sha256": "6265CCDAB5E45F4AB78DE246B7A707F10341A179B2265C28BA2737F712600465"
+    },
+    {
+      "path": "tools/dev/HubCursorShotProbe.gd",
+      "sha256": "566D3285B0399AC6DF001405083C05646CBF7CCA533BE73BB82C93EA8673E25B"
+    },
+    {
+      "path": "tools/dev/HubCursorShotProbe.tscn",
+      "sha256": "3FC2EE83FFB78204E45A0B9427FC0DA5057B7E255B994518595412B0AF0105B5"
+    }
+  ]
+}
