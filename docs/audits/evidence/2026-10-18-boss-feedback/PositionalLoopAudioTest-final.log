@@ -1,0 +1,14 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: starting objective capture creates one attached emitter
+PASS: a translated objective emits at (1200, 600), not twice that offset ((1200.0, 600.0))
+PASS: ensuring the same owner/tag reuses its existing loop
+PASS: ensuring an existing loop still updates its gain
+PASS: stopping an objective loop removes its emitter
+PASS: a stopped owner can start a new tagged objective loop
+PASS: rotation and nonuniform scale leave the emitter at the objective origin ((850.0, 2200.0))
+PASS: an active loop follows its moving world without restarting ((1200.0, 1600.0))
+PASS: an active loop follows its moving owner within that world ((1170.0, 1320.0))
+PASS: different tags retain independent loops on one owner
+PASS: stopping one tag preserves the other loop
+PositionalLoopAudioTest: 11 passed, 0 failed

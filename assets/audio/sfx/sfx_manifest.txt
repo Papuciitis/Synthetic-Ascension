@@ -30,6 +30,8 @@ player_hurt=actions/hurt.wav|vol=-18|pitch=0.02|bus=SFX
 enemy_hurt=enemies/enemy_hurt.wav|vol=-7|pitch=0.06|bus=SFX
 enemy_death=enemies/enemy_death.ogg|vol=-5|pitch=0.05|bus=SFX
 boss_intro=boss/boss_intro.ogg|vol=-6|pitch=0.00|bus=SFX
+# Finite body collapse: the same licensed weighted impact, at role pitch.
+boss_defeat=bosses/candidates_v3/slam_weighted_thud.wav|vol=-6|pitch=0.00|bus=SFX
 # Original synthesized phase latch; provenance/recipe beside the S10 score.
 boss_phase_shift=res://assets/audio/music/s10/phase_shift.wav|vol=-14|pitch=0.00|bus=SFX
 # Recorded/edited boss cues selected after listening feedback. See bosses/CREDITS.md.
@@ -37,7 +39,9 @@ boss_phase_shift=res://assets/audio/music/s10/phase_shift.wav|vol=-14|pitch=0.00
 boss_warning=bosses/candidates_v3/warning_weighted_brace.wav|vol=-8|pitch=0.00|bus=SFX
 boss_cast_warning=bosses/candidates_v2/cast_air_swish.wav|vol=-15|pitch=0.00|bus=SFX
 boss_slam_impact=bosses/candidates_v3/slam_weighted_thud.wav|vol=-8|pitch=0.00|bus=SFX
-boss_beam_release=bosses/candidates_v2/beam_electric_crackle.wav|vol=-14|pitch=0.00|bus=SFX
+boss_rush_release=bosses/candidates_v3/slam_weighted_thud.wav|vol=-11|pitch=0.00|bus=SFX
+boss_fan_release=bosses/candidates_v2/beam_electric_crackle.wav|vol=-12|pitch=0.00|bus=SFX
+boss_beam_release=bosses/candidates_v2/beam_electric_crackle.wav|vol=-10|pitch=0.00|bus=SFX
 boss_pylon_shot=bosses/candidates_v2/cast_air_swish.wav|vol=-18|pitch=0.00|bus=SFX
 boss_mine_burst=bosses/candidates_v3/mine_compact_blast.wav|vol=-10|pitch=0.00|bus=SFX
 

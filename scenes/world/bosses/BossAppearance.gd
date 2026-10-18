@@ -1,6 +1,6 @@
 extends RefCounted
 ## Authored forms keep anatomy independent of equipment and collision shapes.
-## Main-tier equipment and feet-anchored acting follow the committed brain.
+## Both tiers' feet-anchored acting follows the committed brain.
 
 const Acting := preload("res://scenes/world/bosses/BossActing.gd")
 const PORTRAITS := {
@@ -78,13 +78,12 @@ static func apply(actor: EnemyActor, tier: int) -> void:
 		"equipment_bounds_world": Rect2(FEET_OFFSET + (gear.position - foot) * factor, gear.size * factor),
 		"anatomy_bounds_world": Rect2(FEET_OFFSET + (anatomy.position - foot) * factor, anatomy.size * factor),
 		"physical_radius": float(profile["radius"]), "contact_size": Vector2.ONE * float(profile["hitbox"]),
-		"art_status": "equipped form with phase treatment and feet-anchored attack acting" if normalized_tier == 1 else "teaching proportion study",
+		"art_status": "equipped form with feet-anchored attack acting",
 	})
-	if normalized_tier == 1:
-		var acting := Acting.new()
-		acting.name = "BossActing"
-		actor.add_child(acting)
-		acting.setup(actor, sprite)
+	var acting := Acting.new()
+	acting.name = "BossActing"
+	actor.add_child(acting)
+	acting.setup(actor, sprite)
 
 
 static func portrait_for(actor: EnemyActor, tier: int, fallback: Texture2D = null) -> Texture2D:

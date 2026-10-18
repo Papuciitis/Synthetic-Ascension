@@ -1,0 +1,88 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: boss_warning has a real loaded sound definition
+PASS: boss_warning resolves the chosen replacement WAV and its delivered duration
+PASS: boss_warning uses the intended SFX bus, gain and stable pitch
+PASS: boss_warning is a one-shot in both definition and stream
+PASS: boss_cast_warning has a real loaded sound definition
+PASS: boss_cast_warning resolves the chosen replacement WAV and its delivered duration
+PASS: boss_cast_warning uses the intended SFX bus, gain and stable pitch
+PASS: boss_cast_warning is a one-shot in both definition and stream
+PASS: boss_slam_impact has a real loaded sound definition
+PASS: boss_slam_impact resolves the chosen replacement WAV and its delivered duration
+PASS: boss_slam_impact uses the intended SFX bus, gain and stable pitch
+PASS: boss_slam_impact is a one-shot in both definition and stream
+PASS: boss_beam_release has a real loaded sound definition
+PASS: boss_beam_release resolves the chosen replacement WAV and its delivered duration
+PASS: boss_beam_release uses the intended SFX bus, gain and stable pitch
+PASS: boss_beam_release is a one-shot in both definition and stream
+PASS: boss_fan_release has a real loaded sound definition
+PASS: boss_fan_release resolves the chosen replacement WAV and its delivered duration
+PASS: boss_fan_release uses the intended SFX bus, gain and stable pitch
+PASS: boss_fan_release is a one-shot in both definition and stream
+PASS: boss_rush_release has a real loaded sound definition
+PASS: boss_rush_release resolves the chosen replacement WAV and its delivered duration
+PASS: boss_rush_release uses the intended SFX bus, gain and stable pitch
+PASS: boss_rush_release is a one-shot in both definition and stream
+PASS: boss_defeat has a real loaded sound definition
+PASS: boss_defeat resolves the chosen replacement WAV and its delivered duration
+PASS: boss_defeat uses the intended SFX bus, gain and stable pitch
+PASS: boss_defeat is a one-shot in both definition and stream
+PASS: boss_pylon_shot has a real loaded sound definition
+PASS: boss_pylon_shot resolves the chosen replacement WAV and its delivered duration
+PASS: boss_pylon_shot uses the intended SFX bus, gain and stable pitch
+PASS: boss_pylon_shot is a one-shot in both definition and stream
+PASS: boss_mine_burst has a real loaded sound definition
+PASS: boss_mine_burst resolves the chosen replacement WAV and its delivered duration
+PASS: boss_mine_burst uses the intended SFX bus, gain and stable pitch
+PASS: boss_mine_burst is a one-shot in both definition and stream
+PASS: boss_phase_shift has a real loaded sound definition
+PASS: boss_phase_shift resolves the chosen replacement WAV and its delivered duration
+PASS: boss_phase_shift uses the intended SFX bus, gain and stable pitch
+PASS: boss_phase_shift is a one-shot in both definition and stream
+PASS: BossBulldozer phase transition requests its distinct original chime once
+PASS: BossBulldozer phase transition leaves the entrance recording for entrances
+PASS: BossArcanist phase transition requests its distinct original chime once
+PASS: BossArcanist phase transition leaves the entrance recording for entrances
+PASS: accepted slam warns once at the committed origin; rejected overlap is silent
+PASS: dead boss cannot replay a slam warning
+PASS: accepted fan uses its caster warning once at the committed origin; rejected overlap is silent
+PASS: Arcanist fan cannot borrow the physical bracing warning
+PASS: dead boss cannot replay a fan warning
+PASS: volley release stays silent during its real warning
+PASS: paused volley cannot play its shot early
+PASS: accepted focused volley requests one release cue for the whole bolt batch
+PASS: volley release stays silent during its real warning
+PASS: paused volley cannot play its shot early
+PASS: accepted split volley requests one release cue for the whole bolt batch
+PASS: canceled volley cannot produce a stale shot cue
+PASS: committed rush warning does not play launch audio early
+PASS: paused rush cannot play a launch
+PASS: real committed rush starts with exactly one physical launch cue
+PASS: committed rush warning does not play launch audio early
+PASS: paused rush cannot play a launch
+PASS: canceled rush cannot play a stale launch
+PASS: pausing slam anticipation releases neither the new impact recording nor the old procedural thump
+PASS: real slam release requests one dedicated impact at the committed origin after resuming
+PASS: boss slam no longer requests the rejected procedural multikill recording
+PASS: completed slam callbacks cannot duplicate the dedicated impact cue
+PASS: brief stun cancels pending slam audio with its damage and visual cast
+PASS: dead source cannot revive a canceled physical impact cue
+PASS: first real ground shock requests the physical impact recording at its own committed position
+PASS: ground shock also avoids the old procedural multikill sound
+PASS: mine detonation requests one burst at the impact, never one per duplicate call
+PASS: paused mine detonation guard requests no release audio
+PASS: mine requests its burst once when an accepted detonation resumes
+PASS: canceled boss mine cannot request stale detonation audio
+PASS: beam creation and incomplete anticipation are silent at the release boundary
+PASS: paused beam anticipation cannot request release audio
+PASS: beam transition requests one positional release, not one per sweep frame
+PASS: canceled beam cannot request stale transition audio
+PASS: stun cancellation fixture creates the arcanist's actual beam channel
+PASS: brief stun queues the sustained channel for cancellation
+PASS: a stunned beam awaiting deletion cannot request stale release audio
+PASS: a stunned beam awaiting deletion cannot display the active sweep
+PASS: pylon aim and windup do not play projectile release early
+PASS: pylon projectile release requests one cue at its muzzle
+PASS: canceled pylon cannot request stale projectile release audio
+BossAttackAudioTest: 85 passed, 0 failed

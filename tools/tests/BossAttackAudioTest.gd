@@ -10,7 +10,7 @@ const MINE = preload("res://scenes/world/bosses/BossMine.tscn")
 const BEAM = preload("res://scenes/world/bosses/BossBeamSweep.tscn")
 const PYLON = preload("res://scenes/world/bosses/BossPylon.tscn")
 const SCOPE = preload("res://scenes/world/bosses/BossAttackScope.gd")
-const AUDIO_IDS: Array[StringName] = [&"boss_warning", &"boss_cast_warning", &"boss_slam_impact", &"boss_beam_release", &"boss_pylon_shot", &"boss_mine_burst"]
+const AUDIO_IDS: Array[StringName] = [&"boss_warning", &"boss_cast_warning", &"boss_slam_impact", &"boss_beam_release", &"boss_pylon_shot", &"boss_mine_burst", &"boss_fan_release", &"boss_rush_release"]
 
 class Target:
 	extends Node2D
@@ -96,7 +96,10 @@ func _test_definitions() -> void:
 		[&"boss_warning", -8.0, 0.480000, "res://assets/audio/sfx/bosses/candidates_v3/warning_weighted_brace.wav"],
 		[&"boss_cast_warning", -15.0, 0.196871, "res://assets/audio/sfx/bosses/candidates_v2/cast_air_swish.wav"],
 		[&"boss_slam_impact", -8.0, 0.720000, "res://assets/audio/sfx/bosses/candidates_v3/slam_weighted_thud.wav"],
-		[&"boss_beam_release", -14.0, 0.666312, "res://assets/audio/sfx/bosses/candidates_v2/beam_electric_crackle.wav"],
+		[&"boss_beam_release", -10.0, 0.666312, "res://assets/audio/sfx/bosses/candidates_v2/beam_electric_crackle.wav"],
+		[&"boss_fan_release", -12.0, 0.666312, "res://assets/audio/sfx/bosses/candidates_v2/beam_electric_crackle.wav"],
+		[&"boss_rush_release", -11.0, 0.720000, "res://assets/audio/sfx/bosses/candidates_v3/slam_weighted_thud.wav"],
+		[&"boss_defeat", -6.0, 0.720000, "res://assets/audio/sfx/bosses/candidates_v3/slam_weighted_thud.wav"],
 		[&"boss_pylon_shot", -18.0, 0.196871, "res://assets/audio/sfx/bosses/candidates_v2/cast_air_swish.wav"],
 		[&"boss_mine_burst", -10.0, 0.660000, "res://assets/audio/sfx/bosses/candidates_v3/mine_compact_blast.wav"],
 		[&"boss_phase_shift", -14.0, 0.720000, "res://assets/audio/music/s10/phase_shift.wav"],
@@ -148,6 +151,62 @@ func _test_phase_boundaries() -> void:
 		actor.get_node("BossBrain").call("_begin_phase_shift", 1)
 		_check_one_at(&"boss_phase_shift", actor.global_position, "%s phase transition requests its distinct original chime once" % actor.name)
 		_check(_requests(&"boss_intro").is_empty(), "%s phase transition leaves the entrance recording for entrances" % actor.name)
+		await _end_fixture()
+
+
+func _test_volley_and_rush_release_boundaries() -> void:
+	for split: bool in [false, true]:
+		_fixture()
+		var mage := _actor(MAGE)
+		mage.add_to_group(&"boss" if split else &"miniboss")
+		var brain := mage.get_node("BossBrain")
+		_clear_requests()
+		brain.call("_ensure_teaching")
+		if split:
+			brain.call("_start_split", Vector2.RIGHT, 1.0, &"split", 0.95)
+		else:
+			brain.call("_fan_shot")
+		brain.call("_tick_teaching", 0.4)
+		_check(_requests(&"boss_fan_release").is_empty(), "volley release stays silent during its real warning")
+		get_tree().paused = true
+		brain.call("_tick_teaching", 1.0)
+		_check(_requests(&"boss_fan_release").is_empty(), "paused volley cannot play its shot early")
+		get_tree().paused = false
+		brain.call("_tick_teaching", 0.6)
+		brain.call("_tick_teaching", 0.1)
+		_check_one_at(&"boss_fan_release", mage.global_position, "accepted %s volley requests one release cue for the whole bolt batch" % ("split" if split else "focused"))
+		await _end_fixture()
+	_fixture()
+	var mage := _actor(MAGE)
+	mage.add_to_group(&"miniboss")
+	var brain := mage.get_node("BossBrain")
+	brain.call("_fan_shot")
+	_clear_requests()
+	_invalidate(mage)
+	brain.call("_tick_teaching", 2.0)
+	_check(_requests(&"boss_fan_release").is_empty(), "canceled volley cannot produce a stale shot cue")
+	await _end_fixture()
+	for canceled: bool in [false, true]:
+		_fixture()
+		var tank := _actor(TANK)
+		tank.add_to_group(&"miniboss")
+		brain = tank.get_node("BossBrain")
+		_clear_requests()
+		brain.call("_begin_teaching_rush", 0.8)
+		brain.call("_tick_cast", 0.3)
+		_check(_requests(&"boss_rush_release").is_empty(), "committed rush warning does not play launch audio early")
+		get_tree().paused = true
+		brain.call("_tick_cast", 1.0)
+		_check(_requests(&"boss_rush_release").is_empty(), "paused rush cannot play a launch")
+		get_tree().paused = false
+		if canceled:
+			_invalidate(tank)
+		brain.call("_tick_cast", 0.6)
+		brain.call("_tick_cast", 0.1)
+		if canceled:
+			_check(_requests(&"boss_rush_release").is_empty(), "canceled rush cannot play a stale launch")
+		else:
+			_check_one_at(&"boss_rush_release", tank.global_position, "real committed rush starts with exactly one physical launch cue")
 		await _end_fixture()
 
 
@@ -328,6 +387,7 @@ func _run() -> void:
 	_test_definitions()
 	await _test_phase_boundaries()
 	await _test_brain_warnings()
+	await _test_volley_and_rush_release_boundaries()
 	await _test_physical_impact_boundaries()
 	await _test_mine_boundaries()
 	await _test_beam_boundaries()

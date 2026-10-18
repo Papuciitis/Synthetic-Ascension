@@ -151,6 +151,6 @@ func _test_role(packed: PackedScene) -> void:
 	acting.call("_physics_process", 0.2)
 	_check(sprite.transform.is_equal_approx(rest) and not acting.is_physics_processing(), "%s defeat stops acting and restores the authored pose" % actor.spec.id)
 	APPEARANCE.apply(actor, 0)
-	_check(actor.get_node_or_null("BossActing") == null and sprite.material == null, "%s changing to teaching tier removes main-boss equipment acting" % actor.spec.id)
+	_check(actor.get_node_or_null("BossActing") != null and sprite.material is ShaderMaterial and int((sprite.material as ShaderMaterial).get_shader_parameter("phase")) == 0, "%s changing to teaching tier keeps body acting and resets main-boss phase equipment" % actor.spec.id)
 	actor.queue_free()
 	await get_tree().process_frame

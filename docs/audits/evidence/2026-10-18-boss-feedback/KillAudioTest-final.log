@@ -1,0 +1,32 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: kills 1-4 in the window sound as authored
+PASS: the fifth raises it one semitone
+PASS: twelve raise it two
+PASS: and it stops at +7
+PASS: every defeat asks for the death sound (12)
+PASS: the first kill of a quiet spell is at authored pitch
+PASS: the twelfth inside 1.5 s is two semitones up (1.122)
+PASS: after a 1.5 s pause the ladder is back at the bottom
+PASS: 14 kills inside 0.6 s are not a multi-kill
+PASS: the 15th makes one
+PASS: it says x15 (["×15"])
+PASS: with one thump
+PASS: kills while it holds count on the same line (["×20"])
+PASS: without another thump or multi-kill
+PASS: a new burst inside 2.5 s of the last thump is quiet
+PASS: an elite kill says ELITE DOWN (["ELITE DOWN"])
+PASS: with its sting
+PASS: a second inside a second counts on the same line (["ELITE DOWN ×2"])
+PASS: without a second sting
+PASS: fodder never stings
+PASS: a second later the next elite stings again
+PASS: a melee hit plays the connect sound
+PASS: once per swing (90 ms), however many bodies it catches
+PASS: a projectile hit is not a melee connect
+PASS: nor is any hit on a ranged build
+PASS: an item instance landing near the player clinks
+PASS: one far off-screen stays quiet
+PASS: and level-built exploration loot does not clink
+PASS: collecting an item instance plays the pickup sound (it used to return first)
+KillAudioTest: 29 passed, 0 failed

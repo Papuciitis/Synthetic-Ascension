@@ -640,6 +640,7 @@ func _tick_cast(delta: float) -> void:
 			_e.set_meta(&"boss_cast_locked", false)
 			_set_teaching_state(_cast)
 			_e._charge.begin_committed(_cast_dir, _e.spec.charge_duration, _e.spec.charge_speed)
+			SfxManager.play_2d(&"boss_rush_release", _cast_origin, 0.0, 0.95)
 			_track_charge(0.0)
 	elif _cast == &"phase_shift":
 		if _cast_elapsed >= PHASE_SHIFT_SECONDS:

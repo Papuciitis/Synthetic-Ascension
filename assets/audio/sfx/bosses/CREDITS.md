@@ -14,11 +14,17 @@ with the user.
 | Bulldozer accepts a slam/shockwave, or its S5 committed rush | `boss_warning` | [Weighted brace](candidates_v3/warning_weighted_brace.wav) | 0.480 s | -8 dB |
 | Arcanist fan; S5 blink or mine planting anticipation | `boss_cast_warning` | [Air swish](candidates_v2/cast_air_swish.wav) | 0.197 s | -15 dB |
 | Bulldozer slam, ground-shock release or charge-end impact | `boss_slam_impact` | [Weighted thud](candidates_v3/slam_weighted_thud.wav) | 0.720 s | -8 dB |
-| Beam moves from anticipation into its active sweep | `boss_beam_release` | [Electric crackle](candidates_v2/beam_electric_crackle.wav) | 0.666 s | -14 dB |
+| Accepted focused/split volley releases its complete bolt batch | `boss_fan_release` | [Electric crackle](candidates_v2/beam_electric_crackle.wav), pitch 1.1 | 0.606 s playback | -12 dB |
+| Committed rush/breach actually begins moving | `boss_rush_release` | [Weighted thud](candidates_v3/slam_weighted_thud.wav), pitch 0.95 | 0.758 s playback | -11 dB |
+| Beam moves from anticipation into its active sweep | `boss_beam_release` | [Electric crackle](candidates_v2/beam_electric_crackle.wav) | 0.666 s | -10 dB |
 | Pylon releases a projectile at its muzzle | `boss_pylon_shot` | [Air swish](candidates_v2/cast_air_swish.wav) | 0.197 s | -18 dB |
 | Mine detonates at its planted position | `boss_mine_burst` | [Compact blast](candidates_v3/mine_compact_blast.wav) | 0.660 s | -10 dB |
+| Canonical boss death, once per actual defeated body | `boss_defeat` | [Weighted thud](candidates_v3/slam_weighted_thud.wav), tank pitch 0.78 / mage pitch 1.0 | 0.923 / 0.720 s playback | -6 dB |
 
-All six definitions use the SFX bus, zero pitch jitter and one-shot playback.
+All nine definitions use the SFX bus, zero pitch jitter and one-shot playback.
+Boss one-shots now have eight reserved positional voices, still controlled by
+the user's SFX setting. Ordinary weapon/death saturation cannot steal them;
+within the boss pool a pylon shot cannot displace a major warning or phase cue.
 Recordings retain their delivered durations; the S5 teaching kit requests them
 at its accepted anticipation and actual release boundaries. Physical impacts
 and mine detonations retain the existing 120 ms per-ID limit; pylon releases

@@ -29,6 +29,12 @@ var _ui: AudioStreamPlayer
 var _ui_current_id: StringName = &""
 
 var _pool: Array[AudioStreamPlayer2D] = []
+# Warnings and releases must survive dense weapon/death playback. They still
+# follow SFX gain/mute and remain positional; ordinary combat cannot borrow
+# these eight bounded voices.
+const BOSS_VOICES := 8
+var _boss_pool: Array[AudioStreamPlayer2D] = []
+var _world_voices: Array[AudioStreamPlayer2D] = []
 var _headless := false
 var _loops: Dictionary = {} # String -> AudioStreamPlayer2D (key = "<owner_id>:<tag>")
 
@@ -90,6 +96,17 @@ func _ready() -> void:
 		p.process_mode = Node.PROCESS_MODE_PAUSABLE
 		add_child(p)
 		_pool.append(p)
+		_world_voices.append(p)
+	for i in BOSS_VOICES:
+		var p := AudioStreamPlayer2D.new()
+		p.bus = _best_bus(&"SFX")
+		p.max_distance = 2600.0
+		p.attenuation = 0.65
+		p.finished.connect(_on_pooled_finished.bind(p))
+		p.process_mode = Node.PROCESS_MODE_PAUSABLE
+		add_child(p)
+		_boss_pool.append(p)
+		_world_voices.append(p)
 
 	for i in range(GLOBAL_VOICES):
 		var g := AudioStreamPlayer.new()
@@ -157,7 +174,7 @@ func play_2d(id: StringName, world_pos: Vector2, vol_add_db: float = 0.0, pitch:
 	if _too_many(id):
 		return
 
-	var p := _obtain_player()
+	var p := _obtain_player(id)
 	if p == null:
 		return
 
@@ -172,6 +189,7 @@ func play_2d(id: StringName, world_pos: Vector2, vol_add_db: float = 0.0, pitch:
 	p.play()
 	_inc(id)
 	p.set_meta(&"sfx_id", id)
+	p.set_meta(&"sfx_started", Time.get_ticks_usec())
 
 ## A world sound at most once per `min_interval_ms` for its id (a melee
 ## swing that hits six enemies, a shower of drops). Returns whether it played
@@ -393,18 +411,36 @@ func _apply_loop_flag(stream: AudioStream, loop_on: bool) -> void:
 		var w: AudioStreamWAV = stream
 		w.loop_mode = AudioStreamWAV.LOOP_FORWARD if loop_on else AudioStreamWAV.LOOP_DISABLED
 
-func _obtain_player() -> AudioStreamPlayer2D:
-	for p in _pool:
+func _obtain_player(id: StringName = &"") -> AudioStreamPlayer2D:
+	var voices := _boss_pool if String(id).begins_with("boss_") else _pool
+	for p in voices:
 		if not p.playing:
 			return p
-	return _pool[0] if _pool.size() > 0 else null
+	if voices.is_empty():
+		return null
+	if voices == _pool:
+		return voices[0]
+	# A pylon cannot cut off the entrance, a warning or phase punctuation.
+	var priority := _boss_priority(id)
+	var oldest: AudioStreamPlayer2D = null
+	for p in voices:
+		if _boss_priority(p.get_meta(&"sfx_id", &"")) > priority:
+			continue
+		if oldest == null or int(p.get_meta(&"sfx_started", 0)) < int(oldest.get_meta(&"sfx_started", 0)):
+			oldest = p
+	return oldest
+
+func _boss_priority(id: StringName) -> int:
+	if id in [&"boss_intro", &"boss_phase_shift", &"boss_warning", &"boss_cast_warning"]:
+		return 3
+	return 1 if id == &"boss_pylon_shot" else 2
 
 func _too_many(id: StringName) -> bool:
 	# Recount from actual playing nodes to avoid stale bookkeeping across pauses/scene transitions.
 	var c: int = 0
 	if _ui != null and _ui.playing and _ui_current_id == id:
 		c += 1
-	for p in _pool:
+	for p in _world_voices:
 		if p == null or not is_instance_valid(p):
 			continue
 		if not p.playing:
@@ -446,7 +482,7 @@ func _exit_tree() -> void:
 	if _ui != null and is_instance_valid(_ui):
 		_ui.stop()
 		_ui.stream = null
-	for p in _pool:
+	for p in _world_voices:
 		if p != null and is_instance_valid(p):
 			p.stop()
 			p.stream = null

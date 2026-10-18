@@ -273,6 +273,7 @@ func _release_fan() -> void:
 		AttackScope.bind(proj, _e)
 		_register_teaching_pressure(proj)
 		get_tree().current_scene.add_child(proj)
+	SfxManager.play_2d(&"boss_fan_release", _fan_origin, 0.0, 1.1)
 
 func _begin_cast(kind: StringName, duration: float) -> bool:
 	if _scope == null or not _scope.is_active() or _cast_kind != &"":
@@ -847,6 +848,7 @@ func _release_split() -> void:
 		AttackScope.bind(proj, _e)
 		_register_teaching_pressure(proj)
 		world.add_child(proj)
+	SfxManager.play_2d(&"boss_fan_release", _fan_origin, 0.0, 1.1)
 
 
 ## The rebuilt Arc Sweep: start and end lanes announced through the whole

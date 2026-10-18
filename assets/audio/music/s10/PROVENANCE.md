@@ -23,8 +23,13 @@ phase crossfades at the current loop position.
 
 The separate 3.2-second defeat/release starts with a falling machine tone and
 answers with a sustained D-minor-add9 chord. It never loops. Engine integration
-plays the score on Music at five dB below the ordinary track setting and ducks
-it a further seven dB during major attack warnings. SFX remains unaffected.
+plays the first arrangement for S5 and the full three-part progression for
+S10. Following the first listening report, each arrangement receives measured
+internal gain compensation (+14/+12/+11 dB above the ordinary -10 dB voice)
+before the user's Music setting; the default .32 bus yields approximately
+-30/-29/-28 dBFS RMS. Major warnings duck Music a further 3 dB for 0.48 seconds.
+The finite release uses +8 dB above that ordinary voice. Saved Music/SFX gains
+and mutes remain entirely under user control. SFX remains unaffected.
 
 The separate 0.72-second phase-shift chime is an original rising three-note
 synthetic latch, registered as `boss_phase_shift` on SFX at -14 dB, stable pitch,

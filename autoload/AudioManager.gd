@@ -1,6 +1,6 @@
 extends Node
 
-# Menu/game crossfades, adaptive ordinary music and the three-part S10 score.
+# Menu/game crossfades, adaptive ordinary music and the boss score.
 
 const MENU_MUSIC_PATH := "res://assets/audio/music/main_menu.mp3"
 const GAME_MUSIC_PATH := "res://assets/audio/music/in_game.mp3"
@@ -10,15 +10,21 @@ const BOSS_MUSIC_PATHS := [
 	"res://assets/audio/music/s10/main_phase_3.wav",
 ]
 const BOSS_RELEASE_PATH := "res://assets/audio/music/s10/defeat_release.wav"
-const BOSS_GAIN_DB := -5.0
-const WARNING_DUCK_DB := -7.0
-const WARNING_DUCK_SECONDS := 0.9
+# These quiet, high-crest-factor recordings need arrangement gain before the
+# user's Music bus. Their measured RMS is -23.9/-21.1/-18.9 dBFS; the old
+# shared -5 dB left phase one near -49 dBFS at the default Music setting.
+# Result: roughly -30/-29/-28 dBFS at that setting, preserving escalation.
+const BOSS_PHASE_GAIN_DB := [14.0, 12.0, 11.0]
+const BOSS_RELEASE_GAIN_DB := 8.0
+const WARNING_DUCK_DB := -3.0
+const WARNING_DUCK_SECONDS := 0.48
 const RELEASE_SECONDS := 3.2
 
 var _boss_streams: Array[AudioStream] = []
 var _release_stream: AudioStream
 var _boss_ref: WeakRef
 var _boss_phase := 0
+var _boss_tier := -1
 var _boss_active := false
 var _boss_player_down := false
 var _boss_route: StringName = &"menu"
@@ -351,10 +357,11 @@ func _owned_boss() -> Node:
 
 
 func _on_boss_spawned(boss: Node, tier: int, _portrait: Texture2D, _title: String) -> void:
-	if tier < 1 or boss == null or boss == _owned_boss() or _current_key != &"game":
+	if tier not in [0, 1] or boss == null or boss == _owned_boss() or _current_key != &"game":
 		return
 	_clear_boss_music()
 	_boss_ref = weakref(boss)
+	_boss_tier = tier
 	_boss_phase = 0
 	var on_exit := _on_boss_exiting.bind(boss.get_instance_id())
 	if not boss.tree_exiting.is_connected(on_exit):
@@ -363,7 +370,7 @@ func _on_boss_spawned(boss: Node, tier: int, _portrait: Texture2D, _title: Strin
 
 
 func _on_boss_phase_changed(boss: Node, phase: int) -> void:
-	if boss != _owned_boss() or phase <= _boss_phase:
+	if _boss_tier != 1 or boss != _owned_boss() or phase <= _boss_phase:
 		return
 	_boss_phase = clampi(phase, 0, BOSS_MUSIC_PATHS.size() - 1)
 	if _boss_active:
@@ -378,19 +385,19 @@ func _resume_boss_music() -> void:
 	_boss_route = &"boss"
 	_boss_transitions += 1
 	var stream: AudioStream = _boss_streams[_boss_phase] if not _boss_streams.is_empty() else null
-	_play_context(&"game", stream, false, BOSS_GAIN_DB, fmod(position, 16.0))
+	_play_context(&"game", stream, false, BOSS_PHASE_GAIN_DB[_boss_phase], fmod(position, 16.0))
 	_set_boss_paused(get_tree().paused)
 	_poll_left = 0.0
 
 
 func _on_boss_cleared(boss: Node, tier: int) -> void:
-	if tier < 1 or boss == null or boss != _owned_boss():
+	if tier != _boss_tier or boss == null or boss != _owned_boss():
 		return
 	_clear_boss_music()
 	_boss_route = &"release"
 	_release_left = RELEASE_SECONDS
 	_boss_releases += 1
-	_play_context(&"game", _release_stream, false, BOSS_GAIN_DB)
+	_play_context(&"game", _release_stream, false, BOSS_RELEASE_GAIN_DB)
 	_set_boss_paused(get_tree().paused)
 
 
@@ -405,6 +412,7 @@ func _on_boss_exiting(id: int) -> void:
 
 func _clear_boss_music() -> void:
 	_boss_ref = null
+	_boss_tier = -1
 	_boss_active = false
 	_boss_player_down = false
 	_release_left = 0.0
@@ -475,7 +483,7 @@ func _on_player_life_event(_player: Node, kind: StringName) -> void:
 
 ## Decisions remain observable without decoding/starting voices in headless.
 func boss_music_state() -> Dictionary:
-	return {"active": _boss_active, "phase": _boss_phase, "route": _boss_route,
+	return {"active": _boss_active, "phase": _boss_phase, "tier": _boss_tier, "route": _boss_route,
 		"paused": _boss_paused, "transitions": _boss_transitions, "releases": _boss_releases,
 		"warning_duck_db": WARNING_DUCK_DB if _warning_left > 0.0 else 0.0}
 
