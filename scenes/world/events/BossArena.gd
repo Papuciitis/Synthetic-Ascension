@@ -18,7 +18,7 @@ class_name BossArena
 @export var tank_entrance: String = "The ground shudders. The Bulldozer braces to charge."
 @export var mage_entrance: String = "The air fractures. The Arcanist raises its array."
 
-@export var boss_portrait: Texture2D = preload("res://ui/boss/portraits/boss_portrait.png")
+@export var boss_portrait: Texture2D = preload("res://ui/boss/portraits/bulldozer_s10_v2.png")
 
 @export_group("Tuning")
 @export var hp_mult: float = 22.0

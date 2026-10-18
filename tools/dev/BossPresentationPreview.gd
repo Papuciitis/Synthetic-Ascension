@@ -14,6 +14,7 @@ var _stage: Node2D
 var _player: Node2D
 var _origin := Vector2.ZERO
 var _captures: Array[Dictionary] = []
+var _teaching_bar: BossBarHUD
 
 func _enter_tree() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -75,6 +76,10 @@ func _run() -> void:
 	var bar := BAR.instantiate()
 	bar.name = "BossBarHUD"
 	hud.add_child(bar)
+	_teaching_bar = BAR.instantiate() as BossBarHUD
+	_teaching_bar.offset_top = 104.0
+	_teaching_bar.offset_bottom = 178.0
+	hud.add_child(_teaching_bar)
 	var controller := HudBossController.new()
 	controller.boss_bar_path = NodePath("../BossBarHUD")
 	hud.add_child(controller)
@@ -158,7 +163,7 @@ func _build_presentation(role: String, reduced: bool) -> void:
 		elif child is CanvasItem and child is not Label:
 			child.hide()
 	_show_bar(bar_boss, "Boss: The " + role.capitalize(), 2)
-	_label(Vector2(-730, -390), Vector2(1460, 50), "S10 %s / REPRESENTATIVE RENDERER / %s" % [role.to_upper(), "REDUCED MOTION" if reduced else "PHASE EQUIPMENT + ACTING"], 25)
+	_label(Vector2(-730, -300), Vector2(1460, 50), "S10 %s / REPRESENTATIVE RENDERER / %s" % [role.to_upper(), "REDUCED MOTION" if reduced else "PHASE EQUIPMENT + ACTING"], 25)
 	_label(Vector2(-600, 355), Vector2(1200, 60), "Production poses and original footprints; cues hidden for body inspection. Human motion/readability review remains separate.", 19)
 	_freeze(_stage)
 
@@ -193,6 +198,7 @@ func _show_bar(actor: EnemyActor, title: String, phase: int) -> void:
 	var front := _game.find_child("BossBarHUD", true, false).get_node("Panel/HBox/VBox/HpBar/HpFrame")
 	front.set("_mark_flash", 0.0)
 	front.queue_redraw()
+	_teaching_bar.show_boss("S5 portrait: " + actor.spec.display_name, preload("res://scenes/world/bosses/BossAppearance.gd").portrait_for(actor, 0), actor.max_hp, actor.max_hp)
 
 func _adopt(before: Array) -> void:
 	for child in _game.get_children():

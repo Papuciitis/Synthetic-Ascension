@@ -4,8 +4,8 @@ extends RefCounted
 
 const Acting := preload("res://scenes/world/bosses/BossActing.gd")
 const PORTRAITS := {
-	&"boss_bulldozer": "res://ui/boss/portraits/bulldozer_s10_portrait.tres",
-	&"boss_arcanist": "res://ui/boss/portraits/arcanist_s10_portrait.tres",
+	&"boss_bulldozer": ["res://ui/boss/portraits/bulldozer_s5_v2.png", "res://ui/boss/portraits/bulldozer_s10_v2.png"],
+	&"boss_arcanist": ["res://ui/boss/portraits/arcanist_s5_v2.png", "res://ui/boss/portraits/arcanist_s10_v2.png"],
 }
 
 const ART_ROOT := "res://scenes/world/bosses/art/forms/"
@@ -88,9 +88,9 @@ static func apply(actor: EnemyActor, tier: int) -> void:
 
 
 static func portrait_for(actor: EnemyActor, tier: int, fallback: Texture2D = null) -> Texture2D:
-	if tier != 1 or actor == null or actor.spec == null:
+	if tier not in [0, 1] or actor == null or actor.spec == null or not PORTRAITS.has(actor.spec.id):
 		return fallback
-	var path: String = PORTRAITS.get(actor.spec.id, "")
+	var path: String = PORTRAITS[actor.spec.id][tier]
 	return load(path) as Texture2D if not path.is_empty() and ResourceLoader.exists(path) else fallback
 
 

@@ -1,4 +1,23 @@
-# S10 boss presentation — 18 October 2026
+# Boss presentation — 18 October 2026
+
+## Current portraits — coherent world-form set (v2)
+
+The user's later correction replaces the meme blends with portraits matching the actual world artwork, for both S5 and S10. The four active portraits below use only their corresponding established world form as an image input. Bulldozer keeps its closed helmet; Arcanist keeps its stern human face. S5 has simpler armor/hood fittings, while S10 has piston braces or the focusing rack. All four share charcoal, worn brass and a dark painterly background. No meme photographs, animal identities, names or text are present in the v2 artwork.
+
+The built-in `image_gen.imagegen` tool made one square 1254×1254 PNG per portrait. Each generated output was copied unchanged into the game. [Exact prompts, source form hashes, output hashes and original generated filenames](2026-10-18-boss-portrait-v2-prompts.json) preserve the complete generation record. Source world-form provenance remains in [the established form record](2026-10-16-boss-step2-assets.md). No external art was fetched.
+
+| Active portrait | Sole source form | Output SHA-256 |
+| --- | --- | --- |
+| `ui/boss/portraits/bulldozer_s5_v2.png` | `bulldozer_s5_v1.png` | `d1994f23256376493766a65c314e703cb0dfdc36c0b45ed98451a366e8b19f38` |
+| `ui/boss/portraits/arcanist_s5_v2.png` | `arcanist_s5_v1.png` | `475b95eb198f5aa6ad0605ad113207d68a0feced404138e650f03ba111ca28f5` |
+| `ui/boss/portraits/bulldozer_s10_v2.png` | `bulldozer_s10_v1.png` | `6808786b501e1c62b86168184bdc838ab84b3ff6c93ede5ae2907cad65178734` |
+| `ui/boss/portraits/arcanist_s10_v2.png` | `arcanist_s10_v1.png` | `0770426f34821b4c47234a97945d1edcd283b6a63b6faa29e69286a731e09d6d` |
+
+`BossAppearance.portrait_for` and the production HUD select the correct portrait for both known roles and tiers. Unsupported identities or tiers preserve the caller's fallback. The old meme portraits and v1 blend files are retained as superseded history; production boss HUDs use v2.
+
+## Superseded v1 portrait generation record
+
+The following v1 generation record is retained for provenance. Its meme direction was superseded by the user's later correction above and is no longer the active portrait mapping.
 
 Two role-specific portraits were edited with the built-in `image_gen.imagegen` tool. The source portraits already belonged to this game: the shared S10 Jamal portrait and the S5 Chihuahua portrait. No external imagery was fetched. The original memes and their existing provenance remain unchanged; this record documents only these new edits, not a claim to authorship or a new license for the underlying memes.
 
@@ -29,11 +48,11 @@ The established ImageGen S10 form PNGs are retained byte-for-byte. Their source 
 
 `BossActing` follows the production brain's accepted attack state and phase. It adds a small feet-anchored lean/compression for anticipation, a 140 ms release follow-through inside the real recovery opening, and an exposed recovery stance. Sustained rush/shock/sweep states follow their existing release clocks. The authored equipment receives static texture-masked amber heat (Bulldozer) or violet focus (Arcanist) as phases advance, without rolling back on healing. Reduced Motion restores the exact authored sprite transform while retaining the static phase identity. Defeat and tier changes restore the original pose/material. No damage geometry or attack clock is changed.
 
-This is runtime acting of the established whole-form raster, not a newly drawn frame animation sheet. Normal/small-window representative production-renderer boards compare all three equipment phases and windup/release/recovery with and without Reduced Motion. They hide foreground attack VFX for body inspection; they do not establish dense-fight readability, final animation weight or human approval. The attempted actual-Game capture did not finish and is retained as a failed diagnostic separately from the successful representative-renderer captures.
+This is runtime acting of the established whole-form raster, not a newly drawn frame animation sheet. Normal/small-window representative production-renderer boards compare all three equipment phases and windup/release/recovery with and without Reduced Motion. They hide foreground attack VFX for body inspection; they do not establish dense-fight readability, final animation weight or human approval. The first actual-Game capture attempt did not finish; a subsequent isolated native run produced the six successful actual-Game references below.
 
 ## Reproducible rendered references
 
-Four selected final frames are saved in [the reference folder](reference/2026-10-18-boss-presentation/), with [capture conditions and pixel checks](reference/2026-10-18-boss-presentation/capture-info.json):
+Four selected final v2 frames are saved in [the reference folder](reference/2026-10-18-boss-presentation/), with [capture conditions and pixel checks](reference/2026-10-18-boss-presentation/capture-info.json). Each board shows the S10 production boss bar and a second bar previewing the matching S5 portrait, so all four new icons are visible at normal/small HUD size:
 
 - [Bulldozer, normal 1280×720](reference/2026-10-18-boss-presentation/bulldozer-normal-1280x720.png)
 - [Arcanist, normal 1280×720](reference/2026-10-18-boss-presentation/arcanist-normal-1280x720.png)
@@ -42,4 +61,10 @@ Four selected final frames are saved in [the reference folder](reference/2026-10
 
 Reproduce all eight combinations with `res://tools/dev/BossPresentationPreview.tscn -- --out=/absolute/output/folder`, using an isolated user-data environment and no concurrent human playtest. The final native renderer exited 0, recorded eight captures with zero failures and zero save writes, and produced no runtime diagnostics. All eight were inspected. Phase-1 versus phase-3 body-region comparisons changed 297/173 Bulldozer pixels and 136/82 Arcanist pixels at 1280/960 widths; Reduced Motion preserved those same phase differences.
 
-The focused real-brain presentation regression passes 29 checks, with compatibility suites passing 72 proportion, 15 phase-bar and 44 main-interruption checks. The final combined parse audit belongs to the enclosing delivery; these scoped results do not claim a human encounter or art verdict.
+The focused real-brain presentation regression passes 37 checks after the v2 correction: all four role/tier portrait routes, distinct assets, unsupported-tier and unknown-role fallbacks, alongside the prior acting/geometry/accessibility checks. Before the correction, the updated suite recorded 32 passes and five expected failures against the previous mapping; after integration it exited natively with 37 passes and zero failures. The enclosing delivery also records compatibility suites of 72 proportion, 15 phase-bar and 44 main-interruption checks. The refreshed boards include a second S5 bar to inspect both tiers. The final combined audit passes all 535 gameplay scripts; these scoped results do not claim a human encounter or art verdict.
+
+## Actual Game references
+
+Six [actual Game frames](reference/2026-10-18-boss-game/) show both roles and the Arcanist's phase-3 mine arc at 1280×720 and 960×540, with the production court, player, boss HUD, role portraits, equipment treatment and attack effects. [Capture metadata](reference/2026-10-18-boss-game/capture-info.json) records seed 16102026, zero save writes and zero capture failures. The native renderer exited 0 without runtime diagnostics; all six frames were inspected.
+
+Reproduce with `res://tools/dev/BossDeliveryGamePreview.tscn -- --out=/absolute/output/folder`, isolated APPDATA/LOCALAPPDATA and no concurrent human playtest. It extends the existing telegraph preview, advances visual acting once and freezes production brain casts at 60% of their tells. These are staged views, not moving encounters or timing tests. Actual-damage walking controls are recorded separately in the delivery audit.

@@ -56,17 +56,29 @@ func _test_portrait_routing() -> void:
 	hud.add_child(controller)
 	var legacy := load("res://ui/boss/portraits/boss_portrait.png") as Texture2D
 	var paths: Array[String] = []
-	for packed: PackedScene in [TANK, MAGE]:
-		var actor := packed.instantiate() as EnemyActor
+	for row: Dictionary in [
+		{"scene": TANK, "tier": 0, "portrait": "res://ui/boss/portraits/bulldozer_s5_v2.png"},
+		{"scene": MAGE, "tier": 0, "portrait": "res://ui/boss/portraits/arcanist_s5_v2.png"},
+		{"scene": TANK, "tier": 1, "portrait": "res://ui/boss/portraits/bulldozer_s10_v2.png"},
+		{"scene": MAGE, "tier": 1, "portrait": "res://ui/boss/portraits/arcanist_s10_v2.png"},
+	]:
+		var actor := (row["scene"] as PackedScene).instantiate() as EnemyActor
 		_world.add_child(actor)
 		actor.process_mode = Node.PROCESS_MODE_DISABLED
-		RunEvents.boss_spawned.emit(actor, 1, legacy, "Main boss")
+		RunEvents.boss_spawned.emit(actor, int(row["tier"]), legacy, "Boss")
 		paths.append(bar.portrait.texture.resource_path)
-		_check(bar.portrait.visible and bar.portrait.texture != legacy, "%s main encounter replaces the generic portrait with role art" % actor.spec.id)
-		RunEvents.boss_spawned.emit(actor, 0, legacy, "Teaching")
-		_check(bar.portrait.texture == legacy, "%s teaching portrait remains arena-authored" % actor.spec.id)
+		_check(bar.portrait.visible and bar.portrait.texture.resource_path == String(row["portrait"]), "%s tier %d HUD selects its matching world-form portrait" % [actor.spec.id, row["tier"]])
+		RunEvents.boss_spawned.emit(actor, 2, legacy, "Unknown tier")
+		_check(bar.portrait.texture == legacy, "unsupported boss tier preserves the caller's fallback")
+		actor.spec = actor.spec.duplicate()
+		actor.spec.id = &"unknown_boss_fixture"
+		RunEvents.boss_spawned.emit(actor, 1, legacy, "Unknown role")
+		_check(bar.portrait.texture == legacy, "unknown boss identity preserves the caller's fallback")
 		actor.queue_free()
-	_check(paths[0] != paths[1], "the two main boss choices show different portraits")
+	var unique_paths := {}
+	for path: String in paths:
+		unique_paths[path] = true
+	_check(unique_paths.size() == 4, "both boss choices in both tiers have distinct portraits")
 	hud.queue_free()
 	await get_tree().process_frame
 

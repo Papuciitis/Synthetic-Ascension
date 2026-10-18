@@ -15,8 +15,8 @@ class_name MiniBossArena
 @export var tank_title: String = "Mini-Boss: Bulldozer"
 @export var mage_title: String = "Mini-Boss: Arcanist"
 
-@export var tank_portrait: Texture2D = preload("res://ui/boss/portraits/miniboss_portrait_01.png")
-@export var mage_portrait: Texture2D = preload("res://ui/boss/portraits/miniboss_portrait_02.png")
+@export var tank_portrait: Texture2D = preload("res://ui/boss/portraits/bulldozer_s5_v2.png")
+@export var mage_portrait: Texture2D = preload("res://ui/boss/portraits/arcanist_s5_v2.png")
 
 @export_group("Tuning")
 @export var hp_mult: float = 8.0
