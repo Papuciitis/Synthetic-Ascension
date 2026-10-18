@@ -1,0 +1,168 @@
+{
+  "capture_id": "2026-10-18_14-29-09_19808_357870982_1",
+  "original_directory": "balance_captures/2026-10-18/2026-10-18_14-29-09_19808_357870982_1",
+  "original_metadata": {
+    "balance_revision": 2,
+    "build": {
+      "game_version": "0.0.0.25.5",
+      "git_branch": "feat/authoritative-enemy-world",
+      "git_commit": "c9d5a31772f3",
+      "godot_version": "4.7.1-stable (official)",
+      "world_seed": 1794675549650
+    },
+    "capture_id": "2026-10-18_14-29-09_19808_357870982_1",
+    "city_development": {
+      "attempt": {
+        "augment_id": "",
+        "ranks": {
+          "armor": 0,
+          "augment": 0,
+          "bag": 0,
+          "binding_echo": 0,
+          "haste": 0,
+          "health": 0,
+          "luck": 0,
+          "power": 0,
+          "range": 0,
+          "size": 0,
+          "speed": 0
+        },
+        "revision": 1
+      },
+      "effective_bonuses": {
+        "armor": 0,
+        "augment_id": "",
+        "bag_slots": 0,
+        "binding_echo": false,
+        "haste": 0.0,
+        "hp": 0,
+        "luck": 0.0,
+        "power": 0.0,
+        "range_multiplier": 1.0,
+        "size_multiplier": 1.0,
+        "speed": 0.0
+      },
+      "enabled": true,
+      "profile": {
+        "active_bonuses": {
+          "armor": 0,
+          "augment_id": "",
+          "bag_slots": 0,
+          "binding_echo": false,
+          "haste": 0.0,
+          "hp": 0,
+          "luck": 0.0,
+          "power": 0.0,
+          "range_multiplier": 1.0,
+          "size_multiplier": 1.0,
+          "speed": 0.0
+        },
+        "augment_id": "",
+        "claimed_segments": [],
+        "earned": 0,
+        "next_armor_bonus": 0,
+        "next_bag_slots": 0,
+        "next_bonuses": {
+          "armor": 0,
+          "augment_id": "",
+          "bag_slots": 0,
+          "binding_echo": false,
+          "haste": 0.0,
+          "hp": 0,
+          "luck": 0.0,
+          "power": 0.0,
+          "range_multiplier": 1.0,
+          "size_multiplier": 1.0,
+          "speed": 0.0
+        },
+        "next_hp_bonus": 0,
+        "points": 0,
+        "ranks": {
+          "armor": 0,
+          "augment": 0,
+          "bag": 0,
+          "binding_echo": 0,
+          "haste": 0,
+          "health": 0,
+          "luck": 0,
+          "power": 0,
+          "range": 0,
+          "size": 0,
+          "speed": 0
+        }
+      }
+    },
+    "city_farming_experiments": {
+      "gospel_strongest_rewards": false,
+      "no_overtime_drop_bonus": false,
+      "no_overtime_rarity_bonus": false,
+      "no_permanent_development": false
+    },
+    "coverage": "observed_session",
+    "features": {
+      "exit_detail": true,
+      "health_reconciliation": true,
+      "incidents": true,
+      "progression": true,
+      "pure_snapshots": true,
+      "source_attribution": true
+    },
+    "recorder_revision": 2,
+    "run_key": "-1:1794675549650",
+    "save_slot": -1,
+    "start_segment": 5,
+    "starting_debug": {
+      "debug_ascension_revelations_enabled": true,
+      "debug_dev_mode": true,
+      "debug_dev_segment": false,
+      "debug_enemy_hp_scale": 1.0,
+      "debug_opening_mode_override": "",
+      "debug_player_god_mode": false,
+      "enemy_proxy_rollout": true,
+      "time_scale": 1.0
+    },
+    "tuning_hash": "672b4c05e09e7ccdf376c21d2f366a0b954824be9f1e3fc70a5dd897baaf806b",
+    "tuning_stages": [
+      "items",
+      "sets",
+      "economy"
+    ]
+  },
+  "provenance_note": "User playtest artifacts read from the existing local capture directory. Copied report/summary/CSV are byte-identical originals, including the revision-2 S6/S10 labeling error. events.jsonl is hashed and excerpted, not copied wholesale. Current tuning-target source hashes identify source references only; they are not a claim of newly measured balance.",
+  "original_files": {
+    "report.md": {
+      "bytes": 13390,
+      "sha256": "fcaadf2913e675258bc48dc04c43aa5a2fdf1f51e773eab9f0f5579b7aaadf35"
+    },
+    "summary.json": {
+      "bytes": 97786,
+      "sha256": "31adeaf92610c7109a7b2939d65d1481dbc5dd86ebcf6f9ea267125f67c1ee75"
+    },
+    "segments.csv": {
+      "bytes": 670,
+      "sha256": "e59df0ee8c267503122f34f2ee197ffb84dd4213ca872b7b3e498eedde807d32"
+    },
+    "events.jsonl": {
+      "bytes": 11292537,
+      "sha256": "9cb5a337e518ab25ffb89cfbcfe5db060deaca2e2727eb2e965e6a84908a2a8b"
+    }
+  },
+  "referenced_tuning_source_sha256": {
+    "scenes/world/events/BossArena.gd": "457269e3f1467726b7812ad0b58ef766dfe23b3a45801c6bdbb79f3067830942",
+    "scenes/world/events/MiniBossArena.gd": "2376a697f6bbd3390f22cc2d99b3d0c44eb600a6bb7910c28465f3ca09105255",
+    "core/actors/enemy/EnemySpec_BossArcanist.tres": "0d76a1e318c17a35bda39c60fc8803155603816e9ddb891937270fc9c8cfac01",
+    "core/actors/enemy/EnemySpec_BossBulldozer.tres": "cc77e2c70ce7aba44bed7aa3e54de2ec82402c17db31f263f296d81e3f4be3b9",
+    "effects/items/logic/RegenerationRingEffect.gd": "50507af48352d3c8acf7c5a62e6f879be6293a41f3efd3698df7ad7fdcb81be1",
+    "data/items/item_scaling_v2.json": "672b4c05e09e7ccdf376c21d2f366a0b954824be9f1e3fc70a5dd897baaf806b",
+    "core/systems/ascension/engines/BarrageEngine.gd": "cfc4e09cfc13177b4cf08fddae3ce8948cf1ebcc64dd5bcafcab6f3ca4e43cf1",
+    "data/ascension/tree_v4.json": "73926e2fe72321ef8d951e4f25e60d10d3e4b5323e914f402ab96f854b574c43"
+  },
+  "copied_evidence_sha256": {
+    "derived-observations.json": "c5608f1ddac2df443eab42eb17055bdd3b40ac1763e2a3bc7dff1aca69caa977",
+    "pfr-segment-evidence.json": "1860a3de87183f4a7219278d1841bd91e7625bb5934eeeaf6741f975402d4338",
+    "report.md": "fcaadf2913e675258bc48dc04c43aa5a2fdf1f51e773eab9f0f5579b7aaadf35",
+    "route-boss-events.json": "08729a1235f5021bb3fa29c161359854ce1f693bf010302fea7cb2f4edbc296d",
+    "segments.csv": "e59df0ee8c267503122f34f2ee197ffb84dd4213ca872b7b3e498eedde807d32",
+    "summary.json": "31adeaf92610c7109a7b2939d65d1481dbc5dd86ebcf6f9ea267125f67c1ee75"
+  }
+}

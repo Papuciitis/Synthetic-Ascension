@@ -1,0 +1,92 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+TRANSITION_CASE cold
+PREP_STAGE phase=ground_0 call_ms=33.816
+PREP_STAGE phase=ground_1 call_ms=23.395
+PREP_STAGE phase=ground_2 call_ms=0.027
+PREP_STAGE phase=ground_3 call_ms=0.021
+PREP_STAGE phase=ground_4 call_ms=0.051
+PREP_STAGE phase=ground_5 call_ms=28.506
+PREP_STAGE phase=ground_6 call_ms=26.132
+PREP_STAGE phase=ground_7 call_ms=0.032
+PREP_STAGE phase=ground_8 call_ms=30.049
+PREP_STAGE phase=ground_9 call_ms=32.835
+PREP_STAGE phase=ground_10 call_ms=32.429
+PREP_STAGE phase=ground_11 call_ms=33.432
+PREP_STAGE phase=ground_12 call_ms=33.012
+PREP_STAGE phase=baked_array call_ms=45.955
+PREP_STAGE phase=noise call_ms=11.633
+TRANSITION_STATE resource_status=0 active=false paused=false current=<switching>
+TRANSITION_METRICS loading_frames=1311 spinner_advances=1311 route_ms=9331.053 max_gap_ms=46.444
+PASS: the spinner advances across real cold Game loading work
+SETUP_FRAME index=1 gap_ms=37.992 game_stage=scene_children builder_stage=<none> hud_stage=<none>
+HUD_STAGE phase=BossBarHUD call_ms=3.085
+SETUP_FRAME index=2 gap_ms=69.541 game_stage=hud builder_stage=<none> hud_stage=BossBarHUD
+HUD_STAGE phase=EvacOverlay call_ms=1.510
+SETUP_FRAME index=3 gap_ms=58.741 game_stage=hud builder_stage=<none> hud_stage=EvacOverlay
+HUD_STAGE phase=DangerOverlay call_ms=0.275
+SETUP_FRAME index=4 gap_ms=21.653 game_stage=hud builder_stage=<none> hud_stage=DangerOverlay
+HUD_STAGE phase=ManageOverlay call_ms=0.261
+SETUP_FRAME index=5 gap_ms=20.468 game_stage=hud builder_stage=<none> hud_stage=ManageOverlay
+HUD_STAGE phase=GateOverlay call_ms=13.995
+SETUP_FRAME index=6 gap_ms=30.465 game_stage=hud builder_stage=<none> hud_stage=GateOverlay
+HUD_STAGE phase=TopLeft call_ms=99.751
+SETUP_FRAME index=7 gap_ms=118.764 game_stage=hud builder_stage=<none> hud_stage=TopLeft
+HUD_STAGE phase=BagUI call_ms=143.754
+SETUP_FRAME index=8 gap_ms=151.205 game_stage=hud builder_stage=<none> hud_stage=BagUI
+HUD_STAGE phase=ActiveAbilityHud_R call_ms=9.074
+SETUP_FRAME index=9 gap_ms=10.761 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_R
+HUD_STAGE phase=ActiveAbilityHud_Q call_ms=6.852
+SETUP_FRAME index=10 gap_ms=7.794 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_Q
+HUD_STAGE phase=ActiveAbilityHud_V call_ms=7.040
+SETUP_FRAME index=11 gap_ms=7.970 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_V
+HUD_STAGE phase=Toast call_ms=0.689
+SETUP_FRAME index=12 gap_ms=1.641 game_stage=hud builder_stage=<none> hud_stage=Toast
+HUD_STAGE phase=SetBreakpointNotifier call_ms=2.708
+SETUP_FRAME index=13 gap_ms=5.307 game_stage=hud builder_stage=<none> hud_stage=SetBreakpointNotifier
+HUD_STAGE phase=ManifestationPairNotifier call_ms=2.837
+SETUP_FRAME index=14 gap_ms=6.874 game_stage=hud builder_stage=<none> hud_stage=ManifestationPairNotifier
+HUD_STAGE phase=FlyVfx call_ms=0.311
+SETUP_FRAME index=15 gap_ms=6.924 game_stage=hud builder_stage=<none> hud_stage=FlyVfx
+HUD_STAGE phase=RunSheetHUD call_ms=19.664
+SETUP_FRAME index=16 gap_ms=23.923 game_stage=hud builder_stage=<none> hud_stage=RunSheetHUD
+HUD_STAGE phase=AugmentFlyVfx call_ms=0.307
+SETUP_FRAME index=17 gap_ms=0.995 game_stage=hud builder_stage=<none> hud_stage=AugmentFlyVfx
+SETUP_FRAME index=18 gap_ms=5.940 game_stage=hud builder_stage=<none> hud_stage=BossController
+SETUP_FRAME index=19 gap_ms=6.878 game_stage=hud builder_stage=<none> hud_stage=EvacOverlayController
+SETUP_FRAME index=20 gap_ms=6.906 game_stage=hud builder_stage=<none> hud_stage=GateOverlayController
+SETUP_FRAME index=21 gap_ms=6.893 game_stage=hud builder_stage=<none> hud_stage=TutorialTipController
+SETUP_FRAME index=22 gap_ms=6.921 game_stage=hud builder_stage=<none> hud_stage=ObjectiveController
+SETUP_FRAME index=23 gap_ms=6.878 game_stage=hud builder_stage=<none> hud_stage=GateChecklistController
+SETUP_FRAME index=24 gap_ms=6.913 game_stage=hud builder_stage=<none> hud_stage=ThreatController
+SETUP_FRAME index=25 gap_ms=6.882 game_stage=hud builder_stage=<none> hud_stage=ManifestationController
+SETUP_FRAME index=26 gap_ms=6.922 game_stage=hud builder_stage=<none> hud_stage=HealthController
+SETUP_FRAME index=27 gap_ms=6.885 game_stage=hud builder_stage=<none> hud_stage=BagController
+SETUP_FRAME index=28 gap_ms=9.859 game_stage=hud builder_stage=<none> hud_stage=TooltipController
+SETUP_FRAME index=29 gap_ms=4.181 game_stage=hud builder_stage=<none> hud_stage=AugmentTooltipController
+SETUP_FRAME index=30 gap_ms=6.657 game_stage=hud builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=31 gap_ms=6.924 game_stage=authored_world builder_stage=<none> hud_stage=ready
+[Game] ready seg=2 race=human style=ranged seed=732113
+SETUP_FRAME index=32 gap_ms=59.039 game_stage=bindings builder_stage=<none> hud_stage=ready
+PROC_STAGE phase=plan call_ms=1.936
+SETUP_FRAME index=33 gap_ms=3.429 game_stage=procedural_world builder_stage=plan hud_stage=ready
+PROC_STAGE phase=center_chunk call_ms=63.495
+SETUP_FRAME index=34 gap_ms=64.545 game_stage=procedural_world builder_stage=center_chunk hud_stage=ready
+PROC_STAGE phase=primary_objective call_ms=61.972
+SETUP_FRAME index=35 gap_ms=73.702 game_stage=procedural_world builder_stage=primary_objective hud_stage=ready
+PROC_STAGE phase=wardstones call_ms=1.468
+SETUP_FRAME index=36 gap_ms=2.600 game_stage=procedural_world builder_stage=wardstones hud_stage=ready
+PROC_STAGE phase=exit_gate call_ms=0.317
+SETUP_FRAME index=37 gap_ms=4.282 game_stage=procedural_world builder_stage=exit_gate hud_stage=ready
+PROC_STAGE phase=events call_ms=0.350
+SETUP_FRAME index=38 gap_ms=6.934 game_stage=procedural_world builder_stage=events hud_stage=ready
+SETUP_FRAME index=39 gap_ms=164.822 game_stage=ready builder_stage=events hud_stage=ready
+PASS: the responsive route reaches the actual Game scene
+PASS: the real destination completes its initial world setup
+PASS: the destination builds across animated frames with gameplay and input frozen
+PASS: ready gameplay releases only the temporary loading pause and input lock
+PASS: staged HUD retains its management, tooltip, gate, and tutorial bindings
+TRANSITION_SETUP_METRICS setup_frames=39 spinner_advances=39 total_ms=10387.587 max_gap_ms=164.822
+PASS: resource loading and initial world setup keep animation frame gaps below 300 ms
+TRANSITION_CASE_RESULT case=cold passed=7 failed=0
+LoadingTransitionResponsivenessTest: 7 passed, 0 failed

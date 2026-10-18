@@ -1,0 +1,22 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: Trauma equips
+PASS: nothing is learned before the first wound
+PASS: a minor hit teaches nothing
+PASS: a major hit teaches its category (claw)
+PASS: the teaching hit itself lands at full damage (hp 65.0)
+PASS: the learned category is resisted at 30% (hp 51.0)
+PASS: an unlearned category lands in full (hp 31.0)
+PASS: a new major wound replaces the lesson (fang)
+PASS: the reduction caps at 40% (0.40)
+PASS: Dignity equips
+PASS: intact dignity carries its Power bonus (1.08)
+PASS: a moderate hit leaves dignity standing
+PASS: a 25%%+ hit drops the standard
+PASS: the bonus is gone while it lies there
+PASS: it fell exactly where you were struck — always reachable
+PASS: distance does not restore it
+PASS: walking back over it restores the bonus
+PASS: the standard returns by itself after the patience timer
+PASS: the auto-return is counted honestly
+ItemBatch3Test: 19 passed, 0 failed

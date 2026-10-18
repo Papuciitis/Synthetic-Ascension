@@ -1,0 +1,38 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: balance ledger is available
+PASS: refund does not masquerade as earnings
+PASS: wallet reconciles including refunds
+PASS: actual enemy HP loss and overkill are separate
+PASS: batched hits and duplicate death cannot inflate counts
+PASS: enemy TTK excludes pauses
+PASS: lethal incoming hit only charges remaining health
+PASS: healing overflow and sealed healing are separate
+PASS: segment balances carry over without duplicated income
+PASS: clock modes remain independent
+PASS: despawning a wounded enemy is not a kill
+PASS: history is bounded with explicit loss reporting
+PASS: history pressure never drops accounting
+PASS: unobserved wallet changes are flagged
+PASS: an intercepted lethal hit charges the health it removed and counts once
+PASS: a rule-made miss is an avoided hit, not HP loss
+PASS: hit, heal and cost reconcile and the cost is paid HP once
+PASS: a sampled gap is reported as unexplained and the expectation resyncs
+PASS: reconstruction closes the dead life and baselines the next
+PASS: the summary declares schema 2
+PASS: developer funding is its own bucket, never earned income
+PASS: the wallet reconciles through debug grants
+PASS: mixed and even exchanges retain gross sales and purchase values
+PASS: deferred elite promotion updates cohort and HP without double counting
+PASS: promotion removes obsolete normal HP samples
+PASS: a truth milestone stamps the segment clock once (12.0)
+PASS: later milestones read the advanced clock
+PASS: companion absorption is counted, not dropped
+PASS: the absorbed hit never counts as HP loss
+PASS: population aggregate keeps sums and maxima
+PASS: render-budget honesty rides the run truth
+PASS: segment procs live on their own segment's row
+PASS: a new segment opens a fresh truth block
+PASS: cumulative counters become per-segment deltas
+PASS: a rebuilt engine's reset counter clamps, never negative
+BalanceLedgerTest: 35 passed, 0 failed

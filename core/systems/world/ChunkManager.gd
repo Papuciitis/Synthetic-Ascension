@@ -221,6 +221,63 @@ var _last_plan_camera_pos: Vector2 = Vector2.INF
 var streaming_started: bool = false
 
 var _debug_tex: Texture2D = null
+static var _transition_resource_stage: StringName = &"idle"
+
+
+## Called by the scene router before adding Game. Each first-touch image
+## and array layer gets its own frame while the old world is paused behind
+## LoadingScrim. Normal direct-scene/test startup retains its synchronous
+## contract; subsequent requests reuse the exact same cached resources.
+static func prepare_transition_resources(tree: SceneTree) -> void:
+	for index in _WORLD_ART.ground_texture_count():
+		if not _WORLD_ART.ground_texture_is_cached(index):
+			_transition_resource_stage = StringName("ground_%d" % index)
+			var started := Time.get_ticks_usec()
+			_WORLD_ART.ground_texture(index)
+			_trace_transition_resource_step(started)
+			await _finish_transition_resource_frame(tree)
+	if not _WORLD_ART.ground_material_array_is_cached():
+		_transition_resource_stage = &"baked_array"
+		var baked_started := Time.get_ticks_usec()
+		_WORLD_ART.prepare_baked_ground_materials()
+		_trace_transition_resource_step(baked_started)
+		await _finish_transition_resource_frame(tree)
+	if not _WORLD_ART.ground_material_array_is_cached():
+		var layers: Array[Image] = []
+		for index in _WORLD_ART.ground_texture_count():
+			if _WORLD_ART.ground_material_array_is_cached():
+				break
+			_transition_resource_stage = StringName("layer_%d" % index)
+			var started := Time.get_ticks_usec()
+			layers.append(_WORLD_ART.prepare_ground_material_layer(index))
+			_trace_transition_resource_step(started)
+			await _finish_transition_resource_frame(tree)
+		if not _WORLD_ART.ground_material_array_is_cached():
+			_transition_resource_stage = &"array_upload"
+			var started := Time.get_ticks_usec()
+			_WORLD_ART.cache_ground_material_layers(layers)
+			_trace_transition_resource_step(started)
+			await _finish_transition_resource_frame(tree)
+	_transition_resource_stage = &"noise"
+	var started := Time.get_ticks_usec()
+	GroundSplatRenderer.noise_texture()
+	_trace_transition_resource_step(started)
+	await _finish_transition_resource_frame(tree)
+	_transition_resource_stage = &"ready"
+
+
+static func _finish_transition_resource_frame(tree: SceneTree) -> void:
+	# Let the renderer submit this first-touch upload before preparing another
+	# texture. process_frame alone resumes before the next frame is drawn.
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+	await tree.process_frame
+
+
+static func _trace_transition_resource_step(started: int) -> void:
+	if OS.get_environment("FRONTEND_TRACE_READY") == "1":
+		print("PREP_STAGE phase=%s call_ms=%.3f" % [_transition_resource_stage, float(Time.get_ticks_usec() - started) / 1000.0])
+
 
 func _ready() -> void:
 	add_to_group(&"chunk_manager")
@@ -1253,6 +1310,23 @@ func _warm_decal_tiles() -> void:
 	_decal_tiles_warmed = true
 	for index in range(_WORLD_ART.decal_texture_count()):
 		_tile_renderer.warm_decal(_WORLD_ART.decal_texture(index))
+
+
+func prepare_authored_rendering() -> void:
+	if _decal_tiles_warmed or not tiled_world_rendering or not decals_enabled:
+		return
+	# The authored destination switches tiled rendering on after this manager's
+	# _ready. Its decal sources also read texture images; submit them separately.
+	_decal_tiles_warmed = true
+	_ensure_tile_renderer()
+	for index in _WORLD_ART.decal_texture_count():
+		var started := Time.get_ticks_usec()
+		_tile_renderer.warm_decal(_WORLD_ART.decal_texture(index))
+		if OS.get_environment("FRONTEND_TRACE_READY") == "1":
+			print("DECAL_PREP index=%d call_ms=%.3f" % [index, float(Time.get_ticks_usec() - started) / 1000.0])
+		await _finish_transition_resource_frame(get_tree())
+		if not is_inside_tree():
+			return
 
 
 func _prepare_chunk_rendering(chunk: Node2D, _coord: Vector2i) -> void:

@@ -65,15 +65,21 @@ var _secondary_completed: Dictionary = {}
 var _active_secondary_id: int = -1
 var _secondary_feedback_token: int = 0
 var _rite_safeguard_sources: Dictionary = {}
+var progressive_initialization := false
+var initial_world_ready := false
+var _initialization_stage: StringName = &"plan"
+var _initialization_stage_started := 0
 
 @export_group("Procedural Debug")
 @export var debug_proc_state: bool = false
 
 func _ready() -> void:
+	_initialization_stage_started = Time.get_ticks_usec()
 	add_to_group(&"segment_proc_builder")
 	_segment = (Global.attempt_segment if Global != null else 1)
 	_progress_epoch = Global.segment_progress_epoch
 	if _segment <= 1:
+		initial_world_ready = true
 		queue_free()
 		return
 
@@ -139,7 +145,12 @@ func _ready() -> void:
 
 	_apply_segment_rules()
 	restore_attempt_progress()
-	_build_world_from_plan()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	await _build_world_from_plan()
+	if progressive_initialization and not is_inside_tree():
+		return
 	_hook_resonance()
 	_hook_secondary_objectives()
 	set_process(true)
@@ -152,6 +163,21 @@ func _ready() -> void:
 	_push_resonance_ui()
 	_clear_secondary_objective_ui()
 	_announce_secondaries()
+	initial_world_ready = true
+
+
+func _initialization_frame() -> void:
+	if progressive_initialization and not is_inside_tree():
+		return
+	if progressive_initialization:
+		if OS.get_environment("FRONTEND_TRACE_READY") == "1":
+			print("PROC_STAGE phase=%s call_ms=%.3f" % [_initialization_stage, float(Time.get_ticks_usec() - _initialization_stage_started) / 1000.0])
+		if DisplayServer.get_name() != "headless":
+			await RenderingServer.frame_post_draw
+			if progressive_initialization and not is_inside_tree():
+				return
+		await get_tree().process_frame
+		_initialization_stage_started = Time.get_ticks_usec()
 
 func _announce_secondaries() -> void:
 	# "A secondary appeared" was a designed feedback moment with no signal
@@ -314,12 +340,32 @@ func _build_world_from_plan() -> void:
 	# The manager remains dormant until the full semantic plan and checkpoint are
 	# installed, so startup creates the center exactly once.
 	_cm.start_streaming(start_world)
+	_initialization_stage = &"center_chunk"
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
 
 	# Spawn objective, wardstones and exit gate after chunks exist so visuals sit on top cleanly.
 	_spawn_primary_objective()
+	_initialization_stage = &"primary_objective"
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
 	_spawn_wardstones()
+	_initialization_stage = &"wardstones"
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
 	_spawn_exit_gate()
+	_initialization_stage = &"exit_gate"
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
 	_spawn_segment_events()
+	_initialization_stage = &"events"
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
 	_spawn_secondary_nodes()
 
 func _spawn_primary_objective() -> void:

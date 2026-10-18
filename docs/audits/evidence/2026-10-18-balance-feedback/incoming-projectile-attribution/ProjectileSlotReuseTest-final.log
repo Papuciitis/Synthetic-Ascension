@@ -1,0 +1,20 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: ten projectiles spawn
+PASS: spawns fill packed slots
+PASS: removals shrink the active count
+PASS: removals keep the high-water capacity instead of resizing every array
+PASS: spawning after removal reuses a retained slot
+PASS: slot reuse does not grow the arrays
+PASS: the reused slot carries the new projectile's data
+PASS: renderer shows exactly the active projectiles
+PASS: raw buffer upload notifies the MultiMeshInstance2D to redraw
+PASS: render buffer carries the simulation position
+PASS: raw renderer record matches Godot's canonical diagonal transform and color
+PASS: clear removes all projectiles
+PASS: the manager reports its buffer uploads
+PASS: twenty empty frames upload nothing (0 extra)
+PASS: a spawned projectile uploads again (5)
+PASS: and emptying it uploads exactly once more - the wipe (6)
+PASS: then it goes quiet again (0 extra)
+ProjectileSlotReuseTest: 17 passed, 0 failed

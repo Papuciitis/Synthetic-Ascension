@@ -1,0 +1,4102 @@
+{
+	"artifacts_complete": true,
+	"attribution_coverage": {
+		"attributed": 472381.732002753,
+		"attributed_share": 0.999272491710525,
+		"hp_removed": 472725.643827285,
+		"mixed": 343.911824531555,
+		"unknown": 0.0
+	},
+	"dropped_records": 0,
+	"elapsed_seconds": 1361.66147089973,
+	"health": {
+		"current_life": {
+			"by_category": {
+				"adjustment": {
+					"count": 44,
+					"delta": 116.01006490523
+				},
+				"heal": {
+					"count": 1652,
+					"delta": 849.03733823255
+				},
+				"hit": {
+					"count": 163,
+					"delta": -845.153091803522
+				}
+			},
+			"by_source": {
+				"boss_arcanist": -42.1261845217555,
+				"contact_swarm": -335.855495465757,
+				"enemy_bomber": -13.719617052527,
+				"enemy_herald": -26.1885473770677,
+				"enemy_sniper": -63.5248915361472,
+				"enemy_spitter": -89.1730930307738,
+				"heal:exit_rite": 8.89493173242226,
+				"heal:generic": 206.104303531319,
+				"heal:item:ring_regeneration": 446.825183360175,
+				"heal:lifesteal": 182.983752353548,
+				"heal:wardstone": 4.22916725508549,
+				"player:stats": 116.01006490523,
+				"res://core/combat/projectile/EnemyProjectile.gd": -12.3801213162037,
+				"unknown": -262.18514150329
+			},
+			"by_source_overflow": 0,
+			"changes": 1859,
+			"checks": 1053,
+			"closed_reason": "application_closed",
+			"expected_hp": 408.863200223146,
+			"hp_start": 288.968888888889,
+			"life_id": 1,
+			"max_abs_residual": 0.0,
+			"max_hp": 408.863200223146,
+			"reason": "capture_start",
+			"residual": 0.0,
+			"started_gameplay": 0.0,
+			"unexplained_checks": 0,
+			"unexplained_hp_delta": 0.0
+		},
+		"lives": [],
+		"lives_completed": 0,
+		"totals": {
+			"by_category": {
+				"adjustment": {
+					"count": 44,
+					"delta": 116.01006490523
+				},
+				"heal": {
+					"count": 1652,
+					"delta": 849.03733823255
+				},
+				"hit": {
+					"count": 163,
+					"delta": -845.153091803522
+				}
+			},
+			"changes": 1859,
+			"checks": 1053,
+			"max_abs_residual": 0.0,
+			"unexplained_checks": 0,
+			"unexplained_hp_delta": 0.0
+		}
+	},
+	"history": {
+		"coalesced": 605,
+		"complete": true,
+		"event_cap": 2048,
+		"events": 232,
+		"events_expired": 17389,
+		"events_overwritten": 0,
+		"events_pushed": 18226,
+		"life_id": 1,
+		"retain_seconds": 5.0,
+		"sample_cap": 32,
+		"samples": 23,
+		"samples_expired": 4590,
+		"samples_overwritten": 0,
+		"samples_pushed": 4613
+	},
+	"incidents": {
+		"bytes": 0,
+		"captures": 0,
+		"ceiling": 2097152,
+		"deaths": 0,
+		"history_incomplete": 0,
+		"trimmed_events": 0,
+		"trimmed_samples": 0
+	},
+	"last_error": "",
+	"last_sequence": 19083,
+	"max_sample_callback_usec": 4407,
+	"metadata": {
+		"balance_revision": 2,
+		"build": {
+			"game_version": "0.0.0.25.5",
+			"git_branch": "feat/authoritative-enemy-world",
+			"git_commit": "c9d5a31772f3",
+			"godot_version": "4.7.1-stable (official)",
+			"world_seed": 1794675549650
+		},
+		"capture_id": "2026-10-18_14-29-09_19808_357870982_1",
+		"city_development": {
+			"attempt": {
+				"augment_id": "",
+				"ranks": {
+					"armor": 0,
+					"augment": 0,
+					"bag": 0,
+					"binding_echo": 0,
+					"haste": 0,
+					"health": 0,
+					"luck": 0,
+					"power": 0,
+					"range": 0,
+					"size": 0,
+					"speed": 0
+				},
+				"revision": 1
+			},
+			"effective_bonuses": {
+				"armor": 0,
+				"augment_id": "",
+				"bag_slots": 0,
+				"binding_echo": false,
+				"haste": 0.0,
+				"hp": 0,
+				"luck": 0.0,
+				"power": 0.0,
+				"range_multiplier": 1.0,
+				"size_multiplier": 1.0,
+				"speed": 0.0
+			},
+			"enabled": true,
+			"profile": {
+				"active_bonuses": {
+					"armor": 0,
+					"augment_id": "",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"augment_id": "",
+				"claimed_segments": [],
+				"earned": 0,
+				"next_armor_bonus": 0,
+				"next_bag_slots": 0,
+				"next_bonuses": {
+					"armor": 0,
+					"augment_id": "",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"next_hp_bonus": 0,
+				"points": 0,
+				"ranks": {
+					"armor": 0,
+					"augment": 0,
+					"bag": 0,
+					"binding_echo": 0,
+					"haste": 0,
+					"health": 0,
+					"luck": 0,
+					"power": 0,
+					"range": 0,
+					"size": 0,
+					"speed": 0
+				}
+			}
+		},
+		"city_farming_experiments": {
+			"gospel_strongest_rewards": false,
+			"no_overtime_drop_bonus": false,
+			"no_overtime_rarity_bonus": false,
+			"no_permanent_development": false
+		},
+		"coverage": "observed_session",
+		"features": {
+			"exit_detail": true,
+			"health_reconciliation": true,
+			"incidents": true,
+			"progression": true,
+			"pure_snapshots": true,
+			"source_attribution": true
+		},
+		"recorder_revision": 2,
+		"run_key": "-1:1794675549650",
+		"save_slot": -1,
+		"start_segment": 5,
+		"starting_debug": {
+			"debug_ascension_revelations_enabled": true,
+			"debug_dev_mode": true,
+			"debug_dev_segment": false,
+			"debug_enemy_hp_scale": 1.0,
+			"debug_opening_mode_override": "",
+			"debug_player_god_mode": false,
+			"enemy_proxy_rollout": true,
+			"time_scale": 1.0
+		},
+		"tuning_hash": "672b4c05e09e7ccdf376c21d2f366a0b954824be9f1e3fc70a5dd897baaf806b",
+		"tuning_stages": [
+			"items",
+			"sets",
+			"economy"
+		]
+	},
+	"outcome": "application_closed",
+	"schema_version": 2,
+	"segments": [
+		{
+			"absorbed_hits": 0.0,
+			"attacks": 1986.0,
+			"attribution": {
+				"by_emitter": {
+					"ascension:BR02:bullet": {
+						"casts": 0,
+						"hits": 59,
+						"hp_removed": 816.698553237915,
+						"kills": 9,
+						"overkill": 34.6012935638428
+					},
+					"ascension:BR05:fragment": {
+						"casts": 0,
+						"hits": 3538,
+						"hp_removed": 40048.7191174934,
+						"kills": 1507,
+						"overkill": 12198.9146128316
+					},
+					"ascension:BR06:crossfire": {
+						"casts": 0,
+						"hits": 91,
+						"hp_removed": 1606.45954999976,
+						"kills": 33,
+						"overkill": 225.631026048139
+					},
+					"ascension:OR02:grenade": {
+						"casts": 0,
+						"hits": 123,
+						"hp_removed": 2930.16957336876,
+						"kills": 47,
+						"overkill": 777.7247845893
+					},
+					"ascension:PR09:split": {
+						"casts": 0,
+						"hits": 18,
+						"hp_removed": 273.848282664464,
+						"kills": 3,
+						"overkill": 39.2292206938864
+					},
+					"ascension:PR11:crossing": {
+						"casts": 0,
+						"hits": 22,
+						"hp_removed": 351.046097168464,
+						"kills": 11,
+						"overkill": 168.432860424819
+					},
+					"ascension:PRF2:edge_return": {
+						"casts": 0,
+						"hits": 212,
+						"hp_removed": 4299.4975558424,
+						"kills": 93,
+						"overkill": 1416.93866255283
+					},
+					"ascension:PRQ5:beam": {
+						"casts": 0,
+						"hits": 25,
+						"hp_removed": 368.240616223785,
+						"kills": 15,
+						"overkill": 335.075783262273
+					},
+					"ascension:PRQ6:execute": {
+						"casts": 0,
+						"hits": 10,
+						"hp_removed": 49.8501361179735,
+						"kills": 7,
+						"overkill": 7.00000070503829
+					},
+					"ascension:PRQ:beam": {
+						"casts": 0,
+						"hits": 27,
+						"hp_removed": 633.914083604395,
+						"kills": 12,
+						"overkill": 283.685574416558
+					},
+					"manifestation:predestination_sigil": {
+						"casts": 0,
+						"hits": 236,
+						"hp_removed": 9125.27731432733,
+						"kills": 224,
+						"overkill": 17770.9866629918
+					},
+					"manifestation:predestination_sigil:mark_bonus": {
+						"casts": 0,
+						"hits": 80,
+						"hp_removed": 1577.68538489059,
+						"kills": 28,
+						"overkill": 623.621123143591
+					},
+					"manifestation:shard:orbit": {
+						"casts": 0,
+						"hits": 1,
+						"hp_removed": 15.4180582390933,
+						"kills": 0,
+						"overkill": 0.0
+					},
+					"manifestation:shard:projectile": {
+						"casts": 0,
+						"hits": 8,
+						"hp_removed": 216.815163789793,
+						"kills": 6,
+						"overkill": 190.470502445427
+					},
+					"mixed": {
+						"casts": 0,
+						"hits": 11,
+						"hp_removed": 131.895579814911,
+						"kills": 4,
+						"overkill": 101.378839015961
+					},
+					"native:ranged:bullet": {
+						"casts": 0,
+						"hits": 276,
+						"hp_removed": 5434.13497398852,
+						"kills": 143,
+						"overkill": 2326.46241704202
+					},
+					"native:ranged:bullet_node": {
+						"casts": 0,
+						"hits": 2817,
+						"hp_removed": 58314.0585214363,
+						"kills": 1452,
+						"overkill": 23709.1774440252
+					},
+					"set:lattice:6:afterstrike": {
+						"casts": 0,
+						"hits": 692,
+						"hp_removed": 17728.5841556867,
+						"kills": 433,
+						"overkill": 9735.55640237689
+					},
+					"status:burn": {
+						"casts": 0,
+						"hits": 152,
+						"hp_removed": 198.937297261489,
+						"kills": 6,
+						"overkill": 3.50804194585274
+					}
+				},
+				"by_origin": {
+					"ascension:BR02": {
+						"casts": 0,
+						"hits": 59,
+						"hp_removed": 816.698553237915,
+						"kills": 9,
+						"overkill": 34.6012935638428
+					},
+					"ascension:BR05": {
+						"casts": 290,
+						"hits": 3312,
+						"hp_removed": 37750.6146458485,
+						"kills": 1431,
+						"overkill": 11448.4392811304
+					},
+					"ascension:BR06": {
+						"casts": 0,
+						"hits": 91,
+						"hp_removed": 1606.45954999976,
+						"kills": 33,
+						"overkill": 225.631026048139
+					},
+					"ascension:OR02": {
+						"casts": 48,
+						"hits": 123,
+						"hp_removed": 2930.16957336876,
+						"kills": 47,
+						"overkill": 777.7247845893
+					},
+					"ascension:PR09": {
+						"casts": 0,
+						"hits": 18,
+						"hp_removed": 273.848282664464,
+						"kills": 3,
+						"overkill": 39.2292206938864
+					},
+					"ascension:PR11": {
+						"casts": 0,
+						"hits": 22,
+						"hp_removed": 351.046097168464,
+						"kills": 11,
+						"overkill": 168.432860424819
+					},
+					"ascension:PRF2": {
+						"casts": 0,
+						"hits": 212,
+						"hp_removed": 4299.4975558424,
+						"kills": 93,
+						"overkill": 1416.93866255283
+					},
+					"ascension:PRQ": {
+						"casts": 6,
+						"hits": 278,
+						"hp_removed": 3300.25917147294,
+						"kills": 103,
+						"overkill": 1369.23668937995
+					},
+					"ascension:PRQ6": {
+						"casts": 0,
+						"hits": 10,
+						"hp_removed": 49.8501361179735,
+						"kills": 7,
+						"overkill": 7.00000070503829
+					},
+					"manifestation:predestination_sigil": {
+						"casts": 0,
+						"hits": 316,
+						"hp_removed": 10702.9626992179,
+						"kills": 252,
+						"overkill": 18394.6077861354
+					},
+					"manifestation:shard": {
+						"casts": 0,
+						"hits": 9,
+						"hp_removed": 232.233222028886,
+						"kills": 6,
+						"overkill": 190.470502445427
+					},
+					"mixed": {
+						"casts": 0,
+						"hits": 11,
+						"hp_removed": 131.895579814911,
+						"kills": 4,
+						"overkill": 101.378839015961
+					},
+					"native:ranged": {
+						"casts": 0,
+						"hits": 3093,
+						"hp_removed": 63748.1934954249,
+						"kills": 1595,
+						"overkill": 26035.6398610672
+					},
+					"set:lattice:6": {
+						"casts": 0,
+						"hits": 692,
+						"hp_removed": 17728.5841556867,
+						"kills": 433,
+						"overkill": 9735.55640237689
+					},
+					"status:burn": {
+						"casts": 0,
+						"hits": 152,
+						"hp_removed": 198.937297261489,
+						"kills": 6,
+						"overkill": 3.50804194585274
+					}
+				},
+				"mixed_raw_breakdown": {
+					"ascension:BR02|ascension:BR02:bullet": 49.9853916168213,
+					"ascension:BR06|ascension:BR06:crossfire": 22.7970752716064,
+					"ascension:PR09|ascension:PR09:split": 38.9197731018066,
+					"native:ranged|native:ranged:bullet": 143.778028488159
+				},
+				"overflow": {
+					"by_emitter": 0,
+					"by_origin": 0
+				}
+			},
+			"critical_hits": 15.0,
+			"damage_absorbed": 0.0,
+			"deaths": 0.0,
+			"enemies": {
+				"bomber": {
+					"damage": 3490.92122945049,
+					"engaged": 122,
+					"hp_max": 31.5711994171143,
+					"hp_min": 9.98214054107666,
+					"hp_sum": 3489.20901489258,
+					"kills": 122,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 122,
+					"ttk_count": 122,
+					"ttk_max": 7.12927637036989,
+					"ttk_seconds": 21.8293789765519
+				},
+				"bomber [elite]": {
+					"damage": 1279.94814021612,
+					"engaged": 19,
+					"hp_max": 73.2451858520508,
+					"hp_min": 51.2716293334961,
+					"hp_sum": 1264.5571937561,
+					"kills": 19,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 19,
+					"ttk_count": 19,
+					"ttk_max": 1.5991725555557,
+					"ttk_seconds": 4.97831166811091
+				},
+				"boss_bulldozer": {
+					"damage": 6037.99134181971,
+					"engaged": 1,
+					"hp_max": 6037.9921875,
+					"hp_min": 6037.9921875,
+					"hp_sum": 6037.9921875,
+					"kills": 1,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 1,
+					"ttk_count": 1,
+					"ttk_max": 23.8123366666565,
+					"ttk_seconds": 23.8123366666565
+				},
+				"brute": {
+					"damage": 6999.81344994294,
+					"engaged": 63,
+					"hp_max": 138.123992919922,
+					"hp_min": 48.3433990478516,
+					"hp_sum": 7171.80792999268,
+					"kills": 62,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 63,
+					"ttk_count": 62,
+					"ttk_max": 79.3318463332967,
+					"ttk_seconds": 122.961850824158
+				},
+				"brute [elite]": {
+					"damage": 2444.43933005598,
+					"engaged": 8,
+					"hp_max": 320.447662353516,
+					"hp_min": 204.481704711914,
+					"hp_sum": 2353.74816894531,
+					"kills": 8,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 8,
+					"ttk_count": 8,
+					"ttk_max": 9.25678175000397,
+					"ttk_seconds": 14.4538582651545
+				},
+				"chanter": {
+					"damage": 2151.33224338591,
+					"engaged": 70,
+					"hp_max": 39.4640007019043,
+					"hp_min": 11.2862548828125,
+					"hp_sum": 2152.12152576447,
+					"kills": 70,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 70,
+					"ttk_count": 70,
+					"ttk_max": 3.77911600000013,
+					"ttk_seconds": 15.4612690701067
+				},
+				"chanter [elite]": {
+					"damage": 1186.52213656306,
+					"engaged": 16,
+					"hp_max": 91.5564804077148,
+					"hp_min": 64.0895385742188,
+					"hp_sum": 1178.82666015625,
+					"kills": 16,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 16,
+					"ttk_count": 16,
+					"ttk_max": 4.01015644444243,
+					"ttk_seconds": 6.87985270706838
+				},
+				"charger": {
+					"damage": 8479.60077845957,
+					"engaged": 177,
+					"hp_max": 59.1959991455078,
+					"hp_min": 17.0504417419434,
+					"hp_sum": 8563.91285705566,
+					"kills": 177,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 178,
+					"ttk_count": 177,
+					"ttk_max": 9.2082709999994,
+					"ttk_seconds": 68.7883820996898
+				},
+				"charger [elite]": {
+					"damage": 4757.58632944748,
+					"engaged": 38,
+					"hp_max": 137.334716796875,
+					"hp_min": 92.5779495239258,
+					"hp_sum": 4656.95124816895,
+					"kills": 38,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 38,
+					"ttk_count": 38,
+					"ttk_max": 5.99856933333439,
+					"ttk_seconds": 32.6266591871092
+				},
+				"grunt": {
+					"damage": 17617.1223079549,
+					"engaged": 1130,
+					"hp_max": 19.7320003509521,
+					"hp_min": 6.23058652877808,
+					"hp_sum": 17621.8731389046,
+					"kills": 1130,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 1130,
+					"ttk_count": 1130,
+					"ttk_max": 7.66341338094634,
+					"ttk_seconds": 54.0179508968197
+				},
+				"grunt [elite]": {
+					"damage": 6525.22872297926,
+					"engaged": 161,
+					"hp_max": 45.7782402038574,
+					"hp_min": 16.0223846435547,
+					"hp_sum": 6501.60231781006,
+					"kills": 160,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 161,
+					"ttk_count": 160,
+					"ttk_max": 22.6360939166725,
+					"ttk_seconds": 73.0316825948905
+				},
+				"herald": {
+					"damage": 4106.35981374454,
+					"engaged": 82,
+					"hp_max": 67.0887985229492,
+					"hp_min": 23.4810791015625,
+					"hp_sum": 4193.04989624023,
+					"kills": 81,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 82,
+					"ttk_count": 81,
+					"ttk_max": 10.8396299206306,
+					"ttk_seconds": 38.2129573333235
+				},
+				"herald [elite]": {
+					"damage": 3366.3507709739,
+					"engaged": 23,
+					"hp_max": 165.373886108398,
+					"hp_min": 115.76171875,
+					"hp_sum": 3357.08987426758,
+					"kills": 23,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 23,
+					"ttk_count": 23,
+					"ttk_max": 5.74501977777305,
+					"ttk_seconds": 33.0833395420787
+				},
+				"leech": {
+					"damage": 4832.9641852345,
+					"engaged": 125,
+					"hp_max": 47.3568000793457,
+					"hp_min": 16.5748805999756,
+					"hp_sum": 4860.76902008057,
+					"kills": 125,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 125,
+					"ttk_count": 125,
+					"ttk_max": 18.5067060000063,
+					"ttk_seconds": 61.8611703359902
+				},
+				"leech [elite]": {
+					"damage": 2178.74137646343,
+					"engaged": 23,
+					"hp_max": 109.867774963379,
+					"hp_min": 72.4447479248047,
+					"hp_sum": 2192.89278411865,
+					"kills": 23,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 23,
+					"ttk_count": 23,
+					"ttk_max": 8.20944299999888,
+					"ttk_seconds": 22.0927750673384
+				},
+				"lurker": {
+					"damage": 2287.35613696682,
+					"engaged": 53,
+					"hp_max": 51.3031997680664,
+					"hp_min": 17.9561195373535,
+					"hp_sum": 2297.31312179565,
+					"kills": 53,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 53,
+					"ttk_count": 53,
+					"ttk_max": 8.78062433333417,
+					"ttk_seconds": 25.1727767056282
+				},
+				"lurker [elite]": {
+					"damage": 709.379605855879,
+					"engaged": 7,
+					"hp_max": 119.023422241211,
+					"hp_min": 83.3163986206055,
+					"hp_sum": 690.335861206055,
+					"kills": 7,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 7,
+					"ttk_count": 7,
+					"ttk_max": 14.6115213838338,
+					"ttk_seconds": 15.4322102020151
+				},
+				"orbiter": {
+					"damage": 7744.81578298239,
+					"engaged": 255,
+					"hp_max": 35.5176010131836,
+					"hp_min": 10.1810932159424,
+					"hp_sum": 7736.30415153503,
+					"kills": 255,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 255,
+					"ttk_count": 255,
+					"ttk_max": 7.32916666667239,
+					"ttk_seconds": 44.9614598934647
+				},
+				"orbiter [elite]": {
+					"damage": 3795.4440320112,
+					"engaged": 58,
+					"hp_max": 77.2507858276367,
+					"hp_min": 50.1151123046875,
+					"hp_sum": 3816.19004821777,
+					"kills": 58,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 58,
+					"ttk_count": 58,
+					"ttk_max": 2.67586566666608,
+					"ttk_seconds": 16.6957224166667
+				},
+				"runner": {
+					"damage": 5538.40601557458,
+					"engaged": 396,
+					"hp_max": 17.7588005065918,
+					"hp_min": 5.46837902069092,
+					"hp_sum": 5561.59579277039,
+					"kills": 396,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 397,
+					"ttk_count": 396,
+					"ttk_max": 2.46970533333413,
+					"ttk_seconds": 17.9585832598641
+				},
+				"runner [elite]": {
+					"damage": 1377.64835533322,
+					"engaged": 46,
+					"hp_max": 34.7628517150879,
+					"hp_min": 14.4600868225098,
+					"hp_sum": 1401.1437587738,
+					"kills": 46,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 47,
+					"ttk_count": 46,
+					"ttk_max": 2.41563000000036,
+					"ttk_seconds": 6.77432346753233
+				},
+				"siphon": {
+					"damage": 1458.58945392915,
+					"engaged": 35,
+					"hp_max": 43.410400390625,
+					"hp_min": 15.193639755249,
+					"hp_sum": 1462.93049240112,
+					"kills": 35,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 35,
+					"ttk_count": 35,
+					"ttk_max": 5.22414466666532,
+					"ttk_seconds": 10.0755419552648
+				},
+				"siphon [elite]": {
+					"damage": 312.207590838416,
+					"engaged": 4,
+					"hp_max": 100.712127685547,
+					"hp_min": 70.4984893798828,
+					"hp_sum": 312.207595825195,
+					"kills": 4,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 4,
+					"ttk_count": 4,
+					"ttk_max": 0.539317666666591,
+					"ttk_seconds": 0.559317666666573
+				},
+				"sniper": {
+					"damage": 1039.91804082479,
+					"engaged": 26,
+					"hp_max": 67.0887985229492,
+					"hp_min": 23.4810791015625,
+					"hp_sum": 1180.18840026855,
+					"kills": 25,
+					"present_at_entry": 0,
+					"removed_alive": 3,
+					"seen": 28,
+					"ttk_count": 25,
+					"ttk_max": 101.260990777787,
+					"ttk_seconds": 172.217201111129
+				},
+				"sniper [elite]": {
+					"damage": 1223.47246797165,
+					"engaged": 8,
+					"hp_max": 155.646011352539,
+					"hp_min": 108.952209472656,
+					"hp_sum": 1198.47428894043,
+					"kills": 8,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 8,
+					"ttk_count": 8,
+					"ttk_max": 8.52926766666633,
+					"ttk_seconds": 18.4810808888856
+				},
+				"spitter": {
+					"damage": 8572.51874210524,
+					"engaged": 239,
+					"hp_max": 43.410400390625,
+					"hp_min": 15.193639755249,
+					"hp_sum": 8645.53751373291,
+					"kills": 239,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 239,
+					"ttk_count": 239,
+					"ttk_max": 89.1933017685477,
+					"ttk_seconds": 138.453840681731
+				},
+				"spitter [elite]": {
+					"damage": 3507.49340116954,
+					"engaged": 39,
+					"hp_max": 100.712127685547,
+					"hp_min": 67.4837646484375,
+					"hp_sum": 3567.82852172852,
+					"kills": 37,
+					"present_at_entry": 0,
+					"removed_alive": 2,
+					"seen": 39,
+					"ttk_count": 37,
+					"ttk_max": 38.3828886666774,
+					"ttk_seconds": 68.1052209570865
+				},
+				"splitter": {
+					"damage": 18237.8474743228,
+					"engaged": 484,
+					"hp_max": 118.391998291016,
+					"hp_min": 23.1481800079346,
+					"hp_sum": 18333.2483901978,
+					"kills": 484,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 484,
+					"ttk_count": 484,
+					"ttk_max": 96.8988219999607,
+					"ttk_seconds": 196.282837828713
+				},
+				"summoned_minion": {
+					"damage": 1625.91682936755,
+					"engaged": 165,
+					"hp_max": 9.86600017547607,
+					"hp_min": 9.86600017547607,
+					"hp_sum": 1884.40603351593,
+					"kills": 165,
+					"present_at_entry": 0,
+					"removed_alive": 26,
+					"seen": 191,
+					"ttk_count": 165,
+					"ttk_max": 0.0831826666666302,
+					"ttk_seconds": 0.604578260702169
+				},
+				"summoner": {
+					"damage": 4721.07828441169,
+					"engaged": 99,
+					"hp_max": 55.2495994567871,
+					"hp_min": 19.3373603820801,
+					"hp_sum": 4715.55332565308,
+					"kills": 99,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 99,
+					"ttk_count": 99,
+					"ttk_max": 8.22559399999813,
+					"ttk_seconds": 56.6079262183684
+				},
+				"summoner [elite]": {
+					"damage": 1705.54567258144,
+					"engaged": 15,
+					"hp_max": 128.179077148438,
+					"hp_min": 89.7253570556641,
+					"hp_sum": 1691.96383666992,
+					"kills": 15,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 15,
+					"ttk_count": 15,
+					"ttk_max": 3.30357700000067,
+					"ttk_seconds": 12.2287402751316
+				},
+				"warden": {
+					"damage": 3107.60649999366,
+					"engaged": 44,
+					"hp_max": 78.9280014038086,
+					"hp_min": 27.6247997283936,
+					"hp_sum": 3124.97067642212,
+					"kills": 44,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 44,
+					"ttk_count": 44,
+					"ttk_max": 2.0572024242411,
+					"ttk_seconds": 8.74903276430791
+				},
+				"warden [elite]": {
+					"damage": 1221.79916346031,
+					"engaged": 8,
+					"hp_max": 183.11296081543,
+					"hp_min": 128.179077148438,
+					"hp_sum": 1190.23426818848,
+					"kills": 8,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 8,
+					"ttk_count": 8,
+					"ttk_max": 1.76833366666636,
+					"ttk_seconds": 3.9290849292922
+				}
+			},
+			"enemy_damage_after_defenses": 214069.645267233,
+			"enemy_hp_removed": 144121.250015157,
+			"enemy_overkill": 69948.3952520754,
+			"evaded_hits": 2.0,
+			"exit": {
+				"attempts": 2.0,
+				"channel_seconds": 19.9999999999818,
+				"completed_at": 432.025168166629,
+				"deaths_after_reconstruction": 0,
+				"deaths_while_channeling": 0,
+				"first_channel_at": 411.441834833314,
+				"lapses": 0,
+				"last_chance": 1.0,
+				"overtime": {
+					"director_injected_seconds": 45.0,
+					"final_overtime": 1.002232484,
+					"final_unseal_seconds": 108.559373666667,
+					"injected_seconds": 45.0,
+					"injection_count": 2,
+					"injection_overflow": 0,
+					"injections": {
+						"manifestation:overtime_gospel@slot5#-9223371566102868507": 45.0
+					},
+					"max_overtime": 1.002232484
+				},
+				"progress_lost": {
+					"death": 0.0,
+					"lapse": 0.0,
+					"other": 0.0
+				},
+				"reconstruction_spent": 0,
+				"reentry_seconds": [],
+				"reinforcements": {
+					"beats_aborted": 0,
+					"beats_ended": 17,
+					"beats_started": 18,
+					"escalations": 3,
+					"members": 70,
+					"specialist_responses": 9
+				},
+				"rejections": 0,
+				"safeguards_drained": 0,
+				"safeguards_granted": 1.0,
+				"safeguards_used": 0,
+				"seals": 3.0,
+				"spawn_overflow": 0,
+				"spawns": {
+					"ambient:paused": {
+						"enemies": 0,
+						"requests": 24
+					},
+					"ambient:rite_pressure": {
+						"enemies": 0,
+						"requests": 272
+					},
+					"ambient:spawned": {
+						"enemies": 2806,
+						"requests": 788
+					},
+					"beat:spawned": {
+						"enemies": 77,
+						"requests": 77
+					},
+					"burst:gated": {
+						"enemies": 0,
+						"requests": 4
+					},
+					"burst:rite_pressure": {
+						"enemies": 0,
+						"requests": 3
+					},
+					"burst:spawned": {
+						"enemies": 15,
+						"requests": 2
+					},
+					"burst_at:spawned": {
+						"enemies": 42,
+						"requests": 14
+					}
+				},
+				"status": "completed",
+				"unlock_to_first_channel": 40.679373666636,
+				"unlocked_at": 370.762461166678,
+				"wave_enemies": 38.0,
+				"waves": 7.0
+			},
+			"followers_adjustments": 0,
+			"followers_by_reason": {
+				"combat_influence": {
+					"count": 3862,
+					"gained": 10575,
+					"net": 10575,
+					"spent": 0
+				},
+				"miniboss_victory": {
+					"count": 1,
+					"gained": 8,
+					"net": 8,
+					"spent": 0
+				}
+			},
+			"followers_close": 10953,
+			"followers_debug": 0,
+			"followers_earned": 10583,
+			"followers_open": 370,
+			"followers_peak": 10953,
+			"followers_recruited": 10583,
+			"followers_spent": 0,
+			"god_mode_hits": 0.0,
+			"heal_blocked": 0.0,
+			"heal_overflow": 5157.66558571344,
+			"healing": 420.279178720496,
+			"healing_by_source": {
+				"exit_rite": 8.89493173242226,
+				"generic": 132.958652248195,
+				"item:ring_regeneration": 212.091294223632,
+				"lifesteal": 62.1051332611612,
+				"wardstone": 4.22916725508549
+			},
+			"hp_paid": 0.0,
+			"hub_departure_wallet": null,
+			"intercepted_hits": 0.0,
+			"invulnerable_hits": 0.0,
+			"kills": 4033.0,
+			"missed_hits": 0.0,
+			"player_credited_damage": 85807.1914937199,
+			"player_damage_after_defenses": 416.394932291468,
+			"player_damage_before_defenses": 555.539616513252,
+			"player_damage_by_source": {
+				"contact_swarm": 187.974125563434,
+				"enemy_bomber": 9.02708004250866,
+				"enemy_herald": 10.3694355734094,
+				"enemy_sniper": 49.2374779397503,
+				"enemy_spitter": 60.308914223312,
+				"unknown": 99.4778989490539
+			},
+			"player_hp_lost": 416.394932291468,
+			"player_overkill": 0.000000000000314415160573844,
+			"rescues": 0.0,
+			"resolved_hits": 8398.0,
+			"respawns": 0.0,
+			"secondary_completed_count": 0.0,
+			"secondary_discovered": 0.0,
+			"seconds_gameplay": 434.221834833293,
+			"seconds_hub": 0.0,
+			"seconds_loading": 0.0,
+			"seconds_paused": 24.0718670000001,
+			"segment": 5,
+			"slow_frames": 472.0,
+			"status": "completed",
+			"truth": {
+				"perf": {
+					"data_only_max": 38,
+					"enemies_max": 103,
+					"enemies_sum": 8273.0,
+					"materialized_max": 68,
+					"overflow_queue_max": 0,
+					"projectiles_max": 36,
+					"projectiles_sum": 5837.0,
+					"samples": 457,
+					"sim_capacity_max_seen": 4096,
+					"undrawn_max": 0
+				},
+				"primary_completed_at": 158.5,
+				"procs": {
+					"ascension": {
+						"BR.crossfire": 662.0,
+						"BR.fifth_shots": 397.0,
+						"BR.fragment_hits": 3644.0,
+						"BR.fragments": 5652.0,
+						"OR.chain": 42.0,
+						"OR.grenade_blasts": 496.0,
+						"OR.grenades": 496.0,
+						"OR.grenades_attached": 32.0,
+						"OR.grenades_grounded": 464.0,
+						"PR.consumed": 32.0,
+						"PR.crossings": 22.0,
+						"PR.deadshots": 6.0,
+						"PR.edge_returns": 1816.0,
+						"PR.executions": 10.0,
+						"PR.exposed": 122.0,
+						"PR.far_shots": 226.0,
+						"PR.lines": 44.0,
+						"PR.recalculates": 8.0,
+						"PR.second_reads": 14.0,
+						"PR.splits": 10.0,
+						"runner.chain_kills": 1739.0,
+						"runner.generated": 7640.0,
+						"runner.hits": 5567.0,
+						"runner.kills": 4033.0,
+						"runner.longest_chain": 52.0,
+						"runner.seed_kills": 145.0,
+						"runner.tree_hits": 4120.0,
+						"runner.tree_kills": 1739.0
+					}
+				},
+				"resonance_full_at": 211.9
+			},
+			"upgrade_summary": {
+				"acquired_total": 109,
+				"debug_operations": 0,
+				"first_rank_up_at": 170.61283116669,
+				"material_value": 0,
+				"mean_purchase_value": null,
+				"mean_seconds_between_rank_ups": 18.5535131025608,
+				"meter_gained_equipped": 17.0280743645042,
+				"net_purchases": 0,
+				"net_sales": 0,
+				"organic_income": 10583,
+				"organic_income_per_minute": 1462.34009683963,
+				"rank_ups_equipped": 14,
+				"shop_cost_in_minutes": null
+			},
+			"upgrades": {
+				"acquired": {
+					"pickup": 109
+				},
+				"acquired_total": 109.0,
+				"compatible_drops": {
+					"acc_firestone:pos:-1": {
+						"count": 1,
+						"value": 113
+					},
+					"acc_firestone:pos:-3": {
+						"count": 1,
+						"value": 171
+					},
+					"acc_firestone:pos:0": {
+						"count": 2,
+						"value": 259
+					},
+					"acc_firestone:pos:1": {
+						"count": 2,
+						"value": 220
+					},
+					"acc_firestone:pos:2": {
+						"count": 1,
+						"value": 60
+					},
+					"acc_firestone:pos:3": {
+						"count": 4,
+						"value": 350
+					},
+					"acc_firestone:pos:4": {
+						"count": 3,
+						"value": 232
+					},
+					"lattice_fingerprint:pos:1": {
+						"count": 1,
+						"value": 174
+					},
+					"lattice_fingerprint:pos:3": {
+						"count": 2,
+						"value": 227
+					},
+					"lattice_fingerprint:pos:4": {
+						"count": 3,
+						"value": 294
+					},
+					"lattice_fingerprint:pos:5": {
+						"count": 3,
+						"value": 206
+					},
+					"lattice_fingerprint:pos:6": {
+						"count": 1,
+						"value": 50
+					},
+					"lattice_focusnode:pos:2": {
+						"count": 2,
+						"value": 319
+					},
+					"lattice_focusnode:pos:3": {
+						"count": 3,
+						"value": 411
+					},
+					"lattice_focusnode:pos:4": {
+						"count": 4,
+						"value": 493
+					},
+					"lattice_focusnode:pos:5": {
+						"count": 12,
+						"value": 940
+					},
+					"lattice_focusnode:pos:6": {
+						"count": 2,
+						"value": 149
+					},
+					"lattice_pulsecoil:pos:3": {
+						"count": 3,
+						"value": 403
+					},
+					"lattice_pulsecoil:pos:4": {
+						"count": 6,
+						"value": 678
+					},
+					"lattice_pulsecoil:pos:5": {
+						"count": 3,
+						"value": 244
+					},
+					"lattice_pulsecoil:pos:6": {
+						"count": 5,
+						"value": 346
+					},
+					"lattice_shellplate:pos:3": {
+						"count": 4,
+						"value": 592
+					},
+					"lattice_shellplate:pos:4": {
+						"count": 1,
+						"value": 94
+					},
+					"lattice_shellplate:pos:5": {
+						"count": 6,
+						"value": 525
+					},
+					"lattice_shellplate:pos:6": {
+						"count": 11,
+						"value": 725
+					},
+					"lattice_shellplate:pos:7": {
+						"count": 1,
+						"value": 70
+					},
+					"lattice_strideframe:pos:-1": {
+						"count": 1,
+						"value": 237
+					},
+					"lattice_strideframe:pos:2": {
+						"count": 2,
+						"value": 302
+					},
+					"lattice_strideframe:pos:3": {
+						"count": 1,
+						"value": 123
+					},
+					"lattice_strideframe:pos:4": {
+						"count": 3,
+						"value": 281
+					},
+					"lattice_strideframe:pos:5": {
+						"count": 5,
+						"value": 362
+					},
+					"lattice_strideframe:pos:6": {
+						"count": 3,
+						"value": 150
+					},
+					"lattice_tickspurs:pos:2": {
+						"count": 2,
+						"value": 323
+					},
+					"lattice_tickspurs:pos:4": {
+						"count": 2,
+						"value": 190
+					},
+					"lattice_tickspurs:pos:5": {
+						"count": 1,
+						"value": 71
+					},
+					"lattice_tickspurs:pos:6": {
+						"count": 5,
+						"value": 360
+					},
+					"ring_regeneration:pos:1": {
+						"count": 1,
+						"value": 128
+					},
+					"ring_regeneration:pos:2": {
+						"count": 4,
+						"value": 444
+					},
+					"ring_regeneration:pos:3": {
+						"count": 6,
+						"value": 497
+					},
+					"ring_regeneration:pos:4": {
+						"count": 2,
+						"value": 169
+					}
+				},
+				"compatible_overflow": 0,
+				"debug_operations": 0,
+				"dropped_to_world": 0,
+				"equips": 0,
+				"generated": {
+					"dropped": 611,
+					"offered": 0
+				},
+				"generated_by_source": {
+					"boss": 2,
+					"enemy": 603,
+					"exploration": 4,
+					"indoor": 2
+				},
+				"material_value": 0,
+				"merge_mass": 69.278801031685,
+				"merges": 93.0,
+				"merges_by_container": {
+					"bag": 61,
+					"equipped": 32
+				},
+				"meter_gained_equipped": 17.0280743645042,
+				"moves": 0,
+				"operations": 109.0,
+				"purchase_value": 0,
+				"purchased": 0,
+				"rank_up_times": [
+					170.61283116669,
+					170.896164500024,
+					191.826306166695,
+					192.142960166694,
+					210.26757883337,
+					250.766416166716,
+					265.741003833377,
+					275.024124166706,
+					320.90752250003,
+					373.641712833343,
+					375.391264166676,
+					384.759262166671,
+					387.125928833335,
+					411.80850149998
+				],
+				"rank_ups_equipped": 14.0,
+				"sale_value": 0,
+				"sold": 0,
+				"stashed": 0,
+				"swaps_equipped": 1.0,
+				"undone_ops": 0,
+				"undone_purchases": 0,
+				"undone_sales": 0,
+				"unequips": 0
+			}
+		},
+		{
+			"absorbed_hits": 0.0,
+			"attacks": 4454.0,
+			"attribution": {
+				"by_emitter": {
+					"ascension:BR02:bullet": {
+						"casts": 0,
+						"hits": 107,
+						"hp_removed": 1494.63497038841,
+						"kills": 30,
+						"overkill": 179.74193406105
+					},
+					"ascension:BR05:fragment": {
+						"casts": 0,
+						"hits": 5101,
+						"hp_removed": 63220.6566936126,
+						"kills": 2007,
+						"overkill": 18850.3016718762
+					},
+					"ascension:BR06:crossfire": {
+						"casts": 0,
+						"hits": 222,
+						"hp_removed": 4058.2911396122,
+						"kills": 85,
+						"overkill": 804.338524913788
+					},
+					"ascension:OR02:grenade": {
+						"casts": 0,
+						"hits": 172,
+						"hp_removed": 4080.76576156947,
+						"kills": 66,
+						"overkill": 1296.72093957131
+					},
+					"ascension:PR09:split": {
+						"casts": 0,
+						"hits": 39,
+						"hp_removed": 493.289493934485,
+						"kills": 13,
+						"overkill": 318.519669004258
+					},
+					"ascension:PR11:crossing": {
+						"casts": 0,
+						"hits": 42,
+						"hp_removed": 799.500808732162,
+						"kills": 14,
+						"overkill": 183.126817907187
+					},
+					"ascension:PRF2:edge_return": {
+						"casts": 0,
+						"hits": 481,
+						"hp_removed": 10456.5481935928,
+						"kills": 201,
+						"overkill": 2911.72866109399
+					},
+					"ascension:PRQ5:beam": {
+						"casts": 0,
+						"hits": 7,
+						"hp_removed": 158.144173884661,
+						"kills": 6,
+						"overkill": 85.922797172146
+					},
+					"ascension:PRQ6:execute": {
+						"casts": 0,
+						"hits": 1,
+						"hp_removed": 0.070015162229538,
+						"kills": 1,
+						"overkill": 0.464992419902773
+					},
+					"ascension:PRQ:beam": {
+						"casts": 0,
+						"hits": 17,
+						"hp_removed": 465.665534461659,
+						"kills": 3,
+						"overkill": 65.1691364321951
+					},
+					"augment:magic_missile:missile": {
+						"casts": 0,
+						"hits": 1464,
+						"hp_removed": 30399.0170298936,
+						"kills": 668,
+						"overkill": 10485.4959775628
+					},
+					"manifestation:predestination_sigil": {
+						"casts": 0,
+						"hits": 552,
+						"hp_removed": 26649.4449866526,
+						"kills": 498,
+						"overkill": 47150.5613071492
+					},
+					"manifestation:predestination_sigil:mark_bonus": {
+						"casts": 0,
+						"hits": 329,
+						"hp_removed": 7687.66454323227,
+						"kills": 109,
+						"overkill": 2782.25092782731
+					},
+					"manifestation:retaliation_writ": {
+						"casts": 0,
+						"hits": 17,
+						"hp_removed": 610.020779422071,
+						"kills": 14,
+						"overkill": 781.348691564385
+					},
+					"manifestation:shard:projectile": {
+						"casts": 0,
+						"hits": 46,
+						"hp_removed": 1078.09679512589,
+						"kills": 15,
+						"overkill": 227.27365889794
+					},
+					"mixed": {
+						"casts": 0,
+						"hits": 16,
+						"hp_removed": 212.016244716644,
+						"kills": 5,
+						"overkill": 158.836634635925
+					},
+					"native:ranged:bullet": {
+						"casts": 0,
+						"hits": 480,
+						"hp_removed": 10959.4640652898,
+						"kills": 194,
+						"overkill": 3099.46225548561
+					},
+					"native:ranged:bullet_node": {
+						"casts": 0,
+						"hits": 5476,
+						"hp_removed": 140991.295235095,
+						"kills": 2596,
+						"overkill": 56387.2798975
+					},
+					"set:lattice:6:afterstrike": {
+						"casts": 0,
+						"hits": 796,
+						"hp_removed": 24219.9478760077,
+						"kills": 489,
+						"overkill": 15508.3667373636
+					},
+					"status:burn": {
+						"casts": 0,
+						"hits": 361,
+						"hp_removed": 569.859471752726,
+						"kills": 6,
+						"overkill": 6.19314222582594
+					}
+				},
+				"by_origin": {
+					"ascension:BR02": {
+						"casts": 0,
+						"hits": 107,
+						"hp_removed": 1494.63497038841,
+						"kills": 30,
+						"overkill": 179.74193406105
+					},
+					"ascension:BR05": {
+						"casts": 481,
+						"hits": 5076,
+						"hp_removed": 62856.4855752713,
+						"kills": 1999,
+						"overkill": 18774.8471591133
+					},
+					"ascension:BR06": {
+						"casts": 0,
+						"hits": 222,
+						"hp_removed": 4058.2911396122,
+						"kills": 85,
+						"overkill": 804.338524913788
+					},
+					"ascension:OR02": {
+						"casts": 84,
+						"hits": 172,
+						"hp_removed": 4080.76576156947,
+						"kills": 66,
+						"overkill": 1296.72093957131
+					},
+					"ascension:PR09": {
+						"casts": 0,
+						"hits": 39,
+						"hp_removed": 493.289493934485,
+						"kills": 13,
+						"overkill": 318.519669004258
+					},
+					"ascension:PR11": {
+						"casts": 0,
+						"hits": 42,
+						"hp_removed": 799.500808732162,
+						"kills": 14,
+						"overkill": 183.126817907187
+					},
+					"ascension:PRF2": {
+						"casts": 0,
+						"hits": 481,
+						"hp_removed": 10456.5481935928,
+						"kills": 201,
+						"overkill": 2911.72866109399
+					},
+					"ascension:PRQ": {
+						"casts": 4,
+						"hits": 49,
+						"hp_removed": 987.980826687672,
+						"kills": 17,
+						"overkill": 226.546446367264
+					},
+					"ascension:PRQ6": {
+						"casts": 0,
+						"hits": 1,
+						"hp_removed": 0.070015162229538,
+						"kills": 1,
+						"overkill": 0.464992419902773
+					},
+					"augment:magic_missile": {
+						"casts": 0,
+						"hits": 1464,
+						"hp_removed": 30399.0170298936,
+						"kills": 668,
+						"overkill": 10485.4959775628
+					},
+					"manifestation:predestination_sigil": {
+						"casts": 0,
+						"hits": 881,
+						"hp_removed": 34337.1095298848,
+						"kills": 607,
+						"overkill": 49932.8122349766
+					},
+					"manifestation:retaliation_writ": {
+						"casts": 0,
+						"hits": 17,
+						"hp_removed": 610.020779422071,
+						"kills": 14,
+						"overkill": 781.348691564385
+					},
+					"manifestation:shard": {
+						"casts": 0,
+						"hits": 46,
+						"hp_removed": 1078.09679512589,
+						"kills": 15,
+						"overkill": 227.27365889794
+					},
+					"mixed": {
+						"casts": 0,
+						"hits": 16,
+						"hp_removed": 212.016244716644,
+						"kills": 5,
+						"overkill": 158.836634635925
+					},
+					"native:ranged": {
+						"casts": 0,
+						"hits": 5956,
+						"hp_removed": 151950.759300385,
+						"kills": 2790,
+						"overkill": 59486.7421529855
+					},
+					"set:lattice:6": {
+						"casts": 0,
+						"hits": 796,
+						"hp_removed": 24219.9478760077,
+						"kills": 489,
+						"overkill": 15508.3667373636
+					},
+					"status:burn": {
+						"casts": 0,
+						"hits": 361,
+						"hp_removed": 569.859471752726,
+						"kills": 6,
+						"overkill": 6.19314222582594
+					}
+				},
+				"mixed_raw_breakdown": {
+					"ascension:BR02|ascension:BR02:bullet": 56.4950828552246,
+					"ascension:BR06|ascension:BR06:crossfire": 126.887567520142,
+					"ascension:PRF2|ascension:PRF2:edge_return": 72.2071647644043,
+					"native:ranged|native:ranged:bullet": 179.32350730896
+				},
+				"overflow": {
+					"by_emitter": 0,
+					"by_origin": 0
+				}
+			},
+			"critical_hits": 13.0,
+			"damage_absorbed": 0.0,
+			"deaths": 0.0,
+			"enemies": {
+				"bomber": {
+					"damage": 8621.72729928816,
+					"engaged": 302,
+					"hp_max": 34.0351982116699,
+					"hp_min": 9.52327919006348,
+					"hp_sum": 8646.2326593399,
+					"kills": 302,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 302,
+					"ttk_count": 302,
+					"ttk_max": 2.7445583333307,
+					"ttk_seconds": 34.5215440966603
+				},
+				"bomber [elite]": {
+					"damage": 5795.3191782004,
+					"engaged": 56,
+					"hp_max": 119.803894042969,
+					"hp_min": 73.438591003418,
+					"hp_sum": 5779.89018249512,
+					"kills": 56,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 56,
+					"ttk_count": 56,
+					"ttk_max": 4.03523411110848,
+					"ttk_seconds": 22.2702320668448
+				},
+				"boss_arcanist": {
+					"damage": 22661.0210297458,
+					"engaged": 1,
+					"hp_max": 21378.359375,
+					"hp_min": 21378.359375,
+					"hp_sum": 21378.359375,
+					"kills": 1,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 1,
+					"ttk_count": 1,
+					"ttk_max": 74.5523316666176,
+					"ttk_seconds": 74.5523316666176
+				},
+				"boss_pylon": {
+					"damage": 0.0,
+					"engaged": 0,
+					"hp_max": 40.0,
+					"hp_min": 40.0,
+					"hp_sum": 160.0,
+					"kills": 0,
+					"present_at_entry": 0,
+					"removed_alive": 4,
+					"seen": 4,
+					"ttk_count": 0,
+					"ttk_max": 0.0,
+					"ttk_seconds": 0.0
+				},
+				"brute": {
+					"damage": 15634.2611655689,
+					"engaged": 119,
+					"hp_max": 148.904006958008,
+					"hp_min": 51.5021514892578,
+					"hp_sum": 15695.5322494507,
+					"kills": 118,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 119,
+					"ttk_count": 118,
+					"ttk_max": 198.365517666555,
+					"ttk_seconds": 290.096221299497
+				},
+				"brute [elite]": {
+					"damage": 5130.09640699277,
+					"engaged": 13,
+					"hp_max": 524.14208984375,
+					"hp_min": 311.2734375,
+					"hp_sum": 5627.54791259766,
+					"kills": 12,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 13,
+					"ttk_count": 12,
+					"ttk_max": 5.80609966666407,
+					"ttk_seconds": 11.3466716632928
+				},
+				"chanter": {
+					"damage": 4391.02742496807,
+					"engaged": 126,
+					"hp_max": 42.5439987182617,
+					"hp_min": 14.8903999328613,
+					"hp_sum": 4392.30374145508,
+					"kills": 126,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 126,
+					"ttk_count": 126,
+					"ttk_max": 4.36302666666688,
+					"ttk_seconds": 27.4487974064397
+				},
+				"chanter [elite]": {
+					"damage": 4042.86537172658,
+					"engaged": 30,
+					"hp_max": 149.7548828125,
+					"hp_min": 104.828414916992,
+					"hp_sum": 4099.2932434082,
+					"kills": 30,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 31,
+					"ttk_count": 30,
+					"ttk_max": 2.58843633333277,
+					"ttk_seconds": 15.8529429417969
+				},
+				"charger": {
+					"damage": 17055.6461481006,
+					"engaged": 309,
+					"hp_max": 63.8159980773926,
+					"hp_min": 17.6945991516113,
+					"hp_sum": 17031.3960571289,
+					"kills": 309,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 309,
+					"ttk_count": 309,
+					"ttk_max": 7.96580266666263,
+					"ttk_seconds": 108.167923571366
+				},
+				"charger [elite]": {
+					"damage": 12165.9426309605,
+					"engaged": 63,
+					"hp_max": 224.632308959961,
+					"hp_min": 124.569984436035,
+					"hp_sum": 12055.0752410889,
+					"kills": 63,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 63,
+					"ttk_count": 63,
+					"ttk_max": 102.080245888834,
+					"ttk_seconds": 141.344069005214
+				},
+				"grunt": {
+					"damage": 32488.4367520186,
+					"engaged": 1833,
+					"hp_max": 21.2719993591309,
+					"hp_min": 5.89820003509521,
+					"hp_sum": 32496.6787462235,
+					"kills": 1833,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 1833,
+					"ttk_count": 1833,
+					"ttk_max": 6.50726166666368,
+					"ttk_seconds": 82.8062694290143
+				},
+				"grunt [elite]": {
+					"damage": 17722.6137783265,
+					"engaged": 275,
+					"hp_max": 74.87744140625,
+					"hp_min": 26.207103729248,
+					"hp_sum": 17672.9819145203,
+					"kills": 275,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 275,
+					"ttk_count": 275,
+					"ttk_max": 186.700319333228,
+					"ttk_seconds": 303.745839253796
+				},
+				"herald": {
+					"damage": 9844.85160320482,
+					"engaged": 163,
+					"hp_max": 72.3247985839844,
+					"hp_min": 25.3136806488037,
+					"hp_sum": 9959.12481307983,
+					"kills": 163,
+					"present_at_entry": 0,
+					"removed_alive": 2,
+					"seen": 165,
+					"ttk_count": 163,
+					"ttk_max": 19.6092561851794,
+					"ttk_seconds": 79.4309418090128
+				},
+				"herald [elite]": {
+					"damage": 7888.55263765163,
+					"engaged": 34,
+					"hp_max": 270.494750976563,
+					"hp_min": 94.6731643676758,
+					"hp_sum": 7966.0704574585,
+					"kills": 33,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 34,
+					"ttk_count": 33,
+					"ttk_max": 24.5812769999948,
+					"ttk_seconds": 64.0298052645284
+				},
+				"leech": {
+					"damage": 9380.12979360903,
+					"engaged": 223,
+					"hp_max": 51.0527992248535,
+					"hp_min": 17.868480682373,
+					"hp_sum": 9313.41156768799,
+					"kills": 223,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 223,
+					"ttk_count": 223,
+					"ttk_max": 100.291227999947,
+					"ttk_seconds": 169.576071718526
+				},
+				"leech [elite]": {
+					"damage": 7505.92578541428,
+					"engaged": 47,
+					"hp_max": 179.705856323242,
+					"hp_min": 99.6559982299805,
+					"hp_sum": 7474.31903076172,
+					"kills": 47,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 47,
+					"ttk_count": 47,
+					"ttk_max": 8.47797322221993,
+					"ttk_seconds": 40.5038654881981
+				},
+				"lurker": {
+					"damage": 5091.496092064,
+					"engaged": 103,
+					"hp_max": 55.307201385498,
+					"hp_min": 19.3575191497803,
+					"hp_sum": 5097.02680778503,
+					"kills": 103,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 103,
+					"ttk_count": 103,
+					"ttk_max": 1.67481766666731,
+					"ttk_seconds": 15.148968911489
+				},
+				"lurker [elite]": {
+					"damage": 4276.8347285452,
+					"engaged": 24,
+					"hp_max": 194.681350708008,
+					"hp_min": 136.276947021484,
+					"hp_sum": 4230.11129760742,
+					"kills": 24,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 24,
+					"ttk_count": 24,
+					"ttk_max": 3.80277777777633,
+					"ttk_seconds": 11.4149061914324
+				},
+				"orbiter": {
+					"damage": 15781.544265996,
+					"engaged": 486,
+					"hp_max": 38.2896003723145,
+					"hp_min": 12.3772220611572,
+					"hp_sum": 15769.4301462173,
+					"kills": 486,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 486,
+					"ttk_count": 486,
+					"ttk_max": 18.0274209999951,
+					"ttk_seconds": 93.7738522601742
+				},
+				"orbiter [elite]": {
+					"damage": 9620.21230499442,
+					"engaged": 86,
+					"hp_max": 126.355682373047,
+					"hp_min": 70.0706100463867,
+					"hp_sum": 9455.68951416016,
+					"kills": 86,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 86,
+					"ttk_count": 86,
+					"ttk_max": 128.991515151443,
+					"ttk_seconds": 154.789728361148
+				},
+				"runner": {
+					"damage": 10370.9599636333,
+					"engaged": 656,
+					"hp_max": 19.1448001861572,
+					"hp_min": 5.30838012695313,
+					"hp_sum": 10377.0862970352,
+					"kills": 656,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 656,
+					"ttk_count": 656,
+					"ttk_max": 4.51994744444153,
+					"ttk_seconds": 23.6465379042718
+				},
+				"runner [elite]": {
+					"damage": 4405.00851226991,
+					"engaged": 88,
+					"hp_max": 56.8600578308105,
+					"hp_min": 24.8362236022949,
+					"hp_sum": 4424.9779624939,
+					"kills": 87,
+					"present_at_entry": 0,
+					"removed_alive": 2,
+					"seen": 89,
+					"ttk_count": 87,
+					"ttk_max": 2.66382311111056,
+					"ttk_seconds": 16.8356394276035
+				},
+				"siphon": {
+					"damage": 3093.84228034438,
+					"engaged": 77,
+					"hp_max": 46.7984008789063,
+					"hp_min": 16.3794403076172,
+					"hp_sum": 3086.35453796387,
+					"kills": 77,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 77,
+					"ttk_count": 77,
+					"ttk_max": 1.42781938095061,
+					"ttk_seconds": 10.0762694829185
+				},
+				"siphon [elite]": {
+					"damage": 2747.7027150474,
+					"engaged": 19,
+					"hp_max": 164.730377197266,
+					"hp_min": 115.311264038086,
+					"hp_sum": 2734.52426147461,
+					"kills": 19,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 19,
+					"ttk_count": 19,
+					"ttk_max": 1.2193252222213,
+					"ttk_seconds": 7.63283525396344
+				},
+				"sniper": {
+					"damage": 2934.23110679553,
+					"engaged": 54,
+					"hp_max": 72.3247985839844,
+					"hp_min": 23.4106426239014,
+					"hp_sum": 3118.79190063477,
+					"kills": 53,
+					"present_at_entry": 0,
+					"removed_alive": 3,
+					"seen": 56,
+					"ttk_count": 53,
+					"ttk_max": 15.7117899999888,
+					"ttk_seconds": 48.2016339855472
+				},
+				"sniper [elite]": {
+					"damage": 3897.11857899236,
+					"engaged": 17,
+					"hp_max": 254.583297729492,
+					"hp_min": 174.469802856445,
+					"hp_sum": 3924.53004455566,
+					"kills": 16,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 17,
+					"ttk_count": 16,
+					"ttk_max": 6.03863633333276,
+					"ttk_seconds": 23.8719996402014
+				},
+				"spitter": {
+					"damage": 16873.3011741033,
+					"engaged": 412,
+					"hp_max": 46.7984008789063,
+					"hp_min": 16.3794403076172,
+					"hp_sum": 16879.4827194214,
+					"kills": 412,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 412,
+					"ttk_count": 412,
+					"ttk_max": 8.7442386666587,
+					"ttk_seconds": 74.4370325612879
+				},
+				"spitter [elite]": {
+					"damage": 10334.2463372015,
+					"engaged": 70,
+					"hp_max": 164.730377197266,
+					"hp_min": 95.3124389648438,
+					"hp_sum": 10342.6265487671,
+					"kills": 69,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 70,
+					"ttk_count": 69,
+					"ttk_max": 6.31760011110543,
+					"ttk_seconds": 47.3065319403369
+				},
+				"splitter": {
+					"damage": 31024.0361668771,
+					"engaged": 759,
+					"hp_max": 127.631996154785,
+					"hp_min": 25.1123695373535,
+					"hp_sum": 31379.223236084,
+					"kills": 759,
+					"present_at_entry": 0,
+					"removed_alive": 3,
+					"seen": 762,
+					"ttk_count": 759,
+					"ttk_max": 127.570447666595,
+					"ttk_seconds": 374.091868968565
+				},
+				"summoned_minion": {
+					"damage": 2874.00928464854,
+					"engaged": 271,
+					"hp_max": 10.6359996795654,
+					"hp_min": 10.2960004806519,
+					"hp_sum": 5484.50101661682,
+					"kills": 271,
+					"present_at_entry": 0,
+					"removed_alive": 245,
+					"seen": 516,
+					"ttk_count": 271,
+					"ttk_max": 0.995616959595623,
+					"ttk_seconds": 3.06338026262449
+				},
+				"summoner": {
+					"damage": 7840.44078991585,
+					"engaged": 164,
+					"hp_max": 59.5615997314453,
+					"hp_min": 20.5635585784912,
+					"hp_sum": 8145.01047325134,
+					"kills": 161,
+					"present_at_entry": 0,
+					"removed_alive": 7,
+					"seen": 168,
+					"ttk_count": 161,
+					"ttk_max": 7.01935344443973,
+					"ttk_seconds": 41.4178823775643
+				},
+				"summoner [elite]": {
+					"damage": 5735.42019577403,
+					"engaged": 32,
+					"hp_max": 209.656829833984,
+					"hp_min": 146.759780883789,
+					"hp_sum": 5912.32260131836,
+					"kills": 30,
+					"present_at_entry": 0,
+					"removed_alive": 3,
+					"seen": 33,
+					"ttk_count": 30,
+					"ttk_max": 6.33180138094849,
+					"ttk_seconds": 22.697270865792
+				},
+				"warden": {
+					"damage": 8454.744774785,
+					"engaged": 109,
+					"hp_max": 85.0879974365234,
+					"hp_min": 29.596736907959,
+					"hp_sum": 8429.21837997437,
+					"kills": 109,
+					"present_at_entry": 0,
+					"removed_alive": 0,
+					"seen": 109,
+					"ttk_count": 109,
+					"ttk_max": 14.0962163333249,
+					"ttk_seconds": 77.8222662313284
+				},
+				"warden [elite]": {
+					"damage": 2920.8275343751,
+					"engaged": 12,
+					"hp_max": 299.509765625,
+					"hp_min": 209.656829833984,
+					"hp_sum": 3144.85250854492,
+					"kills": 11,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 12,
+					"ttk_count": 11,
+					"ttk_max": 19.5851446666595,
+					"ttk_seconds": 29.4666279206257
+				}
+			},
+			"enemy_damage_after_defenses": 489887.498186786,
+			"enemy_hp_removed": 328604.393812131,
+			"enemy_overkill": 161283.104374664,
+			"evaded_hits": 19.0,
+			"exit": {
+				"attempts": 1.0,
+				"channel_seconds": 20.0280819629467,
+				"completed_at": 984.331049277376,
+				"deaths_after_reconstruction": 0,
+				"deaths_while_channeling": 0,
+				"first_channel_at": 964.302967314429,
+				"lapses": 0,
+				"last_chance": 1.0,
+				"overtime": {
+					"director_injected_seconds": 40.0,
+					"final_overtime": 0.48,
+					"final_unseal_seconds": 67.0952964000001,
+					"injected_seconds": 40.0,
+					"injection_count": 2,
+					"injection_overflow": 0,
+					"injections": {
+						"manifestation:overtime_gospel@slot0#-9223371565733769824": 20.0,
+						"manifestation:overtime_gospel@slot5#-9223371566102868507": 20.0
+					},
+					"max_overtime": 0.48
+				},
+				"progress_lost": {
+					"death": 0.0,
+					"lapse": 0.0,
+					"other": 0.0
+				},
+				"reconstruction_spent": 0,
+				"reentry_seconds": [],
+				"reinforcements": {
+					"beats_aborted": 0,
+					"beats_ended": 18,
+					"beats_started": 19,
+					"escalations": 3,
+					"members": 54,
+					"specialist_responses": 8
+				},
+				"rejections": 2.0,
+				"safeguards_drained": 0,
+				"safeguards_granted": 3.0,
+				"safeguards_used": 0,
+				"seals": 3.0,
+				"spawn_overflow": 0,
+				"spawns": {
+					"ambient:culled": {
+						"enemies": 0,
+						"requests": 1
+					},
+					"ambient:paused": {
+						"enemies": 0,
+						"requests": 30
+					},
+					"ambient:refill_hold": {
+						"enemies": 0,
+						"requests": 19
+					},
+					"ambient:rite_pressure": {
+						"enemies": 0,
+						"requests": 139
+					},
+					"ambient:spawned": {
+						"enemies": 5043,
+						"requests": 1332
+					},
+					"beat:spawned": {
+						"enemies": 61,
+						"requests": 61
+					},
+					"burst:gated": {
+						"enemies": 0,
+						"requests": 6
+					},
+					"burst:rite_pressure": {
+						"enemies": 0,
+						"requests": 1
+					},
+					"burst:spawned": {
+						"enemies": 12,
+						"requests": 2
+					},
+					"burst_at:spawned": {
+						"enemies": 30,
+						"requests": 10
+					}
+				},
+				"status": "completed",
+				"unlock_to_first_channel": 4.95828603703819,
+				"unlocked_at": 959.344681277391,
+				"wave_enemies": 38.0,
+				"waves": 7.0
+			},
+			"followers_adjustments": 0,
+			"followers_by_reason": {
+				"boss_victory": {
+					"count": 1,
+					"gained": 25,
+					"net": 25,
+					"spent": 0
+				},
+				"combat_influence": {
+					"count": 6749,
+					"gained": 19272,
+					"net": 19272,
+					"spent": 0
+				}
+			},
+			"followers_close": 30250,
+			"followers_debug": 0,
+			"followers_earned": 19297,
+			"followers_open": 10953,
+			"followers_peak": 30250,
+			"followers_recruited": 19297,
+			"followers_spent": 0,
+			"god_mode_hits": 0.0,
+			"heal_blocked": 0.0,
+			"heal_overflow": 8627.65467389074,
+			"healing": 428.758159512054,
+			"healing_by_source": {
+				"exit_rite": 0.0,
+				"generic": 73.1456512831239,
+				"item:ring_regeneration": 234.733889136543,
+				"lifesteal": 120.878619092387,
+				"wardstone": 0.0
+			},
+			"hp_paid": 0.0,
+			"hub_departure_wallet": 10953,
+			"intercepted_hits": 0.0,
+			"invulnerable_hits": 1.0,
+			"kills": 7020.0,
+			"missed_hits": 0.0,
+			"player_credited_damage": 187613.098577044,
+			"player_damage_after_defenses": 428.758159512054,
+			"player_damage_before_defenses": 717.335370385647,
+			"player_damage_by_source": {
+				"boss_arcanist": 42.1261845217555,
+				"contact_swarm": 147.881369902323,
+				"enemy_bomber": 4.69253701001833,
+				"enemy_herald": 15.8191118036584,
+				"enemy_sniper": 14.2874135963968,
+				"enemy_spitter": 28.8641788074618,
+				"res://core/combat/projectile/EnemyProjectile.gd": 12.3801213162037,
+				"unknown": 162.707242554236
+			},
+			"player_hp_lost": 428.758159512054,
+			"player_overkill": 0.00000000000045941028758989,
+			"rescues": 0.0,
+			"resolved_hits": 15726.0,
+			"respawns": 0.0,
+			"secondary_completed_count": 0.0,
+			"secondary_discovered": 0.0,
+			"seconds_gameplay": 552.335802844371,
+			"seconds_hub": 30.7686871111106,
+			"seconds_loading": 0.0666666666666667,
+			"seconds_paused": 48.221132444445,
+			"segment": 6,
+			"slow_frames": 1118.0,
+			"status": "completed",
+			"truth": {
+				"perf": {
+					"data_only_max": 35,
+					"enemies_max": 119,
+					"enemies_sum": 14728.0,
+					"materialized_max": 88,
+					"overflow_queue_max": 0,
+					"projectiles_max": 53,
+					"projectiles_sum": 14134.0,
+					"samples": 596,
+					"sim_capacity_max_seen": 4096,
+					"undrawn_max": 0
+				},
+				"primary_completed_at": 155.3,
+				"procs": {
+					"ascension": {
+						"BR.crossfire": 1484.0,
+						"BR.fifth_shots": 890.0,
+						"BR.fragment_hits": 5305.0,
+						"BR.fragments": 7875.0,
+						"OR.chain": 143.0,
+						"OR.grenade_blasts": 1113.0,
+						"OR.grenades": 1113.0,
+						"OR.grenades_attached": 47.0,
+						"OR.grenades_grounded": 1066.0,
+						"PR.consumed": 53.0,
+						"PR.crossings": 42.0,
+						"PR.deadshots": 4.0,
+						"PR.edge_returns": 4117.0,
+						"PR.executions": 1.0,
+						"PR.exposed": 265.0,
+						"PR.far_shots": 422.0,
+						"PR.lines": 27.0,
+						"PR.recalculates": 3.0,
+						"PR.second_reads": 16.0,
+						"PR.splits": 12.0,
+						"runner.chain_kills": 2429.0,
+						"runner.generated": 14070.0,
+						"runner.hits": 10227.0,
+						"runner.kills": 7024.0,
+						"runner.longest_chain": 57.0,
+						"runner.seed_kills": 196.0,
+						"runner.tree_hits": 6179.0,
+						"runner.tree_kills": 2429.0
+					}
+				},
+				"resonance_full_at": 196.5
+			},
+			"upgrade_summary": {
+				"acquired_total": 113,
+				"debug_operations": 0,
+				"first_rank_up_at": 530.672363277652,
+				"material_value": 0,
+				"mean_purchase_value": null,
+				"mean_seconds_between_rank_ups": 20.1285056888765,
+				"meter_gained_equipped": 17.0490245047571,
+				"net_purchases": 0,
+				"net_sales": 0,
+				"organic_income": 19297,
+				"organic_income_per_minute": 2096.22478578712,
+				"rank_ups_equipped": 16,
+				"shop_cost_in_minutes": null
+			},
+			"upgrades": {
+				"acquired": {
+					"pickup": 113
+				},
+				"acquired_total": 113.0,
+				"compatible_drops": {
+					"acc_firestone:pos:1": {
+						"count": 1,
+						"value": 161
+					},
+					"acc_firestone:pos:2": {
+						"count": 5,
+						"value": 750
+					},
+					"acc_firestone:pos:3": {
+						"count": 12,
+						"value": 1590
+					},
+					"acc_firestone:pos:4": {
+						"count": 10,
+						"value": 1150
+					},
+					"acc_firestone:pos:5": {
+						"count": 3,
+						"value": 288
+					},
+					"lattice_fingerprint:pos:3": {
+						"count": 4,
+						"value": 723
+					},
+					"lattice_fingerprint:pos:4": {
+						"count": 8,
+						"value": 1095
+					},
+					"lattice_fingerprint:pos:5": {
+						"count": 8,
+						"value": 996
+					},
+					"lattice_fingerprint:pos:6": {
+						"count": 11,
+						"value": 1159
+					},
+					"lattice_focusnode:pos:3": {
+						"count": 2,
+						"value": 381
+					},
+					"lattice_focusnode:pos:4": {
+						"count": 7,
+						"value": 1202
+					},
+					"lattice_focusnode:pos:5": {
+						"count": 10,
+						"value": 1493
+					},
+					"lattice_focusnode:pos:6": {
+						"count": 15,
+						"value": 1819
+					},
+					"lattice_focusnode:pos:7": {
+						"count": 4,
+						"value": 393
+					},
+					"lattice_pulsecoil:pos:2": {
+						"count": 1,
+						"value": 178
+					},
+					"lattice_pulsecoil:pos:3": {
+						"count": 2,
+						"value": 413
+					},
+					"lattice_pulsecoil:pos:4": {
+						"count": 11,
+						"value": 1712
+					},
+					"lattice_pulsecoil:pos:5": {
+						"count": 11,
+						"value": 1516
+					},
+					"lattice_pulsecoil:pos:6": {
+						"count": 6,
+						"value": 803
+					},
+					"lattice_pulsecoil:pos:7": {
+						"count": 7,
+						"value": 729
+					},
+					"lattice_pulsecoil:pos:8": {
+						"count": 1,
+						"value": 96
+					},
+					"lattice_shellplate:pos:3": {
+						"count": 1,
+						"value": 212
+					},
+					"lattice_shellplate:pos:5": {
+						"count": 7,
+						"value": 1084
+					},
+					"lattice_shellplate:pos:6": {
+						"count": 8,
+						"value": 956
+					},
+					"lattice_shellplate:pos:7": {
+						"count": 8,
+						"value": 907
+					},
+					"lattice_shellplate:pos:8": {
+						"count": 4,
+						"value": 365
+					},
+					"lattice_strideframe:pos:3": {
+						"count": 6,
+						"value": 952
+					},
+					"lattice_strideframe:pos:4": {
+						"count": 9,
+						"value": 1272
+					},
+					"lattice_strideframe:pos:5": {
+						"count": 11,
+						"value": 1344
+					},
+					"lattice_strideframe:pos:6": {
+						"count": 9,
+						"value": 951
+					},
+					"lattice_strideframe:pos:7": {
+						"count": 3,
+						"value": 282
+					},
+					"lattice_tickspurs:pos:2": {
+						"count": 1,
+						"value": 185
+					},
+					"lattice_tickspurs:pos:3": {
+						"count": 1,
+						"value": 190
+					},
+					"lattice_tickspurs:pos:4": {
+						"count": 4,
+						"value": 646
+					},
+					"lattice_tickspurs:pos:5": {
+						"count": 8,
+						"value": 1134
+					},
+					"lattice_tickspurs:pos:6": {
+						"count": 9,
+						"value": 1049
+					},
+					"lattice_tickspurs:pos:7": {
+						"count": 4,
+						"value": 373
+					},
+					"ring_regeneration:pos:-1": {
+						"count": 1,
+						"value": 222
+					},
+					"ring_regeneration:pos:1": {
+						"count": 2,
+						"value": 363
+					},
+					"ring_regeneration:pos:2": {
+						"count": 3,
+						"value": 402
+					},
+					"ring_regeneration:pos:3": {
+						"count": 3,
+						"value": 456
+					},
+					"ring_regeneration:pos:4": {
+						"count": 3,
+						"value": 426
+					},
+					"ring_regeneration:pos:5": {
+						"count": 7,
+						"value": 817
+					},
+					"ring_regeneration:pos:6": {
+						"count": 2,
+						"value": 209
+					}
+				},
+				"compatible_overflow": 0,
+				"debug_operations": 0,
+				"dropped_to_world": 0,
+				"equips": 0,
+				"generated": {
+					"dropped": 1193,
+					"offered": 0
+				},
+				"generated_by_source": {
+					"boss": 5,
+					"enemy": 1181,
+					"exploration": 5,
+					"indoor": 2
+				},
+				"material_value": 0,
+				"merge_mass": 60.9533235972988,
+				"merges": 113.0,
+				"merges_by_container": {
+					"bag": 72,
+					"equipped": 41
+				},
+				"meter_gained_equipped": 17.0490245047571,
+				"moves": 0,
+				"operations": 113.0,
+				"purchase_value": 0,
+				"purchased": 0,
+				"rank_up_times": [
+					530.672363277652,
+					598.437302610926,
+					603.046544944258,
+					620.22045727758,
+					673.838691499765,
+					680.087099944205,
+					681.072729499759,
+					728.27706153148,
+					736.379569277506,
+					736.396235944172,
+					741.509185610835,
+					748.881426610831,
+					783.720668610822,
+					796.395230277487,
+					820.281426610805,
+					832.599948610799
+				],
+				"rank_ups_equipped": 16.0,
+				"sale_value": 0,
+				"sold": 0,
+				"stashed": 0,
+				"swaps_equipped": 0,
+				"undone_ops": 0,
+				"undone_purchases": 0,
+				"undone_sales": 0,
+				"unequips": 0
+			}
+		},
+		{
+			"absorbed_hits": 0.0,
+			"attacks": 0.0,
+			"attribution": {
+				"by_emitter": {},
+				"by_origin": {},
+				"mixed_raw_breakdown": {},
+				"overflow": {
+					"by_emitter": 0,
+					"by_origin": 0
+				}
+			},
+			"critical_hits": 0.0,
+			"damage_absorbed": 0.0,
+			"deaths": 0.0,
+			"enemies": {
+				"runner [elite]": {
+					"damage": 0.0,
+					"engaged": 0,
+					"hp_max": 56.0932388305664,
+					"hp_min": 56.0932388305664,
+					"hp_sum": 56.0932388305664,
+					"kills": 0,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 1,
+					"ttk_count": 0,
+					"ttk_max": 0.0,
+					"ttk_seconds": 0.0
+				},
+				"sniper [elite]": {
+					"damage": 0.0,
+					"engaged": 0,
+					"hp_max": 249.242568969727,
+					"hp_min": 249.242568969727,
+					"hp_sum": 249.242568969727,
+					"kills": 0,
+					"present_at_entry": 0,
+					"removed_alive": 1,
+					"seen": 1,
+					"ttk_count": 0,
+					"ttk_max": 0.0,
+					"ttk_seconds": 0.0
+				}
+			},
+			"enemy_damage_after_defenses": 0.0,
+			"enemy_hp_removed": 0.0,
+			"enemy_overkill": 0.0,
+			"evaded_hits": 0.0,
+			"exit": {
+				"attempts": 0,
+				"channel_seconds": 0.0,
+				"completed_at": null,
+				"deaths_after_reconstruction": 0,
+				"deaths_while_channeling": 0,
+				"first_channel_at": null,
+				"lapses": 0,
+				"last_chance": 0,
+				"overtime": {
+					"director_injected_seconds": 0.0,
+					"final_overtime": 0.0,
+					"final_unseal_seconds": 0.0,
+					"injected_seconds": 0.0,
+					"injection_count": 0,
+					"injection_overflow": 0,
+					"injections": {},
+					"max_overtime": 0.0
+				},
+				"progress_lost": {
+					"death": 0.0,
+					"lapse": 0.0,
+					"other": 0.0
+				},
+				"reconstruction_spent": 0,
+				"reentry_seconds": [],
+				"reinforcements": {
+					"beats_aborted": 0,
+					"beats_ended": 2,
+					"beats_started": 0,
+					"escalations": 0,
+					"members": 0,
+					"specialist_responses": 0
+				},
+				"rejections": 0,
+				"safeguards_drained": 0,
+				"safeguards_granted": 0,
+				"safeguards_used": 0,
+				"seals": 0,
+				"spawn_overflow": 0,
+				"spawns": {},
+				"status": "unfinished",
+				"unlock_to_first_channel": null,
+				"unlocked_at": null,
+				"wave_enemies": 0,
+				"waves": 0
+			},
+			"followers_adjustments": 0,
+			"followers_by_reason": {},
+			"followers_close": 30250,
+			"followers_debug": 0,
+			"followers_earned": 0,
+			"followers_open": 30250,
+			"followers_peak": 30250,
+			"followers_recruited": 0,
+			"followers_spent": 0,
+			"god_mode_hits": 0.0,
+			"heal_blocked": 0.0,
+			"heal_overflow": 0.0,
+			"healing": 0.0,
+			"healing_by_source": {},
+			"hp_paid": 0.0,
+			"hub_departure_wallet": null,
+			"intercepted_hits": 0.0,
+			"invulnerable_hits": 0.0,
+			"kills": 0.0,
+			"missed_hits": 0.0,
+			"player_credited_damage": 0.0,
+			"player_damage_after_defenses": 0.0,
+			"player_damage_before_defenses": 0.0,
+			"player_damage_by_source": {},
+			"player_hp_lost": 0.0,
+			"player_overkill": 0.0,
+			"rescues": 0.0,
+			"resolved_hits": 0.0,
+			"respawns": 0.0,
+			"secondary_completed_count": 0.0,
+			"secondary_discovered": 0.0,
+			"seconds_gameplay": 0.0,
+			"seconds_hub": 267.950685666645,
+			"seconds_loading": 0.0333333333333333,
+			"seconds_paused": 3.99146099999999,
+			"segment": 11,
+			"slow_frames": 0.0,
+			"status": "application_closed",
+			"truth": {
+				"perf": {
+					"data_only_max": 0,
+					"enemies_max": 0,
+					"enemies_sum": 0.0,
+					"materialized_max": 0,
+					"overflow_queue_max": 0,
+					"projectiles_max": 0,
+					"projectiles_sum": 0.0,
+					"samples": 0,
+					"sim_capacity_max_seen": 0,
+					"undrawn_max": 0
+				},
+				"primary_completed_at": null,
+				"procs": {},
+				"resonance_full_at": null
+			},
+			"upgrade_summary": {
+				"acquired_total": 4,
+				"debug_operations": 0,
+				"first_rank_up_at": null,
+				"material_value": 0,
+				"mean_purchase_value": null,
+				"mean_seconds_between_rank_ups": null,
+				"meter_gained_equipped": 0.0,
+				"net_purchases": 0,
+				"net_sales": 0,
+				"organic_income": 0,
+				"organic_income_per_minute": null,
+				"rank_ups_equipped": 0,
+				"shop_cost_in_minutes": null
+			},
+			"upgrades": {
+				"acquired": {
+					"pickup": 4
+				},
+				"acquired_total": 4.0,
+				"compatible_drops": {},
+				"compatible_overflow": 0,
+				"debug_operations": 0,
+				"dropped_to_world": 0,
+				"equips": 2.0,
+				"generated": {
+					"dropped": 0,
+					"offered": 0
+				},
+				"generated_by_source": {},
+				"material_value": 0,
+				"merge_mass": 0.0,
+				"merges": 0,
+				"merges_by_container": {},
+				"meter_gained_equipped": 0.0,
+				"moves": 11.0,
+				"operations": 26.0,
+				"purchase_value": 0,
+				"purchased": 0,
+				"rank_up_times": [],
+				"rank_ups_equipped": 0,
+				"sale_value": 0,
+				"sold": 0,
+				"stashed": 7.0,
+				"swaps_equipped": 0,
+				"undone_ops": 0,
+				"undone_purchases": 0,
+				"undone_sales": 0,
+				"unequips": 2.0
+			}
+		}
+	],
+	"totals": {
+		"absorbed_hits": 0.0,
+		"attacks": 6440.0,
+		"attribution": {
+			"by_emitter": {
+				"ascension:BR02:bullet": {
+					"casts": 0,
+					"hits": 166,
+					"hp_removed": 2311.33352362633,
+					"kills": 39,
+					"overkill": 214.343227624893
+				},
+				"ascension:BR05:fragment": {
+					"casts": 0,
+					"hits": 8639,
+					"hp_removed": 103269.375811106,
+					"kills": 3514,
+					"overkill": 31049.2162847083
+				},
+				"ascension:BR06:crossfire": {
+					"casts": 0,
+					"hits": 313,
+					"hp_removed": 5664.75068961196,
+					"kills": 118,
+					"overkill": 1029.96955096193
+				},
+				"ascension:OR02:grenade": {
+					"casts": 0,
+					"hits": 295,
+					"hp_removed": 7010.93533493823,
+					"kills": 113,
+					"overkill": 2074.44572416061
+				},
+				"ascension:PR09:split": {
+					"casts": 0,
+					"hits": 57,
+					"hp_removed": 767.13777659895,
+					"kills": 16,
+					"overkill": 357.748889698144
+				},
+				"ascension:PR11:crossing": {
+					"casts": 0,
+					"hits": 64,
+					"hp_removed": 1150.54690590063,
+					"kills": 25,
+					"overkill": 351.559678332006
+				},
+				"ascension:PRF2:edge_return": {
+					"casts": 0,
+					"hits": 693,
+					"hp_removed": 14756.0457494352,
+					"kills": 294,
+					"overkill": 4328.66732364683
+				},
+				"ascension:PRQ5:beam": {
+					"casts": 0,
+					"hits": 32,
+					"hp_removed": 526.384790108446,
+					"kills": 21,
+					"overkill": 420.998580434419
+				},
+				"ascension:PRQ6:execute": {
+					"casts": 0,
+					"hits": 11,
+					"hp_removed": 49.920151280203,
+					"kills": 8,
+					"overkill": 7.46499312494106
+				},
+				"ascension:PRQ:beam": {
+					"casts": 0,
+					"hits": 44,
+					"hp_removed": 1099.57961806605,
+					"kills": 15,
+					"overkill": 348.854710848753
+				},
+				"augment:magic_missile:missile": {
+					"casts": 0,
+					"hits": 1464,
+					"hp_removed": 30399.0170298936,
+					"kills": 668,
+					"overkill": 10485.4959775628
+				},
+				"manifestation:predestination_sigil": {
+					"casts": 0,
+					"hits": 788,
+					"hp_removed": 35774.7223009799,
+					"kills": 722,
+					"overkill": 64921.5479701412
+				},
+				"manifestation:predestination_sigil:mark_bonus": {
+					"casts": 0,
+					"hits": 409,
+					"hp_removed": 9265.34992812286,
+					"kills": 137,
+					"overkill": 3405.8720509709
+				},
+				"manifestation:retaliation_writ": {
+					"casts": 0,
+					"hits": 17,
+					"hp_removed": 610.020779422071,
+					"kills": 14,
+					"overkill": 781.348691564385
+				},
+				"manifestation:shard:orbit": {
+					"casts": 0,
+					"hits": 1,
+					"hp_removed": 15.4180582390933,
+					"kills": 0,
+					"overkill": 0.0
+				},
+				"manifestation:shard:projectile": {
+					"casts": 0,
+					"hits": 54,
+					"hp_removed": 1294.91195891568,
+					"kills": 21,
+					"overkill": 417.744161343367
+				},
+				"mixed": {
+					"casts": 0,
+					"hits": 27,
+					"hp_removed": 343.911824531555,
+					"kills": 9,
+					"overkill": 260.215473651886
+				},
+				"native:ranged:bullet": {
+					"casts": 0,
+					"hits": 756,
+					"hp_removed": 16393.5990392784,
+					"kills": 337,
+					"overkill": 5425.92467252762
+				},
+				"native:ranged:bullet_node": {
+					"casts": 0,
+					"hits": 8293,
+					"hp_removed": 199305.353756532,
+					"kills": 4048,
+					"overkill": 80096.4573415244
+				},
+				"set:lattice:6:afterstrike": {
+					"casts": 0,
+					"hits": 1488,
+					"hp_removed": 41948.5320316944,
+					"kills": 922,
+					"overkill": 25243.9231397406
+				},
+				"status:burn": {
+					"casts": 0,
+					"hits": 513,
+					"hp_removed": 768.796769014216,
+					"kills": 12,
+					"overkill": 9.70118417167868
+				}
+			},
+			"by_origin": {
+				"ascension:BR02": {
+					"casts": 0,
+					"hits": 166,
+					"hp_removed": 2311.33352362633,
+					"kills": 39,
+					"overkill": 214.343227624893
+				},
+				"ascension:BR05": {
+					"casts": 771,
+					"hits": 8388,
+					"hp_removed": 100607.10022112,
+					"kills": 3430,
+					"overkill": 30223.2864402442
+				},
+				"ascension:BR06": {
+					"casts": 0,
+					"hits": 313,
+					"hp_removed": 5664.75068961196,
+					"kills": 118,
+					"overkill": 1029.96955096193
+				},
+				"ascension:OR02": {
+					"casts": 132,
+					"hits": 295,
+					"hp_removed": 7010.93533493823,
+					"kills": 113,
+					"overkill": 2074.44572416061
+				},
+				"ascension:PR09": {
+					"casts": 0,
+					"hits": 57,
+					"hp_removed": 767.13777659895,
+					"kills": 16,
+					"overkill": 357.748889698144
+				},
+				"ascension:PR11": {
+					"casts": 0,
+					"hits": 64,
+					"hp_removed": 1150.54690590063,
+					"kills": 25,
+					"overkill": 351.559678332006
+				},
+				"ascension:PRF2": {
+					"casts": 0,
+					"hits": 693,
+					"hp_removed": 14756.0457494352,
+					"kills": 294,
+					"overkill": 4328.66732364683
+				},
+				"ascension:PRQ": {
+					"casts": 10,
+					"hits": 327,
+					"hp_removed": 4288.23999816061,
+					"kills": 120,
+					"overkill": 1595.78313574721
+				},
+				"ascension:PRQ6": {
+					"casts": 0,
+					"hits": 11,
+					"hp_removed": 49.920151280203,
+					"kills": 8,
+					"overkill": 7.46499312494106
+				},
+				"augment:magic_missile": {
+					"casts": 0,
+					"hits": 1464,
+					"hp_removed": 30399.0170298936,
+					"kills": 668,
+					"overkill": 10485.4959775628
+				},
+				"manifestation:predestination_sigil": {
+					"casts": 0,
+					"hits": 1197,
+					"hp_removed": 45040.0722291028,
+					"kills": 859,
+					"overkill": 68327.4200211122
+				},
+				"manifestation:retaliation_writ": {
+					"casts": 0,
+					"hits": 17,
+					"hp_removed": 610.020779422071,
+					"kills": 14,
+					"overkill": 781.348691564385
+				},
+				"manifestation:shard": {
+					"casts": 0,
+					"hits": 55,
+					"hp_removed": 1310.33001715477,
+					"kills": 21,
+					"overkill": 417.744161343367
+				},
+				"mixed": {
+					"casts": 0,
+					"hits": 27,
+					"hp_removed": 343.911824531555,
+					"kills": 9,
+					"overkill": 260.215473651886
+				},
+				"native:ranged": {
+					"casts": 0,
+					"hits": 9049,
+					"hp_removed": 215698.952795811,
+					"kills": 4385,
+					"overkill": 85522.3820140519
+				},
+				"set:lattice:6": {
+					"casts": 0,
+					"hits": 1488,
+					"hp_removed": 41948.5320316944,
+					"kills": 922,
+					"overkill": 25243.9231397406
+				},
+				"status:burn": {
+					"casts": 0,
+					"hits": 513,
+					"hp_removed": 768.796769014216,
+					"kills": 12,
+					"overkill": 9.70118417167868
+				}
+			},
+			"mixed_raw_breakdown": {
+				"ascension:BR02|ascension:BR02:bullet": 106.480474472046,
+				"ascension:BR06|ascension:BR06:crossfire": 149.684642791748,
+				"ascension:PR09|ascension:PR09:split": 38.9197731018066,
+				"ascension:PRF2|ascension:PRF2:edge_return": 72.2071647644043,
+				"native:ranged|native:ranged:bullet": 323.101535797119
+			},
+			"overflow": {
+				"by_emitter": 0,
+				"by_origin": 0
+			}
+		},
+		"critical_hits": 28.0,
+		"damage_absorbed": 0.0,
+		"deaths": 0.0,
+		"enemies": {
+			"bomber": {
+				"damage": 12112.6485287387,
+				"engaged": 424,
+				"hp_max": 34.0351982116699,
+				"hp_min": 9.52327919006348,
+				"hp_sum": 12135.4416742325,
+				"kills": 424,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 424,
+				"ttk_count": 424,
+				"ttk_max": 7.12927637036989,
+				"ttk_seconds": 56.3509230732121
+			},
+			"bomber [elite]": {
+				"damage": 7075.26731841652,
+				"engaged": 75,
+				"hp_max": 119.803894042969,
+				"hp_min": 51.2716293334961,
+				"hp_sum": 7044.44737625122,
+				"kills": 75,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 75,
+				"ttk_count": 75,
+				"ttk_max": 4.03523411110848,
+				"ttk_seconds": 27.2485437349557
+			},
+			"boss_arcanist": {
+				"damage": 22661.0210297458,
+				"engaged": 1,
+				"hp_max": 21378.359375,
+				"hp_min": 21378.359375,
+				"hp_sum": 21378.359375,
+				"kills": 1,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 1,
+				"ttk_count": 1,
+				"ttk_max": 74.5523316666176,
+				"ttk_seconds": 74.5523316666176
+			},
+			"boss_bulldozer": {
+				"damage": 6037.99134181971,
+				"engaged": 1,
+				"hp_max": 6037.9921875,
+				"hp_min": 6037.9921875,
+				"hp_sum": 6037.9921875,
+				"kills": 1,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 1,
+				"ttk_count": 1,
+				"ttk_max": 23.8123366666565,
+				"ttk_seconds": 23.8123366666565
+			},
+			"boss_pylon": {
+				"damage": 0.0,
+				"engaged": 0,
+				"hp_max": 40.0,
+				"hp_min": 40.0,
+				"hp_sum": 160.0,
+				"kills": 0,
+				"present_at_entry": 0,
+				"removed_alive": 4,
+				"seen": 4,
+				"ttk_count": 0,
+				"ttk_max": 0.0,
+				"ttk_seconds": 0.0
+			},
+			"brute": {
+				"damage": 22634.0746155118,
+				"engaged": 182,
+				"hp_max": 148.904006958008,
+				"hp_min": 48.3433990478516,
+				"hp_sum": 22867.3401794434,
+				"kills": 180,
+				"present_at_entry": 0,
+				"removed_alive": 2,
+				"seen": 182,
+				"ttk_count": 180,
+				"ttk_max": 198.365517666555,
+				"ttk_seconds": 413.058072123655
+			},
+			"brute [elite]": {
+				"damage": 7574.53573704874,
+				"engaged": 21,
+				"hp_max": 524.14208984375,
+				"hp_min": 204.481704711914,
+				"hp_sum": 7981.29608154297,
+				"kills": 20,
+				"present_at_entry": 0,
+				"removed_alive": 1,
+				"seen": 21,
+				"ttk_count": 20,
+				"ttk_max": 9.25678175000397,
+				"ttk_seconds": 25.8005299284473
+			},
+			"chanter": {
+				"damage": 6542.35966835397,
+				"engaged": 196,
+				"hp_max": 42.5439987182617,
+				"hp_min": 11.2862548828125,
+				"hp_sum": 6544.42526721954,
+				"kills": 196,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 196,
+				"ttk_count": 196,
+				"ttk_max": 4.36302666666688,
+				"ttk_seconds": 42.9100664765463
+			},
+			"chanter [elite]": {
+				"damage": 5229.38750828963,
+				"engaged": 46,
+				"hp_max": 149.7548828125,
+				"hp_min": 64.0895385742188,
+				"hp_sum": 5278.11990356445,
+				"kills": 46,
+				"present_at_entry": 0,
+				"removed_alive": 1,
+				"seen": 47,
+				"ttk_count": 46,
+				"ttk_max": 4.01015644444243,
+				"ttk_seconds": 22.7327956488652
+			},
+			"charger": {
+				"damage": 25535.2469265603,
+				"engaged": 486,
+				"hp_max": 63.8159980773926,
+				"hp_min": 17.0504417419434,
+				"hp_sum": 25595.3089141846,
+				"kills": 486,
+				"present_at_entry": 0,
+				"removed_alive": 1,
+				"seen": 487,
+				"ttk_count": 486,
+				"ttk_max": 9.2082709999994,
+				"ttk_seconds": 176.956305671056
+			},
+			"charger [elite]": {
+				"damage": 16923.528960408,
+				"engaged": 101,
+				"hp_max": 224.632308959961,
+				"hp_min": 92.5779495239258,
+				"hp_sum": 16712.0264892578,
+				"kills": 101,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 101,
+				"ttk_count": 101,
+				"ttk_max": 102.080245888834,
+				"ttk_seconds": 173.970728192323
+			},
+			"grunt": {
+				"damage": 50105.5590599735,
+				"engaged": 2963,
+				"hp_max": 21.2719993591309,
+				"hp_min": 5.89820003509521,
+				"hp_sum": 50118.551885128,
+				"kills": 2963,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 2963,
+				"ttk_count": 2963,
+				"ttk_max": 7.66341338094634,
+				"ttk_seconds": 136.824220325834
+			},
+			"grunt [elite]": {
+				"damage": 24247.8425013058,
+				"engaged": 436,
+				"hp_max": 74.87744140625,
+				"hp_min": 16.0223846435547,
+				"hp_sum": 24174.5842323303,
+				"kills": 435,
+				"present_at_entry": 0,
+				"removed_alive": 1,
+				"seen": 436,
+				"ttk_count": 435,
+				"ttk_max": 186.700319333228,
+				"ttk_seconds": 376.777521848687
+			},
+			"herald": {
+				"damage": 13951.2114169494,
+				"engaged": 245,
+				"hp_max": 72.3247985839844,
+				"hp_min": 23.4810791015625,
+				"hp_sum": 14152.1747093201,
+				"kills": 244,
+				"present_at_entry": 0,
+				"removed_alive": 3,
+				"seen": 247,
+				"ttk_count": 244,
+				"ttk_max": 19.6092561851794,
+				"ttk_seconds": 117.643899142336
+			},
+			"herald [elite]": {
+				"damage": 11254.9034086256,
+				"engaged": 57,
+				"hp_max": 270.494750976563,
+				"hp_min": 94.6731643676758,
+				"hp_sum": 11323.1603317261,
+				"kills": 56,
+				"present_at_entry": 0,
+				"removed_alive": 1,
+				"seen": 57,
+				"ttk_count": 56,
+				"ttk_max": 24.5812769999948,
+				"ttk_seconds": 97.1131448066071
+			},
+			"leech": {
+				"damage": 14213.0939788435,
+				"engaged": 348,
+				"hp_max": 51.0527992248535,
+				"hp_min": 16.5748805999756,
+				"hp_sum": 14174.1805877686,
+				"kills": 348,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 348,
+				"ttk_count": 348,
+				"ttk_max": 100.291227999947,
+				"ttk_seconds": 231.437242054517
+			},
+			"leech [elite]": {
+				"damage": 9684.66716187772,
+				"engaged": 70,
+				"hp_max": 179.705856323242,
+				"hp_min": 72.4447479248047,
+				"hp_sum": 9667.21181488037,
+				"kills": 70,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 70,
+				"ttk_count": 70,
+				"ttk_max": 8.47797322221993,
+				"ttk_seconds": 62.5966405555365
+			},
+			"lurker": {
+				"damage": 7378.85222903081,
+				"engaged": 156,
+				"hp_max": 55.307201385498,
+				"hp_min": 17.9561195373535,
+				"hp_sum": 7394.33992958069,
+				"kills": 156,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 156,
+				"ttk_count": 156,
+				"ttk_max": 8.78062433333417,
+				"ttk_seconds": 40.3217456171172
+			},
+			"lurker [elite]": {
+				"damage": 4986.21433440108,
+				"engaged": 31,
+				"hp_max": 194.681350708008,
+				"hp_min": 83.3163986206055,
+				"hp_sum": 4920.44715881348,
+				"kills": 31,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 31,
+				"ttk_count": 31,
+				"ttk_max": 14.6115213838338,
+				"ttk_seconds": 26.8471163934474
+			},
+			"orbiter": {
+				"damage": 23526.3600489784,
+				"engaged": 741,
+				"hp_max": 38.2896003723145,
+				"hp_min": 10.1810932159424,
+				"hp_sum": 23505.7342977524,
+				"kills": 741,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 741,
+				"ttk_count": 741,
+				"ttk_max": 18.0274209999951,
+				"ttk_seconds": 138.735312153639
+			},
+			"orbiter [elite]": {
+				"damage": 13415.6563370056,
+				"engaged": 144,
+				"hp_max": 126.355682373047,
+				"hp_min": 50.1151123046875,
+				"hp_sum": 13271.8795623779,
+				"kills": 144,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 144,
+				"ttk_count": 144,
+				"ttk_max": 128.991515151443,
+				"ttk_seconds": 171.485450777815
+			},
+			"runner": {
+				"damage": 15909.3659792079,
+				"engaged": 1052,
+				"hp_max": 19.1448001861572,
+				"hp_min": 5.30838012695313,
+				"hp_sum": 15938.6820898056,
+				"kills": 1052,
+				"present_at_entry": 0,
+				"removed_alive": 1,
+				"seen": 1053,
+				"ttk_count": 1052,
+				"ttk_max": 4.51994744444153,
+				"ttk_seconds": 41.6051211641359
+			},
+			"runner [elite]": {
+				"damage": 5782.65686760312,
+				"engaged": 134,
+				"hp_max": 56.8600578308105,
+				"hp_min": 14.4600868225098,
+				"hp_sum": 5882.21496009827,
+				"kills": 133,
+				"present_at_entry": 0,
+				"removed_alive": 4,
+				"seen": 137,
+				"ttk_count": 133,
+				"ttk_max": 2.66382311111056,
+				"ttk_seconds": 23.6099628951358
+			},
+			"siphon": {
+				"damage": 4552.43173427352,
+				"engaged": 112,
+				"hp_max": 46.7984008789063,
+				"hp_min": 15.193639755249,
+				"hp_sum": 4549.28503036499,
+				"kills": 112,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 112,
+				"ttk_count": 112,
+				"ttk_max": 5.22414466666532,
+				"ttk_seconds": 20.1518114381833
+			},
+			"siphon [elite]": {
+				"damage": 3059.91030588581,
+				"engaged": 23,
+				"hp_max": 164.730377197266,
+				"hp_min": 70.4984893798828,
+				"hp_sum": 3046.7318572998,
+				"kills": 23,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 23,
+				"ttk_count": 23,
+				"ttk_max": 1.2193252222213,
+				"ttk_seconds": 8.19215292063001
+			},
+			"sniper": {
+				"damage": 3974.14914762032,
+				"engaged": 80,
+				"hp_max": 72.3247985839844,
+				"hp_min": 23.4106426239014,
+				"hp_sum": 4298.98030090332,
+				"kills": 78,
+				"present_at_entry": 0,
+				"removed_alive": 6,
+				"seen": 84,
+				"ttk_count": 78,
+				"ttk_max": 101.260990777787,
+				"ttk_seconds": 220.418835096676
+			},
+			"sniper [elite]": {
+				"damage": 5120.59104696401,
+				"engaged": 25,
+				"hp_max": 254.583297729492,
+				"hp_min": 108.952209472656,
+				"hp_sum": 5372.24690246582,
+				"kills": 24,
+				"present_at_entry": 0,
+				"removed_alive": 2,
+				"seen": 26,
+				"ttk_count": 24,
+				"ttk_max": 8.52926766666633,
+				"ttk_seconds": 42.353080529087
+			},
+			"spitter": {
+				"damage": 25445.8199162086,
+				"engaged": 651,
+				"hp_max": 46.7984008789063,
+				"hp_min": 15.193639755249,
+				"hp_sum": 25525.0202331543,
+				"kills": 651,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 651,
+				"ttk_count": 651,
+				"ttk_max": 89.1933017685477,
+				"ttk_seconds": 212.890873243019
+			},
+			"spitter [elite]": {
+				"damage": 13841.7397383711,
+				"engaged": 109,
+				"hp_max": 164.730377197266,
+				"hp_min": 67.4837646484375,
+				"hp_sum": 13910.4550704956,
+				"kills": 106,
+				"present_at_entry": 0,
+				"removed_alive": 3,
+				"seen": 109,
+				"ttk_count": 106,
+				"ttk_max": 38.3828886666774,
+				"ttk_seconds": 115.411752897423
+			},
+			"splitter": {
+				"damage": 49261.8836411997,
+				"engaged": 1243,
+				"hp_max": 127.631996154785,
+				"hp_min": 23.1481800079346,
+				"hp_sum": 49712.4716262817,
+				"kills": 1243,
+				"present_at_entry": 0,
+				"removed_alive": 3,
+				"seen": 1246,
+				"ttk_count": 1243,
+				"ttk_max": 127.570447666595,
+				"ttk_seconds": 570.374706797278
+			},
+			"summoned_minion": {
+				"damage": 4499.92611401609,
+				"engaged": 436,
+				"hp_max": 10.6359996795654,
+				"hp_min": 9.86600017547607,
+				"hp_sum": 7368.90705013275,
+				"kills": 436,
+				"present_at_entry": 0,
+				"removed_alive": 271,
+				"seen": 707,
+				"ttk_count": 436,
+				"ttk_max": 0.995616959595623,
+				"ttk_seconds": 3.66795852332666
+			},
+			"summoner": {
+				"damage": 12561.5190743276,
+				"engaged": 263,
+				"hp_max": 59.5615997314453,
+				"hp_min": 19.3373603820801,
+				"hp_sum": 12860.5637989044,
+				"kills": 260,
+				"present_at_entry": 0,
+				"removed_alive": 7,
+				"seen": 267,
+				"ttk_count": 260,
+				"ttk_max": 8.22559399999813,
+				"ttk_seconds": 98.0258085959327
+			},
+			"summoner [elite]": {
+				"damage": 7440.96586835548,
+				"engaged": 47,
+				"hp_max": 209.656829833984,
+				"hp_min": 89.7253570556641,
+				"hp_sum": 7604.28643798828,
+				"kills": 45,
+				"present_at_entry": 0,
+				"removed_alive": 3,
+				"seen": 48,
+				"ttk_count": 45,
+				"ttk_max": 6.33180138094849,
+				"ttk_seconds": 34.9260111409236
+			},
+			"warden": {
+				"damage": 11562.3512747787,
+				"engaged": 153,
+				"hp_max": 85.0879974365234,
+				"hp_min": 27.6247997283936,
+				"hp_sum": 11554.1890563965,
+				"kills": 153,
+				"present_at_entry": 0,
+				"removed_alive": 0,
+				"seen": 153,
+				"ttk_count": 153,
+				"ttk_max": 14.0962163333249,
+				"ttk_seconds": 86.5712989956363
+			},
+			"warden [elite]": {
+				"damage": 4142.62669783541,
+				"engaged": 20,
+				"hp_max": 299.509765625,
+				"hp_min": 128.179077148438,
+				"hp_sum": 4335.0867767334,
+				"kills": 19,
+				"present_at_entry": 0,
+				"removed_alive": 1,
+				"seen": 20,
+				"ttk_count": 19,
+				"ttk_max": 19.5851446666595,
+				"ttk_seconds": 33.3957128499179
+			}
+		},
+		"enemy_damage_after_defenses": 703957.143454012,
+		"enemy_hp_removed": 472725.643827285,
+		"enemy_overkill": 231231.499626741,
+		"evaded_hits": 21.0,
+		"exit": {
+			"attempts": 3.0,
+			"channel_seconds": 40.0280819629285,
+			"completed_at": null,
+			"deaths_after_reconstruction": 0,
+			"deaths_while_channeling": 0,
+			"first_channel_at": null,
+			"lapses": 0,
+			"last_chance": 2.0,
+			"overtime": {
+				"director_injected_seconds": 0.0,
+				"final_overtime": 0.0,
+				"final_unseal_seconds": 0.0,
+				"injected_seconds": 85.0,
+				"injection_count": 4,
+				"injection_overflow": 0,
+				"injections": {
+					"manifestation:overtime_gospel@slot0#-9223371565733769824": 20.0,
+					"manifestation:overtime_gospel@slot5#-9223371566102868507": 65.0
+				},
+				"max_overtime": 1.002232484
+			},
+			"progress_lost": {
+				"death": 0.0,
+				"lapse": 0.0,
+				"other": 0.0
+			},
+			"reconstruction_spent": 0,
+			"reentry_seconds": [],
+			"reinforcements": {
+				"beats_aborted": 0,
+				"beats_ended": 37,
+				"beats_started": 37,
+				"escalations": 6,
+				"members": 124,
+				"specialist_responses": 17
+			},
+			"rejections": 2.0,
+			"safeguards_drained": 0,
+			"safeguards_granted": 4.0,
+			"safeguards_used": 0,
+			"seals": 6.0,
+			"spawn_overflow": 0,
+			"spawns": {
+				"ambient:culled": {
+					"enemies": 0,
+					"requests": 1
+				},
+				"ambient:paused": {
+					"enemies": 0,
+					"requests": 54
+				},
+				"ambient:refill_hold": {
+					"enemies": 0,
+					"requests": 19
+				},
+				"ambient:rite_pressure": {
+					"enemies": 0,
+					"requests": 411
+				},
+				"ambient:spawned": {
+					"enemies": 7849,
+					"requests": 2120
+				},
+				"beat:spawned": {
+					"enemies": 138,
+					"requests": 138
+				},
+				"burst:gated": {
+					"enemies": 0,
+					"requests": 10
+				},
+				"burst:rite_pressure": {
+					"enemies": 0,
+					"requests": 4
+				},
+				"burst:spawned": {
+					"enemies": 27,
+					"requests": 4
+				},
+				"burst_at:spawned": {
+					"enemies": 72,
+					"requests": 24
+				}
+			},
+			"status": "not_unlocked",
+			"unlock_to_first_channel": null,
+			"unlocked_at": null,
+			"wave_enemies": 76.0,
+			"waves": 14.0
+		},
+		"followers_adjustments": 0,
+		"followers_by_reason": {
+			"boss_victory": {
+				"count": 1,
+				"gained": 25,
+				"net": 25,
+				"spent": 0
+			},
+			"combat_influence": {
+				"count": 10611,
+				"gained": 29847,
+				"net": 29847,
+				"spent": 0
+			},
+			"miniboss_victory": {
+				"count": 1,
+				"gained": 8,
+				"net": 8,
+				"spent": 0
+			}
+		},
+		"followers_close": 30250,
+		"followers_debug": 0,
+		"followers_earned": 29880,
+		"followers_open": 370,
+		"followers_peak": 30250,
+		"followers_recruited": 29880,
+		"followers_spent": 0,
+		"god_mode_hits": 0.0,
+		"heal_blocked": 0.0,
+		"heal_overflow": 13785.3202596042,
+		"healing": 849.03733823255,
+		"healing_by_source": {
+			"exit_rite": 8.89493173242226,
+			"generic": 206.104303531319,
+			"item:ring_regeneration": 446.825183360175,
+			"lifesteal": 182.983752353548,
+			"wardstone": 4.22916725508549
+		},
+		"hp_paid": 0.0,
+		"hub_departure_wallet": null,
+		"intercepted_hits": 0.0,
+		"invulnerable_hits": 1.0,
+		"kills": 11053.0,
+		"missed_hits": 0.0,
+		"player_credited_damage": 273420.290070762,
+		"player_damage_after_defenses": 845.153091803521,
+		"player_damage_before_defenses": 1272.8749868989,
+		"player_damage_by_source": {
+			"boss_arcanist": 42.1261845217555,
+			"contact_swarm": 335.855495465757,
+			"enemy_bomber": 13.719617052527,
+			"enemy_herald": 26.1885473770677,
+			"enemy_sniper": 63.5248915361472,
+			"enemy_spitter": 89.1730930307738,
+			"res://core/combat/projectile/EnemyProjectile.gd": 12.3801213162037,
+			"unknown": 262.18514150329
+		},
+		"player_hp_lost": 845.153091803522,
+		"player_overkill": 0.000000000000773825448163734,
+		"rescues": 0.0,
+		"resolved_hits": 24124.0,
+		"respawns": 0.0,
+		"secondary_completed_count": 0.0,
+		"secondary_discovered": 0.0,
+		"seconds_gameplay": 986.557637677374,
+		"seconds_hub": 298.719372777718,
+		"seconds_loading": 0.1,
+		"seconds_paused": 76.2844604444438,
+		"slow_frames": 1590.0,
+		"truth": {
+			"perf": {
+				"data_only_max": 0,
+				"enemies_max": 0,
+				"enemies_sum": 0.0,
+				"materialized_max": 0,
+				"overflow_queue_max": 0,
+				"projectiles_max": 0,
+				"projectiles_sum": 0.0,
+				"samples": 0,
+				"sim_capacity_max_seen": 0,
+				"undrawn_max": 0
+			},
+			"primary_completed_at": null,
+			"procs": {},
+			"resonance_full_at": null
+		},
+		"upgrade_summary": {
+			"acquired_total": 226,
+			"debug_operations": 0,
+			"first_rank_up_at": 170.61283116669,
+			"material_value": 0,
+			"mean_purchase_value": null,
+			"mean_seconds_between_rank_ups": 22.8271419808313,
+			"meter_gained_equipped": 34.0770988692613,
+			"net_purchases": 0,
+			"net_sales": 0,
+			"organic_income": 29880,
+			"organic_income_per_minute": 1817.22783498057,
+			"rank_ups_equipped": 30,
+			"shop_cost_in_minutes": null
+		},
+		"upgrades": {
+			"acquired": {
+				"pickup": 226
+			},
+			"acquired_total": 226.0,
+			"compatible_drops": {
+				"acc_firestone:pos:-1": {
+					"count": 1,
+					"value": 113
+				},
+				"acc_firestone:pos:-3": {
+					"count": 1,
+					"value": 171
+				},
+				"acc_firestone:pos:0": {
+					"count": 2,
+					"value": 259
+				},
+				"acc_firestone:pos:1": {
+					"count": 3,
+					"value": 381
+				},
+				"acc_firestone:pos:2": {
+					"count": 6,
+					"value": 810
+				},
+				"acc_firestone:pos:3": {
+					"count": 16,
+					"value": 1940
+				},
+				"acc_firestone:pos:4": {
+					"count": 13,
+					"value": 1382
+				},
+				"acc_firestone:pos:5": {
+					"count": 3,
+					"value": 288
+				},
+				"lattice_fingerprint:pos:1": {
+					"count": 1,
+					"value": 174
+				},
+				"lattice_fingerprint:pos:3": {
+					"count": 6,
+					"value": 950
+				},
+				"lattice_fingerprint:pos:4": {
+					"count": 11,
+					"value": 1389
+				},
+				"lattice_fingerprint:pos:5": {
+					"count": 11,
+					"value": 1202
+				},
+				"lattice_fingerprint:pos:6": {
+					"count": 12,
+					"value": 1209
+				},
+				"lattice_focusnode:pos:2": {
+					"count": 2,
+					"value": 319
+				},
+				"lattice_focusnode:pos:3": {
+					"count": 5,
+					"value": 792
+				},
+				"lattice_focusnode:pos:4": {
+					"count": 11,
+					"value": 1695
+				},
+				"lattice_focusnode:pos:5": {
+					"count": 22,
+					"value": 2433
+				},
+				"lattice_focusnode:pos:6": {
+					"count": 17,
+					"value": 1968
+				},
+				"lattice_focusnode:pos:7": {
+					"count": 4,
+					"value": 393
+				},
+				"lattice_pulsecoil:pos:2": {
+					"count": 1,
+					"value": 178
+				},
+				"lattice_pulsecoil:pos:3": {
+					"count": 5,
+					"value": 816
+				},
+				"lattice_pulsecoil:pos:4": {
+					"count": 17,
+					"value": 2390
+				},
+				"lattice_pulsecoil:pos:5": {
+					"count": 14,
+					"value": 1760
+				},
+				"lattice_pulsecoil:pos:6": {
+					"count": 11,
+					"value": 1149
+				},
+				"lattice_pulsecoil:pos:7": {
+					"count": 7,
+					"value": 729
+				},
+				"lattice_pulsecoil:pos:8": {
+					"count": 1,
+					"value": 96
+				},
+				"lattice_shellplate:pos:3": {
+					"count": 5,
+					"value": 804
+				},
+				"lattice_shellplate:pos:4": {
+					"count": 1,
+					"value": 94
+				},
+				"lattice_shellplate:pos:5": {
+					"count": 13,
+					"value": 1609
+				},
+				"lattice_shellplate:pos:6": {
+					"count": 19,
+					"value": 1681
+				},
+				"lattice_shellplate:pos:7": {
+					"count": 9,
+					"value": 977
+				},
+				"lattice_shellplate:pos:8": {
+					"count": 4,
+					"value": 365
+				},
+				"lattice_strideframe:pos:-1": {
+					"count": 1,
+					"value": 237
+				},
+				"lattice_strideframe:pos:2": {
+					"count": 2,
+					"value": 302
+				},
+				"lattice_strideframe:pos:3": {
+					"count": 7,
+					"value": 1075
+				},
+				"lattice_strideframe:pos:4": {
+					"count": 12,
+					"value": 1553
+				},
+				"lattice_strideframe:pos:5": {
+					"count": 16,
+					"value": 1706
+				},
+				"lattice_strideframe:pos:6": {
+					"count": 12,
+					"value": 1101
+				},
+				"lattice_strideframe:pos:7": {
+					"count": 3,
+					"value": 282
+				},
+				"lattice_tickspurs:pos:2": {
+					"count": 3,
+					"value": 508
+				},
+				"lattice_tickspurs:pos:3": {
+					"count": 1,
+					"value": 190
+				},
+				"lattice_tickspurs:pos:4": {
+					"count": 6,
+					"value": 836
+				},
+				"lattice_tickspurs:pos:5": {
+					"count": 9,
+					"value": 1205
+				},
+				"lattice_tickspurs:pos:6": {
+					"count": 14,
+					"value": 1409
+				},
+				"lattice_tickspurs:pos:7": {
+					"count": 4,
+					"value": 373
+				},
+				"ring_regeneration:pos:-1": {
+					"count": 1,
+					"value": 222
+				},
+				"ring_regeneration:pos:1": {
+					"count": 3,
+					"value": 491
+				},
+				"ring_regeneration:pos:2": {
+					"count": 7,
+					"value": 846
+				},
+				"ring_regeneration:pos:3": {
+					"count": 9,
+					"value": 953
+				},
+				"ring_regeneration:pos:4": {
+					"count": 5,
+					"value": 595
+				},
+				"ring_regeneration:pos:5": {
+					"count": 7,
+					"value": 817
+				},
+				"ring_regeneration:pos:6": {
+					"count": 2,
+					"value": 209
+				}
+			},
+			"compatible_overflow": 0,
+			"debug_operations": 0,
+			"dropped_to_world": 0,
+			"equips": 2.0,
+			"generated": {
+				"dropped": 1804,
+				"offered": 0
+			},
+			"generated_by_source": {
+				"boss": 7,
+				"enemy": 1784,
+				"exploration": 9,
+				"indoor": 4
+			},
+			"material_value": 0,
+			"merge_mass": 130.232124628984,
+			"merges": 206.0,
+			"merges_by_container": {
+				"bag": 133,
+				"equipped": 73
+			},
+			"meter_gained_equipped": 34.0770988692613,
+			"moves": 11.0,
+			"operations": 248.0,
+			"purchase_value": 0,
+			"purchased": 0,
+			"rank_up_times": [
+				170.61283116669,
+				170.896164500024,
+				191.826306166695,
+				192.142960166694,
+				210.26757883337,
+				250.766416166716,
+				265.741003833377,
+				275.024124166706,
+				320.90752250003,
+				373.641712833343,
+				375.391264166676,
+				384.759262166671,
+				387.125928833335,
+				411.80850149998,
+				530.672363277652,
+				598.437302610926,
+				603.046544944258,
+				620.22045727758,
+				673.838691499765,
+				680.087099944205,
+				681.072729499759,
+				728.27706153148,
+				736.379569277506,
+				736.396235944172,
+				741.509185610835,
+				748.881426610831,
+				783.720668610822,
+				796.395230277487,
+				820.281426610805,
+				832.599948610799
+			],
+			"rank_ups_equipped": 30.0,
+			"sale_value": 0,
+			"sold": 0,
+			"stashed": 7.0,
+			"swaps_equipped": 1.0,
+			"undone_ops": 0,
+			"undone_purchases": 0,
+			"undone_sales": 0,
+			"unequips": 2.0
+		}
+	},
+	"upgrades": {
+		"acquired_total": 226,
+		"debug_operations": 0,
+		"first_rank_up_at": 170.61283116669,
+		"material_value": 0,
+		"mean_purchase_value": null,
+		"mean_seconds_between_rank_ups": 22.8271419808313,
+		"meter_gained_equipped": 34.0770988692613,
+		"net_purchases": 0,
+		"net_sales": 0,
+		"organic_income": 29880,
+		"organic_income_per_minute": 1817.22783498057,
+		"rank_ups_equipped": 30,
+		"shop_cost_in_minutes": null
+	},
+	"wall_seconds": 1374.429788,
+	"wallet_discontinuities": 0,
+	"writer_failures": 0
+}

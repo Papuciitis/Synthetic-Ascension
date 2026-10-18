@@ -2,6 +2,12 @@ extends Node
 
 const PLAYER := preload("res://core/actors/player/player.tscn")
 const SPAWN := preload("res://core/systems/enemy_world/EnemySpawnState.gd")
+
+class LoadingDestination extends Node:
+	var transition_ready := false
+	func is_transition_ready() -> bool:
+		return transition_ready
+
 var _passes := 0
 var _failures := 0
 
@@ -153,8 +159,98 @@ func _run() -> void:
 	var terminal: Variant = JSON.parse_string(FileAccess.get_file_as_string(third_path.path_join("summary.json")))
 	_check(terminal is Dictionary and terminal.outcome == "failed", "a terminal defeat records outcome failed, not suspended")
 	Global.meta_pending_peep.clear()
+	# The observed playtest jumped from S6 to S10 through the developer route.
+	# No ordinary completion signal occurs for that jump; S10 combat must not
+	# silently remain in the S6 row or manufacture clears for skipped districts.
+	Global.attempt_active = true
+	Global.attempt_segment = 6
+	Global.set_followers(320)
+	recorder.begin_gameplay(player)
+	var jump_path: String = recorder.capture_directory
+	recorder._process(2.0)
+	Global.attempt_segment = 10
+	recorder.begin_gameplay(player)
+	recorder._process(1.0)
+	summary = recorder.get_summary()
+	_check(summary.segments.size() == 2 and summary.segments[0].segment == 6 and summary.segments[1].segment == 10, "actual Game re-entry after a segment jump opens the district really entered")
+	_check(summary.segments[0].status == "route_changed" and summary.segments[0].seconds_gameplay == 2.0 and summary.segments[1].seconds_gameplay == 1.0, "a debug jump preserves both observed clocks without inventing a clear")
+	_check(summary.totals.followers_close == 320 and summary.totals.followers_earned == 0, "segment realignment neither resets nor awards the wallet")
+	recorder.begin_gameplay(player)
+	_check(recorder.get_summary().segments.size() == 2, "re-entering the same segment does not manufacture another segment row")
+	# A real replacement frees the old player before the new Game binds. The
+	# scene request must snapshot and align before incoming actors register.
+	var outgoing_runner: Node = player.get_node("AscensionRunner")
+	var outgoing_telemetry: Dictionary = outgoing_runner.get("telemetry")
+	outgoing_telemetry["route_fixture"] = 7
+	Global.attempt_segment = 12
+	recorder._on_scene_requested(Global.PATH_GAME)
+	var incoming := EnemyWorld.create_enemy(SPAWN.new(&"incoming_route_fixture", "", Vector2.ZERO, 25.0, 0.0, 1.0, 0, 0, {}))
 	player.free()
-	for folder in [capture_path, second_path, third_path]:
+	player = PLAYER.instantiate()
+	add_child(player)
+	player.set_process(false)
+	player.set_physics_process(false)
+	recorder.begin_gameplay(player)
+	summary = recorder.get_summary()
+	_check(summary.segments[1].truth.procs.get("ascension", {}).get("runner.route_fixture", 0) == 7, "a requested route snapshots outgoing proc counters before its player is freed")
+	var incoming_key := "incoming_route_fixture"
+	_check(not summary.segments[1].enemies.has(incoming_key) and summary.segments[2].enemies[incoming_key].seen == 1 and summary.totals.enemies[incoming_key].seen == 1, "incoming actors registered during setup belong to the new segment and are counted once")
+	EnemyWorld.remove_enemy(incoming, &"test_cleanup")
+	# Same-path Game reloads still expose the outgoing scene while resources
+	# load; a matching path and the loader's temporary pause are not gameplay.
+	var original_scene := get_tree().current_scene
+	var destination := LoadingDestination.new()
+	destination.scene_file_path = Global.PATH_GAME
+	get_tree().root.add_child(destination)
+	get_tree().current_scene = destination
+	var clocks: Dictionary = recorder.get_summary().totals.duplicate(true)
+	Global.set("_scene_transition_active", true)
+	recorder._on_scene_requested(Global.PATH_GAME)
+	get_tree().paused = true
+	recorder._process(2.0)
+	Global.set("_scene_transition_active", false)
+	recorder._process(3.0)
+	summary = recorder.get_summary()
+	_check(summary.totals.seconds_loading == clocks.seconds_loading + 5.0 and summary.totals.seconds_paused == clocks.seconds_paused and summary.totals.seconds_gameplay == clocks.seconds_gameplay, "same-path resource loading and staged setup remain loading despite the temporary pause")
+	destination.transition_ready = true
+	get_tree().paused = false
+	recorder.begin_gameplay(player)
+	recorder._process(1.0)
+	get_tree().paused = true
+	recorder._process(4.0)
+	get_tree().paused = false
+	summary = recorder.get_summary()
+	_check(summary.totals.seconds_gameplay == clocks.seconds_gameplay + 1.0 and summary.totals.seconds_paused == clocks.seconds_paused + 4.0, "Game readiness resumes gameplay and a later genuine player pause stays paused")
+	recorder._on_scene_requested(Global.PATH_HUB_WORLD)
+	# Supplemental race/atlas failures identify the failed resource, while
+	# Global's request token guarantees this is the latest pending route.
+	Global.emit_signal("balance_scene_transition_failed", "res://missing_supplemental_frames.tres")
+	recorder._process(1.0)
+	_check(recorder.get_summary().totals.seconds_gameplay == clocks.seconds_gameplay + 2.0, "a supplemental resource failure resumes the outgoing world's telemetry clock")
+	clocks = recorder.get_summary().totals.duplicate(true)
+	destination.scene_file_path = Global.PATH_HUB_WORLD
+	destination.transition_ready = false
+	Global.set("_scene_transition_active", true)
+	recorder._on_scene_requested(Global.PATH_HUB_WORLD)
+	get_tree().paused = true
+	recorder._process(2.0)
+	Global.set("_scene_transition_active", false)
+	recorder._process(3.0)
+	_check(recorder.get_summary().totals.seconds_loading == clocks.seconds_loading + 5.0, "Hub loading waits for both the active route and destination readiness")
+	destination.transition_ready = true
+	get_tree().paused = false
+	recorder._process(1.0)
+	get_tree().paused = true
+	recorder._process(4.0)
+	get_tree().paused = false
+	summary = recorder.get_summary()
+	_check(summary.totals.seconds_hub == clocks.seconds_hub + 1.0 and summary.totals.seconds_paused == clocks.seconds_paused + 4.0, "a ready Hub resumes its own clock and preserves later player pause accounting")
+	get_tree().current_scene = original_scene
+	destination.free()
+	recorder.end_capture("suspended")
+	recorder.flush_reports()
+	player.free()
+	for folder in [capture_path, second_path, third_path, jump_path]:
 		for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
 			DirAccess.remove_absolute(folder.path_join(file_name))
 		DirAccess.remove_absolute(folder)

@@ -1,0 +1,34 @@
+{
+  "source_sha256": {
+    "core/combat/projectile/ProjectileSimulationManager.gd": "f6cff63d717adcde4a4253e42f011c19ab4b3f80a99bc37e4c0989b2c5b03281",
+    "core/actors/player/player.gd": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+    "autoload/BalanceRecorder.gd": "150bc1a9e0ac362ec63242f22ad9d32eb3feec44f10e116262f176e1c79fc7aa",
+    "tools/tests/EnemyProjectileAttributionTest.gd": "7f52ca550695d74b7197dca8cfe5023158f8d0f6b2e63757a9610997d1035367",
+    "tools/tests/EnemyProjectileAttributionTest.tscn": "af6fea12192881cd0ad072e45ce16ac4782dcf36ec0e7d9515bade50cc91ff0e"
+  },
+  "baseline_source_sha256": {
+    "core/actors/player/player.gd": "fe8989e6115ef214c640c703f28602d0f4770a9fdb2c6242f10ac66c2bf63154",
+    "core/combat/projectile/ProjectileSimulationManager.gd": "a5975419166ff4ebf9fdda507a9b5de1a8eca861c76df43751bee705a294931a"
+  },
+  "evidence_sha256": {
+    "BalanceHealthAccountingTest-final.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "BalanceHealthAccountingTest-final.log": "87d26b0d0d0aedb3a6be6a5ce4f8512d1361553fa7b3ff335769dbfe6ef9958e",
+    "BigHitProtectionTest-final.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "BigHitProtectionTest-final.log": "d8bd544d3d748480f972d7964d418bb93e955b2c1b2b49124816af3af44ea404",
+    "damage-body-equivalence.json": "5a4f9cae877c3ae728db58ed7da259534dca9c2029b18b779625f0c3e8732a2b",
+    "damage-resolver-body.txt": "be005f9fdca713e208ce1739ca526a5d043bedf72e819ebd98351581d8130722",
+    "EnemyProjectileAttributionTest-final.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "EnemyProjectileAttributionTest-final.log": "2c4174c76847fea2083ad9aee608bf456cc6353e2ad6981c636ee9af1b298360",
+    "ItemBatch3Test-final.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ItemBatch3Test-final.log": "5f7d0d31ab8bee9842621d78ee616da20a00af0e26e3f0901c20a44cfcbf7063",
+    "native-results.json": "3b3bce1765e70b55aec1318187d02cb8d571a602b88e35cdbda91bd5b34d112a",
+    "ProjectileHandleCombatTest-final.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ProjectileHandleCombatTest-final.log": "1b86c5656b761f9123847f0e060913f5e8ae72160c75fbea0c5214a0910e02df",
+    "ProjectileSlotReuseTest-final.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ProjectileSlotReuseTest-final.log": "45e0f4332f39a892b868a2b24135a326c42e37f0c581abdf5c4a2828fb3cb02f",
+    "red4.err.log": "49c9a6f118049512aafa429a15b4edec03a29d5a40382bb1c4dc459ba0fd6936",
+    "red4.log": "c809bc30362d6131e7cabb183288b60c7ff32fa430658cf3c24707d7ac6a3b95",
+    "unknown-incoming-observations.json": "47a5686a32a186ae67bb98f022989555590cf3d348c4eaffb5dfaa8a98062f1a",
+    "verification.json": "2c9eaa343a03381b892a4e43f942aa28d4b435a69d709353400d9246c4a6dd3d"
+  }
+}

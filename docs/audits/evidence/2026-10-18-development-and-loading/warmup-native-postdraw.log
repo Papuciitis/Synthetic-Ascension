@@ -1,0 +1,43 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics
+
+PREP_STAGE phase=ground_0 call_ms=25.156
+PREP_STAGE phase=ground_1 call_ms=25.450
+PREP_FRAME phase=ground_1 gap_ms=130.199
+PREP_STAGE phase=ground_2 call_ms=27.636
+PREP_FRAME phase=ground_2 gap_ms=62.913
+PREP_STAGE phase=ground_3 call_ms=19.769
+PREP_STAGE phase=ground_4 call_ms=22.731
+PREP_FRAME phase=ground_4 gap_ms=182.663
+PREP_STAGE phase=ground_5 call_ms=25.139
+PREP_STAGE phase=ground_6 call_ms=24.087
+PREP_STAGE phase=ground_7 call_ms=24.339
+PREP_STAGE phase=ground_8 call_ms=26.282
+PREP_STAGE phase=ground_9 call_ms=29.132
+PREP_FRAME phase=ground_9 gap_ms=62.515
+PREP_STAGE phase=ground_10 call_ms=31.328
+PREP_FRAME phase=ground_10 gap_ms=63.891
+PREP_STAGE phase=ground_11 call_ms=27.084
+PREP_FRAME phase=ground_11 gap_ms=61.953
+PREP_STAGE phase=ground_12 call_ms=26.945
+PREP_STAGE phase=layer_0 call_ms=79.977
+PREP_FRAME phase=layer_0 gap_ms=112.707
+PREP_STAGE phase=layer_1 call_ms=8.669
+PREP_STAGE phase=layer_2 call_ms=9.174
+PREP_STAGE phase=layer_3 call_ms=9.068
+PREP_STAGE phase=layer_4 call_ms=9.243
+PREP_STAGE phase=layer_5 call_ms=8.413
+PREP_STAGE phase=layer_6 call_ms=8.375
+PREP_STAGE phase=layer_7 call_ms=15.404
+PREP_STAGE phase=layer_8 call_ms=8.176
+PREP_STAGE phase=layer_9 call_ms=8.375
+PREP_STAGE phase=layer_10 call_ms=8.842
+PREP_STAGE phase=layer_11 call_ms=8.846
+PREP_STAGE phase=layer_12 call_ms=8.244
+PREP_STAGE phase=array_upload call_ms=10.384
+PREP_STAGE phase=noise call_ms=7.184
+PASS: cold preparation renders multiple loading-cue frames rather than one frozen card
+PASS: cold preparation avoids the previous one-second main-thread block (largest 182.7 ms)
+WARMUP frames=30 largest_gap_ms=182.663
+PASS: prepared ground layers are pixel-identical to the original synchronous route
+TransitionResourceWarmupTest: 3 passed, 0 failed

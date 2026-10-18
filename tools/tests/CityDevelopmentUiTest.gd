@@ -43,8 +43,8 @@ func _run() -> void:
 		await _frames()
 		_finish()
 		return
-	_check(development.disabled, "Development explains that a profile must be selected")
-	_check(development.tooltip_text.to_lower().contains("profile"), "the unavailable entry gives its profile requirement")
+	_check(not development.disabled, "Development can open profile selection before a profile is loaded")
+	_check(development.tooltip_text.to_lower().contains("profile"), "the entry explains its profile selection")
 	menu.queue_free()
 	await _frames()
 	_check(Global.has_method("get_city_development_summary"), "the cumulative development API exists")

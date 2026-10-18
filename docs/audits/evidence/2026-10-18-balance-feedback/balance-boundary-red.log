@@ -1,0 +1,66 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: runtime balance recorder is installed
+PASS: headless suite does not automatically start capture
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15387045_1
+PASS: explicit headless capture starts
+PASS: real player damage captures mitigation and HP loss
+PASS: real healing records applied overflow and sealed amounts
+PASS: production proxy death records one kill and exact HP loss
+PASS: critical hit survives ledger aggregation
+PASS: stale handles and despawns cannot manufacture kills
+PASS: segment completion rotates accounting before hub spending
+PASS: runtime wallet events remain classified and reconciled
+[BalanceRecorder] failed — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15387045_1/report.md
+PASS: run failure closes recording before wallet reset
+PASS: saved final summary keeps pre-reset wallet
+PASS: capture contains loadout and runtime snapshots
+PASS: an objective beat records once per title with its detail
+PASS: a secondary completion records its id
+PASS: a Rite checklist transition records once per state with the rows done
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15535031_2
+PASS: new capture has unique files and fresh counters
+PASS: zero-net shop exchange still records both sides
+PASS: real elite promotion and post-registration HP changes refresh scaling records
+PASS: real lethal hit captures only ten remaining HP
+PASS: real reconstruction records death and restoration once
+PASS: runtime pause routing excludes paused time from gameplay
+[BalanceRecorder] save_loaded — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15535031_2/report.md
+[AUG] Player received permanent_augments_changed:[&"", &"", &""]
+PASS: loading a save closes the observed session
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15709152_3
+[BalanceRecorder] failed — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15709152_3/report.md
+PASS: the PeeP route closes the dead run's capture
+PASS: a terminal defeat records outcome failed, not suspended
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15794312_4
+PASS: actual Game re-entry after a segment jump opens the district really entered
+PASS: a debug jump preserves both observed clocks without inventing a clear
+PASS: segment realignment neither resets nor awards the wallet
+PASS: re-entering the same segment does not manufacture another segment row
+ERROR: FAIL: a requested route snapshots outgoing proc counters before its player is freed
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BalanceRecorderTest.gd:23)
+       [1] _run (res://tools/tests/BalanceRecorderTest.gd:195)
+ERROR: FAIL: incoming actors registered during setup belong to the new segment and are counted once
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BalanceRecorderTest.gd:23)
+       [1] _run (res://tools/tests/BalanceRecorderTest.gd:197)
+ERROR: FAIL: same-path resource loading and staged setup remain loading despite the temporary pause
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BalanceRecorderTest.gd:23)
+       [1] _run (res://tools/tests/BalanceRecorderTest.gd:214)
+ERROR: FAIL: Game readiness resumes gameplay and a later genuine player pause stays paused
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BalanceRecorderTest.gd:23)
+       [1] _run (res://tools/tests/BalanceRecorderTest.gd:223)
+ERROR: FAIL: a failed route resumes the outgoing world's telemetry clock
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BalanceRecorderTest.gd:23)
+       [1] _run (res://tools/tests/BalanceRecorderTest.gd:227)
+[BalanceRecorder] suspended — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-boundary-red/Godot/app_userdata/Synthetic Ascension/balance_runtime_test_15387025/2026-10-18/2026-10-18_15-36-07_31148_15794312_4/report.md
+BalanceRecorderTest: 29 passed, 5 failed

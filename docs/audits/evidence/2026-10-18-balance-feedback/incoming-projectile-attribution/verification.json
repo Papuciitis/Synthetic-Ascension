@@ -1,0 +1,55 @@
+{
+  "baseline": {
+    "native_exit_code": 1,
+    "passed": 40,
+    "failed": 9,
+    "note": "Corrected fixture before production changes; final suite adds health-reconciliation, live-boss source/cap and over-cap unknown-member controls."
+  },
+  "green": [
+    {
+      "suite": "EnemyProjectileAttributionTest",
+      "native_exit_code": 0,
+      "stderr_bytes": 0,
+      "passed": 74,
+      "failed": 0
+    },
+    {
+      "suite": "BigHitProtectionTest",
+      "native_exit_code": 0,
+      "stderr_bytes": 0,
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "suite": "BalanceHealthAccountingTest",
+      "native_exit_code": 0,
+      "stderr_bytes": 0,
+      "passed": 34,
+      "failed": 0
+    },
+    {
+      "suite": "ProjectileHandleCombatTest",
+      "native_exit_code": 0,
+      "stderr_bytes": 0,
+      "passed": 25,
+      "failed": 0
+    },
+    {
+      "suite": "ProjectileSlotReuseTest",
+      "native_exit_code": 0,
+      "stderr_bytes": 0,
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "suite": "ItemBatch3Test",
+      "native_exit_code": 0,
+      "stderr_bytes": 0,
+      "passed": 19,
+      "failed": 0
+    }
+  ],
+  "total_passed": 185,
+  "environment": "Native Godot 4.7.1 Windows, --headless --audio-driver Dummy; process-local APPDATA/LOCALAPPDATA under .superpowers/sdd/2026-10-18-playtest-feedback/userdata/projectile-attribution.",
+  "limits": "Focused controls preserve the existing damage operation. Original revision-2 source labels are not reconstructed, and no general balance or performance conclusion is claimed."
+}

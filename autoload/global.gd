@@ -58,6 +58,7 @@ signal followers_changed(value: int)
 signal balance_attempt_boundary(reason: StringName)
 signal balance_segment_completed(segment: int)
 signal balance_scene_requested(path: String)
+signal balance_scene_transition_failed(path: String)
 signal balance_transaction(before: int, change: int, after: int, reason: StringName, context: Dictionary)
 signal followers_transaction(old_value: int, change: int, new_value: int, reason: StringName, context: Dictionary, show_feedback: bool, allow_aggregate: bool)
 signal permanent_augments_changed(ids: Array[StringName])
@@ -417,6 +418,22 @@ func _ready() -> void:
 # ============================================================
 
 var _loading_scrim: LoadingScrim = null
+var _scene_transition_id := 0
+var _scene_transition_active := false
+var _scene_transition_prior_pause := false
+var _scene_transition_assets: Array[Resource] = []
+var _progressive_game_entry_id := 0
+
+
+func is_scene_transition_active() -> bool:
+	return _scene_transition_active
+
+
+func claim_progressive_game_entry(scene: Node) -> bool:
+	if _progressive_game_entry_id == 0 or scene.get_parent() != get_tree().root or scene.scene_file_path != PATH_GAME:
+		return false
+	_progressive_game_entry_id = 0
+	return true
 
 
 ## The card shown over a scene change; created on first use.
@@ -441,6 +458,15 @@ func _scene_title(path: String) -> String:
 
 
 func goto_scene(path: String) -> void:
+	_scene_transition_id += 1
+	var transition_id := _scene_transition_id
+	if not _scene_transition_active:
+		_scene_transition_prior_pause = get_tree().paused
+		var outgoing := get_tree().current_scene
+		if outgoing != null and outgoing.has_method("scene_transition_pause_state"):
+			_scene_transition_prior_pause = bool(outgoing.call("scene_transition_pause_state"))
+		_scene_transition_assets.clear()
+	_scene_transition_active = true
 	if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
 		path = PATH_PEEP
 	if path == PATH_PEEP:
@@ -452,24 +478,115 @@ func goto_scene(path: String) -> void:
 	balance_scene_requested.emit(path)
 	# Scene changes are the natural safe point for any deferred combat autosave.
 	flush_pending_save()
-	# Building the game scene blocks for most of a second; show the card and
-	# let it render before the block, so the stall reads as a transition.
+	# Paint the loading card before requesting resources. Polling the loader
+	# across frames keeps the spinner and window responsive during disk work.
 	var scrim := loading_scrim()
 	scrim.show_for(_scene_title(path), get_tree().current_scene)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	# Terminal defeat may arrive while the loading frames render. Resolve
-	# again at the actual switch so an older Hub/Game request cannot bypass it.
+	if transition_id != _scene_transition_id:
+		return
 	if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
 		path = PATH_PEEP if ResourceLoader.exists(PATH_PEEP) else PATH_MAIN_MENU
-		get_tree().paused = false
 		_continuation_music()
 		balance_scene_requested.emit(path)
+		scrim.show_for(_scene_title(path), get_tree().current_scene)
+	# The outgoing run must not continue fighting under a loading card.
+	get_tree().paused = true
+	var destination: PackedScene = null
+	while destination == null:
+		var request_error := ResourceLoader.load_threaded_request(path, "PackedScene")
+		if request_error != OK:
+			_fail_scene_transition(path, request_error, transition_id)
+			return
+		var status := ResourceLoader.load_threaded_get_status(path)
+		while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			await get_tree().process_frame
+			if transition_id == _scene_transition_id and has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+				# Supersede this resource request promptly; its coroutine still
+				# collects the old result when it completes, then discards it.
+				goto_scene(PATH_PEEP)
+			status = ResourceLoader.load_threaded_get_status(path)
+		# Every request is collected, even when a newer route superseded it.
+		# Calling get before completion would recreate the original blocking load.
+		var resource := ResourceLoader.load_threaded_get(path)
+		if transition_id != _scene_transition_id:
+			return
+		if status != ResourceLoader.THREAD_LOAD_LOADED or not resource is PackedScene:
+			_fail_scene_transition(path, ERR_CANT_OPEN, transition_id)
+			return
+		# Defeat can settle while resources load. An older normal-world request
+		# must still route to the terminal choice at the actual scene switch.
+		if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+			path = PATH_PEEP if ResourceLoader.exists(PATH_PEEP) else PATH_MAIN_MENU
+			_continuation_music()
+			balance_scene_requested.emit(path)
+			scrim.show_for(_scene_title(path), get_tree().current_scene)
+			continue
+		destination = resource as PackedScene
+	if path == PATH_GAME and not debug_dev_segment:
+		# The chosen race's atlas is a runtime path, outside PackedScene's
+		# dependency load. Retain it until PlayerVisual takes ownership.
+		var race_path: String = PlayerVisualController.RACE_DEFINITIONS.get(StringName(selected_race_id), PlayerVisualController.RACE_DEFINITIONS[PlayerVisualController.DEFAULT_RACE])
+		var race_visual := await _load_transition_asset(race_path, transition_id)
+		if race_visual == null:
+			return
+		var frames_path := String(race_visual.call("baked_frames_path"))
+		if await _load_transition_asset(frames_path, transition_id) == null:
+			return
+		# Ground first-touch work previously ran inside child _ready callbacks.
+		# Prepare it across real frames before scene instantiation can begin.
+		await ChunkManager.prepare_transition_resources(get_tree())
+		if transition_id != _scene_transition_id:
+			return
+		if has_pending_peep():
+			goto_scene(PATH_PEEP)
+			return
 	if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("note_scene_change"):
 		PerformanceFlightRecorder.note_scene_change(path.get_file().get_basename())
-	var err := get_tree().change_scene_to_file(path)
+	# End only the temporary loading pause. Preserve a caller-owned pause;
+	# the destination's existing entry policy may then claim or release it.
+	get_tree().paused = false if path == PATH_PEEP else _scene_transition_prior_pause
+	_progressive_game_entry_id = transition_id if path == PATH_GAME and not debug_dev_segment else 0
+	var err := get_tree().change_scene_to_packed(destination)
 	if err != OK:
-		push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])
+		_fail_scene_transition(path, err, transition_id)
+		return
+	_scene_transition_active = false
+
+
+func _load_transition_asset(path: String, transition_id: int) -> Resource:
+	var err := ResourceLoader.load_threaded_request(path)
+	if err != OK:
+		_fail_scene_transition(path, err, transition_id)
+		return null
+	var status := ResourceLoader.load_threaded_get_status(path)
+	while status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		await get_tree().process_frame
+		if transition_id == _scene_transition_id and has_pending_peep():
+			goto_scene(PATH_PEEP)
+		status = ResourceLoader.load_threaded_get_status(path)
+	var asset := ResourceLoader.load_threaded_get(path)
+	if transition_id != _scene_transition_id:
+		return null
+	if status != ResourceLoader.THREAD_LOAD_LOADED or asset == null:
+		_fail_scene_transition(path, ERR_CANT_OPEN, transition_id)
+		return null
+	_scene_transition_assets.append(asset)
+	return asset
+
+
+func _fail_scene_transition(path: String, err: int, transition_id: int) -> void:
+	if transition_id == _scene_transition_id:
+		_progressive_game_entry_id = 0
+		_scene_transition_active = false
+		get_tree().paused = _scene_transition_prior_pause
+		balance_scene_transition_failed.emit(path)
+		var outgoing := get_tree().current_scene
+		if outgoing != null and outgoing.has_method("release_completed_transition_hold"):
+			outgoing.call("release_completed_transition_hold")
+		loading_scrim().dismiss()
+	push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])
 
 ## The continuation always plays the menu's music, whichever route arrives:
 ## a death mid-combat must not carry the combat track into it.

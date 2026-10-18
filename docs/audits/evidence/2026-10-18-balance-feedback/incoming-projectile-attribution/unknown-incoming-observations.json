@@ -1,0 +1,175 @@
+{
+  "source": "balance_captures/2026-10-18/2026-10-18_14-29-09_19808_357870982_1/events.jsonl",
+  "sha256": "9cb5a337e518ab25ffb89cfbcfe5db060deaca2e2727eb2e965e6a84908a2a8b",
+  "metric_windows": 62,
+  "hit_changes": 71,
+  "unknown_hp_lost": 262.1851415032901,
+  "representative_windows": [
+    {
+      "source_line": 806,
+      "record": {
+        "data": {
+          "attacks": 9.0,
+          "critical_hits": 0.0,
+          "enemy_damage_after_defenses": 374.845130619107,
+          "enemy_hp_removed": 199.107954978943,
+          "enemy_overkill": 175.737175640164,
+          "heal_blocked": 0.0,
+          "heal_overflow": 8.10861211003557,
+          "healing": 2.17307099696041,
+          "health_changes": {
+            "heal:heal:item:ring_regeneration": {
+              "count": 1,
+              "delta": 1.09364089960877
+            },
+            "heal:heal:lifesteal": {
+              "count": 10,
+              "delta": 1.07943009735163
+            },
+            "hit:contact_swarm": {
+              "count": 1,
+              "delta": -8.4496697172786
+            },
+            "hit:unknown": {
+              "count": 2,
+              "delta": -8.44967006754041
+            }
+          },
+          "kills": 14.0,
+          "player_credited_damage": 134.928755760193,
+          "player_damage_after_defenses": 16.8993397848189,
+          "player_damage_before_defenses": 21.8560004472733,
+          "player_damage_by_source": {
+            "contact_swarm": 8.4496697172786,
+            "unknown": 8.44967006754041
+          },
+          "player_hp_lost": 16.899339784819,
+          "player_overkill": 0.0,
+          "resolved_hits": 15.0,
+          "seconds_gameplay": 1.0,
+          "spawns": {
+            "ambient:paused": {
+              "enemies": 0,
+              "requests": 1
+            },
+            "beat:spawned": {
+              "enemies": 16,
+              "requests": 16
+            },
+            "burst_at:spawned": {
+              "enemies": 3,
+              "requests": 1
+            }
+          }
+        },
+        "elapsed_seconds": 133.265147999998,
+        "gameplay_seconds": 129.071846666662,
+        "kind": "metrics",
+        "segment": 5,
+        "seq": 806
+      }
+    },
+    {
+      "source_line": 956,
+      "record": {
+        "data": {
+          "critical_hits": 0.0,
+          "enemy_damage_after_defenses": 183.993248312443,
+          "enemy_hp_removed": 126.963201289379,
+          "enemy_overkill": 57.0300470230639,
+          "heal_blocked": 0.0,
+          "heal_overflow": 9.2617768844994,
+          "healing": 1.01570565855843,
+          "health_changes": {
+            "heal:heal:lifesteal": {
+              "count": 8,
+              "delta": 1.01570565855843
+            },
+            "hit:unknown": {
+              "count": 1,
+              "delta": -4.22483503377021
+            }
+          },
+          "kills": 6.0,
+          "player_credited_damage": 126.963201289379,
+          "player_damage_after_defenses": 4.22483503377018,
+          "player_damage_before_defenses": 5.46400022506714,
+          "player_damage_by_source": {
+            "unknown": 4.22483503377021
+          },
+          "player_hp_lost": 4.22483503377021,
+          "player_overkill": 0.0,
+          "resolved_hits": 8.0,
+          "seconds_gameplay": 1.0,
+          "spawns": {
+            "ambient:spawned": {
+              "enemies": 6,
+              "requests": 2
+            }
+          }
+        },
+        "elapsed_seconds": 150.368032666678,
+        "gameplay_seconds": 145.374731333341,
+        "kind": "metrics",
+        "segment": 5,
+        "seq": 956
+      }
+    },
+    {
+      "source_line": 1064,
+      "record": {
+        "data": {
+          "attacks": 7.0,
+          "critical_hits": 0.0,
+          "enemy_damage_after_defenses": 525.626052274684,
+          "enemy_hp_removed": 397.487224886176,
+          "enemy_overkill": 128.138827388508,
+          "heal_blocked": 0.0,
+          "heal_overflow": 8.27341045680741,
+          "healing": 4.21931423354044,
+          "health_changes": {
+            "heal:heal:item:ring_regeneration": {
+              "count": 1,
+              "delta": 2.89542448506279
+            },
+            "heal:heal:lifesteal": {
+              "count": 11,
+              "delta": 1.32388974847765
+            },
+            "hit:unknown": {
+              "count": 1,
+              "delta": -4.21931423354044
+            }
+          },
+          "kills": 15.0,
+          "player_credited_damage": 264.534484556678,
+          "player_damage_after_defenses": 4.21931423354044,
+          "player_damage_before_defenses": 5.49813413619995,
+          "player_damage_by_source": {
+            "unknown": 4.21931423354044
+          },
+          "player_hp_lost": 4.21931423354044,
+          "player_overkill": 0.0,
+          "resolved_hits": 25.0,
+          "seconds_gameplay": 1.0125,
+          "spawns": {
+            "ambient:spawned": {
+              "enemies": 6,
+              "requests": 2
+            },
+            "burst_at:spawned": {
+              "enemies": 3,
+              "requests": 1
+            }
+          }
+        },
+        "elapsed_seconds": 158.405532666685,
+        "gameplay_seconds": 152.612231333347,
+        "kind": "metrics",
+        "segment": 5,
+        "seq": 1064
+      }
+    }
+  ],
+  "limits": "Aggregated windows do not retain every firing identity; this identifies an actual production loss path without assigning every historical unknown hit to it."
+}

@@ -190,6 +190,10 @@ func change_segment(segment: int, previous_status: String) -> void:
 	_open_segment(segment, int(_totals.followers_close))
 	event("segment_started", {})
 
+
+func current_segment() -> int:
+	return int(_current.get("segment", 0))
+
 ## The wallet a Hub visit left with, on the row of the segment it opens
 ## (the Hub belongs to the segment after it; change_segment opened it).
 func mark_hub_departure(wallet: int) -> void:

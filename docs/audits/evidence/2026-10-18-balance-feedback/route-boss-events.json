@@ -1,0 +1,333 @@
+{
+  "source": "balance_captures/2026-10-18/2026-10-18_14-29-09_19808_357870982_1/events.jsonl",
+  "selection": "All capture/segment/scene/hub lifecycle records, plus boss-victory wallet transactions and boss-specific combat-influence transactions. Original event segment labels are preserved.",
+  "total_source_records": 19083,
+  "selected_records": [
+    {
+      "source_line": 1,
+      "record": {
+        "data": {
+          "balance_revision": 2,
+          "build": {
+            "game_version": "0.0.0.25.5",
+            "git_branch": "feat/authoritative-enemy-world",
+            "git_commit": "c9d5a31772f3",
+            "godot_version": "4.7.1-stable (official)",
+            "world_seed": 1794675549650
+          },
+          "capture_id": "2026-10-18_14-29-09_19808_357870982_1",
+          "city_development": {
+            "attempt": {
+              "augment_id": "",
+              "ranks": {
+                "armor": 0,
+                "augment": 0,
+                "bag": 0,
+                "binding_echo": 0,
+                "haste": 0,
+                "health": 0,
+                "luck": 0,
+                "power": 0,
+                "range": 0,
+                "size": 0,
+                "speed": 0
+              },
+              "revision": 1
+            },
+            "effective_bonuses": {
+              "armor": 0,
+              "augment_id": "",
+              "bag_slots": 0,
+              "binding_echo": false,
+              "haste": 0.0,
+              "hp": 0,
+              "luck": 0.0,
+              "power": 0.0,
+              "range_multiplier": 1.0,
+              "size_multiplier": 1.0,
+              "speed": 0.0
+            },
+            "enabled": true,
+            "profile": {
+              "active_bonuses": {
+                "armor": 0,
+                "augment_id": "",
+                "bag_slots": 0,
+                "binding_echo": false,
+                "haste": 0.0,
+                "hp": 0,
+                "luck": 0.0,
+                "power": 0.0,
+                "range_multiplier": 1.0,
+                "size_multiplier": 1.0,
+                "speed": 0.0
+              },
+              "augment_id": "",
+              "claimed_segments": [],
+              "earned": 0,
+              "next_armor_bonus": 0,
+              "next_bag_slots": 0,
+              "next_bonuses": {
+                "armor": 0,
+                "augment_id": "",
+                "bag_slots": 0,
+                "binding_echo": false,
+                "haste": 0.0,
+                "hp": 0,
+                "luck": 0.0,
+                "power": 0.0,
+                "range_multiplier": 1.0,
+                "size_multiplier": 1.0,
+                "speed": 0.0
+              },
+              "next_hp_bonus": 0,
+              "points": 0,
+              "ranks": {
+                "armor": 0,
+                "augment": 0,
+                "bag": 0,
+                "binding_echo": 0,
+                "haste": 0,
+                "health": 0,
+                "luck": 0,
+                "power": 0,
+                "range": 0,
+                "size": 0,
+                "speed": 0
+              }
+            }
+          },
+          "city_farming_experiments": {
+            "gospel_strongest_rewards": false,
+            "no_overtime_drop_bonus": false,
+            "no_overtime_rarity_bonus": false,
+            "no_permanent_development": false
+          },
+          "coverage": "observed_session",
+          "features": {
+            "exit_detail": true,
+            "health_reconciliation": true,
+            "incidents": true,
+            "progression": true,
+            "pure_snapshots": true,
+            "source_attribution": true
+          },
+          "recorder_revision": 2,
+          "run_key": "-1:1794675549650",
+          "save_slot": -1,
+          "start_segment": 5,
+          "starting_debug": {
+            "debug_ascension_revelations_enabled": true,
+            "debug_dev_mode": true,
+            "debug_dev_segment": false,
+            "debug_enemy_hp_scale": 1.0,
+            "debug_opening_mode_override": "",
+            "debug_player_god_mode": false,
+            "enemy_proxy_rollout": true,
+            "time_scale": 1.0
+          },
+          "tuning_hash": "672b4c05e09e7ccdf376c21d2f366a0b954824be9f1e3fc70a5dd897baaf806b",
+          "tuning_stages": [
+            "items",
+            "sets",
+            "economy"
+          ]
+        },
+        "elapsed_seconds": 0.0,
+        "gameplay_seconds": 0.0,
+        "kind": "capture_started",
+        "segment": 5,
+        "seq": 1
+      }
+    },
+    {
+      "source_line": 6332,
+      "record": {
+        "data": {
+          "after": 10370,
+          "before": 10362,
+          "change": 8,
+          "context": {
+            "tier": 0
+          },
+          "reason": "miniboss_victory"
+        },
+        "elapsed_seconds": 394.834328166679,
+        "gameplay_seconds": 370.762461166678,
+        "kind": "transaction",
+        "segment": 5,
+        "seq": 6332
+      }
+    },
+    {
+      "source_line": 6333,
+      "record": {
+        "data": {
+          "after": 10380,
+          "before": 10370,
+          "change": 10,
+          "context": {
+            "enemy_id": "boss_bulldozer"
+          },
+          "reason": "combat_influence"
+        },
+        "elapsed_seconds": 394.834328166679,
+        "gameplay_seconds": 370.762461166678,
+        "kind": "transaction",
+        "segment": 5,
+        "seq": 6333
+      }
+    },
+    {
+      "source_line": 6898,
+      "record": {
+        "data": {
+          "status": "completed"
+        },
+        "elapsed_seconds": 458.293701833294,
+        "gameplay_seconds": 434.221834833293,
+        "kind": "segment_ended",
+        "segment": 5,
+        "seq": 6898
+      }
+    },
+    {
+      "source_line": 6899,
+      "record": {
+        "data": {},
+        "elapsed_seconds": 458.293701833294,
+        "gameplay_seconds": 434.221834833293,
+        "kind": "segment_started",
+        "segment": 6,
+        "seq": 6899
+      }
+    },
+    {
+      "source_line": 6900,
+      "record": {
+        "data": {
+          "target": "res://scenes/hub/HubWorld.tscn"
+        },
+        "elapsed_seconds": 458.293701833294,
+        "gameplay_seconds": 434.221834833293,
+        "kind": "scene_transition",
+        "segment": 6,
+        "seq": 6900
+      }
+    },
+    {
+      "source_line": 6974,
+      "record": {
+        "data": {
+          "wallet": 10953
+        },
+        "elapsed_seconds": 490.442121499933,
+        "gameplay_seconds": 434.221834833293,
+        "kind": "hub_departure",
+        "segment": 6,
+        "seq": 6974
+      }
+    },
+    {
+      "source_line": 6975,
+      "record": {
+        "data": {
+          "target": "res://scenes/game.tscn"
+        },
+        "elapsed_seconds": 490.442121499933,
+        "gameplay_seconds": 434.221834833293,
+        "kind": "scene_transition",
+        "segment": 6,
+        "seq": 6975
+      }
+    },
+    {
+      "source_line": 18269,
+      "record": {
+        "data": {
+          "after": 30056,
+          "before": 30031,
+          "change": 25,
+          "context": {
+            "tier": 1
+          },
+          "reason": "boss_victory"
+        },
+        "elapsed_seconds": 1058.33971916621,
+        "gameplay_seconds": 959.344681277391,
+        "kind": "transaction",
+        "segment": 6,
+        "seq": 18269
+      }
+    },
+    {
+      "source_line": 18270,
+      "record": {
+        "data": {
+          "after": 30070,
+          "before": 30056,
+          "change": 14,
+          "context": {
+            "enemy_id": "boss_arcanist"
+          },
+          "reason": "combat_influence"
+        },
+        "elapsed_seconds": 1058.33971916621,
+        "gameplay_seconds": 959.344681277391,
+        "kind": "transaction",
+        "segment": 6,
+        "seq": 18270
+      }
+    },
+    {
+      "source_line": 18496,
+      "record": {
+        "data": {
+          "status": "completed"
+        },
+        "elapsed_seconds": 1089.68599089952,
+        "gameplay_seconds": 986.557637677374,
+        "kind": "segment_ended",
+        "segment": 6,
+        "seq": 18496
+      }
+    },
+    {
+      "source_line": 18497,
+      "record": {
+        "data": {},
+        "elapsed_seconds": 1089.68599089952,
+        "gameplay_seconds": 986.557637677374,
+        "kind": "segment_started",
+        "segment": 11,
+        "seq": 18497
+      }
+    },
+    {
+      "source_line": 18498,
+      "record": {
+        "data": {
+          "target": "res://scenes/hub/HubWorld.tscn"
+        },
+        "elapsed_seconds": 1089.68599089952,
+        "gameplay_seconds": 986.557637677374,
+        "kind": "scene_transition",
+        "segment": 11,
+        "seq": 18498
+      }
+    },
+    {
+      "source_line": 19083,
+      "record": {
+        "data": {
+          "outcome": "application_closed"
+        },
+        "elapsed_seconds": 1361.66147089973,
+        "gameplay_seconds": 986.557637677374,
+        "kind": "capture_ended",
+        "segment": 11,
+        "seq": 19083
+      }
+    }
+  ]
+}

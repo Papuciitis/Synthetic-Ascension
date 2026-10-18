@@ -1,0 +1,19 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: big-hit protection ships on
+PASS: a 90% contact tick lands as 22% before armour (22.00 of 100)
+PASS: telemetry keeps the raw blow (90.0)
+PASS: and reports exactly what was applied
+PASS: the health record reconciles with the HP lost
+PASS: a hit costing 8% or more grants 0.35 s of invulnerability (0.35)
+PASS: and the body blinks for it
+PASS: a second hit inside the grace is refused and recorded as such
+PASS: an 80% bolt lands as 30% before armour (30.00)
+PASS: a boss's 80% blow lands as 45% (45.00)
+PASS: a 5% hit lands in full
+PASS: and grants no grace
+PASS: so a second one right after lands too
+PASS: a blow of fifty times max HP leaves a full-health player standing
+PASS: pay_health spends the full 60% and grants nothing
+PASS: with the protection off a hit lands raw
+BigHitProtectionTest: 16 passed, 0 failed

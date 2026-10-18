@@ -1,0 +1,53 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the interruption begins during genuine Game resource loading
+PASS: terminal continuation supersedes the in-flight normal-world route
+PASS: the terminal choice remains unresolved without starting another attempt
+PASS: the superseded resource finishes before its late-result assertion
+PASS: the superseded Game result cannot replace continuation after its resource load completes
+PASS: terminal presentation releases the temporary loading pause
+ERROR: Cannot open file 'res://assets/textures/characters/baked/missing_transition_test_race_frames.tres'.
+   at: load (scene/resources/resource_format_text.cpp:1442)
+ERROR: Failed loading resource: res://assets/textures/characters/baked/missing_transition_test_race_frames.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: [Global] scene change failed: path=res://assets/textures/characters/baked/missing_transition_test_race_frames.tres err=Can't open
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail_scene_transition (res://autoload/global.gd:579)
+       [1] _load_transition_asset (res://autoload/global.gd:564)
+PASS: a genuine supplemental race-atlas failure emits exactly one failed-resource signal
+PASS: supplemental asset failure restores the outgoing scene and its pause/input state
+PASS: supplemental asset failure releases the transition and loading card
+PASS: a second route begins while Game genuinely owns an unfinished setup freeze
+[Game] ready seg=2 race=human style=ranged seed=732113
+PASS: the latest Game route replaces the partially constructed destination
+PASS: Game reload does not inherit the superseded destination's temporary pause or input hold
+PASS: terminal interruption also starts during genuine destination construction
+PASS: terminal reroute during destination construction releases the abandoned setup's input and pause
+[Game] ready seg=2 race=human style=ranged seed=732113
+PASS: menu interruption starts at the real final construction stage before Game readiness
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/late-recorder-binding-red/Roaming/Godot/app_userdata/Synthetic Ascension/late_transition_capture_test/2026-10-18/2026-10-18_15-54-13_3220_22281230_1
+ERROR: FAIL: an outgoing Game completing during a menu route cannot reopen a gameplay capture
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/SceneTransitionInterruptionTest.gd:16)
+       [1] _run (res://tools/tests/SceneTransitionInterruptionTest.gd:129)
+[Game] ready seg=2 race=human style=ranged seed=732113
+PASS: failure interruption also begins immediately before old Game readiness
+ERROR: Cannot open file 'res://assets/textures/characters/baked/missing_transition_test_race_frames.tres'.
+   at: load (scene/resources/resource_format_text.cpp:1442)
+ERROR: Failed loading resource: res://assets/textures/characters/baked/missing_transition_test_race_frames.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: [Global] scene change failed: path=res://assets/textures/characters/baked/missing_transition_test_race_frames.tres err=Can't open
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail_scene_transition (res://autoload/global.gd:579)
+       [1] _load_transition_asset (res://autoload/global.gd:564)
+ERROR: FAIL: old Game completion defers its recorder binding while the newer route is still pending
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/SceneTransitionInterruptionTest.gd:16)
+       [1] _run (res://tools/tests/SceneTransitionInterruptionTest.gd:139)
+PASS: failed replacement resumes and binds the now-ready outgoing Game exactly when the route fails
+SceneTransitionInterruptionTest: 17 passed, 2 failed
+[BalanceRecorder] application_closed — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/late-recorder-binding-red/Roaming/Godot/app_userdata/Synthetic Ascension/late_transition_capture_test/2026-10-18/2026-10-18_15-54-13_3220_22281230_1/report.md

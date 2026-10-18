@@ -1,0 +1,7 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the exact ground array is shipped instead of requiring first-entry GPU readback
+PASS: the derived ground array carries reproducible source provenance
+PASS: cached layers match every ordered source and preprocessing revision; art edits require rebaking
+PASS: world startup actually uses the verified derived array
+GroundMaterialCacheTest: 4 passed, 0 failed

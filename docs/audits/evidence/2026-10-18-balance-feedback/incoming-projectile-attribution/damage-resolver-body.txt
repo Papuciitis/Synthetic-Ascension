@@ -1,0 +1,107 @@
+	if Global.debug_player_god_mode:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"god_mode")
+		return
+	if invulnerable_time > 0.0:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"invulnerable")
+		return
+	if is_dead:
+		return
+
+	var mr4: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+
+	# Luck as a systemic stat: the universe occasionally lets a hit miss.
+	var evade_chance: float = LuckResolver.lucky_evasion_chance(Global.run_luck)
+	if mr4 != null:
+		evade_chance = clampf(evade_chance + mr4.get_bonus_evasion_chance(), 0.0, 0.60)
+	if Global._rng.randf() < evade_chance:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"evaded")
+		if BattleText != null:
+			BattleText.popup(global_position, "EVADED", Color(0.5, 0.9, 1.0, 1.0), 1.1)
+		if RunEvents != null:
+			RunEvents.player_evaded.emit(self, global_position)
+		return
+
+	var raw_amount := amount
+	# One hit can only take so much, before armour (big-hit protection). The
+	# recorder still sees the raw blow; adjusted and applied report the cap.
+	amount = minf(amount, max_hp * incoming_hit_cap(source, kind))
+	var ier4: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier4 != null:
+		amount *= ier4.get_damage_taken_multiplier()
+		# Per-source item rules (Trauma's learned resistance).
+		amount *= ier4.get_damage_taken_multiplier_for(source, kind)
+	if mr4 != null:
+		amount *= mr4.get_damage_taken_multiplier()
+	var ar4: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar4 != null:
+		var tree_mul := ar4.get_damage_taken_multiplier_for(source, kind)
+		if tree_mul <= 0.0:
+			# A tree rule made this attack miss (REWRITE: normals' swings).
+			_report_balance_damage(raw_amount, 0.0, 0.0, source, kind, &"missed")
+			if BattleText != null:
+				BattleText.popup(global_position, "MISS", Color(0.8, 0.6, 1.0, 1.0), 1.0)
+			return
+		amount *= tree_mul
+
+	var armor_val: float = 0.0
+	if stats != null:
+		armor_val = stats.armor
+
+	var reduced: float = amount * (100.0 / (100.0 + max(armor_val, 0.0)))
+	# A companion shield (Beka) absorbs from the mitigated hit BEFORE HP
+	# lethality is tested, so a shielded nonlethal hit never spends a
+	# last-chance effect. Absorption is real damage for hit reactions but
+	# is never reported as HP loss; evasions and pay_health never get here.
+	if ier4 != null and reduced > 0.0:
+		var absorbed: float = ier4.absorb_incoming_damage(reduced)
+		if absorbed > 0.0:
+			reduced -= absorbed
+			_report_balance_damage(raw_amount, absorbed, 0.0, source, kind, &"absorbed")
+			if BattleText != null:
+				BattleText.popup(global_position, "-%d" % int(round(absorbed)), Color(0.75, 0.9, 1.0, 0.9), 0.9)
+			if reduced <= 0.001:
+				return
+	var health_before := hp
+	if reduced >= hp and ar4 != null and ar4.intercept_lethal_damage(reduced):
+		# A tree rule (Last Hit) took the killing blow: left at 1 HP.
+		hp = 1.0
+		_flash_hurt()
+		_big_hit_grace(reduced)
+		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
+		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
+		hp_changed.emit(hp, max_hp)
+		if RunEvents != null:
+			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
+		return
+	if reduced >= hp and ier4 != null and ier4.intercept_lethal_damage(reduced, source):
+		# An item rule (Plot Armor) refused the killing blow, after the tree
+		# had its chance; the item marks its own rearm condition.
+		hp = 1.0
+		_flash_hurt()
+		_big_hit_grace(reduced)
+		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
+		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
+		hp_changed.emit(hp, max_hp)
+		if RunEvents != null:
+			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
+		return
+	hp = max(hp - reduced, 0.0)
+	_flash_hurt()
+	_big_hit_grace(reduced)
+	_report_health_change(&"hit", "", health_before, max_hp, reduced, kind, source)
+	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")
+	if BattleText != null:
+		BattleText.player_damage(global_position, reduced)
+
+	# Melee passive regen pauses briefly after taking damage (LoL-style).
+	if _is_melee_style_active():
+		_melee_regen_block_left = maxf(_melee_regen_block_left, melee_regen_delay_after_damage)
+
+	hp_changed.emit(hp, max_hp)
+
+	if RunEvents != null:
+		RunEvents.player_damage_taken.emit(self, reduced, global_position)
+
+	if hp <= 0.0:
+		if not _try_doctrine_death_intercept():
+			die()

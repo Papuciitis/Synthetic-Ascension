@@ -101,6 +101,9 @@ signal dash_cd_changed(time_left: float, max_cd: float)
 var stats: Stats = null
 var hp: float = 100.0
 var spawn_pos: Vector2
+## Capture-only incoming ancestry. Nested ordinary damage pushes an empty
+## frame, so a callback cannot borrow the outer projectile's identity.
+var _balance_damage_contexts: Array[Dictionary] = []
 
 var _weapon_cd: float = 0.0
 ## True only while a native attack fired by a HELD button (Hold to Attack) is
@@ -1403,8 +1406,26 @@ func take_damage(amount: float, _source: Node = null) -> void:
 	_take_damage(amount, _source)
 
 
+## The manager's source Node and the original unknown kind are unchanged:
+## this context is visible only to observers while the same damage resolves.
+func take_damage_with_balance_context(amount: float, source: Node, context: Dictionary) -> void:
+	_take_damage(amount, source, &"unknown", context if RunEvents.balance_health_changed.has_connections() else {})
 
-func _take_damage(amount: float, source: Node = null, kind: StringName = &"unknown") -> void:
+
+func get_balance_damage_context() -> Dictionary:
+	return _balance_damage_contexts[-1].duplicate(true) if not _balance_damage_contexts.is_empty() else {}
+
+
+func _take_damage(amount: float, source: Node = null, kind: StringName = &"unknown", balance_context: Dictionary = {}) -> void:
+	if balance_context.is_empty() and _balance_damage_contexts.is_empty():
+		_resolve_incoming_damage(amount, source, kind)
+		return
+	_balance_damage_contexts.append(balance_context)
+	_resolve_incoming_damage(amount, source, kind)
+	_balance_damage_contexts.pop_back()
+
+
+func _resolve_incoming_damage(amount: float, source: Node, kind: StringName) -> void:
 	if Global.debug_player_god_mode:
 		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"god_mode")
 		return

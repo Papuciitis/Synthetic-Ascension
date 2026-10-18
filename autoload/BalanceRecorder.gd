@@ -12,7 +12,7 @@ const STAT_FIELDS := ["max_hp", "armor", "move_speed", "power", "haste", "luck"]
 const PRESSURE_FIELDS := ["threat", "heat", "overtime", "resonance", "enemy_hp_mul", "enemy_damage_mul", "enemy_speed_mul", "spawn_interval_mul", "elite_bonus", "segment_phase", "rite_channel_active", "power_contrast_active"]
 ## Recorder contract revision, separate from the item-balance revision so an
 ## instrumentation-only capture can never be mistaken for a tuned build.
-const RECORDER_REVISION := 2
+const RECORDER_REVISION := 3
 ## Item balance revision 1 is the pre-curve formula; revision 2 means the
 ## ItemScaling profiles are live. Read at capture start, never assumed.
 const BALANCE_REVISION := 1
@@ -55,6 +55,7 @@ var _queue: RefCounted = WriteQueue.new(Writer.write_batch)
 var _subscriptions: Array = []
 var _mode := "loading"
 var _destination := ""
+var _mode_before_transition := "loading"
 var _sample_left := 1.0
 var _summary_left := 15.0
 var _build_dirty := false
@@ -103,6 +104,7 @@ func _ready() -> void:
 	Global.balance_attempt_boundary.connect(_on_boundary)
 	Global.balance_segment_completed.connect(_on_segment_completed)
 	Global.balance_scene_requested.connect(_on_scene_requested)
+	Global.balance_scene_transition_failed.connect(_on_scene_transition_failed)
 
 func is_recording() -> bool:
 	return _active
@@ -147,7 +149,13 @@ func begin_gameplay(player: Node) -> void:
 		return
 	if not is_instance_valid(player):
 		return
+	# An outgoing staged Game can finish while its replacement is loading.
+	# Only the accepted destination may bind or reopen a capture. On failure
+	# Game's readiness-release handoff retries after the router clears its hold.
+	if Global.is_scene_transition_active():
+		return
 	_fold_hits()
+	_realign_gameplay_segment()
 	_player_ref = weakref(player)
 	_mode = "gameplay"
 	_destination = ""
@@ -208,14 +216,16 @@ func _process(delta: float) -> void:
 		return
 	_fold_hits()
 	var began := Time.get_ticks_usec()
-	if not _destination.is_empty():
+	# Game ends loading explicitly at begin_gameplay, after staged readiness.
+	# A same-path reload otherwise mistakes the outgoing Game for its target.
+	if _destination in [Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP] and not Global.is_scene_transition_active():
 		var scene := get_tree().current_scene
-		if scene != null and scene.scene_file_path == _destination:
-			_mode = "hub" if _destination in [Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP] else "gameplay"
+		if scene != null and scene.scene_file_path == _destination and (not scene.has_method("is_transition_ready") or bool(scene.call("is_transition_ready"))):
+			_mode = "hub"
 			_destination = ""
 	var mode := _mode
 	var player := _player()
-	if get_tree().paused:
+	if mode != "loading" and get_tree().paused:
 		mode = "paused"
 	elif mode == "gameplay" and (player == null or bool(player.get("is_dead"))):
 		mode = "loading"
@@ -316,14 +326,38 @@ func _on_scene_requested(path: String) -> void:
 		# waits for the player's decision. That route is the run's failure.
 		end_capture("failed" if path == Global.PATH_PEEP and Global.has_pending_peep() else "suspended")
 		return
+	if path == Global.PATH_GAME:
+		# Align before the old player is freed and incoming enemies register.
+		_realign_gameplay_segment()
 	# Leaving the Hub for a segment: the wallet the visit kept (P10).
 	if path == Global.PATH_GAME and (_mode == "hub" or _destination in [Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP]):
 		_ledger.mark_hub_departure(Global.followers)
 	_ledger.event("scene_transition", {"target": path})
+	if _mode != "loading":
+		_mode_before_transition = _mode
 	_mode = "loading"
 	_destination = path
 	_capture_build()
 	_submit(true)
+
+func _realign_gameplay_segment() -> void:
+	if not _active or _ledger.current_segment() == Global.attempt_segment:
+		return
+	_fold_hits()
+	var previous_segment: int = _ledger.current_segment()
+	_capture_proc_truth()
+	_ledger.change_segment(Global.attempt_segment, "route_changed")
+	_ledger.event("segment_route_changed", {"from": previous_segment, "to": Global.attempt_segment})
+
+func _on_scene_transition_failed(path: String) -> void:
+	# Global emits only for its latest request. A supplemental race/atlas
+	# failure names that resource, rather than the requested scene itself.
+	if not _active or _destination.is_empty():
+		return
+	var destination := _destination
+	_mode = _mode_before_transition
+	_destination = ""
+	_ledger.event("scene_transition_failed", {"target": destination, "failed_resource": path, "restored_mode": _mode})
 
 func _on_segment_completed(segment: int) -> void:
 	if not _active:
@@ -511,9 +545,21 @@ func _on_weapon_fired(player: Node, _style: StringName, _origin: Vector2, _targe
 func _on_player_damage(player: Node, raw: float, adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
 	if player != _player():
 		return
-	var source_id := _source_id(source, kind)
+	var context := _balance_damage_context(player)
+	var source_id := String(context.get("source_id", ""))
+	if source_id.is_empty():
+		source_id = _source_id(source, kind)
 	_ledger.player_damage(raw, adjusted, applied, source_id, String(outcome))
-	_push_history("damage", {"source": source_id, "attack": String(kind), "outcome": String(outcome), "raw": raw, "adjusted": adjusted, "applied": applied})
+	var history := {"source": source_id, "attack": String(kind), "outcome": String(outcome), "raw": raw, "adjusted": adjusted, "applied": applied}
+	if not context.is_empty():
+		history["source_context"] = context
+	_push_history("damage", history)
+
+func _balance_damage_context(player: Node) -> Dictionary:
+	if not player.has_method("get_balance_damage_context"):
+		return {}
+	var context: Variant = player.call("get_balance_damage_context")
+	return context as Dictionary if context is Dictionary else {}
 
 func _source_id(source: Node, fallback: StringName) -> String:
 	if not is_instance_valid(source):
@@ -550,6 +596,12 @@ func _on_health_changed(player: Node, change: Dictionary) -> void:
 	var record := change.duplicate()
 	var source_node: Variant = record.get("source_node", null)
 	record.erase("source_node")
+	if String(record.get("category", "")) == "hit":
+		var context := _balance_damage_context(player)
+		if not context.is_empty():
+			record["source_context"] = context
+			if String(record.get("source_id", "")).is_empty():
+				record["source_id"] = String(context.get("source_id", ""))
 	if String(record.get("source_id", "")).is_empty():
 		record["source_id"] = _source_id(source_node as Node if source_node is Node else null, StringName(String(record.get("reason", "unknown"))))
 	record["wall_seconds"] = _wall_seconds()

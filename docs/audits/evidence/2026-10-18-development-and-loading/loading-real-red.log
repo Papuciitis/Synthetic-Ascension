@@ -1,0 +1,15 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+TRANSITION_METRICS loading_frames=1 spinner_advances=1 route_ms=7401.979 max_gap_ms=7395.949
+ERROR: FAIL: the spinner advances across real cold Game loading work
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/LoadingTransitionResponsivenessTest.gd:16)
+       [1] _run (res://tools/tests/LoadingTransitionResponsivenessTest.gd:52)
+[Game] ready seg=2 race=human style=ranged seed=1792401684006
+ERROR: FAIL: the responsive route reaches the actual Game scene
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/LoadingTransitionResponsivenessTest.gd:16)
+       [1] _run (res://tools/tests/LoadingTransitionResponsivenessTest.gd:57)
+LoadingTransitionResponsivenessTest: 0 passed, 2 failed

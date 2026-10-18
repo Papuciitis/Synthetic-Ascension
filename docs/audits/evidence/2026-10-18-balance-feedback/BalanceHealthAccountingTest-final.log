@@ -1,0 +1,39 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: runtime balance recorder is installed
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-final-BalanceHealthAccountingTest/Godot/app_userdata/Synthetic Ascension/balance_health_test_16039659/2026-10-18/2026-10-18_15-38-25_30428_16039680_1
+PASS: explicit headless capture starts
+PASS: 100 - 30 hit + 10 heal - 5 cost reconciles to 75 (expected 75.0, residual 0.000)
+PASS: hit loss, healing and paid HP are each counted once (30.0 / 10.0 / 5.0)
+PASS: the reconciliation ledger carries each category with its signed delta
+PASS: the capture declares schema 2 with health reconciliation measured
+PASS: fixture: a hit leaves the player wounded at 30
+PASS: fixture: a held beat costs 5% of 100 max HP (5.0)
+PASS: fixture: the empowered beat is held while wounded
+PASS: panic-firing into the hold pays 5 HP and the recorder counts it as paid HP (hp 25.0, paid 10.0)
+PASS: the toll is attributed to Death Rattle and reconciles
+PASS: the toll rolls no evasion and is not a hit
+PASS: the toll does not pause melee regeneration (pay_health semantics are not imposed)
+PASS: the toll announces itself once, without an extra popup
+PASS: god mode does not exempt the rattle today, and the payment is still recorded (hp 20.0)
+PASS: fixture: a hold is armed at 20 HP
+PASS: fixture: a hit leaves 3 HP (3.00)
+PASS: the rattle never takes the last point: 2 paid, reconciled (hp 1.0, paid 17.0)
+PASS: fixture: the takeback case starts at 1 HP (1.00)
+PASS: 20 healing lands, Slow Heart takes back 17: applied healing stays 20 and nothing is enemy damage (hp 4.0)
+PASS: the takeback is an adjustment attributed to the curse and reconciles
+PASS: the released bank is healing under the curse's source (hp 7.5)
+PASS: Regeneration Ring healing carries a stable item source and reconciles
+PASS: max HP 100 -> 70 at full health records a -30 adjustment, not enemy damage
+PASS: full-health preservation back to 100 is an adjustment, not healing (expected 100.0)
+PASS: every change so far reconciled with the sampled HP
+PASS: a lethal hit closes the life; reconstruction starts the next
+PASS: the new life baselines at the restored HP without counting it as healing (life 2)
+PASS: the closed life records its death and terminal HP
+PASS: an HP change with no record shows as one unexplained check with its residual (-70.0)
+[BalanceRecorder] suspended — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/userdata/balance-final-BalanceHealthAccountingTest/Godot/app_userdata/Synthetic Ascension/balance_health_test_16039659/2026-10-18/2026-10-18_15-38-25_30428_16039680_1/report.md
+PASS: the saved summary separates recorder and balance revisions and declares feature coverage
+PASS: the saved summary carries the health reconciliation
+PASS: the report explains health reconciliation and recorder coverage (headings: ## Recording health, ## Economy, ## Combat, ## Health reconciliation, ## Damage attribution, ## Enemy scaling, ## Upgrade effort and benefit, ## Exit and pressure, ## Incidents, ## Recorder coverage, ## Coverage)
+PASS: the event history records the toll, the unexplained gap and life boundaries
+BalanceHealthAccountingTest: 34 passed, 0 failed

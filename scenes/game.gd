@@ -14,9 +14,9 @@ const ESCAPE_RELEASE_SCRIPT := preload("res://core/systems/world/EscapeRelease.g
 @export var augment_select_scene: PackedScene
 
 @onready var player: Node = $Player
-@onready var hud: Control = $UI/HUD
+var hud: Control = null
 @onready var chunk_manager: ChunkManager = get_node_or_null("ChunkManager") as ChunkManager
-@onready var level1_builder: Node2D = get_node_or_null("Level1") as Node2D
+var level1_builder: Node2D = null
 
 # IMPORTANT: only ONE augment_select var (no duplicate @onready + var)
 var augment_select: CanvasLayer = null
@@ -32,14 +32,38 @@ var _segment_completion_running: bool = false
 var _tutorial_modals: TutorialModalController = null
 var _opening_sequence: OpeningSequenceController = null
 var _pause_menu: CanvasLayer = null
+var _entry_progressive := false
+var _initial_world_ready := true
+var _entry_detached_children: Array[Node] = []
+var _entry_child_order: Array[Node] = []
+var _entry_input_owned := false
+var _entry_prior_input_disabled := false
+var _entry_stage: StringName = &"scene_children"
+var _gameplay_binding_pending := true
 
 
 func _enter_tree() -> void:
+	var progressive_entry := Global != null and Global.claim_progressive_game_entry(self)
 	if Global != null and Global.has_pending_peep():
 		# Child world processing cannot revive the saved terminal snapshot.
 		_disable_failed_world()
 		return
 	if Global == null or not Global.debug_dev_segment:
+		# Keep direct-scene startup synchronous. Routed startup can spread its
+		# independent HUD and authored-world construction behind LoadingScrim.
+		if progressive_entry:
+			_entry_progressive = true
+			_initial_world_ready = false
+			get_tree().paused = true
+			_entry_prior_input_disabled = get_viewport().gui_disable_input
+			get_viewport().gui_disable_input = true
+			_entry_input_owned = true
+			_entry_child_order.assign(get_children())
+			for child_name in [&"UI", &"Level1"]:
+				var child := get_node_or_null(NodePath(child_name))
+				if child != null:
+					remove_child(child)
+					_entry_detached_children.append(child)
 		return
 	# Strip normal-world children before their _ready callbacks can allocate
 	# chunks, navigation buffers, spawn services, or handcrafted geometry.
@@ -52,7 +76,50 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	get_tree().paused = false
+	if _entry_progressive:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+		while not _entry_detached_children.is_empty():
+			var child := _entry_detached_children.pop_front() as Node
+			_entry_stage = &"hud" if child.name == &"UI" else &"authored_world"
+			var console := child.get_node_or_null("PerformanceOverlay") as PerformanceOverlay
+			if console != null:
+				console.progressive_initialization = true
+			var staged_hud := child.get_node_or_null("HUD") as Control
+			if staged_hud != null:
+				staged_hud.progressive_initialization = true
+			if child is Level1Builder:
+				(child as Level1Builder).progressive_initialization = true
+			add_child(child)
+			if staged_hud != null:
+				while not staged_hud.initial_world_ready:
+					await get_tree().process_frame
+					if not is_inside_tree():
+						return
+			if console != null:
+				while not console.initial_world_ready:
+					await get_tree().process_frame
+					if not is_inside_tree():
+						return
+			if child is Level1Builder:
+				while not (child as Level1Builder).initial_world_ready:
+					await get_tree().process_frame
+					if not is_inside_tree():
+						return
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+		var next_index := 0
+		for child in _entry_child_order:
+			if is_instance_valid(child) and child.get_parent() == self:
+				move_child(child, next_index)
+				next_index += 1
+		_entry_child_order.clear()
+	_entry_stage = &"bindings"
+	hud = get_node_or_null("UI/HUD") as Control
+	level1_builder = get_node_or_null("Level1") as Node2D
+	get_tree().paused = _entry_progressive
 	if Global != null and Global.has_pending_peep():
 		Global.goto_resume()
 		return
@@ -64,7 +131,7 @@ func _ready() -> void:
 	_pause_menu = preload("res://ui/screens/PauseMenu.tscn").instantiate()
 	_pause_menu.resume_scene = Global.PATH_GAME
 	_pause_menu.can_open = func() -> bool:
-		return not _run_ended and not _segment_completion_running and process_mode != Node.PROCESS_MODE_DISABLED and (hud == null or ((hud.bag_ctl == null or not hud.bag_ctl.is_management_mode()) and not is_instance_valid(hud.get("_ascension_screen"))))
+		return _initial_world_ready and not _run_ended and not _segment_completion_running and process_mode != Node.PROCESS_MODE_DISABLED and (hud == null or ((hud.bag_ctl == null or not hud.bag_ctl.is_management_mode()) and not is_instance_valid(hud.get("_ascension_screen"))))
 	add_child(_pause_menu)
 	move_child(_pause_menu, 0)
 	_tutorial_modals = TUTORIAL_MODAL_CONTROLLER.new() as TutorialModalController
@@ -147,13 +214,64 @@ func _ready() -> void:
 			(Global.attempt_world_seed if Global != null else 0),
 		])
 
-	_setup_segment_world()
+	if _entry_progressive:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	_entry_stage = &"procedural_world"
+	await _setup_segment_world()
+	if not is_inside_tree():
+		return
+	if Global != null and Global.has_pending_peep():
+		_disable_failed_world()
+		Global.goto_resume()
+		return
 	_setup_enemy_proxy_root()
-	BalanceRecorder.begin_gameplay(player)
 	call_deferred("_setup_encounter_director")
+	_initial_world_ready = true
+	_entry_stage = &"ready"
+	release_completed_transition_hold()
 
 	# Narrative opening precedes run-level reward UI on a fresh Segment 1.
 	call_deferred("_begin_entry_sequence")
+
+
+func is_transition_ready() -> bool:
+	return _initial_world_ready
+
+
+func scene_transition_pause_state() -> bool:
+	# A second route can arrive while this destination still owns its initial
+	# setup freeze. Only a mandatory Binding is then a caller-owned pause.
+	if _entry_progressive and not _initial_world_ready:
+		return _augment_pause_owned
+	return get_tree().paused
+
+
+func release_completed_transition_hold() -> void:
+	if not _initial_world_ready or Global.is_scene_transition_active():
+		return
+	if _gameplay_binding_pending:
+		BalanceRecorder.begin_gameplay(player)
+		_gameplay_binding_pending = false
+	if _entry_input_owned:
+		get_tree().paused = _augment_pause_owned
+		_release_entry_input()
+
+
+func _release_entry_input() -> void:
+	if _entry_input_owned:
+		get_viewport().gui_disable_input = _entry_prior_input_disabled
+		_entry_input_owned = false
+
+
+func _exit_tree() -> void:
+	_release_entry_input()
+	for child in _entry_detached_children:
+		if is_instance_valid(child) and child.get_parent() == null:
+			child.free()
+	_entry_detached_children.clear()
+	_entry_child_order.clear()
 
 
 ## Authored encounter beats on top of the director's continuous pressure
@@ -215,7 +333,12 @@ func _setup_segment_world() -> void:
 
 	var b := SEGMENT_PROC_BUILDER_SCRIPT.new() as Node2D
 	if b != null:
+		b.set("progressive_initialization", _entry_progressive)
 		add_child(b)
+		while _entry_progressive and not bool(b.get("initial_world_ready")):
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
 	else:
 		push_warning("Failed to instantiate SegmentProcBuilder")
 
@@ -245,6 +368,10 @@ func _setup_dev_segment() -> void:
 
 
 func _begin_entry_sequence() -> void:
+	while Global.is_scene_transition_active():
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
 	if Global != null and Global.debug_dev_segment:
 		return
 	var seg: int = (Global.attempt_segment if Global != null else 1)

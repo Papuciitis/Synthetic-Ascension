@@ -4,6 +4,10 @@ class_name Level1Builder
 # Emitted after a milestone is processed; the opening controller awaits this
 # to sequence the admissions-wing beats.
 signal milestone_reached(id: StringName)
+var progressive_initialization := false
+var initial_world_ready := false
+var _initialization_stage: StringName = &"bootstrap"
+var _initialization_stage_started := 0
 
 ## Deterministic, authored Segment 1 layout.
 ##
@@ -147,9 +151,11 @@ var _last_checklist_key: String = ""
 
 
 func _ready() -> void:
+	_initialization_stage_started = Time.get_ticks_usec()
 	# Child _ready() runs before game.gd can remove this node for later segments.
 	# Stay completely inert so direct developer launches into Segment 2+ are safe.
 	if Global != null and int(Global.attempt_segment) != 1:
+		initial_world_ready = true
 		set_process(false)
 		return
 	# The playable opening owns progression messaging until it hands control
@@ -176,16 +182,56 @@ func _ready() -> void:
 	_geo.name = "Level1_Geometry"
 	add_child(_geo)
 	if _cm != null and is_instance_valid(_cm) and _cm.tiled_world_rendering:
+		if progressive_initialization:
+			await _cm.prepare_authored_rendering()
+			if not is_inside_tree():
+				return
+			_initialization_stage_started = Time.get_ticks_usec()
 		_cm.call("_prepare_chunk_rendering", _geo, Vector2i.ZERO)
 
-	_plan_level()
-	_build_ground_stamps()
-	_spawn_planned_geometry()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	await _plan_level()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"ground_stamps"
+	await _build_ground_stamps()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"geometry"
+	await _spawn_planned_geometry()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"connections"
 	_apply_connections()
-	_tile_authored_geometry()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"tile_geometry"
+	await _tile_authored_geometry()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"manual_blocks"
 	_register_manual_blocks()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"indoor_volumes"
 	_spawn_indoor_volumes()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"wardstones_gate"
 	_place_wardstones_and_gate()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"story"
 	_place_story_areas()
 	_place_waypoints()
 	_restore_segment_state()
@@ -212,6 +258,21 @@ func _ready() -> void:
 		var player := get_tree().get_first_node_in_group(&"player") as Node2D
 		var stream_center := player.global_position if player != null else _cell_to_world(_start_cell)
 		_cm.start_streaming(stream_center)
+	initial_world_ready = true
+
+
+func _initialization_frame() -> void:
+	if progressive_initialization and not is_inside_tree():
+		return
+	if progressive_initialization:
+		if OS.get_environment("FRONTEND_TRACE_READY") == "1":
+			print("LEVEL1_STAGE phase=%s call_ms=%.3f" % [_initialization_stage, float(Time.get_ticks_usec() - _initialization_stage_started) / 1000.0])
+		if DisplayServer.get_name() != "headless":
+			await RenderingServer.frame_post_draw
+			if progressive_initialization and not is_inside_tree():
+				return
+		await get_tree().process_frame
+		_initialization_stage_started = Time.get_ticks_usec()
 
 
 func _exit_tree() -> void:
@@ -248,13 +309,42 @@ func _plan_level() -> void:
 	_playable_regions.append(APPROACH_RECT)
 	_spawn_exclusions.append(CLOSED_WAREHOUSE_RECT)
 
+	_initialization_stage = &"plan_facility"
 	_plan_facility()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"plan_admissions"
 	_plan_admissions_wing()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"plan_courtyard"
 	_plan_containment_courtyard()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"plan_service"
 	_plan_service_district()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"plan_approach"
 	_plan_outer_approach()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"plan_landmarks"
 	_plan_cover_and_landmarks()
-	_plan_interior_dressing()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"plan_dressing"
+	await _plan_interior_dressing()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
+	_initialization_stage = &"plan_caches"
 	_plan_exploration_caches()
 
 
@@ -640,8 +730,12 @@ func _plan_interior_dressing() -> void:
 				continue
 			anchors.append(cell)
 			_stamp_cover_cluster(rng, rect, cell)
+		await _initialization_frame()
+		if progressive_initialization and not is_inside_tree():
+			return
 
-	_scatter_floor_detail(rng)
+	_initialization_stage = &"floor_detail"
+	await _scatter_floor_detail(rng)
 
 
 ## An L, a stub wall or a lone crate - three silhouettes rather than one, so the
@@ -779,6 +873,12 @@ func _scatter_floor_detail(rng: RandomNumberGenerator) -> void:
 		@warning_ignore("integer_division")
 		var marks: int = clampi(area / 7, 12, 260)
 		for _i in range(marks):
+			# The first regional pass can create several texture-backed tile
+			# sources. Bound that real work without changing the RNG sequence.
+			if progressive_initialization and Time.get_ticks_usec() - _initialization_stage_started >= 12000:
+				await _initialization_frame()
+				if not is_inside_tree():
+					return
 			var cell := Vector2i(
 				rng.randi_range(rect.position.x, rect.position.x + rect.size.x - 1),
 				rng.randi_range(rect.position.y, rect.position.y + rect.size.y - 1)
@@ -793,6 +893,9 @@ func _scatter_floor_detail(rng: RandomNumberGenerator) -> void:
 			# marks about one cell across, which read as litter dropped on a clean
 			# floor rather than as a floor that has been used.
 			_place_deco(texture, cell, rng.randf_range(0.22, 0.68), _quantised_alpha(rng, 0.30, 0.70), -88)
+		await _initialization_frame()
+		if progressive_initialization and not is_inside_tree():
+			return
 
 
 # -----------------------------------------------------------------------------
@@ -984,6 +1087,9 @@ func _rebuild_wall_visuals() -> void:
 
 func _tile_authored_geometry() -> void:
 	_rebuild_wall_visuals()
+	await _initialization_frame()
+	if progressive_initialization and not is_inside_tree():
+		return
 	if _cm == null or not is_instance_valid(_cm) or _geo == null:
 		return
 	if not _cm.tiled_world_rendering:
@@ -1001,7 +1107,7 @@ func _queue_connections_refresh() -> void:
 
 func _flush_connections_refresh() -> void:
 	_connections_refresh_queued = false
-	if not is_inside_tree():
+	if progressive_initialization and not is_inside_tree():
 		return
 	_apply_connections()
 	_rebuild_wall_visuals()

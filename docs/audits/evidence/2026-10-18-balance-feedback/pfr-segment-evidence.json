@@ -1,0 +1,68 @@
+[
+  {
+    "source": "performance_results/2026-10-18/2026-10-18_14-37-33_segment-10_incident-062.json",
+    "sha256": "3e1b45f0a685ab747bd103eabea30452d1162694528d5c603d8d8008013ec739",
+    "metadata": {
+      "absolute_threshold_ms": 28.0,
+      "aftermath_seconds": 5.0,
+      "build": {
+        "game_version": "0.0.0.25.5",
+        "git_branch": "feat/authoritative-enemy-world",
+        "git_commit": "c9d5a31772f3",
+        "godot_version": "4.7.1-stable (official)",
+        "world_seed": 1794675549650
+      },
+      "dropped_samples": 0,
+      "history_seconds": 10.0,
+      "max_sampling_overhead_usec": 4373,
+      "relative_multiplier": 1.8,
+      "segment": 10,
+      "sequence": 62,
+      "trigger_reason": "automatic",
+      "trigger_usec": 853866830
+    },
+    "events": [
+      {
+        "category": "scene",
+        "details": {
+          "to": "game"
+        },
+        "name": "change",
+        "t_usec": 853110315
+      }
+    ]
+  },
+  {
+    "source": "performance_results/2026-10-18/2026-10-18_14-45-47_segment-10_incident-106.json",
+    "sha256": "2719877ed394a71b96baa990e443f9b2a14a8bd2a86cb3587aa1cd1cc05dfc79",
+    "metadata": {
+      "absolute_threshold_ms": 28.0,
+      "aftermath_seconds": 5.0,
+      "build": {
+        "game_version": "0.0.0.25.5",
+        "git_branch": "feat/authoritative-enemy-world",
+        "git_commit": "c9d5a31772f3",
+        "godot_version": "4.7.1-stable (official)",
+        "world_seed": 1794675549650
+      },
+      "dropped_samples": 0,
+      "history_seconds": 10.0,
+      "max_sampling_overhead_usec": 4373,
+      "relative_multiplier": 1.8,
+      "segment": 10,
+      "sequence": 106,
+      "trigger_reason": "automatic",
+      "trigger_usec": 1347821057
+    },
+    "events": [
+      {
+        "category": "encounter",
+        "details": {
+          "position": "(37888.0, -1024.0)"
+        },
+        "name": "boss_started",
+        "t_usec": 1351498236
+      }
+    ]
+  }
+]

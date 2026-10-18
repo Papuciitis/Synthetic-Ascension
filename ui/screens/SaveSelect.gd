@@ -9,9 +9,11 @@ extends Control
 
 const SLOT_COUNT: int = 3
 const ArcaneDialogScript := preload("res://ui/components/ArcaneDialog.gd")
+const CITY_DEVELOPMENT := preload("res://ui/screens/CityDevelopmentScreen.tscn")
 
 ## Why the Archives were opened: &"new" (New Run) selects the first free slot,
 ## &"browse" (Archives, Continue with nothing to continue) the latest save.
+## &"development" selects a profile for improvements without resuming a run.
 ## Read once on entry and reset, so other routes here default to browsing.
 static var open_intent: StringName = &"browse"
 
@@ -32,6 +34,7 @@ var _rename_slot: int = 0
 var _delete_slot_pending: int = 0
 var _rename_dialog: Control = null
 var _delete_dialog: Control = null
+var _development_screen: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -41,9 +44,9 @@ func _ready() -> void:
 	open_intent = &"browse"
 
 	if title != null:
-		title.text = "NEW RUN" if intent == &"new" else "ARCHIVES"
+		title.text = "DEVELOPMENT" if intent == &"development" else ("NEW RUN" if intent == &"new" else "ARCHIVES")
 	if subtitle != null:
-		subtitle.text = "Choose where the new chronicle begins." if intent == &"new" else "Every chronicle the Pattern remembers."
+		subtitle.text = "Choose a profile to view its retained improvements." if intent == &"development" else ("Choose where the new chronicle begins." if intent == &"new" else "Every chronicle the Pattern remembers.")
 
 	if back != null:
 		back.pressed.connect(func() -> void:
@@ -188,6 +191,8 @@ func _refresh_ui() -> void:
 
 
 func _on_slot_pressed(slot: int) -> void:
+	if _dialog_open():
+		return
 	var s: SaveData = _load_slot(slot)
 	if s == null and _has_save(slot):
 		# The files exist but cannot be read. Creating a profile here would
@@ -198,6 +203,14 @@ func _on_slot_pressed(slot: int) -> void:
 		s = _create_slot(slot, "Profile %d" % slot)
 
 	_set_current(slot, s)
+	if intent == &"development":
+		_development_screen = CITY_DEVELOPMENT.instantiate() as CanvasLayer
+		add_child(_development_screen)
+		_development_screen.closed.connect(func() -> void:
+			_development_screen = null
+			_refocus_selected()
+		)
+		return
 	Global.goto_resume()
 
 
@@ -212,7 +225,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _dialog_open() -> bool:
-	return (_rename_dialog != null and _rename_dialog.visible) or (_delete_dialog != null and _delete_dialog.visible)
+	return (_rename_dialog != null and _rename_dialog.visible) or (_delete_dialog != null and _delete_dialog.visible) or (_development_screen != null and is_instance_valid(_development_screen) and _development_screen.visible)
 
 
 func _play_intro() -> void:

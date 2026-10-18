@@ -1,0 +1,51 @@
+ERROR: FAIL: same-origin impacts retain one honest enemy identity and both hit contributions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:143)
+ERROR: FAIL: the actual recorder attributes the freed-shooter health loss to its retained identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:148)
+ERROR: FAIL: the health-reconciliation source uses the same retained identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:150)
+ERROR: FAIL: a mixed-source batch names both identities without assigning the entire batch to one
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:160)
+ERROR: FAIL: an unavailable member remains explicitly unknown inside a mixed batch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:171)
+ERROR: FAIL: swap-removal moves the surviving projectile's telemetry identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:180)
+ERROR: FAIL: a reused slot clears stale enemy ancestry
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:185)
+ERROR: FAIL: member identities stay bounded while all twenty original damage contributions remain
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:193)
+ERROR: FAIL: an outer context survives a nested ordinary damage call
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyProjectileAttributionTest.gd:35)
+       [1] _on_resolved (res://tools/tests/EnemyProjectileAttributionTest.gd:50)
+       [2] _report_balance_damage (res://core/actors/player/player.gd:1538)
+       [3] _take_damage (res://core/actors/player/player.gd:1499)
+       [4] take_damage (res://core/actors/player/player.gd:1403)
+       [5] _flush_hit_ledgers (res://core/combat/projectile/ProjectileSimulationManager.gd:602)
+       [6] _impact (res://tools/tests/EnemyProjectileAttributionTest.gd:75)
+       [7] _run (res://tools/tests/EnemyProjectileAttributionTest.gd:200)

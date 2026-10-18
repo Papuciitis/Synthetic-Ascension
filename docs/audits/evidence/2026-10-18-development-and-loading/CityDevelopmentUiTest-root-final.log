@@ -1,0 +1,95 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main menu exposes Development through an actual native button
+PASS: Development can open profile selection before a profile is loaded
+PASS: the entry explains its profile selection
+PASS: the cumulative development API exists
+PASS: segment 1 completion begins
+PASS: segment 1 completion settles
+PASS: segment 2 completion begins
+PASS: segment 2 completion settles
+PASS: segment 3 completion begins
+PASS: segment 3 completion settles
+PASS: segment 4 completion begins
+PASS: segment 4 completion settles
+PASS: segment 5 completion begins
+PASS: segment 5 completion settles
+PASS: segment 6 completion begins
+PASS: segment 6 completion settles
+PASS: segment 7 completion begins
+PASS: segment 7 completion settles
+PASS: a selected profile enables Development
+PASS: Development exists as a native control
+PASS: controller A opens the real Development panel
+PASS: the initial panel settles inside the normal viewport before any resize
+PASS: the heading presents one choice among alternatives
+PASS: the panel explains that earlier choices accumulate
+PASS: seven distinct first clears provide seven available Research
+PASS: the wallet reports available and invested Research
+PASS: the Research source is explicit and finite
+PASS: the panel states when development begins
+PASS: the active attempt has its own summary
+PASS: Invest_haste exists as a native control
+PASS: one haste choice consumes exactly one Research and leaves every other option unchanged
+PASS: Invest_health exists as a native control
+PASS: Enter invests one Research in permanent +5 HP
+PASS: Invest_armor exists for pointer activation
+PASS: a native pointer click invests in armor
+PASS: D-pad navigation moves between native choices inside the panel
+PASS: Invest_bag exists as a native control
+PASS: controller A invests in permanent backpack capacity
+PASS: the target selector includes owned real augments and excludes empty or missing resources
+PASS: Invest_augment exists as a native control
+PASS: augment training costs one permanent Research rank
+PASS: training initially targets the chosen owned augment
+CITY SELECTOR TRACE: { "stage": "before native open", "selected": 0, "popup_visible": false, "popup_focused": -1, "metadata": ["augment_tesla_aura", "augment_magic_missile"], "target": "augment_tesla_aura", "points": 2, "ui_down_exists": true, "embedded": true }
+CITY SELECTOR TRACE: { "stage": "after native open", "selected": 0, "popup_visible": true, "popup_focused": 0, "metadata": ["augment_tesla_aura", "augment_magic_missile"], "target": "augment_tesla_aura", "points": 2, "ui_down_exists": true, "embedded": true }
+PASS: the native popup uses the embedded Window input dispatch path
+CITY SELECTOR TRACE: { "stage": "after native Window Down", "selected": 0, "popup_visible": true, "popup_focused": 1, "metadata": ["augment_tesla_aura", "augment_magic_missile"], "target": "augment_tesla_aura", "points": 2, "ui_down_exists": true, "embedded": true }
+PASS: the native popup uses the embedded Window input dispatch path
+CITY SELECTOR TRACE: { "stage": "after native Window confirm", "selected": 1, "popup_visible": false, "popup_focused": -1, "metadata": ["augment_tesla_aura", "augment_magic_missile"], "target": "augment_magic_missile", "points": 2, "ui_down_exists": true, "embedded": true }
+PASS: native selector activation retargets purchased training for free
+PASS: invalid and empty training targets cannot be selected
+PASS: investment and reassignment leave the active development snapshot unchanged
+PASS: the active build keeps its original HP, armor, bag and augment level
+PASS: next-attempt totals show the exact cumulative gains
+PASS: Invest_health exists as a native control
+PASS: Invest_health exists as a native control
+PASS: HP accumulates to its three-rank cap with no overspend
+PASS: a fully developed option says that it is capped
+PASS: an unaffordable investment is disabled
+PASS: focus remains inside the panel when the last Research is spent
+PASS: an empty owned library disables training selection safely
+PASS: the panel stays within a small logical viewport
+PASS: small screens can scroll every development option
+PASS: CloseDevelopment exists as a native control
+PASS: Close returns focus to the invoking main-menu entry
+PASS: the actual main-menu Development entry remains inside a small logical viewport
+PASS: Development exists as a native control
+PASS: controller B closes Development without navigating away from the menu
+PASS: the cumulative profile can be read from its isolated slot
+PASS: Research, cumulative ranks and reassigned training survive an actual save/reload
+PASS: Continue restores the original active snapshot despite newer profile development
+[Base] commit selection race=human style=ranged weapon=ranged
+[Base] commit selection race=human style=ranged weapon=ranged
+PASS: new-attempt setup exposes Development for the selected profile
+PASS: Development exists as a native control
+PASS: the existing scene opens Development
+PASS: controller B closes only Development and restores the invoking control
+PASS: Hub exposes Development for the selected profile
+PASS: Development exists as a native control
+PASS: the existing scene opens Development
+PASS: controller B closes only Development and restores the invoking control
+PASS: terminal failure leaves its durable continuation decision pending
+PASS: a selected failed profile can prepare through MainMenu Development before accepting continuation
+PASS: Development exists as a native control
+PASS: pending continuation does not block the preparation screen
+PASS: Invest_health exists as a native control
+PASS: one retained choice can be spent before continuation
+PASS: preparation preserves the unresolved failed attempt snapshot
+PASS: acceptance begins the prepared next attempt
+PASS: the prepared +5 HP is captured by the new attempt exactly at continuation
+PASS: a duplicate acceptance cannot start another attempt or duplicate preparation
+PASS: a screen without a profile explains why it cannot invest
+PASS: CloseDevelopment exists as a native control
+CityDevelopmentUiTest: 86 passed, 0 failed

@@ -266,6 +266,14 @@ func _set_dev_label(on: bool) -> void:
 func _on_continue_pressed() -> void:
 	# Resume the most recently written readable save; with none, open the
 	# Archives so a chronicle can begin.
+	if _select_latest_profile():
+		call_deferred("_go_to_base")
+	else:
+		SAVE_SELECT.open_intent = &"new"
+		call_deferred("_go_to_saves")
+
+
+func _select_latest_profile() -> bool:
 	var best_slot := -1
 	var best_save: SaveData = null
 	var best_time := -1
@@ -279,13 +287,10 @@ func _on_continue_pressed() -> void:
 			best_slot = slot
 			best_save = s
 
-	# Defer to avoid changing scenes mid-callback
 	if best_save != null:
 		SaveManager.set_current(best_slot, best_save)
-		call_deferred("_go_to_base")
-	else:
-		SAVE_SELECT.open_intent = &"new"
-		call_deferred("_go_to_saves")
+		return true
+	return false
 
 
 func _on_new_run_pressed() -> void:
@@ -638,12 +643,17 @@ func _create_development_entry() -> void:
 	_development_button.mood = &"archive"
 	menu.add_child(_development_button)
 	menu.move_child(_development_button, btn_archives.get_index() + 1)
-	_development_button.disabled = SaveManager.current_save == null
-	_development_button.tooltip_text = "Select or create a profile in the Archives to view its retained improvements." if _development_button.disabled else "Choose one retained improvement for each Research. Earlier choices remain."
+	_development_button.tooltip_text = "View your profile's retained improvements. Choose or create a profile if none is available."
 	_development_button.pressed.connect(_open_development)
 
 func _open_development() -> void:
-	if SaveManager.current_save == null or (_development_screen != null and is_instance_valid(_development_screen)):
+	if _development_screen != null and is_instance_valid(_development_screen):
+		return
+	# A restarted game has no current_save until a menu action selects one.
+	# Match Continue's profile selection without entering its saved attempt.
+	if SaveManager.current_save == null and not _select_latest_profile():
+		SAVE_SELECT.open_intent = &"development"
+		call_deferred("_go_to_saves")
 		return
 	var screen := CITY_DEVELOPMENT.instantiate() as CanvasLayer
 	_development_screen = screen

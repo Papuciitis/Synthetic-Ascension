@@ -43,6 +43,8 @@ var _row_controls: Dictionary = {}
 var _updating_controls := false
 var _confirm_action: StringName = &""
 var _confirm_until_msec := 0
+var progressive_initialization := false
+var initial_world_ready := false
 
 
 func _ready() -> void:
@@ -76,8 +78,21 @@ func _ready() -> void:
 	_batched_sprites.toggled.connect(_set_batched_sprites)
 	_pause_game.toggled.connect(_set_game_paused)
 	_header.gui_input.connect(_on_header_input)
-	_build_tests_tab()
+	await _initialization_frame()
+	if not is_inside_tree():
+		return
+	await _build_tests_tab()
+	if not is_inside_tree():
+		return
+	initial_world_ready = true
 	call_deferred("_place_default")
+
+
+func _initialization_frame() -> void:
+	if not is_inside_tree():
+		return
+	if progressive_initialization:
+		await get_tree().process_frame
 
 
 func _process(delta: float) -> void:
@@ -493,6 +508,8 @@ func _build_enemy_rows(ids: Array[StringName]) -> void:
 
 
 func _place_default() -> void:
+	if not is_inside_tree():
+		return
 	var rect := default_safe_rect(get_viewport_rect().size)
 	position = rect.position
 	size = rect.size
@@ -709,10 +726,25 @@ func _build_tests_tab() -> void:
 	column.add_child(tabs)
 
 	_build_run_tab(_tests_page(tabs, "Run"), tools)
+	await _initialization_frame()
+	if not is_inside_tree():
+		return
 	_build_gear_tab(_tests_page(tabs, "Gear"), tools)
+	await _initialization_frame()
+	if not is_inside_tree():
+		return
 	_build_rules_tab(_tests_page(tabs, "Rules"), tools)
+	await _initialization_frame()
+	if not is_inside_tree():
+		return
 	_build_story_tab(_tests_page(tabs, "Story"), tools)
+	await _initialization_frame()
+	if not is_inside_tree():
+		return
 	_build_world_tab(_tests_page(tabs, "World"), tools)
+	await _initialization_frame()
+	if not is_inside_tree():
+		return
 
 	_dev_log = Label.new()
 	_dev_log.name = "ActionLog"

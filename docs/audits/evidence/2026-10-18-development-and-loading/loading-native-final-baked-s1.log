@@ -1,0 +1,378 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics
+
+TRANSITION_CASE cold
+PREP_STAGE phase=ground_0 call_ms=25.767
+PREP_STAGE phase=ground_1 call_ms=22.738
+PREP_STAGE phase=ground_2 call_ms=0.029
+PREP_STAGE phase=ground_3 call_ms=0.083
+PREP_STAGE phase=ground_4 call_ms=0.059
+PREP_STAGE phase=ground_5 call_ms=23.867
+PREP_STAGE phase=ground_6 call_ms=20.197
+PREP_STAGE phase=ground_7 call_ms=0.039
+PREP_STAGE phase=ground_8 call_ms=26.830
+PREP_STAGE phase=ground_9 call_ms=27.024
+PREP_STAGE phase=ground_10 call_ms=22.014
+PREP_STAGE phase=ground_11 call_ms=26.451
+PREP_STAGE phase=ground_12 call_ms=42.530
+PREP_STAGE phase=baked_array call_ms=39.826
+PREP_STAGE phase=noise call_ms=8.110
+LOAD_FRAME index=198 gap_ms=405.515
+TRANSITION_STATE resource_status=0 active=false paused=true current=res://scenes/game.tscn
+TRANSITION_METRICS loading_frames=199 spinner_advances=199 route_ms=7247.649 max_gap_ms=405.515
+PASS: the spinner advances across real cold Game loading work
+HUD_STAGE phase=BossBarHUD call_ms=1.818
+SETUP_FRAME index=1 gap_ms=76.413 game_stage=hud builder_stage=<none> hud_stage=BossBarHUD
+HUD_STAGE phase=EvacOverlay call_ms=0.943
+SETUP_FRAME index=2 gap_ms=77.012 game_stage=hud builder_stage=<none> hud_stage=EvacOverlay
+HUD_STAGE phase=DangerOverlay call_ms=0.146
+SETUP_FRAME index=3 gap_ms=45.753 game_stage=hud builder_stage=<none> hud_stage=DangerOverlay
+HUD_STAGE phase=ManageOverlay call_ms=0.101
+SETUP_FRAME index=4 gap_ms=47.250 game_stage=hud builder_stage=<none> hud_stage=ManageOverlay
+HUD_STAGE phase=GateOverlay call_ms=7.067
+SETUP_FRAME index=5 gap_ms=62.017 game_stage=hud builder_stage=<none> hud_stage=GateOverlay
+HUD_STAGE phase=TopLeft call_ms=37.924
+SETUP_FRAME index=6 gap_ms=95.982 game_stage=hud builder_stage=<none> hud_stage=TopLeft
+HUD_STAGE phase=BagUI call_ms=43.735
+SETUP_FRAME index=7 gap_ms=80.920 game_stage=hud builder_stage=<none> hud_stage=BagUI
+HUD_STAGE phase=ActiveAbilityHud_R call_ms=3.132
+SETUP_FRAME index=8 gap_ms=35.436 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_R
+HUD_STAGE phase=ActiveAbilityHud_Q call_ms=2.555
+SETUP_FRAME index=9 gap_ms=35.431 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_Q
+HUD_STAGE phase=ActiveAbilityHud_V call_ms=2.687
+SETUP_FRAME index=10 gap_ms=34.350 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_V
+HUD_STAGE phase=Toast call_ms=0.705
+SETUP_FRAME index=11 gap_ms=34.053 game_stage=hud builder_stage=<none> hud_stage=Toast
+HUD_STAGE phase=SetBreakpointNotifier call_ms=3.231
+SETUP_FRAME index=12 gap_ms=36.963 game_stage=hud builder_stage=<none> hud_stage=SetBreakpointNotifier
+HUD_STAGE phase=ManifestationPairNotifier call_ms=3.878
+SETUP_FRAME index=13 gap_ms=36.706 game_stage=hud builder_stage=<none> hud_stage=ManifestationPairNotifier
+HUD_STAGE phase=FlyVfx call_ms=0.542
+SETUP_FRAME index=14 gap_ms=34.545 game_stage=hud builder_stage=<none> hud_stage=FlyVfx
+HUD_STAGE phase=RunSheetHUD call_ms=14.119
+SETUP_FRAME index=15 gap_ms=53.418 game_stage=hud builder_stage=<none> hud_stage=RunSheetHUD
+HUD_STAGE phase=AugmentFlyVfx call_ms=0.344
+SETUP_FRAME index=16 gap_ms=33.293 game_stage=hud builder_stage=<none> hud_stage=AugmentFlyVfx
+SETUP_FRAME index=17 gap_ms=37.973 game_stage=hud builder_stage=<none> hud_stage=BossController
+SETUP_FRAME index=18 gap_ms=34.779 game_stage=hud builder_stage=<none> hud_stage=EvacOverlayController
+SETUP_FRAME index=19 gap_ms=35.183 game_stage=hud builder_stage=<none> hud_stage=GateOverlayController
+SETUP_FRAME index=20 gap_ms=35.264 game_stage=hud builder_stage=<none> hud_stage=TutorialTipController
+SETUP_FRAME index=21 gap_ms=44.598 game_stage=hud builder_stage=<none> hud_stage=ObjectiveController
+SETUP_FRAME index=22 gap_ms=32.786 game_stage=hud builder_stage=<none> hud_stage=GateChecklistController
+SETUP_FRAME index=23 gap_ms=32.703 game_stage=hud builder_stage=<none> hud_stage=ThreatController
+SETUP_FRAME index=24 gap_ms=32.538 game_stage=hud builder_stage=<none> hud_stage=ManifestationController
+SETUP_FRAME index=25 gap_ms=32.281 game_stage=hud builder_stage=<none> hud_stage=HealthController
+SETUP_FRAME index=26 gap_ms=33.675 game_stage=hud builder_stage=<none> hud_stage=BagController
+SETUP_FRAME index=27 gap_ms=44.073 game_stage=hud builder_stage=<none> hud_stage=TooltipController
+SETUP_FRAME index=28 gap_ms=33.344 game_stage=hud builder_stage=<none> hud_stage=AugmentTooltipController
+SETUP_FRAME index=29 gap_ms=31.763 game_stage=hud builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=30 gap_ms=33.826 game_stage=hud builder_stage=<none> hud_stage=ready
+DECAL_PREP index=0 call_ms=14.378
+SETUP_FRAME index=31 gap_ms=48.419 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=1 call_ms=9.908
+SETUP_FRAME index=32 gap_ms=43.295 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=2 call_ms=6.319
+SETUP_FRAME index=33 gap_ms=39.094 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=3 call_ms=8.058
+SETUP_FRAME index=34 gap_ms=41.188 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=4 call_ms=9.401
+SETUP_FRAME index=35 gap_ms=43.039 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=5 call_ms=6.819
+SETUP_FRAME index=36 gap_ms=39.975 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=6 call_ms=8.100
+SETUP_FRAME index=37 gap_ms=40.366 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=bootstrap call_ms=0.035
+SETUP_FRAME index=38 gap_ms=32.355 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_facility call_ms=0.162
+SETUP_FRAME index=39 gap_ms=33.136 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_admissions call_ms=0.049
+SETUP_FRAME index=40 gap_ms=32.330 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_courtyard call_ms=0.056
+SETUP_FRAME index=41 gap_ms=31.648 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_service call_ms=0.244
+SETUP_FRAME index=42 gap_ms=32.285 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_approach call_ms=0.089
+SETUP_FRAME index=43 gap_ms=32.741 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_landmarks call_ms=105.739
+SETUP_FRAME index=44 gap_ms=143.432 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.135
+SETUP_FRAME index=45 gap_ms=32.141 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.067
+SETUP_FRAME index=46 gap_ms=32.084 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.128
+SETUP_FRAME index=47 gap_ms=31.931 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.261
+SETUP_FRAME index=48 gap_ms=32.960 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.482
+SETUP_FRAME index=49 gap_ms=33.614 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=15.276
+SETUP_FRAME index=50 gap_ms=48.755 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.014
+SETUP_FRAME index=51 gap_ms=47.034 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=14.005
+SETUP_FRAME index=52 gap_ms=48.798 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.856
+SETUP_FRAME index=53 gap_ms=46.172 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.267
+SETUP_FRAME index=54 gap_ms=46.728 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.921
+SETUP_FRAME index=55 gap_ms=45.398 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.445
+SETUP_FRAME index=56 gap_ms=45.608 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.539
+SETUP_FRAME index=57 gap_ms=44.862 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.638
+SETUP_FRAME index=58 gap_ms=46.420 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=18.131
+SETUP_FRAME index=59 gap_ms=51.718 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=15.113
+SETUP_FRAME index=60 gap_ms=48.075 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.803
+SETUP_FRAME index=61 gap_ms=45.181 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.015
+SETUP_FRAME index=62 gap_ms=46.812 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.657
+SETUP_FRAME index=63 gap_ms=46.615 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.473
+SETUP_FRAME index=64 gap_ms=46.931 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.839
+SETUP_FRAME index=65 gap_ms=48.670 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=18.202
+SETUP_FRAME index=66 gap_ms=52.492 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=14.233
+SETUP_FRAME index=67 gap_ms=48.744 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.634
+SETUP_FRAME index=68 gap_ms=45.669 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=18.377
+SETUP_FRAME index=69 gap_ms=54.520 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=0.263
+SETUP_FRAME index=70 gap_ms=33.158 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.789
+SETUP_FRAME index=71 gap_ms=47.289 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=0.397
+SETUP_FRAME index=72 gap_ms=33.895 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=1.868
+SETUP_FRAME index=73 gap_ms=34.190 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=3.232
+SETUP_FRAME index=74 gap_ms=38.272 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=1.371
+SETUP_FRAME index=75 gap_ms=33.471 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=0.012
+SETUP_FRAME index=76 gap_ms=33.255 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_caches call_ms=2.188
+SETUP_FRAME index=77 gap_ms=45.174 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=ground_stamps call_ms=3.925
+SETUP_FRAME index=78 gap_ms=49.833 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=geometry call_ms=102.548
+SETUP_FRAME index=79 gap_ms=145.397 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=connections call_ms=13.262
+SETUP_FRAME index=80 gap_ms=50.049 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=tile_geometry call_ms=20.645
+SETUP_FRAME index=81 gap_ms=500.515 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=tile_geometry call_ms=154.084
+SETUP_FRAME index=82 gap_ms=201.534 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=manual_blocks call_ms=5.565
+SETUP_FRAME index=83 gap_ms=38.609 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=indoor_volumes call_ms=1.703
+SETUP_FRAME index=84 gap_ms=37.071 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=wardstones_gate call_ms=2.255
+SETUP_FRAME index=85 gap_ms=53.739 game_stage=authored_world builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=86 gap_ms=162.359 game_stage=authored_world builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=87 gap_ms=33.842 game_stage=authored_world builder_stage=<none> hud_stage=ready
+[Game] ready seg=1 race=human style=ranged seed=732113
+SETUP_FRAME index=88 gap_ms=471.395 game_stage=bindings builder_stage=<none> hud_stage=ready
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s1/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-05_3612_22328522_1
+SETUP_FRAME index=89 gap_ms=127.390 game_stage=ready builder_stage=<none> hud_stage=ready
+PASS: the responsive route reaches the actual Game scene
+PASS: the real destination completes its initial world setup
+PASS: the destination builds across animated frames with gameplay and input frozen
+PASS: ready gameplay releases only the temporary loading pause and input lock
+PASS: staged HUD retains its management, tooltip, gate, and tutorial bindings
+TRANSITION_SETUP_METRICS setup_frames=89 spinner_advances=89 total_ms=12483.780 max_gap_ms=500.515
+ERROR: FAIL: resource loading and initial world setup keep animation frame gaps below 300 ms
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/LoadingTransitionResponsivenessTest.gd:17)
+       [1] _run (res://tools/tests/LoadingTransitionResponsivenessTest.gd:112)
+TRANSITION_CASE_RESULT case=cold passed=6 failed=1
+LoadingTransitionResponsivenessTest: 6 passed, 1 failed
+ERROR: Resumed function '_tutorial_intro_sequence()' after await, but class instance is gone. At script: res://scenes/game.gd:520
+   at: resume (modules/gdscript/gdscript_function.cpp:323)
+TRANSITION_CASE warm_same_process
+[BalanceRecorder] restarted — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s1/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-05_3612_22328522_1/report.md
+PREP_STAGE phase=noise call_ms=0.007
+TRANSITION_STATE resource_status=0 active=false paused=true current=res://scenes/game.tscn
+TRANSITION_METRICS loading_frames=11 spinner_advances=11 route_ms=431.717 max_gap_ms=49.927
+PASS: the spinner advances across real cold Game loading work
+HUD_STAGE phase=BossBarHUD call_ms=1.086
+SETUP_FRAME index=1 gap_ms=49.554 game_stage=hud builder_stage=<none> hud_stage=BossBarHUD
+HUD_STAGE phase=EvacOverlay call_ms=0.881
+SETUP_FRAME index=2 gap_ms=60.524 game_stage=hud builder_stage=<none> hud_stage=EvacOverlay
+HUD_STAGE phase=DangerOverlay call_ms=0.143
+SETUP_FRAME index=3 gap_ms=47.149 game_stage=hud builder_stage=<none> hud_stage=DangerOverlay
+HUD_STAGE phase=ManageOverlay call_ms=0.109
+SETUP_FRAME index=4 gap_ms=46.327 game_stage=hud builder_stage=<none> hud_stage=ManageOverlay
+HUD_STAGE phase=GateOverlay call_ms=6.237
+SETUP_FRAME index=5 gap_ms=47.324 game_stage=hud builder_stage=<none> hud_stage=GateOverlay
+HUD_STAGE phase=TopLeft call_ms=28.775
+SETUP_FRAME index=6 gap_ms=71.165 game_stage=hud builder_stage=<none> hud_stage=TopLeft
+HUD_STAGE phase=BagUI call_ms=44.259
+SETUP_FRAME index=7 gap_ms=79.436 game_stage=hud builder_stage=<none> hud_stage=BagUI
+HUD_STAGE phase=ActiveAbilityHud_R call_ms=2.542
+SETUP_FRAME index=8 gap_ms=34.862 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_R
+HUD_STAGE phase=ActiveAbilityHud_Q call_ms=2.607
+SETUP_FRAME index=9 gap_ms=34.440 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_Q
+HUD_STAGE phase=ActiveAbilityHud_V call_ms=2.443
+SETUP_FRAME index=10 gap_ms=34.517 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_V
+HUD_STAGE phase=Toast call_ms=0.316
+SETUP_FRAME index=11 gap_ms=32.947 game_stage=hud builder_stage=<none> hud_stage=Toast
+HUD_STAGE phase=SetBreakpointNotifier call_ms=1.180
+SETUP_FRAME index=12 gap_ms=34.357 game_stage=hud builder_stage=<none> hud_stage=SetBreakpointNotifier
+HUD_STAGE phase=ManifestationPairNotifier call_ms=1.297
+SETUP_FRAME index=13 gap_ms=33.547 game_stage=hud builder_stage=<none> hud_stage=ManifestationPairNotifier
+HUD_STAGE phase=FlyVfx call_ms=0.215
+SETUP_FRAME index=14 gap_ms=32.022 game_stage=hud builder_stage=<none> hud_stage=FlyVfx
+HUD_STAGE phase=RunSheetHUD call_ms=9.001
+SETUP_FRAME index=15 gap_ms=44.005 game_stage=hud builder_stage=<none> hud_stage=RunSheetHUD
+HUD_STAGE phase=AugmentFlyVfx call_ms=0.195
+SETUP_FRAME index=16 gap_ms=32.080 game_stage=hud builder_stage=<none> hud_stage=AugmentFlyVfx
+SETUP_FRAME index=17 gap_ms=32.291 game_stage=hud builder_stage=<none> hud_stage=BossController
+SETUP_FRAME index=18 gap_ms=31.959 game_stage=hud builder_stage=<none> hud_stage=EvacOverlayController
+SETUP_FRAME index=19 gap_ms=32.309 game_stage=hud builder_stage=<none> hud_stage=GateOverlayController
+SETUP_FRAME index=20 gap_ms=32.543 game_stage=hud builder_stage=<none> hud_stage=TutorialTipController
+SETUP_FRAME index=21 gap_ms=31.152 game_stage=hud builder_stage=<none> hud_stage=ObjectiveController
+SETUP_FRAME index=22 gap_ms=33.041 game_stage=hud builder_stage=<none> hud_stage=GateChecklistController
+SETUP_FRAME index=23 gap_ms=32.293 game_stage=hud builder_stage=<none> hud_stage=ThreatController
+SETUP_FRAME index=24 gap_ms=33.129 game_stage=hud builder_stage=<none> hud_stage=ManifestationController
+SETUP_FRAME index=25 gap_ms=32.934 game_stage=hud builder_stage=<none> hud_stage=HealthController
+SETUP_FRAME index=26 gap_ms=31.398 game_stage=hud builder_stage=<none> hud_stage=BagController
+SETUP_FRAME index=27 gap_ms=35.436 game_stage=hud builder_stage=<none> hud_stage=TooltipController
+SETUP_FRAME index=28 gap_ms=33.512 game_stage=hud builder_stage=<none> hud_stage=AugmentTooltipController
+SETUP_FRAME index=29 gap_ms=32.194 game_stage=hud builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=30 gap_ms=32.078 game_stage=hud builder_stage=<none> hud_stage=ready
+DECAL_PREP index=0 call_ms=7.612
+SETUP_FRAME index=31 gap_ms=40.942 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=1 call_ms=6.987
+SETUP_FRAME index=32 gap_ms=40.105 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=2 call_ms=6.619
+SETUP_FRAME index=33 gap_ms=39.592 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=3 call_ms=6.252
+SETUP_FRAME index=34 gap_ms=39.048 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=4 call_ms=6.390
+SETUP_FRAME index=35 gap_ms=40.025 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=5 call_ms=7.631
+SETUP_FRAME index=36 gap_ms=41.769 game_stage=authored_world builder_stage=<none> hud_stage=ready
+DECAL_PREP index=6 call_ms=8.513
+SETUP_FRAME index=37 gap_ms=42.810 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=bootstrap call_ms=0.050
+SETUP_FRAME index=38 gap_ms=33.563 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_facility call_ms=0.174
+SETUP_FRAME index=39 gap_ms=33.160 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_admissions call_ms=0.061
+SETUP_FRAME index=40 gap_ms=32.542 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_courtyard call_ms=0.076
+SETUP_FRAME index=41 gap_ms=31.647 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_service call_ms=0.266
+SETUP_FRAME index=42 gap_ms=31.520 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_approach call_ms=0.132
+SETUP_FRAME index=43 gap_ms=31.047 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_landmarks call_ms=109.522
+SETUP_FRAME index=44 gap_ms=143.565 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.154
+SETUP_FRAME index=45 gap_ms=32.562 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.069
+SETUP_FRAME index=46 gap_ms=32.093 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.147
+SETUP_FRAME index=47 gap_ms=32.822 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.262
+SETUP_FRAME index=48 gap_ms=32.485 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_dressing call_ms=0.293
+SETUP_FRAME index=49 gap_ms=32.635 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.236
+SETUP_FRAME index=50 gap_ms=44.996 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.294
+SETUP_FRAME index=51 gap_ms=44.921 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.479
+SETUP_FRAME index=52 gap_ms=46.234 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.714
+SETUP_FRAME index=53 gap_ms=46.874 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.634
+SETUP_FRAME index=54 gap_ms=48.208 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.505
+SETUP_FRAME index=55 gap_ms=47.111 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.752
+SETUP_FRAME index=56 gap_ms=46.740 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.145
+SETUP_FRAME index=57 gap_ms=45.692 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.664
+SETUP_FRAME index=58 gap_ms=47.502 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=16.717
+SETUP_FRAME index=59 gap_ms=51.099 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.913
+SETUP_FRAME index=60 gap_ms=47.871 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.816
+SETUP_FRAME index=61 gap_ms=48.718 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.082
+SETUP_FRAME index=62 gap_ms=45.981 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.128
+SETUP_FRAME index=63 gap_ms=46.975 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.573
+SETUP_FRAME index=64 gap_ms=47.383 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.973
+SETUP_FRAME index=65 gap_ms=47.559 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.339
+SETUP_FRAME index=66 gap_ms=45.599 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.328
+SETUP_FRAME index=67 gap_ms=46.655 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=12.392
+SETUP_FRAME index=68 gap_ms=45.662 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=17.210
+SETUP_FRAME index=69 gap_ms=51.249 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=0.266
+SETUP_FRAME index=70 gap_ms=32.397 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=13.653
+SETUP_FRAME index=71 gap_ms=48.293 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=0.210
+SETUP_FRAME index=72 gap_ms=33.105 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=0.965
+SETUP_FRAME index=73 gap_ms=33.097 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=1.446
+SETUP_FRAME index=74 gap_ms=34.214 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=1.597
+SETUP_FRAME index=75 gap_ms=35.552 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=floor_detail call_ms=0.017
+SETUP_FRAME index=76 gap_ms=32.212 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=plan_caches call_ms=2.226
+SETUP_FRAME index=77 gap_ms=42.140 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=ground_stamps call_ms=1.618
+SETUP_FRAME index=78 gap_ms=33.965 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=geometry call_ms=66.696
+SETUP_FRAME index=79 gap_ms=122.541 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=connections call_ms=13.652
+SETUP_FRAME index=80 gap_ms=51.180 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=tile_geometry call_ms=13.109
+SETUP_FRAME index=81 gap_ms=47.515 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=tile_geometry call_ms=154.974
+SETUP_FRAME index=82 gap_ms=202.157 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=manual_blocks call_ms=3.426
+SETUP_FRAME index=83 gap_ms=35.592 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=indoor_volumes call_ms=0.852
+SETUP_FRAME index=84 gap_ms=34.623 game_stage=authored_world builder_stage=<none> hud_stage=ready
+LEVEL1_STAGE phase=wardstones_gate call_ms=0.501
+SETUP_FRAME index=85 gap_ms=35.103 game_stage=authored_world builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=86 gap_ms=46.102 game_stage=authored_world builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=87 gap_ms=34.110 game_stage=authored_world builder_stage=<none> hud_stage=ready
+[Game] ready seg=1 race=human style=ranged seed=732113
+SETUP_FRAME index=88 gap_ms=86.085 game_stage=bindings builder_stage=<none> hud_stage=ready
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s1/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-10_3612_27072453_2
+SETUP_FRAME index=89 gap_ms=42.583 game_stage=ready builder_stage=<none> hud_stage=ready
+PASS: the responsive route reaches the actual Game scene
+PASS: the real destination completes its initial world setup
+PASS: the destination builds across animated frames with gameplay and input frozen
+PASS: ready gameplay releases only the temporary loading pause and input lock
+PASS: staged HUD retains its management, tooltip, gate, and tutorial bindings
+TRANSITION_SETUP_METRICS setup_frames=89 spinner_advances=89 total_ms=4391.354 max_gap_ms=202.157
+PASS: resource loading and initial world setup keep animation frame gaps below 300 ms
+TRANSITION_CASE_RESULT case=warm_same_process passed=7 failed=0
+LoadingTransitionResponsivenessTest: 13 passed, 1 failed
+[BalanceRecorder] application_closed — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s1/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-10_3612_27072453_2/report.md

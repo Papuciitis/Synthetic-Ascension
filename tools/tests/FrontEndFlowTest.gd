@@ -33,10 +33,12 @@ func _run() -> void:
 
 	await _check_menu_items()
 	await _check_intents(sm)
+	await _check_development_restart(sm)
 	await _check_card_clicks(sm)
 	await _check_erase_asks(sm)
 	await _check_backdrop()
 	await _check_new_chronicle()
+	await _check_development_first_profile(sm)
 
 	for slot in range(1, 4):
 		sm.call("delete_slot", slot)
@@ -117,6 +119,79 @@ func _check_intents(sm: Node) -> void:
 	var script := load("res://ui/screens/SaveSelect.gd") as GDScript
 	_check(StringName(script.get("open_intent")) == &"browse", "the intent is read once and reset")
 	fresh.queue_free()
+	await process_frame
+
+
+func _menu_accept(button: Control) -> void:
+	button.grab_focus()
+	for pressed: bool in [true, false]:
+		var event := InputEventKey.new()
+		event.keycode = KEY_ENTER
+		event.physical_keycode = KEY_ENTER
+		event.pressed = pressed
+		root.push_input(event, true)
+		await process_frame
+		await process_frame
+
+
+func _check_development_restart(sm: Node) -> void:
+	# Startup has readable slots on disk but no in-memory current profile.
+	# A disabled menu entry left Development unreachable after every restart.
+	var global := root.get_node("Global")
+	global.set("debug_disable_autosave", true)
+	sm.set("current_save", null)
+	sm.set("current_slot", -1)
+	var menu := (load("res://ui/screens/MainMenu.tscn") as PackedScene).instantiate() as Control
+	root.add_child(menu)
+	await process_frame
+	var entry := menu.find_child("Development", true, false) as Button
+	_check(entry != null and not entry.disabled, "Development remains actionable on a restart with saved profiles")
+	if entry != null:
+		await _menu_accept(entry)
+	var screen := menu.find_child("CityDevelopmentScreen", true, false) as CanvasLayer
+	_check(screen != null and screen.visible, "Enter on Development opens its real panel from a cold menu")
+	_check(int(sm.get("current_slot")) == 3, "cold-menu Development selects the latest readable profile as Continue does")
+	var loaded: Resource = sm.get("current_save")
+	_check(loaded != null and not bool(loaded.get("attempt_active")), "opening Development leaves an inactive profile outside an attempt")
+	menu.queue_free()
+	await process_frame
+	sm.set("current_save", null)
+	sm.set("current_slot", -1)
+	global.set("debug_disable_autosave", false)
+
+
+func _check_development_first_profile(sm: Node) -> void:
+	for slot in range(1, 4):
+		sm.call("delete_slot", slot)
+	sm.set("current_save", null)
+	sm.set("current_slot", -1)
+	var menu := (load("res://ui/screens/MainMenu.tscn") as PackedScene).instantiate() as Control
+	root.add_child(menu)
+	current_scene = menu
+	await process_frame
+	var entry := menu.find_child("Development", true, false) as Button
+	await _menu_accept(entry)
+	var deadline := Time.get_ticks_msec() + 10000
+	while Time.get_ticks_msec() < deadline:
+		if current_scene != null and current_scene.scene_file_path == "res://ui/screens/SaveSelect.tscn":
+			break
+		await process_frame
+	var archives := current_scene as Control
+	var reached := archives != null and archives.scene_file_path == "res://ui/screens/SaveSelect.tscn"
+	_check(reached and StringName(archives.get("intent")) == &"development", "Development with no profiles opens its profile-selection route")
+	if reached:
+		await _menu_accept(archives.call("_card", 1) as Control)
+		var screen := archives.find_child("CityDevelopmentScreen", true, false) as CanvasLayer
+		_check(screen != null and screen.visible, "choosing a first profile opens Development without leaving the Archives")
+		var save: Resource = sm.get("current_save")
+		_check(save != null and not bool(save.get("attempt_active")), "creating a profile for Development does not start an attempt")
+		if screen != null:
+			screen.call("close")
+			await process_frame
+			_check(current_scene == archives and root.gui_get_focus_owner() == archives.call("_card", 1), "closing Development returns focus to the chosen profile")
+	if current_scene != null:
+		current_scene.queue_free()
+		current_scene = null
 	await process_frame
 
 

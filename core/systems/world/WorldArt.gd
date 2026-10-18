@@ -133,34 +133,70 @@ static func release_static_caches() -> void:
 ## 1024 px for a 320-384 px world repeat, so half resolution is still above
 ## 1:1 on screen.
 const _GROUND_ARRAY_LAYER_PX: int = 512
+const GROUND_ARRAY_CACHE_REVISION: int = 1
+const GROUND_ARRAY_CACHE_PATH := "res://assets/world/ground/baked/ground_materials.res"
 static var _ground_array: Texture2DArray = null
 
 
 ## Every ground texture as one Texture2DArray (layer = ground texture index),
-## for the ground splat shader. Built once from the imported textures; about
-## 100 ms the first time, so the chunk manager warms it on the segment build.
-static func ground_material_array() -> Texture2DArray:
+## for the ground splat shader. The committed derived array avoids native
+## GPU readback during first entry. The original builder remains available
+## for missing-cache fallback, rebaking and exact pixel verification.
+static func ground_material_array(prefer_baked: bool = true) -> Texture2DArray:
 	if _ground_array != null:
+		return _ground_array
+	if prefer_baked and prepare_baked_ground_materials():
 		return _ground_array
 	var images: Array[Image] = []
 	for index in _GROUND_TEX_PATHS.size():
-		var texture := ground_texture(index)
-		var image: Image = texture.get_image() if texture != null else null
-		if image == null or image.is_empty():
-			image = Image.create(_GROUND_ARRAY_LAYER_PX, _GROUND_ARRAY_LAYER_PX, false, Image.FORMAT_RGB8)
-			image.fill(Color(0.35, 0.35, 0.33))
-		else:
-			image = image.duplicate() as Image
-			if image.is_compressed():
-				image.decompress()
-			image.clear_mipmaps()
-			image.convert(Image.FORMAT_RGB8)
-			while image.get_width() >= _GROUND_ARRAY_LAYER_PX * 2 and image.get_height() >= _GROUND_ARRAY_LAYER_PX * 2:
-				image.shrink_x2()
-			if image.get_width() != _GROUND_ARRAY_LAYER_PX or image.get_height() != _GROUND_ARRAY_LAYER_PX:
-				image.resize(_GROUND_ARRAY_LAYER_PX, _GROUND_ARRAY_LAYER_PX, Image.INTERPOLATE_BILINEAR)
-		image.generate_mipmaps()
-		images.append(image)
+		images.append(prepare_ground_material_layer(index))
+	return cache_ground_material_layers(images)
+
+
+static func prepare_baked_ground_materials() -> bool:
+	if _ground_array != null:
+		return true
+	if not ResourceLoader.exists(GROUND_ARRAY_CACHE_PATH, "Texture2DArray"):
+		return false
+	var array := ResourceLoader.load(GROUND_ARRAY_CACHE_PATH, "Texture2DArray") as Texture2DArray
+	if array == null or array.get_layers() != _GROUND_TEX_PATHS.size() or array.get_width() != _GROUND_ARRAY_LAYER_PX or array.get_height() != _GROUND_ARRAY_LAYER_PX or array.get_format() != Image.FORMAT_RGB8:
+		return false
+	_ground_array = array
+	return true
+
+
+static func ground_material_array_is_cached() -> bool:
+	return _ground_array != null
+
+
+## The same layer preparation used by synchronous worlds, exposed as one
+## bounded unit so the transition can render between expensive first loads.
+static func prepare_ground_material_layer(index: int) -> Image:
+	var texture := ground_texture(index)
+	var image: Image = texture.get_image() if texture != null else null
+	if image == null or image.is_empty():
+		image = Image.create(_GROUND_ARRAY_LAYER_PX, _GROUND_ARRAY_LAYER_PX, false, Image.FORMAT_RGB8)
+		image.fill(Color(0.35, 0.35, 0.33))
+	else:
+		image = image.duplicate() as Image
+		if image.is_compressed():
+			image.decompress()
+		image.clear_mipmaps()
+		image.convert(Image.FORMAT_RGB8)
+		while image.get_width() >= _GROUND_ARRAY_LAYER_PX * 2 and image.get_height() >= _GROUND_ARRAY_LAYER_PX * 2:
+			image.shrink_x2()
+		if image.get_width() != _GROUND_ARRAY_LAYER_PX or image.get_height() != _GROUND_ARRAY_LAYER_PX:
+			image.resize(_GROUND_ARRAY_LAYER_PX, _GROUND_ARRAY_LAYER_PX, Image.INTERPOLATE_BILINEAR)
+	image.generate_mipmaps()
+	return image
+
+
+static func cache_ground_material_layers(images: Array[Image]) -> Texture2DArray:
+	# A superseding Game request may finish the same preparation first.
+	if _ground_array != null:
+		return _ground_array
+	if images.size() != _GROUND_TEX_PATHS.size():
+		return null
 	var array := Texture2DArray.new()
 	if array.create_from_images(images) != OK:
 		return null

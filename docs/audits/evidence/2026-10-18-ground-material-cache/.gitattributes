@@ -1,0 +1,4 @@
+# Preserve captured bytes, including native CRLF and original report breaks.
+* -text whitespace=trailing-space,space-before-tab,cr-at-eol
+*.log -whitespace
+report.md -whitespace

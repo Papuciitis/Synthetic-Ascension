@@ -1,0 +1,181 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics
+
+TRANSITION_CASE cold
+PREP_STAGE phase=ground_0 call_ms=26.800
+PREP_STAGE phase=ground_1 call_ms=25.983
+PREP_STAGE phase=ground_2 call_ms=0.029
+PREP_STAGE phase=ground_3 call_ms=0.028
+PREP_STAGE phase=ground_4 call_ms=0.046
+PREP_STAGE phase=ground_5 call_ms=24.754
+PREP_STAGE phase=ground_6 call_ms=21.177
+PREP_STAGE phase=ground_7 call_ms=0.043
+PREP_STAGE phase=ground_8 call_ms=23.640
+PREP_STAGE phase=ground_9 call_ms=26.134
+PREP_STAGE phase=ground_10 call_ms=24.107
+PREP_STAGE phase=ground_11 call_ms=24.248
+PREP_STAGE phase=ground_12 call_ms=27.411
+PREP_STAGE phase=baked_array call_ms=52.965
+PREP_STAGE phase=noise call_ms=9.984
+TRANSITION_STATE resource_status=0 active=false paused=true current=res://scenes/game.tscn
+TRANSITION_METRICS loading_frames=213 spinner_advances=213 route_ms=7373.488 max_gap_ms=111.972
+PASS: the spinner advances across real cold Game loading work
+HUD_STAGE phase=BossBarHUD call_ms=2.108
+SETUP_FRAME index=1 gap_ms=88.107 game_stage=hud builder_stage=<none> hud_stage=BossBarHUD
+HUD_STAGE phase=EvacOverlay call_ms=0.991
+SETUP_FRAME index=2 gap_ms=80.986 game_stage=hud builder_stage=<none> hud_stage=EvacOverlay
+HUD_STAGE phase=DangerOverlay call_ms=0.137
+SETUP_FRAME index=3 gap_ms=43.900 game_stage=hud builder_stage=<none> hud_stage=DangerOverlay
+HUD_STAGE phase=ManageOverlay call_ms=0.107
+SETUP_FRAME index=4 gap_ms=47.574 game_stage=hud builder_stage=<none> hud_stage=ManageOverlay
+HUD_STAGE phase=GateOverlay call_ms=8.157
+SETUP_FRAME index=5 gap_ms=61.999 game_stage=hud builder_stage=<none> hud_stage=GateOverlay
+HUD_STAGE phase=TopLeft call_ms=62.610
+SETUP_FRAME index=6 gap_ms=130.016 game_stage=hud builder_stage=<none> hud_stage=TopLeft
+HUD_STAGE phase=BagUI call_ms=72.868
+SETUP_FRAME index=7 gap_ms=111.327 game_stage=hud builder_stage=<none> hud_stage=BagUI
+HUD_STAGE phase=ActiveAbilityHud_R call_ms=3.029
+SETUP_FRAME index=8 gap_ms=35.963 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_R
+HUD_STAGE phase=ActiveAbilityHud_Q call_ms=2.557
+SETUP_FRAME index=9 gap_ms=34.070 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_Q
+HUD_STAGE phase=ActiveAbilityHud_V call_ms=2.871
+SETUP_FRAME index=10 gap_ms=35.296 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_V
+HUD_STAGE phase=Toast call_ms=0.391
+SETUP_FRAME index=11 gap_ms=32.764 game_stage=hud builder_stage=<none> hud_stage=Toast
+HUD_STAGE phase=SetBreakpointNotifier call_ms=2.024
+SETUP_FRAME index=12 gap_ms=35.605 game_stage=hud builder_stage=<none> hud_stage=SetBreakpointNotifier
+HUD_STAGE phase=ManifestationPairNotifier call_ms=2.017
+SETUP_FRAME index=13 gap_ms=34.436 game_stage=hud builder_stage=<none> hud_stage=ManifestationPairNotifier
+HUD_STAGE phase=FlyVfx call_ms=0.236
+SETUP_FRAME index=14 gap_ms=32.968 game_stage=hud builder_stage=<none> hud_stage=FlyVfx
+HUD_STAGE phase=RunSheetHUD call_ms=12.658
+SETUP_FRAME index=15 gap_ms=51.618 game_stage=hud builder_stage=<none> hud_stage=RunSheetHUD
+HUD_STAGE phase=AugmentFlyVfx call_ms=0.256
+SETUP_FRAME index=16 gap_ms=33.152 game_stage=hud builder_stage=<none> hud_stage=AugmentFlyVfx
+SETUP_FRAME index=17 gap_ms=32.166 game_stage=hud builder_stage=<none> hud_stage=BossController
+SETUP_FRAME index=18 gap_ms=32.611 game_stage=hud builder_stage=<none> hud_stage=EvacOverlayController
+SETUP_FRAME index=19 gap_ms=34.085 game_stage=hud builder_stage=<none> hud_stage=GateOverlayController
+SETUP_FRAME index=20 gap_ms=32.065 game_stage=hud builder_stage=<none> hud_stage=TutorialTipController
+SETUP_FRAME index=21 gap_ms=32.540 game_stage=hud builder_stage=<none> hud_stage=ObjectiveController
+SETUP_FRAME index=22 gap_ms=32.592 game_stage=hud builder_stage=<none> hud_stage=GateChecklistController
+SETUP_FRAME index=23 gap_ms=33.035 game_stage=hud builder_stage=<none> hud_stage=ThreatController
+SETUP_FRAME index=24 gap_ms=33.074 game_stage=hud builder_stage=<none> hud_stage=ManifestationController
+SETUP_FRAME index=25 gap_ms=32.650 game_stage=hud builder_stage=<none> hud_stage=HealthController
+SETUP_FRAME index=26 gap_ms=32.166 game_stage=hud builder_stage=<none> hud_stage=BagController
+SETUP_FRAME index=27 gap_ms=42.872 game_stage=hud builder_stage=<none> hud_stage=TooltipController
+SETUP_FRAME index=28 gap_ms=33.688 game_stage=hud builder_stage=<none> hud_stage=AugmentTooltipController
+SETUP_FRAME index=29 gap_ms=32.210 game_stage=hud builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=30 gap_ms=32.417 game_stage=hud builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=31 gap_ms=32.613 game_stage=authored_world builder_stage=<none> hud_stage=ready
+[Game] ready seg=2 race=human style=ranged seed=732113
+SETUP_FRAME index=32 gap_ms=87.403 game_stage=bindings builder_stage=<none> hud_stage=ready
+PROC_STAGE phase=plan call_ms=1.857
+SETUP_FRAME index=33 gap_ms=35.552 game_stage=procedural_world builder_stage=plan hud_stage=ready
+PROC_STAGE phase=center_chunk call_ms=56.419
+SETUP_FRAME index=34 gap_ms=89.238 game_stage=procedural_world builder_stage=center_chunk hud_stage=ready
+PROC_STAGE phase=primary_objective call_ms=40.203
+SETUP_FRAME index=35 gap_ms=81.973 game_stage=procedural_world builder_stage=primary_objective hud_stage=ready
+PROC_STAGE phase=wardstones call_ms=2.597
+SETUP_FRAME index=36 gap_ms=37.464 game_stage=procedural_world builder_stage=wardstones hud_stage=ready
+PROC_STAGE phase=exit_gate call_ms=0.250
+SETUP_FRAME index=37 gap_ms=32.541 game_stage=procedural_world builder_stage=exit_gate hud_stage=ready
+PROC_STAGE phase=events call_ms=0.252
+SETUP_FRAME index=38 gap_ms=33.129 game_stage=procedural_world builder_stage=events hud_stage=ready
+SETUP_FRAME index=39 gap_ms=54.135 game_stage=procedural_world builder_stage=events hud_stage=ready
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s2/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-50_29460_20089387_1
+SETUP_FRAME index=40 gap_ms=215.602 game_stage=ready builder_stage=events hud_stage=ready
+PASS: the responsive route reaches the actual Game scene
+PASS: the real destination completes its initial world setup
+PASS: the destination builds across animated frames with gameplay and input frozen
+PASS: ready gameplay releases only the temporary loading pause and input lock
+PASS: staged HUD retains its management, tooltip, gate, and tutorial bindings
+TRANSITION_SETUP_METRICS setup_frames=40 spinner_advances=40 total_ms=9431.386 max_gap_ms=215.602
+PASS: resource loading and initial world setup keep animation frame gaps below 300 ms
+TRANSITION_CASE_RESULT case=cold passed=7 failed=0
+LoadingTransitionResponsivenessTest: 7 passed, 0 failed
+ERROR: Resumed function '_tutorial_intro_sequence()' after await, but class instance is gone. At script: res://scenes/game.gd:520
+   at: resume (modules/gdscript/gdscript_function.cpp:323)
+TRANSITION_CASE warm_same_process
+[BalanceRecorder] restarted — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s2/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-50_29460_20089387_1/report.md
+PREP_STAGE phase=noise call_ms=0.006
+TRANSITION_STATE resource_status=0 active=false paused=true current=res://scenes/game.tscn
+TRANSITION_METRICS loading_frames=12 spinner_advances=12 route_ms=440.262 max_gap_ms=42.586
+PASS: the spinner advances across real cold Game loading work
+HUD_STAGE phase=BossBarHUD call_ms=1.025
+SETUP_FRAME index=1 gap_ms=48.712 game_stage=hud builder_stage=<none> hud_stage=BossBarHUD
+HUD_STAGE phase=EvacOverlay call_ms=0.457
+SETUP_FRAME index=2 gap_ms=53.009 game_stage=hud builder_stage=<none> hud_stage=EvacOverlay
+HUD_STAGE phase=DangerOverlay call_ms=0.134
+SETUP_FRAME index=3 gap_ms=440.374 game_stage=hud builder_stage=<none> hud_stage=DangerOverlay
+HUD_STAGE phase=ManageOverlay call_ms=0.102
+SETUP_FRAME index=4 gap_ms=41.188 game_stage=hud builder_stage=<none> hud_stage=ManageOverlay
+HUD_STAGE phase=GateOverlay call_ms=5.007
+SETUP_FRAME index=5 gap_ms=47.210 game_stage=hud builder_stage=<none> hud_stage=GateOverlay
+HUD_STAGE phase=TopLeft call_ms=30.281
+SETUP_FRAME index=6 gap_ms=71.469 game_stage=hud builder_stage=<none> hud_stage=TopLeft
+HUD_STAGE phase=BagUI call_ms=43.966
+SETUP_FRAME index=7 gap_ms=78.116 game_stage=hud builder_stage=<none> hud_stage=BagUI
+HUD_STAGE phase=ActiveAbilityHud_R call_ms=2.544
+SETUP_FRAME index=8 gap_ms=34.626 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_R
+HUD_STAGE phase=ActiveAbilityHud_Q call_ms=2.583
+SETUP_FRAME index=9 gap_ms=35.020 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_Q
+HUD_STAGE phase=ActiveAbilityHud_V call_ms=2.466
+SETUP_FRAME index=10 gap_ms=34.328 game_stage=hud builder_stage=<none> hud_stage=ActiveAbilityHud_V
+HUD_STAGE phase=Toast call_ms=0.329
+SETUP_FRAME index=11 gap_ms=31.766 game_stage=hud builder_stage=<none> hud_stage=Toast
+HUD_STAGE phase=SetBreakpointNotifier call_ms=1.117
+SETUP_FRAME index=12 gap_ms=33.693 game_stage=hud builder_stage=<none> hud_stage=SetBreakpointNotifier
+HUD_STAGE phase=ManifestationPairNotifier call_ms=1.271
+SETUP_FRAME index=13 gap_ms=32.931 game_stage=hud builder_stage=<none> hud_stage=ManifestationPairNotifier
+HUD_STAGE phase=FlyVfx call_ms=0.223
+SETUP_FRAME index=14 gap_ms=31.621 game_stage=hud builder_stage=<none> hud_stage=FlyVfx
+HUD_STAGE phase=RunSheetHUD call_ms=9.171
+SETUP_FRAME index=15 gap_ms=43.872 game_stage=hud builder_stage=<none> hud_stage=RunSheetHUD
+HUD_STAGE phase=AugmentFlyVfx call_ms=0.201
+SETUP_FRAME index=16 gap_ms=32.950 game_stage=hud builder_stage=<none> hud_stage=AugmentFlyVfx
+SETUP_FRAME index=17 gap_ms=32.951 game_stage=hud builder_stage=<none> hud_stage=BossController
+SETUP_FRAME index=18 gap_ms=33.056 game_stage=hud builder_stage=<none> hud_stage=EvacOverlayController
+SETUP_FRAME index=19 gap_ms=32.200 game_stage=hud builder_stage=<none> hud_stage=GateOverlayController
+SETUP_FRAME index=20 gap_ms=32.079 game_stage=hud builder_stage=<none> hud_stage=TutorialTipController
+SETUP_FRAME index=21 gap_ms=32.650 game_stage=hud builder_stage=<none> hud_stage=ObjectiveController
+SETUP_FRAME index=22 gap_ms=31.927 game_stage=hud builder_stage=<none> hud_stage=GateChecklistController
+SETUP_FRAME index=23 gap_ms=31.947 game_stage=hud builder_stage=<none> hud_stage=ThreatController
+SETUP_FRAME index=24 gap_ms=32.696 game_stage=hud builder_stage=<none> hud_stage=ManifestationController
+SETUP_FRAME index=25 gap_ms=31.889 game_stage=hud builder_stage=<none> hud_stage=HealthController
+SETUP_FRAME index=26 gap_ms=31.589 game_stage=hud builder_stage=<none> hud_stage=BagController
+SETUP_FRAME index=27 gap_ms=35.767 game_stage=hud builder_stage=<none> hud_stage=TooltipController
+SETUP_FRAME index=28 gap_ms=35.810 game_stage=hud builder_stage=<none> hud_stage=AugmentTooltipController
+SETUP_FRAME index=29 gap_ms=32.253 game_stage=hud builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=30 gap_ms=31.725 game_stage=hud builder_stage=<none> hud_stage=ready
+SETUP_FRAME index=31 gap_ms=32.657 game_stage=authored_world builder_stage=<none> hud_stage=ready
+[Game] ready seg=2 race=human style=ranged seed=732113
+SETUP_FRAME index=32 gap_ms=63.901 game_stage=bindings builder_stage=<none> hud_stage=ready
+PROC_STAGE phase=plan call_ms=1.609
+SETUP_FRAME index=33 gap_ms=34.110 game_stage=procedural_world builder_stage=plan hud_stage=ready
+PROC_STAGE phase=center_chunk call_ms=8.038
+SETUP_FRAME index=34 gap_ms=41.059 game_stage=procedural_world builder_stage=center_chunk hud_stage=ready
+PROC_STAGE phase=primary_objective call_ms=0.365
+SETUP_FRAME index=35 gap_ms=32.977 game_stage=procedural_world builder_stage=primary_objective hud_stage=ready
+PROC_STAGE phase=wardstones call_ms=0.368
+SETUP_FRAME index=36 gap_ms=32.586 game_stage=procedural_world builder_stage=wardstones hud_stage=ready
+PROC_STAGE phase=exit_gate call_ms=0.257
+SETUP_FRAME index=37 gap_ms=32.396 game_stage=procedural_world builder_stage=exit_gate hud_stage=ready
+PROC_STAGE phase=events call_ms=0.078
+SETUP_FRAME index=38 gap_ms=32.105 game_stage=procedural_world builder_stage=events hud_stage=ready
+SETUP_FRAME index=39 gap_ms=36.019 game_stage=procedural_world builder_stage=events hud_stage=ready
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s2/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-53_29460_23026084_2
+SETUP_FRAME index=40 gap_ms=45.155 game_stage=ready builder_stage=events hud_stage=ready
+PASS: the responsive route reaches the actual Game scene
+PASS: the real destination completes its initial world setup
+PASS: the destination builds across animated frames with gameplay and input frozen
+PASS: ready gameplay releases only the temporary loading pause and input lock
+PASS: staged HUD retains its management, tooltip, gate, and tutorial bindings
+TRANSITION_SETUP_METRICS setup_frames=40 spinner_advances=40 total_ms=2373.013 max_gap_ms=440.374
+ERROR: FAIL: resource loading and initial world setup keep animation frame gaps below 300 ms
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/LoadingTransitionResponsivenessTest.gd:17)
+       [1] _run (res://tools/tests/LoadingTransitionResponsivenessTest.gd:112)
+TRANSITION_CASE_RESULT case=warm_same_process passed=6 failed=1
+LoadingTransitionResponsivenessTest: 13 passed, 1 failed
+[BalanceRecorder] application_closed — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/2026-10-18-playtest-feedback/frontend/userdata/loading-native-final-baked-s2/Roaming/Godot/app_userdata/Synthetic Ascension/frontend_transition_captures/2026-10-18/2026-10-18_16-08-53_29460_23026084_2/report.md

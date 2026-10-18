@@ -6,6 +6,12 @@ extends Node
 #
 # Run: <godot> --headless --path . res://tools/tests/LoadingScrimTest.tscn
 
+class PendingDestination:
+	extends Node
+	var initial_world_ready := false
+	func is_transition_ready() -> bool:
+		return initial_world_ready
+
 class Driver:
 	extends Node
 
@@ -71,15 +77,33 @@ class Driver:
 		await get_tree().process_frame
 		_check(scrim.is_showing() and get_tree().current_scene == before, "the card gets a frame on screen before the scene changes")
 		var changed := false
-		for _i in range(8):
+		var change_deadline := Time.get_ticks_msec() + 10000
+		while Time.get_ticks_msec() < change_deadline:
 			await get_tree().process_frame
 			if get_tree().current_scene != before and get_tree().current_scene != null:
 				changed = true
+				break
+		for _i in range(LoadingScrim.HOLD_FRAMES + 2):
+			await get_tree().process_frame
 		_check(changed, "the scene changed after the card rendered")
 		_check(scrim._fading or not scrim.is_showing(), "the card starts lifting once the new scene has rendered")
 		# Headless frames are not paced, so wait by wall time, not frames.
 		await get_tree().create_timer(LoadingScrim.FADE_SECONDS + 0.4).timeout
 		_check(not scrim.is_showing(), "the card is gone after the fade")
+		var scene_before_setup := get_tree().current_scene
+		var pending := PendingDestination.new()
+		get_tree().root.add_child(pending)
+		scrim.show_for("SEGMENT 3", scene_before_setup)
+		get_tree().current_scene = pending
+		for _frame in range(LoadingScrim.HOLD_FRAMES + 3):
+			await get_tree().process_frame
+		_check(scrim.is_showing() and not scrim._fading, "the loading card stays opaque while the destination prepares its initial world")
+		pending.initial_world_ready = true
+		for _frame in range(LoadingScrim.HOLD_FRAMES + 2):
+			await get_tree().process_frame
+		_check(scrim._fading, "the loading card starts lifting only after the initial world reports ready")
+		get_tree().current_scene = scene_before_setup
+		pending.queue_free()
 		print("LoadingScrimTest: %d passed, %d failed" % [_passes, _failures])
 		get_tree().quit(1 if _failures > 0 else 0)
 

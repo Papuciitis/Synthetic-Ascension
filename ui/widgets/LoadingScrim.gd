@@ -1,9 +1,8 @@
 extends CanvasLayer
 class_name LoadingScrim
 ## Destination and explicit wait cue for scene changes. Global.goto_scene
-## lets the card render before the synchronous scene build, then the card
-## lifts itself after the new scene has rendered. The spinner advances while
-## frames are available; scene construction itself can block those frames.
+## loads resources across frames, then the card lifts after the destination
+## reports its initial world setup ready and has rendered.
 ## Reduced Motion retains the same loading label and a static gold mark.
 
 const FADE_SECONDS := 0.35
@@ -122,6 +121,11 @@ func is_showing() -> bool:
 	return visible
 
 
+func dismiss() -> void:
+	visible = false
+	set_process(false)
+
+
 func _process(delta: float) -> void:
 	if not visible:
 		set_process(false)
@@ -140,6 +144,9 @@ func _process(delta: float) -> void:
 	# Wait for the new scene to exist and render a couple of frames, so the
 	# card covers the build stall and the first uninitialised frames.
 	if tree.current_scene == null or tree.current_scene == _armed_scene:
+		return
+	if tree.current_scene.has_method("is_transition_ready") and not bool(tree.current_scene.call("is_transition_ready")):
+		_frames_after_change = 0
 		return
 	_frames_after_change += 1
 	if _frames_after_change >= HOLD_FRAMES:

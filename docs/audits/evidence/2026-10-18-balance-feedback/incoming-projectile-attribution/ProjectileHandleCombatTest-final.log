@@ -1,0 +1,28 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: managed projectile spawns for data-only target
+PASS: managed projectile damages data-only record
+PASS: managed projectile applies knockback to data-only record
+PASS: managed projectile schedules burn on data-only record
+PASS: non-piercing projectile retires after data-only hit
+PASS: piercing projectile spawns for mixed representations
+PASS: first piercing hit updates materialized record and mirror
+PASS: piercing projectile survives first handle hit
+PASS: piercing projectile next damages data-only handle
+PASS: piercing projectile retires after its final hit
+PASS: pending ledger is keyed by stable handle
+PASS: stale queued hit cannot damage slot replacement
+PASS: pierce sweep damages the first enemy on the segment
+PASS: pierce sweep also damages the second enemy crossed in the same step
+PASS: pierce budget exhausted inside one step retires the bullet
+PASS: a pierce-12 bullet hits all ten enemies crossed in one step (hit 10)
+PASS: the bullet survives with pierce budget to spare
+PASS: touching enemy A is hit exactly once (health 10.0)
+PASS: touching enemy B is hit exactly once (health 10.0)
+PASS: two hits spend two pierce, the pierce-3 bullet survives
+PASS: exactly two hits are queued for the touching pair (got 2)
+PASS: a render frame with no banked physics time advances at most one tick of credit (got 1.667 px)
+PASS: with the credit spent, bullets wait for physics (got 1.667 px)
+PASS: each physics tick releases exactly one tick of bullet time (got 3.333 px)
+PASS: a short render frame consumes only its own delta from the bank (got 4.167 px)
+ProjectileHandleCombatTest passes=25 failures=0

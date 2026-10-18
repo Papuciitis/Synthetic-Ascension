@@ -27,6 +27,15 @@ func frames(count: int = 3) -> void:
 	for _i in range(count):
 		await get_tree().process_frame
 
+func wait_scene(path: String) -> void:
+	var deadline := Time.get_ticks_msec() + 30000
+	while Time.get_ticks_msec() < deadline:
+		var scene := get_tree().current_scene
+		if scene != null and scene.scene_file_path == path and (not scene.has_method("is_transition_ready") or bool(scene.call("is_transition_ready"))):
+			await frames()
+			return
+		await frames(1)
+
 func cancel() -> void:
 	var key := InputEventKey.new()
 	key.keycode = KEY_ESCAPE
@@ -104,7 +113,7 @@ func _run() -> void:
 	Global.debug_player_god_mode = true
 	Global.balance_attempt_boundary.connect(func(reason: StringName) -> void: boundaries.append(reason))
 	Global.goto_game()
-	await frames(8)
+	await wait_scene(Global.PATH_GAME)
 	var game := get_tree().current_scene
 	check(game != null and game.scene_file_path == Global.PATH_GAME, "real Game loads")
 	if game == null:
@@ -259,7 +268,7 @@ func _run() -> void:
 	await frames()
 	(menu.get("_confirm") as Control).call("_on_confirm")
 	check(get_tree().paused, "world remains frozen through navigation loading frames")
-	await frames(10)
+	await wait_scene(Global.PATH_MAIN_MENU)
 	check(get_tree().current_scene.scene_file_path == Global.PATH_MAIN_MENU and not get_tree().paused, "Main Menu arrives without pause leakage")
 	var disk := ResourceLoader.load(SaveManager._slot_path(0), "", ResourceLoader.CACHE_MODE_IGNORE) as SaveData
 	check(disk != null and disk.attempt_resume_scene == Global.PATH_GAME and disk.attempt_checkpoint_pos == Vector2(100, 200) and disk.attempt_world_seed == seed and disk.attempt_deaths_this_segment == 2 and disk.attempt_followers == 37 and disk.attempt_congregation == 50, "Game exit durably saves current attempt and existing Wardstone")
@@ -268,11 +277,11 @@ func _run() -> void:
 	Global.apply_save(disk)
 	Global.debug_dev_mode = true
 	Global.goto_resume()
-	await frames(40)
+	await wait_scene(Global.PATH_GAME)
 	game = get_tree().current_scene
 	check(game.scene_file_path == Global.PATH_GAME and Global.attempt_checkpoint_pos == Vector2(100, 200), "Continue follows saved Game checkpoint semantics")
 	Global.goto_hub_shop()
-	await frames(25)
+	await wait_scene(Global.PATH_HUB_WORLD)
 	var hub := get_tree().current_scene
 	menu = hub.get_node_or_null("PauseMenu")
 	check(hub.scene_file_path == Global.PATH_HUB_WORLD and menu != null, "real HubWorld installs same pause flow")
@@ -293,13 +302,13 @@ func _run() -> void:
 	(menu.get("_menu_button") as Button).pressed.emit()
 	await frames()
 	(menu.get("_confirm") as Control).call("_on_confirm")
-	await frames(10)
+	await wait_scene(Global.PATH_MAIN_MENU)
 	disk = ResourceLoader.load(SaveManager._slot_path(0), "", ResourceLoader.CACHE_MODE_IGNORE) as SaveData
 	check(disk.attempt_resume_scene == Global.PATH_HUB_WORLD and disk.attempt_vendor_seed == 4242 and disk.attempt_vendor_refreshes == 2 and disk.attempt_pending_augment_pick and disk.attempt_pending_big_choice and disk.attempt_major_choice_offer_ids == ["doctrine_method_open_circuit"], "hub exit saves hub destination, vendor and pending reward unchanged")
 	SaveManager.current_save = disk
 	Global.apply_save(disk)
 	Global.goto_resume()
-	await frames(25)
+	await wait_scene(Global.PATH_HUB_WORLD)
 	check(get_tree().current_scene.scene_file_path == Global.PATH_HUB_WORLD and not get_tree().paused and Global.pending_big_choice, "Continue returns to hub without pause leakage")
 	finish()
 

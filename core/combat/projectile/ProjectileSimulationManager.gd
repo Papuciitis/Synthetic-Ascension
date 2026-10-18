@@ -92,6 +92,10 @@ var _enemy_halo_instance: MultiMeshInstance2D = null
 var _buffer_enemy_halo := PackedFloat32Array()
 var _enemy_halo_prev_count: int = 0
 var _sources: Array = []
+## Stable telemetry identity, independent of a firing actor's lifetime or
+## representation lease. The source Node still owns every gameplay rule.
+var _enemy_source_ids := PackedStringArray()
+const BALANCE_SOURCE_MEMBER_CAP := 16
 var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
 var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
 # Advancement-tree projectile behaviours (see HitProfileAdapter): the path
@@ -295,9 +299,9 @@ func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: floa
 	elif enemy_id == &"enemy_herald":
 		visual = Visual.ENEMY_VIOLET
 		color = Color(1.0, 0.70, 0.35, 1.0)
-	return _spawn(origin, direction.normalized() * speed, lifetime, speed * lifetime, 5.0, damage, Team.ENEMY, visual, source, 0.0, 0, false, 0, 0.0, 0.5, 0.0, 18.0, 4.0, color)
+	return _spawn(origin, direction.normalized() * speed, lifetime, speed * lifetime, 5.0, damage, Team.ENEMY, visual, source, 0.0, 0, false, 0, 0.0, 0.5, 0.0, 18.0, 4.0, color, PackedStringArray(), enemy_id)
 
-func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color, tags: PackedStringArray = PackedStringArray()) -> bool:
+func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color, tags: PackedStringArray = PackedStringArray(), enemy_source_id: StringName = &"") -> bool:
 	if _active_count >= capacity:
 		if capacity < SIM_CAPACITY_MAX:
 			capacity = mini(SIM_CAPACITY_MAX, capacity * 2)
@@ -334,6 +338,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_colors[index] = color
 		_identity_tiles[index] = _tile_for_tags(tags)
 		_sources[index] = source
+		_enemy_source_ids[index] = String(enemy_source_id)
 		_tags[index] = tags
 		_ids[index] = _next_id
 		_paths[index] = PackedVector2Array([origin])
@@ -369,6 +374,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_colors.append(color)
 		_identity_tiles.append(_tile_for_tags(tags))
 		_sources.append(source)
+		_enemy_source_ids.append(String(enemy_source_id))
 		_tags.append(tags)
 		_ids.append(_next_id)
 		_paths.append(PackedVector2Array([origin]))
@@ -585,7 +591,12 @@ func _add_projectile_to_ledger(index: int, ledger: HitLedger) -> void:
 	ledger.projectile_id = _ids[index]
 	ledger.direction = direction
 	ledger.projectile_crossed = _crossed[index]
-	ledger.contributions.append({"tags": _tags[index], "damage": _damage[index]})
+	var contribution := {"tags": _tags[index], "damage": _damage[index]}
+	# Only the recorder (or an explicit health observer) needs the incoming
+	# ancestry. Ordinary gameplay listeners such as Trauma do not allocate it.
+	if _teams[index] == Team.ENEMY and RunEvents.balance_health_changed.has_connections():
+		contribution["balance_source_id"] = _enemy_source_ids[index]
+	ledger.contributions.append(contribution)
 	ledger.add_resolved_hit(_damage[index], source, direction * _knockback[index], _crit[index] != 0, _burn_stacks[index], _burn_duration[index], _burn_tick[index], _damage[index] * _burn_mult[index])
 
 func _flush_hit_ledgers() -> void:
@@ -599,7 +610,45 @@ func _flush_hit_ledgers() -> void:
 		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("apply_hit_ledger"):
 			ledger.target.call("apply_hit_ledger", ledger)
 		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("take_damage"):
-			ledger.target.call("take_damage", ledger.total_raw_damage, ledger.source)
+			var context: Dictionary = {}
+			if ledger.target.has_method("take_damage_with_balance_context") and RunEvents.balance_health_changed.has_connections():
+				context = _balance_damage_context(ledger)
+			if context.is_empty():
+				ledger.target.call("take_damage", ledger.total_raw_damage, ledger.source)
+			else:
+				ledger.target.call("take_damage_with_balance_context", ledger.total_raw_damage, ledger.source, context)
+
+
+## A batch remains one damage operation. Alternate ancestry is honestly
+## mixed; the bounded member list never apportions its mitigated HP loss.
+func _balance_damage_context(ledger: HitLedger) -> Dictionary:
+	var members := PackedStringArray()
+	var first := ""
+	var mixed := false
+	var overflow := false
+	var recorded := false
+	for contribution: Dictionary in ledger.contributions:
+		recorded = recorded or contribution.has("balance_source_id")
+		var id := String(contribution.get("balance_source_id", ""))
+		if id.is_empty():
+			id = "unknown"
+		if first.is_empty():
+			first = id
+		elif id != first:
+			mixed = true
+		if not members.has(id):
+			if members.size() < BALANCE_SOURCE_MEMBER_CAP:
+				members.append(id)
+			else:
+				overflow = true
+				# An unavailable contributor must stay visible even when a
+				# heterogeneous batch already filled the bounded name list.
+				if id == "unknown":
+					members[BALANCE_SOURCE_MEMBER_CAP - 1] = id
+	if not recorded:
+		return {}
+	return {"source_id": "mixed" if mixed else first, "member_ids": members,
+		"members_overflow": overflow, "hit_count": ledger.hit_count}
 
 func _spawn_impact(world_position: Vector2) -> void:
 	if debug_disable_impacts:
@@ -656,6 +705,7 @@ func _remove(index: int, reason: StringName = &"consumed") -> void:
 		_colors[index] = _colors[last]
 		_identity_tiles[index] = _identity_tiles[last]
 		_sources[index] = _sources[last]
+		_enemy_source_ids[index] = _enemy_source_ids[last]
 		_tags[index] = _tags[last]
 		_ids[index] = _ids[last]
 		_paths[index] = _paths[last]
@@ -672,6 +722,7 @@ func _remove(index: int, reason: StringName = &"consumed") -> void:
 	# a realloc + copy storm at bullet-heaven churn rates. Only the released
 	# source reference is cleared so it cannot pin a freed node's Variant.
 	_sources[last] = null
+	_enemy_source_ids[last] = ""
 	_tags[last] = PackedStringArray()
 	_paths[last] = PackedVector2Array()
 	_active_count -= 1

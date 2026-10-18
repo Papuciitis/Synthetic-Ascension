@@ -1,0 +1,65 @@
+{
+  "recorder_revision": 3,
+  "balance_revision_unchanged": 2,
+  "native_results": [
+    {
+      "suite": "BalanceRecorderTest",
+      "passed": 36,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "balance-supplemental-green.log"
+    },
+    {
+      "suite": "BalanceHealthAccountingTest",
+      "passed": 34,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "BalanceHealthAccountingTest-final.log"
+    },
+    {
+      "suite": "BalanceRevisionTest",
+      "passed": 10,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "BalanceRevisionTest-final.log"
+    },
+    {
+      "suite": "BalanceLedgerTest",
+      "passed": 35,
+      "failed": 0,
+      "native_exit": 0,
+      "log": "BalanceLedgerTest-final.log"
+    }
+  ],
+  "expected_failures": [
+    {
+      "log": "balance-route-red.log",
+      "passed": 26,
+      "failed": 3,
+      "native_exit": 1
+    },
+    {
+      "log": "balance-boundary-red.log",
+      "passed": 29,
+      "failed": 5,
+      "native_exit": 1
+    },
+    {
+      "log": "balance-supplemental-red.log",
+      "passed": 35,
+      "failed": 1,
+      "native_exit": 1
+    }
+  ],
+  "profile_isolation": "All process-local APPDATA and LOCALAPPDATA point beneath the task evidence; no live saves used for execution.",
+  "review": "Independent review found the supplemental-resource identity mismatch; regression reproduced and correction passed.",
+  "final_source_hashes": {
+    "autoload\\BalanceRecorder.gd": "150bc1a9e0ac362ec63242f22ad9d32eb3feec44f10e116262f176e1c79fc7aa",
+    "core\\systems\\telemetry\\BalanceLedger.gd": "fb45eae03fc086691a9cc7dd63df269e63f19d214d3db8ea411089ec97a48cbb",
+    "core\\actors\\player\\player.gd": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+    "core\\combat\\projectile\\ProjectileSimulationManager.gd": "f6cff63d717adcde4a4253e42f011c19ab4b3f80a99bc37e4c0989b2c5b03281",
+    "tools\\tests\\BalanceRecorderTest.gd": "e721e326e3dc0ee6d58634e446b8b58e7ff77a00be025a01e2e1632c70c18ac5",
+    "tools\\tests\\EnemyProjectileAttributionTest.gd": "7f52ca550695d74b7197dca8cfe5023158f8d0f6b2e63757a9610997d1035367"
+  },
+  "integration_notes": "Route suites repeated with final projectile context adapter and late-Game guard. Incoming ancestry suite and its six-suite185check compatibility record are separate; do not add duplicate health assertions to a unique-suite total."
+}

@@ -3,37 +3,37 @@ extends Control
 # HUD is intentionally "thin": it binds player/inventory and delegates specialized
 # overlay behaviour (tutorial tips, gate arrow/popup) to dedicated controllers.
 
-@onready var top_left: PanelContainer = get_node_or_null("TopLeft") as PanelContainer
-@onready var fly_vfx: UiFlyVfx = get_node_or_null("FlyVfx") as UiFlyVfx
+var top_left: PanelContainer = null
+var fly_vfx: UiFlyVfx = null
 
 # Controllers (placed in HUD.tscn)
-@onready var bag_ctl: HudBagController = get_node_or_null("BagController") as HudBagController
-@onready var tip_ctl: HudTooltipController = get_node_or_null("TooltipController") as HudTooltipController
-@onready var gate_overlay_ctl: HudGateOverlayController = get_node_or_null("GateOverlayController") as HudGateOverlayController
-@onready var tutorial_tip_ctl: HudTutorialTipController = get_node_or_null("TutorialTipController") as HudTutorialTipController
+var bag_ctl: HudBagController = null
+var tip_ctl: HudTooltipController = null
+var gate_overlay_ctl: HudGateOverlayController = null
+var tutorial_tip_ctl: HudTutorialTipController = null
 
 # Ability HUDs (Conduit set ability in the middle)
-@onready var ability_hud_r: Node = get_node_or_null("ActiveAbilityHud_R")
+var ability_hud_r: Node = null
 
 # Augments panel
-@onready var aug_panel: Node = get_node_or_null("TopLeft/Margin/VBox/BodyRow/AugmentsPanel")
+var aug_panel: Node = null
 
 # HP
-@onready var hp_bar: ProgressBar = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar") as ProgressBar
-@onready var hp_value: Label = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPValue") as Label
-@onready var hp_percent: Label = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPPercent") as Label
+var hp_bar: ProgressBar = null
+var hp_value: Label = null
+var hp_percent: Label = null
 ## The bar's well and damage trail (behind the fill) and its rule, ticks and
 ## low warning (over it). See ui/widgets/hud/HudBarDecor.gd.
-@onready var hp_track: Control = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPTrack") as Control
-@onready var hp_frame: Control = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPFrame") as Control
-@onready var portrait_rect: TextureRect = get_node_or_null("TopLeft/Margin/VBox/TopRow/ProfilePic/Portrait") as TextureRect
+var hp_track: Control = null
+var hp_frame: Control = null
+var portrait_rect: TextureRect = null
 
 # Followers
-@onready var followers_label: Label = get_node_or_null("TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow/FollowersValue") as Label
-@onready var followers_pill: Control = get_node_or_null("TopLeft/Margin/VBox/Row2/FollowersPill") as Control
+var followers_label: Label = null
+var followers_pill: Control = null
 
 # Inventory bar instance
-@onready var inv_bar: InventoryBar = get_node_or_null("TopLeft/Margin/VBox/BodyRow/InventoryBar") as InventoryBar
+var inv_bar: InventoryBar = null
 
 @export var manage_toggle_action: StringName = &"bag_toggle"
 
@@ -50,7 +50,7 @@ extends Control
 ## augment choice or the developer console can all own the pause, and closing
 ## the bag must never resume a fight that one of those is holding.
 var _owns_pause: bool = false
-@onready var run_sheet: Control = get_node_or_null("RunSheetHUD") as Control
+var run_sheet: Control = null
 
 @export var augment_badge_scene: PackedScene
 
@@ -77,13 +77,56 @@ var _router: InventoryRouter = null
 var _bound_inv: Inventory = null
 var _bound_bag: BagInventory = null
 var _bound_player: Node = null
+var progressive_initialization := false
+var initial_world_ready := false
+var _entry_children: Array[Node] = []
+var _entry_order: Array[Node] = []
+var _initialization_stage: StringName = &"views"
 
 
 func _enter_tree() -> void:
 	_hook_run_events()
+	if progressive_initialization:
+		_entry_order.assign(get_children())
+		for child in _entry_order:
+			remove_child(child)
+			_entry_children.append(child)
 
 
 func _ready() -> void:
+	if progressive_initialization:
+		# Controllers can bind the complete view once its independent widgets
+		# have entered, while the destination still holds gameplay and input.
+		for child in _entry_children.duplicate():
+			if child is CanvasItem:
+				var started := Time.get_ticks_usec()
+				_initialization_stage = StringName(child.name)
+				_entry_children.erase(child)
+				add_child(child)
+				if OS.get_environment("FRONTEND_TRACE_READY") == "1":
+					print("HUD_STAGE phase=%s call_ms=%.3f" % [child.name, float(Time.get_ticks_usec() - started) / 1000.0])
+				if DisplayServer.get_name() != "headless":
+					await RenderingServer.frame_post_draw
+					if not is_inside_tree():
+						return
+				await get_tree().process_frame
+				if not is_inside_tree():
+					return
+	_bind_view_nodes()
+	if progressive_initialization:
+		while not _entry_children.is_empty():
+			var child := _entry_children.pop_front() as Node
+			_initialization_stage = StringName(child.name)
+			add_child(child)
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+		var next_index := 0
+		for child in _entry_order:
+			move_child(child, next_index)
+			next_index += 1
+		_entry_order.clear()
+		_bind_view_nodes()
 	add_to_group(&"pause_handoff_owner")
 	_router = get_node_or_null("/root/InvRouter") as InventoryRouter
 	if _router == null:
@@ -126,6 +169,29 @@ func _ready() -> void:
 
 	call_deferred("_cache_augment_slots")
 	set_process(true)
+	initial_world_ready = true
+	_initialization_stage = &"ready"
+
+
+func _bind_view_nodes() -> void:
+	top_left = get_node_or_null("TopLeft") as PanelContainer
+	fly_vfx = get_node_or_null("FlyVfx") as UiFlyVfx
+	bag_ctl = get_node_or_null("BagController") as HudBagController
+	tip_ctl = get_node_or_null("TooltipController") as HudTooltipController
+	gate_overlay_ctl = get_node_or_null("GateOverlayController") as HudGateOverlayController
+	tutorial_tip_ctl = get_node_or_null("TutorialTipController") as HudTutorialTipController
+	ability_hud_r = get_node_or_null("ActiveAbilityHud_R")
+	aug_panel = get_node_or_null("TopLeft/Margin/VBox/BodyRow/AugmentsPanel")
+	hp_bar = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar") as ProgressBar
+	hp_value = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPValue") as Label
+	hp_percent = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPPercent") as Label
+	hp_track = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPTrack") as Control
+	hp_frame = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPFrame") as Control
+	portrait_rect = get_node_or_null("TopLeft/Margin/VBox/TopRow/ProfilePic/Portrait") as TextureRect
+	followers_label = get_node_or_null("TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow/FollowersValue") as Label
+	followers_pill = get_node_or_null("TopLeft/Margin/VBox/Row2/FollowersPill") as Control
+	inv_bar = get_node_or_null("TopLeft/Margin/VBox/BodyRow/InventoryBar") as InventoryBar
+	run_sheet = get_node_or_null("RunSheetHUD") as Control
 
 
 func _hook_run_events() -> void:
@@ -642,6 +708,11 @@ func _apply_management_pause(is_open: bool) -> void:
 
 ## A scene change while the bag is open must not leave the tree paused.
 func _exit_tree() -> void:
+	for child in _entry_children:
+		if is_instance_valid(child) and child.get_parent() == null:
+			child.free()
+	_entry_children.clear()
+	_entry_order.clear()
 	if _owns_pause:
 		_owns_pause = false
 		var tree := get_tree()
