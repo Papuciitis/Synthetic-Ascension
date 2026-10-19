@@ -1,0 +1,24 @@
+{
+  "scene": "res://tools/tests/RectFacilityInteriorTest.tscn",
+  "pid": 46476,
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\house-shell-red-3f145eb3",
+  "native_exit": 1,
+  "timeout": false,
+  "diagnostics": [
+    "ERROR: Single-room fallback must not add an inner enclosing shell dir=(0, -1) cells=[(11, 3), (12, 3), (14, 3), (10, 4), (15, 4), (10, 5), (15, 5), (10, 6), (15, 6), (11, 7), (12, 7), (13, 7), (14, 7)]",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (12, 2)",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (13, 2)",
+    "ERROR: Single-room fallback must not add an inner enclosing shell dir=(1, 0) cells=[(11, 3), (12, 3), (13, 3), (14, 3), (10, 4), (15, 4), (10, 5), (10, 6), (15, 6), (11, 7), (12, 7), (13, 7), (14, 7)]",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (16, 4)",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (16, 5)",
+    "ERROR: Single-room fallback must not add an inner enclosing shell dir=(0, 1) cells=[(11, 3), (12, 3), (13, 3), (14, 3), (10, 4), (15, 4), (10, 5), (15, 5), (10, 6), (15, 6), (11, 7), (12, 7), (14, 7)]",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (14, 8)",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (13, 8)",
+    "ERROR: Single-room fallback must not add an inner enclosing shell dir=(-1, 0) cells=[(11, 3), (12, 3), (13, 3), (14, 3), (10, 4), (15, 4), (15, 5), (10, 6), (15, 6), (11, 7), (12, 7), (13, 7), (14, 7)]",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (9, 6)",
+    "ERROR: Fallback cover keeps the actual door and inner approach clear at (9, 5)"
+  ],
+  "summary": [
+    "RectFacilityInteriorTest: 146 passed, 12 failed"
+  ]
+}

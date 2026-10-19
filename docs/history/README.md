@@ -9,3 +9,12 @@ files, `PATCH_MANIFEST.sha256`, the `STATIC_VALIDATION_*.json` reports and
 (`git log --all -- <name>`) keeps them.
 
 Current direction: `docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md`.
+
+## Game conversation history
+
+[Chat archive](chat_archive/README.md) indexes the old Synthetic Ascension
+conversations supplied on 2026-10-16. It contains six partial excerpts, preserved
+source images, per-conversation coverage for all 30 chats, and a separately
+sourced repository chronology. Start with [the game history](chat_archive/HISTORY.md)
+for the concept, changed decisions, and topic guide. The import is incomplete;
+the coverage register distinguishes recovered excerpts from unread chats.

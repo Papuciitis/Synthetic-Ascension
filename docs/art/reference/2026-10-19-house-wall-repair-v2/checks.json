@@ -1,0 +1,140 @@
+{
+  "status": "Focused regression passed; corrected ordinary native route in progress",
+  "publication": "HOLD; no stage, commit or push",
+  "root_cause": "Small layouts unable to fit two rooms used an extra-inset single-room fallback. A boundary-wall pass enclosed that inset room in addition to the always-added parcel perimeter, leaving a redundant inner shell and one blocked lane inside the east door.",
+  "scope": "Only the fewer-than-two-rooms fallback changes. It uses the existing envelope and excludes fallback cover from threshold/exterior floor and inner door approaches.",
+  "red": {
+    "passed": 146,
+    "failed": 12,
+    "inner_wall_cells": 13,
+    "directions": 4,
+    "cover_on_both_door_cells": true
+  },
+  "green": {
+    "passed": 161,
+    "failed": 0,
+    "diagnostics": 0,
+    "larger_rooms": 4,
+    "larger_partition_cells": 80,
+    "larger_output_and_rng_identical": true,
+    "actual_facility_walls": [
+      684,
+      368
+    ],
+    "actual_facility_full_outputs_identical": true
+  },
+  "facility_source_drift": [
+    "core/systems/world/proc/RectFacilityCarver.gd"
+  ],
+  "facility_capture_limit": "Facility native-v2 and Donjon native-v1 predate the shared RectFacilityCarver edit. Full production output signatures for both captured RectFacility plans remain identical after the edit; do not claim their old source hashes match current source.",
+  "unchanged_irregular_proof": "../2026-10-19-house-wall-repair-v1",
+  "limits": [
+    "Corrected small fallback is one functional room; successful multi-room partitions are retained.",
+    "Native fixture uses scripted input/god mode and controlled outside combat.",
+    "Genuine CA Donjon enclosure/art gap remains separately reported by facility owner.",
+    "Generic duplicate IndoorVolume ownership follow-up remains intentionally deferred."
+  ],
+  "native": {
+    "exit": 0,
+    "diagnostics": [],
+    "failures": 0,
+    "save_writes": 0,
+    "frames": 147,
+    "fires": 61,
+    "hits": 60,
+    "deaths": 29,
+    "route": [
+      {
+        "equal": true,
+        "event": "streamed_reload",
+        "restored_visual_instances": 1216,
+        "unloaded_visual_instances": 0
+      },
+      {
+        "arrived": "(550.7385, 6815.999)",
+        "desired": "(536.0, 6810.0)",
+        "event": "walk",
+        "path_cells": 16,
+        "resolution_distance": 10.0,
+        "resolved": "(544.0, 6816.0)",
+        "strict_perimeter": true
+      },
+      {
+        "arrived": "(544.0001, 6247.105)",
+        "desired": "(536.0, 6232.0)",
+        "event": "walk",
+        "path_cells": 9,
+        "resolution_distance": 11.3137083053589,
+        "resolved": "(544.0, 6240.0)",
+        "strict_perimeter": true
+      },
+      {
+        "arrived": "(1112.898, 6240.001)",
+        "desired": "(1128.0, 6232.0)",
+        "event": "walk",
+        "path_cells": 9,
+        "resolution_distance": 11.3137083053589,
+        "resolved": "(1120.0, 6240.0)",
+        "strict_perimeter": true
+      },
+      {
+        "arrived": "(1120.0, 6808.851)",
+        "desired": "(1128.0, 6810.0)",
+        "event": "walk",
+        "path_cells": 9,
+        "resolution_distance": 10.0,
+        "resolved": "(1120.0, 6816.0)",
+        "strict_perimeter": true
+      },
+      {
+        "arrived": "(1177.231, 6496.658)",
+        "desired": "(1152.0, 6464.0)",
+        "event": "walk",
+        "path_cells": 6,
+        "resolution_distance": 45.2548332214355,
+        "resolved": "(1184.0, 6496.0)",
+        "strict_perimeter": true
+      },
+      {
+        "arrived": "(998.9873, 6496.001)",
+        "desired": "(992.0, 6464.0)",
+        "event": "walk",
+        "path_cells": 3,
+        "resolution_distance": 32.0,
+        "resolved": "(992.0, 6496.0)",
+        "strict_perimeter": false
+      },
+      {
+        "alpha": 0.0,
+        "event": "entered",
+        "inside_count": 1,
+        "security": 5
+      },
+      {
+        "arrived": "(1240.483, 6496.001)",
+        "desired": "(1216.0, 6464.0)",
+        "event": "walk",
+        "path_cells": 4,
+        "resolution_distance": 45.2548332214355,
+        "resolved": "(1248.0, 6496.0)",
+        "strict_perimeter": false
+      },
+      {
+        "alpha": 1.0,
+        "event": "exited",
+        "inside_count": 0
+      },
+      {
+        "arrived": "(1305.648, 6496.001)",
+        "desired": "(1326.0, 6464.0)",
+        "event": "walk",
+        "path_cells": 1,
+        "resolution_distance": 34.9284973144531,
+        "resolved": "(1312.0, 6496.0)",
+        "strict_perimeter": false
+      }
+    ],
+    "interior": "moving-reduced-211/interior.png"
+  },
+  "baseline_carver_sha256": "B7A2FA7845BFC00B303B260B021A0EB88B5750C1D97D5254DDD2388E3E3BF669"
+}

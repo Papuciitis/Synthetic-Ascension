@@ -1,0 +1,158 @@
+{
+	"appdata": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-upgrade-native-02-c69c35a3",
+	"camera_rotation": 0.0,
+	"camera_zoom": "(1.0, 1.0)",
+	"capture_scene": "res://.superpowers/sdd/2026-10-18-city-block/CityUpgradeCapture.tscn",
+	"captures": [
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "searchable-building-exterior-1280x720.png",
+			"metadata": {
+				"building_center": "(544.0, 18944.0)",
+				"building_id": 2098284276,
+				"doorway_world": "(576.0, 19168.0)",
+				"outward": "(0.0, 1.0)",
+				"secondary_objective_id": 445533616,
+				"size_cells": "(9, 6)"
+			},
+			"note": "Actual generated searchable parcel, roof outside state, real doorway approach; no authored replacement geometry",
+			"panel": "searchable-building-exterior",
+			"player_position": "(608.0, 19296.0)",
+			"proxy_published_instances": 0,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "searchable-building-exterior-960x540.png",
+			"metadata": {
+				"building_center": "(544.0, 18944.0)",
+				"building_id": 2098284276,
+				"doorway_world": "(576.0, 19168.0)",
+				"outward": "(0.0, 1.0)",
+				"secondary_objective_id": 445533616,
+				"size_cells": "(9, 6)"
+			},
+			"note": "Actual generated searchable parcel, roof outside state, real doorway approach; no authored replacement geometry",
+			"panel": "searchable-building-exterior",
+			"player_position": "(608.0, 19296.0)",
+			"proxy_published_instances": 0,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "behind-building-before-1280x720.png",
+			"metadata": {
+				"feet_mask_strength": 1.0,
+				"roof_alpha": 1.0,
+				"staged_behind_north_wall": true
+			},
+			"note": "Comparison control: new roof mask temporarily disabled, identical actual generated roof and player pose",
+			"panel": "behind-building-before",
+			"player_position": "(294.08, 18656.0)",
+			"proxy_published_instances": 0,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "behind-building-before-960x540.png",
+			"metadata": {
+				"feet_mask_strength": 1.0,
+				"roof_alpha": 1.0,
+				"staged_behind_north_wall": true
+			},
+			"note": "Comparison control: new roof mask temporarily disabled, identical actual generated roof and player pose",
+			"panel": "behind-building-before",
+			"player_position": "(294.08, 18656.0)",
+			"proxy_published_instances": 0,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "behind-building-shadow-1280x720.png",
+			"metadata": {
+				"feet_mask_strength": 1.0,
+				"roof_alpha": 1.0,
+				"staged_behind_north_wall": true
+			},
+			"note": "Production per-pixel roof silhouette; staged pose, not physical traversal evidence",
+			"panel": "behind-building-shadow",
+			"player_position": "(294.08, 18656.0)",
+			"proxy_published_instances": 0,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "behind-building-shadow-960x540.png",
+			"metadata": {
+				"feet_mask_strength": 1.0,
+				"roof_alpha": 1.0,
+				"staged_behind_north_wall": true
+			},
+			"note": "Production per-pixel roof silhouette; staged pose, not physical traversal evidence",
+			"panel": "behind-building-shadow",
+			"player_position": "(294.08, 18656.0)",
+			"proxy_published_instances": 0,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "searchable-building-interior-1280x720.png",
+			"metadata": {
+				"actual_local_encounter_nodes": 5,
+				"building_center": "(544.0, 18944.0)",
+				"building_id": 2098284276,
+				"doorway_world": "(576.0, 19168.0)",
+				"outward": "(0.0, 1.0)",
+				"roof_states": [
+					{
+						"alpha": 0.0,
+						"inside_count": 1
+					}
+				],
+				"secondary_objective_id": 445533616,
+				"size_cells": "(9, 6)"
+			},
+			"note": "Same actual parcel and camera center; production body_entered signal starts real local security and fades actual roof, then frozen; no human-played combat",
+			"panel": "searchable-building-interior",
+			"player_position": "(544.0, 18976.0)",
+			"proxy_published_instances": 5,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(724.0, 18944.0)",
+			"file": "searchable-building-interior-960x540.png",
+			"metadata": {
+				"actual_local_encounter_nodes": 5,
+				"building_center": "(544.0, 18944.0)",
+				"building_id": 2098284276,
+				"doorway_world": "(576.0, 19168.0)",
+				"outward": "(0.0, 1.0)",
+				"roof_states": [
+					{
+						"alpha": 0.0,
+						"inside_count": 1
+					}
+				],
+				"secondary_objective_id": 445533616,
+				"size_cells": "(9, 6)"
+			},
+			"note": "Same actual parcel and camera center; production body_entered signal starts real local security and fades actual roof, then frozen; no human-played combat",
+			"panel": "searchable-building-interior",
+			"player_position": "(544.0, 18976.0)",
+			"proxy_published_instances": 5,
+			"window": "(960, 540)"
+		}
+	],
+	"combat_flash": "off",
+	"failures": 0,
+	"localappdata": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-upgrade-native-02-c69c35a3",
+	"notes": [],
+	"presentation": "FROZEN CURRENT GAME; controlled camera/player placement in actual generated S2; not human-played",
+	"reduced_motion": true,
+	"save_directory": "user://tests/city_concept_capture_21436964/",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 2,
+	"viewport": "(1920, 1080)",
+	"world_seed": 16102026
+}

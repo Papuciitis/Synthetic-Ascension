@@ -1,0 +1,161 @@
+{
+  "review": "small",
+  "scene": "res://tools/dev/CityBlockPlayablePreview.tscn",
+  "engine": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64.exe",
+  "pid": 23636,
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\small-c1916df7",
+  "started_utc": "2026-10-18T21:22:03.7807987Z",
+  "ended_utc": "2026-10-18T21:24:01.9051073Z",
+  "native_exit": 0,
+  "timeout": false,
+  "source_hashes": [
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "sha256": "FE4668DEDBB198455020395B13E6C6F033FD372E6F3586CDDE20617B8E7EC2B3"
+    },
+    {
+      "path": "scenes/world/buildings/RoofOverlay.gd",
+      "sha256": "C7A2E60B11E74D518E34762FC6528CB0C6F7E56F38A30E6C6EF9EF85E5457CF0"
+    },
+    {
+      "path": "scenes/world/buildings/city_stone.gdshader",
+      "sha256": "42B77A9DDB0C6B112919D04CB31E81AB47707B4C32FD10B64FA23BCEF0700E2D"
+    },
+    {
+      "path": "scenes/world/buildings/city_paving.gdshader",
+      "sha256": "931A17F472A3CE71B1692E36AEAFF283C7A7E6A300F319C0A5D0C42B7C8F8031"
+    },
+    {
+      "path": "core/systems/world/proc/SiteParcelsImpl.gd",
+      "sha256": "515F4D6AFD9B125385C0065D0993987FC922ECDF4E67A9AB18170B65B06870A0"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "C9719F832EA24430D30FCFFC84252D016F51F650649115FFAA79DCF6020C9F96"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "sha256": "D60A3917B57D369CC3F807DE8004482B251CC3C516A944A20FEE1FDC09BD2D5D"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "sha256": "523520A9F61EC25D4223A80911577CC73BEA09A83CC7A37658493B487BB4CFAE"
+    },
+    {
+      "path": "tools/dev/CityBlockPlayablePreview.gd",
+      "sha256": "9BE93F541993B4155B7FE7447FC472A1B29EABC63D75BBB724D9B123EB68EF4B"
+    },
+    {
+      "path": "scenes/world/buildings/city_ground.gdshader",
+      "sha256": "BEB0347708CAA6A24EAAA4982EC853FADF196D319433152E319C3F23C5FFDA1C"
+    },
+    {
+      "path": "assets/world/ground/ground_cobble_01.png",
+      "sha256": "47F6EF64BAB73E0BD8ABEDCC61CDD5D3E3A807EEA7E6937844CC8576D5FC2C23"
+    },
+    {
+      "path": "assets/world/ground/ground_grass_01.png",
+      "sha256": "27553F2F93DCD67D712DAD138759E3EA46129576C7C3DEBCBEF9370A8E01DA29"
+    },
+    {
+      "path": "assets/world/ground/ground_dirt_01.png",
+      "sha256": "D932CEBF6FA8C15494E3BDDFC398BB7E1CFD6DBCD623EDBB27775645030DEB9C"
+    },
+    {
+      "path": "core/systems/world/WorldDepthStyle.gd",
+      "sha256": "9966A37D74AE76CF58B892CA55513597B6A78A6D1604A5C41053C48CC855187E"
+    },
+    {
+      "path": "assets/world/dressing/generated/olive_shrub.tres",
+      "sha256": "E94A4C1C99E0FA9B26453A34661A38C6F3DEAFC105DF28F3C3E2F5E143C7B6C6"
+    },
+    {
+      "path": "assets/world/dressing/generated/dressing_set_v2.png",
+      "sha256": "78DC5E917B3C0EAC0903BAA2A40816C84A90C069CCC8F405772CA9B7E5B5E9B3"
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+      "sha256": "1943044B44DE2C665D4973DFDF9AA0D3E01FA0F0033CE58FE3E6CEC6D8E774A2"
+    },
+    {
+      "path": "scenes/world/buildings/roof.gdshader",
+      "sha256": "AEC9E9FA7212438C9F5E0531C65425E3B0E0F6FE8F3F1DB9276B1944F4E439E8"
+    },
+    {
+      "path": "scenes/world/buildings/RoofOverlay.tscn",
+      "sha256": "010DD09276FA06E2B4F4BA83EA2E6869E3B9F862074981594EC0CA1A9C726B1D"
+    },
+    {
+      "path": "core/actors/player/PlayerVisualController.gd",
+      "sha256": "221C72B3BCD86DD1138C3F2FBA03122029AABBEF26F4F7BF5392EA46E263EC15"
+    },
+    {
+      "path": "core/actors/player/PlayerRoofOcclusion.gd",
+      "sha256": "529ECAA953D68413E1667C919992BD038577EF95720520EC03620D0403AE503B"
+    },
+    {
+      "path": "core/actors/player/player_roof_occlusion.gdshader",
+      "sha256": "2B84AB79A8D7F614CEE3F961BC41D3603EDA72378FF912D2E5E7D9E56F682B26"
+    },
+    {
+      "path": "ui/cursor/CursorManager.gd",
+      "sha256": "3DE9226926D57FF324023775B5F0EF0A2F237E8279631BF66EBAEFCA866B4303"
+    },
+    {
+      "path": "assets/world/city_block/civic_arcade.png",
+      "sha256": "ABB2099E8AAE36BBEC9216E2C77A3DA5EA9AE803BAA9F6C451FC3EE26729BACC"
+    },
+    {
+      "path": "assets/world/city_block/clay.png",
+      "sha256": "F636529852FE4D6D406010CCBD8B379FA18BB3A24B9D4EFA62D4988F902D4F60"
+    },
+    {
+      "path": "assets/world/city_block/domestic_awning.png",
+      "sha256": "748731830F51273DE851107FA5306ED012E4D1BEE85559336A5C66949009E42F"
+    },
+    {
+      "path": "assets/world/city_block/house_front.png",
+      "sha256": "075D87A3F85E26DF88D4641AF0E61B2A226723C8735C16FB03A1D62C723E5780"
+    },
+    {
+      "path": "assets/world/city_block/paving.png",
+      "sha256": "5E0DB453EC02930531475EB2E4873BDFE9C04FD1571FAABE65807D3F5FC03316"
+    },
+    {
+      "path": "assets/world/city_block/planted_corner.png",
+      "sha256": "E2330237491733D53A559AF7E0ADDFDECE37397649B4989FF7F9EAA64DBCB316"
+    },
+    {
+      "path": "assets/world/city_block/planted_stone_trough.png",
+      "sha256": "BF6C64823F115F571F868754B298D2DE5986C1DE8839838D86034919790A670B"
+    },
+    {
+      "path": "assets/world/city_block/pressure_plant.png",
+      "sha256": "A7D3EB0CBA45C42B68A67FCAB2771E91AD72C245F77EECB03FD881E392901D33"
+    },
+    {
+      "path": "assets/world/city_block/slate.png",
+      "sha256": "BB09A59686A36A1D33BAC41CA568A8C872E859FC78CDEA02D198840CB70E3247"
+    },
+    {
+      "path": "assets/world/city_block/street_setts.png",
+      "sha256": "2261EA102D04BF5FE714842F0209A9FA5540C373B3968FDBAC153B2B6D3E045F"
+    },
+    {
+      "path": "assets/world/city_block/temperate_tree.png",
+      "sha256": "C8A2DFE0B7CE901E2D92DB2A4B0E1E813F859D41A8EAEFDDBE287FED7F0357EF"
+    },
+    {
+      "path": "assets/world/city_block/wall_lantern.png",
+      "sha256": "D26858ACF4A7AEBE8B7566D9980C27DB4135C8C14136CE7FBCEB85A025206E4E"
+    },
+    {
+      "path": "assets/world/city_block/worn_setts.png",
+      "sha256": "2261EA102D04BF5FE714842F0209A9FA5540C373B3968FDBAC153B2B6D3E045F"
+    }
+  ],
+  "diagnostics": [],
+  "summary": [
+    "CityBlockPlayablePreview: review=small frames=150 fires=61 hits=61 deaths=28 save_writes=0 failures=0"
+  ]
+}

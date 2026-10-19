@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ddqww62eanq8o"]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
-[ext_resource type="Texture2D" path="res://assets/textures/items/curses/curse_slow_heart.png" id="90_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2_itemdata"]
 [ext_resource type="PackedScene" path="res://effects/items/scenes/SlowHeartCurse.tscn" id="3_eff"]
+[ext_resource type="Texture2D" uid="uid://hnvsqkkvgdwf" path="res://assets/textures/items/curses/curse_slow_heart.png" id="90_icon"]
 
 [sub_resource type="Resource" id="mods"]
 script = ExtResource("1_sd")
@@ -25,9 +25,8 @@ description = "It still beats. It has opinions about urgency.
 • Takes nothing while you heal slowly. Ruins you if you heal in bursts."
 mods = SubResource("mods")
 rarity_base = SubResource("rarity_base")
-pct_min = -0.30
+pct_min = -0.3
 pct_max = 0.0
-duplicate_feed_value = 0.0
 scripted_value_weight = 18.0
 drop_weight = 0.3
 equip_slot = 0

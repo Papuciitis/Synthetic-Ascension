@@ -87,6 +87,10 @@ const PROP_Z := -6
 ## Blocker variant bit for walls that stand inside a building's roof
 ## (interior partitions): drawn at PROP_Z with the props.
 const VARIANT_UNDER_ROOF := 1
+const VARIANT_CITY_STONE := 2
+## Occupied parcel envelopes use complete wall pieces. Ruin rhythm's broken
+## sections and raised piers are not openings or duplicate building courses.
+const VARIANT_BUILDING_ENVELOPE := 4
 
 
 ## World offset of a quadrant fill's centre from its cell centre.
@@ -130,8 +134,8 @@ static func window_texture(mask: int) -> Texture2D:
 ## The piece for a wall cell at a GLOBAL cell: the mask's piece, or on a
 ## straight run a buttress or a collapsed section. Deterministic per cell, so
 ## streamed chunks and authored levels agree.
-static func wall_texture_at(kind: int, mask: int, global_cell: Vector2i) -> Texture2D:
-	if not three_quarter_walls or not wall_rhythm_enabled or kind != WorldBlockerGeometry.Kind.WALL:
+static func wall_texture_at(kind: int, mask: int, global_cell: Vector2i, variant: int = 0) -> Texture2D:
+	if not three_quarter_walls or not wall_rhythm_enabled or kind != WorldBlockerGeometry.Kind.WALL or (variant & VARIANT_BUILDING_ENVELOPE) != 0:
 		return wall_texture(kind, mask)
 	var horizontal := mask == (E | W)
 	if not horizontal and mask != (N | S):

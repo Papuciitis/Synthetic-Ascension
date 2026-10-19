@@ -1,0 +1,262 @@
+{
+  "schema_version": 2,
+  "batch": "middle",
+  "updated_at": "2026-10-16",
+  "status": "partial_sources_reconciled",
+  "assigned_conversation_count": 10,
+  "reviewed_conversation_count": 3,
+  "raw_page_count": 2,
+  "message_count": 29,
+  "worker_access": {
+    "source_reconciliation": "Read saved reader pages and root browser capture; no fresh browser session was used for this reconciliation.",
+    "historical_worker_limitation": "Earlier assigned worker could not use the reader or the root browser. This is superseded as a source-content count by the saved receipts below.",
+    "browser_review_performed": false
+  },
+  "comparison_document": "batches/current_context.md",
+  "target_audit": "batches/submitted_target_audit.json",
+  "entries": [
+    {
+      "conversation_id": "698f4308-37a8-838c-8b0f-8f053e3ad8bf",
+      "title": "Atzarojums · Atzarojums · Atzarojums · Roguelike Enemy Spawning System",
+      "url": "https://chatgpt.com/c/698f4308-37a8-838c-8b0f-8f053e3ad8bf",
+      "status": "partial_browser_tail_reviewed",
+      "browser_review_performed": true,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 10,
+      "digest": "conversations/698f4308-37a8-838c-8b0f-8f053e3ad8bf.md",
+      "digest_kind": "source_digest",
+      "supplied_message_ids": [
+        "0323a15b-da82-4fae-897c-30ad96d0ef96"
+      ],
+      "coverage_limitation": "Browser capture records endReached=true, beginningReached=false, and loading=true in its observed window. Relative indices do not prove continuity; final user code includes Show more/ellipsis UI text.",
+      "user_messages": 5,
+      "assistant_messages": 5,
+      "sources": [
+        "sources/698f4308-37a8-838c-8b0f-8f053e3ad8bf/browser-review.json"
+      ],
+      "captured_at_utc": "2026-10-15T22:42:49.357Z",
+      "original_message_dates_available": false,
+      "browser_capture_count": 1,
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "0323a15b-da82-4fae-897c-30ad96d0ef96"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "6998912d-2a74-8392-b903-6088e44d4de5",
+      "title": null,
+      "url": "https://chatgpt.com/c/6998912d-2a74-8392-b903-6088e44d4de5",
+      "status": "no_saved_chat_content",
+      "browser_review_performed": false,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 0,
+      "digest": "conversations/6998912d-2a74-8392-b903-6088e44d4de5.md",
+      "digest_kind": "gap_stub",
+      "supplied_message_ids": [
+        "026fb1ce-d7cd-4eb2-bf29-ebdd14893cff"
+      ],
+      "coverage_limitation": "No content-bearing saved reader page or browser message capture. Title, dates, decisions and implementation remain unknown; do not infer them from other chats or repository recaps.",
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "026fb1ce-d7cd-4eb2-bf29-ebdd14893cff"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "6998d6d5-7924-8396-8dd8-5b0da37bc30e",
+      "title": null,
+      "url": "https://chatgpt.com/c/6998d6d5-7924-8396-8dd8-5b0da37bc30e",
+      "status": "no_saved_chat_content",
+      "browser_review_performed": false,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 0,
+      "digest": "conversations/6998d6d5-7924-8396-8dd8-5b0da37bc30e.md",
+      "digest_kind": "gap_stub",
+      "supplied_message_ids": [
+        "c92417a5-3421-4e0f-84c4-37c33fc83f4e",
+        "96af5265-9903-42c7-b073-a2c89cd04c3a"
+      ],
+      "coverage_limitation": "No content-bearing saved reader page or browser message capture. Title, dates, decisions and implementation remain unknown; do not infer them from other chats or repository recaps.",
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "c92417a5-3421-4e0f-84c4-37c33fc83f4e",
+        "96af5265-9903-42c7-b073-a2c89cd04c3a"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "69999621-00d4-838d-89e6-fe16c8e18065",
+      "title": "Project Snapshot Summary",
+      "url": "https://chatgpt.com/c/69999621-00d4-838d-89e6-fe16c8e18065",
+      "status": "partial_reader_tail_reviewed",
+      "browser_review_performed": false,
+      "raw_pages_saved": 1,
+      "messages_reviewed": 10,
+      "digest": "conversations/69999621-00d4-838d-89e6-fe16c8e18065.md",
+      "digest_kind": "source_digest",
+      "supplied_message_ids": [
+        "a0b534e0-45b8-4a8a-bac8-22b7799aee3f"
+      ],
+      "coverage_limitation": "Five returned turns with hasMore=false and no cursor do not establish full original-chat coverage. Earlier context and original ZIP contents are absent.",
+      "user_messages": 5,
+      "assistant_messages": 5,
+      "sources": [
+        "sources/69999621-00d4-838d-89e6-fe16c8e18065/page-001.json"
+      ],
+      "turn_count": 5,
+      "source_created_at_utc": "2026-02-21T11:25:21.3920000+00:00",
+      "source_updated_at_utc": "2026-02-27T15:27:26.9800000+00:00",
+      "returned_started_at_utc": "2026-02-21T15:31:22.9780000+00:00",
+      "returned_completed_at_utc": "2026-02-22T23:25:02.8100000+00:00",
+      "preserved_images": [],
+      "zip_binaries_preserved": false,
+      "supplied_targets_found": [
+        "a0b534e0-45b8-4a8a-bac8-22b7799aee3f"
+      ],
+      "supplied_targets_absent": [],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "699b92a5-20b8-838e-aac5-943bb51dc741",
+      "title": "Procedural Cover System",
+      "url": "https://chatgpt.com/c/699b92a5-20b8-838e-aac5-943bb51dc741",
+      "status": "partial_reader_tail_reviewed",
+      "browser_review_performed": false,
+      "raw_pages_saved": 1,
+      "messages_reviewed": 9,
+      "digest": "conversations/699b92a5-20b8-838e-aac5-943bb51dc741.md",
+      "digest_kind": "source_digest",
+      "supplied_message_ids": [
+        "7a2405c8-61a2-4a68-bc1e-df77a268dc10"
+      ],
+      "coverage_limitation": "Five returned turns with hasMore=false and no cursor do not establish full original-chat coverage. Earlier context and original ZIP contents are absent.",
+      "user_messages": 5,
+      "assistant_messages": 4,
+      "sources": [
+        "sources/699b92a5-20b8-838e-aac5-943bb51dc741/page-001.json"
+      ],
+      "turn_count": 5,
+      "source_created_at_utc": "2026-02-22T23:36:07.2190000+00:00",
+      "source_updated_at_utc": "2026-03-04T22:48:45.3780000+00:00",
+      "returned_started_at_utc": "2026-02-23T11:56:53.5710000+00:00",
+      "returned_completed_at_utc": "2026-02-23T15:25:48.5590000+00:00",
+      "preserved_images": [
+        "sources/699b92a5-20b8-838e-aac5-943bb51dc741/ground_grass_01.png",
+        "sources/699b92a5-20b8-838e-aac5-943bb51dc741/fc083075-4a0a-4cd7-a526-92ba0f2de387.png"
+      ],
+      "zip_binaries_preserved": false,
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "7a2405c8-61a2-4a68-bc1e-df77a268dc10"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "699d2b99-1bcc-8386-a7d3-4a4236407a82",
+      "title": null,
+      "url": "https://chatgpt.com/c/699d2b99-1bcc-8386-a7d3-4a4236407a82",
+      "status": "no_saved_chat_content",
+      "browser_review_performed": false,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 0,
+      "digest": "conversations/699d2b99-1bcc-8386-a7d3-4a4236407a82.md",
+      "digest_kind": "gap_stub",
+      "supplied_message_ids": [
+        "fe7c87d5-56d6-4202-a176-54456aef8456"
+      ],
+      "coverage_limitation": "No content-bearing saved reader page or browser message capture. Title, dates, decisions and implementation remain unknown; do not infer them from other chats or repository recaps.",
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "fe7c87d5-56d6-4202-a176-54456aef8456"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "699d9082-3850-8388-a4e2-775bf19f8d7b",
+      "title": null,
+      "url": "https://chatgpt.com/c/699d9082-3850-8388-a4e2-775bf19f8d7b",
+      "status": "no_saved_chat_content",
+      "browser_review_performed": false,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 0,
+      "digest": "conversations/699d9082-3850-8388-a4e2-775bf19f8d7b.md",
+      "digest_kind": "gap_stub",
+      "supplied_message_ids": [
+        "1212ad74-a3cf-43ce-b0fa-4e340b746675"
+      ],
+      "coverage_limitation": "No content-bearing saved reader page or browser message capture. Title, dates, decisions and implementation remain unknown; do not infer them from other chats or repository recaps.",
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "1212ad74-a3cf-43ce-b0fa-4e340b746675"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "699dde56-10b0-838d-832c-55529d80a0d8",
+      "title": null,
+      "url": "https://chatgpt.com/c/699dde56-10b0-838d-832c-55529d80a0d8",
+      "status": "no_saved_chat_content",
+      "browser_review_performed": false,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 0,
+      "digest": "conversations/699dde56-10b0-838d-832c-55529d80a0d8.md",
+      "digest_kind": "gap_stub",
+      "supplied_message_ids": [
+        "d8b4cb83-e189-49bb-bba1-3f7de939d9dc"
+      ],
+      "coverage_limitation": "No content-bearing saved reader page or browser message capture. Title, dates, decisions and implementation remain unknown; do not infer them from other chats or repository recaps.",
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "d8b4cb83-e189-49bb-bba1-3f7de939d9dc"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "699e140c-e7c0-838a-a877-8a8162540538",
+      "title": null,
+      "url": "https://chatgpt.com/c/699e140c-e7c0-838a-a877-8a8162540538",
+      "status": "no_saved_chat_content",
+      "browser_review_performed": false,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 0,
+      "digest": "conversations/699e140c-e7c0-838a-a877-8a8162540538.md",
+      "digest_kind": "gap_stub",
+      "supplied_message_ids": [
+        "7c19b901-551e-4e6a-910a-e5c5354ab0ab"
+      ],
+      "coverage_limitation": "No content-bearing saved reader page or browser message capture. Title, dates, decisions and implementation remain unknown; do not infer them from other chats or repository recaps.",
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "7c19b901-551e-4e6a-910a-e5c5354ab0ab"
+      ],
+      "complete_original_conversation": false
+    },
+    {
+      "conversation_id": "699e25b9-5ecc-8384-9625-914cfaf5a53b",
+      "title": null,
+      "url": "https://chatgpt.com/c/699e25b9-5ecc-8384-9625-914cfaf5a53b",
+      "status": "no_saved_chat_content",
+      "browser_review_performed": false,
+      "raw_pages_saved": 0,
+      "messages_reviewed": 0,
+      "digest": "conversations/699e25b9-5ecc-8384-9625-914cfaf5a53b.md",
+      "digest_kind": "gap_stub",
+      "supplied_message_ids": [
+        "ee0f93bc-93a9-4bb4-9896-b253d4d346e1"
+      ],
+      "coverage_limitation": "No content-bearing saved reader page or browser message capture. Title, dates, decisions and implementation remain unknown; do not infer them from other chats or repository recaps.",
+      "supplied_targets_found": [],
+      "supplied_targets_absent": [
+        "ee0f93bc-93a9-4bb4-9896-b253d4d346e1"
+      ],
+      "complete_original_conversation": false
+    }
+  ],
+  "browser_capture_count": 1,
+  "user_message_count": 15,
+  "assistant_message_count": 14,
+  "unrecovered_conversation_count": 7,
+  "complete_conversation_count": 0,
+  "preserved_image_count": 2
+}

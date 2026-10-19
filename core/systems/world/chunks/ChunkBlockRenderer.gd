@@ -4,6 +4,7 @@ class_name ChunkBlockRenderer
 const VISUAL_SCALE := Vector2(0.0625, 0.0625)
 const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const MATERIALS := preload("res://core/systems/world/WorldDressingMaterials.gd")
+const CITY_STONE := preload("res://scenes/world/buildings/city_stone.gdshader")
 const SHADOW_OFFSET := DEPTH.SHADOW_DIRECTION * 8.0
 const SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
 ## Three-quarter walls cast a longer shadow away from the light (top right),
@@ -34,6 +35,13 @@ var _host: Node2D
 var _chunk_size := 2048
 var _cell_size := 64
 var _batches: Dictionary = {}
+var _city_material: ShaderMaterial
+
+func _city_stone_material() -> ShaderMaterial:
+	if _city_material == null:
+		_city_material = ShaderMaterial.new()
+		_city_material.shader = CITY_STONE
+	return _city_material
 
 
 func configure(host: Node2D, chunk_size: int, cell_size: int) -> void:
@@ -66,7 +74,7 @@ func add_chunk(data: ChunkBuildData) -> void:
 			rotation = ChunkBlockVisualCatalog.half_rotation(variant)
 		else:
 			var global_cell := data.coord * data.cells_per_side + cell
-			texture = ChunkBlockVisualCatalog.wall_texture_at(kind, data.mask_at(cell), global_cell)
+			texture = ChunkBlockVisualCatalog.wall_texture_at(kind, data.mask_at(cell), global_cell, data.variant_at(cell))
 		if texture == null:
 			continue
 		var key := _texture_key(texture)
@@ -76,7 +84,12 @@ func add_chunk(data: ChunkBuildData) -> void:
 		var z := ChunkBlockVisualCatalog.PROP_Z if kind == WorldBlockerGeometry.Kind.HALF_COVER or under_roof else ChunkBlockVisualCatalog.WALL_Z
 		if under_roof:
 			key += "#under_roof"
+		var city_stone := wall_like and (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_CITY_STONE) != 0
+		if city_stone:
+			key += "#city_stone"
 		var batch := _get_or_create_batch(key, texture, false, kit, z)
+		if city_stone and not batch.visual.material is ShaderMaterial:
+			batch.visual.material = _city_stone_material()
 		if not touched.has(key):
 			touched[key] = batch.transforms.size()
 		var world_center := chunk_origin + (Vector2(cell) + Vector2(0.5, 0.5)) * float(_cell_size)
@@ -135,9 +148,12 @@ func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vecto
 		if neighbour != WorldBlockerGeometry.Kind.WALL and neighbour != WorldBlockerGeometry.Kind.WINDOW:
 			continue
 		var texture: Texture2D = fill[2]
-		var key := _texture_key(texture) + ("#under_roof" if under_roof else "")
+		var city_stone := (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_CITY_STONE) != 0
+		var key := _texture_key(texture) + ("#under_roof" if under_roof else "") + ("#city_stone" if city_stone else "")
 		var fill_z := ChunkBlockVisualCatalog.PROP_Z if under_roof else ChunkBlockVisualCatalog.FILL_Z
 		var batch := _get_or_create_batch(key, texture, true, false, fill_z)
+		if city_stone:
+			batch.visual.material = _city_stone_material()
 		if not touched.has(key):
 			touched[key] = batch.transforms.size()
 		var at := world_center + ChunkBlockVisualCatalog.fill_offset(diagonal)

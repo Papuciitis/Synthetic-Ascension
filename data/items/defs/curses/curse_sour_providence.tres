@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://0hnf1cpr2ttk"]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
-[ext_resource type="Texture2D" path="res://assets/textures/items/curses/curse_sour_providence.png" id="90_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2_itemdata"]
 [ext_resource type="PackedScene" path="res://effects/items/scenes/SourProvidenceCurse.tscn" id="3_eff"]
+[ext_resource type="Texture2D" uid="uid://bg3itf6mk78cy" path="res://assets/textures/items/curses/curse_sour_providence.png" id="90_icon"]
 
 [sub_resource type="Resource" id="mods"]
 script = ExtResource("1_sd")
@@ -25,9 +25,8 @@ description = "The world keeps handing you the wrong end of things.
 • A poison to an ordinary run. A supply line to a curse build."
 mods = SubResource("mods")
 rarity_base = SubResource("rarity_base")
-pct_min = -0.30
+pct_min = -0.3
 pct_max = 0.0
-duplicate_feed_value = 0.0
 scripted_value_weight = 18.0
 drop_weight = 0.3
 equip_slot = 5

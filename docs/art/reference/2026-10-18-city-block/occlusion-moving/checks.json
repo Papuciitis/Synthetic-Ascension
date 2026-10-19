@@ -1,0 +1,66 @@
+{
+  "roof_mask": {
+    "scene": "res://tools/tests/PlayerRoofOcclusionTest.tscn",
+    "pid": 18268,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\roof-concave-green-4d178d71",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "PlayerRoofOcclusionTest: 11 passed, 0 failed"
+    ]
+  },
+  "parse": {
+    "scene": "res://tools/tests/ScriptParseAuditTest.tscn",
+    "pid": 17028,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-occlusion-parse-final-bfb33026",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "ScriptParseAuditTest: 542 passed, 0 failed (checked 542 scripts across 8 roots)"
+    ]
+  },
+  "animation": {
+    "passed": 163,
+    "failed": 0,
+    "native_exit": 0,
+    "expected_warning": "invalid-race fallback",
+    "log": ".superpowers/sdd/2026-10-18-city-block/character-animation-final-7f2649ea/engine.log"
+  },
+  "actor_depth": {
+    "scene": "res://tools/tests/ActorDepthShadowTest.tscn",
+    "pid": 24780,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actor-depth-final-3f1df09d",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "ActorDepthShadowTest passes=38 failures=0"
+    ]
+  },
+  "native_roof_capture": {
+    "scene": "res://.superpowers/sdd/2026-10-18-city-block/CityOcclusionCapture.tscn",
+    "pid": 20224,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\roof-occlusion-native-corrected-d88c67a5",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityBlockCapture: captures=8 failures=0 save_writes=0"
+    ]
+  },
+  "native_cursor_capture": {
+    "scene": "res://.superpowers/sdd/2026-10-18-city-block/CursorSizeCapture.tscn",
+    "pid": 28324,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\cursor-size-native-corrected-6b4c8c53",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityCursorCapture: captures=4 save_writes=0"
+    ]
+  },
+  "code_review": "No further concrete blocker after recessed-wing/courtyard correction",
+  "limitations": "Current rectilinear footprints; mask capped at32 nearby triangles; native capture is not a performance benchmark or human-motion comfort test"
+}

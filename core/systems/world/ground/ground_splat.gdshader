@@ -27,6 +27,10 @@ uniform sampler2D noise_tex : filter_linear, repeat_enable;
 uniform float map_size = 256.0;
 uniform float cell_px = 64.0;
 uniform float slot_layer[8];
+uniform float slot_index[8];
+uniform bool city_streetscape = false;
+uniform sampler2D city_setts : source_color, filter_linear_mipmap, repeat_enable;
+uniform sampler2D city_limestone : source_color, filter_linear_mipmap, repeat_enable;
 uniform float slot_repeat_px[8];
 uniform vec4 slot_tint[8];
 uniform vec4 overgrowth_a = vec4(0.0);
@@ -79,6 +83,23 @@ void fragment() {
 		float rep = slot_repeat_px[slot];
 		vec3 col = textureGrad(materials, vec3(world_pos / rep, slot_layer[slot]), ddx / rep, ddy / rep).rgb;
 		col *= slot_tint[slot].rgb;
+		if (city_streetscape) {
+			float index = slot_index[slot];
+			if (index == 4.0 || index == 7.0 || index == 8.0 || index == 9.0) {
+				vec3 setts = textureGrad(city_setts, world_pos / 272.0, ddx / 272.0, ddy / 272.0).rgb;
+				col = mix(vec3(0.49,0.52,0.51), setts * vec3(0.87,0.93,0.96), 0.30);
+				// Access corridors and road arms share one surface at junctions.
+				// Dirt retains its own real layers (1/5), not a raised-looking
+				// tinted patch every time two road stamps meet.
+			} else if (index == 2.0 || index == 3.0 || index == 6.0) {
+				vec3 limestone = textureGrad(city_limestone, world_pos / 384.0, ddx / 384.0, ddy / 384.0).rgb;
+				col = mix(vec3(0.57,0.59,0.55),limestone,0.40);
+			} else if (index == 0.0 || index >= 10.0) {
+				col = mix(vec3(0.31,0.37,0.28),col * vec3(1.12,1.16,1.05),0.48);
+			} else if (index == 1.0 || index == 5.0) {
+				col = mix(vec3(0.38,0.37,0.30),col,0.42);
+			}
+		}
 
 		vec4 light = texture(light_map, p / map_size);
 		col *= light.r * 2.0;

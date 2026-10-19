@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c53yrju6gaje6"]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
-[ext_resource type="Texture2D" path="res://assets/textures/items/rings/seven_mile_boots.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://c0c7ty230xr3v" path="res://assets/textures/items/rings/seven_mile_boots.png" id="2_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="3_itemdata"]
 [ext_resource type="PackedScene" path="res://effects/items/scenes/SevenMileBootsEffect.tscn" id="4_eff"]
 
@@ -20,7 +20,9 @@ script = ExtResource("3_itemdata")
 id = "seven_mile_boots"
 display_name = "7-Mile Boots (Hand-Me-Downs)"
 icon = ExtResource("2_icon")
-description = "Someone walked far in these.\n• Dashes reach further.\n• For a moment after, step back into the boot you left behind."
+description = "Someone walked far in these.
+• Dashes reach further.
+• For a moment after, step back into the boot you left behind."
 mods = SubResource("mods")
 rarity_base = SubResource("rarity_base")
 pct_min = 0.0

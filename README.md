@@ -44,6 +44,10 @@ Playtests follow `docs/2026-08-28-playtest-protocol.md`. Patch-era history
 (0.21–0.25.x) lives in `docs/history/` and the frozen `DEVELOPMENT_LOG.md`;
 the other root-level docs are era-labelled — trust their banners.
 
+Earlier game conversations and changed design decisions are indexed in
+[`docs/history/chat_archive/README.md`](docs/history/chat_archive/README.md).
+Its coverage register distinguishes recovered excerpts from chats still awaiting import.
+
 ## Layout
 
 - `autoload/` — persistent state (Global, SaveManager), schedulers, event buses

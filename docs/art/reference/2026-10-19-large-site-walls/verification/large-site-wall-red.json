@@ -1,0 +1,22 @@
+{
+  "scene": "res://tools/tests/SiteWallContinuityTest.tscn",
+  "pid": 51604,
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\large-site-wall-red-3a765520",
+  "native_exit": 1,
+  "timeout": false,
+  "diagnostics": [
+    "ERROR: streamed wall retains complete-plan connection arms across chunk seam: (3, 2)",
+    "ERROR: streamed site wall cells must equal complete plan; no trimmed jambs or boundary endpoints: (4, 2)",
+    "ERROR: streamed wall retains complete-plan connection arms across chunk seam: (4, 2)",
+    "ERROR: window classification survives site slicing",
+    "ERROR: streamed site wall cells must equal complete plan; no trimmed jambs or boundary endpoints: (5, 2)",
+    "ERROR: streamed wall retains complete-plan connection arms across chunk seam: (5, 2)",
+    "ERROR: streamed site wall cells must equal complete plan; no trimmed jambs or boundary endpoints: (8, 2)",
+    "ERROR: streamed wall retains complete-plan connection arms across chunk seam: (8, 2)",
+    "ERROR: streamed site wall cells must equal complete plan; no trimmed jambs or boundary endpoints: (9, 2)",
+    "ERROR: streamed wall retains complete-plan connection arms across chunk seam: (9, 2)"
+  ],
+  "summary": [
+    "SiteWallContinuityTest: 19225 passed, 588 failed; 2x1/1x2/2x2 sites, normal/reverse reload order"
+  ]
+}

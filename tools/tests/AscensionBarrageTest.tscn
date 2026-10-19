@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://bd2qqgxyvqrso"]
 
-[ext_resource type="Script" path="res://tools/tests/AscensionBarrageTest.gd" id="1"]
+[ext_resource type="Script" uid="uid://1133jq43qye3" path="res://tools/tests/AscensionBarrageTest.gd" id="1"]
 
-[node name="AscensionBarrageTest" type="Node"]
+[node name="AscensionBarrageTest" type="Node" unique_id=1061487837]
 script = ExtResource("1")

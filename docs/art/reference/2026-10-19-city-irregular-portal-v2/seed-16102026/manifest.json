@@ -1,0 +1,118 @@
+{
+	"ambient_spawner": false,
+	"captures": [
+		{
+			"camera_center": "(1184.0, 16744.0)",
+			"file": "frontage-irregular-1280x720.png",
+			"metadata": {
+				"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+				"chunk": "(0.0, 16384.0)",
+				"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+				"opening_face": "[P: (1152.0, 384.0), S: (128.0, 112.0)]",
+				"physical_input_traversal": true,
+				"portal_count": 1
+			},
+			"note": "Actual reviewed production building; frozen exterior",
+			"panel": "frontage-irregular",
+			"player_position": "(1184.0, 17444.0)",
+			"proxy_published_instances": 0,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(1184.0, 16744.0)",
+			"file": "frontage-irregular-960x540.png",
+			"metadata": {
+				"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+				"chunk": "(0.0, 16384.0)",
+				"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+				"opening_face": "[P: (1152.0, 384.0), S: (128.0, 112.0)]",
+				"physical_input_traversal": true,
+				"portal_count": 1
+			},
+			"note": "Actual reviewed production building; frozen exterior",
+			"panel": "frontage-irregular",
+			"player_position": "(1184.0, 17444.0)",
+			"proxy_published_instances": 0,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(1506.998, 16613.0)",
+			"file": "frontage-irregular-entered-1280x720.png",
+			"metadata": {
+				"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+				"chunk": "(0.0, 16384.0)",
+				"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+				"entry_alpha": 0.0,
+				"opening_face": "[P: (1152.0, 384.0), S: (128.0, 112.0)]",
+				"physical_input_traversal": true,
+				"portal_count": 1
+			},
+			"note": "Physical input/collision entry and actual Area2D roof cutaway",
+			"panel": "frontage-irregular-entered",
+			"player_position": "(1280.0, 16517.0)",
+			"proxy_published_instances": 0,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(1506.998, 16613.0)",
+			"file": "frontage-irregular-entered-960x540.png",
+			"metadata": {
+				"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+				"chunk": "(0.0, 16384.0)",
+				"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+				"entry_alpha": 0.0,
+				"opening_face": "[P: (1152.0, 384.0), S: (128.0, 112.0)]",
+				"physical_input_traversal": true,
+				"portal_count": 1
+			},
+			"note": "Physical input/collision entry and actual Area2D roof cutaway",
+			"panel": "frontage-irregular-entered",
+			"player_position": "(1280.0, 16517.0)",
+			"proxy_published_instances": 0,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(1233.182, 16601.18)",
+			"file": "frontage-irregular-restored-1280x720.png",
+			"metadata": {
+				"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+				"chunk": "(0.0, 16384.0)",
+				"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+				"entry_alpha": 0.0,
+				"exit_alpha": 0.0,
+				"opening_face": "[P: (1152.0, 384.0), S: (128.0, 112.0)]",
+				"physical_input_traversal": true,
+				"portal_count": 1
+			},
+			"note": "Physical input/collision exit and restored exterior",
+			"panel": "frontage-irregular-restored",
+			"player_position": "(1280.0, 16697.18)",
+			"proxy_published_instances": 0,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(1233.182, 16601.18)",
+			"file": "frontage-irregular-restored-960x540.png",
+			"metadata": {
+				"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+				"chunk": "(0.0, 16384.0)",
+				"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+				"entry_alpha": 0.0,
+				"exit_alpha": 0.0,
+				"opening_face": "[P: (1152.0, 384.0), S: (128.0, 112.0)]",
+				"physical_input_traversal": true,
+				"portal_count": 1
+			},
+			"note": "Physical input/collision exit and restored exterior",
+			"panel": "frontage-irregular-restored",
+			"player_position": "(1280.0, 16697.18)",
+			"proxy_published_instances": 0,
+			"window": "(960, 540)"
+		}
+	],
+	"failures": 2,
+	"player_god_mode": true,
+	"save_writes": 0,
+	"scripted_input": true,
+	"seed": 16102026
+}

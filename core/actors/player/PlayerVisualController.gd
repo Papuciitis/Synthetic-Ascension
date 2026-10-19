@@ -65,10 +65,12 @@ var _preview_facing: StringName = FACING_DOWN
 var _shadow_root: Node2D
 var _body_shadow: Sprite2D
 var _head_shadow: Sprite2D
+var _roof_occlusion: RefCounted = preload("res://core/actors/player/PlayerRoofOcclusion.gd").new()
 
 
 func _ready() -> void:
 	_create_cast_shadow()
+	_roof_occlusion.configure(body, head)
 	var parent := get_parent() as Node2D
 	if parent != null:
 		_stay_upright(parent)
@@ -92,6 +94,13 @@ func _process(_delta: float) -> void:
 		_update_facing(velocity)
 		state = State.RUN if velocity.length_squared() > MOVING_SPEED_SQ else State.IDLE
 	_apply()
+	refresh_roof_occlusion()
+
+
+func refresh_roof_occlusion() -> void:
+	# The player's visible silhouette fits in this conservative world-space
+	# window; individual roof triangles still clip every rendered pixel.
+	_roof_occlusion.update(self, global_position, Rect2(global_position - Vector2(80, 150), Vector2(160, 165)))
 
 
 ## The body rotates for the dash and slash logic; the art does not. Position

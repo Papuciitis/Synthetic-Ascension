@@ -1,0 +1,32 @@
+{
+  "source_hashes_match_current_files": true,
+  "runs": [
+    {
+      "directory": "small-final",
+      "review": "small",
+      "size": "(960, 540)",
+      "frames": 154,
+      "fires": 61,
+      "hits": 62,
+      "deaths": 29,
+      "initial_outside_population": 26,
+      "outside_frame_population_drop": 24,
+      "outside_frame_projectile_peak": 7,
+      "interior_fight_seconds": 1.1,
+      "outside_fight_simulation_seconds": 12.0000000000002,
+      "outside_fight_wall_seconds": 11.929589,
+      "process_frame_ms_median": 16.666,
+      "process_frame_ms_p95": 16.6666666666667,
+      "reduced_motion": false,
+      "combat_flashes": "full",
+      "save_writes": 0,
+      "native_exit": 0,
+      "failures": 0,
+      "diagnostics": [],
+      "walkthrough": "small-final/walkthrough.mp4",
+      "fight": "small-final/fight.mp4"
+    }
+  ],
+  "counter_limits": "Fires, hits and deaths count the entire walkthrough, including interior clearance. Outdoor-only projectile/population assertions use the outdoor phase's own frame samples; player attack evidence is also visible in its native footage.",
+  "performance_limits": "60 fps cap; native Intel UHD Compatibility renderer with viewport readback and scripted controls. These are visual review observations, not a benchmark or evidence of an improvement in full-run loading stalls."
+}

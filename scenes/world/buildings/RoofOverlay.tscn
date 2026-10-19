@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/world/buildings/RoofOverlay.gd" id="1_roof"]
 
-[node name="RoofOverlay" type="Node2D"]
+[node name="RoofOverlay" type="Node2D" groups=["roof_occluders"]]
 script = ExtResource("1_roof")
 
 [node name="RoofPoly" type="Polygon2D" parent="."]

@@ -1,0 +1,1436 @@
+{
+  "schema_version": 2,
+  "archive_date": "2026-10-16",
+  "submission": {
+    "links": 42,
+    "unique_conversations": 30,
+    "unique_conversation_message_targets": 34,
+    "inventory_path": "submitted_links.json",
+    "original_links_preserved": true
+  },
+  "retrieval": {
+    "complete_conversations": 0,
+    "partial_conversations": 11,
+    "unread_conversations": 19,
+    "reader_page_count": 10,
+    "returned_turns": 49,
+    "returned_reader_messages": 97,
+    "browser_capture_count": 2,
+    "captured_browser_messages": 26,
+    "unique_recovered_messages": 119,
+    "unique_user_messages": 60,
+    "unique_assistant_messages": 59,
+    "reader_recheck_count": 1,
+    "retrieval_failure_record_count": 14,
+    "source_message_limit": 20000,
+    "full_transcript_available": false,
+    "target_pairs_recovered": 4,
+    "target_pairs_missing": 30,
+    "target_audit_path": "batches/submitted_target_audit.json",
+    "metadata_listed_attachments": 13,
+    "preserved_attachment_files": 11,
+    "metadata_only_attachments": 2,
+    "counting_note": "Reader turns/messages count canonical page-*.json only. Browser counts include overlaps; unique messages use conversation/message UUID pairs. after-browser-read.json exactly repeats the original first-conversation turns and is listed as a recheck. Failure receipts contain no chat content. Attachment totals cover saved files and reader attachment metadata, not every historically referenced upload/download.",
+    "sign_in_status": "resolved_by_user; not an active blocker",
+    "blockers": [
+      "The reader exposes a recent tail (usually five turns) without a continuation cursor; hasMore=false does not establish complete coverage.",
+      "Rate limits and request timeouts interrupt further reader retrieval.",
+      "Signed-in browser access yielded two partial DOM captures; later browser/CDP operations stalled or timed out. Worker browser-unavailable receipts did not observe conversation content.",
+      "Browser fallback turn indices can renumber as older content loads; endpoint flags or an empty missing-index list do not certify continuity.",
+      "Original uploaded project files and historical generated download binaries are not recovered merely because their references or names appear in text."
+    ]
+  },
+  "conversations": [
+    {
+      "conversation_id": "6981b42f-a1ac-8388-9f6b-f4316054575c",
+      "batch": "early",
+      "title": "Game Development Tools",
+      "url": "https://chatgpt.com/c/6981b42f-a1ac-8388-9f6b-f4316054575c",
+      "status": "partial_excerpt",
+      "coverage_note": "Five-turn reader tail plus 16 browser messages observed at the beginning yield 22 distinct message UUIDs after four overlaps. The repeated after-browser reader response adds no content. Browser end was not reached and continuity of the combined windows is unproven.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 16,
+      "unique_recovered_message_count": 22,
+      "unique_user_message_count": 11,
+      "unique_assistant_message_count": 11,
+      "source_created_at": "2026-02-03T08:39:52.840Z",
+      "source_updated_at": "2026-02-03T17:04:09.327Z",
+      "source_paths": [
+        "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/browser-review.json",
+        "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/page-001.json"
+      ],
+      "reader_recheck_paths": [
+        "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/after-browser-read.json"
+      ],
+      "source_records": [
+        {
+          "path": "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/after-browser-read.json",
+          "kind": "duplicate_reader_recheck",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        },
+        {
+          "path": "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/browser-review.json",
+          "kind": "rendered_browser_snapshot",
+          "message_count": 16,
+          "captured_at": "2026-10-15T22:40:40.277Z",
+          "beginning_reached_reported": true,
+          "end_reached_reported": false,
+          "method": "Rendered DOM messages; long code blocks explicitly omitted",
+          "completeness": "not_established",
+          "identity_note": "Stable message UUIDs are used for deduplication. Fallback turn keys and relative indices cannot establish continuity."
+        },
+        {
+          "path": "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/6981b42f-a1ac-8388-9f6b-f4316054575c.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6981b42f-a1ac-8388-9f6b-f4316054575c",
+          "message_id": "bbb21f0e-601c-4894-ae7f-008c0a98675e",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/6981b42f-a1ac-8388-9f6b-f4316054575c?src=history_search&messageId=bbb21f0e-601c-4894-ae7f-008c0a98675e&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [
+        "bbb21f0e-601c-4894-ae7f-008c0a98675e"
+      ],
+      "target_message_ids_missing": []
+    },
+    {
+      "conversation_id": "69822a53-6a20-8385-9eb7-3f5393b473c2",
+      "batch": "early",
+      "title": "Godot Expertise Overview",
+      "url": "https://chatgpt.com/c/69822a53-6a20-8385-9eb7-3f5393b473c2",
+      "status": "partial_excerpt",
+      "coverage_note": "Partial source snapshot. Reported reader exhaustion or browser endpoint observations do not certify a full transcript; missing original messages must not be reconstructed from recaps.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": "2026-02-03T17:03:21.969Z",
+      "source_updated_at": "2026-02-04T05:01:44.763Z",
+      "source_paths": [
+        "sources/69822a53-6a20-8385-9eb7-3f5393b473c2/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/69822a53-6a20-8385-9eb7-3f5393b473c2/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/69822a53-6a20-8385-9eb7-3f5393b473c2.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69822a53-6a20-8385-9eb7-3f5393b473c2",
+          "message_id": "110120da-33e4-48f1-82d3-6d1f887bdd01",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/69822a53-6a20-8385-9eb7-3f5393b473c2?src=history_search&messageId=110120da-33e4-48f1-82d3-6d1f887bdd01&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "69822a53-6a20-8385-9eb7-3f5393b473c2",
+          "message_id": "110120da-33e4-48f1-82d3-6d1f887bdd01",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/69822a53-6a20-8385-9eb7-3f5393b473c2?src=history_search&messageId=110120da-33e4-48f1-82d3-6d1f887bdd01&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [
+        "110120da-33e4-48f1-82d3-6d1f887bdd01"
+      ],
+      "target_message_ids_missing": []
+    },
+    {
+      "conversation_id": "69826fce-5958-838b-91b1-44e7dfb4437c",
+      "batch": "early",
+      "title": "Godot Code Review",
+      "url": "https://chatgpt.com/c/69826fce-5958-838b-91b1-44e7dfb4437c",
+      "status": "partial_excerpt",
+      "coverage_note": "Partial source snapshot. Reported reader exhaustion or browser endpoint observations do not certify a full transcript; missing original messages must not be reconstructed from recaps.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": "2026-02-03T22:00:13.760Z",
+      "source_updated_at": "2026-02-05T15:20:58.072Z",
+      "source_paths": [
+        "sources/69826fce-5958-838b-91b1-44e7dfb4437c/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/69826fce-5958-838b-91b1-44e7dfb4437c/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [
+        {
+          "name": "a0418874-af7e-49d3-a9a9-54468eb60718.png",
+          "metadata_source_paths": [
+            "sources/69826fce-5958-838b-91b1-44e7dfb4437c/page-001.json"
+          ],
+          "preserved_path": "sources/69826fce-5958-838b-91b1-44e7dfb4437c/attachments/a0418874-af7e-49d3-a9a9-54468eb60718.png",
+          "status": "preserved"
+        }
+      ],
+      "digest_path": "conversations/69826fce-5958-838b-91b1-44e7dfb4437c.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69826fce-5958-838b-91b1-44e7dfb4437c",
+          "message_id": "bbb18d74-b2a5-4768-b2a8-92412293eb39",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/69826fce-5958-838b-91b1-44e7dfb4437c?src=history_search&messageId=bbb18d74-b2a5-4768-b2a8-92412293eb39&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "69826fce-5958-838b-91b1-44e7dfb4437c",
+          "message_id": "bbb18d74-b2a5-4768-b2a8-92412293eb39",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/69826fce-5958-838b-91b1-44e7dfb4437c?src=history_search&messageId=bbb18d74-b2a5-4768-b2a8-92412293eb39&historySearchQuery=synthetic"
+        },
+        {
+          "conversation_id": "69826fce-5958-838b-91b1-44e7dfb4437c",
+          "message_id": "bbb18d74-b2a5-4768-b2a8-92412293eb39",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/69826fce-5958-838b-91b1-44e7dfb4437c?src=history_search&messageId=bbb18d74-b2a5-4768-b2a8-92412293eb39&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "bbb18d74-b2a5-4768-b2a8-92412293eb39"
+      ]
+    },
+    {
+      "conversation_id": "69831bf7-b8ac-8385-8a8d-85f1d4c0603b",
+      "batch": "early",
+      "title": "Atzarojums · Godot Code Review",
+      "url": "https://chatgpt.com/c/69831bf7-b8ac-8385-8a8d-85f1d4c0603b",
+      "status": "partial_excerpt",
+      "coverage_note": "Partial source snapshot. Reported reader exhaustion or browser endpoint observations do not certify a full transcript; missing original messages must not be reconstructed from recaps.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": "2026-02-04T10:15:02.454Z",
+      "source_updated_at": "2026-02-05T13:58:28.899Z",
+      "source_paths": [
+        "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [
+        {
+          "name": "2f2c99b8-a7f3-4b93-9a04-da1ec9aa989a.png",
+          "metadata_source_paths": [
+            "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/page-001.json"
+          ],
+          "preserved_path": "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/attachments/2f2c99b8-a7f3-4b93-9a04-da1ec9aa989a.png",
+          "status": "preserved"
+        },
+        {
+          "name": "c869814f-de53-45a1-9c04-f28943144771.png",
+          "metadata_source_paths": [
+            "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/page-001.json"
+          ],
+          "preserved_path": "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/attachments/c869814f-de53-45a1-9c04-f28943144771.png",
+          "status": "preserved"
+        }
+      ],
+      "digest_path": "conversations/69831bf7-b8ac-8385-8a8d-85f1d4c0603b.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69831bf7-b8ac-8385-8a8d-85f1d4c0603b",
+          "message_id": "bbb18d74-b2a5-4768-b2a8-92412293eb39",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/69831bf7-b8ac-8385-8a8d-85f1d4c0603b?src=history_search&messageId=bbb18d74-b2a5-4768-b2a8-92412293eb39&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "69831bf7-b8ac-8385-8a8d-85f1d4c0603b",
+          "message_id": "4e6d073d-9e4d-4801-a914-4db61c8f183c",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/69831bf7-b8ac-8385-8a8d-85f1d4c0603b?src=history_search&messageId=4e6d073d-9e4d-4801-a914-4db61c8f183c&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "4e6d073d-9e4d-4801-a914-4db61c8f183c",
+        "bbb18d74-b2a5-4768-b2a8-92412293eb39"
+      ]
+    },
+    {
+      "conversation_id": "69835f0b-34e4-8397-be22-199a4d7287c1",
+      "batch": "early",
+      "title": "Atzarojums · Atzarojums · Godot Code Review",
+      "url": "https://chatgpt.com/c/69835f0b-34e4-8397-be22-199a4d7287c1",
+      "status": "partial_excerpt",
+      "coverage_note": "Partial source snapshot. Reported reader exhaustion or browser endpoint observations do not certify a full transcript; missing original messages must not be reconstructed from recaps.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": "2026-02-04T15:01:21.120Z",
+      "source_updated_at": "2026-02-04T20:54:42.457Z",
+      "source_paths": [
+        "sources/69835f0b-34e4-8397-be22-199a4d7287c1/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/69835f0b-34e4-8397-be22-199a4d7287c1/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/69835f0b-34e4-8397-be22-199a4d7287c1.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69835f0b-34e4-8397-be22-199a4d7287c1",
+          "message_id": "bbb18d74-b2a5-4768-b2a8-92412293eb39",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/69835f0b-34e4-8397-be22-199a4d7287c1?src=history_search&messageId=bbb18d74-b2a5-4768-b2a8-92412293eb39&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "69835f0b-34e4-8397-be22-199a4d7287c1",
+          "message_id": "6ee0cf56-6c84-41a5-a403-1fbe226e5fe6",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/69835f0b-34e4-8397-be22-199a4d7287c1?src=history_search&messageId=6ee0cf56-6c84-41a5-a403-1fbe226e5fe6&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "6ee0cf56-6c84-41a5-a403-1fbe226e5fe6",
+        "bbb18d74-b2a5-4768-b2a8-92412293eb39"
+      ]
+    },
+    {
+      "conversation_id": "69849acb-2570-8385-9d51-0f3beff761d2",
+      "batch": "early",
+      "title": "New chat",
+      "url": "https://chatgpt.com/c/69849acb-2570-8385-9d51-0f3beff761d2",
+      "status": "partial_excerpt",
+      "coverage_note": "Partial source snapshot. Reported reader exhaustion or browser endpoint observations do not certify a full transcript; missing original messages must not be reconstructed from recaps.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": "2026-02-05T13:28:54.350Z",
+      "source_updated_at": "2026-02-05T15:30:16.722Z",
+      "source_paths": [
+        "sources/69849acb-2570-8385-9d51-0f3beff761d2/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/69849acb-2570-8385-9d51-0f3beff761d2/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [
+        {
+          "name": "2efe6527-6691-4457-bad0-7deb2e512800.png",
+          "metadata_source_paths": [
+            "sources/69849acb-2570-8385-9d51-0f3beff761d2/page-001.json"
+          ],
+          "preserved_path": "sources/69849acb-2570-8385-9d51-0f3beff761d2/attachments/2efe6527-6691-4457-bad0-7deb2e512800.png",
+          "status": "preserved"
+        },
+        {
+          "name": "4e4ac7a4-4b46-4fce-a1cd-1fa06f5fe463.png",
+          "metadata_source_paths": [
+            "sources/69849acb-2570-8385-9d51-0f3beff761d2/page-001.json"
+          ],
+          "preserved_path": "sources/69849acb-2570-8385-9d51-0f3beff761d2/attachments/4e4ac7a4-4b46-4fce-a1cd-1fa06f5fe463.png",
+          "status": "preserved"
+        },
+        {
+          "name": "b977d5cc-58a7-4ea6-8bde-d2624eddd40e.png",
+          "metadata_source_paths": [
+            "sources/69849acb-2570-8385-9d51-0f3beff761d2/page-001.json"
+          ],
+          "preserved_path": "sources/69849acb-2570-8385-9d51-0f3beff761d2/attachments/b977d5cc-58a7-4ea6-8bde-d2624eddd40e.png",
+          "status": "preserved"
+        }
+      ],
+      "digest_path": "conversations/69849acb-2570-8385-9d51-0f3beff761d2.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69849acb-2570-8385-9d51-0f3beff761d2",
+          "message_id": "35e5fcbd-383e-4f78-b49c-d826c9c38d1b",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/69849acb-2570-8385-9d51-0f3beff761d2?src=history_search&messageId=35e5fcbd-383e-4f78-b49c-d826c9c38d1b&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "35e5fcbd-383e-4f78-b49c-d826c9c38d1b"
+      ]
+    },
+    {
+      "conversation_id": "6984a339-2680-8384-897f-90a4e43afa22",
+      "batch": "early",
+      "title": null,
+      "url": "https://chatgpt.com/c/6984a339-2680-8384-897f-90a4e43afa22",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/6984a339-2680-8384-897f-90a4e43afa22/fetch-error.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/6984a339-2680-8384-897f-90a4e43afa22.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6984a339-2680-8384-897f-90a4e43afa22",
+          "message_id": "9c35cba1-827c-4e42-a0f9-1bdf3d4d45d9",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/6984a339-2680-8384-897f-90a4e43afa22?src=history_search&messageId=9c35cba1-827c-4e42-a0f9-1bdf3d4d45d9&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "6984a339-2680-8384-897f-90a4e43afa22",
+          "message_id": "9c35cba1-827c-4e42-a0f9-1bdf3d4d45d9",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/6984a339-2680-8384-897f-90a4e43afa22?src=history_search&messageId=9c35cba1-827c-4e42-a0f9-1bdf3d4d45d9&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "9c35cba1-827c-4e42-a0f9-1bdf3d4d45d9"
+      ]
+    },
+    {
+      "conversation_id": "698c4e97-b728-8390-bc30-e6dd762fe5d0",
+      "batch": "early",
+      "title": "Roguelike Enemy Spawning System",
+      "url": "https://chatgpt.com/c/698c4e97-b728-8390-bc30-e6dd762fe5d0",
+      "status": "partial_excerpt",
+      "coverage_note": "Partial source snapshot. Reported reader exhaustion or browser endpoint observations do not certify a full transcript; missing original messages must not be reconstructed from recaps.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": "2026-02-11T09:41:24.790Z",
+      "source_updated_at": "2026-02-12T23:38:20.492Z",
+      "source_paths": [
+        "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [
+        "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/fetch-error.json"
+      ],
+      "attachments": [
+        {
+          "name": "15ef65f7-aad0-48c3-86db-75c627611988.png",
+          "metadata_source_paths": [
+            "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/page-001.json"
+          ],
+          "preserved_path": "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/attachments/15ef65f7-aad0-48c3-86db-75c627611988.png",
+          "status": "preserved"
+        }
+      ],
+      "digest_path": "conversations/698c4e97-b728-8390-bc30-e6dd762fe5d0.md",
+      "supplied_links": [
+        {
+          "conversation_id": "698c4e97-b728-8390-bc30-e6dd762fe5d0",
+          "message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/698c4e97-b728-8390-bc30-e6dd762fe5d0?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "698c4e97-b728-8390-bc30-e6dd762fe5d0",
+          "message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/698c4e97-b728-8390-bc30-e6dd762fe5d0?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic"
+        },
+        {
+          "conversation_id": "698c4e97-b728-8390-bc30-e6dd762fe5d0",
+          "message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/698c4e97-b728-8390-bc30-e6dd762fe5d0?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "0323a15b-da82-4fae-897c-30ad96d0ef96"
+      ]
+    },
+    {
+      "conversation_id": "698cd9bd-4f08-838f-a8ee-60858d1c2704",
+      "batch": "early",
+      "title": null,
+      "url": "https://chatgpt.com/c/698cd9bd-4f08-838f-a8ee-60858d1c2704",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/698cd9bd-4f08-838f-a8ee-60858d1c2704/fetch-error.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/698cd9bd-4f08-838f-a8ee-60858d1c2704.md",
+      "supplied_links": [
+        {
+          "conversation_id": "698cd9bd-4f08-838f-a8ee-60858d1c2704",
+          "message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/698cd9bd-4f08-838f-a8ee-60858d1c2704?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic+ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "0323a15b-da82-4fae-897c-30ad96d0ef96"
+      ]
+    },
+    {
+      "conversation_id": "698e4da9-a444-8389-b133-266a5e75d01e",
+      "batch": "early",
+      "title": null,
+      "url": "https://chatgpt.com/c/698e4da9-a444-8389-b133-266a5e75d01e",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/698e4da9-a444-8389-b133-266a5e75d01e/fetch-error.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/698e4da9-a444-8389-b133-266a5e75d01e.md",
+      "supplied_links": [
+        {
+          "conversation_id": "698e4da9-a444-8389-b133-266a5e75d01e",
+          "message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/698e4da9-a444-8389-b133-266a5e75d01e?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic+ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "0323a15b-da82-4fae-897c-30ad96d0ef96"
+      ]
+    },
+    {
+      "conversation_id": "698f4308-37a8-838c-8b0f-8f053e3ad8bf",
+      "batch": "middle",
+      "title": "Atzarojums · Atzarojums · Atzarojums · Roguelike Enemy Spawning System",
+      "url": "https://chatgpt.com/c/698f4308-37a8-838c-8b0f-8f053e3ad8bf",
+      "status": "partial_excerpt",
+      "coverage_note": "Ten rendered browser messages at the end were preserved; the beginning was not reached. Relative turn indices are snapshot-local and do not establish a full transcript. The supplied target is absent. The final user code is visibly collapsed with an ellipsis / Show more marker; its hidden continuation was not captured.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 10,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [
+        "sources/698f4308-37a8-838c-8b0f-8f053e3ad8bf/browser-review.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/698f4308-37a8-838c-8b0f-8f053e3ad8bf/browser-review.json",
+          "kind": "rendered_browser_snapshot",
+          "message_count": 10,
+          "captured_at": "2026-10-15T22:42:49.357Z",
+          "beginning_reached_reported": false,
+          "end_reached_reported": true,
+          "method": "DOM-rendered messages with explicitly recorded long code omissions",
+          "completeness": "not_established",
+          "identity_note": "Stable message UUIDs are used for deduplication. Fallback turn keys and relative indices cannot establish continuity."
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/698f4308-37a8-838c-8b0f-8f053e3ad8bf.md",
+      "supplied_links": [
+        {
+          "conversation_id": "698f4308-37a8-838c-8b0f-8f053e3ad8bf",
+          "message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/698f4308-37a8-838c-8b0f-8f053e3ad8bf?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic+ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "0323a15b-da82-4fae-897c-30ad96d0ef96"
+      ]
+    },
+    {
+      "conversation_id": "6998912d-2a74-8392-b903-6088e44d4de5",
+      "batch": "middle",
+      "title": null,
+      "url": "https://chatgpt.com/c/6998912d-2a74-8392-b903-6088e44d4de5",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/6998912d-2a74-8392-b903-6088e44d4de5.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6998912d-2a74-8392-b903-6088e44d4de5",
+          "message_id": "026fb1ce-d7cd-4eb2-bf29-ebdd14893cff",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/6998912d-2a74-8392-b903-6088e44d4de5?src=history_search&messageId=026fb1ce-d7cd-4eb2-bf29-ebdd14893cff&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "026fb1ce-d7cd-4eb2-bf29-ebdd14893cff"
+      ]
+    },
+    {
+      "conversation_id": "6998d6d5-7924-8396-8dd8-5b0da37bc30e",
+      "batch": "middle",
+      "title": null,
+      "url": "https://chatgpt.com/c/6998d6d5-7924-8396-8dd8-5b0da37bc30e",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/6998d6d5-7924-8396-8dd8-5b0da37bc30e.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6998d6d5-7924-8396-8dd8-5b0da37bc30e",
+          "message_id": "c92417a5-3421-4e0f-84c4-37c33fc83f4e",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/6998d6d5-7924-8396-8dd8-5b0da37bc30e?src=history_search&messageId=c92417a5-3421-4e0f-84c4-37c33fc83f4e&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "6998d6d5-7924-8396-8dd8-5b0da37bc30e",
+          "message_id": "96af5265-9903-42c7-b073-a2c89cd04c3a",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/6998d6d5-7924-8396-8dd8-5b0da37bc30e?src=history_search&messageId=96af5265-9903-42c7-b073-a2c89cd04c3a&historySearchQuery=synthetic"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "96af5265-9903-42c7-b073-a2c89cd04c3a",
+        "c92417a5-3421-4e0f-84c4-37c33fc83f4e"
+      ]
+    },
+    {
+      "conversation_id": "69999621-00d4-838d-89e6-fe16c8e18065",
+      "batch": "middle",
+      "title": "Project Snapshot Summary",
+      "url": "https://chatgpt.com/c/69999621-00d4-838d-89e6-fe16c8e18065",
+      "status": "partial_excerpt",
+      "coverage_note": "Partial source snapshot. Reported reader exhaustion or browser endpoint observations do not certify a full transcript; missing original messages must not be reconstructed from recaps.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 10,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 10,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 5,
+      "source_created_at": "2026-02-21T11:25:21.391Z",
+      "source_updated_at": "2026-02-27T15:27:26.979Z",
+      "source_paths": [
+        "sources/69999621-00d4-838d-89e6-fe16c8e18065/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/69999621-00d4-838d-89e6-fe16c8e18065/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 10,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/69999621-00d4-838d-89e6-fe16c8e18065.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69999621-00d4-838d-89e6-fe16c8e18065",
+          "message_id": "a0b534e0-45b8-4a8a-bac8-22b7799aee3f",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/69999621-00d4-838d-89e6-fe16c8e18065?src=history_search&messageId=a0b534e0-45b8-4a8a-bac8-22b7799aee3f&historySearchQuery=synthetic+ascension"
+        }
+      ],
+      "target_message_ids_recovered": [
+        "a0b534e0-45b8-4a8a-bac8-22b7799aee3f"
+      ],
+      "target_message_ids_missing": []
+    },
+    {
+      "conversation_id": "699b92a5-20b8-838e-aac5-943bb51dc741",
+      "batch": "middle",
+      "title": "Procedural Cover System",
+      "url": "https://chatgpt.com/c/699b92a5-20b8-838e-aac5-943bb51dc741",
+      "status": "partial_excerpt",
+      "coverage_note": "Five reader turns contain five user messages and four assistant replies. The reader supplies no cursor despite broader source metadata dates. Earlier content is missing. Both listed PNGs are preserved; uploaded asset ZIP contents referenced in message text are not recovered.",
+      "returned_turn_count": 5,
+      "returned_reader_message_count": 9,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 9,
+      "unique_user_message_count": 5,
+      "unique_assistant_message_count": 4,
+      "source_created_at": "2026-02-22T23:36:07.218Z",
+      "source_updated_at": "2026-03-04T22:48:45.377Z",
+      "source_paths": [
+        "sources/699b92a5-20b8-838e-aac5-943bb51dc741/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/699b92a5-20b8-838e-aac5-943bb51dc741/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 5,
+          "message_count": 9,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [],
+      "attachments": [
+        {
+          "name": "fc083075-4a0a-4cd7-a526-92ba0f2de387.png",
+          "metadata_source_paths": [
+            "sources/699b92a5-20b8-838e-aac5-943bb51dc741/page-001.json"
+          ],
+          "preserved_path": "sources/699b92a5-20b8-838e-aac5-943bb51dc741/fc083075-4a0a-4cd7-a526-92ba0f2de387.png",
+          "status": "preserved"
+        },
+        {
+          "name": "ground_grass_01.png",
+          "metadata_source_paths": [
+            "sources/699b92a5-20b8-838e-aac5-943bb51dc741/page-001.json"
+          ],
+          "preserved_path": "sources/699b92a5-20b8-838e-aac5-943bb51dc741/ground_grass_01.png",
+          "status": "preserved"
+        }
+      ],
+      "digest_path": "conversations/699b92a5-20b8-838e-aac5-943bb51dc741.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699b92a5-20b8-838e-aac5-943bb51dc741",
+          "message_id": "7a2405c8-61a2-4a68-bc1e-df77a268dc10",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/699b92a5-20b8-838e-aac5-943bb51dc741?src=history_search&messageId=7a2405c8-61a2-4a68-bc1e-df77a268dc10&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "699b92a5-20b8-838e-aac5-943bb51dc741",
+          "message_id": "7a2405c8-61a2-4a68-bc1e-df77a268dc10",
+          "query": "synthetic",
+          "url": "https://chatgpt.com/c/699b92a5-20b8-838e-aac5-943bb51dc741?src=history_search&messageId=7a2405c8-61a2-4a68-bc1e-df77a268dc10&historySearchQuery=synthetic"
+        },
+        {
+          "conversation_id": "699b92a5-20b8-838e-aac5-943bb51dc741",
+          "message_id": "7a2405c8-61a2-4a68-bc1e-df77a268dc10",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699b92a5-20b8-838e-aac5-943bb51dc741?src=history_search&messageId=7a2405c8-61a2-4a68-bc1e-df77a268dc10&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "7a2405c8-61a2-4a68-bc1e-df77a268dc10"
+      ]
+    },
+    {
+      "conversation_id": "699d2b99-1bcc-8386-a7d3-4a4236407a82",
+      "batch": "middle",
+      "title": null,
+      "url": "https://chatgpt.com/c/699d2b99-1bcc-8386-a7d3-4a4236407a82",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/699d2b99-1bcc-8386-a7d3-4a4236407a82.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699d2b99-1bcc-8386-a7d3-4a4236407a82",
+          "message_id": "fe7c87d5-56d6-4202-a176-54456aef8456",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699d2b99-1bcc-8386-a7d3-4a4236407a82?src=history_search&messageId=fe7c87d5-56d6-4202-a176-54456aef8456&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "fe7c87d5-56d6-4202-a176-54456aef8456"
+      ]
+    },
+    {
+      "conversation_id": "699d9082-3850-8388-a4e2-775bf19f8d7b",
+      "batch": "middle",
+      "title": null,
+      "url": "https://chatgpt.com/c/699d9082-3850-8388-a4e2-775bf19f8d7b",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/699d9082-3850-8388-a4e2-775bf19f8d7b.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699d9082-3850-8388-a4e2-775bf19f8d7b",
+          "message_id": "1212ad74-a3cf-43ce-b0fa-4e340b746675",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699d9082-3850-8388-a4e2-775bf19f8d7b?src=history_search&messageId=1212ad74-a3cf-43ce-b0fa-4e340b746675&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "1212ad74-a3cf-43ce-b0fa-4e340b746675"
+      ]
+    },
+    {
+      "conversation_id": "699dde56-10b0-838d-832c-55529d80a0d8",
+      "batch": "middle",
+      "title": null,
+      "url": "https://chatgpt.com/c/699dde56-10b0-838d-832c-55529d80a0d8",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/699dde56-10b0-838d-832c-55529d80a0d8.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699dde56-10b0-838d-832c-55529d80a0d8",
+          "message_id": "d8b4cb83-e189-49bb-bba1-3f7de939d9dc",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699dde56-10b0-838d-832c-55529d80a0d8?src=history_search&messageId=d8b4cb83-e189-49bb-bba1-3f7de939d9dc&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "d8b4cb83-e189-49bb-bba1-3f7de939d9dc"
+      ]
+    },
+    {
+      "conversation_id": "699e140c-e7c0-838a-a877-8a8162540538",
+      "batch": "middle",
+      "title": null,
+      "url": "https://chatgpt.com/c/699e140c-e7c0-838a-a877-8a8162540538",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/699e140c-e7c0-838a-a877-8a8162540538.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699e140c-e7c0-838a-a877-8a8162540538",
+          "message_id": "7c19b901-551e-4e6a-910a-e5c5354ab0ab",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699e140c-e7c0-838a-a877-8a8162540538?src=history_search&messageId=7c19b901-551e-4e6a-910a-e5c5354ab0ab&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "7c19b901-551e-4e6a-910a-e5c5354ab0ab"
+      ]
+    },
+    {
+      "conversation_id": "699e25b9-5ecc-8384-9625-914cfaf5a53b",
+      "batch": "middle",
+      "title": null,
+      "url": "https://chatgpt.com/c/699e25b9-5ecc-8384-9625-914cfaf5a53b",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [],
+      "attachments": [],
+      "digest_path": "conversations/699e25b9-5ecc-8384-9625-914cfaf5a53b.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699e25b9-5ecc-8384-9625-914cfaf5a53b",
+          "message_id": "ee0f93bc-93a9-4bb4-9896-b253d4d346e1",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699e25b9-5ecc-8384-9625-914cfaf5a53b?src=history_search&messageId=ee0f93bc-93a9-4bb4-9896-b253d4d346e1&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "ee0f93bc-93a9-4bb4-9896-b253d4d346e1"
+      ]
+    },
+    {
+      "conversation_id": "699ef6a7-deac-838d-ac54-b9319ab248b8",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/699ef6a7-deac-838d-ac54-b9319ab248b8",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/699ef6a7-deac-838d-ac54-b9319ab248b8/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/699ef6a7-deac-838d-ac54-b9319ab248b8.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699ef6a7-deac-838d-ac54-b9319ab248b8",
+          "message_id": "395f835c-f913-4935-9f91-9281b894f3f0",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699ef6a7-deac-838d-ac54-b9319ab248b8?src=history_search&messageId=395f835c-f913-4935-9f91-9281b894f3f0&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "395f835c-f913-4935-9f91-9281b894f3f0"
+      ]
+    },
+    {
+      "conversation_id": "699f521d-47ac-8392-88f8-5f9c4ceb3baf",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/699f521d-47ac-8392-88f8-5f9c4ceb3baf",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/699f521d-47ac-8392-88f8-5f9c4ceb3baf/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/699f521d-47ac-8392-88f8-5f9c4ceb3baf.md",
+      "supplied_links": [
+        {
+          "conversation_id": "699f521d-47ac-8392-88f8-5f9c4ceb3baf",
+          "message_id": "f5fa3c44-6aa7-4b35-a759-86d926838ae0",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/699f521d-47ac-8392-88f8-5f9c4ceb3baf?src=history_search&messageId=f5fa3c44-6aa7-4b35-a759-86d926838ae0&historySearchQuery=synthetic+ascension"
+        },
+        {
+          "conversation_id": "699f521d-47ac-8392-88f8-5f9c4ceb3baf",
+          "message_id": "f88a930a-b02e-4401-908b-58d56a8bf4ac",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/699f521d-47ac-8392-88f8-5f9c4ceb3baf?src=history_search&messageId=f88a930a-b02e-4401-908b-58d56a8bf4ac&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "f5fa3c44-6aa7-4b35-a759-86d926838ae0",
+        "f88a930a-b02e-4401-908b-58d56a8bf4ac"
+      ]
+    },
+    {
+      "conversation_id": "69a2a885-bc90-8396-beea-5cdbb7bce485",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/69a2a885-bc90-8396-beea-5cdbb7bce485",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/69a2a885-bc90-8396-beea-5cdbb7bce485/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/69a2a885-bc90-8396-beea-5cdbb7bce485.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69a2a885-bc90-8396-beea-5cdbb7bce485",
+          "message_id": "d5200b4f-e2ad-4c85-8184-99f2a60bc778",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/69a2a885-bc90-8396-beea-5cdbb7bce485?src=history_search&messageId=d5200b4f-e2ad-4c85-8184-99f2a60bc778&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "d5200b4f-e2ad-4c85-8184-99f2a60bc778"
+      ]
+    },
+    {
+      "conversation_id": "69a3fd56-16e8-8386-a1b0-59cbdb4e941d",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/69a3fd56-16e8-8386-a1b0-59cbdb4e941d",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/69a3fd56-16e8-8386-a1b0-59cbdb4e941d/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/69a3fd56-16e8-8386-a1b0-59cbdb4e941d.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69a3fd56-16e8-8386-a1b0-59cbdb4e941d",
+          "message_id": "a0ba7007-7e3e-4042-a5e7-0fafbb90388e",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/69a3fd56-16e8-8386-a1b0-59cbdb4e941d?src=history_search&messageId=a0ba7007-7e3e-4042-a5e7-0fafbb90388e&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "a0ba7007-7e3e-4042-a5e7-0fafbb90388e"
+      ]
+    },
+    {
+      "conversation_id": "69a62328-8a04-8384-9067-5311863e1f25",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/69a62328-8a04-8384-9067-5311863e1f25",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/69a62328-8a04-8384-9067-5311863e1f25/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/69a62328-8a04-8384-9067-5311863e1f25.md",
+      "supplied_links": [
+        {
+          "conversation_id": "69a62328-8a04-8384-9067-5311863e1f25",
+          "message_id": "510f123a-106c-4ee0-9d0b-8c03c68c1b8e",
+          "query": "synthetic ascension",
+          "url": "https://chatgpt.com/c/69a62328-8a04-8384-9067-5311863e1f25?src=history_search&messageId=510f123a-106c-4ee0-9d0b-8c03c68c1b8e&historySearchQuery=synthetic+ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "510f123a-106c-4ee0-9d0b-8c03c68c1b8e"
+      ]
+    },
+    {
+      "conversation_id": "6a606f04-481c-83ed-ae4b-efea6a1aab50",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/6a606f04-481c-83ed-ae4b-efea6a1aab50",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/6a606f04-481c-83ed-ae4b-efea6a1aab50/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/6a606f04-481c-83ed-ae4b-efea6a1aab50.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6a606f04-481c-83ed-ae4b-efea6a1aab50",
+          "message_id": "0fff94ce-0d51-4b95-ad2d-f2379dacef40",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/6a606f04-481c-83ed-ae4b-efea6a1aab50?src=history_search&messageId=0fff94ce-0d51-4b95-ad2d-f2379dacef40&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "0fff94ce-0d51-4b95-ad2d-f2379dacef40"
+      ]
+    },
+    {
+      "conversation_id": "6a60abe8-4928-83ed-abe1-531bd87d1573",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/6a60abe8-4928-83ed-abe1-531bd87d1573",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/6a60abe8-4928-83ed-abe1-531bd87d1573/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/6a60abe8-4928-83ed-abe1-531bd87d1573.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6a60abe8-4928-83ed-abe1-531bd87d1573",
+          "message_id": "4f61eca1-c78d-4a6d-8784-04b8e8aa2d97",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/6a60abe8-4928-83ed-abe1-531bd87d1573?src=history_search&messageId=4f61eca1-c78d-4a6d-8784-04b8e8aa2d97&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "4f61eca1-c78d-4a6d-8784-04b8e8aa2d97"
+      ]
+    },
+    {
+      "conversation_id": "6a615027-8668-83eb-9da0-9282723bb2b0",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/6a615027-8668-83eb-9da0-9282723bb2b0",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/6a615027-8668-83eb-9da0-9282723bb2b0/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/6a615027-8668-83eb-9da0-9282723bb2b0.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6a615027-8668-83eb-9da0-9282723bb2b0",
+          "message_id": "c47e9e06-e1bf-4ad1-8864-a03a3cec59f4",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/6a615027-8668-83eb-9da0-9282723bb2b0?src=history_search&messageId=c47e9e06-e1bf-4ad1-8864-a03a3cec59f4&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "c47e9e06-e1bf-4ad1-8864-a03a3cec59f4"
+      ]
+    },
+    {
+      "conversation_id": "6a61b871-620c-83ed-8ea9-8fe4dedc68bc",
+      "batch": "late",
+      "title": null,
+      "url": "https://chatgpt.com/c/6a61b871-620c-83ed-8ea9-8fe4dedc68bc",
+      "status": "unread",
+      "coverage_note": "No conversation content recovered. Any saved failure receipt documents a retrieval attempt only. Reader rate limits/timeouts and unavailable or stalled browser access prevented recovery; sign-in has since been resolved.",
+      "returned_turn_count": 0,
+      "returned_reader_message_count": 0,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 0,
+      "unique_user_message_count": 0,
+      "unique_assistant_message_count": 0,
+      "source_created_at": null,
+      "source_updated_at": null,
+      "source_paths": [],
+      "reader_recheck_paths": [],
+      "source_records": [],
+      "retrieval_record_paths": [
+        "sources/6a61b871-620c-83ed-8ea9-8fe4dedc68bc/browser-review.json"
+      ],
+      "attachments": [],
+      "digest_path": "conversations/6a61b871-620c-83ed-8ea9-8fe4dedc68bc.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6a61b871-620c-83ed-8ea9-8fe4dedc68bc",
+          "message_id": "07dcfff8-2105-46a4-91c6-688fce9b245a",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/6a61b871-620c-83ed-8ea9-8fe4dedc68bc?src=history_search&messageId=07dcfff8-2105-46a4-91c6-688fce9b245a&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [],
+      "target_message_ids_missing": [
+        "07dcfff8-2105-46a4-91c6-688fce9b245a"
+      ]
+    },
+    {
+      "conversation_id": "6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438",
+      "batch": "late",
+      "title": "Enemy Performance Optimization",
+      "url": "https://chatgpt.com/c/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438",
+      "status": "partial_excerpt",
+      "coverage_note": "Four reader turns / eight messages; the apparent opening was not independently confirmed in a browser. Two PNGs are preserved; two uploaded project ZIPs remain metadata-only. The final patch claim has no subsequent user verification.",
+      "returned_turn_count": 4,
+      "returned_reader_message_count": 8,
+      "browser_message_count": 0,
+      "unique_recovered_message_count": 8,
+      "unique_user_message_count": 4,
+      "unique_assistant_message_count": 4,
+      "source_created_at": "2026-07-23T08:21:39.216Z",
+      "source_updated_at": "2026-07-23T09:38:36.128Z",
+      "source_paths": [
+        "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/page-001.json"
+      ],
+      "reader_recheck_paths": [],
+      "source_records": [
+        {
+          "path": "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/page-001.json",
+          "kind": "reader_excerpt",
+          "turn_count": 4,
+          "message_count": 8,
+          "reader_has_more": false,
+          "reader_next_cursor": null,
+          "completeness": "not_established"
+        }
+      ],
+      "retrieval_record_paths": [
+        "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/browser-review.json"
+      ],
+      "attachments": [
+        {
+          "name": "image(32).png",
+          "metadata_source_paths": [
+            "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/page-001.json"
+          ],
+          "preserved_path": "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/attachments/image(32).png",
+          "status": "preserved"
+        },
+        {
+          "name": "image(33).png",
+          "metadata_source_paths": [
+            "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/page-001.json"
+          ],
+          "preserved_path": "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/attachments/image(33).png",
+          "status": "preserved"
+        },
+        {
+          "name": "syntethic-ascension-0.0.0.25.5.zip",
+          "metadata_source_paths": [
+            "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/page-001.json"
+          ],
+          "preserved_path": null,
+          "status": "metadata_only"
+        },
+        {
+          "name": "syntethic-ascension-0.0.0.25.6.zip",
+          "metadata_source_paths": [
+            "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/page-001.json"
+          ],
+          "preserved_path": null,
+          "status": "metadata_only"
+        }
+      ],
+      "digest_path": "conversations/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438.md",
+      "supplied_links": [
+        {
+          "conversation_id": "6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438",
+          "message_id": "051866f8-e2b3-4b1a-94c0-85f52526be6b",
+          "query": "ascension",
+          "url": "https://chatgpt.com/c/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438?src=history_search&messageId=051866f8-e2b3-4b1a-94c0-85f52526be6b&historySearchQuery=ascension"
+        }
+      ],
+      "target_message_ids_recovered": [
+        "051866f8-e2b3-4b1a-94c0-85f52526be6b"
+      ],
+      "target_message_ids_missing": []
+    }
+  ]
+}

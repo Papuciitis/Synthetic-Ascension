@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d0isg0ukbwpp5"]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
-[ext_resource type="Texture2D" path="res://assets/textures/items/offhand/grandmas_bazooka.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://n3c5bw6oqphb" path="res://assets/textures/items/offhand/grandmas_bazooka.png" id="2_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="3_itemdata"]
 [ext_resource type="PackedScene" path="res://effects/items/scenes/GrandmasBazookaEffect.tscn" id="4_eff"]
 
@@ -20,7 +20,9 @@ script = ExtResource("3_itemdata")
 id = "grandmas_bazooka"
 display_name = "Grandma's Bazooka"
 icon = ExtResource("2_icon")
-description = "Hurt her grandchild. Go on.\n• A homing rocket answers whoever wounds you.\n• Grandma remembers."
+description = "Hurt her grandchild. Go on.
+• A homing rocket answers whoever wounds you.
+• Grandma remembers."
 mods = SubResource("mods")
 rarity_base = SubResource("rarity_base")
 pct_min = 0.0

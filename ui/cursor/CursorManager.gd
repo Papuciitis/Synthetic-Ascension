@@ -8,6 +8,7 @@ const CURSORS := {
 	Input.CURSOR_POINTING_HAND: [preload("res://ui/cursor/point.svg"), Vector2(14, 4)],
 	Input.CURSOR_CROSS: [preload("res://ui/cursor/cross.svg"), Vector2(20, 20)],
 }
+const BASE_SCALE := 0.65
 
 var _textures: Dictionary = {}
 
@@ -33,10 +34,10 @@ func _on_settings_changed(section: StringName, key: StringName, _value: Variant)
 
 
 func _apply_scale() -> void:
-	var scale_factor := 1.0
+	var scale_factor := BASE_SCALE
 	if SettingsManager != null:
-		# Never shrink the cursor below its readable native size.
-		scale_factor = maxf(1.0, float(SettingsManager.get_value(&"accessibility", &"ui_scale", 1.0)))
+		# Keep the smaller default while retaining accessibility enlargement.
+		scale_factor *= maxf(1.0, float(SettingsManager.get_value(&"accessibility", &"ui_scale", 1.0)))
 	for shape: int in CURSORS:
 		var source := CURSORS[shape][0] as Texture2D
 		var image := source.get_image()

@@ -13,16 +13,23 @@ uniform float lit_slope = 1.12;
 uniform float shade_slope = 0.72;
 uniform float ridge_light = 0.4;
 uniform float eave_px = 12.0;
+// Defaults preserve existing city roofs; the composed first-block kit quiets
+// its material units while keeping the structural ridge/eave shading crisp.
+uniform float material_contrast = 1.0;
+uniform vec3 material_mid = vec3(0.3);
 
 varying vec2 local_pos;
+varying vec4 surface_tint;
 
 void vertex() {
 	local_pos = VERTEX;
+	surface_tint = COLOR;
 }
 
 void fragment() {
 	// COLOR already carries the texture (Godot 4 canvas_item).
 	vec4 c = COLOR;
+	c.rgb = mix(material_mid * surface_tint.rgb, c.rgb, material_contrast);
 	vec2 size = max(bounds.zw - bounds.xy, vec2(1.0));
 	vec2 t = (local_pos - bounds.xy) / size;
 	float shade = 1.0;

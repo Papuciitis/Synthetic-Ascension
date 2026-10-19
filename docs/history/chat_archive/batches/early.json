@@ -1,0 +1,474 @@
+{
+  "schema_version": 1,
+  "batch": "early",
+  "generated_at_utc": "2026-10-15T22:14:53Z",
+  "assigned_conversation_count": 10,
+  "returned_tail_snapshot_count": 7,
+  "retrieval_gap_count": 3,
+  "full_conversation_count": 0,
+  "response_page_count": 7,
+  "returned_turn_count": 35,
+  "returned_user_message_count": 35,
+  "returned_assistant_message_count": 35,
+  "text_truncation_marker_count": 0,
+  "image_omission_marker_count": 5,
+  "image_omission_declared_count": 7,
+  "preserved_original_png_count": 7,
+  "unknown_truncation_conversation_count": 3,
+  "source_metadata_covered_range_utc": [
+    "2026-02-03T08:39:52.840Z",
+    "2026-02-12T23:38:20.492Z"
+  ],
+  "limitations": [
+    "Original history-reader results expose five-turn tails; separate browser review and combined narrative coverage are tracked per conversation.",
+    "Three assigned conversations still have no recovered content; an additional reader retry recovered the sniper/spawning tail.",
+    "Seven PNGs omitted from message text were preserved from temporary attachment paths.",
+    "Assistant design recaps and proposed patches are labeled separately from direct user decisions, pasted code, runtime logs, and user-confirmed outcomes.",
+    "No historical feature claim establishes present-day repository behavior."
+  ],
+  "conversations": [
+    {
+      "conversation_id": "6981b42f-a1ac-8388-9f6b-f4316054575c",
+      "status": "combined_text_coverage",
+      "source_title": "Game Development Tools",
+      "source_url": "https://chatgpt.com/c/6981b42f-a1ac-8388-9f6b-f4316054575c",
+      "source_metadata_start_utc": "2026-02-03T08:39:52.840Z",
+      "source_metadata_end_utc": "2026-02-03T17:04:09.327Z",
+      "returned_start_utc": "2026-02-03T09:08:55.253Z",
+      "returned_end_utc": "2026-02-03T17:03:47.019Z",
+      "requested_turn_limit": 10,
+      "returned_turn_count": 5,
+      "user_message_count": 5,
+      "assistant_message_count": 5,
+      "pages": [
+        "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/page-001.json"
+      ],
+      "source_has_more": false,
+      "source_next_cursor": null,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_marker_count": 0,
+      "image_omission_declared_count": 0,
+      "preserved_attachments": [],
+      "digest_path": "conversations/6981b42f-a1ac-8388-9f6b-f4316054575c.md",
+      "summary": "Direct user source establishes six temporary items, three persistent spells, item sets, four race choices/styles, stacked extreme randomizer, required negative-stat conversion, followers/technology lore, and scope closure.",
+      "tags": [
+        "concept",
+        "scope",
+        "super-randomizer",
+        "followers",
+        "persistent-spells",
+        "items",
+        "race-style",
+        "synthetic-technology",
+        "Steam"
+      ],
+      "coverage_notes": [
+        "Browser16messages reaches beginning; reader10messages reaches ending. Four exactIDs overlap, giving22uniqueIDs/11apparentturns.",
+        "Fallback-turn indices may renumber on lazy loads; coverage is based on message IDs and observed beginning/ending.",
+        "Likely continuous mainline text across sources, but no unified raw full export.",
+        "Historical intentions are not current implementation claims."
+      ],
+      "browser_review_path": "sources/6981b42f-a1ac-8388-9f6b-f4316054575c/browser-review.json",
+      "browser_message_count": 16,
+      "browser_turn_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "browser_beginning_reached": true,
+      "browser_end_reached": false,
+      "omitted_code_block_count": 0,
+      "combined_turn_count": 11,
+      "combined_message_count": 22,
+      "full_history_recovered_definition": "No unified raw transcript export. Browser beginning plus reader ending contain22distinct message IDs/11apparent turns with4exact overlapping IDs; likely continuous mainline text.",
+      "accepted_user_decisions": [
+        {
+          "label": "user_design_intent",
+          "decision": "Six temporary item slots and three spell-card slots retained after death.",
+          "message_id": "bbb2135e-9048-4bf1-8a31-dcaaa95f81ed"
+        },
+        {
+          "label": "user_design_intent",
+          "decision": "Item set bonuses, roughly four races, melee/ranged/magic starting styles.",
+          "message_id": "bbb21c26-62f9-4539-900f-f716b128d0f9"
+        },
+        {
+          "label": "user_design_intent",
+          "decision": "Central randomizer with stacked duplicate pickups and extreme positive/negative stats; math unresolved.",
+          "message_id": "bbb21066-5fce-4009-9d71-baebf3e2d498"
+        },
+        {
+          "label": "user_requirement",
+          "decision": "Spell that turns negative modifiers into benefits is a must.",
+          "message_id": "bbb21f0e-601c-4894-ae7f-008c0a98675e"
+        },
+        {
+          "label": "user_design_intent",
+          "decision": "Follower-based spells, upgrades, death payment, respawn, and zero-follower permadeath retaining spell slots; synthetic-technology spread opposed by entities.",
+          "message_id": "bbb21f0e-601c-4894-ae7f-008c0a98675e"
+        },
+        {
+          "label": "user_scope_decision",
+          "decision": "No additional systems.",
+          "message_id": "bbb21a87-907d-4744-a844-83804e00876c"
+        }
+      ],
+      "combined_message_id_count": 22,
+      "overlap_message_ids": [
+        "bbb21216-8878-4bd0-be2d-116a6d4bb97f",
+        "53ccfe43-d4f1-4590-a28b-f05256a90856",
+        "bbb215ce-a9bd-4ffa-b150-a8a090e1cb1b",
+        "8765f8af-12cd-4023-bf72-8221dfdfb5ce"
+      ]
+    },
+    {
+      "conversation_id": "69822a53-6a20-8385-9eb7-3f5393b473c2",
+      "status": "returned_tail_snapshot",
+      "source_title": "Godot Expertise Overview",
+      "source_url": "https://chatgpt.com/c/69822a53-6a20-8385-9eb7-3f5393b473c2",
+      "source_metadata_start_utc": "2026-02-03T17:03:21.969Z",
+      "source_metadata_end_utc": "2026-02-04T05:01:44.763Z",
+      "returned_start_utc": "2026-02-03T21:48:30.267Z",
+      "returned_end_utc": "2026-02-04T05:01:12.505Z",
+      "requested_turn_limit": 10,
+      "returned_turn_count": 5,
+      "user_message_count": 5,
+      "assistant_message_count": 5,
+      "pages": [
+        "sources/69822a53-6a20-8385-9eb7-3f5393b473c2/page-001.json"
+      ],
+      "source_has_more": false,
+      "source_next_cursor": null,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_marker_count": 0,
+      "image_omission_declared_count": 0,
+      "preserved_attachments": [],
+      "digest_path": "conversations/69822a53-6a20-8385-9eb7-3f5393b473c2.md",
+      "summary": "Manual spell API mismatch and missing auto_cast property; no-crash report, uncertain casting; assistant recaps Syn'Tek lore.",
+      "tags": [
+        "prototype",
+        "SpellCaster",
+        "manual-input",
+        "Syn'Tek",
+        "lore"
+      ],
+      "coverage_notes": [
+        "Exactly five turns returned despite requested limit ten.",
+        "Earlier referenced discussion is not present; API hasMore=false does not establish completeness.",
+        "Historical evidence must not be treated as current repository state."
+      ]
+    },
+    {
+      "conversation_id": "69826fce-5958-838b-91b1-44e7dfb4437c",
+      "status": "returned_tail_snapshot",
+      "source_title": "Godot Code Review",
+      "source_url": "https://chatgpt.com/c/69826fce-5958-838b-91b1-44e7dfb4437c",
+      "source_metadata_start_utc": "2026-02-03T22:00:13.760Z",
+      "source_metadata_end_utc": "2026-02-05T15:20:58.072Z",
+      "returned_start_utc": "2026-02-04T15:19:16.280Z",
+      "returned_end_utc": "2026-02-05T15:20:43.146Z",
+      "requested_turn_limit": 10,
+      "returned_turn_count": 5,
+      "user_message_count": 5,
+      "assistant_message_count": 5,
+      "pages": [
+        "sources/69826fce-5958-838b-91b1-44e7dfb4437c/page-001.json"
+      ],
+      "source_has_more": false,
+      "source_next_cursor": null,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_marker_count": 1,
+      "image_omission_declared_count": 1,
+      "preserved_attachments": [
+        "sources/69826fce-5958-838b-91b1-44e7dfb4437c/attachments/a0418874-af7e-49d3-a9a9-54468eb60718.png"
+      ],
+      "digest_path": "conversations/69826fce-5958-838b-91b1-44e7dfb4437c.md",
+      "summary": "Game Over, respawn contact damage, and HUD mouse interception debugging; runtime logs and user acknowledgment.",
+      "tags": [
+        "debugging",
+        "game-over",
+        "respawn",
+        "followers",
+        "mouse-input"
+      ],
+      "coverage_notes": [
+        "Exactly five turns returned despite requested limit ten.",
+        "Earlier referenced discussion is not present; API hasMore=false does not establish completeness.",
+        "Historical evidence must not be treated as current repository state."
+      ]
+    },
+    {
+      "conversation_id": "69831bf7-b8ac-8385-8a8d-85f1d4c0603b",
+      "status": "returned_tail_snapshot",
+      "source_title": "Atzarojums · Godot Code Review",
+      "source_url": "https://chatgpt.com/c/69831bf7-b8ac-8385-8a8d-85f1d4c0603b",
+      "source_metadata_start_utc": "2026-02-04T10:15:02.454Z",
+      "source_metadata_end_utc": "2026-02-05T13:58:28.899Z",
+      "returned_start_utc": "2026-02-05T11:13:35.923Z",
+      "returned_end_utc": "2026-02-05T13:51:19.278Z",
+      "requested_turn_limit": 10,
+      "returned_turn_count": 5,
+      "user_message_count": 5,
+      "assistant_message_count": 5,
+      "pages": [
+        "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/page-001.json"
+      ],
+      "source_has_more": false,
+      "source_next_cursor": null,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_marker_count": 1,
+      "image_omission_declared_count": 2,
+      "preserved_attachments": [
+        "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/attachments/c869814f-de53-45a1-9c04-f28943144771.png",
+        "sources/69831bf7-b8ac-8385-8a8d-85f1d4c0603b/attachments/2f2c99b8-a7f3-4b93-9a04-da1ec9aa989a.png"
+      ],
+      "digest_path": "conversations/69831bf7-b8ac-8385-8a8d-85f1d4c0603b.md",
+      "summary": "Successful item_test pickup/stat refresh; user requests 2-column ×3-row inventory sketch layout and confirms layout fix.",
+      "tags": [
+        "items",
+        "inventory",
+        "StatDelta",
+        "HUD",
+        "layout",
+        "user-sketch"
+      ],
+      "coverage_notes": [
+        "Exactly five turns returned despite requested limit ten.",
+        "Earlier referenced discussion is not present; API hasMore=false does not establish completeness.",
+        "Historical evidence must not be treated as current repository state."
+      ]
+    },
+    {
+      "conversation_id": "69835f0b-34e4-8397-be22-199a4d7287c1",
+      "status": "returned_tail_snapshot",
+      "source_title": "Atzarojums · Atzarojums · Godot Code Review",
+      "source_url": "https://chatgpt.com/c/69835f0b-34e4-8397-be22-199a4d7287c1",
+      "source_metadata_start_utc": "2026-02-04T15:01:21.120Z",
+      "source_metadata_end_utc": "2026-02-04T20:54:42.457Z",
+      "returned_start_utc": "2026-02-04T16:01:53.075Z",
+      "returned_end_utc": "2026-02-04T16:28:16.013Z",
+      "requested_turn_limit": 10,
+      "returned_turn_count": 5,
+      "user_message_count": 5,
+      "assistant_message_count": 5,
+      "pages": [
+        "sources/69835f0b-34e4-8397-be22-199a4d7287c1/page-001.json"
+      ],
+      "source_has_more": false,
+      "source_next_cursor": null,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_marker_count": 0,
+      "image_omission_declared_count": 0,
+      "preserved_attachments": [],
+      "digest_path": "conversations/69835f0b-34e4-8397-be22-199a4d7287c1.md",
+      "summary": "User prioritizes modular player foundation; missing Global fields repaired far enough to run, click/autofire regression unresolved.",
+      "tags": [
+        "base-player",
+        "Stats",
+        "races",
+        "starter-weapons",
+        "Global",
+        "manual-input"
+      ],
+      "coverage_notes": [
+        "Exactly five turns returned despite requested limit ten.",
+        "Earlier referenced discussion is not present; API hasMore=false does not establish completeness.",
+        "Historical evidence must not be treated as current repository state."
+      ]
+    },
+    {
+      "conversation_id": "69849acb-2570-8385-9d51-0f3beff761d2",
+      "status": "returned_tail_snapshot",
+      "source_title": "New chat",
+      "source_url": "https://chatgpt.com/c/69849acb-2570-8385-9d51-0f3beff761d2",
+      "source_metadata_start_utc": "2026-02-05T13:28:54.350Z",
+      "source_metadata_end_utc": "2026-02-05T15:30:16.722Z",
+      "returned_start_utc": "2026-02-05T14:56:09.862Z",
+      "returned_end_utc": "2026-02-05T15:24:00.937Z",
+      "requested_turn_limit": 10,
+      "returned_turn_count": 5,
+      "user_message_count": 5,
+      "assistant_message_count": 5,
+      "pages": [
+        "sources/69849acb-2570-8385-9d51-0f3beff761d2/page-001.json"
+      ],
+      "source_has_more": false,
+      "source_next_cursor": null,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_marker_count": 2,
+      "image_omission_declared_count": 3,
+      "preserved_attachments": [
+        "sources/69849acb-2570-8385-9d51-0f3beff761d2/attachments/b977d5cc-58a7-4ea6-8bde-d2624eddd40e.png",
+        "sources/69849acb-2570-8385-9d51-0f3beff761d2/attachments/4e4ac7a4-4b46-4fce-a1cd-1fa06f5fe463.png",
+        "sources/69849acb-2570-8385-9d51-0f3beff761d2/attachments/2efe6527-6691-4457-bad0-7deb2e512800.png"
+      ],
+      "digest_path": "conversations/69849acb-2570-8385-9d51-0f3beff761d2.md",
+      "summary": "Three-slot save-selection scenes and repeated SaveCard/getter/layout revisions; final repair unverified.",
+      "tags": [
+        "save-selection",
+        "SaveCard",
+        "SaveManager",
+        "UI",
+        "layout",
+        "scene-paths"
+      ],
+      "coverage_notes": [
+        "Exactly five turns returned despite requested limit ten.",
+        "Earlier referenced discussion is not present; API hasMore=false does not establish completeness.",
+        "Historical evidence must not be treated as current repository state."
+      ]
+    },
+    {
+      "conversation_id": "6984a339-2680-8384-897f-90a4e43afa22",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "source_url": "https://chatgpt.com/c/6984a339-2680-8384-897f-90a4e43afa22",
+      "submitted_message_link": "https://chatgpt.com/c/6984a339-2680-8384-897f-90a4e43afa22?src=history_search&messageId=9c35cba1-827c-4e42-a0f9-1bdf3d4d45d9&historySearchQuery=synthetic+ascension",
+      "submitted_message_id": "9c35cba1-827c-4e42-a0f9-1bdf3d4d45d9",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "preserved_attachments": [],
+      "error_response_path": "sources/6984a339-2680-8384-897f-90a4e43afa22/fetch-error.json",
+      "error": "{\"detail\":\"Too many requests\"}",
+      "digest_path": "conversations/6984a339-2680-8384-897f-90a4e43afa22.md",
+      "summary": "No content recovered; request was rate limited.",
+      "tags": [
+        "game-history",
+        "retrieval-gap",
+        "rate-limited",
+        "unrecovered"
+      ]
+    },
+    {
+      "conversation_id": "698c4e97-b728-8390-bc30-e6dd762fe5d0",
+      "status": "returned_tail_snapshot",
+      "source_title": "Roguelike Enemy Spawning System",
+      "source_url": "https://chatgpt.com/c/698c4e97-b728-8390-bc30-e6dd762fe5d0",
+      "submitted_message_link": "https://chatgpt.com/c/698c4e97-b728-8390-bc30-e6dd762fe5d0?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic+ascension",
+      "submitted_message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+      "submitted_message_present": false,
+      "source_metadata_start_utc": "2026-02-11T09:41:24.790Z",
+      "source_metadata_end_utc": "2026-02-12T23:38:20.492Z",
+      "returned_start_utc": "2026-02-12T22:08:59.143Z",
+      "returned_end_utc": "2026-02-12T23:32:14.662Z",
+      "requested_turn_limit": 5,
+      "returned_turn_count": 5,
+      "user_message_count": 5,
+      "assistant_message_count": 5,
+      "pages": [
+        "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/page-001.json"
+      ],
+      "source_has_more": false,
+      "source_next_cursor": null,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_marker_count": 1,
+      "image_omission_declared_count": 1,
+      "preserved_attachments": [
+        "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/attachments/15ef65f7-aad0-48c3-86db-75c627611988.png"
+      ],
+      "prior_error_response_path": "sources/698c4e97-b728-8390-bc30-e6dd762fe5d0/fetch-error.json",
+      "digest_path": "conversations/698c4e97-b728-8390-bc30-e6dd762fe5d0.md",
+      "summary": "User accepts disciplined base sniper / tactical SWIT elite direction; pasted spawn and sniper resources exist, but final test reports no attack and red tint. Caps/tuning/final integration remain proposed.",
+      "tags": [
+        "enemy-spawning",
+        "sniper",
+        "elite",
+        "SWIT",
+        "tactical-AI",
+        "EnemySpec",
+        "spawn-caps",
+        "debugging"
+      ],
+      "accepted_user_decisions": [
+        {
+          "label": "user_design_direction_accepted",
+          "decision": "Base sniper A uses disciplined range control; elite sniper B adds tactical/SWIT behavior.",
+          "message_id": "fa9ae078-ef36-483e-bc6e-2f2c363e9f24"
+        }
+      ],
+      "coverage_notes": [
+        "Five-turn tail; earlier discussion and submitted target are absent despite hasMore=false.",
+        "Final sniper integration patch is unverified; user last reports sniper failing.",
+        "Prior rate-limit receipt retained."
+      ]
+    },
+    {
+      "conversation_id": "698cd9bd-4f08-838f-a8ee-60858d1c2704",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "source_url": "https://chatgpt.com/c/698cd9bd-4f08-838f-a8ee-60858d1c2704",
+      "submitted_message_link": "https://chatgpt.com/c/698cd9bd-4f08-838f-a8ee-60858d1c2704?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic+ascension",
+      "submitted_message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "preserved_attachments": [],
+      "error_response_path": "sources/698cd9bd-4f08-838f-a8ee-60858d1c2704/fetch-error.json",
+      "error": "ChatGPT conversation history was rate limited",
+      "digest_path": "conversations/698cd9bd-4f08-838f-a8ee-60858d1c2704.md",
+      "summary": "No content recovered; request was rate limited.",
+      "tags": [
+        "game-history",
+        "retrieval-gap",
+        "rate-limited",
+        "unrecovered"
+      ]
+    },
+    {
+      "conversation_id": "698e4da9-a444-8389-b133-266a5e75d01e",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "source_url": "https://chatgpt.com/c/698e4da9-a444-8389-b133-266a5e75d01e",
+      "submitted_message_link": "https://chatgpt.com/c/698e4da9-a444-8389-b133-266a5e75d01e?src=history_search&messageId=0323a15b-da82-4fae-897c-30ad96d0ef96&historySearchQuery=synthetic+ascension",
+      "submitted_message_id": "0323a15b-da82-4fae-897c-30ad96d0ef96",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "preserved_attachments": [],
+      "error_response_path": "sources/698e4da9-a444-8389-b133-266a5e75d01e/fetch-error.json",
+      "error": "ChatGPT conversation history was rate limited",
+      "digest_path": "conversations/698e4da9-a444-8389-b133-266a5e75d01e.md",
+      "summary": "No content recovered; request was rate limited.",
+      "tags": [
+        "game-history",
+        "retrieval-gap",
+        "rate-limited",
+        "unrecovered"
+      ]
+    }
+  ],
+  "browser_reviewed_conversation_count": 1,
+  "combined_text_coverage_conversation_count": 1,
+  "full_conversation_count_definition": "Unified complete raw transcript exports; combined source coverage tracked separately.",
+  "returned_tail_snapshot_count_definition": "Original raw reader snapshots retained even when browser evidence augments them.",
+  "browser_recovery_status": "stalled_central_browser_CDP_deadline",
+  "browser_recovery_note": "Root reports central browser stalled on a long branch and fallback tab; remaining early9 have no new browser receipt this run."
+}

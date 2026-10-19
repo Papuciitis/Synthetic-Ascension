@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ch66ycaclwcud"]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
-[ext_resource type="Texture2D" path="res://assets/textures/items/offhand/beka_icon.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://reclthm4nwaq" path="res://assets/textures/items/offhand/beka_icon.png" id="2_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="3_itemdata"]
 [ext_resource type="PackedScene" path="res://effects/items/scenes/BekaCompanionEffect.tscn" id="4_eff"]
 

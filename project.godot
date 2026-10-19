@@ -15,9 +15,9 @@ config/description="An exploration-driven horde roguelite about becoming an incr
 config/version="0.0.0.25.5"
 run/main_scene="uid://c446qid4khmif"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/icon="res://assets/ui/boot/app_icon.png"
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/image="res://assets/ui/boot/splash.png"
+config/icon="res://assets/ui/boot/app_icon.png"
 
 [autoload]
 

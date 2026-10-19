@@ -1,0 +1,62 @@
+{
+  "status": "House perimeter/art correction verified; ordinary near-perimeter room boundary remains a visual review item; combined facility/native approval pending",
+  "scope": "Ordinary and irregular parcel wall continuity and intact wall art; facility seam repair separately owned.",
+  "publication": "HOLD; no stage, commit or push",
+  "roots": [
+    "Four-neighbor irregular boundaries left diagonal reflex-corner gaps and isolated bars.",
+    "Intact building walls inherited ruin textures with broken sections and raised piers."
+  ],
+  "correction": [
+    "Eight-neighbor envelope boundary, with declared door cells preserved.",
+    "Original window RNG sequence retained to preserve downstream parcel identities.",
+    "Intact wall flag 4 preserves existing roof/material flags and bypasses ruin rhythm."
+  ],
+  "fixture_diagnostic": {
+    "test": "ChunkBlockIntegrationTest",
+    "passed": 64,
+    "failed": 0,
+    "diagnostic": "WARNING: [ChunkManager] Player not found (group 'player').",
+    "attribution": "Fixture _configured_manager adds ChunkManager directly without a player group node; ChunkManager._ready emits its established warning and returns. Production code unchanged for this diagnostic."
+  },
+  "retained_evidence": [
+    "Earlier portal v2 capture remains FAILED: wrong rear-volume anchor in harness.",
+    "Portal v3 physical captures passed but precede this wall correction.",
+    "Neighborhood v1 hashes and native captures describe earlier revisions."
+  ],
+  "deferred": "Generic ChunkGenStructures duplicate IndoorVolume ownership issue intentionally unchanged by designer direction.",
+  "native": {
+    "irregular_seeds": [
+      16102026,
+      211
+    ],
+    "irregular_images": 12,
+    "failures": 0,
+    "diagnostics": 0,
+    "save_writes": 0,
+    "physical_entry_and_restore": true,
+    "ordinary_sample": "moving-reduced-211/interior.png",
+    "ordinary_limit": "Room-first carver still produces actual inner boundary runs close to the perimeter. No blanket deletion of real partitions; remaining double-wall appearance requires designer assessment.",
+    "moving": {
+      "seed": 211,
+      "review": "reduced",
+      "frames": 148,
+      "fires": 62,
+      "hits": 61,
+      "deaths": 29,
+      "failures": 0,
+      "diagnostics": 0,
+      "save_writes": 0,
+      "gates": [
+        "physical perimeter movement",
+        "entry",
+        "five security guards cleared",
+        "exit and roof restoration",
+        "streamed reload equality",
+        "controlled populated combat"
+      ]
+    }
+  },
+  "source_hash_mismatches": [],
+  "source_hash_count": 14,
+  "moving_source_asset_hash_count": 40
+}

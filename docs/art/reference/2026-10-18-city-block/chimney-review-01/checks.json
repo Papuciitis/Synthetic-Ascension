@@ -1,0 +1,71 @@
+{
+  "kit": {
+    "scene": "res://tools/tests/CityBlockKitTest.tscn",
+    "pid": 20992,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-upgrade-all-final-9c3605ff",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityBlockKitTest: 1112 passed, 0 failed"
+    ]
+  },
+  "procedural": {
+    "scene": "res://tools/tests/CityBlockProceduralTest.tscn",
+    "pid": 24592,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-upgrade-procedural-final-e6ba531e",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityBlockProceduralTest: 2685 passed, 0 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 75 styled kit instances across 22 sizes"
+    ]
+  },
+  "roof_mask": {
+    "scene": "res://tools/tests/PlayerRoofOcclusionTest.tscn",
+    "pid": 31196,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-upgrade-shadow-final-759ae987",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "PlayerRoofOcclusionTest: 11 passed, 0 failed"
+    ]
+  },
+  "parse": {
+    "scene": "res://tools/tests/ScriptParseAuditTest.tscn",
+    "pid": 5048,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-upgrade-all-parse-final-15425275",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "ScriptParseAuditTest: 542 passed, 0 failed (checked 542 scripts across 8 roots)"
+    ]
+  },
+  "layout_capture": {
+    "scene": "res://.superpowers/sdd/2026-10-18-city-block/CityProceduralCapture.tscn",
+    "pid": 25164,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-chimney-procedural-native-a40ee70d",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityProceduralCapture: captures=5 save_writes=0"
+    ]
+  },
+  "block_capture": {
+    "scene": "res://.superpowers/sdd/2026-10-18-city-block/CityUpgradeCapture.tscn",
+    "pid": 27612,
+    "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-chimney-block-native-2d0445e7",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityBlockCapture: captures=8 failures=0 save_writes=0"
+    ]
+  },
+  "art": "KEEP for four refinements, corrected board and shown role-specific chimney treatment",
+  "code_review": "No remaining concrete blocker",
+  "limits": "75 styled kit instances among76 generated parcels; all-facing/irregular painted art incomplete; seed sweep is geometry verification, native layout views are inspection rather than Game traversal; art PNG review does not prove human motion comfort."
+}

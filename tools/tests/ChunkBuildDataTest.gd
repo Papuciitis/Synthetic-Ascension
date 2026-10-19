@@ -81,6 +81,8 @@ func _test_wall_catalog() -> void:
 		var run_piece := ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 10, Vector2i(x, 3))
 		if run_piece == ChunkBlockVisualCatalog.KIT_PIER_H:
 			piers += 1
+		var intact_piece := ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL,10,Vector2i(x,3),ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE)
+		_check(intact_piece == ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL,10),"intact building wall remains continuous instead of using broken/pier ruin pieces")
 	_check(piers == 10, "kit: a 60-cell straight run carries a buttress every 6 cells (%d)" % piers)
 	_check(ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 10, Vector2i(17, -4)) == ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 10, Vector2i(17, -4)), "kit: rhythm is deterministic per cell")
 	_check(ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 3, Vector2i(0, 0)) == ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 3), "kit: corners never take a rhythm variant")

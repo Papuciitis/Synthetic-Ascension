@@ -30,6 +30,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	# intentionally have no road connectors, so they cannot create fake streets.
 	if role == &"district_fill" and conn_mask == 0 and gen._site_mgr != null:
 		var fill_cfg: Dictionary = {
+			"city_block_style": preload("res://scenes/world/buildings/CityBlockKit.gd").enabled_for(role, Global.attempt_segment),
+			"city_shared_ground": true,
 			"courtyard_floor_tex": 8,
 			"passage_floor_tex": 4,
 			"urban_fill_frontage_target": 0.82,
@@ -289,6 +291,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	if gen.parcels_enabled and gen._site_mgr != null and rng.randf() < parcel_roll_chance and not has_plaza:
 		if (has_h or has_v) and (archetype == &"street" or archetype == &"district"):
 			var pcfg := {
+				"city_block_style": preload("res://scenes/world/buildings/CityBlockKit.gd").enabled_for(role, Global.attempt_segment),
+				"city_shared_ground": role != &"secondary_reward_building",
 				"force_parcel": forced_reward_building,
 				"frontage_target": (0.92 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.84),
 				"frontage_passage_chance": (0.14 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.24),

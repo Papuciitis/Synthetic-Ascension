@@ -1,0 +1,77 @@
+{
+  "review": "reduced",
+  "scene": "res://tools/dev/CityBlockPlayablePreview.tscn",
+  "engine": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64.exe",
+  "pid": 28008,
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\reduced-06323c79",
+  "started_utc": "2026-10-18T17:49:08.3970439Z",
+  "ended_utc": "2026-10-18T17:50:50.8283881Z",
+  "native_exit": 0,
+  "timeout": false,
+  "source_hashes": [
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "sha256": "818D0E1E5736856BCA46A0DABA6D14C44919D1EA9A954CE24C9D24B76D1E4071"
+    },
+    {
+      "path": "scenes/world/buildings/RoofOverlay.gd",
+      "sha256": "899F1D8AE49F535F836F260A7B95786906FC6305A6D5C6FC0EC1C9B18E70852F"
+    },
+    {
+      "path": "scenes/world/buildings/city_stone.gdshader",
+      "sha256": "856514C0558D62EDFED49EF05A658215B4BA9352D93CC2B6E7485F61EE5F9CC7"
+    },
+    {
+      "path": "scenes/world/buildings/city_paving.gdshader",
+      "sha256": "DD2D55D91D6B5E2A47CB7C22D2F0198974B760B4ADD872D55BE808CAB49294C0"
+    },
+    {
+      "path": "core/systems/world/proc/SiteParcelsImpl.gd",
+      "sha256": "51DD98DE3194A7128562F80858F3AD62229C1ABFDE74565C19603FDFFA64F4CD"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "C9719F832EA24430D30FCFFC84252D016F51F650649115FFAA79DCF6020C9F96"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "sha256": "D60A3917B57D369CC3F807DE8004482B251CC3C516A944A20FEE1FDC09BD2D5D"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "sha256": "523520A9F61EC25D4223A80911577CC73BEA09A83CC7A37658493B487BB4CFAE"
+    },
+    {
+      "path": "tools/dev/CityBlockPlayablePreview.gd",
+      "sha256": "9BE93F541993B4155B7FE7447FC472A1B29EABC63D75BBB724D9B123EB68EF4B"
+    },
+    {
+      "path": "assets/world/city_block/civic_arcade.png",
+      "sha256": "ABB2099E8AAE36BBEC9216E2C77A3DA5EA9AE803BAA9F6C451FC3EE26729BACC"
+    },
+    {
+      "path": "assets/world/city_block/clay.png",
+      "sha256": "F636529852FE4D6D406010CCBD8B379FA18BB3A24B9D4EFA62D4988F902D4F60"
+    },
+    {
+      "path": "assets/world/city_block/house_front.png",
+      "sha256": "075D87A3F85E26DF88D4641AF0E61B2A226723C8735C16FB03A1D62C723E5780"
+    },
+    {
+      "path": "assets/world/city_block/paving.png",
+      "sha256": "5E0DB453EC02930531475EB2E4873BDFE9C04FD1571FAABE65807D3F5FC03316"
+    },
+    {
+      "path": "assets/world/city_block/pressure_plant.png",
+      "sha256": "A7D3EB0CBA45C42B68A67FCAB2771E91AD72C245F77EECB03FD881E392901D33"
+    },
+    {
+      "path": "assets/world/city_block/slate.png",
+      "sha256": "BB09A59686A36A1D33BAC41CA568A8C872E859FC78CDEA02D198840CB70E3247"
+    }
+  ],
+  "diagnostics": [],
+  "summary": [
+    "CityBlockPlayablePreview: review=reduced frames=151 fires=61 hits=62 deaths=28 save_writes=0 failures=0"
+  ]
+}

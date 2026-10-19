@@ -1,0 +1,55 @@
+{
+  "checks": [
+    {
+      "scene": "res://tools/tests/CityBlockKitTest.tscn",
+      "pid": 29228,
+      "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\imported-focused-bb3fb7c9",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockKitTest: 1056 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/ChunkBlockRendererTest.tscn",
+      "pid": 4644,
+      "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\renderer-final-ceebb62a",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "ChunkBlockRendererTest: 11 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/ChunkBlockIntegrationTest.tscn",
+      "pid": 25244,
+      "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\integration-final-dbbfbad0",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [
+        "WARNING: [ChunkManager] Player not found (group 'player')."
+      ],
+      "summary": [
+        "ChunkBlockIntegrationTest: 64 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/ScriptParseAuditTest.tscn",
+      "pid": 30608,
+      "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\imported-parse-189a4566",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "ScriptParseAuditTest: 540 passed, 0 failed (checked 540 scripts across 8 roots)"
+      ]
+    }
+  ],
+  "import": {
+    "native_exit": 0,
+    "timeout": false,
+    "log": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\final-import\\engine.log"
+  }
+}

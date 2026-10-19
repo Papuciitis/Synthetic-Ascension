@@ -1,0 +1,142 @@
+{
+  "generator": "built-in image_gen.imagegen",
+  "selected_assets": [
+    {
+      "file": "temperate_tree.png",
+      "source": "C:\\Users\\NaurisKrišjānis\\.codex\\generated_images\\01a14f56-352f-79b2-b401-d8c10d6ba199\\exec-9e22f0fd-8741-4d32-aaef-cb82dcf55861.png",
+      "prompt_id": "temperate_tree",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "c8a2dfe0b7ce901e2d92db2a4b0e1e813f859d41a8eaefddbe287fed7f0357ef",
+      "source_bytes_unchanged": true,
+      "anchor_pixels": [
+        650,
+        1170
+      ],
+      "anchor_role": "trunk/root ground contact",
+      "anchor_normalized": [
+        0.518341,
+        0.933014
+      ],
+      "suggested_world_width": 280,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "file": "planted_corner.png",
+      "source": "C:\\Users\\NaurisKrišjānis\\.codex\\generated_images\\01a14f56-352f-79b2-b401-d8c10d6ba199\\exec-f0a63c55-ecd0-4dbf-8aa7-4f8d95c82c19.png",
+      "prompt_id": "planted_stone_trough_clean",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "e2330237491733d53a559af7e0addfdece37397649b4989ff7f9eaa64dbcb316",
+      "source_bytes_unchanged": true,
+      "anchor_pixels": [
+        800,
+        870
+      ],
+      "anchor_role": "stone base contact; ignore trailing-ivy lower edge",
+      "anchor_normalized": [
+        0.520833,
+        0.849609
+      ],
+      "suggested_world_width": 160,
+      "alpha_extrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "file": "domestic_awning.png",
+      "source": "C:\\Users\\NaurisKrišjānis\\.codex\\generated_images\\01a14f56-352f-79b2-b401-d8c10d6ba199\\exec-0f4bf8ab-e8a9-41a3-b074-6b45be2d37e3.png",
+      "prompt_id": "domestic_awning",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "748731830f51273de851107fa5306ed012e4d1bee85559336a5c66949009e42f",
+      "source_bytes_unchanged": true,
+      "anchor_pixels": [
+        720,
+        160
+      ],
+      "anchor_role": "approximate back rail mount; fit actual valid window span",
+      "anchor_normalized": [
+        0.46875,
+        0.15625
+      ],
+      "suggested_world_width": 150,
+      "alpha_extrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "file": "wall_lantern.png",
+      "source": "C:\\Users\\NaurisKrišjānis\\.codex\\generated_images\\01a14f56-352f-79b2-b401-d8c10d6ba199\\exec-aff18616-669a-432b-b67e-e1efbdbaa0f7.png",
+      "prompt_id": "shielded_wall_lantern",
+      "size": [
+        1086,
+        1448
+      ],
+      "mode": "RGBA",
+      "sha256": "d26858acf4a7aebe8b7566d9980c27db4135c8c14136ce7fbceb85a025206e4e",
+      "source_bytes_unchanged": true,
+      "anchor_pixels": [
+        200,
+        440
+      ],
+      "anchor_role": "approximate back wall plate center; distinguish glass/light center",
+      "anchor_normalized": [
+        0.184162,
+        0.303867
+      ],
+      "suggested_world_width": null,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "suggested_world_height": 48
+    },
+    {
+      "file": "worn_setts.png",
+      "source": "C:\\Users\\NaurisKrišjānis\\.codex\\generated_images\\01a14f56-352f-79b2-b401-d8c10d6ba199\\exec-6fcf9cd5-c5ea-41c9-b3e7-d2923dc37e82.png",
+      "prompt_id": "worn_street_setts",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "sha256": "2261ea102d04bf5fe714842f0209a9fa5540c373b3968fdbac153b2b6d3e045f",
+      "source_bytes_unchanged": true,
+      "anchor_pixels": null,
+      "anchor_role": "world-coordinate UV surface; native repeated seam/contrast check required",
+      "anchor_normalized": null,
+      "suggested_world_width": null
+    }
+  ],
+  "alternates": [
+    {
+      "file": "planted_stone_trough.png",
+      "source": "C:\\Users\\NaurisKrišjānis\\.codex\\generated_images\\01a14f56-352f-79b2-b401-d8c10d6ba199\\exec-05bdee86-9c3c-47a0-8ba4-79a23946bfcc.png",
+      "sha256": "bf6c64823f115f571f868754b298d2de5986c1de8839838d86034919790a670b",
+      "purpose": "original planter variant, not the selected runtime v2"
+    },
+    {
+      "file": "street_setts.png",
+      "source": "C:\\Users\\NaurisKrišjānis\\.codex\\generated_images\\01a14f56-352f-79b2-b401-d8c10d6ba199\\exec-6fcf9cd5-c5ea-41c9-b3e7-d2923dc37e82.png",
+      "sha256": "2261ea102d04bf5fe714842f0209a9fa5540c373b3968fdbac153b2b6d3e045f",
+      "purpose": "exact-byte alias of worn_setts.png, not a distinct material"
+    }
+  ],
+  "alpha_note": "Broad colored RGB in transparent preview areas has alpha zero in sampled regions. Do not judge a baked halo from RGB-only preview. Native compositing was checked in ground-review-08 for selected tree/planter. Antialias pixels may have partial alpha.",
+  "limits": "Anchors are art starting points, not new collision footprints. Current camera/directional coverage and optional-placement eligibility remain implementation constraints. Requested seamless road texture is not certified by prompt alone."
+}

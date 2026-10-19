@@ -1,5 +1,6 @@
 extends Node2D
 class_name RoofOverlay
+signal cover_alpha_changed(alpha: float)
 
 ## Three-quarter walls give a building its mass now, so the roof is a shade
 ## over the interior rather than a dark slab (was 0.62).
@@ -196,6 +197,11 @@ func _frame_textured_roof() -> void:
 	# its box (a rectangle) or not (an L or a notch).
 	var fills_box := box.get_area() > 0.0 and absf(_signed_area(poly)) >= box.get_area() * 0.97
 	roof_material.set_shader_parameter("gable", 1.0 if fills_box else 0.0)
+	if Global.attempt_segment == 2:
+		# Carry the approved quiet material hierarchy into generated roofs,
+		# including irregular silhouettes. Keep their shape and actual cutaway.
+		roof_material.set_shader_parameter("material_contrast", 0.50)
+		roof_material.set_shader_parameter("material_mid", Vector3(0.43,0.26,0.19) if _poly.texture == ROOF_CLAY else Vector3(0.27,0.32,0.35))
 	_poly.material = roof_material
 	poly = _notch_doors(poly)
 	_poly.polygon = poly
@@ -205,7 +211,10 @@ func _frame_textured_roof() -> void:
 
 ## Cut the roof back over each doorway (the door cells plus the eave in front
 ## of them), so entrances show from outside instead of hiding under tiles.
-func _notch_doors(poly: PackedVector2Array) -> PackedVector2Array:
+func _notch_doors(poly: PackedVector2Array, allow_empty: bool = false) -> PackedVector2Array:
+	# Clipper returns outer contours counterclockwise even when a shallow
+	# return face was authored clockwise. Normalize before classifying holes.
+	if Geometry2D.is_polygon_clockwise(poly): poly.reverse()
 	var cell := float(_cell_px)
 	for door_value in _doors:
 		var door := door_value as Dictionary
@@ -224,6 +233,7 @@ func _notch_doors(poly: PackedVector2Array) -> PackedVector2Array:
 		var cut := Geometry2D.clip_polygons(poly, PackedVector2Array([
 			notch.position, Vector2(notch.end.x, notch.position.y), notch.end, Vector2(notch.position.x, notch.end.y),
 		]))
+		if cut.is_empty() and allow_empty: return PackedVector2Array()
 		var best := PackedVector2Array()
 		var best_area := 0.0
 		for candidate in cut:
@@ -386,6 +396,64 @@ func _on_volume_body_entered(body: Node) -> void:
 		_update_target()
 
 
+## Opt-in first-block material; preserves this roof's volume/fade ownership.
+func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, compound: bool = true) -> void:
+	if texture == null:
+		return
+	_poly.texture = texture
+	_poly.texture_scale = Vector2.ONE * 4.0
+	_poly.texture_offset = Vector2.ZERO
+	_poly.color = Color(0.91, 0.98, 1.02) if civic else Color(0.96, 0.95, 0.93)
+	# Remove the old broken-roof stamps only on this selected block.
+	for child in _poly.get_children():
+		if child is Sprite2D:
+			child.queue_free()
+	if facade_depth > 0.0 and compound:
+		var points := _poly.polygon
+		var bottom := -INF
+		for point in points:
+			bottom = maxf(bottom, point.y)
+		for i in points.size():
+			points[i].y = minf(points[i].y, bottom - facade_depth)
+		_poly.polygon = points
+		_add_eave_shadow(points)
+	elif facade_depth > 0.0:
+		# Vertical erosion of the real footprint exposes the south wall runs
+		# of an L/recess, including its inner bay. Start before door notching
+		# so the offset does not create a second displaced doorway.
+		var original := _inset_outline(footprint_outline_px, ROOF_INSET_PX)
+		var lifted := original.duplicate()
+		for index in lifted.size(): lifted[index] -= Vector2(0,facade_depth)
+		var pieces := Geometry2D.intersect_polygons(original,lifted)
+		var best := PackedVector2Array()
+		for piece: PackedVector2Array in pieces:
+			if absf(_signed_area(piece)) > absf(_signed_area(best)): best = piece
+		if best.size() >= 3:
+			_poly.polygon = _notch_doors(best)
+			_add_eave_shadow(_poly.polygon)
+	var box := Rect2(_poly.polygon[0], Vector2.ZERO)
+	for point in _poly.polygon: box = box.expand(point)
+	if _poly.material is ShaderMaterial:
+		(_poly.material as ShaderMaterial).set_shader_parameter("bounds", Vector4(box.position.x, box.position.y, box.end.x, box.end.y))
+	if _poly.material is ShaderMaterial:
+		var base_material := _poly.material as ShaderMaterial
+		base_material.set_shader_parameter("material_contrast", 0.35)
+		base_material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if civic else Vector3(0.52, 0.29, 0.20))
+	if compound:
+		preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose(_poly, civic, box)
+		# Compound caps must not fill the actual north/east/west door notch.
+		for plane: Node in _poly.find_children("*", "Polygon2D", true, false):
+			if plane.get_parent().name == &"CityRoofComposition":
+				plane.polygon = _notch_doors(plane.polygon, true)
+	else:
+		# L/recessed parcels retain their real silhouette. Never stretch a
+		# rectangular compound over the courtyard notch or its walkable bay.
+		var material := _poly.material as ShaderMaterial
+		material.set_shader_parameter("gable",1.0)
+		_poly.set_meta(&"city_roof_form", &"irregular_hall")
+		preload("res://scenes/world/buildings/CityBlockRoofForms.gd")._chimney(_poly,_poly,civic)
+
+
 func _on_volume_body_exited(body: Node) -> void:
 	if body != null and body.is_in_group(&"player"):
 		_inside_count = maxi(0, _inside_count - 1)
@@ -409,3 +477,4 @@ func _set_alpha(a: float) -> void:
 	_poly.modulate = Color(1, 1, 1, aa)
 	# Slightly stronger façade edge
 	_edge.modulate = Color(1, 1, 1, clampf(aa * 1.15, 0.0, 1.0))
+	cover_alpha_changed.emit(aa)

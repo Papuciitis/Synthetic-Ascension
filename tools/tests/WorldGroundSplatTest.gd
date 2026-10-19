@@ -25,6 +25,9 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _run() -> void:
+	var player := Node2D.new()
+	player.add_to_group(&"player")
+	add_child(player)
 	_test_base_and_stamps()
 	_test_z_order()
 	_test_authored_stamps_survive_bases()
@@ -119,6 +122,8 @@ func _test_slots() -> void:
 
 func _test_chunk_manager_path() -> void:
 	var manager := ChunkManager.new()
+	# This fixture exercises ground streaming, without furnishing content scenes.
+	manager.generation_enabled = false
 	manager.world_seed = 424242
 	manager.load_radius = 0
 	manager.unload_radius = 1

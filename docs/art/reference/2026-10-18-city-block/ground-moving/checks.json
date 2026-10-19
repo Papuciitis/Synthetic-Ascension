@@ -1,0 +1,128 @@
+{
+  "completed_local_date": "2026-10-19",
+  "tests": {
+    "kit": {
+      "scene": "res://tools/tests/CityBlockKitTest.tscn",
+      "pid": 28784,
+      "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-streetscape-resource-final-kit-b80519bd",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockKitTest: 1118 passed, 0 failed"
+      ]
+    },
+    "procedural": {
+      "scene": "res://tools/tests/CityBlockProceduralTest.tscn",
+      "pid": 10728,
+      "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-streetscape-final-procedural-ff1b167e",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockProceduralTest: 4326 passed, 0 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 75 styled kit instances across 22 sizes"
+      ]
+    },
+    "parse": {
+      "scene": "res://tools/tests/ScriptParseAuditTest.tscn",
+      "pid": 2704,
+      "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-streetscape-resource-final-parse-c4ab83cf",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "ScriptParseAuditTest: 542 passed, 0 failed (checked 542 scripts across 8 roots)"
+      ]
+    }
+  },
+  "native_stills": {
+    "scene": "res://.superpowers/sdd/2026-10-18-city-block/CityGroundCapture.tscn",
+    "pid": 26812,
+    "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-streetscape-join-fixed-e70d66f4",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityBlockCapture: captures=8 failures=0 save_writes=0"
+    ]
+  },
+  "native_generated_layouts": {
+    "scene": "res://.superpowers/sdd/2026-10-18-city-block/CityGroundProceduralCapture.tscn",
+    "pid": 15204,
+    "runtime": "C:\\Users\\NaurisKri\u0161j\u0101nis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\city-streetscape-generated-final-713f7aff",
+    "native_exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "summary": [
+      "CityProceduralCapture: captures=5 save_writes=0"
+    ]
+  },
+  "rendered_edge_checks": [
+    {
+      "image": "docs\\art\\reference\\2026-10-18-city-block\\ground-review-11\\street-ownership-debug-960x540.png",
+      "width": 960,
+      "height": 540,
+      "sampled_columns": 562,
+      "largest_jump_px": 1,
+      "largest_jump_at_x": 770,
+      "limit_px": 3,
+      "passed": true
+    },
+    {
+      "image": "docs\\art\\reference\\2026-10-18-city-block\\ground-review-11\\street-ownership-debug-1280x720.png",
+      "width": 1280,
+      "height": 720,
+      "sampled_columns": 748,
+      "largest_jump_px": 1,
+      "largest_jump_at_x": 1039,
+      "limit_px": 4,
+      "passed": true
+    }
+  ],
+  "moving": {
+    "source_hashes_match_current_files": true,
+    "runs": [
+      {
+        "directory": "small-streetscape-verified",
+        "review": "small",
+        "size": "(960, 540)",
+        "frames": 150,
+        "fires": 61,
+        "hits": 61,
+        "deaths": 28,
+        "initial_outside_population": 26,
+        "outside_frame_population_drop": 23,
+        "outside_frame_projectile_peak": 6,
+        "interior_fight_seconds": 0.933333333333335,
+        "outside_fight_simulation_seconds": 12.0000000000002,
+        "outside_fight_wall_seconds": 11.809895000000004,
+        "process_frame_ms_median": 16.666,
+        "process_frame_ms_p95": 16.6666666666667,
+        "reduced_motion": false,
+        "combat_flashes": "full",
+        "save_writes": 0,
+        "native_exit": 0,
+        "failures": 0,
+        "diagnostics": [],
+        "walkthrough": "small-streetscape-verified/walkthrough.mp4",
+        "fight": "small-streetscape-verified/fight.mp4"
+      }
+    ],
+    "counter_limits": "Fires, hits and deaths count the entire walkthrough, including interior clearance. Outdoor-only projectile/population assertions use the outdoor phase's own frame samples; player attack evidence is also visible in its native footage.",
+    "performance_limits": "60 fps cap; native Intel UHD Compatibility renderer with viewport readback and scripted controls. These are visual review observations, not a benchmark or evidence of an improvement in full-run loading stalls."
+  },
+  "moving_source_hash_count": 36,
+  "video_decodes": [
+    {
+      "video": "walkthrough.mp4",
+      "exit": 0,
+      "diagnostics": []
+    },
+    {
+      "video": "fight.mp4",
+      "exit": 0,
+      "diagnostics": []
+    }
+  ],
+  "art_review": "Bounded KEEP: combined static scene, one generated L view, verified exterior, populated outside frame83, interior frame56 and fight-ending still. No new environment readability blocker. Existing crowded-player/VFX recovery limit remains; PNG samples only, no continuous MP4/human comfort/performance/full current reduced-mode approval."
+}

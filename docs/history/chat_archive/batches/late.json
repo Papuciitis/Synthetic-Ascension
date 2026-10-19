@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "batch": "late",
+  "generated_at_utc": "2026-10-15T22:27:23Z",
+  "archive_date_local": "2026-10-16",
+  "assigned_conversation_count": 10,
+  "returned_snapshot_count": 1,
+  "retrieval_gap_count": 9,
+  "full_conversation_count": 0,
+  "response_page_count": 1,
+  "returned_turn_count": 4,
+  "returned_user_message_count": 4,
+  "returned_assistant_message_count": 4,
+  "source_message_limit": 20000,
+  "text_truncation_marker_count": 0,
+  "image_omission_declared_count": 2,
+  "preserved_original_png_count": 2,
+  "browser_reviewed_conversation_count": 0,
+  "browser_selection_attempts": 2,
+  "browser_blocker": "Assigned browser 2/tab 4 unavailable to this subagent; inventory apps=[] and browsers=[]; neither attempt bound a tab.",
+  "supplementary_repository_history": "batches/repository_history.md",
+  "limitations": [
+    "The browser failure is agent-surface unavailability, not evidence that conversations do not exist or that the user cannot access them.",
+    "Nine assigned chats have no message content recovered.",
+    "One centrally saved reader response reports4 turns, limit5, hasMore=false; full-history coverage is not certified without the browser beginning.",
+    "No full browser transcripts were saved; browser-review.json files are negative retrieval receipts.",
+    "Assistant proposals/claimed patches remain separate from user decisions/runtime observations and direct screenshot evidence.",
+    "No historical implementation claim verifies the current repository."
+  ],
+  "conversations": [
+    {
+      "conversation_id": "699ef6a7-deac-838d-ac54-b9319ab248b8",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/699ef6a7-deac-838d-ac54-b9319ab248b8",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/699ef6a7-deac-838d-ac54-b9319ab248b8/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/699ef6a7-deac-838d-ac54-b9319ab248b8.md",
+      "supplied_target_message_ids": [
+        "395f835c-f913-4935-9f91-9281b894f3f0"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "699f521d-47ac-8392-88f8-5f9c4ceb3baf",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/699f521d-47ac-8392-88f8-5f9c4ceb3baf",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/699f521d-47ac-8392-88f8-5f9c4ceb3baf/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/699f521d-47ac-8392-88f8-5f9c4ceb3baf.md",
+      "supplied_target_message_ids": [
+        "f5fa3c44-6aa7-4b35-a759-86d926838ae0",
+        "f88a930a-b02e-4401-908b-58d56a8bf4ac"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "69a2a885-bc90-8396-beea-5cdbb7bce485",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/69a2a885-bc90-8396-beea-5cdbb7bce485",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/69a2a885-bc90-8396-beea-5cdbb7bce485/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/69a2a885-bc90-8396-beea-5cdbb7bce485.md",
+      "supplied_target_message_ids": [
+        "d5200b4f-e2ad-4c85-8184-99f2a60bc778"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "69a3fd56-16e8-8386-a1b0-59cbdb4e941d",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/69a3fd56-16e8-8386-a1b0-59cbdb4e941d",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/69a3fd56-16e8-8386-a1b0-59cbdb4e941d/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/69a3fd56-16e8-8386-a1b0-59cbdb4e941d.md",
+      "supplied_target_message_ids": [
+        "a0ba7007-7e3e-4042-a5e7-0fafbb90388e"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "69a62328-8a04-8384-9067-5311863e1f25",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/69a62328-8a04-8384-9067-5311863e1f25",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/69a62328-8a04-8384-9067-5311863e1f25/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/69a62328-8a04-8384-9067-5311863e1f25.md",
+      "supplied_target_message_ids": [
+        "510f123a-106c-4ee0-9d0b-8c03c68c1b8e"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "6a606f04-481c-83ed-ae4b-efea6a1aab50",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/6a606f04-481c-83ed-ae4b-efea6a1aab50",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/6a606f04-481c-83ed-ae4b-efea6a1aab50/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/6a606f04-481c-83ed-ae4b-efea6a1aab50.md",
+      "supplied_target_message_ids": [
+        "0fff94ce-0d51-4b95-ad2d-f2379dacef40"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "6a60abe8-4928-83ed-abe1-531bd87d1573",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/6a60abe8-4928-83ed-abe1-531bd87d1573",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/6a60abe8-4928-83ed-abe1-531bd87d1573/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/6a60abe8-4928-83ed-abe1-531bd87d1573.md",
+      "supplied_target_message_ids": [
+        "4f61eca1-c78d-4a6d-8784-04b8e8aa2d97"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "6a615027-8668-83eb-9da0-9282723bb2b0",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/6a615027-8668-83eb-9da0-9282723bb2b0",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/6a615027-8668-83eb-9da0-9282723bb2b0/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/6a615027-8668-83eb-9da0-9282723bb2b0.md",
+      "supplied_target_message_ids": [
+        "c47e9e06-e1bf-4ad1-8864-a03a3cec59f4"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "6a61b871-620c-83ed-8ea9-8fe4dedc68bc",
+      "status": "retrieval_gap",
+      "source_title": null,
+      "url": "https://chatgpt.com/c/6a61b871-620c-83ed-8ea9-8fe4dedc68bc",
+      "source_metadata_start_utc": null,
+      "source_metadata_end_utc": null,
+      "returned_turn_count": 0,
+      "user_message_count": 0,
+      "assistant_message_count": 0,
+      "pages": [],
+      "browser_attempt_receipt": "sources/6a61b871-620c-83ed-8ea9-8fe4dedc68bc/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": null,
+      "image_omission_declared_count": null,
+      "preserved_attachments": [],
+      "uploaded_game_zip_count_not_archived": null,
+      "digest_path": "conversations/6a61b871-620c-83ed-8ea9-8fe4dedc68bc.md",
+      "supplied_target_message_ids": [
+        "07dcfff8-2105-46a4-91c6-688fce9b245a"
+      ],
+      "target_message_ids_recovered": [],
+      "tags": [
+        "retrieval-gap",
+        "unrecovered",
+        "browser-unavailable"
+      ],
+      "coverage_notes": [
+        "No source title, timestamps or message contents available.",
+        "Browser target could not be bound; navigation to this chat was not attempted.",
+        "No content inferred from ID, search target or repository chronology."
+      ]
+    },
+    {
+      "conversation_id": "6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438",
+      "status": "partial_reader_snapshot",
+      "source_title": "Enemy Performance Optimization",
+      "url": "https://chatgpt.com/c/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438",
+      "source_metadata_start_utc": "2026-07-23T08:21:39.216Z",
+      "source_metadata_end_utc": "2026-07-23T09:38:36.128Z",
+      "returned_turn_count": 4,
+      "user_message_count": 4,
+      "assistant_message_count": 4,
+      "pages": [
+        "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/page-001.json"
+      ],
+      "browser_attempt_receipt": "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/browser-review.json",
+      "browser_content_reviewed": false,
+      "true_beginning_confirmed": false,
+      "full_history_recovered": false,
+      "text_truncation_marker_count": 0,
+      "image_omission_declared_count": 2,
+      "preserved_attachments": [
+        "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/attachments/image(32).png",
+        "sources/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438/attachments/image(33).png"
+      ],
+      "uploaded_game_zip_count_not_archived": 2,
+      "digest_path": "conversations/6a61ce3a-8f3c-83ed-b8a2-bcb9c5107438.md",
+      "supplied_target_message_ids": [
+        "051866f8-e2b3-4b1a-94c0-85f52526be6b"
+      ],
+      "target_message_ids_recovered": [
+        "051866f8-e2b3-4b1a-94c0-85f52526be6b"
+      ],
+      "tags": [
+        "performance",
+        "enemy-simulation",
+        "simulation-LOD",
+        "Splitter",
+        "respawn",
+        "relay",
+        "stats",
+        "0.25.6",
+        "0.25.6a",
+        "0.25.6b"
+      ],
+      "coverage_notes": [
+        "Four returned turns with response hasMore=false; browser beginning not independently confirmed.",
+        "No text-clipping marker observed; uploaded game ZIP contents not reviewed.",
+        "Two screenshots omitted from message text were preserved and inspected.",
+        "No user confirmation of final 0.25.6b delivery is present."
+      ]
+    }
+  ]
+}

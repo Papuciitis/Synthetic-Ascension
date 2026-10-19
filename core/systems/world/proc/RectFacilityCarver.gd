@@ -74,12 +74,11 @@ static func carve_room_first(
 			"z": -93
 		})
 
-	# Ensure at least a couple rooms
-	if rooms.size() < 2:
-		var rr2 := Rect2i(
-			Vector2i(inner.position.x + 1, inner.position.y + 1),
-			Vector2i(maxi(3, inner.size.x - 2), maxi(3, inner.size.y - 2))
-		)
+	# If two rooms cannot fit, use one usable room inside the existing envelope.
+	# An extra inset here becomes a redundant inner wall ring, not a partition.
+	var single_room_fallback := rooms.size() < 2
+	if single_room_fallback:
+		var rr2 := inner
 		rooms = [rr2]
 		centers = [_rect_center_cell(rr2)]
 		_fill_rect(floor_cells, rr2)
@@ -191,6 +190,18 @@ static func carve_room_first(
 	# half cover: sample a few floor cells near walls
 	var cover_budget := 6
 	var floor_keys: Array = floor_cells.keys()
+	if single_room_fallback:
+		# Entrance carving also records threshold/exterior floor cells. Keep
+		# fallback cover in the room and off the one-cell approach to each door.
+		floor_keys = []
+		for cell: Vector2i in floor_cells:
+			if not inner.has_point(cell): continue
+			var at_entrance := false
+			for offset: Vector2i in [Vector2i.UP,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.LEFT]:
+				if door_cells.has(cell+offset):
+					at_entrance = true
+					break
+			if not at_entrance: floor_keys.append(cell)
 	for _i in range(cover_budget * 8):
 		if res.half_cover_cells.size() >= cover_budget:
 			break

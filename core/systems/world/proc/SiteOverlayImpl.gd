@@ -116,14 +116,23 @@ func decorate_chunk(
 			continue
 		window_cells_chunk[p - chunk_offset_cells] = true
 
-	# Trim micro-spurs (prevents "wall confetti")
-	_trim_wall_spurs(wall_cells_chunk, 2)
-	# Remove windows that no longer exist after trim
-	for k in window_cells_chunk.keys():
-		if not wall_cells_chunk.has(k):
-			window_cells_chunk.erase(k)
-
-	chunk_manager._spawn_wall_cells(chunk, wall_cells_chunk, window_cells_chunk)
+	# The complete plan owns topology. Clipping creates artificial endpoints;
+	# pruning them erodes door jambs and opens holes at streamed boundaries.
+	# Resolve connections before clipping too: a neighbor in the next chunk
+	# still requires this cell's visual/collision half-arm up to the seam.
+	var directions := [Vector2i.UP,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.LEFT]
+	var build_data: ChunkBuildData = chunk_manager.get("_active_build_data")
+	for cell: Vector2i in wall_cells_chunk:
+		var site_cell := cell+chunk_offset_cells
+		var mask := 0
+		for index in range(4):
+			if chosen.carve.wall_cells.has(site_cell+directions[index]): mask |= 1<<index
+		var scene: PackedScene = chunk_manager.cover_window_scene if window_cells_chunk.has(cell) else chunk_manager.cover_full_scene
+		chunk_manager._spawn_block(chunk,scene,cell.x,cell.y,mask)
+		if build_data != null:
+			var index := build_data._index(cell)
+			if index >= 0:
+				build_data.blocker_variant[index] |= ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE
 
 	# Some half-cover props from carve (clipped)
 	steps["walls"] = Time.get_ticks_usec() - step_started_usec

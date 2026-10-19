@@ -2410,3 +2410,220 @@ independent reviewers inspected all 69 and found no blocking visual issue.
 Focused checks and all 539 gameplay script parses pass. Human moving-fight
 readability and discovery remain playtest work. See the [rework audit and previews](audits/2026-10-18-objective-visual-rework.md)
 for state provenance, review limits and the previously unresolved loading stalls.
+
+## 2026-10-18 — First playable city block ready for visual review
+
+Segment 2's existing searchable-building block now has a small original
+Mediterranean / medieval / municipal-industrial kit: a shallow civic arcade,
+shuttered house frontage, quieter slate and terracotta roofs, practical service
+plant, clipped limestone frontage paving and restrained planting. Actual parcel
+footprints, door gaps, collision, local security/rewards and roof entry/exit
+ownership remain. Tall frontage cuts away with the roof; wall geometry continues
+through the shared renderer. Other city blocks retain their existing art.
+
+Four isolated native runs cover normal/small windows, Reduced Motion with Combat
+Flashes Off, and an original-art control. All complete physical perimeter/alley
+traversal, real interior entry/security clearance/exit, streamed regeneration and
+a populated moving outside fight. The final runs report zero failures/save writes
+and clean native exits; before/after videos, source hashes and explicit god-mode /
+scripted-input limits are retained. Focused checks pass and all 540 gameplay
+scripts parse. No combat/balance/save-rule retuning or Git publication occurred.
+
+This is one bounded playable example, with painted fronts currently supporting
+south-facing doors. It is ready for human aesthetic/readability review rather
+than whole-city rollout; compound roof silhouettes, broader directional coverage
+and the previously reported loading stalls remain later work. See the
+[first-block audit and native review media](audits/2026-10-18-first-city-block.md).
+
+## 2026-10-18 — City-block designer corrections and roof concealment
+
+The first art iteration required rework. The art chat subsequently cleared the
+revised architectural shape: taller occupied arcade, connected pitched roof
+forms, distinct domestic roof, quieter material hierarchy, continuous block
+paving and purposeful service/planting groups. This supersedes the initial
+static rejection for this bounded block; whole-city rollout remains outside it.
+Three fresh normal/small/reduced native runs pass, with 467 captured frames.
+
+User follow-up reduces the default hardware cursor by 35%, retaining enlarged
+accessibility sizes and aligned hotspots. Roof-covered player pixels now show
+a restrained cool translucent silhouette; exposed parts and indoor cutaways keep
+normal art. Depth classification handles recessed wings and courtyard spans.
+The designer cleared the staged shadow treatment and both compact/enlarged
+cursor previews. One further final-source native moving run passes physical
+entry/exit, streamed reload and populated combat with zero failures/save writes
+or diagnostics. Roof-mask tests pass 11, animation 163, actor-depth/shadows 38,
+and all 542 gameplay scripts parse. Human continuous-motion comfort and crowded
+player recovery remain separate from sampled-image approval. No balance/save
+retuning or Git publication occurred. See the updated
+[audit, versioned evidence and designer verdicts](audits/2026-10-18-first-city-block.md).
+
+## 2026-10-18 — Procedural kit checks and designer-led city refinement
+
+Following the user's request to continue with the art chat, the bounded block
+receives a thinner domestic eave, shallow entrance contact/flush worn thresholds,
+a coherent aged-copper plant-to-drain connection, and one wall-mounted civic
+records group. Its corrected opaque ledger faces sit above masonry fills and
+below the roof, and dressing is omitted if a real north doorway would conflict.
+The art chat cleared all four relationships at small native size.
+
+The user's chimney correction replaces clean pale boxes with role-specific civic
+coping/flue and domestic clay-pot assemblies, roof flashing and short shadows.
+The shared helper derives placement from the generated supporting roof polygon,
+clears ridges/eaves and skips unsafe spans. The designer cleared the shown
+original and generated placement/cutaway states. Five native generated-layout
+inspection views include horizontal/vertical streets, cross, L and T junctions;
+curb openings now follow only road arms actually reaching that edge.
+
+The procedural sweep covers four seeds and five road layouts: 20 distinct
+layouts, 76 parcels and 75 styled rectangular instances across 22 sizes, with all
+four entrance directions. Its 2,685 checks preserve geometry, actual doors,
+identities, deterministic regeneration and open road connections. Kit checks
+pass 1,112; roof-mask checks pass 11; all 542 gameplay scripts parse. A final
+post-chimney small native Game run passes traversal, entry/security clearance/
+exit, streamed reload and populated combat without failures, diagnostics or save
+writes. No balance/save-rule changes or Git publication occurred.
+
+This validates a parametric prototype, not finished procedural art coverage:
+painted detailed fronts remain south-facing, irregular footprints retain existing
+art, and rollout is still limited to the S2 example role. Multi-facing frontage
+and irregular-family coverage remain explicit next steps. Sampled art approval
+does not certify human continuous-motion comfort or performance. See the
+[refinement audit and versioned native evidence](audits/2026-10-18-first-city-block.md).
+
+## 2026-10-19 — Procedural streetscape and original city dressing
+
+The S2 prototype now separates quieter worn street setts from limestone
+frontages, with broad asymmetric paved width, open generated road connectors,
+broken shallow curbs and localized soil/growth/repair groups. Shared southwest
+building and foliage shadows, a deeper civic entry and an actually mounted
+outlet over a flush catch drain give the block more physical depth. No road,
+door, collision, objective, balance or save rules changed.
+
+Following the user's stronger visual direction in the art chat, five original
+assets are integrated: temperate tree, ivy/stone planter, one domestic awning,
+shielded entry lantern and worn setts. Measured roots/mounts and span checks keep
+them tied to real generated geometry; mounted art follows the actual cutaway,
+while outdoor foliage remains. Source images, exact generation prompts and
+anchors are retained. The designer cleared the combined shown scene, one
+generated L layout and sampled inside/outside combat, with explicit sampled-review
+limits and the existing crowded-player recovery limit retained.
+
+The square road-edge discontinuity was traced with native ownership captures:
+replacing floating sine hashing with integer lattice hashing changes the
+maximum sampled adjacent-column jump from 18 pixels to one at both window sizes.
+Final checks pass 1,118 for the kit, 4,326 across 20 generated layouts (22 parcel
+sizes/all four entrances), and all 542 gameplay script parses. The final native
+small-window moving run passes perimeter traversal, entry/security/exit, streamed
+reload and populated combat: 150 frames, 61 fires/61 hits/28 deaths, clean exit,
+zero failures/diagnostics/save writes. Current source hashes and measured-timing
+videos are preserved and both videos decode cleanly.
+
+This is a materially richer reusable block family, not whole-city rollout or a
+new organic city topology. Detailed non-south/irregular art coverage, human
+continuous-play comfort and packed-export/performance validation remain separate.
+See the [street/ground audit and native review evidence](audits/2026-10-18-city-ground.md).
+
+## 2026-10-19 — Actual city generation inspection and corrections
+
+Actual Game inspection across attempt seeds 16102026 and 211 and five production
+roles exposed the gap between the example block and the broader S2 city. Shared
+S2 ground now carries the quieter original setts/limestone and subdued soil/grass
+treatment through existing organic coverage. Road/access material joins no longer
+read as overlapping dark patches; legacy S2 roof texture contrast is reduced.
+Composed block paving is clipped to its owning chunk and fades into shared
+ground, fixing overdraw into uninspected neighboring interiors.
+
+Seed 211 also genuinely omitted a planned searchable building: courtyard access
+crossed the full-depth frontage bands. Only when required placement fails, a
+smaller workshop now fits within a safe part of the same band, using the standard
+door/interior/keepout path. Actual-plan checks verify the objective and reachable
+entry in four plans. The broader route suite passes 3,840 chunks, 2,538 doors and
+1,728 reward placements; the kit passes 1,118 checks, its 20-layout sweep 4,580,
+and all 542 gameplay scripts parse. Ground ownership/streaming and S2 switching
+checks pass cleanly.
+
+A fresh native seed-211 run passes perimeter movement, real entry/security/exit,
+roof restoration, streamed regeneration and populated combat: 145 frames, 61
+fires/60 hits/29 deaths, no failures, diagnostics or save writes. An earlier
+scripted attempt to walk through live guards before fighting remains failed
+evidence; the corrected check stops just inside the actual threshold. Collision
+and encounter rules remain active. Current source/asset hashes are retained.
+
+The art chat keeps the corrected junctions, ground boundary and visible repaired
+building. Whole-city concept fidelity still needs work: non-south/irregular
+frontages, connected neighboring building groups, broader depth/shadows and
+organized mature planting remain visibly incomplete. No new assets, whole-city
+topology rewrite or balance/save retuning were performed. See the
+[actual-generation audit](audits/2026-10-19-actual-city-generation.md) and
+[designer's sampled review](art/reviews/2026-10-19-production-city-generation-designer-review.md).
+
+## 2026-10-19 — Procedural civic and domestic neighborhood coverage
+
+The accepted civic arcade and inhabited domestic families now extend through S2
+street parcels and courtyard fill. Visible south wall depth is independent of
+entrance direction: north/east/west entrances retain upright closed frontage
+bays and receive recess/contact geometry at their real openings. Compound roof
+faces preserve doorway notches. Irregular buildings keep their actual L/recess
+silhouette, with roof setbacks and wall bays following exposed footprint edges;
+bounding-box awnings and replacement interior floors are omitted there.
+
+Ambient workshops receive a stable occasional civic identity; domestic planting
+adds measured tree/stone groups on eligible blocked corners. Service plant and
+drain stay on the same wall, away from east entrances. Original textures are
+shared across streamed instances, including the raw-source fallback. New roles
+retain the existing shared organic ground; the reviewed prototype's composed
+paving remains local to its original role. No physical footprint, security,
+reward, combat, balance or save-rule changes were made.
+
+Independent code review identified an inherited irregular north/east even-width
+door-record offset. Its presentation anchor now matches the already carved
+cells, with a regression covering every declared opening cell in all four
+directions. Kit checks pass 1,257; the 20-layout sweep passes 5,430 across all 76
+parcels, including the irregular parcel. Four actual plans exercise 20 production
+chunks and 60 styled buildings, both families and all four entrance directions.
+The required searchable-building, protected access, ground, roof occlusion and
+3,840-chunk reachability checks remain clean; all 543 gameplay scripts parse.
+
+Fresh production Game captures cover attempt seeds 16102026 and 211: 48 normal/
+small role and directional stills, including irregular buildings. Two native
+moving runs cover normal and small Reduced Motion/Combat Flashes Off windows.
+Both pass physical perimeter movement, entry/security clearance/exit, roof
+restoration, streamed reload and populated outside combat: 291 recorded frames,
+zero failures, diagnostics or save writes, and all 40 source/asset hashes match
+in each run. Scripted input and god mode remain explicit fixture limits.
+
+The implementation and personally inspected native samples are ready for the
+coordinating designer's review; these checks do not confer new aesthetic or
+human continuous-play approval. Earlier visual iterations are preserved and
+marked superseded in the [versioned verification record](art/reference/2026-10-19-city-neighborhood-v1/checks.json).
+
+## 2026-10-19 — House wall continuity correction, review pending
+
+Irregular parcel walls now join inward corners cardinally, closing the diagonal
+holes and reconnecting bars beside recessed entrances. Declared door cells stay
+open. The original window-roll sequence is retained so the repair does not
+change later parcel choices. Ordinary and irregular parcel walls carry an intact
+building flag, preserving existing roof/material bits while avoiding broken ruin
+sections and raised piers. Real interior partitions remain in place.
+
+Fresh checks pass: 1,298 kit assertions; 5,430 procedural assertions across 76
+parcels; 60 actual buildings in 20 chunks; blocker data/rendering/physics; roof
+occlusion; 3,840-chunk reachability; and 543 script parses. The unchanged chunk
+integration fixture passes 64 assertions with its established missing-player
+warning, recorded separately rather than treated as a clean production run.
+
+Both reviewed irregular houses have fresh native exterior/physical-entry/exit
+captures at 1280×720 and 960×540: 12 images, zero failures, diagnostics or save
+writes. A current-code reduced-motion native route also passes perimeter travel,
+five-guard clearance, roof restoration and streamed reload: 148 recorded frames,
+62 weapon fires, 61 hits and 29 deaths, zero failures/diagnostics/save writes.
+All 40 captured source/asset hashes match. Scripted input, god mode and controlled
+outside combat remain explicit fixture limits.
+
+The ordinary rectangular cutaway retains actual inner room-boundary runs near
+the perimeter. That remaining double-wall appearance is explicitly a visual
+review item; this correction does not claim it resolved every reported interior
+layout issue. Facility seam work and its native proof have a separate owner.
+Publication remains on hold pending combined review. The generic duplicate
+IndoorVolume ownership issue is deferred by designer direction. See the
+[current house verification packet](art/reference/2026-10-19-house-wall-repair-v1/checks.json).

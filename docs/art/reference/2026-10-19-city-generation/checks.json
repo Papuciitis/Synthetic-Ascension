@@ -1,0 +1,281 @@
+{
+  "checks": [
+    {
+      "label": "actual-clean-material",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityGenerationMaterialTest: failures=0"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-clean-material-733f7b1d"
+    },
+    {
+      "label": "actual-clean-splat",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "WorldGroundSplatTest: 21 passed, 0 failed"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-clean-splat-2d737735"
+    },
+    {
+      "label": "actual-final-CityPlannedBuildingTest",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityPlannedBuildingTest: chunks=4 failures=0"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-final-CityPlannedBuildingTest-5ed74cac"
+    },
+    {
+      "label": "actual-final-CityBlockKitTest",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockKitTest: 1118 passed, 0 failed"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-final-CityBlockKitTest-c5b36133"
+    },
+    {
+      "label": "actual-final-CityBlockProceduralTest",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockProceduralTest: 4580 passed, 0 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 75 styled kit instances across 22 sizes"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-final-CityBlockProceduralTest-444c3bb1"
+    },
+    {
+      "label": "actual-final-ProcChunkReachabilityTest",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "ProcChunkReachabilityTest: 3840 chunks, 2538 doors, 1728 rewards, 0 failures"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-final-ProcChunkReachabilityTest-4b16c7ab"
+    },
+    {
+      "label": "actual-final-ScriptParseAuditTest",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "ScriptParseAuditTest: 542 passed, 0 failed (checked 542 scripts across 8 roots)"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-final-ScriptParseAuditTest-f09a8f41"
+    },
+    {
+      "label": "actual-gen-final-native",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityActualGenerationCapture: captures=12 failures=0 save_writes=0"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-gen-final-native-2b3101e7"
+    },
+    {
+      "label": "actual-gen-final211-materials",
+      "native_exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityActualGenerationCapture: captures=14 failures=0 save_writes=0"
+      ],
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\actual-gen-final211-materials-4ea10499"
+    }
+  ],
+  "live": {
+    "directory": "moving-211-verified",
+    "seed": 211,
+    "frames": 145,
+    "fires": 61,
+    "hits": 60,
+    "deaths": 29,
+    "outside_projectile_peak": 6.0,
+    "outside_population_drop": 24,
+    "simulation_fight_seconds": 12.0000000000002,
+    "native_exit": 0,
+    "failures": 0,
+    "save_writes": 0,
+    "source_hashes_match": true,
+    "source_count": 39,
+    "events": {
+      "streamed_reload": {
+        "equal": true,
+        "event": "streamed_reload",
+        "restored_visual_instances": 1834,
+        "unloaded_visual_instances": 0
+      },
+      "exited": {
+        "alpha": 1.0,
+        "event": "exited",
+        "inside_count": 0
+      },
+      "entered": {
+        "alpha": 0.0,
+        "event": "entered",
+        "inside_count": 1,
+        "security": 5
+      }
+    },
+    "frame_ms_median": 16.666,
+    "frame_ms_p95": 16.6666666666667
+  },
+  "source_hashes": [
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "sha256": "8BAF6FA5DF9A1EA684E1BA5E4F6A9638BC09BC2853AE7CBF67E14A2AA17EFBEF"
+    },
+    {
+      "path": "scenes/world/buildings/RoofOverlay.gd",
+      "sha256": "5525394DD5B8850C39A447C36AF818DDEBCC96C0F7A602573935B2A7FBE22C43"
+    },
+    {
+      "path": "scenes/world/buildings/city_stone.gdshader",
+      "sha256": "42B77A9DDB0C6B112919D04CB31E81AB47707B4C32FD10B64FA23BCEF0700E2D"
+    },
+    {
+      "path": "scenes/world/buildings/city_paving.gdshader",
+      "sha256": "931A17F472A3CE71B1692E36AEAFF283C7A7E6A300F319C0A5D0C42B7C8F8031"
+    },
+    {
+      "path": "core/systems/world/proc/SiteParcelsImpl.gd",
+      "sha256": "896DD4C100ABED5954AED43DD454D2D071C1FDEECDEF2523D851824F0517C027"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "C9719F832EA24430D30FCFFC84252D016F51F650649115FFAA79DCF6020C9F96"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "sha256": "D60A3917B57D369CC3F807DE8004482B251CC3C516A944A20FEE1FDC09BD2D5D"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "sha256": "523520A9F61EC25D4223A80911577CC73BEA09A83CC7A37658493B487BB4CFAE"
+    },
+    {
+      "path": "tools/dev/CityBlockPlayablePreview.gd",
+      "sha256": "ECC411E2B91B891A64545465230A36C1895FD853BE83110ED4C412821900C05F"
+    },
+    {
+      "path": "scenes/world/buildings/city_ground.gdshader",
+      "sha256": "0E823A339DA2A5E5C3B994DE31151F8DBFC1960319D86AD55D1E7E19583A25BF"
+    },
+    {
+      "path": "assets/world/ground/ground_cobble_01.png",
+      "sha256": "47F6EF64BAB73E0BD8ABEDCC61CDD5D3E3A807EEA7E6937844CC8576D5FC2C23"
+    },
+    {
+      "path": "assets/world/ground/ground_grass_01.png",
+      "sha256": "27553F2F93DCD67D712DAD138759E3EA46129576C7C3DEBCBEF9370A8E01DA29"
+    },
+    {
+      "path": "assets/world/ground/ground_dirt_01.png",
+      "sha256": "D932CEBF6FA8C15494E3BDDFC398BB7E1CFD6DBCD623EDBB27775645030DEB9C"
+    },
+    {
+      "path": "core/systems/world/ChunkManager.gd",
+      "sha256": "E1EA17E50266D616DF50A61B1D5370E587E546183A5002B1BC5E2C6F2FB23931"
+    },
+    {
+      "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+      "sha256": "7B6BCABAC118BE9A74C3737672A1F23B9FB088D8345F7CCD48F66C405E36D8AA"
+    },
+    {
+      "path": "core/systems/world/ground/ground_splat.gdshader",
+      "sha256": "4EB6372195F2F05E79718D18EDA740FD9239F1BE2A9591CAAF40669DEC3AE4F7"
+    },
+    {
+      "path": "core/systems/world/WorldDepthStyle.gd",
+      "sha256": "9966A37D74AE76CF58B892CA55513597B6A78A6D1604A5C41053C48CC855187E"
+    },
+    {
+      "path": "assets/world/dressing/generated/olive_shrub.tres",
+      "sha256": "E94A4C1C99E0FA9B26453A34661A38C6F3DEAFC105DF28F3C3E2F5E143C7B6C6"
+    },
+    {
+      "path": "assets/world/dressing/generated/dressing_set_v2.png",
+      "sha256": "78DC5E917B3C0EAC0903BAA2A40816C84A90C069CCC8F405772CA9B7E5B5E9B3"
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+      "sha256": "1943044B44DE2C665D4973DFDF9AA0D3E01FA0F0033CE58FE3E6CEC6D8E774A2"
+    },
+    {
+      "path": "scenes/world/buildings/roof.gdshader",
+      "sha256": "AEC9E9FA7212438C9F5E0531C65425E3B0E0F6FE8F3F1DB9276B1944F4E439E8"
+    },
+    {
+      "path": "scenes/world/buildings/RoofOverlay.tscn",
+      "sha256": "010DD09276FA06E2B4F4BA83EA2E6869E3B9F862074981594EC0CA1A9C726B1D"
+    },
+    {
+      "path": "core/actors/player/PlayerVisualController.gd",
+      "sha256": "221C72B3BCD86DD1138C3F2FBA03122029AABBEF26F4F7BF5392EA46E263EC15"
+    },
+    {
+      "path": "core/actors/player/PlayerRoofOcclusion.gd",
+      "sha256": "529ECAA953D68413E1667C919992BD038577EF95720520EC03620D0403AE503B"
+    },
+    {
+      "path": "core/actors/player/player_roof_occlusion.gdshader",
+      "sha256": "2B84AB79A8D7F614CEE3F961BC41D3603EDA72378FF912D2E5E7D9E56F682B26"
+    },
+    {
+      "path": "ui/cursor/CursorManager.gd",
+      "sha256": "3DE9226926D57FF324023775B5F0EF0A2F237E8279631BF66EBAEFCA866B4303"
+    },
+    {
+      "path": "assets/world/city_block/civic_arcade.png",
+      "sha256": "ABB2099E8AAE36BBEC9216E2C77A3DA5EA9AE803BAA9F6C451FC3EE26729BACC"
+    },
+    {
+      "path": "assets/world/city_block/clay.png",
+      "sha256": "F636529852FE4D6D406010CCBD8B379FA18BB3A24B9D4EFA62D4988F902D4F60"
+    },
+    {
+      "path": "assets/world/city_block/domestic_awning.png",
+      "sha256": "748731830F51273DE851107FA5306ED012E4D1BEE85559336A5C66949009E42F"
+    },
+    {
+      "path": "assets/world/city_block/house_front.png",
+      "sha256": "075D87A3F85E26DF88D4641AF0E61B2A226723C8735C16FB03A1D62C723E5780"
+    },
+    {
+      "path": "assets/world/city_block/paving.png",
+      "sha256": "5E0DB453EC02930531475EB2E4873BDFE9C04FD1571FAABE65807D3F5FC03316"
+    },
+    {
+      "path": "assets/world/city_block/planted_corner.png",
+      "sha256": "E2330237491733D53A559AF7E0ADDFDECE37397649B4989FF7F9EAA64DBCB316"
+    },
+    {
+      "path": "assets/world/city_block/planted_stone_trough.png",
+      "sha256": "BF6C64823F115F571F868754B298D2DE5986C1DE8839838D86034919790A670B"
+    },
+    {
+      "path": "assets/world/city_block/pressure_plant.png",
+      "sha256": "A7D3EB0CBA45C42B68A67FCAB2771E91AD72C245F77EECB03FD881E392901D33"
+    },
+    {
+      "path": "assets/world/city_block/slate.png",
+      "sha256": "BB09A59686A36A1D33BAC41CA568A8C872E859FC78CDEA02D198840CB70E3247"
+    },
+    {
+      "path": "assets/world/city_block/street_setts.png",
+      "sha256": "2261EA102D04BF5FE714842F0209A9FA5540C373B3968FDBAC153B2B6D3E045F"
+    },
+    {
+      "path": "assets/world/city_block/temperate_tree.png",
+      "sha256": "C8A2DFE0B7CE901E2D92DB2A4B0E1E813F859D41A8EAEFDDBE287FED7F0357EF"
+    },
+    {
+      "path": "assets/world/city_block/wall_lantern.png",
+      "sha256": "D26858ACF4A7AEBE8B7566D9980C27DB4135C8C14136CE7FBCEB85A025206E4E"
+    },
+    {
+      "path": "assets/world/city_block/worn_setts.png",
+      "sha256": "2261EA102D04BF5FE714842F0209A9FA5540C373B3968FDBAC153B2B6D3E045F"
+    }
+  ],
+  "limits": "Two actual S2 seeds with frozen environment views; four actual-plan reward placements; separate parametric and route sweeps. Live run uses scripted input, god mode and controlled outside population. Sampled visual art review; no full-city concept fidelity, human motion comfort, packed export or performance benchmark claim."
+}

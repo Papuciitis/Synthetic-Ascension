@@ -4,6 +4,7 @@ class_name SiteParcelsImpl
 const RECT_FAC := preload("res://core/systems/world/proc/RectFacilityCarver.gd")
 const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
 const ROOF_OVERLAY_SCENE: PackedScene = preload("res://scenes/world/buildings/RoofOverlay.tscn")
+const CITY_KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const _DIR_N: int = 1
 const _DIR_E: int = 2
 const _DIR_S: int = 4
@@ -62,6 +63,28 @@ func decorate_district_parcels(
 			continue
 		if _fill_frontage_band(chunk_manager, chunk, coord, band, door_dir, keepout_rects, placed, working_cfg, rng, chunk_rect, force_parcel and not filled_any):
 			filled_any = true
+	# Courtyard access can cross the nominal full-depth frontage band. A
+	# required reward must still use a smaller safe part of that same band,
+	# rather than silently leaving a planned searchable objective empty.
+	if force_parcel and not filled_any:
+		for band_data: Dictionary in bands:
+			var band: Rect2i = (band_data.rect as Rect2i).intersection(chunk_rect.grow(-2))
+			var direction: Vector2i = band_data.door_dir
+			var size := Vector2i(7,8) if direction.y != 0 else Vector2i(8,7)
+			for y in range(band.position.y,band.end.y-size.y+1):
+				for x in range(band.position.x,band.end.x-size.x+1):
+					var candidate := Rect2i(Vector2i(x,y),size)
+					if not _rect_can_place(candidate,chunk_rect,keepout_rects,placed): continue
+					filled_any = _spawn_building_rect(chunk_manager,chunk,coord,candidate,direction,&"workshop",keepout_rects,placed,working_cfg,rng,chunk_rect)
+					if filled_any: break
+				if filled_any: break
+			if filled_any: break
+	if bool(working_cfg.get("city_block_style", false)):
+		if not bool(working_cfg.get("city_shared_ground", false)):
+			CITY_KIT.compose_street(chunk, placed, lane_rect_h, lane_rect_v, int(chunk_manager.cell_size_px), cpc)
+		else:
+			for kit: Node in chunk.get_children():
+				if kit.is_in_group(&"city_block_building"): kit.trim_paving(placed, int(chunk_manager.cell_size_px))
 
 	return placed
 
@@ -155,6 +178,13 @@ func decorate_urban_fill(
 		_fill_frontage_band(chunk_manager, chunk, coord, band, door_dir, keepouts, placed, fill_cfg, rng, chunk_rect, false)
 
 	_decorate_courtyard_props(chunk_manager, chunk, courtyard, passage_dirs, rng)
+	if bool(fill_cfg.get("city_block_style", false)):
+		# Keep courtyard/access material ownership in the shared ground map.
+		# Only trim local surrounds and shadows; don't invent road arms here.
+		for kit: Node in chunk.get_children():
+			if kit.is_in_group(&"city_block_building"):
+				kit.set("_chunk_extent", Vector2.ONE*cpc*int(chunk_manager.cell_size_px))
+				kit.trim_paving(placed, int(chunk_manager.cell_size_px))
 
 	# Courtyard combat/ambush sockets, but no dormant enemies are created here.
 	for socket_offset in [Vector2(court_w * 0.25, court_h * 0.5), Vector2(court_w * 0.75, court_h * 0.5), Vector2(court_w * 0.5, court_h * 0.25)]:
@@ -456,6 +486,7 @@ func _spawn_building_rect(
 		chunk_manager.spawn_roofed_wall_cells(chunk, wall_cells, window_cells, interior_walls)
 	else:
 		chunk_manager._spawn_wall_cells(chunk, wall_cells, window_cells)
+	_mark_building_walls(chunk_manager,wall_cells,bool(cfg.get("city_block_style",false)))
 
 	for entrance in entrances:
 		var entrance_pos: Vector2i = entrance.get("pos", Vector2i.ZERO) as Vector2i
@@ -509,6 +540,11 @@ func _spawn_building_rect(
 					chunk.add_child(roof)
 					if roof.has_method("configure"):
 						roof.configure(build_rect, int(chunk_manager.cell_size_px), door_dir, volume, template, building_id, entrances)
+					if bool(cfg.get("city_block_style", false)):
+						var kit := CITY_KIT.new()
+						chunk.add_child(kit)
+						var civic := building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
+						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)))
 
 	placed.append(build_rect)
 	return true
@@ -598,32 +634,43 @@ func _spawn_building_footprint(
 
 	# Perimeter walls come straight from the footprint; the interior is open.
 	var wall_cells: Dictionary = {}
+	var legacy_window_boundary: Dictionary = {}
 	for cell_key in footprint.keys():
 		var cell := cell_key as Vector2i
-		for offset in [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]:
+		# Include diagonal exposure at reflex corners. The wall kit/colliders
+		# connect cardinal arms; a four-neighbor boundary alone leaves diagonal
+		# gaps and isolated bars around the L and recessed entrance.
+		for offset in [Vector2i(0,-1),Vector2i(1,0),Vector2i(0,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(1,-1),Vector2i(1,1),Vector2i(-1,1)]:
 			if not footprint.has(cell + offset):
 				wall_cells[cell] = true
+				if offset.x == 0 or offset.y == 0: legacy_window_boundary[cell] = true
 				break
 	# The doorway: an opening of door_w in the (possibly recessed) front wall.
 	@warning_ignore("integer_division")
 	for step in range(-(door_w - 1) / 2, door_w / 2 + 1):
 		wall_cells.erase(door_pos + across * step)
+		legacy_window_boundary.erase(door_pos + across * step)
 	# Windows on straight runs only, at the authored chance.
 	var window_cells: Dictionary = {}
 	var window_chance := float(cfg.get("facility_window_chance", 0.18))
-	for cell_key in wall_cells.keys():
+	# Preserve the old window-roll schedule so healing a corner cannot change
+	# the RNG state used for later parcel layouts and building identities.
+	for cell_key in legacy_window_boundary.keys():
 		var cell := cell_key as Vector2i
 		var mask := 0
-		if wall_cells.has(cell + Vector2i(0, -1)):
+		if legacy_window_boundary.has(cell + Vector2i(0, -1)):
 			mask |= 1
-		if wall_cells.has(cell + Vector2i(1, 0)):
+		if legacy_window_boundary.has(cell + Vector2i(1, 0)):
 			mask |= 2
-		if wall_cells.has(cell + Vector2i(0, 1)):
+		if legacy_window_boundary.has(cell + Vector2i(0, 1)):
 			mask |= 4
-		if wall_cells.has(cell + Vector2i(-1, 0)):
+		if legacy_window_boundary.has(cell + Vector2i(-1, 0)):
 			mask |= 8
 		if (mask == 5 or mask == 10) and rng.randf() < window_chance:
-			window_cells[cell] = true
+			var actual_mask := 0
+			for pair: Array in [[Vector2i.UP,1],[Vector2i.RIGHT,2],[Vector2i.DOWN,4],[Vector2i.LEFT,8]]:
+				if wall_cells.has(cell+pair[0]): actual_mask |= int(pair[1])
+			if actual_mask == 5 or actual_mask == 10: window_cells[cell] = true
 
 	# Floors per wing, then the shared spawn/collision path.
 	var floor_tex: int = int(cfg.get("workshop_floor_tex", 4)) if template == &"workshop" else int(cfg.get("residential_floor_tex", 2))
@@ -632,6 +679,7 @@ func _spawn_building_footprint(
 	for wing in [wing_a, wing_b]:
 		chunk_manager._stamp_floor_rect_cells(chunk, wing, floor_tex, stamp_rng, float(cfg.get("indoor_floor_alpha", 0.95)), int(cfg.get("indoor_floor_z", -94)))
 	chunk_manager._spawn_wall_cells(chunk, wall_cells, window_cells)
+	_mark_building_walls(chunk_manager,wall_cells,bool(cfg.get("city_block_style",false)))
 	_stamp_door_apron(chunk_manager, chunk, coord, build_rect, door_pos, door_dir, apron_len + (1 if recess else 0), cfg, chunk_rect)
 	var door_socket := Marker2D.new()
 	door_socket.name = "DoorSpawnSocket"
@@ -694,8 +742,18 @@ func _spawn_building_footprint(
 			if roof.has_method("configure_polygon"):
 				var outline := _footprint_outline(footprint, cell_px)
 				var facade := _edge_span_px(wing_a, door_dir, cell_px)
+				# The irregular carver uses positive across coordinates. Roof and
+				# dressing use signed perpendicular records; normalize the even
+				# north/east anchor without moving any physically carved cell.
+				var visual_door_pos := door_pos
+				if door_w % 2 == 0 and (door_dir == Vector2i.UP or door_dir == Vector2i.RIGHT): visual_door_pos += across
+				var visual_doors: Array = [{"pos":visual_door_pos,"dir":door_dir,"width":door_w}]
 				roof.configure_polygon(outline, facade[0], facade[1], volumes, template, building_id,
-					[{"pos": door_pos, "dir": door_dir, "width": door_w}], cell_px)
+					visual_doors, cell_px)
+				if bool(cfg.get("city_block_style", false)):
+					var kit := CITY_KIT.new()
+					chunk.add_child(kit)
+					kit.configure(build_rect, cell_px, visual_doors, roof, template == &"workshop" and building_id % 3 == 0, outline, bool(cfg.get("city_shared_ground", false)))
 
 	placed.append(build_rect)
 	return true
@@ -745,6 +803,15 @@ func _footprint_outline(footprint: Dictionary, cell_px: int) -> PackedVector2Arr
 			out.append(Vector2(here) * float(cell_px))
 	return out
 
+
+func _mark_building_walls(chunk_manager: Node, wall_cells: Dictionary, city_stone: bool) -> void:
+	var data: ChunkBuildData = chunk_manager.get("_active_build_data")
+	if data == null: return
+	for cell: Vector2i in wall_cells:
+		var index := data._index(cell)
+		if index < 0: continue
+		data.blocker_variant[index] |= ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE
+		if city_stone: data.blocker_variant[index] |= ChunkBlockVisualCatalog.VARIANT_CITY_STONE
 
 func _edge_span_px(rect: Rect2i, door_dir: Vector2i, cell_px: int) -> Array:
 	var tl := Vector2(rect.position) * float(cell_px)

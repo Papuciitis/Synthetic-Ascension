@@ -128,6 +128,18 @@ func set_world_tint(tint: Color) -> void:
 	_material.set_shader_parameter("world_tint", tint)
 
 
+func set_city_streetscape(enabled: bool) -> void:
+	# Presentation only: retain the exact splat ownership, organic edges and
+	# stamped indoor/plaza/road hierarchy. Other segments use their old palette.
+	_material.set_shader_parameter("city_streetscape", enabled)
+	_material.set_shader_parameter("seam_shadow", 0.0 if enabled else 0.12)
+	_material.set_shader_parameter("lip_shadow", 0.22 if enabled else 0.36)
+	if enabled and _material.get_shader_parameter("city_setts") == null:
+		var kit := preload("res://scenes/world/buildings/CityBlockKit.gd")
+		_material.set_shader_parameter("city_setts", kit._texture("worn_setts.png"))
+		_material.set_shader_parameter("city_limestone", kit._texture("paving.png"))
+
+
 func get_shader_material() -> ShaderMaterial:
 	return _material
 
@@ -297,18 +309,21 @@ func _slot_for(ground_index: int) -> int:
 
 func _push_slot_uniforms() -> void:
 	var layers := PackedFloat32Array()
+	var indices := PackedFloat32Array()
 	var repeats := PackedFloat32Array()
 	var tints := PackedColorArray()
 	var og := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	for slot in SLOTS:
 		var ground_index := maxi(0, _slot_material[slot])
 		var layer := material_layer(ground_index)
+		indices.append(float(ground_index))
 		layers.append(float(layer))
 		repeats.append(float(_WORLD_ART.ground_repeat_world_px(layer)))
 		tints.append(material_tint(ground_index))
 		if _slot_material[slot] >= 0 and _WORLD_ART.is_overgrowth_ground(ground_index):
 			og[slot] = 1.0
 	_material.set_shader_parameter("slot_layer", layers)
+	_material.set_shader_parameter("slot_index", indices)
 	_material.set_shader_parameter("slot_repeat_px", repeats)
 	_material.set_shader_parameter("slot_tint", tints)
 	_material.set_shader_parameter("overgrowth_a", Vector4(og[0], og[1], og[2], og[3]))

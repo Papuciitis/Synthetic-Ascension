@@ -49,6 +49,12 @@ func _run() -> void:
 	_check(int(renderer.get_stats().shadow_instances) == 2, "chunk removal retires matching shadow instances")
 	renderer.clear()
 	_check(renderer.get_stats().instances == 0 and host.get_child_count() == 0, "clear releases all visual batches")
+	var occupied_building := ChunkBuildData.new(Vector2i(3,0),4)
+	occupied_building.add_blocker(Vector2i.ZERO,WorldBlockerGeometry.Kind.WALL,10,ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE)
+	renderer.add_chunk(occupied_building)
+	for batch: ChunkBlockRenderer.TextureBatch in renderer.get("_batches").values():
+		_check(batch.texture == ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL,10),"renderer carries intact-building state through texture selection at a ruin-pier coordinate")
+	renderer.clear()
 	host.queue_free()
 	print("ChunkBlockRendererTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)

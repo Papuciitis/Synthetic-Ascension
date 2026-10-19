@@ -1,0 +1,260 @@
+{
+  "date": "2026-10-19",
+  "status": "Implementation verified; ready for coordinating designer visual review",
+  "scope": "Generated S2 parcels, courtyard fill and irregular frontage fallback using existing civic/domestic original art",
+  "tests": [
+    {
+      "suite": "CityBlockKitTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockKitTest: 1257 passed, 0 failed"
+      ],
+      "record": "verification/CityBlockKitTest.json"
+    },
+    {
+      "suite": "CityBlockProceduralTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockProceduralTest: 5430 passed, 0 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 76 styled kit instances across 22 sizes"
+      ],
+      "record": "verification/CityBlockProceduralTest.json"
+    },
+    {
+      "suite": "CityPlannedBuildingTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityPlannedBuildingTest: chunks=20 styled_buildings=60 families=2 directions=4 failures=0"
+      ],
+      "record": "verification/CityPlannedBuildingTest.json"
+    },
+    {
+      "suite": "ScriptParseAuditTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "ScriptParseAuditTest: 543 passed, 0 failed (checked 543 scripts across 8 roots)"
+      ],
+      "record": "verification/ScriptParseAuditTest.json"
+    },
+    {
+      "suite": "CityGenerationMaterialTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "CityGenerationMaterialTest: failures=0"
+      ],
+      "record": "verification/CityGenerationMaterialTest.json"
+    },
+    {
+      "suite": "WorldGroundSplatTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "WorldGroundSplatTest: 21 passed, 0 failed"
+      ],
+      "record": "verification/WorldGroundSplatTest.json"
+    },
+    {
+      "suite": "PlayerRoofOcclusionTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "PlayerRoofOcclusionTest: 11 passed, 0 failed"
+      ],
+      "record": "verification/PlayerRoofOcclusionTest.json"
+    },
+    {
+      "suite": "ProcChunkReachabilityTest",
+      "exit": 0,
+      "diagnostics": [],
+      "summary": [
+        "ProcChunkReachabilityTest: 3840 chunks, 2538 doors, 1728 rewards, 0 failures"
+      ],
+      "record": "verification/ProcChunkReachabilityTest.json"
+    }
+  ],
+  "native_stills": [
+    {
+      "seed": 16102026,
+      "captures": 24,
+      "failures": 0,
+      "save_writes": 0,
+      "native_exit": 0,
+      "diagnostics": [],
+      "manifest": "release-16102026/manifest.json"
+    },
+    {
+      "seed": 211,
+      "captures": 24,
+      "failures": 0,
+      "save_writes": 0,
+      "native_exit": 0,
+      "diagnostics": [],
+      "manifest": "release-211/manifest.json"
+    }
+  ],
+  "sampled_neighborhood_census": [
+    {
+      "seed": 16102026,
+      "unique_buildings_in_visited_streamed_neighborhoods": 123,
+      "families": [
+        {
+          "Name": "civic",
+          "Count": 4
+        },
+        {
+          "Name": "residential",
+          "Count": 119
+        }
+      ],
+      "irregular": 6,
+      "samples": {
+        "east": true,
+        "irregular": true,
+        "north": true,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "seed": 211,
+      "unique_buildings_in_visited_streamed_neighborhoods": 134,
+      "families": [
+        {
+          "Name": "civic",
+          "Count": 1
+        },
+        {
+          "Name": "residential",
+          "Count": 133
+        }
+      ],
+      "irregular": 5,
+      "samples": {
+        "east": true,
+        "irregular": true,
+        "north": true,
+        "south": true,
+        "west": true
+      }
+    }
+  ],
+  "moving": [
+    {
+      "folder": "moving-normal-16102026",
+      "seed": 16102026,
+      "window": "(1280, 720)",
+      "reduced_motion": false,
+      "combat_flashes": "full",
+      "frames": 144,
+      "fires": 61,
+      "hits": 61,
+      "deaths": 29,
+      "failures": 0,
+      "save_writes": 0,
+      "native_exit": 0,
+      "diagnostics": [],
+      "source_hashes_verified": 40,
+      "source_mismatches": 0,
+      "route_gates": [
+        {
+          "equal": true,
+          "event": "streamed_reload",
+          "restored_visual_instances": 1817,
+          "unloaded_visual_instances": 0
+        },
+        {
+          "alpha": 0.0,
+          "event": "entered",
+          "inside_count": 1,
+          "security": 5
+        },
+        {
+          "alpha": 1.0,
+          "event": "exited",
+          "inside_count": 0
+        }
+      ],
+      "phase_frames": [
+        {
+          "Name": "fight",
+          "Count": 74
+        },
+        {
+          "Name": "interior_fight",
+          "Count": 7
+        },
+        {
+          "Name": "traversal",
+          "Count": 63
+        }
+      ]
+    },
+    {
+      "folder": "moving-reduced-211",
+      "seed": 211,
+      "window": "(960, 540)",
+      "reduced_motion": true,
+      "combat_flashes": "off",
+      "frames": 147,
+      "fires": 60,
+      "hits": 60,
+      "deaths": 29,
+      "failures": 0,
+      "save_writes": 0,
+      "native_exit": 0,
+      "diagnostics": [],
+      "source_hashes_verified": 40,
+      "source_mismatches": 0,
+      "route_gates": [
+        {
+          "equal": true,
+          "event": "streamed_reload",
+          "restored_visual_instances": 1834,
+          "unloaded_visual_instances": 0
+        },
+        {
+          "alpha": 0.0,
+          "event": "entered",
+          "inside_count": 1,
+          "security": 5
+        },
+        {
+          "alpha": 1.0,
+          "event": "exited",
+          "inside_count": 0
+        }
+      ],
+      "phase_frames": [
+        {
+          "Name": "fight",
+          "Count": 74
+        },
+        {
+          "Name": "interior_fight",
+          "Count": 7
+        },
+        {
+          "Name": "traversal",
+          "Count": 66
+        }
+      ]
+    }
+  ],
+  "source_hashes": "release-source-hashes.json",
+  "baseline_hashes": "before-source-hashes.json",
+  "baseline": "before-16102026",
+  "superseded": {
+    "final-16102026": "Intermediate packet despite folder name; superseded after irregular awning, wall-depth, door-record and texture-cache corrections",
+    "iteration-01-16102026": "Intermediate broader composed paving, superseded by shared ground preservation"
+  },
+  "independent_code_review": "One P2 irregular UP/RIGHT even-width presentation offset corrected and reproduced by physical-cell regression; no other actionable finding",
+  "limits": [
+    "Frozen role and directional stills use production Game generation and streaming, without forced parcel fixtures.",
+    "Moving checks use scripted input and god mode; real collision and local security remain active, with a controlled outside crowd.",
+    "Visual samples do not certify human continuous-play comfort, packed-export performance or final designer aesthetic acceptance."
+  ]
+}

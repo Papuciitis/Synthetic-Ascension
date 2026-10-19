@@ -1286,6 +1286,7 @@ func _ensure_ground_splat() -> GroundSplatRenderer:
 		_ground_splat.configure(cell_size_px, _cells_per_chunk())
 		add_child(_ground_splat)
 	_ground_splat.set_world_tint(district_tint)
+	_ground_splat.set_city_streetscape(Global.attempt_segment == 2)
 	return _ground_splat
 
 
