@@ -8,3 +8,7 @@
 [Exact prompts, tool mode and original output paths](provenance.json); [SHA256 and read-only alpha/anchor measurements](anchors.json). Primary style reference is selected S3 concept 03; the existing city arcade supplied camera/material consistency. The compact watch mass, roof pitch, masonry returns and support/cutaway geometry are drawn by `CheckpointOfficeForms`; the game never pastes a complete concept scene over its physical map.
 
 Current prototype uses the project's 64 px cell scale, rectangular 192 px facade and safe 112 px irregular treatment. The watch has 128×128 px support, 16 px fitting margin, 96 px upright lift and a further 32 px roof pitch; its complete visible forms participate in existing actor occlusion. Shared slate, lamps and sun/shadow language are reused. See the district design packet and S3 implementation audit for verification and review limits.
+
+## Visual refinement v2
+
+`guard_quiet_infill_v2.png` is a new opaque 1254×1254 original for the supported infill/watch surfaces. [Exact prompt, source path, hash, material bounds and UV/display scale](infill-v2-provenance.json) record the built-in generation. The returned original is copied unchanged. Runtime geometry supplies plinths, corner returns, watch window/eave depth and real cardinal thresholds; the texture has no painted doors, light source or symbols. Both original arch masters remain unchanged. Native acceptance is recorded separately from material generation.

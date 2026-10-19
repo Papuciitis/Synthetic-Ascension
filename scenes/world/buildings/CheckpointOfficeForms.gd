@@ -131,10 +131,10 @@ static func compose_roof(roof: RoofOverlay, form_plan: Dictionary, textures: Dic
 	for shadow: PackedVector2Array in Geometry2D.intersect_polygons(Geometry2D.convex_hull(cast),host.polygon):
 		_face(group,shadow,Color(0.07,0.12,0.15,0.23))
 	var front := PackedVector2Array([Vector2(box.position.x,box.end.y-lift),box.end-Vector2(0,lift),box.end,Vector2(box.position.x,box.end.y)])
-	var body := _face(group,front,Color("a0a698"))
+	var body := _surface(group,front,textures,Color("c2c5b7"),&"infill")
 	body.name = "GuardWatchFront"
 	_occlusion_form(body,&"guard_watch_front",0.0,true)
-	var side := _face(group,PackedVector2Array([Vector2(box.end.x,box.position.y-lift),box.end-Vector2(0,lift),box.end+Vector2(9,0),Vector2(box.end.x+9,box.position.y)]),Color("586762"))
+	var side := _surface(group,PackedVector2Array([Vector2(box.end.x,box.position.y-lift),box.end-Vector2(0,lift),box.end+Vector2(16,0),Vector2(box.end.x+16,box.position.y)]),textures,Color("6d8077"),&"infill")
 	side.name = "GuardWatchSide"
 	_occlusion_form(side,&"guard_watch_side",0.0,true)
 	# A compact raised pitch makes this a watch pavilion rather than another
@@ -158,12 +158,21 @@ static func compose_roof(roof: RoofOverlay, form_plan: Dictionary, textures: Dic
 		cap_material.set_shader_parameter("ridge_along_x",0.0)
 		cap.material = cap_material
 	_occlusion_form(cap,&"guard_watch",lift,true)
-	var window := Rect2(box.get_center().x-17,box.end.y-lift+22,34,lift-35)
-	_face(group,_rect_polygon(window.grow(5)),Color("87968d"))
-	_face(group,_rect_polygon(window),Color("273b3d"))
-	for index: int in 3:
-		_face(group,_rect_polygon(Rect2(window.position.x+7+index*9,window.position.y,3,window.size.y)),Color("647b72"))
-	_face(group,_rect_polygon(Rect2(box.position.x-4,box.end.y-lift-4,box.size.x+8,9)),Color("bcc0a9"))
+	# These joins sit inside the already covered body; only its existing
+	# front/side/cap consume actor-mask geometry, not every surface detail.
+	var plinth := _surface(group,_rect_polygon(Rect2(box.position.x,box.end.y-14,box.size.x,14)),textures,Color("88988b"),&"plinth")
+	plinth.name = "GuardWatchPlinth"
+	for x: float in [box.position.x,box.end.x-12]:
+		_surface(group,_rect_polygon(Rect2(x,box.end.y-lift+6,12,lift-20)),textures,Color("d1d1ba"),&"return")
+	var eave_shadow := _face(group,_rect_polygon(Rect2(box.position.x,box.end.y-lift+5,box.size.x,9)),Color(0.13,0.21,0.20,0.66))
+	eave_shadow.name = "GuardWatchEaveShadow"
+	var window := Rect2(box.get_center().x-28,box.end.y-lift+24,56,48)
+	_surface(group,_rect_polygon(window.grow(6)),textures,Color("8b9a8b"),&"return")
+	_face(group,_rect_polygon(window),Color("293f3e"))
+	_face(group,_rect_polygon(Rect2(window.get_center().x-2,window.position.y,4,window.size.y)),Color("a1ad98"))
+	_face(group,_rect_polygon(Rect2(window.position.x,window.get_center().y-2,window.size.x,4)),Color("7e9386"))
+	_face(group,_rect_polygon(Rect2(window.position.x-6,window.end.y+1,window.size.x+12,7)),Color("c4c8ad"))
+	_face(group,_rect_polygon(Rect2(box.position.x-4,box.end.y-lift-4,box.size.x+8,9)),Color("c5cab5"))
 
 static func compose_frontage(kit: Node2D, form_plan: Dictionary, textures: Dictionary) -> void:
 	var group := Node2D.new()
@@ -171,9 +180,12 @@ static func compose_frontage(kit: Node2D, form_plan: Dictionary, textures: Dicti
 	group.set_meta(&"city_facade_detail",true)
 	kit.add_child(group)
 	for wall: Rect2 in form_plan.get("wall_faces",[]):
-		var face := _face(group,_rect_polygon(wall),Color.WHITE)
-		face.vertex_colors = PackedColorArray([Color("b3b9ae"),Color("c1c3b6"),Color("8b9992"),Color("87968e")])
+		var face := _surface(group,_rect_polygon(wall),textures,Color.WHITE,&"infill")
+		face.vertex_colors = PackedColorArray([Color("c7c8b9"),Color("d0cdbd"),Color("adb5a5"),Color("a4b1a3")])
 		_face(group,_rect_polygon(Rect2(wall.position+Vector2(0,4),Vector2(wall.size.x,10))),Color("c3c5ad"))
+		_surface(group,_rect_polygon(Rect2(wall.position.x,wall.end.y-22,wall.size.x,22)),textures,Color("8b9c8e"),&"plinth")
+		for x: float in [wall.position.x,wall.end.x-12]:
+			_surface(group,_rect_polygon(Rect2(x,wall.position.y+14,12,wall.size.y-36)),textures,Color("bbc3ab"),&"return")
 	for bay: Dictionary in form_plan.arch_bays:
 		var face: Rect2 = bay.face
 		_face(group,_rect_polygon(face.grow(5)),Color("56685f"))
@@ -208,12 +220,43 @@ static func compose_frontage(kit: Node2D, form_plan: Dictionary, textures: Dicti
 			# Cardinal contacts remain ground-aligned geometry, never a rotated
 			# south facade that paints a false door or wall across the opening.
 			_face(portal,_rect_polygon(gap.grow(-7)),Color(0.13,0.23,0.23,0.32))
+			_threshold(portal,gap,direction,textures)
 			if direction.x != 0:
 				for end_y: float in [gap.position.y+4,gap.end.y-14]:
 					_face(portal,_rect_polygon(Rect2(gap.position.x+7,end_y,gap.size.x-14,10)),Color("a8af98"))
 			else:
 				for end_x: float in [gap.position.x+4,gap.end.x-14]:
 					_face(portal,_rect_polygon(Rect2(end_x,gap.position.y+7,10,gap.size.y-14)),Color("a8af98"))
+
+static func _threshold(parent: Node2D, gap: Rect2, direction: Vector2i, textures: Dictionary) -> void:
+	# The original one-cell doorway apron is already clear/stamped. Finish
+	# only its first 48 px outside the wall; neither floor nor nav is changed.
+	var depth := minf(gap.size.x,gap.size.y)*0.75
+	var landing: Rect2
+	if direction == Vector2i.RIGHT: landing=Rect2(gap.end.x,gap.position.y,depth,gap.size.y)
+	elif direction == Vector2i.LEFT: landing=Rect2(gap.position.x-depth,gap.position.y,depth,gap.size.y)
+	else: landing=Rect2(gap.position.x,gap.position.y-depth,gap.size.x,depth)
+	var slab := _surface(parent,_rect_polygon(landing),textures,Color("b3bca7"),&"threshold")
+	slab.name = "GuardThreshold"
+	if direction.x != 0:
+		for y: float in [landing.position.y,landing.end.y-8]:
+			_face(parent,_rect_polygon(Rect2(landing.position.x,y,landing.size.x,8)),Color("d0d0b7"))
+		var edge_x := landing.end.x-3 if direction.x>0 else landing.position.x
+		_face(parent,_rect_polygon(Rect2(edge_x,landing.position.y+8,3,landing.size.y-16)),Color("677d70"))
+	else:
+		for x: float in [landing.position.x,landing.end.x-8]:
+			_face(parent,_rect_polygon(Rect2(x,landing.position.y,8,landing.size.y)),Color("d0d0b7"))
+		_face(parent,_rect_polygon(Rect2(landing.position.x+8,landing.position.y,landing.size.x-16,3)),Color("677d70"))
+
+static func _surface(parent: Node2D, points: PackedVector2Array, textures: Dictionary, color: Color, kind: StringName) -> Polygon2D:
+	var face := _face(parent,points,color)
+	face.set_meta(&"guard_surface",kind)
+	face.texture = textures.get("infill") as Texture2D
+	face.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	var uv := PackedVector2Array()
+	for point: Vector2 in points: uv.append(point*4.0)
+	face.uv = uv
+	return face
 
 static func _occlusion_form(shape: Polygon2D, kind: StringName, lift: float, full_form: bool) -> void:
 	shape.set_meta(&"city_roof_form",kind)

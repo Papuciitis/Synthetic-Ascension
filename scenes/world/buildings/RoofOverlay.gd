@@ -443,7 +443,7 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 		var forms := preload("res://scenes/world/buildings/CheckpointOfficeForms.gd")
 		var form_plan := forms.plan(footprint_outline_px,_poly.polygon,_doors,_cell_px,int(visual_profile.get("visual_seed",0)))
 		set_meta(&"district_form_plan",form_plan)
-		forms.compose_roof(self,form_plan,{"slate":texture})
+		forms.compose_roof(self,form_plan,{"slate":texture,"infill":visual_profile.get("infill_texture")})
 	elif compound:
 		preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose(_poly, civic, box)
 		# Compound caps must not fill the actual north/east/west door notch.

@@ -70,7 +70,9 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	_facade = _texture("civic_arcade.png" if civic else "house_front.png")
 	if roof != null:
 		roof.cover_alpha_changed.connect(_on_roof_alpha)
-		roof.apply_city_material(_texture("slate.png" if civic else "clay.png"), civic, _facade_height - ChunkBlockVisualCatalog.KIT_HEIGHT, not _irregular,_district_profile)
+		var roof_profile := _district_profile.duplicate()
+		if _is_guard(): roof_profile["infill_texture"] = _texture(GUARD_ROOT+"guard_quiet_infill_v2.png")
+		roof.apply_city_material(_texture("slate.png" if civic else "clay.png"), civic, _facade_height - ChunkBlockVisualCatalog.KIT_HEIGHT, not _irregular,roof_profile)
 		if civic and not _irregular and not _is_guard():
 			var plant := Sprite2D.new()
 			plant.set_meta(&"district_optional_detail",true)
@@ -90,7 +92,7 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 		_add_records_board(cell_px, doors)
 		_add_planting()
 	if _is_guard() and roof != null:
-		preload("res://scenes/world/buildings/CheckpointOfficeForms.gd").compose_frontage(self,roof.get_meta(&"district_form_plan",{}),{"arch_open":_texture(GUARD_ROOT+"guard_arch_open.png"),"arch_closed":_texture(GUARD_ROOT+"guard_arch_closed.png")})
+		preload("res://scenes/world/buildings/CheckpointOfficeForms.gd").compose_frontage(self,roof.get_meta(&"district_form_plan",{}),{"arch_open":_texture(GUARD_ROOT+"guard_arch_open.png"),"arch_closed":_texture(GUARD_ROOT+"guard_arch_closed.png"),"infill":_texture(GUARD_ROOT+"guard_quiet_infill_v2.png")})
 	else:
 		preload("res://scenes/world/buildings/CityBlockFrontages.gd").compose(self, doors, cell_px, irregular_outline, _texture("wall_lantern.png") if civic else null, _texture("house_front.png") if _irregular else null)
 	if not _irregular: _add_frontage_details()

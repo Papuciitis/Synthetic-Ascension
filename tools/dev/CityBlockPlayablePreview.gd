@@ -168,6 +168,7 @@ func _run() -> void:
 	if _still_only:
 		var building_bounds := Rect2(_roof.footprint_outline_px[0],Vector2.ZERO)
 		for point: Vector2 in _roof.footprint_outline_px: building_bounds = building_bounds.expand(point)
+		await _wait_for_temporary_tips()
 		_camera.global_position = _roof.to_global(building_bounds.get_center())-Vector2(0,40)
 		_camera.reset_smoothing()
 		_camera.force_update_scroll()
@@ -328,6 +329,17 @@ func _settle() -> void:
 
 func _frames(count: int) -> void:
 	for _i in count: await get_tree().process_frame
+
+func _wait_for_temporary_tips() -> void:
+	# Architecture-only review waits for the real HUD queue to finish; do not
+	# hide it or alter live game settings to manufacture an unobstructed image.
+	for _step: int in 300:
+		var busy := false
+		for controller: Node in _game.find_children("TutorialTipController","",true,false):
+			busy = busy or bool(controller.get("_running"))
+		if not busy: return
+		await get_tree().create_timer(0.1).timeout
+	_fail("Temporary HUD tip queue did not clear for whole-building review")
 
 func _still(name: String) -> void:
 	await RenderingServer.frame_post_draw
