@@ -29,7 +29,9 @@ static var preview_original_materials := false
 static var _texture_cache: Dictionary = {}
 
 static func enabled_for(_role: StringName, segment: int) -> bool:
-	return not preview_original_materials and segment == 2
+	# Ordinary procedural architecture shares the accepted civic/domestic kit.
+	# Authored Institution and Hub architecture have separate ownership.
+	return not preview_original_materials and segment >= 2
 
 func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_civic: bool, irregular_outline: PackedVector2Array = PackedVector2Array(), shared_ground: bool = false) -> void:
 	bounds = Rect2(Vector2(rect.position) * cell_px, Vector2(rect.size) * cell_px)

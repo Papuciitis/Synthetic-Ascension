@@ -1,0 +1,75 @@
+# Generation contracts and extension seams
+
+2026-10-19. Read-only source trace. Proposed names below are interface recommendations for the post-base handoff; no new API exists because it is written here. Recheck base-owner changes before choosing final signatures.
+
+## Current path
+
+| Responsibility | Actual source and behaviour | Implication |
+| --- | --- | --- |
+| Select the theme | [`SegmentThemePicker.get_theme(segment, attempt_world_seed)`](../../../core/systems/world/proc/SegmentThemePicker.gd:10) has fourteen IDs and seeded alternatives at S4/6/7/8/9. [`SegmentThemeData`](../../../core/systems/world/proc/SegmentThemeData.gd:9) stores `district_family`. | Use the selected family, not guessed segment number, palette or screenshot appearance. S11+ is a documented fallback. |
+| Initialise the world | [`SegmentProcBuilder`](../../../core/systems/world/SegmentProcBuilder.gd:116) selects theme and calls `DistrictPlan.generate`; `_apply_segment_rules` applies theme fields and urban defaults. `_build_world_from_plan` installs semantic maps before streaming. | Copy family context into the manager before `start_streaming`. Existing application copies terrain/tint/budgets/layout fields, but not family. |
+| Generate macro roles | [`DistrictPlan.generate`](../../../core/systems/world/proc/DistrictPlan.gd:17) validates up to six deterministic candidates, preserving route/exploration/access roles. The checkpoint role is assigned near 68% of the main route when eligible, but can be absent or superseded by later role assignments. | Never assume every S3 seed contains a usable checkpoint chunk. Pilot selection must record actual role maps and include a safe no-checkpoint case. |
+| Dispatch content | [`ChunkGenImpl._generate_chunk`](../../../core/systems/world/proc/ChunkGenImpl.gd:227) tries eligible sites first; successful sites bypass base generation. District chunks and fallback archetypes follow different paths. Environment decoration runs after content. | Parcel-family hooks alone cannot claim theme coverage for multi-chunk sites, fallback buildings or compact DonJons. Keep explicit coverage by path. |
+| Build road/fill chunks | [`ChunkGenDistrict._generate_district`](../../../core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:23) has an early courtyard-fill return. Both fill and street parcel dictionaries set `city_block_style`. Street parcels are skipped for plaza chunks. | A new family must enter both parcel dictionaries. A checkpoint plaza does not currently contain normal street parcels; do not promise an automatic guard office there. |
+| Place ordinary buildings | [`SiteParcelsImpl`](../../../core/systems/world/proc/SiteParcelsImpl.gd:15) fits frontage bands against road/access keepouts. Rectangular and irregular paths attach roofs and then `CityBlockKit`. | Dress the actual footprint and normalised door records after placement. Preserve template selection, required-building fallback and all RNG consumption. |
+| Generate building behaviour | [`_spawn_building_rect`](../../../core/systems/world/proc/SiteParcelsImpl.gd:389) carves rooms, stamps floors, creates real openings/aprons/sockets, configures `IndoorVolume` and then the roof. Rectangular IDs use salt 77; irregular IDs use 78. | Visual names must not alter building IDs, loot/security configuration, secondary assignment, room carving or entry geometry. |
+| Style the common base | [`CityBlockKit.configure`](../../../scenes/world/buildings/CityBlockKit.gd:34) takes rect, cell size, doors, roof, civic flag, optional outline and shared-ground flag. It adds material, frontage, planted/detail and shadow presentation. | A common-base rollout is necessary but does not itself supply rail, canals, tents or fourteen architectures. Avoid an independent second facade/roof stack. |
+| Keep roof/actors readable | [`RoofOverlay`](../../../scenes/world/buildings/RoofOverlay.gd:59) supports rectangular and polygon coverage and emits `cover_alpha_changed`; `DungeonRoof` has a separate clipped-wing path. | Wall-mounted equipment and overhead forms follow their real owner's fade and occlusion contract. Outdoor props do not vanish simply because a nearby building is entered. |
+| Protect environment placement | [`ChunkGenDeco.plan_vegetation`](../../../core/systems/world/proc/chunkgen/ChunkGenDeco.gd:13) consumes clear/deco-clear metadata, avoids interiors and reserves a margin near door sockets. [`ChunkManager._add_environment_deco`](../../../core/systems/world/ChunkManager.gd:873) also paints generic landmarks. | Reuse the reservation approach, including object extents. Current generic landmark selection is not a safe general-purpose placement API for large new structures. |
+| Activate physical geometry | [`ChunkManager._create_chunk`](../../../core/systems/world/ChunkManager.gd:520) gathers `ChunkBuildData`, activates floors and may stage blockers. [`ChunkBuildData`](../../../core/systems/world/chunks/ChunkBuildData.gd:1) holds blockers/masks/variants and floor stamps. | Real new obstacles must enter shared geometry/nav/physics activation. A sprite with independent collision would create an untracked second geometry system. |
+
+## Proposed first-stage data flow
+
+Add a small family catalogue after the common-base handoff, rather than fourteen generators:
+
+1. Add `district_family: StringName` to manager context and copy it in `SegmentThemeData.apply_to_chunk_manager`; mirror it in `ChunkGenImpl.sync_from_chunk_manager`. This is instance state, never a mutable global “current theme”.
+2. Forward `district_family` into **both** ordinary street/fill parcel configurations. Keep all existing `city_block_style`, `city_shared_ground`, template, loot and carve decisions untouched.
+3. Proposed `DistrictVisualProfiles.resolve(family: StringName) -> Dictionary` returns a visual-only profile. Initial keys: `family_id`, `roof_material_id`, `facade_set_id`, `mounted_prop_set_id`, `ground_prop_set_id`, `landmark_set_id`. Missing/unknown entries resolve to the common base, without changing terrain or pretending the family is S2.
+4. The existing kit remains the one roof/frontage owner. Candidate adapter: an optional final `visual_profile: Dictionary = {}` argument to `CityBlockKit.configure`, or a dedicated family configuration method called once by the parcel path. Confirm the least disruptive form against the base owner's final interface. Apply material/facade choices in the existing renderer, not by layering another opaque roof on it.
+5. A focused optional `DistrictFamilyDressing` child can own new visual attachments. It consumes resolved profile, real footprint/outline, already normalised door records, the roof reference, `building_id`, chunk clip and cell size. It creates no `IndoorVolume`, reward, physics body or encounter. It must not call `RoofOverlay.configure` again.
+
+Profile selection must also prevent duplicate base details: the current kit already has a north-wall interior `CivicRecordsBoard` and an exterior entry lantern. Select or replace their visual treatment through the existing owner, rather than stacking a second board/lamp in the same span. An exterior order board is a different supported placement. Preserve `IndoorVolume`'s live building-entry/security status labels; a decorative records panel cannot replace those gameplay cues.
+
+Only S3 resolves to a distinct profile in the first playable slice. Other known IDs deliberately return the shared base until their own assets are reviewed. Add a visible diagnostic family/profile identifier for evidence, not player-facing implementation copy.
+
+### Determinism
+
+Use the project's integer mixing helpers with a dedicated, named visual salt. Derive per-building visual selection from family, existing `building_id` and feature kind; use a fixed explicit catalogue order or stable integer IDs for family/feature values. Do not rely on iteration order, a random global call, scene creation order or a transient instance ID.
+
+Never draw from the parcel, room, reward, macro-layout, existing vegetation or existing landmark RNG just to choose an extra decorative item. Adding/removing a lamp must leave later buildings, doors, windows, rewards and existing scatter unchanged. Do not early-return out of existing landmark selection without preserving its legacy RNG draws; initial S3 can leave generic landmarks unchanged. A later landmark replacement should derive replacement appearance from the already selected event/placement and keep the original random sequence stable.
+
+Repeat generation after unloading must reproduce profile/props with no visit-dependent changes. A visual-only feature toggle must yield identical physical/interaction snapshots; allow only explicitly documented visual material bits to differ. No save migration is needed for a visual-only profile. A future topology version requires a separate Continue/checkpoint compatibility decision before release.
+
+## Placement contracts
+
+- **Street and access:** preserve straight lane contract rectangles, bent `road_cells`, urban access corridors, connector sockets, door gaps/aprons and `_proc_clear_cells` / `_proc_deco_clear_cells`. Keep organic roads enabled and retain their socket endpoints; do not replace them with a grid or a family-specific pavement slab.
+- **Building:** obtain support spans from the real exposed footprint edges. An L/recessed parcel cannot receive a bounding-box facade across its notch. Keep both doors of a passage and all declared cells of even-width north/east openings. Reuse the corrected visual-door records rather than recalculating their anchor.
+- **Props:** check complete feet/support footprint and visible extent against reservations. Door and gameplay visibility margins matter even for collision-free sprites. Place a new tall item only on a verified existing support/blocked area or with the shared actor-occlusion treatment; otherwise omit it. Decorative equipment cannot create visible impassable cover on free floor.
+- **Objectives:** primary/secondary/wardstone/exit anchors and approach cells stay clear. Mandatory boss courts use `BossArenaSpace.clear_rect`: 20 cells at S5, 28 at S10 on the standard 32-cell chunk. Do not let geometry, planting, props or large shadows camouflage tells or objective silhouettes there.
+- **Ground:** keep per-theme terrain/tint, semantic road stamps and ownership clipping. Preserve the accepted S2-local composed pavement policy; later themes use shared ground unless separately designed. Roof/ground shadows may cross a visual edge only through a documented clipping/ownership policy, never by painting over a neighbour's interior.
+- **Light:** keep shared `WorldDepthStyle` sun direction. Prefer existing painted/local light presentation for the pilot. Do not add live-light or per-frame scan costs per lamp without measured need. Readable daylight must remain after palette treatment and reduced-effects settings.
+
+## Bespoke infrastructure contract — later phases
+
+Rail strips, canals, spanning underpasses and long walls cannot be independent random prop scatters. Plan bounded structural features after the base semantic plan exists, with a dedicated seed and a validation result. Initially **fit around** the existing graph; if no legal placement exists, omit the feature and retain the valid district. A topology-changing feature is a separate implementation scope.
+
+Each proposed feature record needs stable `feature_id`, `kind`, owning anchor chunk, world/cell footprint, per-chunk slices, physical blocked cells, required-clear crossing cells, visible envelope/height, and any roof/overhead coverage. Store explicit crossing locations before water/wall/rail stock is placed. Validate the same feature and seam geometry with neighbouring chunks loaded singly, in either order and after reload; loading one slice must not require its neighbour's node to exist.
+
+Rendering consumes the record; shared blockers/nav consume its physical cells. Do not squeeze feature kinds into the existing byte-sized blocker variant flags without auditing the available bit space. Ground-only rail ties and blocked stationary wagons are different physical objects. Canal water needs explicit blocked semantics and shared visual/physical bank boundaries. A tunnel is passable ground under an occluding overhead form, not a blocked rectangle. Wall frontage needs gaps through every existing crossing and must preserve the open-world streaming contract.
+
+Existing multi-chunk site anchor completeness and generic duplicate IndoorVolume ownership are recorded limitations. This design does not assume either is fixed. New infrastructure must have self-contained ownership/coverage validation before reusing a site path whose defaults can omit slices.
+
+## Verification that earns each claim
+
+The following are **future required checks**, not runs performed by this design chat:
+
+| Claim | Necessary evidence |
+| --- | --- |
+| Theme reaches actual buildings | Natural theme selection and real `DistrictPlan` role maps; street **and** courtyard-fill paths; supported family ID recorded on each sample. All fourteen IDs are accounted for, including explicit base fallback. |
+| First S3 pass is visual-only | Profile on/off comparison of full blocker data, floor stamps/alpha, footprints, room/door records, connector/access maps, indoor IDs/configuration, reward/security state and clear masks. Existing later RNG outcomes match. |
+| Doors and roofs still work | Rectangular, L/recessed, passage, all four entry directions, even-width corrected records; physical entry/security/exit, cutaway restore, actor behind tall frontage and reload while indoors. |
+| Infrastructure is coherent | Global feature record vs slice union, seam endpoints and masks agree; actual route, reward and building reachability survive water/wall/wagon cells and arbitrary stream order. |
+| The family looks distinct | Native 1280×720 and 960×540 outside/inside/moving-fight samples with family, seed, coordinate, role and current source/asset hashes. Inspect ground quietness, shadow support, silhouettes and objective readability. Beauty concepts and god-mode fixtures do not replace human play acceptance. |
+| Streaming cost is acceptable | Compare chunk content/blocker costs, peak nodes/draws/materials and a repeated travel/reload route against the handed-off base. Reuse cached textures/materials; avoid runtime asset decoding and unbounded per-frame world scans. No numerical budget is claimed without that baseline. |
+
+Reuse the existing `CityBlockKitTest`, `CityBlockProceduralTest`, `CityPlannedBuildingTest`, `CityGenerationMaterialTest`, `ProcSeedSweepTest`, `ProcChunkReachabilityTest`, `WorldTerrainTest`, `PlayerRoofOcclusionTest`, `BossArenaSpaceTest`, chunk data/renderer/physics suites and `ScriptParseAuditTest` according to the changed path. Extend provisional `CitySegmentCoverageTest` only after checking its assumptions against the final base policy; a test file's presence is not a passing result.

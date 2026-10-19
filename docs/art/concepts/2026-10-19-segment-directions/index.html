@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic Ascension — District concepts</title>
+<style>
+:root{font-family:Segoe UI,Arial,sans-serif;color:#20312f;background:#e9e7df;font-synthesis:none}*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1540px;margin:auto;padding:26px 30px}header{padding-bottom:14px}.eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#606c65}h1{font-size:clamp(26px,4vw,46px);font-weight:600;letter-spacing:-.035em;margin:8px 0 12px}p{max-width:880px;line-height:1.6;margin:8px 0;color:#53605b}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 0}button{font:inherit;cursor:pointer;border:1px solid #aeb7ae;border-radius:6px;background:#f7f6f0;color:#263c37;padding:9px 14px}button[aria-pressed=true]{background:#29473f;border-color:#29473f;color:white}main{padding-top:10px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.card{margin:0;border:1px solid #c8cec3;background:#f8f8f1;border-radius:8px;overflow:hidden;box-shadow:0 4px 16px #273d3409}.card button{padding:0;border:0;border-radius:0;width:100%;display:block;position:relative;background:#cbd1c5;aspect-ratio:16/9;overflow:hidden}.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .15s}.card button:hover img{transform:scale(1.025)}figcaption{padding:14px 16px 16px}.label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#6b766c}.card h2{font-weight:600;font-size:18px;margin:6px 0 8px}.card p{font-size:13px;line-height:1.5;margin:0}.hint{font-size:12px}.pending{position:absolute;inset:0;display:grid;place-content:center;color:#4f6158;font-size:14px}.card img.loaded+.pending{display:none}footer{font-size:13px;color:#67726c;padding-top:0}dialog{border:0;padding:0;background:#101b17;color:#eee;border-radius:9px;width:min(96vw,1800px);max-width:none;max-height:96vh;overflow:auto;box-shadow:0 12px 80px #0008}dialog::backdrop{background:#08130edb}.viewer-head{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 20px}.viewer-head h2{margin:0;font-size:18px;font-weight:500}.viewer-head button{background:#233c32;border-color:#486055;color:white}.viewer-image{display:block;width:100%;height:auto;max-height:80vh;object-fit:contain}.viewer-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 20px;font-size:12px;color:#bdc8bd}.viewer-foot a{color:#e7eee1}.viewer-foot button{background:#233c32;border-color:#486055;color:white;padding:6px 14px}@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.grid{grid-template-columns:1fr}header,main,footer{padding-left:16px;padding-right:16px}.viewer-head{padding:10px}.viewer-head h2{font-size:14px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<header>
+ <div class="eyebrow">Synthetic Ascension · Visual development · 19 October 2026</div>
+ <h1>One city. Distinct districts.</h1>
+ <p>Fifteen segment plates share Mediterranean civic stone, medieval city forms and restrained industrial additions. Each district has its own architecture, landmarks and routes. Three supporting plates explore the hub, DonJon compounds and the space beyond the wall.</p>
+ <p class="hint">Concept targets, not in-game screenshots. Select a plate to inspect the original image. “Beyond the Wall” is an exploration, not an established new biome.</p>
+ <nav class="filters" aria-label="Filter concepts">
+  <button data-filter="all" aria-pressed="true">All 18</button><button data-filter="early" aria-pressed="false">Segments 1–5</button><button data-filter="middle" aria-pressed="false">Segments 6–7</button><button data-filter="outer" aria-pressed="false">Segments 8–10</button><button data-filter="support" aria-pressed="false">Supporting spaces</button>
+ </nav>
+</header>
+<main><div id="grid" class="grid"></div></main>
+<footer>Shared direction: bright temperate daylight, quiet broad surfaces, believable depth and continuous architecture, organic streets and readable combat space. Exact prompts and original-output provenance are saved beside these images.</footer>
+<dialog id="viewer" aria-labelledby="viewer-title">
+ <div class="viewer-head"><h2 id="viewer-title"></h2><button id="close" aria-label="Close image">Close ×</button></div>
+ <img id="viewer-image" class="viewer-image" alt="">
+ <div class="viewer-foot"><button id="previous" aria-label="Previous concept">← Previous</button><span id="viewer-position"></span><a id="original" target="_blank" rel="noopener">Open original</a><button id="next" aria-label="Next concept">Next →</button></div>
+</dialog>
+<script>
+const plates=[
+ ['01-s1-the-institution.png','S1 · The Institution','early','Admission courts, research wings and institutional authority.'],
+ ['02-s2-service-courtyards.png','S2 · Service Courtyards','early','Open inhabited courts, civic arcades and service passages.'],
+ ['03-s3-checkpoint-lanes.png','S3 · Checkpoint Lanes','early','Guard offices, inspection courts and controlled approaches.'],
+ ['04-s4-collapsed-ward.png','S4A · Collapsed Ward','early','Failed structural bays, breached courts and reclaimed edges.'],
+ ['05-s4-civilian-cut-through.png','S4B · Civilian Cut-through','early','Homes, shops, a washhouse and irregular pocket squares.'],
+ ['06-s5-inner-district-gate.png','S5 · Inner District Gate','early','Heavy gatehouses framing a clear encounter court.'],
+ ['07-s6-industrial-cut-through.png','S6A · Industrial Cut-through','middle','Working workshops, loading aprons and deliberate services.'],
+ ['08-s6-ruined-service-district.png','S6B · Ruined Service District','middle','Broken service halls and surviving working routes.'],
+ ['09-s7-underpass-veins.png','S7A · Underpass Veins','middle','Monumental supports above readable human-scale streets.'],
+ ['10-s7-canal-service-routes.png','S7B · Canal Service Routes','middle','Connected quays, a lockhouse and a broad crossing.'],
+ ['11-s8-rail-yard-expanse.png','S8A · Rail Yard Expanse','outer','Old-city depots, curved rails and open loading ground.'],
+ ['12-s8-military-staging-ground.png','S8B · Military Staging Ground','outer','Reused civic halls, barracks and a clear muster yard.'],
+ ['13-s9-outer-wall-approaches.png','S9A · Outer Wall Approaches','outer','Thick layered city walls and thinning urban frontage.'],
+ ['14-s9-siege-service-district.png','S9B · Siege Service District','outer','Repair halls, reinforced stores and wall-side logistics.'],
+ ['15-s10-gate-district.png','S10 · Gate District','outer','A dominant city gate and broad departure plaza.'],
+ ['16-hub-market-courtyard.png','Hub · Market courtyard','support','A sheltered inhabited refuge with distinct station frontages.'],
+ ['17-donjon-enclosed-compound.png','DonJon · Enclosed compound','support','Roofed halls and cells enclosing an outdoor court.'],
+ ['18-beyond-the-wall-exploration.png','Beyond the Wall · Exploration','support','An exploratory temperate transition outside the city.']
+];
+const grid=document.querySelector('#grid'),viewer=document.querySelector('#viewer');let visible=plates.map((_,i)=>i),current=0;
+function render(filter='all'){grid.replaceChildren();visible=[];plates.forEach((plate,index)=>{if(filter!=='all'&&plate[2]!==filter)return;visible.push(index);const card=document.createElement('figure');card.className='card';const button=document.createElement('button');button.setAttribute('aria-label','Inspect '+plate[1]);button.addEventListener('click',()=>openPlate(index));const img=document.createElement('img');img.src=plate[0];img.alt=plate[1]+' environment concept';img.loading=index<3?'eager':'lazy';img.addEventListener('load',()=>img.classList.add('loaded'));const pending=document.createElement('span');pending.className='pending';pending.textContent='Concept image loading';button.append(img,pending);const caption=document.createElement('figcaption');const label=document.createElement('div');label.className='label';label.textContent=index<15?'Segment concept':index===17?'Exploratory proposal':'Supporting family';const title=document.createElement('h2');title.textContent=plate[1];const summary=document.createElement('p');summary.textContent=plate[3];caption.append(label,title,summary);card.append(button,caption);grid.append(card);});}
+function openPlate(index){current=index;const plate=plates[index];document.querySelector('#viewer-title').textContent=plate[1];const img=document.querySelector('#viewer-image');img.src=plate[0];img.alt=plate[1]+' full concept';document.querySelector('#original').href=plate[0];document.querySelector('#viewer-position').textContent=(visible.indexOf(index)+1)+' / '+visible.length;if(!viewer.open)viewer.showModal();}
+function step(offset){const next=(visible.indexOf(current)+offset+visible.length)%visible.length;openPlate(visible[next]);}
+document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));render(button.dataset.filter);}));
+document.querySelector('#close').addEventListener('click',()=>viewer.close());document.querySelector('#previous').addEventListener('click',()=>step(-1));document.querySelector('#next').addEventListener('click',()=>step(1));document.addEventListener('keydown',event=>{if(!viewer.open)return;if(event.key==='ArrowLeft')step(-1);if(event.key==='ArrowRight')step(1);});viewer.addEventListener('click',event=>{if(event.target===viewer)viewer.close();});render();
+</script>
+</html>

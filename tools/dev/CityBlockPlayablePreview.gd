@@ -1,10 +1,11 @@
 extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ## Isolated actual-Game first-block traversal and live fight. No profile writes.
-## -- --review=normal|small|reduced|before [--visible] [--playable]
+## -- --review=normal|small|reduced|before [--segment=2] [--world-seed=16102026] [--visible] [--playable]
 
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 var _review := "normal"
 var _city_world_seed := 16102026
+var _city_segment := 2
 var _playable := false
 var _phase := "loading"
 var _recording := false
@@ -24,6 +25,8 @@ func _enter_tree() -> void:
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--review="): _review = arg.trim_prefix("--review=")
 		if arg.begins_with("--world-seed="): _city_world_seed = int(arg.trim_prefix("--world-seed="))
+		if arg.begins_with("--seed="): _city_world_seed = int(arg.trim_prefix("--seed="))
+		if arg.begins_with("--segment="): _city_segment = maxi(2, int(arg.trim_prefix("--segment=")))
 		if arg == "--playable": _playable = true
 	if _out == "user://dev_previews/elite_crowd_fight":
 		_out = "res://docs/art/reference/2026-10-18-city-block/" + _review
@@ -35,6 +38,7 @@ func _run() -> void:
 		get_tree().quit(1)
 		return
 	_prepare_runtime()
+	Global.attempt_segment = _city_segment
 	Global.attempt_world_seed = _city_world_seed
 	Global.debug_player_god_mode = not _playable
 	_reduced_motion = _review == "reduced"
@@ -169,7 +173,7 @@ func _run() -> void:
 	if writes != 0 or SaveManager.current_save != null: _fail("Unexpected profile write or selection")
 	if _weapon_fires == 0 or _player_hits == 0 or _max_projectiles == 0: _fail("Moving fight did not exercise attacks, hits and projectiles")
 	_frame_times.sort()
-	var info := {"review": _review, "scene": "res://scenes/game.tscn", "seed": _city_world_seed, "segment": 2, "player_god_mode": true, "scripted_input": true, "ambient_spawner": false, "image_size": str(get_window().size), "reduced_motion": _reduced_motion, "combat_flashes": "off" if _reduced_motion else "full", "initial_fight_population": _initial_population, "simulation_fight_seconds": _combat_time, "weapon_fires": _weapon_fires, "hits": _player_hits, "deaths": _deaths, "max_projectiles": _max_projectiles, "route": _route_notes, "frames": _capture_info, "save_writes": writes, "failures": _failures, "process_frame_ms_median": _frame_times[_frame_times.size()/2] if not _frame_times.is_empty() else 0.0, "process_frame_ms_p95": _frame_times[int(_frame_times.size()*0.95)] if not _frame_times.is_empty() else 0.0, "limits": "Visual/traversal fixture on Intel UHD Compatibility; GPU readback during recording affects timing. Not a benchmark or balance test. Security encounter is production-triggered; outside crowd is controlled."}
+	var info := {"review": _review, "scene": "res://scenes/game.tscn", "seed": _city_world_seed, "segment": _city_segment, "theme": String(SegmentThemePicker.get_theme(_city_segment,_city_world_seed).id), "player_god_mode": true, "scripted_input": true, "ambient_spawner": false, "image_size": str(get_window().size), "reduced_motion": _reduced_motion, "combat_flashes": "off" if _reduced_motion else "full", "initial_fight_population": _initial_population, "simulation_fight_seconds": _combat_time, "weapon_fires": _weapon_fires, "hits": _player_hits, "deaths": _deaths, "max_projectiles": _max_projectiles, "route": _route_notes, "frames": _capture_info, "save_writes": writes, "failures": _failures, "process_frame_ms_median": _frame_times[_frame_times.size()/2] if not _frame_times.is_empty() else 0.0, "process_frame_ms_p95": _frame_times[int(_frame_times.size()*0.95)] if not _frame_times.is_empty() else 0.0, "limits": "Visual/traversal fixture on Intel UHD Compatibility; GPU readback during recording affects timing. Not a benchmark or balance test. Security encounter is production-triggered; outside crowd is controlled."}
 	var file := FileAccess.open(_out.path_join("capture-info.json"), FileAccess.WRITE)
 	info["wall_seconds"] = wall_seconds
 	info["captured_frames"] = _pixels.size()
