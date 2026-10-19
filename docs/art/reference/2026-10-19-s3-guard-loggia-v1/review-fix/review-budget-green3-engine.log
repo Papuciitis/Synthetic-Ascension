@@ -1,0 +1,40 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+Guard coverage stress dir=(0, -1) irregular=false reference_triangles=27 roofs=5
+ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CheckpointOfficeRenderTest.gd:17)
+       [1] _run (res://tools/tests/CheckpointOfficeRenderTest.gd:151)
+Guard coverage stress dir=(1, 0) irregular=false reference_triangles=29 roofs=5
+Guard coverage stress dir=(0, 1) irregular=false reference_triangles=26 roofs=5
+ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CheckpointOfficeRenderTest.gd:17)
+       [1] _run (res://tools/tests/CheckpointOfficeRenderTest.gd:151)
+Guard coverage stress dir=(-1, 0) irregular=false reference_triangles=26 roofs=5
+ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CheckpointOfficeRenderTest.gd:17)
+       [1] _run (res://tools/tests/CheckpointOfficeRenderTest.gd:151)
+Guard coverage stress dir=(0, -1) irregular=true reference_triangles=25 roofs=5
+ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CheckpointOfficeRenderTest.gd:17)
+       [1] _run (res://tools/tests/CheckpointOfficeRenderTest.gd:151)
+Guard coverage stress dir=(0, 1) irregular=true reference_triangles=25 roofs=5
+ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CheckpointOfficeRenderTest.gd:17)
+       [1] _run (res://tools/tests/CheckpointOfficeRenderTest.gd:151)
+Guard coverage stress dir=(-1, 0) irregular=true reference_triangles=25 roofs=5
+ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CheckpointOfficeRenderTest.gd:17)
+       [1] _run (res://tools/tests/CheckpointOfficeRenderTest.gd:151)
+CheckpointOfficeRenderTest: 293 passed, 6 failed

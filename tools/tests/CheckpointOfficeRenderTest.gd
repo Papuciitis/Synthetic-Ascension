@@ -16,6 +16,42 @@ func _check(ok: bool, message: String) -> void:
 		failed += 1
 		push_error(message)
 
+func _budget_reference(mask: RefCounted, actor: Node2D, roofs: Array[RoofOverlay], feet: Vector2, bounds: Rect2) -> Array:
+	# Isolate each real roof so its independent geometry cannot consume another
+	# roof's budget. Their union is the reference for the shared capped mask.
+	var reference: Array = []
+	for roof: RoofOverlay in roofs: roof.remove_from_group(&"roof_occluders")
+	for roof: RoofOverlay in roofs:
+		roof.add_to_group(&"roof_occluders")
+		mask.update(actor,feet,bounds)
+		_check(mask._triangles.size()<32,"Each isolated reference roof is below the coverage cap")
+		for index: int in mask._triangles.size():
+			reference.append({"triangle":mask._triangles[index].duplicate(),"strength":mask._strengths[index]})
+		roof.remove_from_group(&"roof_occluders")
+	for roof: RoofOverlay in roofs: roof.add_to_group(&"roof_occluders")
+	return reference
+
+func _budget_samples_match(mask: RefCounted, reference: Array, bounds: Rect2) -> bool:
+	# Dense interior/edge grid detects loss on either the guard or its neighbours;
+	# checking a cap centroid alone could miss discarded late triangles.
+	var samples := PackedVector2Array()
+	for row: Dictionary in reference:
+		var triangle: PackedVector2Array = row.triangle
+		var center := (triangle[0]+triangle[1]+triangle[2])/3.0
+		for edge: int in 3:
+			for fraction: float in [0.1,0.5,0.9]:
+				var point := triangle[edge].lerp(triangle[(edge+1)%3],fraction).lerp(center,0.01)
+				if bounds.has_point(point): samples.append(point)
+	for yy: int in range(1,30):
+		for xx: int in range(1,22):
+			samples.append(bounds.position + bounds.size*Vector2(float(xx)/22.0,float(yy)/30.0))
+	for point: Vector2 in samples:
+		var expected := 0.0
+		for row: Dictionary in reference:
+			if Geometry2D.is_point_in_polygon(point,row.triangle): expected=maxf(expected,row.strength)
+		if not is_equal_approx(mask.strength_at(point),expected): return false
+	return true
+
 func _fixture(direction: Vector2i, irregular: bool) -> Dictionary:
 	var roof := ROOF.instantiate() as RoofOverlay
 	add_child(roof)
@@ -95,9 +131,34 @@ func _run() -> void:
 					neighbour.position = Vector2(80,-40)
 					neighbour.configure(Rect2i(2,4,11,9),64,Vector2i.DOWN,null)
 					roof._set_alpha(1.0)
+					var reference := _budget_reference(mask,actor,[roof,neighbour],feet,bounds)
+					var budget_roofs: Array[RoofOverlay] = [roof,neighbour]
+					var budget_kits: Array[Node2D] = []
+					# Conservative projected-overlap stress, using actual
+					# guard compositions; not a claim of natural parcel density.
+					for offset: Vector2 in [Vector2(-32,0),Vector2(32,20),Vector2(0,-20),Vector2(-16,-32)]:
+						if reference.size()>=28: break
+						var extra_fixture := _fixture(Vector2i.DOWN,false)
+						var extra: RoofOverlay = extra_fixture.roof
+						var extra_cap := extra.find_children("GuardWatchCap","Polygon2D",true,false)[0] as Polygon2D
+						var extra_center := Vector2.ZERO
+						for point: Vector2 in extra_cap.polygon: extra_center+=extra_cap.to_global(point)
+						extra.position=sample+offset-extra_center/extra_cap.polygon.size()
+						budget_roofs.append(extra)
+						budget_kits.append(extra_fixture.kit)
+						reference = _budget_reference(mask,actor,budget_roofs,feet,bounds)
+					print("Guard coverage stress dir=%s irregular=%s reference_triangles=%d roofs=%d" % [direction,irregular,reference.size(),budget_roofs.size()])
+					_check(reference.size()>=28,"Neighbour fixture genuinely pressures the 32-triangle shared budget")
+					for reverse_order: bool in [false,true]:
+						move_child(roof,get_child_count()-1 if reverse_order else 0)
+						mask.update(actor,feet,bounds)
+						_check(mask._triangles.size()==mini(reference.size(),32),"Shared mask reaches the reference count or the actual fixed capacity")
+						_check(_budget_samples_match(mask,reference,bounds),"Both roof stream orders match uncapped union coverage over the whole actor")
 					mask.update(actor,feet,bounds)
 					_check(mask.strength_at(sample)>0.99,"Neighbouring roof cannot exhaust coverage of the raised guard mass")
 					_check(mask._triangles.size()<=32,"Guard family stays within the existing actor coverage capacity")
+					for extra: RoofOverlay in budget_roofs.slice(2): extra.free()
+					for extra_kit: Node2D in budget_kits: extra_kit.free()
 					neighbour.free()
 					var front_y := -INF
 					for point: Vector2 in roof.footprint_outline_px: front_y = maxf(front_y,point.y)

@@ -1,0 +1,10 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Invalid argument for "apply_city_material()" function: argument 1 should be "Texture2D" but is "int".
+   at: GDScript::reload (res://tools/tests/CheckpointOfficeRenderTest.gd:135)
+SCRIPT ERROR: Parse Error: Cannot pass a value of type "Rect2i" as "float".
+   at: GDScript::reload (res://tools/tests/CheckpointOfficeRenderTest.gd:135)
+SCRIPT ERROR: Parse Error: Invalid argument for "apply_city_material()" function: argument 3 should be "float" but is "Rect2i".
+   at: GDScript::reload (res://tools/tests/CheckpointOfficeRenderTest.gd:135)
+ERROR: Failed to load script "res://tools/tests/CheckpointOfficeRenderTest.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

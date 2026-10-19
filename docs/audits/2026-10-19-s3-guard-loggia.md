@@ -1,6 +1,6 @@
 # S3 guard-office/loggia prototype
 
-19 October 2026. **Implemented; final independent review in progress.** Native observations are sampled prototype evidence; final coordinating-designer/human aesthetic acceptance is not asserted.
+19 October 2026. **Implemented; independent review addressed and coordinating review accepts the bounded first prototype.** Native observations are sampled prototype evidence; final human aesthetic acceptance is not asserted; the coordinating designer keeps this as the first prototype with refinements pending.
 
 ## Result and baseline
 
@@ -26,7 +26,7 @@ All 22 final Godot scene/script runs exit 0 with zero failures and diagnostics. 
 | --- | --- |
 | Family routing, physical snapshots, caller RNG | 133 / 0 |
 | Fitted guard geometry | 150 / 0 |
-| Guard rendering, full cap/faces, cache, fading/occlusion | 180 / 0 |
+| Guard rendering, full cap/faces, cache, fading/occlusion | 349 / 0 after review; original 180 / 0 |
 | Natural production comparisons | 395 / 0; 79 real chunks; 5 native candidates |
 | Existing city kit / procedural parcels | 1,298 / 0; 5,430 / 0 across 76 parcels and 4 directions |
 | Existing planned / material / all-theme coverage | 20 chunks, 60 buildings, 0 failures; material 0 failures; 150 / 0 |
@@ -60,11 +60,11 @@ At unchanged north-up camera/zoom, the small/normal pairs show fitted arches, a 
 
 ## Cost and contract limits
 
-The [cost probe](../art/reference/2026-10-19-s3-guard-loggia-v1/chunk-cost-probe.json) runs three paired managed creations for five real chunks after warmup. Mean content time is 11.608 ms common / 5.737 ms guard; blockers 2.661 / 2.573 ms. The 79-chunk fixture averages 156.861 / 154.709 nodes. These noisy headless fixtures disable ground drawing, ambient decorations and sites and isolate family costs on current routing source. They do not establish faster gameplay, GPU/draw-call costs, historical routing overhead or a loading budget. Reload checks verify removal/restoration and identical forms; cache checks verify shared textures. The existing 250 ms warmup concern remains unresolved, with no threshold/scheduler edit.
+The [cost probe](../art/reference/2026-10-19-s3-guard-loggia-v1/chunk-cost-probe.json) runs three paired managed creations for five real chunks after one guard-only warmup, always measuring common first. Mean content time is 11.608 ms common / 5.737 ms guard; blockers 2.661 / 2.573 ms. The 79-chunk fixture averages 156.861 / 154.709 nodes. These noisy headless fixtures disable ground drawing, ambient decorations and sites and have asymmetric cold/order effects (first common south/east about 42.65/53.96 ms). Their means cannot isolate family costs; see the [interpretation correction](../art/reference/2026-10-19-s3-guard-loggia-v1/cost-probe-interpretation.json). They do not establish faster gameplay, GPU/draw-call costs, historical routing overhead or a loading budget. Reload checks verify removal/restoration and identical forms; cache checks verify shared textures. The existing 250 ms warmup concern remains unresolved, with no threshold/scheduler edit.
 
 Common/guard comparisons cover blocker kind/mask/variant, floor stamps/alpha, room/door/footprint records, access/clear masks, IDs, security/rewards and later RNG outcomes. No road graph, terrain/ground policy, checkpoint topology or enemy rules change. S1, Hub, DonJons, legacy roofless structures, gates/gantries/canals/rail and other bespoke families remain separate.
 
-All native presentation evidence uses **64 px cells**. Pure planner scaling is tested; arbitrary whole-game scales remain unaudited because base renderers use fixed heights. The actor shader retains its **32-triangle** cap; representative neighbouring-roof coverage is tested without rewriting it. Scripted input, god mode, inactive ambient spawner and controlled crowds are labelled. Strict warnings cover the reported categories/14 scripts, not the complete editor warning panel. Original frames and earlier exploratory captures remain local; committed stills, videos, metadata and logs provide the packet.
+All native presentation evidence uses **64 px cells**. The pure planner implements scale math; alternate scales remain unverified; arbitrary whole-game scales remain unaudited because base renderers use fixed heights. The actor shader retains its **32-triangle** cap; the final test compares dense interior/near-edge samples in both stream orders with an independent union of individually uncapped roofs. Conservative projected overlap uses real guard compositions and 29–36 reference triangles, reaching the fixed 32 capacity where applicable. This stress fixture is not a natural-density claim and does not rewrite the algorithm. Scripted input, god mode, inactive ambient spawner and controlled crowds are labelled. Strict warnings cover the reported categories/14 scripts, not the complete editor warning panel. Original frames and earlier exploratory captures remain local; committed stills, videos, metadata and logs provide the packet.
 
 ## Rulings made during implementation
 
@@ -88,4 +88,30 @@ Every ledger ruling is preserved in order, with the cost if wrong.
 
 ## Final review
 
-One fresh whole-change reviewer is required by the inline workflow. Findings and tested fixes will be recorded here before handoff. No merge, PR, push or unrelated cleanup is part of this task.
+The one fresh read-only reviewer inspected baseline `a798043d` through `e7488e36`, source/spec/rulings and actual pixels. No Critical or demonstrated gameplay failure was found. The Important gap was the old neighbouring-roof fixture, which never demonstrated pressure and checked only a centroid. A new pressure assertion failed seven old fixtures; stronger geometry-union/order/edge tests then pass, with the complete final suite/parse/strict evidence recorded under `post-review-tests` and `post-review-strict-warnings`. One trial helper used an incorrect existing material signature; its parser failure is preserved and not counted as a passing run. Only test/evidence/docs change in this fix pass; all captured runtime hashes remain valid. No second reviewer is dispatched. See [fresh review](../art/reference/2026-10-19-s3-guard-loggia-v1/fresh-review.md).
+
+The [coordinating visual review](../art/reference/2026-10-19-s3-guard-loggia-v1/coordinating-visual-review.md) accepts keeping this first prototype, with three pending refinements: quieter material/depth on pale panels, a more distinct watch body/eave silhouette, and clearer real side-threshold cues. Closed/open arch readings, recessed outline and sampled combat actor distinction are supported. Inherited lighting and foliage/HUD composition remain separate limits. No final human art sign-off is claimed.
+
+### Deferred minors
+
+- Balanced warmup/alternating-order cost methodology; historical diagnostics are explicitly corrected, with no speed claim.
+- Alternate-scale planner fixtures; scale math exists, but only canonical scale is verified.
+- Flat infill/watch-panel material and corner/base depth refinement.
+- Stronger compact watch body/side/eave silhouette.
+- Clearer actual side-entry surrounds/ground cues.
+- Capture-tool compatibility: by source inspection, S3 plus the older original-material `before` mode conflicts with the new guard-profile assertion. That combination was not executed or accepted; use the verified instance-local common-base comparison. Default S2 `before` remains separate. A compatibility fix is deferred.
+
+### Additional review rulings
+
+16. Final art/daylight/blank panels/HUD foliage are not code acceptance: coordinating review keeps the prototype but requires a later visual pass; cost is further refinement before human sign-off.
+17. Whole district concepts, gates/gantries and other families remain outside this selected family: later district work is still necessary.
+18. Arbitrary whole-game scales remain unaccepted at a 64 px native boundary: noncanonical configurations can render incorrectly.
+19. GPU/loading budgets and historical routing overhead are unproven by this asymmetric CPU probe: performance issues outside it remain possible; the old 250 ms concern stays open.
+20. Human continuous play/balance is not established by scripted god-mode captures: human-play defects can remain undiscovered.
+21. The reviewer ran no engine under the read-only single-lane instruction: execution confidence rests on the executor's fresh logged runs.
+22. Passage exits and narrow no-watch support have pure geometry fixtures; a no-watch irregular case exercises render integration, but neither has a native walkthrough. The natural irregular sample has a watch: native aesthetics for these variants can still require refinement.
+23. The pressure test uses conservative overlapping projections of real rendered forms and independent per-roof reference unions: it deliberately pressures 29–36 triangles rather than claiming those overlapping footprints occur naturally; arbitrary future configurations beyond the sampled coverage remain unaudited.
+24. Preserve the existing shared branch/worktree and make no merge/push/PR: the user's existing no-push ownership instruction already chooses keep-as-is; no integration menu or new permission request is needed.
+25. Preserve raw failed-run logs byte-for-byte despite their trailing blank line: final whitespace validation excludes `.log` evidence while checking every code/document change; formatting defects inside raw logs are intentionally retained as provenance.
+
+No merge, PR, push or unrelated cleanup is part of this task. The exhaustive execution ledger is preserved in the evidence packet before deleting only this plan's scratch workspace.

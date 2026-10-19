@@ -1,0 +1,47 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: segment 1 game scene starts
+[Game] ready seg=1 race=human style=ranged seed=0
+PASS: chunk streaming made the start cell walkable
+PASS: Level1 builder exists
+PASS: ThreatDirector autoload exists
+PASS: stage 0 mirrors phase recon
+PASS: stage 1 mirrors phase recon
+PASS: stage 2 mirrors phase recon
+PASS: stage 3 mirrors phase disturbance
+PASS: stage 4 mirrors phase disturbance
+PASS: stage 5 mirrors phase ascension
+PASS: stage 6 mirrors phase collapse
+PASS: spawner rejects void positions outside the authored footprint
+PASS: spawner accepts a walkable facility position
+PASS: three secondaries registered (got 3)
+PASS: secondary room 1102 has guaranteed loot
+PASS: secondary room 1103 has guaranteed loot
+PASS: secondary room 1104 has guaranteed loot
+PASS: three indoor volumes carry secondary ids (got 3)
+PASS: the warehouse secondary runs a local encounter
+PASS: secondary completion granted resonance exactly once
+PASS: restore with courtyard milestones re-enters disturbance
+PASS: checklist emitted on gate tick
+PASS: checklist starts LOCKED
+PASS: checklist carries five items
+PASS: final checkpoint moves the checklist to LOCATED
+PASS: plaza + full resonance moves the checklist to READY
+PASS: READY checklist shows every item done
+PASS: wing west wall exists
+PASS: wing east wall exists
+PASS: street entrance gap is open
+PASS: lab door gap is open
+PASS: lab door is framed
+PASS: admissions milestone records
+PASS: milestone_reached signal fires
+PASS: evidence milestone records
+PASS: game exposes awaitable augment pick
+PASS: city reveal milestone records
+PASS: full opening starts at the entrance
+PASS: post-admission resume starts in the lab corridor
+PASS: short mode keeps the corridor start
+PASS: segment 1 rebuilds from its milestones
+[Game] ready seg=1 race=human style=ranged seed=0
+PASS: rebuilt past the final plaza with the director on another segment, the restored collapse holds (collapse)
+Segment1ProgressionTest: 42 passed, 0 failed

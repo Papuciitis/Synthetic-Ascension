@@ -1,0 +1,11 @@
+{
+  "suite": "CheckpointOfficeRenderTest",
+  "exit": 0,
+  "timeout": false,
+  "diagnostics": [
+    "SCRIPT ERROR: Parse Error: Invalid argument for \"apply_city_material()\" function: argument 1 should be \"Texture2D\" but is \"int\".",
+    "SCRIPT ERROR: Parse Error: Cannot pass a value of type \"Rect2i\" as \"float\".",
+    "SCRIPT ERROR: Parse Error: Invalid argument for \"apply_city_material()\" function: argument 3 should be \"float\" but is \"Rect2i\".",
+    "ERROR: Failed to load script \"res://tools/tests/CheckpointOfficeRenderTest.gd\" with error \"Parse error\"."
+  ]
+}

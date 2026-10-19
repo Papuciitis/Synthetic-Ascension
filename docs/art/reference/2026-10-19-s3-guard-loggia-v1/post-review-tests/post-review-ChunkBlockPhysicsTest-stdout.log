@@ -1,0 +1,15 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: two half-arms merge into one run
+PASS: an unconnected wall becomes one centered post
+PASS: an L corner emits one horizontal and one vertical arm
+PASS: wall geometry contains only wall arms
+PASS: window geometry is batched separately
+PASS: one body is created for each present collision category
+PASS: merged rectangles and two half covers create four shapes
+PASS: two half covers use two circle shape owners
+PASS: shape owners outlive their body during streamed-scene teardown
+PASS: batched collision creates no CollisionShape2D nodes
+PASS: wall, window, and half-cover bodies retain legacy layers
+PASS: clear releases every batched collision body
+ChunkBlockPhysicsTest: 12 passed, 0 failed

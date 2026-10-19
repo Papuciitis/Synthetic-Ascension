@@ -1,0 +1,57 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: completion advanced the segment before the hub (3)
+PASS: completion saves the hub world as the resume target
+PASS: arriving in the hub never advances the segment again
+PASS: the arrival state is a controllable character in the world
+PASS: ability inputs are disabled in the safe hub
+PASS: the native weapon is locked in the safe hub
+PASS: merchant, ascension, gear, alcove, papers and exit stand in the courtyard (6)
+PASS: the stations carry their service names
+PASS: the arrival medallion is standable (feet at (1024.0, 1184.0))
+PASS: the exit medallion is standable (feet at (1024.0, 57.6))
+PASS: the ascension medallion is standable (feet at (1024.0, 851.2))
+PASS: the merchant medallion is standable (feet at (480.0, 448.0))
+PASS: the gear medallion is standable (feet at (1632.0, 832.0))
+PASS: the alcove medallion is standable (feet at (352.0, 870.4))
+PASS: the papers medallion is standable (feet at (563.2, 870.4))
+PASS: the dais under the obelisk is solid
+PASS: the dais's front steps are solid
+PASS: feet stop before the south roofs
+PASS: feet reach the square's south edge
+PASS: feet reach the north house fronts
+PASS: a lamp's base is solid
+PASS: standing on the medallion (feet on the ring) is in range
+PASS: the merchant opens the existing trade post as an embedded panel
+PASS: the embedded return button says what it does (Return to Courtyard)
+PASS: a pending mandatory choice never traps the player in the shop
+PASS: the vendor stocked its shelf
+PASS: closing the panel returns to the courtyard
+PASS: opening a shop panel never advances anything
+PASS: reopening the merchant is never a free reroll
+PASS: the identity pass trades in a live merchant panel
+PASS: before the trade every item lives in exactly one container
+PASS: the trade moved items without duplicating any ([])
+PASS: the bought instance moved vendor -> bag by identity
+PASS: the sold instance sits on the buyback shelf by identity
+PASS: the trade settled a real follower net
+PASS: undo restores snapshots without duplicating any item ([])
+PASS: undo returns the exact follower balance (1000000)
+PASS: the sold original exists at most once after undo
+PASS: the gear corner opens the inventory screen
+PASS: it shows the run's equipment and bag
+PASS: and every slot of the persistent stash
+PASS: the gear panel shows a visible close button
+PASS: Escape closes the gear panel and returns to the courtyard
+PASS: the screen reference is released with the panel
+PASS: the close button also returns to the courtyard
+PASS: a pending required choice shows an in-world cue at the gate
+PASS: the gate refuses departure while the choice waits
+PASS: the gate opens the required choice instead
+PASS: departure engages once
+PASS: spamming the gate cannot load the next segment twice; the resume target is the run (res://scenes/game.tscn)
+PASS: an old shop-target save resumes into the walkable hub
+PASS: a save with no resume target lands in the hub, never nowhere
+PASS: a mid-segment save resumes into the segment
+PASS: the isolated save directory is cleaned up
+HubWorldTest: 54 passed, 0 failed

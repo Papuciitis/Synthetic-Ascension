@@ -2748,8 +2748,8 @@ irregular service parcel. Two full native runs and three ambient entry runs
 preserve roof entry/exit and identical streamed reload; normal and small/reduced
 combat runs total 306 frames, 127 fires, 118 hits and 58 deaths. All nine current
 captures have zero failures, diagnostics/save writes and 459 matching runtime
-source/asset hashes. Twenty-two final scene/script suites, the 548-script parse
-audit and isolated strict reported-warning check pass. Cost sampling is a bounded
+source/asset hashes. Twenty-two final scene/script suites, including the 548-script parse
+audit, and isolated strict reported-warning check pass. Cost sampling is a bounded
 headless diagnostic, not performance acceptance. Native fixtures use scripted
 input/god mode; final coordinating-design and human aesthetic acceptance remain
 distinct from these checks.

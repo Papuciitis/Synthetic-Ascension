@@ -1,6 +1,6 @@
 # S3 guard-loggia native evidence
 
-19 October 2026. Baseline `a798043d`; scoped prototype with existing physical rules. [Audit](../../../audits/2026-10-19-s3-guard-loggia.md) · [Machine checks](checks.json) · [Final tests](tests/summary.json) · [Runtime hash matches](capture-hash-checks.json) · [Current source hashes](verified-source-hashes.json).
+19 October 2026. Baseline `a798043d`; scoped prototype with existing physical rules. [Audit](../../../audits/2026-10-19-s3-guard-loggia.md) · [Machine checks](checks.json) · [Reviewed final tests](post-review-tests/summary.json) · [Initial tests](tests/summary.json) · [Runtime hash matches](capture-hash-checks.json) · [Current source hashes](verified-source-hashes.json).
 
 ## Architecture at the actual camera
 
@@ -30,8 +30,16 @@ Combined 306 frames, 127 fires, 118 hits, 58 deaths. Both runs pass perimeter mo
 
 All nine current runs have zero failures, diagnostics and save writes, with 459 matching runtime source/asset hashes. Each has run-results and still/entry/capture metadata. [Production samples](production-samples.json) record natural IDs/roles; [chunk costs](chunk-cost-probe.json) are bounded headless diagnostics. [Strict warnings](final-strict-warnings/results.json) cover fourteen scripts without changing working settings.
 
+## Review and supplementary verification
+
+The [fresh code review](fresh-review.md) identified a shared-roof coverage verification gap. The strengthened test compares dense interior/near-edge pixels in both stream orders with an independent union of isolated real roofs. Conservative projected overlaps produce 29–36 reference triangles and reach the fixed 32-triangle budget; they are stress fixtures, not natural-density claims. The [fix evidence](review-fix/review-budget-red-result.json) preserves the old fixture's failing pressure assertion, and [final tests](post-review-tests/summary.json) record the reviewed candidate. [Post-review strict warnings](post-review-strict-warnings/results.json) confirm the same fourteen sources; captured runtime files are unchanged, so native evidence remains current.
+
+The [coordinating visual review](coordinating-visual-review.md) keeps this as the first S3 prototype, with pale panels, watch-body silhouette and side-entry cues deferred to a further visual pass. [Cost interpretation](cost-probe-interpretation.json) explicitly corrects the probe's asymmetric warmup/order; the old means cannot establish comparative speed. Alternate planner scales and native passage/no-watch aesthetics remain unverified. The [execution ledger](execution-ledger.md) preserves decisions and deferred refinements.
+
 ## Provenance and limits
 
 `architecture-final` is current. `architecture-review`, first/form/v3 exploratory folders remain locally as earlier iterations, superseded for final hash claims. `production-samples-before-main-street-correction.json` preserves the old incomplete role sweep. Complete original frame sequences, concat lists and isolated runtimes remain local; representative stills, videos, metadata and final logs form the committed packet. Unrelated import/UID/cache artifacts are excluded.
 
 The new family applies only to S3 civic buildings. Other families, topology/gantries, S1/Hub, DonJons and legacy roofless structures remain separate. Presenter acceptance is 64 px/cell with the existing 32-triangle actor limit. Author inspection and passing tests do not assert final designer/human aesthetics or continuous-play acceptance.
+
+The verified S3 comparator is `DistrictCommonBase`, retaining the selected theme. S3 with the older original-material `before` mode has a guard-assertion conflict by source inspection and is not part of this accepted capture set; its compatibility fix is deferred. Default S2 original-material evidence remains separate.
