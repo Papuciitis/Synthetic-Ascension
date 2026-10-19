@@ -1,0 +1,30 @@
+[
+  {
+    "path": "native-south-normal/walkthrough.mp4",
+    "exit": 0,
+    "diagnostics": [],
+    "sha256": "42F7B05FE7598169EA898D1BE526ADDB62B178A9DA0F03045740423681B5A5EA",
+    "method": "ffmpeg -v error -i INPUT -fps_mode passthrough -enc_time_base demux -f null -"
+  },
+  {
+    "path": "native-south-normal/fight.mp4",
+    "exit": 0,
+    "diagnostics": [],
+    "sha256": "AEAD7A93C38BB85FCE76D9E3DFC33108F2F8BD3D518F6D11263468393CE1E512",
+    "method": "ffmpeg -v error -i INPUT -fps_mode passthrough -enc_time_base demux -f null -"
+  },
+  {
+    "path": "native-north-reduced/walkthrough.mp4",
+    "exit": 0,
+    "diagnostics": [],
+    "sha256": "D925D1EF39583F0BB5EE839BC4E3B8012CF1CCAEB51CA2B86E984D0033F505D5",
+    "method": "ffmpeg -v error -i INPUT -fps_mode passthrough -enc_time_base demux -f null -"
+  },
+  {
+    "path": "native-north-reduced/fight.mp4",
+    "exit": 0,
+    "diagnostics": [],
+    "sha256": "5975EC544DFBB3267C58E75729BC19539077E45026815E6E673222E9230F5B3A",
+    "method": "ffmpeg -v error -i INPUT -fps_mode passthrough -enc_time_base demux -f null -"
+  }
+]

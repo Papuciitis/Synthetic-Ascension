@@ -1,0 +1,57 @@
+{
+	"attempt_seed": 16102026,
+	"building_id": 1272508659,
+	"closed_arch_bays": 2,
+	"coord": "(-3, 4)",
+	"district_family": "checkpoint_lanes",
+	"doors": "[{ \"pos\": (8, 15), \"dir\": (1, 0), \"width\": 2 }]",
+	"failures": 0,
+	"footprint": "[(64.0, 640.0), (576.0, 640.0), (576.0, 1344.0), (64.0, 1344.0)]",
+	"has_watch": true,
+	"inside_alpha": 0.0,
+	"irregular": false,
+	"local_security": false,
+	"native_entry_only": true,
+	"outside_alpha": 1.0,
+	"plan_seed": 1532982726,
+	"profile": "checkpoint_guard_loggia",
+	"role": "district_fill",
+	"save_writes": 0,
+	"segment": 3,
+	"streamed_reload": [
+		{
+			"equal": true,
+			"event": "streamed_reload",
+			"restored_visual_instances": 1009,
+			"unloaded_visual_instances": 0
+		},
+		{
+			"arrived": "(-5465.495, 9184.0)",
+			"desired": "(-5504.0, 9152.0)",
+			"event": "walk",
+			"path_cells": 1,
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(-5472.0, 9184.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(-5657.146, 9184.0)",
+			"desired": "(-5664.0, 9152.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 32.0,
+			"resolved": "(-5664.0, 9184.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(-5478.911, 9184.0)",
+			"desired": "(-5504.0, 9152.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(-5472.0, 9184.0)",
+			"strict_perimeter": false
+		}
+	],
+	"watch_fallback": ""
+}

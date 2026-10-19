@@ -2759,3 +2759,28 @@ The fourteen-theme matrix, other bespoke families, connected gates/gantries,
 rail/canal topology, S1/Hub, DonJons and legacy roofless structures retain their
 separate scopes. No new push is performed. See the [S3 audit](audits/2026-10-19-s3-guard-loggia.md)
 and [native evidence](art/reference/2026-10-19-s3-guard-loggia-v1/README.md).
+
+## 2026-10-19 — S3 visual refinement closed
+
+The bounded follow-up adds one original quiet plaster/limestone material,
+continuous watch-room side/front depth inside the original supported envelope,
+and attached north/east/west sill/landing treatments at real openings. The
+coordinating designer closed all three findings after native review. A small
+side corner exposed by a doorway-notched cap was reproduced and corrected in
+the actor mask before final verification. Physical generation, doors, rewards,
+security, RNG, navigation, terrain and the global32-triangle limit are retained.
+
+Runtime `7f4c12e6` passes16 final suites,548 gameplay-script parses and strict
+reported warnings in14 targets. Ten fresh native runs pass with0failures,
+diagnostics or save writes and530 matching source/asset hashes. Normal/reduced
+footage totals329frames/122fires/115hits/56deaths; four videos decode cleanly.
+These are scripted native samples, separate from continuous human play,
+balance, comparative performance and whole-city aesthetic acceptance.
+
+The next selected building packet is one S4A municipal/service-hall ruin on
+genuine eligible sites with safe no-fit fallback. Street-material coverage and
+staged player/tree, batched-enemy and pickup visibility are separately prepared
+follow-ups; none is silently implemented by this S3 refinement. Existing
+branch/sole production ownership is retained and no push is performed. See the
+[v2 audit](audits/2026-10-19-s3-visual-refinement-v2.md) and
+[evidence](art/reference/2026-10-19-s3-guard-loggia-v2/README.md).

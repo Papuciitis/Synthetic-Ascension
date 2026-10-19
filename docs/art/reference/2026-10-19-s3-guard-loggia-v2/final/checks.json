@@ -1,0 +1,272 @@
+{
+  "runtime_commit": "7f4c12e6",
+  "tests": [
+    {
+      "suite": "CheckpointOfficeRefinementTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CheckpointOfficeRefinementTest: 174 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "CheckpointOfficeRenderTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CheckpointOfficeRenderTest: 313 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "CheckpointOfficeFormsTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CheckpointOfficeFormsTest: 150 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "DistrictFamilyVisualTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "DistrictFamilyVisualTest: 133 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "CityBlockKitTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockKitTest: 1298 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "CityBlockProceduralTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockProceduralTest: 5430 passed, 0 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 76 styled kit instances across 22 sizes"
+      ]
+    },
+    {
+      "suite": "CityPlannedBuildingTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityPlannedBuildingTest: chunks=20 styled_buildings=60 families=2 directions=4 failures=0"
+      ]
+    },
+    {
+      "suite": "CityGenerationMaterialTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityGenerationMaterialTest: failures=0"
+      ]
+    },
+    {
+      "suite": "CitySegmentCoverageTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CitySegmentCoverageTest: 150 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "ProcChunkReachabilityTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "ProcChunkReachabilityTest: 3840 chunks, 2538 doors, 1728 rewards, 0 failures"
+      ]
+    },
+    {
+      "suite": "WorldGroundSplatTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "WorldGroundSplatTest: 21 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "PlayerRoofOcclusionTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "PlayerRoofOcclusionTest: 11 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "Segment1TileIntegrationTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "Segment1TileIntegrationTest: 8 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "Segment1ProgressionTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "Segment1ProgressionTest: 42 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "HubWorldTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "HubWorldTest: 54 passed, 0 failed"
+      ]
+    },
+    {
+      "suite": "ScriptParseAuditTest",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "ScriptParseAuditTest: 548 passed, 0 failed (checked 548 scripts across 8 roots)"
+      ]
+    }
+  ],
+  "test_suite_count": 16,
+  "native": [
+    {
+      "directory": "architecture/guard-small",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 1517657286,
+      "info": "still-info.json"
+    },
+    {
+      "directory": "architecture/guard-normal",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 1517657286,
+      "info": "still-info.json"
+    },
+    {
+      "directory": "architecture/common-small",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 1517657286,
+      "info": "still-info.json"
+    },
+    {
+      "directory": "architecture/common-normal",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 1517657286,
+      "info": "still-info.json"
+    },
+    {
+      "directory": "native-entry-west",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 974809560,
+      "info": "entry-info.json"
+    },
+    {
+      "directory": "native-entry-east",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 1272508659,
+      "info": "entry-info.json"
+    },
+    {
+      "directory": "native-entry-irregular",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 265571229,
+      "info": "entry-info.json"
+    },
+    {
+      "directory": "north-whole",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 93140343,
+      "info": "still-info.json"
+    },
+    {
+      "directory": "native-south-normal",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 1517657286,
+      "info": "capture-info.json"
+    },
+    {
+      "directory": "native-north-reduced",
+      "exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes_matched": 53,
+      "building_id": 93140343,
+      "info": "capture-info.json"
+    }
+  ],
+  "native_run_count": 10,
+  "source_hash_comparisons": 530,
+  "all_sources_match_current_files": true,
+  "strict_target_count": 14,
+  "strict_failed_scripts": 0,
+  "project_settings_unchanged": true,
+  "original_material_unchanged": true,
+  "handoff_sha256": "FEC239A30B41BD4DF1EFFE52B0B8E08620F8418B71A3F750BC538DCD2A863E8C",
+  "historical_source_hash_count_preserved": 12,
+  "designer_reviews": [
+    {
+      "path": "docs/art/reference/2026-10-19-s3-guard-loggia-v2/coordinating-visual-review.md",
+      "sha256": "3C16E41569A0B1B40A5DC85FF253624BCB1C6B0E1DFEA9331E3F57147CF13D6C"
+    },
+    {
+      "path": "docs/art/reference/2026-10-19-s3-guard-loggia-v2/revision2/coordinating-visual-review.md",
+      "sha256": "11B6C49948BCF11D7EE3A573D94D71FBED7C550B6F86781B9BDDEDABBF59A15C"
+    }
+  ],
+  "limits": "Native scripted input/god mode and captured readback; no balance, continuous human play or comparative performance claim."
+}

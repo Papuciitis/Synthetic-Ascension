@@ -2,7 +2,7 @@
 
 2026-10-19. **All fourteen themes mapped; bounded S3 guard-loggia prototype implemented and verified.** Other bespoke district families and connected infrastructure remain proposed.
 
-**Current ownership, later 19 October:** [Production register](06-production-ownership-and-status.md) is the current authority for this packet. This chat owns district production code, new assets and integration. The designer owns direction/review. [Next bounded packet](07-s3-refinement-and-next-family-packet.md) prepares S3 refinement followed provisionally by one S6 workshop family; new product work waits for the designer's forthcoming grounded handoff to be read.
+**Current ownership, later 19 October:** [Production register](06-production-ownership-and-status.md) is the current authority for this packet. This chat owns district production code, new assets and integration. The designer owns direction/review. The [grounded handoff](../../art/2026-10-19-district-production-handoff.md) selects [S3 refinement, followed by one S4A collapsed service-hall family](07-s3-refinement-and-next-family-packet.md). **S3 refinement is complete**, with all three designer findings closed,16 final suites and ten current native runs passing; see the [v2 audit](../../audits/2026-10-19-s3-visual-refinement-v2.md). S4A is the subsequent selected family; street-material and staged visibility follow-ups are separately prepared. S4B and S6 remain later scopes.
 
 The goal is a recognisable journey through all fourteen procedural Area 1 themes, supported by different architectural silhouettes, purposeful prop groups and the infrastructure their identities require. Keep the current north-up top-down game, natural uneven streets, temperate daylight, quiet combat ground and convincing attached shadows. The common language is Greek/Roman/Mediterranean masonry, medieval European forms and restrained early industrial and authoritarian science-fiction additions.
 
@@ -13,6 +13,8 @@ Read in order:
 3. [Phased delivery and first playable extension](03-phased-delivery.md): staged deliverables and a bounded S3 recommendation.
 4. [S3 implementation plan](04-s3-guard-loggia-implementation-plan.md) and [asset brief](05-s3-asset-brief.md): four concrete tasks, two original facade masters, exact source snapshot and required review evidence; executed after the explicit base-owner lane release; final evidence is linked below.
 5. [Current ownership and status](06-production-ownership-and-status.md), then [the next code/asset packet](07-s3-refinement-and-next-family-packet.md).
+6. [Street-material coverage follow-up](08-street-material-coverage-follow-up.md): the later relayed human concern, queued separately after S3; current ground rollout remains S2-specific.
+7. [Foreground/entity visibility packet](09-foreground-and-entity-visibility-packet.md): player/tree alpha/depth coverage first, then batched enemies and pickup consumers; prepared separately from current S3 closure.
 
 ## Authority and ownership
 

@@ -1,0 +1,61 @@
+# S3 visual refinement v2
+
+19 October 2026. **Completed: all three selected S3 visual findings closed and final runtime verification passed.** This does not begin the subsequent S4A family or claim wider city daylight/ground/foliage work complete.
+
+## Authority and baseline
+
+The [grounded district handoff](../art/2026-10-19-district-production-handoff.md) was read in full before new product/asset/engine work. The coordinator explicitly activates the already reviewed S3 refinement and selects one S4A municipal/service-hall ruin family afterward, on genuine eligible ruin sites with a safe fallback. The earlier S6-next proposal is superseded. No new approval question or concept cycle was needed.
+
+Production owner remains this district chat, `01a153ea-44b7-7570-9fe3-e67a5c73ce71`; the designer owns native visual direction/review. Source baseline is `b42dae72` (documentation reconciliation over tested runtime `6d1a0cd7`), on the existing branch/worktree. No new push is authorised. Human playtest/other-engine guards remain active; observed initial inventory had editor29136 only.
+
+## Three selected findings
+
+| Action | Implemented treatment | Review state |
+| --- | --- | --- |
+| Pale infill/end panels and watch front | Original quiet neutral plaster/limestone material on fitted surfaces, geometry-owned plinths/corner returns. Original arches preserved. | **CLOSE** in the [first designer review](../art/reference/2026-10-19-s3-guard-loggia-v2/coordinating-visual-review.md); keep the quiet treatment. |
+| Watch reads as roof equipment | First window/eave improvement was insufficient. Revision2 gives a continuous28px masonry side/front corner/rear contact, with the wall head raised32px and rear roof inset32px inside the old overall envelope. | **CLOSE** in the [second designer review](../art/reference/2026-10-19-s3-guard-loggia-v2/revision2/coordinating-visual-review.md), both normal and small sizes. |
+| Weak N/E/W entries | First apron-only pad still looked detached. Revision2 joins the real64px carved sill to48px of its existing apron, mutes the surface and replaces bright end bars with short grounded jamb returns. | **CLOSE**, including north exterior readability, in the second review. The designer viewed all14 supplied stills; motion remains owner verification. |
+
+These three bounded architectural findings are visually accepted. This is separate from human final aesthetics and whole-concept/city fidelity. The [native evidence folder](../art/reference/2026-10-19-s3-guard-loggia-v2/) distinguishes final and exploratory runs. Natural foliage/ground/HUD remain visible in gameplay samples; only paired architectural views hide separable details.
+
+## Original asset and integration
+
+The built-in image-generation tool produced one opaque **1254×1254** material original, copied unchanged to [guard_quiet_infill_v2.png](../../assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png). SHA256 `3BB297A1082A6427B7B99D29E51EDDB07E3223D06E01C69D05373DE75F5FE9E8`; source/target bytes match. Exact prompt, returned path, opaque material bounds and UV/display scale are in [provenance](../../assets/world/districts/checkpoint_lanes/infill-v2-provenance.json). No raster edit, backdrop removal or whole-building painting was used. Seamless repeat was requested, not asserted as mathematically equal border pixels.
+
+`CityBlockKit` supplies its cached texture through a transient copied roof profile and the frontage texture dictionary. The persisted family/profile selector is unchanged. `CheckpointOfficeForms` renders explicit surface UVs at four source texels per world pixel, a313.5px repeat period. Broad wall faces are112/192px high; the first watch front was128×96px and the final front is100×128px. Corners, plinth, lighting/eave depth and thresholds are geometry-owned.
+
+The first candidate widened the9px side to16px; it still read as a tapered strip. Revision2 instead uses a100×128px front with a continuous28px side inside the same128×128px support. Raising the wall head32px and insetting the rear eave32px preserves the old top/ridge and bottom, for the same256px maximum visible height. Pitch stays32px; visible right extent is smaller than the original16px allowance. The material original and UV density are unchanged.
+
+The taller body exposed six failures in the existing shared-budget test. A compact body proxy removed redundant per-face masks and passed the original seven cases. Fresh code review then found a21world-pixel² side corner that could be exposed by the cap's doorway notch. The owner reproduced that valid door/seed case (167pass/1fail) and replaced the assumption with an exact merge of rendered front/side polygons minus the final notched cap. Every uncovered fragment receives a transparent mask-only polygon. Actual faces remain rendered separately; the global32-triangle limit and algorithm are unchanged. See [review and ruling](../art/reference/2026-10-19-s3-guard-loggia-v2/code-review.md).
+
+## Iteration evidence, superseded by the final packet below
+
+- New material/doorway/base/eave checks: **RED28 passed /35 failed**, then **GREEN131/0**, exit0 and no diagnostics.
+- Existing guard roof visibility, both-order pressure/reference coverage: **349/0**, exit0 and no diagnostics after the geometry/material change.
+- After the first designer review, joined-sill/continuous-corner checks fail **119/39**, then pass **165/0**, including rendered-union equivalence. Revised shared coverage first failed six cases, then passed **313/0** with30–34 uncapped reference triangles in the same seven cases/two stream orders. The assertion total is lower because fewer extra stress roofs are needed; no coverage assertion was removed or weakened. Pure fitting remains150/0.
+- Native exploratory small still: actual S3 profile, zero failures/diagnostics/save writes. Its early camera framing clipped the upper roof after waiting for HUD tips; superseded by the architecture set recentered after the natural queue clears.
+- Architecture `guard-small` and `guard-normal`: zero failures/diagnostics/save writes, whole building visible after temporary HUD tips finish. Native zoom/camera orientation retained; no HUD hiding or game-setting edit.
+- Exploratory west entry: actual building974809560, physical entry alpha0 and restored exit alpha1, zero failures/diagnostics/save writes. At that stage the remaining directional and moving samples were outstanding.
+- Revision2 small architectural and west exterior/entered/restored runs passed against their capture-time source versions. The original v2 architecture/entry set remains the first reviewed candidate, not final current-hash proof after these changes.
+- All eight revision2 static/entry manifests completed cleanly before the final mask-only correction. Fresh final captures replace them for current-source verification without relabelling old hashes. The new corner regression passes174/0, including production actor-mask alpha1/0.4/0 and an adjacent uncovered gap. Shared-budget coverage remains313/0 and pure fitting150/0 after the correction.
+- The first full normal capture was interrupted around the client/tool reset and has no completed run manifest; its partial stills/frames are retained and excluded from successful evidence. No human process was stopped. Its completed replacement is in the separate final directory.
+
+## Final current-source verification
+
+Final runtime commit: **`7f4c12e6`**, over material integration `bd8cd602` and designer correction `5a3b1068`. All16 final suites exit0 with no diagnostics: refinement174/0; shared-budget/order render313/0; pure fitting150/0; family physical/RNG133/0; common kit1298/0; procedural5430/0 across20layouts/76parcels; planned20chunks/60buildings/four directions and material checks with0failures; coverage150/0; reachability3840chunks/2538doors/1728rewards with0failures; ground21/0; player roof11/0; S1 tile8/0; S1 progression42/0; Hub54/0; parse548/0 across eight gameplay roots. Tools are outside the parse sweep; the new test does not raise that gameplay-script count. The isolated strict reported-warning audit reloads all14 targets with0failed scripts/diagnostics and unchanged working project settings.
+
+All **ten fresh native captures** under [final/](../art/reference/2026-10-19-s3-guard-loggia-v2/final/) pass with0fixture failures, native exit0, no timeout/diagnostics and0save writes. Four same-building common/guard architectural stills retain native camera/scale. Three ambient W/E/irregular physical-entry runs retain alpha0inside/1outside and identical streamed reload. A north exterior establishes the real approach; its south frontage reaches the lower viewport edge, so the separate south architectural pair supplies the whole-building view. Both full reward/security runs complete real entry, security clearance, roof restoration, deterministic reload and five perimeter targets.
+
+Normal1280×720 and reduced960×540 footage totals **329frames,122fires,115hits and56deaths**. These whole-walkthrough counters include interior clearance. Outdoor frame samples separately show population drops21/23 and actual projectiles (peak5each); both fights exceed12simulation seconds. Controls are scripted and god mode is enabled; production attacks/AI/collision/stats remain active. Four native-timed H.264 videos decode completely with exit0 and no diagnostics, without resize, interpolation or speed change. Frame readback and the60fps cap make this unsuitable as comparative performance evidence.
+
+The packet checker verifies **530/530** current source/asset hash comparisons (53per run), unchanged original material bytes, the handoff's original SHA256 and all12 preserved historical planning-source hash records. See [checks and copied logs](../art/reference/2026-10-19-s3-guard-loggia-v2/final/checks.json), [motion summary](../art/reference/2026-10-19-s3-guard-loggia-v2/final/review-summary.json), [video decode records](../art/reference/2026-10-19-s3-guard-loggia-v2/final/video-decode-checks.json) and [source hashes](../art/reference/2026-10-19-s3-guard-loggia-v2/final/verified-source-hashes.json).
+
+The designer directly inspected14 revision2 stills and closed every selected action; that candidate's later mask-file hash difference is explicitly preserved. The production owner separately inspected14 selected final stills plus six first/mid/last outdoor combat frames; the exact paths/hashes are recorded in the final inspection record. This is sampled native visual inspection and complete video decoding, without a claim of continuous human play or a newly performed designer motion review. No new natural no-watch or multi-door passage capture is claimed; those fitting/fallback contracts retain authored-suite evidence.
+
+## Protected contracts and subsequent work
+
+No physical floor/blocker stamp, room/door, collision/nav, reward/security/ID, template selection, RNG, terrain policy or road topology is intentionally changed. Thresholds finish existing clear aprons without adding floor or physics data. Non-S3/common/noncivic architecture retains its existing branch. All presentation evidence remains canonical64 px/cell; alternate scales and human continuous-play/balance are unaccepted.
+
+Final correctness/native verification and designer action-by-action closure are complete. Foliage masking, inherited dark/noisy environment, balanced comparative performance methodology, S3 original-material `before` mode compatibility and prior disclosed limits remain separate. The review found one new Minor (cap-notch side coverage), reproduced and fixed before the final packet; no new code finding is deferred. No S4A production code is changed in this packet. Scoped local commits retain the existing branch; no push is performed. Unrelated untracked/import files and retained ignored scratch are left in place.
+
+Later direct human steering is prepared as two separate scoped follow-ups: [appropriate street-material coverage](../design/2026-10-19-district-generation/08-street-material-coverage-follow-up.md) and [player/tree alpha/depth visibility, then enemy/pickup consumers](../design/2026-10-19-district-generation/09-foreground-and-entity-visibility-packet.md). Neither feature is implemented by this S3 refinement.

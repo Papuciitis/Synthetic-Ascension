@@ -7,11 +7,11 @@
 | Responsibility | Owner and boundary |
 | --- | --- |
 | District generation/presentation code, original assets, integration, engine verification and scoped local commits | **District generation and distinctive building types**, this chat `01a153ea-44b7-7570-9fe3-e67a5c73ce71`. One existing checkout/branch; no competing district implementation branch. |
-| Grounded district art direction, interpretation of established concepts and native visual review | **Objective art — visual designer review**, `01a14f56-352f-79b2-b401-d8c10d6ba199`. Supplies the forthcoming coordination handoff/status inventory; does not open a parallel production lane. |
+| Grounded district art direction, interpretation of established concepts and native visual review | **Objective art — visual designer review**, `01a14f56-352f-79b2-b401-d8c10d6ba199`. Supplied the [grounded coordination handoff/status inventory](../../art/2026-10-19-district-production-handoff.md), now read; no parallel production lane. |
 | Collect actual-game feedback and relay human corrections | **Refine game vibe concept**, `01a154dc-2a54-70c3-81ca-1b43d3e32a4f`. Its later coordination request explicitly reconfirms this chat as production/asset owner. |
 | Previous shared-base implementation | **Generate the prototype building families…**, `01a15298-1259-7381-89bb-bce38d810d95`, completed and released the lane at `a798043d`. It is not the current production owner. |
 
-The existing `feat/authoritative-enemy-world` checkout is retained. Scoped local commits remain the established workflow. **No new push is authorised.** Engine work must first exclude human playtests and other active engine jobs; an editor window alone is not a game, and no human process may be stopped. This coordination turn changes documentation only and launches no engine or asset-generation job.
+The existing `feat/authoritative-enemy-world` checkout is retained. Scoped local commits remain the established workflow. **No new push is authorised.** Engine work must first exclude human playtests and other active engine jobs; an editor window alone is not a game, and no human process may be stopped. The preceding coordination turn was documentation only; the later explicit coordinator handoff now starts bounded S3 production with code, assets and native evidence owned together here.
 
 ## Source and delivery record
 
@@ -38,6 +38,16 @@ The [DonJon companion](donjon-theme-integration-notes.md) preserves a separate a
 
 ## Next handoff and current action boundary
 
-The concrete proposal is [S3 refinement, then one S6 workshop family](07-s3-refinement-and-next-family-packet.md). **Before any new product edits, image generation or engine run, read the designer's forthcoming grounded coordination handoff and status inventory**, reconcile its selections with this packet and record the actual handoff path/revision. No such new handoff file was available during the first check in this turn; the designer chat was actively preparing it. This is a requested coordination dependency, not a new permission question to the human.
+The selected sequence is [S3 refinement, then one S4A collapsed service-hall family](07-s3-refinement-and-next-family-packet.md). The [designer handoff](../../art/2026-10-19-district-production-handoff.md) has now been read in full and its hash recorded in the S3-v2 execution record. The coordinator explicitly directs production to proceed with the same three reviewed S3 deficiencies. The earlier awaiting-handoff state is historical; no new concept-only loop or permission question is required.
 
-No design decision is missing for the already reviewed S3 deficiencies. The next-family choice remains a recommendation: S6 `industrial_cutthrough` is proposed after S3 acceptance; the designer may prioritise S4 `civilian_cutthrough` instead. Do not start both or treat this proposal as an all-district implementation authorisation.
+No design decision is missing for S3. After its visual findings are closed, one **S4A Collapsed Ward municipal/service-hall ruin family** on actual eligible ruin sites is selected, with a safe no-fit fallback. S4B domestic grouping follows separately, then S6 working/abandoned services. The earlier S6-next proposal is superseded. No all-district batch or reclassification of legacy roofless rooms is authorised.
+
+The later human concern about sparse use of the new street art is recorded in the [street-material follow-up](08-street-material-coverage-follow-up.md). Its S2-only presentation gate is confirmed. Keep that ground work separate from the current S3 refinement, queue it afterward and resolve appropriate paved-road/footpath coverage before calling a later district visually complete. Do not globally enable S2 courts or indiscriminately pave service/rail/canal/military terrain.
+
+The subsequent human visibility request has a [staged packet](09-foreground-and-entity-visibility-packet.md): actual tree-alpha/depth coverage for the player first, then eligible batched/materialized enemies and pickup icons. Transparent gaps/uncovered pixels remain normal; roof cutaway clears cover, and indoor membership is not a whole-entity tint. This is prepared follow-up scope, not a reason to drop S3's remaining two visual actions or patch only unbatched enemy sprites.
+
+## Later completed S3 refinement
+
+The three visual actions above are now closed by the coordinating designer: quiet infill, continuous watch mass and attached real cardinal thresholds, including north exterior. Runtime commits `bd8cd602`, `5a3b1068`, `7f4c12e6` include one original quiet material and a reviewed cap-notch coverage correction. Final evidence passes16 suites/548 script parses, isolated strict warnings in14 targets, ten native runs and530 current source/asset comparisons. Four normal/reduced native videos decode cleanly; motion totals329frames/122fires/115hits/56deaths. See [v2 audit](../../audits/2026-10-19-s3-visual-refinement-v2.md) and [evidence](../../art/reference/2026-10-19-s3-guard-loggia-v2/README.md).
+
+This supersedes the earlier pending-action status, without rewriting its dated source records. No further S3 design approval loop is needed for these findings. The selected S4A family and the street/visibility packets remain subsequent work; no such product feature is implemented by this refinement. Sole ownership, the existing branch, no push and human-engine guards remain unchanged.
