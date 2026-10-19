@@ -4,6 +4,7 @@ extends Node2D
 
 const ART := preload("res://core/systems/world/WorldArt.gd")
 const ROOT := "res://assets/world/city_block/"
+const GUARD_ROOT := "res://assets/world/districts/checkpoint_lanes/"
 var bounds := Rect2()
 var civic := false
 var _door_x := 0.0
@@ -43,6 +44,7 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 			_district_profile[profile_key] = &"common_base"
 	set_meta(&"district_visual_profile", StringName(_district_profile.get("profile_id", &"common_base")))
 	_facade_height = 184.0 if civic else 148.0
+	if _is_guard(): _facade_height = 192.0
 	_roof = roof
 	_doors = doors
 	_irregular = not irregular_outline.is_empty()
@@ -68,9 +70,10 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	_facade = _texture("civic_arcade.png" if civic else "house_front.png")
 	if roof != null:
 		roof.cover_alpha_changed.connect(_on_roof_alpha)
-		roof.apply_city_material(_texture("slate.png" if civic else "clay.png"), civic, _facade_height - ChunkBlockVisualCatalog.KIT_HEIGHT, not _irregular)
-		if civic and not _irregular:
+		roof.apply_city_material(_texture("slate.png" if civic else "clay.png"), civic, _facade_height - ChunkBlockVisualCatalog.KIT_HEIGHT, not _irregular,_district_profile)
+		if civic and not _irregular and not _is_guard():
 			var plant := Sprite2D.new()
+			plant.set_meta(&"district_optional_detail",true)
 			plant.texture = _texture("pressure_plant.png")
 			plant.scale = Vector2.ONE * (64.0 / plant.texture.get_width())
 			var roof_poly := roof.get_node("RoofPoly") as Polygon2D
@@ -86,9 +89,19 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	if not _irregular:
 		_add_records_board(cell_px, doors)
 		_add_planting()
-	preload("res://scenes/world/buildings/CityBlockFrontages.gd").compose(self, doors, cell_px, irregular_outline, _texture("wall_lantern.png") if civic else null, _texture("house_front.png") if _irregular else null)
+	if _is_guard() and roof != null:
+		preload("res://scenes/world/buildings/CheckpointOfficeForms.gd").compose_frontage(self,roof.get_meta(&"district_form_plan",{}),{"arch_open":_texture(GUARD_ROOT+"guard_arch_open.png"),"arch_closed":_texture(GUARD_ROOT+"guard_arch_closed.png")})
+	else:
+		preload("res://scenes/world/buildings/CityBlockFrontages.gd").compose(self, doors, cell_px, irregular_outline, _texture("wall_lantern.png") if civic else null, _texture("house_front.png") if _irregular else null)
 	if not _irregular: _add_frontage_details()
+	if _is_guard():
+		for detail: Node in get_children():
+			if detail.name in [&"PaintedEntryLantern",&"PaintedCornerPlanter",&"CityTemperateTree",&"CityFoliageShadow"]: detail.set_meta(&"district_optional_detail",true)
+		if _records_board != null: _records_board.set_meta(&"district_optional_detail",true)
 	queue_redraw()
+
+func _is_guard() -> bool:
+	return StringName(_district_profile.get("profile_id",&"")) == &"checkpoint_guard_loggia"
 
 func _on_roof_alpha(alpha: float) -> void:
 	_facade_alpha = alpha
@@ -426,7 +439,7 @@ static func _has_texture(file: String) -> bool:
 
 static func _texture(file: String) -> Texture2D:
 	if _texture_cache.has(file): return _texture_cache[file]
-	var path := ROOT + file
+	var path := file if file.begins_with("res://") else ROOT+file
 	var texture: Texture2D
 	if ResourceLoader.exists(path, "Texture2D"):
 		texture = load(path) as Texture2D
@@ -437,6 +450,7 @@ static func _texture(file: String) -> Texture2D:
 	return texture
 
 func _draw() -> void:
+	if _is_guard(): return
 	if _facade != null and not _south_front and not _irregular:
 		_draw_closed_frontage()
 	if _facade != null and _south_front and not _irregular:

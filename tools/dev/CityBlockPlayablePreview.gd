@@ -7,6 +7,9 @@ var _review := "normal"
 var _city_world_seed := 16102026
 var _city_segment := 2
 var _playable := false
+var _district_common_base := false
+var _hide_district_details := false
+var _still_only := false
 var _phase := "loading"
 var _recording := false
 var _grabbing := false
@@ -28,6 +31,9 @@ func _enter_tree() -> void:
 		if arg.begins_with("--seed="): _city_world_seed = int(arg.trim_prefix("--seed="))
 		if arg.begins_with("--segment="): _city_segment = maxi(2, int(arg.trim_prefix("--segment=")))
 		if arg == "--playable": _playable = true
+		if arg == "--district-common-base": _district_common_base = true
+		if arg == "--hide-district-details": _hide_district_details = true
+		if arg == "--still-only": _still_only = true
 	if _out == "user://dev_previews/elite_crowd_fight":
 		_out = "res://docs/art/reference/2026-10-18-city-block/" + _review
 	KIT.preview_original_materials = _review == "before"
@@ -46,6 +52,7 @@ func _run() -> void:
 	SettingsManager.set_value(&"accessibility", &"combat_flash", "off" if _reduced_motion else "full", false)
 	get_window().size = Vector2i(960, 540) if _review in ["small", "reduced"] else Vector2i(1280, 720)
 	_game = GAME.instantiate() as Node2D
+	(_game.get_node("ChunkManager") as ChunkManager).district_common_base_preview = _district_common_base
 	_game.get_node("Spawner").process_mode = Node.PROCESS_MODE_DISABLED
 	_game.get_node("Player").process_mode = Node.PROCESS_MODE_DISABLED
 	get_tree().root.add_child(_game)
@@ -83,6 +90,7 @@ func _run() -> void:
 		await _shutdown()
 		return
 	await _reload_check(building_id)
+	_hide_optional_district_details()
 	if _volume == null:
 		await _shutdown()
 		return
@@ -91,6 +99,10 @@ func _run() -> void:
 		if owner is RoofOverlay: _roof = owner
 	if _roof == null:
 		_fail("Missing production roof")
+		await _shutdown()
+		return
+	if _city_segment == 3 and not _district_common_base and _district_evidence().get("profile","") != "checkpoint_guard_loggia":
+		_fail("Native S3 sample did not select the actual guard-office family")
 		await _shutdown()
 		return
 	var door := _volume.to_global(_volume.get("_presentation_entry"))
@@ -109,6 +121,22 @@ func _run() -> void:
 		_chunks.set_process(true)
 		return
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out.path_join("frames")))
+	if _still_only:
+		var building_bounds := Rect2(_roof.footprint_outline_px[0],Vector2.ZERO)
+		for point: Vector2 in _roof.footprint_outline_px: building_bounds = building_bounds.expand(point)
+		_camera.global_position = _roof.to_global(building_bounds.get_center())-Vector2(0,40)
+		_camera.reset_smoothing()
+		_camera.force_update_scroll()
+		await _frames(4)
+		await _still("exterior")
+		var still_info := {"segment":_city_segment,"attempt_seed":_city_world_seed,"theme":String(_chunks.district_family),"common_base":_district_common_base,"hide_optional_details":_hide_district_details,"native_still_only":true,"save_writes":SaveManager.debug_save_writes-_save_writes_before,"failures":_failures}
+		still_info.merge(_district_evidence(),true)
+		var still_file := FileAccess.open(_out.path_join("still-info.json"),FileAccess.WRITE)
+		still_file.store_string(JSON.stringify(still_info,"\t"))
+		still_file.close()
+		print("CityBlockStillPreview: segment=%d common_base=%s details_hidden=%s failures=%d" % [_city_segment,_district_common_base,_hide_district_details,_failures])
+		await _shutdown()
+		return
 	await _frames(12)
 	await _still("exterior")
 	_began_usec = Time.get_ticks_usec()
@@ -174,6 +202,7 @@ func _run() -> void:
 	if _weapon_fires == 0 or _player_hits == 0 or _max_projectiles == 0: _fail("Moving fight did not exercise attacks, hits and projectiles")
 	_frame_times.sort()
 	var info := {"review": _review, "scene": "res://scenes/game.tscn", "seed": _city_world_seed, "segment": _city_segment, "theme": String(SegmentThemePicker.get_theme(_city_segment,_city_world_seed).id), "player_god_mode": true, "scripted_input": true, "ambient_spawner": false, "image_size": str(get_window().size), "reduced_motion": _reduced_motion, "combat_flashes": "off" if _reduced_motion else "full", "initial_fight_population": _initial_population, "simulation_fight_seconds": _combat_time, "weapon_fires": _weapon_fires, "hits": _player_hits, "deaths": _deaths, "max_projectiles": _max_projectiles, "route": _route_notes, "frames": _capture_info, "save_writes": writes, "failures": _failures, "process_frame_ms_median": _frame_times[_frame_times.size()/2] if not _frame_times.is_empty() else 0.0, "process_frame_ms_p95": _frame_times[int(_frame_times.size()*0.95)] if not _frame_times.is_empty() else 0.0, "limits": "Visual/traversal fixture on Intel UHD Compatibility; GPU readback during recording affects timing. Not a benchmark or balance test. Security encounter is production-triggered; outside crowd is controlled."}
+	info.merge(_district_evidence(),true)
 	var file := FileAccess.open(_out.path_join("capture-info.json"), FileAccess.WRITE)
 	info["wall_seconds"] = wall_seconds
 	info["captured_frames"] = _pixels.size()
@@ -182,6 +211,27 @@ func _run() -> void:
 	file.close()
 	print("CityBlockPlayablePreview: review=%s frames=%d fires=%d hits=%d deaths=%d save_writes=%d failures=%d" % [_review, _pixels.size(), _weapon_fires, _player_hits, _deaths, writes, _failures])
 	await _shutdown()
+
+func _district_evidence() -> Dictionary:
+	if _roof == null or _volume == null: return {}
+	var coord := _chunks._world_to_chunk(_volume.global_position)
+	var result := {"plan_seed":_chunks.world_seed,"coord":str(coord),"role":String(_chunks.get_chunk_role(coord)),"doors":str(_roof._doors),"footprint":str(_roof.footprint_outline_px),"district_family":String(_chunks.district_family)}
+	for kit: Node in _chunks.find_children("*","",true,false):
+		if not kit.is_in_group(&"city_block_building") or kit.get("_roof") != _roof: continue
+		result["profile"] = String(kit.get_meta(&"district_visual_profile",&"missing"))
+		result["irregular"] = bool(kit.get("_irregular"))
+		break
+	var form_plan: Dictionary = _roof.get_meta(&"district_form_plan",{})
+	result["has_watch"] = bool(form_plan.get("has_watch",false))
+	result["watch_fallback"] = String(form_plan.get("fallback_reason",&"base"))
+	result["closed_arch_bays"] = (form_plan.get("arch_bays",[]) as Array).size()
+	return result
+
+func _hide_optional_district_details() -> void:
+	if not _hide_district_details: return
+	for child: Node in _chunks.find_children("*","",true,false):
+		if child is CanvasItem and (child.get_meta(&"district_optional_detail",false) or child.name in [&"PaintedEntryLantern",&"CardinalEntryLantern",&"PaintedDomesticAwning",&"PaintedCornerPlanter",&"CityTemperateTree",&"CityFoliageShadow",&"CivicRecordsBoard"]):
+			(child as CanvasItem).visible = false
 
 func _reload_check(secondary_id: int) -> void:
 	var coord := _chunks._world_to_chunk(_volume.global_position)

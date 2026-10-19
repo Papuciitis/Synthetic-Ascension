@@ -397,7 +397,7 @@ func _on_volume_body_entered(body: Node) -> void:
 
 
 ## Opt-in first-block material; preserves this roof's volume/fade ownership.
-func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, compound: bool = true) -> void:
+func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, compound: bool = true, visual_profile: Dictionary = {}) -> void:
 	if texture == null:
 		return
 	_poly.texture = texture
@@ -439,7 +439,12 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 		var base_material := _poly.material as ShaderMaterial
 		base_material.set_shader_parameter("material_contrast", 0.35)
 		base_material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if civic else Vector3(0.52, 0.29, 0.20))
-	if compound:
+	if StringName(visual_profile.get("profile_id",&"")) == &"checkpoint_guard_loggia":
+		var forms := preload("res://scenes/world/buildings/CheckpointOfficeForms.gd")
+		var form_plan := forms.plan(footprint_outline_px,_poly.polygon,_doors,_cell_px,int(visual_profile.get("visual_seed",0)))
+		set_meta(&"district_form_plan",form_plan)
+		forms.compose_roof(self,form_plan,{"slate":texture})
+	elif compound:
 		preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose(_poly, civic, box)
 		# Compound caps must not fill the actual north/east/west door notch.
 		for plane: Node in _poly.find_children("*", "Polygon2D", true, false):

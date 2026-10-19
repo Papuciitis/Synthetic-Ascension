@@ -57,6 +57,9 @@ func _run() -> void:
 		for sample: Dictionary in samples:
 			var result := _validate(forms,footprint,support,[sample.door],[sample.gap],true,str(sample.door.dir))
 			_check(not result.arch_bays.is_empty(),"Rectangular family retains deep closed arch bays for every entrance orientation")
+			if sample.door.dir == Vector2i.DOWN:
+				for bay: Dictionary in result.arch_bays:
+					_check(bay.support.end.x <= 368.0 or bay.support.position.x >= 656.0,"Closed bays leave room for the measured wide open-arch returns")
 		_validate(forms,footprint,support,[samples[0].door,samples[1].door],[samples[0].gap,samples[1].gap],true,"two-ended passage")
 		_validate(forms,_rect_poly(Rect2(960,256,576,576)),_rect_poly(Rect2(970,266,556,556)),[],[],true,"second existing parcel")
 		var irregular := PackedVector2Array([Vector2(128,128),Vector2(640,128),Vector2(640,576),Vector2(384,576),Vector2(384,320),Vector2(128,320)])
