@@ -1,6 +1,6 @@
 # District architecture and generation matrix
 
-2026-10-19. All new architectural treatments below are proposals. Exact IDs, terrain pairs and special encounter roles are current code. A/B means a seeded alternative within a segment, not two sequential districts.
+2026-10-19. Original design matrix, updated after S3 execution: the shared base and bounded S3 guard-loggia family are implemented through `6d1a0cd7`; other bespoke treatments below remain proposals. Exact IDs, terrain pairs and encounter roles come from code. A/B means a seeded alternative within a segment, not sequential districts. See the [current production register](06-production-ownership-and-status.md); pre-release recommendations do not assign current ownership.
 
 ## Common visual foundation
 

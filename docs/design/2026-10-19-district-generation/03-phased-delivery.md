@@ -1,13 +1,13 @@
 # Phased delivery and first playable district
 
-2026-10-19. This is a sequencing proposal and reviewable first-slice definition. It is not an executable implementation plan and grants no production lane to this chat.
+2026-10-19. Sequencing record reconciled after execution: phases 0 and 1 are complete within their audited prototype limits. This chat now owns district production code/assets/integration; see the [current register](06-production-ownership-and-status.md). Later phases remain proposals, with [S3 refinement and one next family](07-s3-refinement-and-next-family-packet.md) prepared for the forthcoming designer handoff.
 
 ## Delivery sequence
 
 | Phase | Deliverable and likely integration surface | Dependency / exit evidence |
 | --- | --- | --- |
-| **0 — Finish the shared base** | Base owner extends common walls/roofs/frontages, quiet surfaces, shadow/cutaway quality and all-direction support through ordinary S2+ paths. Keep each theme's ground and layout. | Sole base-owner lane. Receive final API changes, source revision and verification packet. This phase supplies shared quality, not bespoke district infrastructure. |
-| **1 — S3 family pilot** | Family-context forwarding and one distinct guard-office/guard-loggia architectural family: deep stone arches/returns and a compact supported watch-bay roof composition on existing civic parcels. Small mounted equipment supports the family. | S3 plate 03 has been inspected as target direction; explicit production/engine/Git lane handoff remains required. Prove physical/interaction equality, new silhouette and native combat readability. |
+| **0 — Shared base, completed** | Common walls/roofs/frontages and all-direction support across ordinary S2+ paths; each theme retains ground/layout. | Released by base owner at `a798043d`, with foundation audit/evidence. Shared quality, not bespoke infrastructure. |
+| **1 — S3 family pilot, completed** | Selected-family forwarding, original deep arch modules and supported watch roof on existing civic parcels. | Implemented through `6d1a0cd7`; designer keeps the first prototype. Three visual refinements remain before final aesthetics. Production lane is already transferred, not pending. |
 | **2 — Domestic, ruin and work families** | S2 completion, S4 civilian/collapsed treatments and S6 working/ruined-service pairs. Start with actual existing templates, then introduce one fitted ruin or workshop-hall footprint per separately reviewed scope. | Prove silhouette differences at the camera before broad prop expansion. Preserve intact-building/ruin distinction and required searchable-building placement. |
 | **3 — Bounded connected infrastructure** | Separate small plans for S7 canal, S7 underpass and S8 rail strips, using explicit feature records and crossings. Implement one feature kind at a time. | Physical/visual boundary agreement, neighbour-independent slices, stream-order tests, route/loot/door reachability, overhead actor visibility. Each must produce a usable district without requiring the other two. |
 | **4 — Garrison and wall logistics** | S8 military store/tent family, S9 wall approach and siege-service compounds. Add tent physical/indoor semantics separately from military facade dressing. | Tent entry/roof proof; finite wall frontage preserving the open map; safe logistics courts. Do not use tents as skins on opaque house geometry. |
@@ -42,9 +42,9 @@ The scope reuses physical parcels but requires a new rendered building type. Gat
 
 The coordinating [S3 plate 03](../../art/concepts/2026-10-19-segment-directions/03-s3-checkpoint-lanes.png) has been visually inspected. Its loggia and watch/official building mass support this strengthened pilot; its larger gate/road composition establishes a later destination. This is concrete visual reference, not in-engine proof or approval of every tiny decoration. Retain its broad stone/roof hierarchy while reducing repeated tile outlines and keeping real doors/actors readable.
 
-### Expected files after lane handoff
+### Historical pre-release file forecast — earlier 19 October
 
-Reconcile these candidates with the base owner's final result before writing a task-level implementation plan:
+The table below preserves the original forecast. The implemented interfaces and actual commits are recorded in the contracts/audit; it is not an instruction to redo the handoff or completed work:
 
 | Candidate path | Intended change |
 | --- | --- |

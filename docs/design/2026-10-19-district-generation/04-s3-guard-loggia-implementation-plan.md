@@ -1,5 +1,7 @@
 # S3 Guard-loggia Implementation Plan
 
+**Execution status, later 19 October 2026:** completed against released base `a798043d`, through `6d1a0cd7` including review evidence. This is the historical executed plan, not a pending lane request. Current ownership and next scope are in the [production register](06-production-ownership-and-status.md) and [next packet](07-s3-refinement-and-next-family-packet.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task in this chat after explicit lane release. Native execution is the selected method; do not spawn implementation agents or create another worktree.
 
 **Goal:** Introduce one recognisable guard-office/guard-loggia architectural family on S3's existing civic parcels while preserving every physical, interaction and seeded-generation contract.
@@ -20,7 +22,7 @@
 - Irregular/narrow parcels keep fitted family forms and omit unsupported optional watch modules; never bridge a notch with a bounding-box facade.
 - Forward the family selected from the original attempt seed; never reroll from the manager's mixed/retry seed.
 - Authored S1, Hub, DonJon geometry/presenters and legacy roofless exploration structures are outside this implementation.
-- No production edit, asset generation, Godot run or Git mutation before explicit production/engine/Git lane release. No new human confirmation is needed for the already requested prototype.
+- Original activation guard: no production/asset/engine/Git work before lane release. That dependency was satisfied at `a798043d`; it is not a new confirmation requirement. Current scope/engine coordination follows the production register.
 
 ## Review Focus
 
@@ -34,9 +36,9 @@
 
 The coordinating designer reports the completed 18-plate handoff committed as `ef4f4376`, after the pushed WIP checkpoint `d0f99e0614959bceb86514b0347f3e96f496fbea`. The concept [completion README](../../art/concepts/2026-10-19-segment-directions/README.md) and selected [plate 03](../../art/concepts/2026-10-19-segment-directions/03-s3-checkpoint-lanes.png) have been read/viewed. Plate SHA256 is `3CC022A165A5D2611D1DEEACDFCECA35F509CF42F16EE82F3CD5640B4822F71B`, matching its final manifest.
 
-[Planning source snapshot](s3-planning-source-snapshot.json) pins twelve inspected integration/test files. It is a planning snapshot while the base owner finishes verification, **not the released implementation baseline**. Before the first product edit, receive the explicit lane release, final base commit and audit/evidence packet; compare these twelve files, reread changed interfaces, and record final hashes in the new S3 audit. Reconcile this plan against any differences. This is a dependency handoff, not another user-approval gate. Preserve all other owners' files and do not reset their checkout.
+[Planning source snapshot](s3-planning-source-snapshot.json) preserves twelve pre-release file hashes from earlier on 19 October. Its activation/reconciliation requirement was fulfilled before implementation against `a798043d`. It is historical, **not the released baseline or current hashes**; use the audit's verified source manifest for the completed candidate. Preserve other owners' files and never reset the checkout to match old planning hashes.
 
-Current concrete seams: `CityBlockKit.configure` has seven parameters; `RoofOverlay.apply_city_material` has four. The latter adjusts the true roof then calls `CityBlockRoofForms.compose`. Both parcel paths call the kit after configuring real volumes/roofs. `run_city_block_preview.ps1` currently lacks a segment parameter although its target preview already accepts `--segment`.
+Historical planning seams: kit/roof calls originally had seven/four arguments and the wrapper lacked a segment switch. Implemented seams now append optional eighth/fifth visual-profile arguments; the wrapper accepts segment, common-base, detail-hide and natural-target options. Both real parcel paths retain existing volume/roof configuration. Do not reimplement these completed interfaces.
 
 The commands below were planned before release and executed after explicit lane transfer. Final results, deviations and review status are recorded in the audit; they are not inferred from these checked boxes. Resolve the supplied Windows engine path once as `$s3Engine`; verify it is a file. Use the project's existing isolated profile/no-save capture discipline, and never run while a human playtest or another engine job is active.
 

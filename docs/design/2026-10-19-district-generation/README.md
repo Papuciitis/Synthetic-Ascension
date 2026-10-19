@@ -2,6 +2,8 @@
 
 2026-10-19. **All fourteen themes mapped; bounded S3 guard-loggia prototype implemented and verified.** Other bespoke district families and connected infrastructure remain proposed.
 
+**Current ownership, later 19 October:** [Production register](06-production-ownership-and-status.md) is the current authority for this packet. This chat owns district production code, new assets and integration. The designer owns direction/review. [Next bounded packet](07-s3-refinement-and-next-family-packet.md) prepares S3 refinement followed provisionally by one S6 workshop family; new product work waits for the designer's forthcoming grounded handoff to be read.
+
 The goal is a recognisable journey through all fourteen procedural Area 1 themes, supported by different architectural silhouettes, purposeful prop groups and the infrastructure their identities require. Keep the current north-up top-down game, natural uneven streets, temperate daylight, quiet combat ground and convincing attached shadows. The common language is Greek/Roman/Mediterranean masonry, medieval European forms and restrained early industrial and authoritarian science-fiction additions.
 
 Read in order:
@@ -10,6 +12,7 @@ Read in order:
 2. [Generation contracts and extension seams](02-generation-contracts.md): traced current APIs, proposed data flow, determinism, placement and streaming requirements.
 3. [Phased delivery and first playable extension](03-phased-delivery.md): staged deliverables and a bounded S3 recommendation.
 4. [S3 implementation plan](04-s3-guard-loggia-implementation-plan.md) and [asset brief](05-s3-asset-brief.md): four concrete tasks, two original facade masters, exact source snapshot and required review evidence; executed after the explicit base-owner lane release; final evidence is linked below.
+5. [Current ownership and status](06-production-ownership-and-status.md), then [the next code/asset packet](07-s3-refinement-and-next-family-packet.md).
 
 ## Authority and ownership
 
@@ -18,8 +21,9 @@ Read in order:
 - New building names, material choices, prop groups, interfaces and delivery order here are **design recommendations**, unless explicitly identified as existing. No new lore, rewards, enemy rules or interaction mechanics are authorised by these recommendations.
 - The coordinating designer's [completed 18-plate handoff](../../art/concepts/2026-10-19-segment-directions/README.md), common brief and manifest have been read and reconciled below. This chat has visually inspected [S3 plate 03](../../art/concepts/2026-10-19-segment-directions/03-s3-checkpoint-lanes.png); other individual plates remain unreviewed here. Root reports personally reviewing all eighteen and selecting S3 guard-loggia/watch-bay direction for the already requested playable prototype. This selects the architectural direction, not every tiny decoration or new canon.
 - The common-base owner released the sole production/engine/Git lane at `a798043d529acda31994a1b3bdbb526ba7fde41b`; the coordinating designer explicitly transferred it to this district chat. Scoped local commits are authorised, with no new push. The S3 implementation uses that handed-off base, preserving unrelated owners' files.
-- Source observations are a dated snapshot of an actively shared checkout. At the initial trace `CityBlockKit.enabled_for()` selected S2 only; the post-checkpoint read now shows `segment >= 2`. This is base-owner WIP source coverage, not full native rollout or visual acceptance. Recheck the final handoff before choosing interfaces.
+- Historical source observations earlier on 19 October: the initial `CityBlockKit.enabled_for()` gate was S2 only, then the base owner's WIP gate became `segment >= 2`. The base rollout was subsequently completed at `a798043d`, and S3 was completed through `6d1a0cd7`. These earlier observations are not current ownership or a pending-release instruction.
 - The DonJon chat owns the separate [DonJon integration notes](donjon-theme-integration-notes.md) companion in this folder. Those notes have been read for shared identity/roof boundaries; they are not edited by this chat. Ordinary-family profiles do not automatically apply to DonJon compounds.
+- The companion's opening base-owner statement records its original pre-handoff review state. Current production ownership is the later register linked above; it does not transfer DonJon geometry into the ordinary-building family.
 
 ## Recommended approach
 

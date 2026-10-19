@@ -1,6 +1,9 @@
 {
   "date": "2026-10-19",
-  "status": "read-only planning snapshot while base owner holds production/engine/Git; not the released implementation baseline",
+  "status": "historical pre-release planning snapshot from earlier 2026-10-19; base-owner hold subsequently ended and S3 was executed; not current ownership or the released baseline",
+  "superseded_by": "06-production-ownership-and-status.md",
+  "released_base_commit": "a798043d529acda31994a1b3bdbb526ba7fde41b",
+  "completed_s3_commit": "6d1a0cd7",
   "checkpoint_commit": "d0f99e0614959bceb86514b0347f3e96f496fbea",
   "concept_handoff_commit_reported": "ef4f4376",
   "selected_concept": {
@@ -21,5 +24,5 @@
     {"path":"core/actors/player/player_roof_occlusion.gdshader","sha256":"2B84AB79A8D7F614CEE3F961BC41D3603EDA72378FF912D2E5E7D9E56F682B26"},
     {"path":"tools/tests/CitySegmentCoverageTest.gd","sha256":"598585A1C1BBA480AA86DFFBD678BA04C173B050CFD15BAD3EB02747DE664CFD"}
   ],
-  "activation_rule": "After explicit lane release compare the final base source/commit, reread changed interfaces, and record fresh implementation-baseline hashes before the first product edit. Do not revert base-owner changes to match this planning snapshot."
+  "activation_rule": "Historical pre-release rule, fulfilled against a798043d before S3 implementation: compare final base source/commit, reread changed interfaces and record implementation-baseline hashes. Do not revert current sources to match this historical planning snapshot."
 }
