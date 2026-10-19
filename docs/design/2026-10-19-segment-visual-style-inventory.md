@@ -2,6 +2,8 @@
 
 2026-10-19. Source inventory requested before expanding the city art beyond its current coverage. This document records existing names, generation fields, authored spaces and visual gaps. It is not approval to apply the Segment 2 renderer to every segment.
 
+Later on 2026-10-19, the human authorized the bounded common-building foundation across ordinary urban parcels in S2 and later, including the S11+ fallback. The original S2-only coverage diagnosis below records the pre-rollout state. See the [foundation implementation and verification audit](../audits/2026-10-19-city-foundation-rollout.md) for current coverage and its limits; dedicated district architecture and legacy roofless exploration structures remain separate work.
+
 The human clarified that S8 was an arbitrary spot check. The requested review and subsequent visual development cover all segments and their distinct identities; S8 is an example of the wider coverage gap, not the sole target.
 
 ## Scope and sources
@@ -81,4 +83,4 @@ The archive is incomplete; its [coverage register](../history/chat_archive/cover
 
 ## Work state
 
-Broader ordinary-building rollout is on hold at the human's request to review this full list first. The 29 supplied Godot compiler warnings are a separate cleanup task. Diagnostic coverage tests created before the hold contain provisional expectations and are not an approved segment-style policy.
+The human lifted the inventory hold and authorized the common urban-building foundation across all procedural segments. The revised coverage test now checks all 14 actual themes plus the S11+ fallback, while keeping composed ground limited to the accepted S2 prototype. The [foundation audit](../audits/2026-10-19-city-foundation-rollout.md) records native samples, geometry/reward comparisons, authored S1/Hub boundaries and remaining work. This does not authorize turning every district into an S2 courtyard. The separately committed [29-warning cleanup](../audits/2026-10-19-reported-godot-warnings.md) remains verified within its reported scope.

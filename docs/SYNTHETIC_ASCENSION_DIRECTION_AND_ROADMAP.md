@@ -2698,3 +2698,38 @@ ownership is still deferred. Failed/superseded captures are retained and labelle
 See the [implementation audit](audits/2026-10-19-dungeon-architecture.md) and
 [verification packet](art/reference/2026-10-19-dungeon-architecture-v1/checks.json).
 The human authorized applicable commits; this batch has no new push request.
+
+## 2026-10-19 — Common urban-building foundation across procedural segments
+
+The human lifted the inventory hold and requested base buildings throughout all
+other segments. The accepted civic/domestic parcel treatment now applies from
+S2 onward, including the current S11+ Service Courtyards fallback. Composed
+paving remains exclusive to the accepted S2 reward block; later parcels retain
+their theme terrain and semantic route materials. Theme selection, district
+plans, density, vegetation, checkpoints and physical/reward rules are unchanged.
+
+New paired production-parcel checks cover all 14 themes plus S11: 30 chunks,
+121 styled buildings, 150 assertions, identical physical/reward snapshots and
+no later composed paving. The fixtures explicitly disable terrain/decorations/
+sites; actual native S3, S7 and S11 runs supplement them. Their 437 recorded
+frames pass physical perimeter/door travel, security clearance, roof cutaway/
+restoration, deterministic streamed reload and controlled exterior combat with
+zero failures, diagnostics or save writes. The first S11 recording timed out
+while saving frames and remains labelled incomplete; its fresh longer-output
+run passed without changing product timing or thresholds.
+
+All twelve behavior suites and the final 546-script parse audit pass. The strict
+reported-warning check reloads all 14 target scripts without diagnostics or a
+working-project settings change; all 1,536 runtime source/resource hashes match
+the tested candidate. Code/evidence review has no actionable findings. Native
+fixtures use scripted input/god mode and do not establish performance, balance,
+human continuous-play or whole-concept-fidelity acceptance. The existing 250 ms
+warmup guard remains unresolved; no timing threshold or scheduling edit is made.
+
+S1 and Hub retain their authored architecture/progression; their safe common
+material/depth opportunities are documented separately. Legacy roofless default
+exploration rooms remain an explicit separate architecture contract, not newly
+completed civic houses. Distinct district generation follows this foundation.
+The human-requested checkpoint `d0f99e06` backed up the implementation and evidence
+completed at that point; final verification is a separate local record. See the
+[foundation audit](audits/2026-10-19-city-foundation-rollout.md).

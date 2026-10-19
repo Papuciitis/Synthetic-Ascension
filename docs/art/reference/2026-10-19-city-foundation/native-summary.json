@@ -1,0 +1,107 @@
+[
+  {
+    "sample": "native-s3",
+    "segment": 3,
+    "seed": 1,
+    "theme": "checkpoint_lanes",
+    "frames": 142,
+    "failures": 0,
+    "save_writes": 0,
+    "fires": 64,
+    "hits": 63,
+    "deaths": 30,
+    "streamed_reload": [
+      {
+        "equal": true,
+        "event": "streamed_reload",
+        "restored_visual_instances": 943,
+        "unloaded_visual_instances": 0
+      }
+    ],
+    "entry": [
+      {
+        "alpha": 0.0,
+        "event": "entered",
+        "inside_count": 1,
+        "security": 6
+      }
+    ],
+    "exit": [
+      {
+        "alpha": 1.0,
+        "event": "exited",
+        "inside_count": 0
+      }
+    ]
+  },
+  {
+    "sample": "native-s7",
+    "segment": 7,
+    "seed": 4,
+    "theme": "canal_services",
+    "frames": 151,
+    "failures": 0,
+    "save_writes": 0,
+    "fires": 66,
+    "hits": 67,
+    "deaths": 31,
+    "streamed_reload": [
+      {
+        "equal": true,
+        "event": "streamed_reload",
+        "restored_visual_instances": 965,
+        "unloaded_visual_instances": 0
+      }
+    ],
+    "entry": [
+      {
+        "alpha": 0.0,
+        "event": "entered",
+        "inside_count": 1,
+        "security": 7
+      }
+    ],
+    "exit": [
+      {
+        "alpha": 1.0,
+        "event": "exited",
+        "inside_count": 0
+      }
+    ]
+  },
+  {
+    "sample": "native-s11-final",
+    "segment": 11,
+    "seed": 3,
+    "theme": "service_courtyards",
+    "frames": 144,
+    "failures": 0,
+    "save_writes": 0,
+    "fires": 65,
+    "hits": 65,
+    "deaths": 29,
+    "streamed_reload": [
+      {
+        "equal": true,
+        "event": "streamed_reload",
+        "restored_visual_instances": 1237,
+        "unloaded_visual_instances": 0
+      }
+    ],
+    "entry": [
+      {
+        "alpha": 0.0,
+        "event": "entered",
+        "inside_count": 1,
+        "security": 8
+      }
+    ],
+    "exit": [
+      {
+        "alpha": 1.0,
+        "event": "exited",
+        "inside_count": 0
+      }
+    ]
+  }
+]

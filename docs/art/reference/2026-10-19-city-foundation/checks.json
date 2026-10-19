@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-19",
+  "status": "Bounded ordinary urban-parcel foundation verified; legacy roofless structures and unresolved warmup guard remain explicit separate limits.",
+  "implementation_checkpoint": "d0f99e0614959bceb86514b0347f3e96f496fbea",
+  "checkpoint_pushed_by_coordinator": true,
+  "coverage": {
+    "also_s11_fallback": true,
+    "buildings": 121,
+    "checks_failed": 0,
+    "named_themes": 14,
+    "chunks": 30,
+    "red_failures": 39,
+    "fixture_limits": "Terrain/decorations/sites disabled; explicit parcel chance and sidewalk width; paired physical/reward snapshots.",
+    "checks_passed": 150
+  },
+  "behavior_suite_count": 12,
+  "parse_scripts": 546,
+  "all_completed_suite_exits_zero": true,
+  "all_completed_suite_diagnostics_zero": true,
+  "strict_reported_warning_check": {
+    "snapshot": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\warning-snapshot-3a52d399",
+    "autoload_context": true,
+    "exit": 0,
+    "timeout": false,
+    "diagnostics": [],
+    "failed_scripts": 0,
+    "project_settings_file_unchanged": true
+  },
+  "runtime_files_verified": 1536,
+  "runtime_drift": 0,
+  "key_source_test_tool_settings_hashes": 11,
+  "key_hash_drift": 0,
+  "native_runs": 3,
+  "native_frames": 437,
+  "native_failures": 0,
+  "native_diagnostics": 0,
+  "native_save_writes": 0,
+  "native_summary": "native-summary.json",
+  "incomplete_attempt": {
+    "raw_frames_local": ".superpowers/sdd/2026-10-18-city-block/foundation-incomplete-s11-frames",
+    "status": "240-second harness timeout while writing recorded PNGs; not a successful run",
+    "replacement_output_timeout_seconds": 600,
+    "completed_replacement": "native-s11-final",
+    "directory": "native-s11"
+  },
+  "review": "Independent code/evidence review found no actionable issue. Designer inspected S3/S7 foundation coverage, not whole-concept fidelity.",
+  "limits": [
+    "Scripted input and god mode; controlled exterior crowds.",
+    "Native samples do not establish performance, balance, human continuous-play or whole-concept-fidelity approval.",
+    "Authored S1/Hub architecture retained; future compatible material/depth refinements documented.",
+    "Roofless default exploration structures remain separate from accepted urban parcel architecture.",
+    "Warmup timing remains unresolved:465ms/279.9ms against250ms with212.775ms control; thresholds and scheduling unchanged.",
+    "Reported compiler categories in14scripts; not a complete human editor warning-panel inventory."
+  ]
+}
