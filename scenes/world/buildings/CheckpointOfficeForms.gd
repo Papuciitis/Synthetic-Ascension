@@ -164,12 +164,16 @@ static func compose_roof(roof: RoofOverlay, form_plan: Dictionary, textures: Dic
 		cap_material.set_shader_parameter("ridge_along_x",0.0)
 		cap.material = cap_material
 	_occlusion_form(cap,&"guard_watch",lift,true)
-	# The cap already covers the side's upper triangular return. One exact
-	# lower-body union replaces two overlapping masks, saving a triangle per
-	# watch without changing the visible geometry or the shared shader limit.
-	var body_coverage := _face(group,PackedVector2Array([front[0],Vector2(box.end.x,front[1].y),side_points[2],front[2],front[3]]),Color(0,0,0,0))
-	body_coverage.name = "GuardWatchBodyCoverage"
-	_occlusion_form(body_coverage,&"guard_watch_body",0.0,true)
+	# Remove only what the final door-notched cap actually covers. Usually
+	# this is one compact lower body; a notch can expose a small side corner.
+	# Exact polygon subtraction retains that corner without redundant masks.
+	var coverage_index := 0
+	for body_union: PackedVector2Array in Geometry2D.merge_polygons(front,side_points):
+		for uncovered: PackedVector2Array in Geometry2D.clip_polygons(body_union,cap_points):
+			var body_coverage := _face(group,uncovered,Color(0,0,0,0))
+			body_coverage.name = "GuardWatchBodyCoverage" if coverage_index==0 else "GuardWatchBodyCoverage%d" % coverage_index
+			_occlusion_form(body_coverage,&"guard_watch_body",0.0,true)
+			coverage_index+=1
 	# These joins sit inside the already covered body; only its existing
 	# front/side/cap consume actor-mask geometry, not every surface detail.
 	var plinth := _surface(group,_rect_polygon(Rect2(box.position.x,box.end.y-14,front_width,14)),textures,Color("88988b"),&"plinth")

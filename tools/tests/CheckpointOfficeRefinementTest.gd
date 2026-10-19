@@ -46,7 +46,7 @@ func _run() -> void:
 				_check(side.polygon[3].is_equal_approx(front.polygon[2]),"Watch side meets the front wall at the same grounded corner")
 				_check(not roof.find_children("GuardWatchRearContact","Polygon2D",true,false).is_empty(),"Rear masonry plane has an attached contact shadow")
 				var cap := roof.find_children("GuardWatchCap","Polygon2D",true,false)[0] as Polygon2D
-				var coverage := roof.find_children("GuardWatchBodyCoverage","Polygon2D",true,false)[0] as Polygon2D
+				var coverage := roof.find_children("GuardWatchBodyCoverage*","Polygon2D",true,false)
 				var equivalent := true
 				# Independent rendered-face union: the simplified coverage must
 				# preserve every opaque pixel and must not tint an uncovered gap.
@@ -57,7 +57,9 @@ func _run() -> void:
 					for xx: int in 24:
 						var point := bounds.position+bounds.size*Vector2((float(xx)+0.5)/24.0,(float(yy)+0.5)/34.0)
 						var visible := Geometry2D.is_point_in_polygon(point,front.polygon) or Geometry2D.is_point_in_polygon(point,side.polygon) or Geometry2D.is_point_in_polygon(point,cap.polygon)
-						var masked := Geometry2D.is_point_in_polygon(point,coverage.polygon) or Geometry2D.is_point_in_polygon(point,cap.polygon)
+						var masked := Geometry2D.is_point_in_polygon(point,cap.polygon)
+						for part: Polygon2D in coverage:
+							if Geometry2D.is_point_in_polygon(point,part.polygon): masked=true
 						if visible!=masked: equivalent=false
 				_check(equivalent,"Simplified cap/body coverage equals actual opaque rendered geometry, including leaf-like gaps")
 				var support: PackedVector2Array = plan.watch_support
@@ -66,6 +68,7 @@ func _run() -> void:
 				for point: Vector2 in side.polygon: _check(point.x<=max_x+16.01,"Watch side return stays in the existing fitting margin")
 			kit.free()
 			roof.free()
+	_check_notched_side_coverage()
 	print("CheckpointOfficeRefinementTest: %d passed, %d failed" % [passed,failed])
 	get_tree().quit(1 if failed else 0)
 
@@ -73,3 +76,43 @@ func _polygon_area(points: PackedVector2Array) -> float:
 	var total := 0.0
 	for index: int in points.size(): total+=points[index].cross(points[(index+1)%points.size()])
 	return total*0.5
+
+func _check_notched_side_coverage() -> void:
+	# Production-shaped L parcel, centered east door and bottom-right watch.
+	# Its fitted support clears the door, but the raised side reaches the notch.
+	var outline := PackedVector2Array([Vector2(128,128),Vector2(640,128),Vector2(640,832),Vector2(320,832),Vector2(320,512),Vector2(128,512)])
+	var doors: Array = [{"pos":Vector2i(9,8),"dir":Vector2i.RIGHT,"width":2}]
+	var roof := ROOF.instantiate() as RoofOverlay
+	add_child(roof)
+	roof.configure_polygon(outline,Vector2(320,832),Vector2(640,832),[],&"workshop",3,doors,64)
+	var kit := KIT.new()
+	add_child(kit)
+	var profile := PROFILES.resolve(&"checkpoint_lanes")
+	profile["visual_seed"] = 3
+	kit.configure(Rect2i(2,2,8,11),64,doors,roof,true,outline,true,profile)
+	var side := roof.find_children("GuardWatchSide","Polygon2D",true,false)[0] as Polygon2D
+	var cap := roof.find_children("GuardWatchCap","Polygon2D",true,false)[0] as Polygon2D
+	var point := Vector2(613,574)
+	_check(Geometry2D.is_point_in_polygon(point,side.polygon),"Notched regression samples the actual opaque raised side")
+	_check(not Geometry2D.is_point_in_polygon(point,cap.polygon),"The real doorway notch exposes the side corner")
+	var covered := false
+	for shape: Polygon2D in roof.find_children("GuardWatchBodyCoverage*","Polygon2D",true,false):
+		if Geometry2D.is_point_in_polygon(point,shape.polygon): covered=true
+	_check(covered,"Body coverage retains the side wedge exposed by the final cap notch")
+	var actor := Node2D.new()
+	add_child(actor)
+	var body := AnimatedSprite2D.new()
+	var head := AnimatedSprite2D.new()
+	actor.add_child(body)
+	actor.add_child(head)
+	var mask := MASK.new()
+	mask.configure(body,head)
+	var world_point := side.to_global(point)
+	for alpha_value: float in [1.0,0.4,0.0]:
+		roof._set_alpha(alpha_value)
+		mask.update(actor,Vector2(613,100),Rect2(world_point-Vector2(55,75),Vector2(110,150)))
+		_check(is_equal_approx(mask.strength_at(world_point),alpha_value),"Exposed side wedge follows real roof fading through the production actor mask")
+		_check(is_zero_approx(mask.strength_at(side.to_global(Vector2(615,574)))),"The adjacent transparent notch keeps the actor's normal appearance")
+	actor.free()
+	kit.free()
+	roof.free()
