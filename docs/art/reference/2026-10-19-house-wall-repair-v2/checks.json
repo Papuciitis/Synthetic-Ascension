@@ -1,6 +1,6 @@
 {
-  "status": "Focused regression passed; corrected ordinary native route in progress",
-  "publication": "HOLD; no stage, commit or push",
+  "status": "Technical verification complete; bounded ordinary-house correction accepted by designer review",
+  "publication": "Progress checkpoint 3aa358c5f147905a3f6e3f08efaaae3ead57959b was pushed to origin/enemy-world-work by the sole integration owner at human request. Final evidence packaging is saved separately; no new push is authorized for this save.",
   "root_cause": "Small layouts unable to fit two rooms used an extra-inset single-room fallback. A boundary-wall pass enclosed that inset room in addition to the always-added parcel perimeter, leaving a redundant inner shell and one blocked lane inside the east door.",
   "scope": "Only the fewer-than-two-rooms fallback changes. It uses the existing envelope and excludes fallback cover from threshold/exterior floor and inner door approaches.",
   "red": {
@@ -19,14 +19,15 @@
     "larger_output_and_rng_identical": true,
     "actual_facility_walls": [
       684,
-      368
+      368,
+      421
     ],
     "actual_facility_full_outputs_identical": true
   },
   "facility_source_drift": [
     "core/systems/world/proc/RectFacilityCarver.gd"
   ],
-  "facility_capture_limit": "Facility native-v2 and Donjon native-v1 predate the shared RectFacilityCarver edit. Full production output signatures for both captured RectFacility plans remain identical after the edit; do not claim their old source hashes match current source.",
+  "facility_capture_limit": "Facility native-v2 and Donjon native-v1 predate the shared RectFacilityCarver edit. All three captured RectFacility plans have identical full output signatures and masks after the edit; their old source hashes do not match the current carver. See verification/actual-facility-comparison.json.",
   "unchanged_irregular_proof": "../2026-10-19-house-wall-repair-v1",
   "limits": [
     "Corrected small fallback is one functional room; successful multi-room partitions are retained.",
@@ -136,5 +137,22 @@
     ],
     "interior": "moving-reduced-211/interior.png"
   },
-  "baseline_carver_sha256": "B7A2FA7845BFC00B303B260B021A0EB88B5750C1D97D5254DDD2388E3E3BF669"
+  "baseline_carver_sha256": "B7A2FA7845BFC00B303B260B021A0EB88B5750C1D97D5254DDD2388E3E3BF669",
+  "verification": {
+    "kit": "1298 passed, 0 failed",
+    "procedural": "5430 passed, 0 failed; 20 layouts, 76 parcels",
+    "actual_plans": "20 chunks, 60 styled buildings, 2 families, 4 directions, 0 failures",
+    "site_continuity": "21547 passed, 0 failed",
+    "roof_occlusion": "11 passed, 0 failed",
+    "reachability": "3840 chunks, 2538 doors, 1728 rewards, 0 failures",
+    "script_parse": "543 passed, 0 failed",
+    "diagnostics": 0,
+    "independent_review": "No actionable findings; code and test review, no engine run."
+  },
+  "source_hash_count": 16,
+  "moving_source_asset_hash_count": 40,
+  "source_hash_mismatches": [],
+  "verification_revision": "3aa358c5f147905a3f6e3f08efaaae3ead57959b",
+  "source_hash_scope": "The 16 supplemental and 40 moving-run hashes were checked against the house checkpoint before subsequent dungeon architecture work. The empty mismatch record describes that verification time, not later workspace revisions.",
+  "designer_review": "../../reviews/2026-10-19-city-houses-and-large-interiors-designer-review.md"
 }
