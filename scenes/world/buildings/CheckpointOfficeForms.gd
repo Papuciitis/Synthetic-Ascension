@@ -77,7 +77,7 @@ static func plan(footprint_px: PackedVector2Array, roof_support_px: PackedVector
 			var watch_support := _rect_polygon(candidate)
 			result.watch_support = watch_support
 			result.has_watch = true
-			result.roof_planes.append({"kind":&"guard_watch","polygon":watch_support.duplicate(),"lift":96.0*scale_value,"support":watch_support.duplicate()})
+			result.roof_planes.append({"kind":&"guard_watch","polygon":watch_support.duplicate(),"lift":128.0*scale_value,"support":watch_support.duplicate()})
 			break
 	result["fallback_reason"] = &"" if result.has_watch else &"no_watch_support"
 	return result
@@ -124,25 +124,31 @@ static func compose_roof(roof: RoofOverlay, form_plan: Dictionary, textures: Dic
 	if not bool(form_plan.get("has_watch",false)): return
 	var support: PackedVector2Array = form_plan.watch_support
 	var box := _bounds(support)
-	var lift := 96.0*float(roof._cell_px)/64.0
+	var scale_value := float(roof._cell_px)/64.0
+	# Rebalance cap/body inside the original full visible envelope: raising
+	# the wall head32 and insetting the rear eave32 keeps the ridge unchanged.
+	var lift := 128.0*scale_value
+	var front_end := box.end.x-28.0*scale_value
+	var front_width := front_end-box.position.x
 	var cast := support.duplicate()
 	var offset := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(lift)
 	for point: Vector2 in support: cast.append(point+offset)
 	for shadow: PackedVector2Array in Geometry2D.intersect_polygons(Geometry2D.convex_hull(cast),host.polygon):
 		_face(group,shadow,Color(0.07,0.12,0.15,0.23))
-	var front := PackedVector2Array([Vector2(box.position.x,box.end.y-lift),box.end-Vector2(0,lift),box.end,Vector2(box.position.x,box.end.y)])
+	var front := PackedVector2Array([Vector2(box.position.x,box.end.y-lift),Vector2(front_end,box.end.y-lift),Vector2(front_end,box.end.y),Vector2(box.position.x,box.end.y)])
 	var body := _surface(group,front,textures,Color("c2c5b7"),&"infill")
 	body.name = "GuardWatchFront"
-	_occlusion_form(body,&"guard_watch_front",0.0,true)
-	var side := _surface(group,PackedVector2Array([Vector2(box.end.x,box.position.y-lift),box.end-Vector2(0,lift),box.end+Vector2(16,0),Vector2(box.end.x+16,box.position.y)]),textures,Color("6d8077"),&"infill")
+	var side_points := PackedVector2Array([front[1],Vector2(box.end.x,box.end.y-lift-24.0*scale_value),Vector2(box.end.x,box.end.y-24.0*scale_value),front[2]])
+	var rear_contact := _face(group,PackedVector2Array([side_points[1],side_points[1]+Vector2(7,5),side_points[2]+Vector2(7,5),side_points[2]]),Color(0.08,0.14,0.13,0.38))
+	rear_contact.name = "GuardWatchRearContact"
+	var side := _surface(group,side_points,textures,Color("9daa97"),&"infill")
 	side.name = "GuardWatchSide"
-	_occlusion_form(side,&"guard_watch_side",0.0,true)
 	# A compact raised pitch makes this a watch pavilion rather than another
 	# flat equipment box. Its small overhang stays within the fitted margin.
 	var cap_points := PackedVector2Array([
-		Vector2(box.position.x-8,box.position.y-lift+8),
-		Vector2(box.get_center().x,box.position.y-lift-32),
-		Vector2(box.end.x+8,box.position.y-lift+8),
+		Vector2(box.position.x-8,box.position.y+32.0*scale_value-lift+8),
+		Vector2(box.get_center().x,box.position.y+32.0*scale_value-lift-32),
+		Vector2(box.end.x+8,box.position.y+32.0*scale_value-lift+8),
 		Vector2(box.end.x+8,box.end.y-lift),
 		Vector2(box.position.x-8,box.end.y-lift),
 	])
@@ -158,15 +164,22 @@ static func compose_roof(roof: RoofOverlay, form_plan: Dictionary, textures: Dic
 		cap_material.set_shader_parameter("ridge_along_x",0.0)
 		cap.material = cap_material
 	_occlusion_form(cap,&"guard_watch",lift,true)
+	# The cap already covers the side's upper triangular return. One exact
+	# lower-body union replaces two overlapping masks, saving a triangle per
+	# watch without changing the visible geometry or the shared shader limit.
+	var body_coverage := _face(group,PackedVector2Array([front[0],Vector2(box.end.x,front[1].y),side_points[2],front[2],front[3]]),Color(0,0,0,0))
+	body_coverage.name = "GuardWatchBodyCoverage"
+	_occlusion_form(body_coverage,&"guard_watch_body",0.0,true)
 	# These joins sit inside the already covered body; only its existing
 	# front/side/cap consume actor-mask geometry, not every surface detail.
-	var plinth := _surface(group,_rect_polygon(Rect2(box.position.x,box.end.y-14,box.size.x,14)),textures,Color("88988b"),&"plinth")
+	var plinth := _surface(group,_rect_polygon(Rect2(box.position.x,box.end.y-14,front_width,14)),textures,Color("88988b"),&"plinth")
 	plinth.name = "GuardWatchPlinth"
-	for x: float in [box.position.x,box.end.x-12]:
+	_surface(group,PackedVector2Array([side_points[2]-Vector2(0,14),side_points[2],side_points[3],side_points[3]-Vector2(0,14)]),textures,Color("7f9383"),&"plinth")
+	for x: float in [box.position.x,front_end-12]:
 		_surface(group,_rect_polygon(Rect2(x,box.end.y-lift+6,12,lift-20)),textures,Color("d1d1ba"),&"return")
-	var eave_shadow := _face(group,_rect_polygon(Rect2(box.position.x,box.end.y-lift+5,box.size.x,9)),Color(0.13,0.21,0.20,0.66))
+	var eave_shadow := _face(group,_rect_polygon(Rect2(box.position.x,box.end.y-lift+5,front_width,9)),Color(0.13,0.21,0.20,0.66))
 	eave_shadow.name = "GuardWatchEaveShadow"
-	var window := Rect2(box.get_center().x-28,box.end.y-lift+24,56,48)
+	var window := Rect2(box.position.x+front_width*0.5-28,box.end.y-lift+34,56,56)
 	_surface(group,_rect_polygon(window.grow(6)),textures,Color("8b9a8b"),&"return")
 	_face(group,_rect_polygon(window),Color("293f3e"))
 	_face(group,_rect_polygon(Rect2(window.get_center().x-2,window.position.y,4,window.size.y)),Color("a1ad98"))
@@ -221,32 +234,33 @@ static func compose_frontage(kit: Node2D, form_plan: Dictionary, textures: Dicti
 			# south facade that paints a false door or wall across the opening.
 			_face(portal,_rect_polygon(gap.grow(-7)),Color(0.13,0.23,0.23,0.32))
 			_threshold(portal,gap,direction,textures)
-			if direction.x != 0:
-				for end_y: float in [gap.position.y+4,gap.end.y-14]:
-					_face(portal,_rect_polygon(Rect2(gap.position.x+7,end_y,gap.size.x-14,10)),Color("a8af98"))
-			else:
-				for end_x: float in [gap.position.x+4,gap.end.x-14]:
-					_face(portal,_rect_polygon(Rect2(end_x,gap.position.y+7,10,gap.size.y-14)),Color("a8af98"))
 
 static func _threshold(parent: Node2D, gap: Rect2, direction: Vector2i, textures: Dictionary) -> void:
-	# The original one-cell doorway apron is already clear/stamped. Finish
-	# only its first 48 px outside the wall; neither floor nor nav is changed.
+	# Join the already carved sill to48px of its existing clear apron as one
+	# continuous surface. Its material changes no floor/nav/collision data.
 	var depth := minf(gap.size.x,gap.size.y)*0.75
 	var landing: Rect2
 	if direction == Vector2i.RIGHT: landing=Rect2(gap.end.x,gap.position.y,depth,gap.size.y)
 	elif direction == Vector2i.LEFT: landing=Rect2(gap.position.x-depth,gap.position.y,depth,gap.size.y)
 	else: landing=Rect2(gap.position.x,gap.position.y-depth,gap.size.x,depth)
-	var slab := _surface(parent,_rect_polygon(landing),textures,Color("b3bca7"),&"threshold")
+	landing=landing.merge(gap)
+	var slab := _surface(parent,_rect_polygon(landing),textures,Color("8b9e8d"),&"threshold")
 	slab.name = "GuardThreshold"
+	var outward := Vector2(direction)
+	var across := Vector2(-direction.y,direction.x)
+	var boundary := gap.get_center()+outward*gap.size*0.5
+	var span := gap.size.y if direction.x!=0 else gap.size.x
+	for end_sign: float in [-1.0,1.0]:
+		var at := boundary+across*(span*0.5)*end_sign
+		var foot := Rect2(at-Vector2(9,5),Vector2(18,10))
+		var jamb := _surface(parent,_rect_polygon(Rect2(foot.position.x,foot.end.y-20,foot.size.x,20)),textures,Color("99a88f"),&"return")
+		jamb.name = "GuardJambReturn"
+		_surface(parent,_rect_polygon(Rect2(foot.position-Vector2(0,20),foot.size)),textures,Color("aab49b"),&"return")
 	if direction.x != 0:
-		for y: float in [landing.position.y,landing.end.y-8]:
-			_face(parent,_rect_polygon(Rect2(landing.position.x,y,landing.size.x,8)),Color("d0d0b7"))
-		var edge_x := landing.end.x-3 if direction.x>0 else landing.position.x
-		_face(parent,_rect_polygon(Rect2(edge_x,landing.position.y+8,3,landing.size.y-16)),Color("677d70"))
+		var edge_x := landing.end.x-2 if direction.x>0 else landing.position.x
+		_face(parent,_rect_polygon(Rect2(edge_x,landing.position.y+8,2,landing.size.y-16)),Color(0.40,0.48,0.42,0.45))
 	else:
-		for x: float in [landing.position.x,landing.end.x-8]:
-			_face(parent,_rect_polygon(Rect2(x,landing.position.y,8,landing.size.y)),Color("d0d0b7"))
-		_face(parent,_rect_polygon(Rect2(landing.position.x+8,landing.position.y,landing.size.x-16,3)),Color("677d70"))
+		_face(parent,_rect_polygon(Rect2(landing.position.x+8,landing.position.y,landing.size.x-16,2)),Color(0.40,0.48,0.42,0.45))
 
 static func _surface(parent: Node2D, points: PackedVector2Array, textures: Dictionary, color: Color, kind: StringName) -> Polygon2D:
 	var face := _face(parent,points,color)
