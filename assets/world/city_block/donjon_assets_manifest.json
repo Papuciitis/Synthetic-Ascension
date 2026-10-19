@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "created_date": "2026-10-19",
+  "generator": "Built-in image_gen.imagegen, three independent transparent generation calls",
+  "purpose": "Original modular parts for approved runtime DonJon architecture implementation",
+  "postprocessing": "None. Copied unchanged from original generated outputs. Alpha inspected read-only with Pillow.",
+  "reference_role": "Style/material/camera reference; not edit target or native production evidence",
+  "assets": [
+    {
+      "name": "donjon_gate_arch.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "741917D475E8353CD3DCD0354A1E31A1B40B9225D312F6455F9DF45EACCBEA01",
+      "source": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a14f56-352f-79b2-b401-d8c10d6ba199/exec-56b0a2ef-6684-46a0-8832-77f62bdbb399.png",
+      "reference": "docs/art/concepts/2026-10-19-donjon-directions/01-fortified-donjon-exterior.png",
+      "anchor": [
+        768,
+        912
+      ],
+      "alpha128_bounds": [
+        165,
+        112,
+        1371,
+        912
+      ],
+      "suggested_visible_width_world": 280,
+      "prompt": "Use case: stylized-concept\nAsset type: ONE isolated transparent-background modular entrance arch sprite for the near-top-down 2D game Synthetic Ascension.\nInput image: fortified DonJon exterior is a MATERIAL AND CAMERA reference only. Create a brand new single building PART, not the compound or scene.\nSubject: a substantial EMPTY pale limestone gate arch, two sturdy square side piers supporting one low rounded stone arch and simple slate coping. Restrained Roman/medieval institutional architecture with a tiny subdued copper structural bracket; no roofed building attached.\nCamera: north-up, very steep three-quarter overhead orthographic view, the front face points straight toward the bottom of the image; horizontal baseline, vertical piers. No diagonal isometric rotation. We can see broad stone top surfaces and a modest front face, matching the reference's front entrance. Horizontal width about 1.5 times total visible height.\nComposition: centered single symmetric arch module, generous transparent padding on all sides. The arch opening is broad and completely transparent through to the background, INCLUDING the floor and the entire lower central passage. No gate leaf, no portcullis, no dark filled doorway, no tunnel floor, no stairs, no paving, no wall stretching off the sprite. Opening must extend cleanly to the bottom baseline. Side piers narrow enough that opening occupies approximately half of total width. Outer perimeter transparent.\nStyle: hand-painted game environment sprite, clearly grouped light and shadow, simplified large stone blocks, moderate edge softness, restrained detail visible at small game scale, fewer calmer lines than the reference. Solid believable thickness, cool pale limestone, slate coping, slight weathering. Readable daylight from upper right with compact occlusion shadows confined to the stone. No long ground shadow outside asset.\nAvoid: complete building, full environment, extra objects, banners, plants, people, typography, logos, ornamental gold, filigree, tiny repeated engravings, excessive black outline, thick raster borders, beige desert sandstone, checkerboard image background. Actual transparent alpha background."
+    },
+    {
+      "name": "donjon_cell_grille.png",
+      "size": [
+        1774,
+        887
+      ],
+      "sha256": "3569D772BAF2E4BD256E91E2C339A423D5F3D14CA8AE421D80DA0E90854DD2D2",
+      "source": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a14f56-352f-79b2-b401-d8c10d6ba199/exec-a899988f-a90f-441d-95f0-f75824e1d549.png",
+      "reference": "docs/art/concepts/2026-10-19-donjon-directions/02-donjon-interior-cutaway.png",
+      "anchor": [
+        887,
+        753
+      ],
+      "alpha128_bounds": [
+        181,
+        133,
+        1594,
+        753
+      ],
+      "suggested_visible_width_world": [
+        128,
+        160
+      ],
+      "prompt": "Use case: stylized-concept\nAsset type: ONE isolated transparent-background iron cell wall grille bay sprite for the near-top-down 2D game Synthetic Ascension.\nInput image: DonJon interior cutaway is a MATERIAL AND CAMERA reference only. Create a brand new single modular dungeon PART, not a whole room or scene.\nSubject: one low broad institutional cell partition bay, sturdy vertical dark iron bars evenly spaced in a simple horizontal iron lintel and sill, two short pale limestone square jambs. A small subdued copper hinge or bracket, otherwise plain worn iron and cool pale stone. No gate handle required; a fixed grille wall bay.\nCamera: north-up, very steep overhead orthographic three-quarter view, front face toward bottom of image; horizontal baseline, not diagonal isometric. We see the top surfaces of stone jambs, relatively shallow bar elevation. Width around twice height. Perspective and material like the cutaway's low cell partitions.\nComposition: centered single independent module, generous transparent padding. Transparency outside silhouette AND between every iron bar; no black or gray background behind bars, no floor plane, no room, no joined other wall pieces. One bay, not an asset sheet.\nStyle: hand-painted game sprite, broad readable light/shadow groups, quiet material textures, stone details simplified to a few convincing blocks, dark iron bars thick enough for small game scale. Cool pale limestone with dark iron. Natural daylight from upper right and compact self-shadows. No glow, no long ground shadow.\nAvoid: full building, doors elsewhere, furniture, floor, characters, lettering, borders, bright cyan markers, complex ornamentation, tiny gritty outlines, photoreal studio product photo, checkerboard background. Actual transparent alpha background."
+    },
+    {
+      "name": "donjon_masonry_bay.png",
+      "size": [
+        2149,
+        732
+      ],
+      "sha256": "683A347243C4F20FFBE82F362C3B0993B55F4AB02AC5D3756C9310DA056C282F",
+      "source": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a14f56-352f-79b2-b401-d8c10d6ba199/exec-050a1d26-ffbe-46ee-b2af-250702ce5b3f.png",
+      "references": [
+        "assets/world/city_block/donjon_gate_arch.png",
+        "docs/art/concepts/2026-10-19-donjon-directions/01-fortified-donjon-exterior.png"
+      ],
+      "anchor": [
+        1074,
+        542
+      ],
+      "alpha128_bounds": [
+        64,
+        128,
+        2084,
+        542
+      ],
+      "suggested_visible_height_world": 96,
+      "prompt": "Use case: stylized-concept\nAsset type: ONE isolated transparent-background modular masonry wall bay SPRITE for near-top-down 2D game Synthetic Ascension. This is a small repeatable BUILDING PART, not a whole facade or scene.\nInput 1: isolated gate arch is the exact cool limestone material/style reference. Input 2: approved DonJon exterior is the architectural mood reference, not a scene to copy.\nSubject: one LONG LOW STRAIGHT pale limestone wall segment facing directly toward the bottom of frame. A broad beveled stone coping has visibly deep top thickness; beneath it is a shaded front face of just THREE courses of large uneven limestone blocks, slightly chipped/worn, softly varied warm-gray and cool-gray stone, sparse restrained dark joints. Clear compact contact shadow beneath coping and along the bottom plinth. Darker right edge of masonry mass. No buttresses or towers at either end. Left and right ends are simple vertical flush cut edges so several segments can sit together along a longer wall. The wall is about three times as wide as its total visible height.\nCamera: north-up orthographic, very steep overhead three-quarter view matching reference; straight horizontal front, more visible stone TOP depth than a straight elevation. No diagonal isometric angle, no perspective vanishing point. Top occupies about one quarter visible height and front face three quarters. Wall bottom baseline horizontal; no ground or floor.\nComposition: centered single independent wall section with transparent padding on all sides and no cast ground shadow beyond silhouette. True transparent alpha around wall. No asset sheet or extra pieces.\nStyle: grounded hand-painted game sprite, chunky convincing limestone construction with broad quiet value groups. Surface variation at medium scale, not photoreal gritty noise. Fewer, calmer lines than reference. It must retain believable stone grain and volumetric light/shadow when reduced to about 192–256 screen/game units wide. Natural daylight upper right; upper-right edge warm pale, lower-left front face shaded cool stone. Pale limestone/small dark joints, NOT green-gray metal, flat gradient brick wallpaper or desert sandstone.\nAvoid: arch, door, window, gate, grille, text, border, plants, props, full building, scene, floor plane, tall vertical wall, black cartoon outline, equally strong etched grid, filigree, shiny gold, neon, opaque background or checkerboard painted into image. No unnecessary decorative detail; the masonry and thickness are the subject."
+    }
+  ]
+}

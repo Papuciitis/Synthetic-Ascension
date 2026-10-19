@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-19",
+  "status": "Generated concept proposals for human review; not implemented-game evidence",
+  "tool": "Built-in image_gen.imagegen",
+  "transparent_background": false,
+  "reference_roles": [
+    {
+      "path": "docs/art/reference/2026-10-19-large-site-walls/native-v2/facility-2x1-overview-960x540.png",
+      "role": "Actual production facility footprint, scale and camera inspiration; not a locked topology"
+    },
+    {
+      "path": "docs/art/concepts/2026-10-18-city-directions/08-mediterranean-medieval-industrial-city.png",
+      "role": "Accepted city style and material reference"
+    },
+    {
+      "path": "docs/art/reference/2026-10-19-large-site-walls/native-v2/facility-1x2-inside-960x540.png",
+      "role": "Additional interior camera and actor-scale reference for concept 02"
+    }
+  ],
+  "images": [
+    {
+      "file": "01-fortified-donjon-exterior.png",
+      "source": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a14f56-352f-79b2-b401-d8c10d6ba199/exec-d035a803-8ff8-4ef5-a27a-40153cfcd0f7.png",
+      "sha256": "6983FA3117504763A4DA113721A52408A22647B8ACCC2CE892BF4B10C7B899B1",
+      "bytes": 3801621,
+      "prompt": "Use case: stylized-concept. Asset type: Synthetic Ascension dungeon architectural concept, landscape game-view painting.\nInput images: Image 1 is the ACTUAL current large 2x1 dungeon/facility footprint and near-top-down game camera, a rough scale/layout reference. Image 2 is the accepted city art direction and palette, a style/material reference. Create a NEW finished concept; do not present it as a current game screenshot.\nPrimary request: transform the idea of the huge empty facility into a recognizable fortified DONJON / dungeon complex belonging to this city. Greece/Rome/Mediterranean civic stone + medieval European fortress/abbey architecture + restrained crude early industrial/cybernetic retrofits. It must feel like a dungeon from its silhouette and entrance.\nComposition: a single coherent elongated fortified compound, a powerful gatehouse and deep arched entrance, two or three substantial pitched slate/clay roofed wings around an intentional open courtyard, thick connected enclosing walls, a modest square keep/tower anchoring the composition. Clear continuous route through the entrance into the court and adjoining halls. Use the source's elongated footprint as a guide, but reorganize the arbitrary wall stubs into purposeful architecture. Whole complex in frame with a little temperate city edge. Near-top-down orthographic north-up game view, horizontal/vertical building alignment, shallow visible south wall faces like the accepted reference. No dramatic low-angle or diagonally rotated isometric showcase.\nMaterials: cool weathered limestone, broad blue slate roofs, muted terracotta only on a secondary wing, aged iron grilles/portcullis, restrained oxidized copper pipes and a purposeful service bay attached to masonry. Arcaded internal court, deep buttress shadows, worn shallow steps flush into doors, a few mature leafy trees/ivy groups at perimeter. A little warm lantern light in portal shadow and very small teal service accents.\nLighting: bright temperate overcast-to-sunny daylight, strong readable broad shadow masses inside the gate and arcades. Keep pale surfaces luminous and all routes readable. Moody dungeon architecture in a daylight city.\nRendering: polished hand-painted 2D game concept with clean large shapes, selective edge detail and simple material planes. Much calmer linework than the reference: do not outline every roof tile, brick or leaf. Quiet walking ground, texture concentrated at wall bases and focal entrances. One tiny RPG player near the gate for scale.\nNo text, no UI, no watermark. Avoid desert sand, beige monochrome, black/noir lighting, glowing gold circuit pavements, giant modern machinery, floating pipes, random broken wall stubs, accidental holes in enclosure, ornate detail everywhere, cloned palaces, or huge uninterrupted rectangular roof slabs."
+    },
+    {
+      "file": "02-donjon-interior-cutaway.png",
+      "source": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a14f56-352f-79b2-b401-d8c10d6ba199/exec-ac60d404-040d-444d-b5f3-7b6c7b460013.png",
+      "sha256": "9B94897529BD7592DC34A66FC60EFC019FB4A3CEAE34778F8B6DFA78A63DFE44",
+      "bytes": 2987370,
+      "prompt": "Use case: stylized-concept. Asset type: Synthetic Ascension dungeon INTERIOR gameplay cutaway concept, landscape painting.\nInput images: Image 1 is an ACTUAL current large facility footprint for scale/route inspiration; Image 2 is accepted city palette and architecture; Image 3 is actual near-top-down game camera and actor-to-wall scale. Create a NEW concept for a dungeon interior, not a claim of implemented graphics. It should complement a fortified civic/industrial dungeon exterior.\nPrimary request: show a real dungeon that feels inhabitable and navigable: connected vaulted stone halls, an entrance antechamber, a guarded vaulted main chamber, a couple of side cells/storage rooms and one restrained mechanical service chamber. Use the large footprint to suggest purposeful connected rooms rather than arbitrary maze fragments. Walls form continuous room boundaries with actual framed doorways; every side chamber has a clear connection. No useless duplicate wall rings or disconnected masonry bars.\nCamera/composition: near-top-down north-up orthographic 2D gameplay cutaway, clean horizontal/vertical plan alignment and shallow south-facing wall depth, enough visible floor to judge combat readability. Remove roofs/upper vaults deliberately as a game cutaway, retaining arch springings, buttresses and the bases of substantial columns. Show coherent perimeter and internal partitions. One small player on open floor and a few readable dungeon props for scale; no crowd of actors.\nArchitecture/materials: Mediterranean/Roman civic structure transformed over centuries into a medieval fortified dungeon, with early crude sci-fi/steampunk additions. Cool limestone and dark slate-gray interior stone, broad worn paving slabs, heavy iron-barred openings, a simple portcullis, copper/iron conduits following real walls to one valve/containment service bay. Sparse shelving, crates and a restrained teal-lit device in that service room. Architecture does most of the work.\nLight/value: visibly more enclosed and atmospheric than the daylight city, but clearly readable: soft pale daylight shafts from high openings plus small warm amber wall lantern pools. Dark recesses, strong contact/eave shadows, readable midtone floors. No crushed blacks. Gameplay foreground remains quiet; decorative contrast stays at wall edges.\nRendering: polished painterly 2D game concept, broad simple forms, clean silhouettes, restrained linework, selective wear. Avoid outlining every stone, dense grunge, excessive tiny ornaments, neon cyberpunk, golden circuits, sci-fi spaceship rooms, sand/desert palette, oceans of grass inside, random isolated walls, confusing double courses, floor clutter blocking doors, text/UI/watermarks."
+    }
+  ],
+  "limits": [
+    "Illustrated room layout and entrance side are conceptual, not exact copies of the production plan.",
+    "Full-scene paintings are direction references, not runtime sprites or proof of fixed generation.",
+    "Future production art should simplify the remaining repeated stone, tile and leaf detail.",
+    "No new dungeon architecture or lore canon is implemented by these illustrations."
+  ]
+}
