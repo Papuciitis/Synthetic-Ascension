@@ -67,3 +67,5 @@ Final: fixed shared-roof budget verification gap — old fixture pressure check 
 Final review complete: Critical0, Important verification gap fixed,6 deferred minors explicitly recorded. Coordinating designer keeps first prototype; three visual refinements remain before final aesthetics. Existing branch/worktree preserved; no push.
 
 Final: Ruling: preserve raw failed-run logs byte-for-byte despite EOF blank line — source/document whitespace checks exclude only .log evidence — formatting defects inside raw provenance logs remain intentional.
+
+Final: Ruling: retain ignored plan scratch after automatic approval review rejected recursive removal as blocked by policy — no alternate deletion mechanism attempted — temporary files remain; final evidence and ledger are committed independently.
