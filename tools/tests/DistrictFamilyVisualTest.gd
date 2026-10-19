@@ -19,7 +19,7 @@ func _has_property(object: Object, property_name: StringName) -> bool:
 		if StringName(property.name) == property_name: return true
 	return false
 
-func _fixture(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, common_preview: bool, caller_rng: RandomNumberGenerator = null) -> Dictionary:
+func _fixture(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, common_preview: bool, caller_rng: RandomNumberGenerator = null, activate_chunk: bool = false) -> Dictionary:
 	var manager := ChunkManager.new()
 	theme.apply_to_chunk_manager(manager)
 	if _has_property(manager, &"district_common_base_preview"):
@@ -44,30 +44,44 @@ func _fixture(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, common
 	manager._chunk_urban_access = plan.urban_access_by_chunk.duplicate()
 	manager._gen_coord = coord
 	manager._chunk_blocked[coord] = []
-	var data := ChunkBuildData.new(coord, 32)
-	manager._active_build_data = data
-	var chunk := Node2D.new()
-	chunk.position = Vector2(coord) * 2048
-	manager.add_child(chunk)
-	if caller_rng == null:
-		manager._generate_chunk(coord, chunk)
+	var data: ChunkBuildData
+	var chunk: Node2D
+	if activate_chunk:
+		manager.generation_enabled = true
+		chunk = manager._create_chunk(coord)
+		data = manager.get_chunk_build_data(coord)
 	else:
-		var placed: Array[Rect2i] = []
-		var cfg := {"city_block_style":true,"city_shared_ground":true,"district_family":theme.district_family,"district_common_base_preview":common_preview,"secondary_objective_id":41}
-		var placed_ok := SiteParcelsImpl.new()._spawn_building_rect(manager, chunk, coord, Rect2i(2,4,11,9), Vector2i.DOWN, &"workshop", [], placed, cfg, caller_rng, Rect2i(0,0,32,32))
-		_check(placed_ok, "Caller-RNG fixture uses a real fitted civic parcel")
+		data = ChunkBuildData.new(coord,32)
+		manager._active_build_data = data
+		chunk = Node2D.new()
+		chunk.position = Vector2(coord)*2048
+		manager.add_child(chunk)
+		if caller_rng == null:
+			manager._generate_chunk(coord,chunk)
+		else:
+			var placed: Array[Rect2i] = []
+			var cfg := {"city_block_style":true,"city_shared_ground":true,"district_family":theme.district_family,"district_common_base_preview":common_preview,"secondary_objective_id":41}
+			var placed_ok := SiteParcelsImpl.new()._spawn_building_rect(manager,chunk,coord,Rect2i(2,4,11,9),Vector2i.DOWN,&"workshop",[],placed,cfg,caller_rng,Rect2i(0,0,32,32))
+			_check(placed_ok,"Caller-RNG fixture uses a real fitted civic parcel")
 	var profiles: Array = []
+	var records: Array = []
 	var volumes: Array = []
 	var doors: Array = []
 	for child: Node in chunk.get_children():
 		if child.is_in_group(&"city_block_building"):
 			profiles.append([child.get_meta(&"city_role"), child.get_meta(&"district_visual_profile", &"missing")])
+			var roof := child.get("_roof") as RoofOverlay
+			var presentation: Dictionary = child.get("_district_profile")
+			records.append({"city_role":String(child.get_meta(&"city_role")),"profile":String(child.get_meta(&"district_visual_profile",&"missing")),"building_id":int(presentation.get("visual_seed",0)),"irregular":bool(child.get("_irregular")),"door_direction":str(roof._doors[0].dir) if not roof._doors.is_empty() else "","doors":str(roof._doors),"footprint":str(roof.footprint_outline_px),"form_signature":str(roof.get_meta(&"district_form_plan",{})).sha256_text()})
 		if child is RoofOverlay: doors.append([child._doors, child.footprint_outline_px])
 		if child is IndoorVolume:
 			volumes.append([child.cell_tl, child.size_cells, child.building_id, child.secondary_objective_id, child.local_encounter_enabled, child.local_encounter_count, child.small_loot_chance])
 	var snapshot := str([data.blocker_kind_code, data.blocker_mask, data.blocker_variant, data.floor_rect_and_style, data.floor_alpha, volumes, doors, chunk.get_meta(&"_proc_clear_cells", {})]).sha256_text()
+	var node_count := chunk.find_children("*","",true,false).size()+1
+	var phase_samples: Array = manager.get_chunk_stream_debug_stats().get("build_phase_samples",[])
+	var phase: Dictionary = phase_samples[-1].duplicate(true) if not phase_samples.is_empty() else {}
 	manager.free()
-	return {"profiles": profiles, "snapshot": snapshot}
+	return {"profiles": profiles, "snapshot": snapshot,"records":records,"nodes":node_count,"phase":phase}
 
 func _run() -> void:
 	KIT.preview_original_materials = false

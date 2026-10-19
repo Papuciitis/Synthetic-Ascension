@@ -1,0 +1,87 @@
+{
+	"autoload_context": true,
+	"failed_scripts": 0,
+	"limit": "Checks the reported categories in 14 scripts; does not inventory the human editor's complete warning panel.",
+	"startup_severities_strict": true,
+	"targets": [
+		{
+			"path": "scenes/world/buildings/RoofOverlay.gd",
+			"reload_result": 0,
+			"source_sha256": "48857f2ff53f863399bb16a2f6baf69876e96ab33a28bc8926a80fa016455f4b"
+		},
+		{
+			"path": "scenes/world/buildings/DungeonRoof.gd",
+			"reload_result": 0,
+			"source_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7"
+		},
+		{
+			"path": "scenes/world/buildings/CityBlockKit.gd",
+			"reload_result": 0,
+			"source_sha256": "97830e9a12b7d3c73629a198e2707925311f4cad5e26dceb2fc8871986746884"
+		},
+		{
+			"path": "scenes/world/buildings/DungeonBuilding.gd",
+			"reload_result": 0,
+			"source_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d"
+		},
+		{
+			"path": "core/systems/world/ChunkManager.gd",
+			"reload_result": 0,
+			"source_sha256": "d06ec7b09fedd1ea414a05afbd3653392c2912ef5e9fbdf70e38c7fea635071e"
+		},
+		{
+			"path": "ui/screens/CityDevelopmentScreen.gd",
+			"reload_result": 0,
+			"source_sha256": "985a677c4ada8e045a9486984aa1fb7e0d806a54f9147f2558b053f3619de04f"
+		},
+		{
+			"path": "ui/widgets/library/LibraryBook.gd",
+			"reload_result": 0,
+			"source_sha256": "66e793ef44fa7a839e0dde1846101bb000c801b1b6799ec3a62f30e07b581ce8"
+		},
+		{
+			"path": "ui/widgets/library/LibraryOpenBook.gd",
+			"reload_result": 0,
+			"source_sha256": "d55e2347089ff8b5bf1fff42bfb57c4d4665bc72983706099bed30adebd078b4"
+		},
+		{
+			"path": "ui/widgets/library/LibraryRibbon.gd",
+			"reload_result": 0,
+			"source_sha256": "5c3fcbd473457103b3bb7149e157547062955a1e65b5d7055e02c26a70217b96"
+		},
+		{
+			"path": "ui/widgets/library/LibraryPagination.gd",
+			"reload_result": 0,
+			"source_sha256": "33a70278d4b28f9af1b3339089afb2b46a775dd953002e3ca3ed1025f8045c81"
+		},
+		{
+			"path": "ui/screens/opening/OpeningPresentation.gd",
+			"reload_result": 0,
+			"source_sha256": "a23e2fd69c5504175c1899e66f382d65f63dba6af72431d91c664d530a9709ce"
+		},
+		{
+			"path": "core/systems/world/Level1Builder.gd",
+			"reload_result": 0,
+			"source_sha256": "85f263dac8920834c772c5183b8f55aad804c8abff2b4eaa4059b148f7906f36"
+		},
+		{
+			"path": "scenes/world/bosses/BossBulldozerBrain.gd",
+			"reload_result": 0,
+			"source_sha256": "b9a4a65680a396d69d2bc040646642d7665a885e4ba3ec03a5e3f101a2c15b27"
+		},
+		{
+			"path": "core/systems/world/objectives/BreachSealObjective.gd",
+			"reload_result": 0,
+			"source_sha256": "f1097ca421fe35b62245b1d0d1547dbeb67add33f97f6a2c09eec922d0c9413a"
+		}
+	],
+	"warning_categories": [
+		"shadowed_variable_base_class",
+		"unused_private_class_variable",
+		"unused_parameter",
+		"shadowed_global_identifier",
+		"confusable_local_declaration",
+		"integer_division",
+		"redundant_await"
+	]
+}

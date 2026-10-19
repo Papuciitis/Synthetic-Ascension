@@ -5,8 +5,9 @@ param(
     [string]$Engine=(Join-Path $env:USERPROFILE 'Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64.exe')
 )
 $ErrorActionPreference='Stop'
+. (Join-Path $PSScriptRoot 'city_process_guard.ps1')
 $warningRoot=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
-$otherRuns=@(Get-CimInstance Win32_Process | Where-Object {$_.Name -match '^Godot' -and ($_.CommandLine -match '--import' -or $_.CommandLine -notmatch '(--editor| -e( |$))')})
+$otherRuns=@(Get-CimInstance Win32_Process | Where-Object {Test-CityCaptureGameProcess -Name $_.Name -CommandLine $_.CommandLine})
 if ($otherRuns.Count -gt 0) {throw 'Another Godot run is active; leaving it untouched.'}
 $warningOutput=[IO.Path]::GetFullPath($OutputDirectory)
 if ((Test-Path -LiteralPath $warningOutput) -and @(Get-ChildItem -LiteralPath $warningOutput -Force).Count -gt 0) {throw 'Use a fresh output directory to preserve prior diagnostics.'}

@@ -1,0 +1,471 @@
+{
+	"failures": 0,
+	"limits": "Warmed headless CPU fixture, three paired full chunk creations for each of five natural selected chunks. Ground rendering, ambient decoration and sites are disabled. Includes the real content/floor/blocker activation path; excludes GPU drawing and is not human play or whole-run loading/performance acceptance. Common-base override isolates family form costs on current routing source, not routing overhead against the historical commit.",
+	"rows": [
+		{
+			"case": "south",
+			"common": {
+				"blocker_ms": 1.436,
+				"blocker_physics_ms": 0.427,
+				"blocker_render_ms": 1.007,
+				"content_ms": 42.645,
+				"coord": "(2, -5)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.015,
+				"setup_ms": 0.034,
+				"staged_pending": false,
+				"total_ms": 44.133
+			},
+			"guard": {
+				"blocker_ms": 1.985,
+				"blocker_physics_ms": 0.817,
+				"blocker_render_ms": 1.165,
+				"content_ms": 4.75,
+				"coord": "(2, -5)",
+				"floor_ms": 0.004,
+				"ground_ms": 0.024,
+				"setup_ms": 0.037,
+				"staged_pending": false,
+				"total_ms": 6.8
+			},
+			"nodes_common": 125,
+			"nodes_guard": 113,
+			"physical_equal": true,
+			"repetition": 0
+		},
+		{
+			"case": "south",
+			"common": {
+				"blocker_ms": 1.28,
+				"blocker_physics_ms": 0.42,
+				"blocker_render_ms": 0.858,
+				"content_ms": 4.27,
+				"coord": "(2, -5)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.025,
+				"setup_ms": 0.049,
+				"staged_pending": false,
+				"total_ms": 5.627
+			},
+			"guard": {
+				"blocker_ms": 1.31,
+				"blocker_physics_ms": 0.445,
+				"blocker_render_ms": 0.862,
+				"content_ms": 4.484,
+				"coord": "(2, -5)",
+				"floor_ms": 0.002,
+				"ground_ms": 0.016,
+				"setup_ms": 0.028,
+				"staged_pending": false,
+				"total_ms": 5.84
+			},
+			"nodes_common": 125,
+			"nodes_guard": 113,
+			"physical_equal": true,
+			"repetition": 1
+		},
+		{
+			"case": "south",
+			"common": {
+				"blocker_ms": 1.289,
+				"blocker_physics_ms": 0.42,
+				"blocker_render_ms": 0.867,
+				"content_ms": 5.844,
+				"coord": "(2, -5)",
+				"floor_ms": 0.002,
+				"ground_ms": 0.016,
+				"setup_ms": 0.036,
+				"staged_pending": false,
+				"total_ms": 7.187
+			},
+			"guard": {
+				"blocker_ms": 2.356,
+				"blocker_physics_ms": 0.728,
+				"blocker_render_ms": 1.627,
+				"content_ms": 4.528,
+				"coord": "(2, -5)",
+				"floor_ms": 0.004,
+				"ground_ms": 0.017,
+				"setup_ms": 0.05,
+				"staged_pending": false,
+				"total_ms": 6.955
+			},
+			"nodes_common": 125,
+			"nodes_guard": 113,
+			"physical_equal": true,
+			"repetition": 2
+		},
+		{
+			"case": "north",
+			"common": {
+				"blocker_ms": 2.648,
+				"blocker_physics_ms": 0.497,
+				"blocker_render_ms": 2.147,
+				"content_ms": 4.218,
+				"coord": "(2, 2)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.013,
+				"setup_ms": 0.032,
+				"staged_pending": false,
+				"total_ms": 6.914
+			},
+			"guard": {
+				"blocker_ms": 2.992,
+				"blocker_physics_ms": 1.026,
+				"blocker_render_ms": 1.963,
+				"content_ms": 6.461,
+				"coord": "(2, 2)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.018,
+				"setup_ms": 0.045,
+				"staged_pending": false,
+				"total_ms": 9.519
+			},
+			"nodes_common": 112,
+			"nodes_guard": 98,
+			"physical_equal": true,
+			"repetition": 0
+		},
+		{
+			"case": "north",
+			"common": {
+				"blocker_ms": 2.732,
+				"blocker_physics_ms": 0.751,
+				"blocker_render_ms": 1.974,
+				"content_ms": 5.638,
+				"coord": "(2, 2)",
+				"floor_ms": 0.006,
+				"ground_ms": 0.016,
+				"setup_ms": 0.029,
+				"staged_pending": false,
+				"total_ms": 8.421
+			},
+			"guard": {
+				"blocker_ms": 3.031,
+				"blocker_physics_ms": 0.907,
+				"blocker_render_ms": 2.119,
+				"content_ms": 4.79,
+				"coord": "(2, 2)",
+				"floor_ms": 0.004,
+				"ground_ms": 0.015,
+				"setup_ms": 0.029,
+				"staged_pending": false,
+				"total_ms": 7.869
+			},
+			"nodes_common": 112,
+			"nodes_guard": 98,
+			"physical_equal": true,
+			"repetition": 1
+		},
+		{
+			"case": "north",
+			"common": {
+				"blocker_ms": 3.493,
+				"blocker_physics_ms": 1.028,
+				"blocker_render_ms": 2.461,
+				"content_ms": 7.393,
+				"coord": "(2, 2)",
+				"floor_ms": 0.006,
+				"ground_ms": 0.025,
+				"setup_ms": 0.051,
+				"staged_pending": false,
+				"total_ms": 10.968
+			},
+			"guard": {
+				"blocker_ms": 2.715,
+				"blocker_physics_ms": 0.951,
+				"blocker_render_ms": 1.761,
+				"content_ms": 6.782,
+				"coord": "(2, 2)",
+				"floor_ms": 0.004,
+				"ground_ms": 0.018,
+				"setup_ms": 0.032,
+				"staged_pending": false,
+				"total_ms": 9.551
+			},
+			"nodes_common": 112,
+			"nodes_guard": 98,
+			"physical_equal": true,
+			"repetition": 2
+		},
+		{
+			"case": "east",
+			"common": {
+				"blocker_ms": 6.234,
+				"blocker_physics_ms": 1.126,
+				"blocker_render_ms": 5.105,
+				"content_ms": 53.957,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.016,
+				"setup_ms": 0.033,
+				"staged_pending": false,
+				"total_ms": 60.243
+			},
+			"guard": {
+				"blocker_ms": 5.029,
+				"blocker_physics_ms": 1.672,
+				"blocker_render_ms": 3.355,
+				"content_ms": 7.189,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.002,
+				"ground_ms": 0.016,
+				"setup_ms": 0.031,
+				"staged_pending": false,
+				"total_ms": 12.267
+			},
+			"nodes_common": 301,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"repetition": 0
+		},
+		{
+			"case": "east",
+			"common": {
+				"blocker_ms": 3.055,
+				"blocker_physics_ms": 1.249,
+				"blocker_render_ms": 1.804,
+				"content_ms": 6.543,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.004,
+				"ground_ms": 0.015,
+				"setup_ms": 0.032,
+				"staged_pending": false,
+				"total_ms": 9.649
+			},
+			"guard": {
+				"blocker_ms": 2.848,
+				"blocker_physics_ms": 1.082,
+				"blocker_render_ms": 1.765,
+				"content_ms": 6.48,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.002,
+				"ground_ms": 0.023,
+				"setup_ms": 0.046,
+				"staged_pending": false,
+				"total_ms": 9.399
+			},
+			"nodes_common": 301,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"repetition": 1
+		},
+		{
+			"case": "east",
+			"common": {
+				"blocker_ms": 3.12,
+				"blocker_physics_ms": 1.189,
+				"blocker_render_ms": 1.929,
+				"content_ms": 8.702,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.016,
+				"setup_ms": 0.034,
+				"staged_pending": false,
+				"total_ms": 11.875
+			},
+			"guard": {
+				"blocker_ms": 3.323,
+				"blocker_physics_ms": 1.45,
+				"blocker_render_ms": 1.87,
+				"content_ms": 7.115,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.024,
+				"setup_ms": 0.087,
+				"staged_pending": false,
+				"total_ms": 10.552
+			},
+			"nodes_common": 301,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"repetition": 2
+		},
+		{
+			"case": "west",
+			"common": {
+				"blocker_ms": 3.574,
+				"blocker_physics_ms": 1.167,
+				"blocker_render_ms": 2.404,
+				"content_ms": 6.942,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.002,
+				"ground_ms": 0.011,
+				"setup_ms": 0.026,
+				"staged_pending": false,
+				"total_ms": 10.555
+			},
+			"guard": {
+				"blocker_ms": 2.992,
+				"blocker_physics_ms": 1.127,
+				"blocker_render_ms": 1.864,
+				"content_ms": 6.205,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.014,
+				"setup_ms": 0.027,
+				"staged_pending": false,
+				"total_ms": 9.241
+			},
+			"nodes_common": 301,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"repetition": 0
+		},
+		{
+			"case": "west",
+			"common": {
+				"blocker_ms": 3.164,
+				"blocker_physics_ms": 1.163,
+				"blocker_render_ms": 1.998,
+				"content_ms": 7.677,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.014,
+				"setup_ms": 0.026,
+				"staged_pending": false,
+				"total_ms": 10.884
+			},
+			"guard": {
+				"blocker_ms": 3.207,
+				"blocker_physics_ms": 1.124,
+				"blocker_render_ms": 2.079,
+				"content_ms": 9.489,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.017,
+				"setup_ms": 0.033,
+				"staged_pending": false,
+				"total_ms": 12.749
+			},
+			"nodes_common": 301,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"repetition": 1
+		},
+		{
+			"case": "west",
+			"common": {
+				"blocker_ms": 3.342,
+				"blocker_physics_ms": 1.647,
+				"blocker_render_ms": 1.693,
+				"content_ms": 7.384,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.005,
+				"ground_ms": 0.016,
+				"setup_ms": 0.031,
+				"staged_pending": false,
+				"total_ms": 10.778
+			},
+			"guard": {
+				"blocker_ms": 2.723,
+				"blocker_physics_ms": 1.074,
+				"blocker_render_ms": 1.647,
+				"content_ms": 6.315,
+				"coord": "(-3, 4)",
+				"floor_ms": 0.002,
+				"ground_ms": 0.014,
+				"setup_ms": 0.028,
+				"staged_pending": false,
+				"total_ms": 9.082
+			},
+			"nodes_common": 301,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"repetition": 2
+		},
+		{
+			"case": "irregular",
+			"common": {
+				"blocker_ms": 1.307,
+				"blocker_physics_ms": 0.446,
+				"blocker_render_ms": 0.859,
+				"content_ms": 4.454,
+				"coord": "(4, -5)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.013,
+				"setup_ms": 0.029,
+				"staged_pending": false,
+				"total_ms": 5.806
+			},
+			"guard": {
+				"blocker_ms": 1.286,
+				"blocker_physics_ms": 0.446,
+				"blocker_render_ms": 0.838,
+				"content_ms": 3.176,
+				"coord": "(4, -5)",
+				"floor_ms": 0.002,
+				"ground_ms": 0.013,
+				"setup_ms": 0.025,
+				"staged_pending": false,
+				"total_ms": 4.502
+			},
+			"nodes_common": 101,
+			"nodes_guard": 100,
+			"physical_equal": true,
+			"repetition": 0
+		},
+		{
+			"case": "irregular",
+			"common": {
+				"blocker_ms": 1.669,
+				"blocker_physics_ms": 0.769,
+				"blocker_render_ms": 0.896,
+				"content_ms": 3.738,
+				"coord": "(4, -5)",
+				"floor_ms": 0.028,
+				"ground_ms": 0.018,
+				"setup_ms": 0.035,
+				"staged_pending": false,
+				"total_ms": 5.488
+			},
+			"guard": {
+				"blocker_ms": 1.368,
+				"blocker_physics_ms": 0.466,
+				"blocker_render_ms": 0.9,
+				"content_ms": 4.02,
+				"coord": "(4, -5)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.015,
+				"setup_ms": 0.031,
+				"staged_pending": false,
+				"total_ms": 5.437
+			},
+			"nodes_common": 101,
+			"nodes_guard": 100,
+			"physical_equal": true,
+			"repetition": 1
+		},
+		{
+			"case": "irregular",
+			"common": {
+				"blocker_ms": 1.578,
+				"blocker_physics_ms": 0.618,
+				"blocker_render_ms": 0.958,
+				"content_ms": 4.718,
+				"coord": "(4, -5)",
+				"floor_ms": 0.004,
+				"ground_ms": 0.018,
+				"setup_ms": 0.046,
+				"staged_pending": false,
+				"total_ms": 6.364
+			},
+			"guard": {
+				"blocker_ms": 1.435,
+				"blocker_physics_ms": 0.5,
+				"blocker_render_ms": 0.932,
+				"content_ms": 4.265,
+				"coord": "(4, -5)",
+				"floor_ms": 0.003,
+				"ground_ms": 0.015,
+				"setup_ms": 0.031,
+				"staged_pending": false,
+				"total_ms": 5.749
+			},
+			"nodes_common": 101,
+			"nodes_guard": 100,
+			"physical_equal": true,
+			"repetition": 2
+		}
+	]
+}

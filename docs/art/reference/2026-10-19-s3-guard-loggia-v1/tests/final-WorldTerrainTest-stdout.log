@@ -1,0 +1,11 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: thirteen ground textures are registered (13)
+PASS: every ground texture loads
+PASS: the seven terrains map to seven distinct textures
+PASS: an unknown terrain falls back to grass
+PASS: meadow and moss repeat at the grass scale, urban does not
+PASS: every theme from segment 2 to 10 paints known terrains
+PASS: the later segments use meadow, scrub and moss ([&"grass", &"dirt", &"meadow", &"scrub", &"moss", &"mud"])
+PASS: an overgrown theme scatters more vegetation than the default and a staging ground less (28 / 20 / 4)
+WorldTerrainTest: 8 passed, 0 failed

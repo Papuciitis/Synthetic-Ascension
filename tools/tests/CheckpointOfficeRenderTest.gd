@@ -38,6 +38,10 @@ func _fixture(direction: Vector2i, irregular: bool) -> Dictionary:
 	return {"roof":roof,"kit":kit,"doors":doors}
 
 func _run() -> void:
+	for path: String in ["res://assets/world/districts/checkpoint_lanes/guard_arch_open.png","res://assets/world/districts/checkpoint_lanes/guard_arch_closed.png"]:
+		var texture := KIT._texture(path)
+		_check(texture != null,"Required original guard module is available through the production asset loader")
+		_check(texture == KIT._texture(path),"Streamed guard instances share the original module texture resource")
 	for irregular: bool in [false,true]:
 		for direction: Vector2i in [Vector2i.UP,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.LEFT]:
 			var fixture := _fixture(direction,irregular)

@@ -2,6 +2,8 @@
 
 2026-10-19. Read-only source trace. Proposed names below are interface recommendations for the post-base handoff; no new API exists because it is written here. Recheck base-owner changes before choosing final signatures.
 
+Post-checkpoint read: the base owner's `CityBlockKit.enabled_for()` now selects `segment >= 2`; initial S2-only observations are historical within this day's trace. The family forwarding gap still defines the proposed district extension. Base rollout source presence and the checkpoint push are not aesthetic/native acceptance.
+
 ## Current path
 
 | Responsibility | Actual source and behaviour | Implication |
@@ -23,14 +25,23 @@
 Add a small family catalogue after the common-base handoff, rather than fourteen generators:
 
 1. Add `district_family: StringName` to manager context and copy it in `SegmentThemeData.apply_to_chunk_manager`; mirror it in `ChunkGenImpl.sync_from_chunk_manager`. This is instance state, never a mutable global “current theme”.
+   Forward the family already selected from the original attempt seed. Do not call `SegmentThemePicker.get_theme()` again with the manager's mixed/retry plan seed: that can change an A/B alternative after the plan is built.
 2. Forward `district_family` into **both** ordinary street/fill parcel configurations. Keep all existing `city_block_style`, `city_shared_ground`, template, loot and carve decisions untouched.
-3. Proposed `DistrictVisualProfiles.resolve(family: StringName) -> Dictionary` returns a visual-only profile. Initial keys: `family_id`, `roof_material_id`, `facade_set_id`, `mounted_prop_set_id`, `ground_prop_set_id`, `landmark_set_id`. Missing/unknown entries resolve to the common base, without changing terrain or pretending the family is S2.
-4. The existing kit remains the one roof/frontage owner. Candidate adapter: an optional final `visual_profile: Dictionary = {}` argument to `CityBlockKit.configure`, or a dedicated family configuration method called once by the parcel path. Confirm the least disruptive form against the base owner's final interface. Apply material/facade choices in the existing renderer, not by layering another opaque roof on it.
+3. Proposed `DistrictVisualProfiles.resolve(family: StringName) -> Dictionary` returns a presentation profile. Initial keys: `family_id`, `roof_material_id`, `roof_form_set_id`, `facade_form_set_id`, `mounted_prop_set_id`, `ground_prop_set_id`, `landmark_set_id`. S3's `checkpoint_guard_loggia` form set changes architectural massing, not merely colour or attached props. Missing/unknown entries resolve to the common base, without changing terrain or pretending the family is S2.
+4. The existing kit remains the one roof/frontage owner. Candidate adapter: an optional final `visual_profile: Dictionary = {}` argument to `CityBlockKit.configure`, or a dedicated family configuration method called once by the parcel path. Confirm the least disruptive form against the base owner's final interface. Route the S3 form set into roof/frontage composition, replacing the selected base forms rather than stacking another opaque roof on them. `RoofOverlay.apply_city_material()` currently calls `CityBlockRoofForms.compose()` for compound forms; that is a real integration seam, not a reason to restrict family work to material changes.
 5. A focused optional `DistrictFamilyDressing` child can own new visual attachments. It consumes resolved profile, real footprint/outline, already normalised door records, the roof reference, `building_id`, chunk clip and cell size. It creates no `IndoorVolume`, reward, physics body or encounter. It must not call `RoofOverlay.configure` again.
 
 Profile selection must also prevent duplicate base details: the current kit already has a north-wall interior `CivicRecordsBoard` and an exterior entry lantern. Select or replace their visual treatment through the existing owner, rather than stacking a second board/lamp in the same span. An exterior order board is a different supported placement. Preserve `IndoorVolume`'s live building-entry/security status labels; a decorative records panel cannot replace those gameplay cues.
 
 Only S3 resolves to a distinct profile in the first playable slice. Other known IDs deliberately return the shared base until their own assets are reviewed. Add a visible diagnostic family/profile identifier for evidence, not player-facing implementation copy.
+
+### Guard-loggia form provider
+
+A focused proposed `CheckpointOfficeForms` helper should plan one architectural family from the real footprint/outline, normalised cardinal door records and roof support polygons. Its output is facade arch/return segments plus a compact roof/watch-bay composition. Render those through the existing frontage/roof owners; small equipment can remain in the dressing child. The template, building ID, room carve, floor stamps, blockers and volume coverage stay identical.
+
+The new roof cap and upright watch faces must participate in the existing full visible-form actor-occlusion coverage, not only indoor fade. Roof parenting alone does not prove an actor behind a taller mass remains visible. Keep the shared actor shader's finite coverage capacity in scope, measure the actual triangulated form and simplify/omit the optional watch cap if coverage cannot fit safely. Rectangular footprints receive the full composition when supported. Irregular/narrow cases retain the family's deep arch/official roof language through fitted exposed-edge segments; they do not get a bounding-box tower or false new doorway.
+
+In this packet, “visual-only” means unchanged physical and interaction contracts. It explicitly permits substantial rendered architectural geometry and its correct occlusion; it does not mean a recolour-and-signage pass.
 
 ### Determinism
 
@@ -61,7 +72,7 @@ Existing multi-chunk site anchor completeness and generic duplicate IndoorVolume
 
 ## Verification that earns each claim
 
-The following are **future required checks**, not runs performed by this design chat:
+The table states the evidence required for each claim. The bounded S3 implementation now supplies the applicable family/physical/native checks in the [audit](../../audits/2026-10-19-s3-guard-loggia.md); infrastructure remains future work:
 
 | Claim | Necessary evidence |
 | --- | --- |
@@ -73,3 +84,9 @@ The following are **future required checks**, not runs performed by this design 
 | Streaming cost is acceptable | Compare chunk content/blocker costs, peak nodes/draws/materials and a repeated travel/reload route against the handed-off base. Reuse cached textures/materials; avoid runtime asset decoding and unbounded per-frame world scans. No numerical budget is claimed without that baseline. |
 
 Reuse the existing `CityBlockKitTest`, `CityBlockProceduralTest`, `CityPlannedBuildingTest`, `CityGenerationMaterialTest`, `ProcSeedSweepTest`, `ProcChunkReachabilityTest`, `WorldTerrainTest`, `PlayerRoofOcclusionTest`, `BossArenaSpaceTest`, chunk data/renderer/physics suites and `ScriptParseAuditTest` according to the changed path. Extend provisional `CitySegmentCoverageTest` only after checking its assumptions against the final base policy; a test file's presence is not a passing result.
+
+## Implemented interface status — 19 October 2026
+
+The selected family is copied before mixed-seed setup into instance manager context and mirrored through `ChunkGenImpl`. Both actual street/fill configurations forward it; `SiteParcelsImpl` resolves a fresh profile plus the existing building ID. `CityBlockKit.configure` now accepts an optional eighth profile argument and `RoofOverlay.apply_city_material` an optional fifth. Existing callers retain defaults. `DistrictVisualProfiles` maps only `checkpoint_lanes` to `checkpoint_guard_loggia`; other/unknown families explicitly retain the common base, as do non-civic templates.
+
+`CheckpointOfficeForms.plan` fits real polygon supports and existing cardinal openings. Render helpers attach to the existing roof/kit, add no physics or volume and replace corresponding generic forms. The real role key used by production collection is `main_street`; the initial collector's `main_route` spelling was corrected before final natural-coverage claims. The planning snapshot above remains historical rather than a final hash manifest. See [verified sources](../../art/reference/2026-10-19-s3-guard-loggia-v1/verified-source-hashes.json).

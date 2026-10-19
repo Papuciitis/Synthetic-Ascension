@@ -1,0 +1,24 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the sweep covered 360 plans
+PASS: no plan ships invalid without even a fallback ([])
+PASS: fallback plans stay rare (0 of 360)
+RETRIED: seed 66361135381 seg 4 attempt 2
+RETRIED: seed 265444058811 seg 3 attempt 2
+RETRIED: seed 382239328837 seg 3 attempt 2
+RETRIED: seed 520270084951 seg 4 attempt 2
+RETRIED: seed 860038055443 seg 3 attempt 2
+RETRIED: seed 1061775269821 seg 3 attempt 2
+RETRIED: seed 1284747970287 seg 3 attempt 2
+RETRIED: seed 1404197627803 seg 4 attempt 2
+RETRIED: seed 1935084973087 seg 3 attempt 2
+RETRIED: seed 2232381874861 seg 3 attempt 4
+RETRIED: seed 2388993633031 seg 3 attempt 2
+RETRIED: seed 2890682136673 seg 5 attempt 2
+RETRIED: seed 3440150484013 seg 3 attempt 3
+PASS: first-attempt generation is the norm (13 of 360 retried)
+PASS: the theme picker authors arenas on the milestone segments only ([])
+PASS: start -> primary -> exit reachability holds everywhere ([])
+PASS: miniboss at segment 5 and boss at segment 10, never elsewhere ([])
+PASS: the same seed always builds the same world ([])
+ProcSeedSweepTest: 8 passed, 0 failed

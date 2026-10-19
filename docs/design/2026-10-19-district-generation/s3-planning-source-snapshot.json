@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-19",
+  "status": "read-only planning snapshot while base owner holds production/engine/Git; not the released implementation baseline",
+  "checkpoint_commit": "d0f99e0614959bceb86514b0347f3e96f496fbea",
+  "concept_handoff_commit_reported": "ef4f4376",
+  "selected_concept": {
+    "path": "docs/art/concepts/2026-10-19-segment-directions/03-s3-checkpoint-lanes.png",
+    "sha256": "3CC022A165A5D2611D1DEEACDFCECA35F509CF42F16EE82F3CD5640B4822F71B"
+  },
+  "sources": [
+    {"path":"core/systems/world/proc/SegmentThemeData.gd","sha256":"653D3B31BF4B7263303B0FD482F3BC76E9B9C774A9D3B219083AECA87132F80C"},
+    {"path":"core/systems/world/ChunkManager.gd","sha256":"3A797EC7AF44D642F08A24576F96EAB5DF284309E26611AAB93C8C780BDB9CD3"},
+    {"path":"core/systems/world/proc/ChunkGenImpl.gd","sha256":"3CA7B3F0208D1D646ED19C9A366374D88065B498A76770F4E5FEE8B95BCCF2A0"},
+    {"path":"core/systems/world/proc/chunkgen/ChunkGenDistrict.gd","sha256":"734C67E908CCFD7229A6BAD89EFA163BA277C1A6FF6560B07CCB184B8F94882B"},
+    {"path":"core/systems/world/proc/SiteParcelsImpl.gd","sha256":"2ECE5966181EB7ADDBE0635A193A6600D3A54DC7EFD97789C3C2AABA6887FBE1"},
+    {"path":"scenes/world/buildings/CityBlockKit.gd","sha256":"CD7279E02AC731E714A9BBA18A0F452DC40902CD557FFFF977E4EDB5D2A1F1DE"},
+    {"path":"scenes/world/buildings/CityBlockFrontages.gd","sha256":"34F3EF490523BBD76729CB4BB118E6A9FFD6A15E5D163D603B7DF8F93A86BB10"},
+    {"path":"scenes/world/buildings/CityBlockRoofForms.gd","sha256":"1943044B44DE2C665D4973DFDF9AA0D3E01FA0F0033CE58FE3E6CEC6D8E774A2"},
+    {"path":"scenes/world/buildings/RoofOverlay.gd","sha256":"DD2015D5A752249DACAB2F551C19F396E84FB0BD3E2121F50127B1A857F205C6"},
+    {"path":"core/actors/player/PlayerRoofOcclusion.gd","sha256":"4D3C53EEC0B47D08C30EB3FE40D750FEA55094CFC3EB25E386EF28911CBC65BB"},
+    {"path":"core/actors/player/player_roof_occlusion.gdshader","sha256":"2B84AB79A8D7F614CEE3F961BC41D3603EDA72378FF912D2E5E7D9E56F682B26"},
+    {"path":"tools/tests/CitySegmentCoverageTest.gd","sha256":"598585A1C1BBA480AA86DFFBD678BA04C173B050CFD15BAD3EB02747DE664CFD"}
+  ],
+  "activation_rule": "After explicit lane release compare the final base source/commit, reread changed interfaces, and record fresh implementation-baseline hashes before the first product edit. Do not revert base-owner changes to match this planning snapshot."
+}

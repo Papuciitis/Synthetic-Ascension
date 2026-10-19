@@ -10,6 +10,10 @@ var _playable := false
 var _district_common_base := false
 var _hide_district_details := false
 var _still_only := false
+var _entry_only := false
+var _target_building_id := 0
+var _target_chunk := Vector2i.ZERO
+var _has_target_chunk := false
 var _phase := "loading"
 var _recording := false
 var _grabbing := false
@@ -34,6 +38,13 @@ func _enter_tree() -> void:
 		if arg == "--district-common-base": _district_common_base = true
 		if arg == "--hide-district-details": _hide_district_details = true
 		if arg == "--still-only": _still_only = true
+		if arg == "--entry-only": _entry_only = true
+		if arg.begins_with("--target-building-id="): _target_building_id = int(arg.trim_prefix("--target-building-id="))
+		if arg.begins_with("--target-chunk="):
+			var parts := arg.trim_prefix("--target-chunk=").split(",")
+			if parts.size() == 2 and parts[0].is_valid_int() and parts[1].is_valid_int():
+				_target_chunk = Vector2i(int(parts[0]),int(parts[1]))
+				_has_target_chunk = true
 	if _out == "user://dev_previews/elite_crowd_fight":
 		_out = "res://docs/art/reference/2026-10-18-city-block/" + _review
 	KIT.preview_original_materials = _review == "before"
@@ -71,18 +82,25 @@ func _run() -> void:
 	builder.set_process(false)
 	var building_id := 0
 	var destination := Vector2(544, 18944)
-	for info: Dictionary in builder.get("_secondary_objectives"):
-		if String(info.get("type")) == "searchable_reward_building":
-			building_id = int(info.id)
-			destination = info.world
-			break
+	if _target_building_id > 0:
+		if not _has_target_chunk:
+			_fail("Explicit building sample requires its actual chunk")
+			await _shutdown()
+			return
+		destination = (Vector2(_target_chunk)+Vector2.ONE*0.5)*_chunks.chunk_size_px
+	else:
+		for info: Dictionary in builder.get("_secondary_objectives"):
+			if String(info.get("type")) == "searchable_reward_building":
+				building_id = int(info.id)
+				destination = info.world
+				break
 	# Initial staging only. All recorded traversal uses production input,
 	# CharacterBody2D collision, and the actual Area2D entry/exit signals.
 	_player.global_position = destination + Vector2(0, 600)
 	await _settle()
 	_dismiss_dossiers()
 	for candidate: Node in get_tree().get_nodes_in_group(&"indoor_volume"):
-		if candidate is IndoorVolume and candidate.secondary_objective_id == building_id:
+		if candidate is IndoorVolume and _matches_volume(candidate as IndoorVolume,building_id):
 			_volume = candidate
 			break
 	if _volume == null:
@@ -121,6 +139,32 @@ func _run() -> void:
 		_chunks.set_process(true)
 		return
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out.path_join("frames")))
+	if _entry_only:
+		if _volume.local_encounter_enabled:
+			_fail("Entry-only review is for ambient parcels; guarded rewards require the full security run")
+			await _shutdown()
+			return
+		await _frames(8)
+		await _still("exterior")
+		await _walk_to(door+outward*96)
+		await _walk_to(door-outward*float(_chunks.cell_size_px))
+		await _frames(30)
+		var inside_alpha := (_roof.get_node("RoofPoly") as Polygon2D).modulate.a
+		if _roof._inside_count <= 0 or inside_alpha > 0.01: _fail("Ambient physical entry did not fade its actual roof owner")
+		await _still("interior")
+		await _walk_to(door+outward*96)
+		await _frames(30)
+		var outside_alpha := (_roof.get_node("RoofPoly") as Polygon2D).modulate.a
+		if _roof._inside_count != 0 or outside_alpha < 0.99: _fail("Ambient physical exit did not restore its actual roof owner")
+		await _still("restored-exterior")
+		var entry_info := _district_evidence()
+		entry_info.merge({"attempt_seed":_city_world_seed,"segment":_city_segment,"native_entry_only":true,"local_security":false,"inside_alpha":inside_alpha,"outside_alpha":outside_alpha,"streamed_reload":_route_notes,"save_writes":SaveManager.debug_save_writes-_save_writes_before,"failures":_failures},true)
+		var entry_file := FileAccess.open(_out.path_join("entry-info.json"),FileAccess.WRITE)
+		entry_file.store_string(JSON.stringify(entry_info,"\t"))
+		entry_file.close()
+		print("CityBlockEntryPreview: segment=%d building=%d inside=%.2f outside=%.2f failures=%d" % [_city_segment,_volume.building_id,inside_alpha,outside_alpha,_failures])
+		await _shutdown()
+		return
 	if _still_only:
 		var building_bounds := Rect2(_roof.footprint_outline_px[0],Vector2.ZERO)
 		for point: Vector2 in _roof.footprint_outline_px: building_bounds = building_bounds.expand(point)
@@ -212,10 +256,15 @@ func _run() -> void:
 	print("CityBlockPlayablePreview: review=%s frames=%d fires=%d hits=%d deaths=%d save_writes=%d failures=%d" % [_review, _pixels.size(), _weapon_fires, _player_hits, _deaths, writes, _failures])
 	await _shutdown()
 
+func _matches_volume(volume: IndoorVolume, secondary_id: int) -> bool:
+	if _target_building_id > 0:
+		return volume.building_id == _target_building_id and float(volume.get("_presentation_width")) > 0.0
+	return volume.secondary_objective_id == secondary_id
+
 func _district_evidence() -> Dictionary:
 	if _roof == null or _volume == null: return {}
 	var coord := _chunks._world_to_chunk(_volume.global_position)
-	var result := {"plan_seed":_chunks.world_seed,"coord":str(coord),"role":String(_chunks.get_chunk_role(coord)),"doors":str(_roof._doors),"footprint":str(_roof.footprint_outline_px),"district_family":String(_chunks.district_family)}
+	var result := {"plan_seed":_chunks.world_seed,"building_id":_volume.building_id,"coord":str(coord),"role":String(_chunks.get_chunk_role(coord)),"doors":str(_roof._doors),"footprint":str(_roof.footprint_outline_px),"district_family":String(_chunks.district_family)}
 	for kit: Node in _chunks.find_children("*","",true,false):
 		if not kit.is_in_group(&"city_block_building") or kit.get("_roof") != _roof: continue
 		result["profile"] = String(kit.get_meta(&"district_visual_profile",&"missing"))
@@ -252,7 +301,9 @@ func _reload_check(secondary_id: int) -> void:
 	if before != after: _fail("Actual chunk reload changed blockers, material variants, floor stamps or building IDs")
 	_volume = null
 	for candidate: Node in get_tree().get_nodes_in_group(&"indoor_volume"):
-		if candidate is IndoorVolume and candidate.secondary_objective_id == secondary_id: _volume = candidate
+		if candidate is IndoorVolume and _matches_volume(candidate as IndoorVolume,secondary_id):
+			_volume = candidate
+			break
 	if _volume == null: _fail("Actual chunk reload lost the searchable interior")
 	_route_notes.append({"event": "streamed_reload", "equal": before == after, "unloaded_visual_instances": int(empty_stats.instances), "restored_visual_instances": _chunks.get_block_batch_stats().instances})
 
@@ -260,10 +311,14 @@ func _signature(coord: Vector2i) -> Dictionary:
 	var data := _chunks.get_chunk_build_data(coord)
 	var ids: Array[int] = []
 	var roles: Array[StringName] = []
+	var family_forms: Array = []
 	for child: Node in (_chunks._chunks[coord] as Node).get_children():
 		if child is IndoorVolume: ids.append(child.building_id)
-		if child.is_in_group(&"city_block_building"): roles.append(child.get_meta(&"city_role"))
-	return {"kinds": data.blocker_kind_code.duplicate(), "masks": data.blocker_mask.duplicate(), "variants": data.blocker_variant.duplicate(), "floors": data.floor_rect_and_style.duplicate(), "ids": ids, "roles": roles}
+		if child.is_in_group(&"city_block_building"):
+			roles.append(child.get_meta(&"city_role"))
+			var roof := child.get("_roof") as RoofOverlay
+			family_forms.append([child.get_meta(&"district_visual_profile",&""),str(roof.get_meta(&"district_form_plan",{}))])
+	return {"kinds": data.blocker_kind_code.duplicate(), "masks": data.blocker_mask.duplicate(), "variants": data.blocker_variant.duplicate(), "floors": data.floor_rect_and_style.duplicate(),"floor_alpha":data.floor_alpha.duplicate(), "ids": ids, "roles": roles,"family_forms":family_forms}
 
 func _settle() -> void:
 	for frame in range(480):

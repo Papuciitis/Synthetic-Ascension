@@ -1,0 +1,127 @@
+{
+  "baseline": "a798043d529acda31994a1b3bdbb526ba7fde41b",
+  "product_head": "45f35d9959cc4a555d24141dcd65dac36968508e",
+  "scene_suites": 22,
+  "scene_suites_exit_zero": true,
+  "captures": [
+    {
+      "folder": "native-south-normal",
+      "metadata": "capture-info.json",
+      "summary": [
+        "CityBlockPlayablePreview: review=normal frames=142 fires=64 hits=62 deaths=29 save_writes=0 failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "native-north-reduced",
+      "metadata": "capture-info.json",
+      "summary": [
+        "CityBlockPlayablePreview: review=reduced frames=164 fires=63 hits=56 deaths=29 save_writes=0 failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "native-entry-east",
+      "metadata": "entry-info.json",
+      "summary": [
+        "CityBlockEntryPreview: segment=3 building=1272508659 inside=0.00 outside=1.00 failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "native-entry-west",
+      "metadata": "entry-info.json",
+      "summary": [
+        "CityBlockEntryPreview: segment=3 building=974809560 inside=0.00 outside=1.00 failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "native-entry-irregular",
+      "metadata": "entry-info.json",
+      "summary": [
+        "CityBlockEntryPreview: segment=3 building=265571229 inside=0.00 outside=1.00 failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "architecture-final/guard-normal",
+      "metadata": "still-info.json",
+      "summary": [
+        "CityBlockStillPreview: segment=3 common_base=false details_hidden=true failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "architecture-final/common-normal",
+      "metadata": "still-info.json",
+      "summary": [
+        "CityBlockStillPreview: segment=3 common_base=true details_hidden=true failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "architecture-final/guard-small",
+      "metadata": "still-info.json",
+      "summary": [
+        "CityBlockStillPreview: segment=3 common_base=false details_hidden=true failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    },
+    {
+      "folder": "architecture-final/common-small",
+      "metadata": "still-info.json",
+      "summary": [
+        "CityBlockStillPreview: segment=3 common_base=true details_hidden=true failures=0"
+      ],
+      "native_exit": 0,
+      "diagnostics": [],
+      "failures": 0,
+      "save_writes": 0,
+      "source_asset_matches": 51
+    }
+  ],
+  "runtime_hash_checks": 459,
+  "runtime_hash_mismatches": 0,
+  "strict_reported_scripts": 14,
+  "strict_failed_scripts": 0,
+  "project_settings_unchanged": true,
+  "video_decode_exit_zero": 4,
+  "limits": [
+    "Sampled scripted native fixtures, god mode, controlled outside crowds; no human play, balance, whole-concept or GPU benchmark acceptance.",
+    "Current canonical cell size 64; actor shader capacity remains 32 triangles.",
+    "Final coordinating-designer aesthetic approval remains unclaimed."
+  ]
+}

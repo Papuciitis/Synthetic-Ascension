@@ -2733,3 +2733,29 @@ completed civic houses. Distinct district generation follows this foundation.
 The human-requested checkpoint `d0f99e06` backed up the implementation and evidence
 completed at that point; final verification is a separate local record. See the
 [foundation audit](audits/2026-10-19-city-foundation-rollout.md).
+
+## 2026-10-19 — First distinct district family: S3 guard loggias
+
+After the explicit common-base lane handoff at `a798043d`, S3 civic parcels now
+select fitted masonry arch bays, closed iron inspection bays and a compact
+supported watch roof. The already selected family is forwarded through both
+real parcel paths without new generation RNG draws. Physical doors, footprints,
+IDs, floor/blocker data, security/rewards and terrain/layout remain the comparator.
+Other themes and ordinary houses retain the common foundation.
+
+Final evidence covers 79 natural chunks, all four entrance directions and an
+irregular service parcel. Two full native runs and three ambient entry runs
+preserve roof entry/exit and identical streamed reload; normal and small/reduced
+combat runs total 306 frames, 127 fires, 118 hits and 58 deaths. All nine current
+captures have zero failures, diagnostics/save writes and 459 matching runtime
+source/asset hashes. Twenty-two final scene/script suites, the 548-script parse
+audit and isolated strict reported-warning check pass. Cost sampling is a bounded
+headless diagnostic, not performance acceptance. Native fixtures use scripted
+input/god mode; final coordinating-design and human aesthetic acceptance remain
+distinct from these checks.
+
+This completes one bounded architectural prototype, not all district concepts.
+The fourteen-theme matrix, other bespoke families, connected gates/gantries,
+rail/canal topology, S1/Hub, DonJons and legacy roofless structures retain their
+separate scopes. No new push is performed. See the [S3 audit](audits/2026-10-19-s3-guard-loggia.md)
+and [native evidence](art/reference/2026-10-19-s3-guard-loggia-v1/README.md).

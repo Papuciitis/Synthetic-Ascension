@@ -1,0 +1,3464 @@
+{
+	"failures": 0,
+	"natural_no_checkpoint_attempt_seed": 64,
+	"no_checkpoint_case_limit": "If -1, no natural absence was found in this bounded scan; do not claim one.",
+	"samples": [
+		{
+			"attempt_seed": 1,
+			"coord": "(2, -5)",
+			"nodes_common": 122,
+			"nodes_guard": 110,
+			"physical_equal": true,
+			"plan_seed": 1721464603,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 1,
+			"coord": "(-2, -4)",
+			"nodes_common": 204,
+			"nodes_guard": 204,
+			"physical_equal": true,
+			"plan_seed": 1721464603,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 1,
+			"coord": "(-2, -3)",
+			"nodes_common": 263,
+			"nodes_guard": 263,
+			"physical_equal": true,
+			"plan_seed": 1721464603,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 1,
+			"coord": "(-1, -2)",
+			"nodes_common": 105,
+			"nodes_guard": 105,
+			"physical_equal": true,
+			"plan_seed": 1721464603,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 1,
+			"coord": "(1, -5)",
+			"nodes_common": 112,
+			"nodes_guard": 112,
+			"physical_equal": true,
+			"plan_seed": 1721464603,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 1,
+			"coord": "(-1, -5)",
+			"nodes_common": 105,
+			"nodes_guard": 105,
+			"physical_equal": true,
+			"plan_seed": 1721464603,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 1,
+			"coord": "(1, 0)",
+			"nodes_common": 113,
+			"nodes_guard": 113,
+			"physical_equal": true,
+			"plan_seed": 1721464603,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 211,
+			"coord": "(2, 2)",
+			"nodes_common": 109,
+			"nodes_guard": 95,
+			"physical_equal": true,
+			"plan_seed": 1173896510,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 211,
+			"coord": "(-2, 2)",
+			"nodes_common": 309,
+			"nodes_guard": 309,
+			"physical_equal": true,
+			"plan_seed": 1173896510,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 211,
+			"coord": "(-1, 0)",
+			"nodes_common": 261,
+			"nodes_guard": 261,
+			"physical_equal": true,
+			"plan_seed": 1173896510,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 211,
+			"coord": "(4, -5)",
+			"nodes_common": 98,
+			"nodes_guard": 97,
+			"physical_equal": true,
+			"plan_seed": 1173896510,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 211,
+			"coord": "(4, -4)",
+			"nodes_common": 105,
+			"nodes_guard": 105,
+			"physical_equal": true,
+			"plan_seed": 1173896510,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 16102026,
+			"coord": "(-2, 4)",
+			"nodes_common": 123,
+			"nodes_guard": 111,
+			"physical_equal": true,
+			"plan_seed": 1532982726,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 16102026,
+			"coord": "(-4, 5)",
+			"nodes_common": 320,
+			"nodes_guard": 306,
+			"physical_equal": true,
+			"plan_seed": 1532982726,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 16102026,
+			"coord": "(-3, 4)",
+			"nodes_common": 297,
+			"nodes_guard": 265,
+			"physical_equal": true,
+			"plan_seed": 1532982726,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 16102026,
+			"coord": "(-2, 5)",
+			"nodes_common": 112,
+			"nodes_guard": 98,
+			"physical_equal": true,
+			"plan_seed": 1532982726,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 16102026,
+			"coord": "(-2, 6)",
+			"nodes_common": 103,
+			"nodes_guard": 103,
+			"physical_equal": true,
+			"plan_seed": 1532982726,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 2,
+			"coord": "(-3, 8)",
+			"nodes_common": 260,
+			"nodes_guard": 260,
+			"physical_equal": true,
+			"plan_seed": 617949358,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 2,
+			"coord": "(-3, 9)",
+			"nodes_common": 357,
+			"nodes_guard": 357,
+			"physical_equal": true,
+			"plan_seed": 617949358,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 2,
+			"coord": "(-1, 8)",
+			"nodes_common": 52,
+			"nodes_guard": 52,
+			"physical_equal": true,
+			"plan_seed": 617949358,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 2,
+			"coord": "(3, 4)",
+			"nodes_common": 111,
+			"nodes_guard": 111,
+			"physical_equal": true,
+			"plan_seed": 617949358,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 2,
+			"coord": "(4, 2)",
+			"nodes_common": 208,
+			"nodes_guard": 208,
+			"physical_equal": true,
+			"plan_seed": 617949358,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 2,
+			"coord": "(5, 2)",
+			"nodes_common": 156,
+			"nodes_guard": 156,
+			"physical_equal": true,
+			"plan_seed": 617949358,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 3,
+			"coord": "(-1, -1)",
+			"nodes_common": 76,
+			"nodes_guard": 62,
+			"physical_equal": true,
+			"plan_seed": 1661917761,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 3,
+			"coord": "(-4, -9)",
+			"nodes_common": 294,
+			"nodes_guard": 294,
+			"physical_equal": true,
+			"plan_seed": 1661917761,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 3,
+			"coord": "(-4, -6)",
+			"nodes_common": 306,
+			"nodes_guard": 306,
+			"physical_equal": true,
+			"plan_seed": 1661917761,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 3,
+			"coord": "(0, -1)",
+			"nodes_common": 60,
+			"nodes_guard": 60,
+			"physical_equal": true,
+			"plan_seed": 1661917761,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 3,
+			"coord": "(2, -3)",
+			"nodes_common": 108,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 1661917761,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 3,
+			"coord": "(-2, -8)",
+			"nodes_common": 102,
+			"nodes_guard": 102,
+			"physical_equal": true,
+			"plan_seed": 1661917761,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 3,
+			"coord": "(-2, -6)",
+			"nodes_common": 154,
+			"nodes_guard": 154,
+			"physical_equal": true,
+			"plan_seed": 1661917761,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 4,
+			"coord": "(-10, 0)",
+			"nodes_common": 317,
+			"nodes_guard": 317,
+			"physical_equal": true,
+			"plan_seed": 24514392,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 4,
+			"coord": "(-10, 1)",
+			"nodes_common": 319,
+			"nodes_guard": 319,
+			"physical_equal": true,
+			"plan_seed": 24514392,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 4,
+			"coord": "(-8, -1)",
+			"nodes_common": 53,
+			"nodes_guard": 53,
+			"physical_equal": true,
+			"plan_seed": 24514392,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 4,
+			"coord": "(-3, 1)",
+			"nodes_common": 35,
+			"nodes_guard": 35,
+			"physical_equal": true,
+			"plan_seed": 24514392,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 4,
+			"coord": "(-8, -3)",
+			"nodes_common": 102,
+			"nodes_guard": 102,
+			"physical_equal": true,
+			"plan_seed": 24514392,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 4,
+			"coord": "(-5, -1)",
+			"nodes_common": 3,
+			"nodes_guard": 3,
+			"physical_equal": true,
+			"plan_seed": 24514392,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 5,
+			"coord": "(-2, 1)",
+			"nodes_common": 262,
+			"nodes_guard": 252,
+			"physical_equal": true,
+			"plan_seed": 467313600,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 5,
+			"coord": "(-2, 2)",
+			"nodes_common": 364,
+			"nodes_guard": 364,
+			"physical_equal": true,
+			"plan_seed": 467313600,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 5,
+			"coord": "(0, 2)",
+			"nodes_common": 117,
+			"nodes_guard": 117,
+			"physical_equal": true,
+			"plan_seed": 467313600,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 5,
+			"coord": "(0, 4)",
+			"nodes_common": 200,
+			"nodes_guard": 200,
+			"physical_equal": true,
+			"plan_seed": 467313600,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 6,
+			"coord": "(-4, -3)",
+			"nodes_common": 175,
+			"nodes_guard": 163,
+			"physical_equal": true,
+			"plan_seed": 737043042,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 6,
+			"coord": "(-7, -4)",
+			"nodes_common": 258,
+			"nodes_guard": 258,
+			"physical_equal": true,
+			"plan_seed": 737043042,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 6,
+			"coord": "(-7, -3)",
+			"nodes_common": 358,
+			"nodes_guard": 358,
+			"physical_equal": true,
+			"plan_seed": 737043042,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 6,
+			"coord": "(-3, -3)",
+			"nodes_common": 154,
+			"nodes_guard": 154,
+			"physical_equal": true,
+			"plan_seed": 737043042,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 6,
+			"coord": "(0, -6)",
+			"nodes_common": 108,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 737043042,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 6,
+			"coord": "(1, -6)",
+			"nodes_common": 210,
+			"nodes_guard": 210,
+			"physical_equal": true,
+			"plan_seed": 737043042,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 7,
+			"coord": "(5, -1)",
+			"nodes_common": 125,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 1781011445,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 7,
+			"coord": "(0, 0)",
+			"nodes_common": 269,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"plan_seed": 1781011445,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 7,
+			"coord": "(0, 1)",
+			"nodes_common": 185,
+			"nodes_guard": 185,
+			"physical_equal": true,
+			"plan_seed": 1781011445,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 7,
+			"coord": "(2, 1)",
+			"nodes_common": 101,
+			"nodes_guard": 101,
+			"physical_equal": true,
+			"plan_seed": 1781011445,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 7,
+			"coord": "(5, 0)",
+			"nodes_common": 56,
+			"nodes_guard": 56,
+			"physical_equal": true,
+			"plan_seed": 1781011445,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 7,
+			"coord": "(5, 2)",
+			"nodes_common": 268,
+			"nodes_guard": 268,
+			"physical_equal": true,
+			"plan_seed": 1781011445,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 7,
+			"coord": "(5, 3)",
+			"nodes_common": 223,
+			"nodes_guard": 206,
+			"physical_equal": true,
+			"plan_seed": 1781011445,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 8,
+			"coord": "(-9, -2)",
+			"nodes_common": 354,
+			"nodes_guard": 354,
+			"physical_equal": true,
+			"plan_seed": 485239860,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 8,
+			"coord": "(-9, -1)",
+			"nodes_common": 381,
+			"nodes_guard": 381,
+			"physical_equal": true,
+			"plan_seed": 485239860,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 8,
+			"coord": "(-8, 0)",
+			"nodes_common": 102,
+			"nodes_guard": 102,
+			"physical_equal": true,
+			"plan_seed": 485239860,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 8,
+			"coord": "(-1, -2)",
+			"nodes_common": 136,
+			"nodes_guard": 136,
+			"physical_equal": true,
+			"plan_seed": 485239860,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 8,
+			"coord": "(-6, -2)",
+			"nodes_common": 175,
+			"nodes_guard": 175,
+			"physical_equal": true,
+			"plan_seed": 485239860,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 8,
+			"coord": "(-5, -4)",
+			"nodes_common": 101,
+			"nodes_guard": 101,
+			"physical_equal": true,
+			"plan_seed": 485239860,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 9,
+			"coord": "(1, -7)",
+			"nodes_common": 123,
+			"nodes_guard": 113,
+			"physical_equal": true,
+			"plan_seed": 1483277235,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 9,
+			"coord": "(-3, -1)",
+			"nodes_common": 340,
+			"nodes_guard": 323,
+			"physical_equal": true,
+			"plan_seed": 1483277235,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 9,
+			"coord": "(-3, 0)",
+			"nodes_common": 320,
+			"nodes_guard": 320,
+			"physical_equal": true,
+			"plan_seed": 1483277235,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 9,
+			"coord": "(2, 0)",
+			"nodes_common": 111,
+			"nodes_guard": 111,
+			"physical_equal": true,
+			"plan_seed": 1483277235,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 9,
+			"coord": "(3, -7)",
+			"nodes_common": 152,
+			"nodes_guard": 152,
+			"physical_equal": true,
+			"plan_seed": 1483277235,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 10,
+			"coord": "(-4, 3)",
+			"nodes_common": 125,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 379761990,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 10,
+			"coord": "(-10, -3)",
+			"nodes_common": 358,
+			"nodes_guard": 358,
+			"physical_equal": true,
+			"plan_seed": 379761990,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 10,
+			"coord": "(-10, -2)",
+			"nodes_common": 351,
+			"nodes_guard": 351,
+			"physical_equal": true,
+			"plan_seed": 379761990,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 10,
+			"coord": "(-1, 3)",
+			"nodes_common": 116,
+			"nodes_guard": 116,
+			"physical_equal": true,
+			"plan_seed": 379761990,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 10,
+			"coord": "(-8, -1)",
+			"nodes_common": 101,
+			"nodes_guard": 101,
+			"physical_equal": true,
+			"plan_seed": 379761990,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 10,
+			"coord": "(-8, 0)",
+			"nodes_common": 156,
+			"nodes_guard": 156,
+			"physical_equal": true,
+			"plan_seed": 379761990,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 11,
+			"coord": "(-8, 4)",
+			"nodes_common": 118,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 1423730393,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 11,
+			"coord": "(-10, -1)",
+			"nodes_common": 354,
+			"nodes_guard": 354,
+			"physical_equal": true,
+			"plan_seed": 1423730393,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 11,
+			"coord": "(-10, 0)",
+			"nodes_common": 374,
+			"nodes_guard": 374,
+			"physical_equal": true,
+			"plan_seed": 1423730393,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 11,
+			"coord": "(-7, 4)",
+			"nodes_common": 111,
+			"nodes_guard": 111,
+			"physical_equal": true,
+			"plan_seed": 1423730393,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 11,
+			"coord": "(-3, 4)",
+			"nodes_common": 217,
+			"nodes_guard": 217,
+			"physical_equal": true,
+			"plan_seed": 1423730393,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 11,
+			"coord": "(-6, 2)",
+			"nodes_common": 102,
+			"nodes_guard": 102,
+			"physical_equal": true,
+			"plan_seed": 1423730393,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 11,
+			"coord": "(-5, 2)",
+			"nodes_common": 4,
+			"nodes_guard": 4,
+			"physical_equal": true,
+			"plan_seed": 1423730393,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 12,
+			"coord": "(-1, -2)",
+			"nodes_common": 270,
+			"nodes_guard": 270,
+			"physical_equal": true,
+			"plan_seed": 1003999888,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 12,
+			"coord": "(-1, -1)",
+			"nodes_common": 326,
+			"nodes_guard": 316,
+			"physical_equal": true,
+			"plan_seed": 1003999888,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 12,
+			"coord": "(1, -1)",
+			"nodes_common": 202,
+			"nodes_guard": 202,
+			"physical_equal": true,
+			"plan_seed": 1003999888,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 12,
+			"coord": "(2, -1)",
+			"nodes_common": 197,
+			"nodes_guard": 196,
+			"physical_equal": true,
+			"plan_seed": 1003999888,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 13,
+			"coord": "(-9, -1)",
+			"nodes_common": 303,
+			"nodes_guard": 306,
+			"physical_equal": true,
+			"plan_seed": 1602370919,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 13,
+			"coord": "(-9, 0)",
+			"nodes_common": 315,
+			"nodes_guard": 315,
+			"physical_equal": true,
+			"plan_seed": 1602370919,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 13,
+			"coord": "(-1, -1)",
+			"nodes_common": 203,
+			"nodes_guard": 203,
+			"physical_equal": true,
+			"plan_seed": 1602370919,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 13,
+			"coord": "(-6, 3)",
+			"nodes_common": 205,
+			"nodes_guard": 205,
+			"physical_equal": true,
+			"plan_seed": 1602370919,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 13,
+			"coord": "(-6, 4)",
+			"nodes_common": 156,
+			"nodes_guard": 156,
+			"physical_equal": true,
+			"plan_seed": 1602370919,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 14,
+			"coord": "(-11, 0)",
+			"nodes_common": 315,
+			"nodes_guard": 315,
+			"physical_equal": true,
+			"plan_seed": 498855674,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 14,
+			"coord": "(-11, 1)",
+			"nodes_common": 274,
+			"nodes_guard": 264,
+			"physical_equal": true,
+			"plan_seed": 498855674,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 14,
+			"coord": "(-7, -2)",
+			"nodes_common": 110,
+			"nodes_guard": 110,
+			"physical_equal": true,
+			"plan_seed": 498855674,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 14,
+			"coord": "(-6, -3)",
+			"nodes_common": 151,
+			"nodes_guard": 151,
+			"physical_equal": true,
+			"plan_seed": 498855674,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 15,
+			"coord": "(3, 3)",
+			"nodes_common": 75,
+			"nodes_guard": 58,
+			"physical_equal": true,
+			"plan_seed": 1542824077,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 15,
+			"coord": "(-4, 2)",
+			"nodes_common": 359,
+			"nodes_guard": 359,
+			"physical_equal": true,
+			"plan_seed": 1542824077,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 15,
+			"coord": "(-4, 3)",
+			"nodes_common": 360,
+			"nodes_guard": 360,
+			"physical_equal": true,
+			"plan_seed": 1542824077,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 15,
+			"coord": "(2, 3)",
+			"nodes_common": 58,
+			"nodes_guard": 58,
+			"physical_equal": true,
+			"plan_seed": 1542824077,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 15,
+			"coord": "(-2, 3)",
+			"nodes_common": 56,
+			"nodes_guard": 56,
+			"physical_equal": true,
+			"plan_seed": 1542824077,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 15,
+			"coord": "(1, 2)",
+			"nodes_common": 100,
+			"nodes_guard": 100,
+			"physical_equal": true,
+			"plan_seed": 1542824077,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 16,
+			"coord": "(-10, 2)",
+			"nodes_common": 232,
+			"nodes_guard": 232,
+			"physical_equal": true,
+			"plan_seed": 1153870936,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 16,
+			"coord": "(-9, 2)",
+			"nodes_common": 380,
+			"nodes_guard": 365,
+			"physical_equal": true,
+			"plan_seed": 1153870936,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 16,
+			"coord": "(-8, 4)",
+			"nodes_common": 113,
+			"nodes_guard": 113,
+			"physical_equal": true,
+			"plan_seed": 1153870936,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 16,
+			"coord": "(-6, 2)",
+			"nodes_common": 205,
+			"nodes_guard": 205,
+			"physical_equal": true,
+			"plan_seed": 1153870936,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 16,
+			"coord": "(-6, 4)",
+			"nodes_common": 192,
+			"nodes_guard": 192,
+			"physical_equal": true,
+			"plan_seed": 1153870936,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 17,
+			"coord": "(3, 5)",
+			"nodes_common": 117,
+			"nodes_guard": 107,
+			"physical_equal": true,
+			"plan_seed": 50355691,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 17,
+			"coord": "(-4, 2)",
+			"nodes_common": 308,
+			"nodes_guard": 308,
+			"physical_equal": true,
+			"plan_seed": 50355691,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 17,
+			"coord": "(-4, 3)",
+			"nodes_common": 151,
+			"nodes_guard": 151,
+			"physical_equal": true,
+			"plan_seed": 50355691,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 17,
+			"coord": "(2, 5)",
+			"nodes_common": 207,
+			"nodes_guard": 207,
+			"physical_equal": true,
+			"plan_seed": 50355691,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 17,
+			"coord": "(-2, 3)",
+			"nodes_common": 87,
+			"nodes_guard": 87,
+			"physical_equal": true,
+			"plan_seed": 50355691,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 17,
+			"coord": "(2, 7)",
+			"nodes_common": 46,
+			"nodes_guard": 46,
+			"physical_equal": true,
+			"plan_seed": 50355691,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 18,
+			"coord": "(0, 0)",
+			"nodes_common": 125,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 1094324094,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 18,
+			"coord": "(-11, 0)",
+			"nodes_common": 324,
+			"nodes_guard": 324,
+			"physical_equal": true,
+			"plan_seed": 1094324094,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 18,
+			"coord": "(-11, 1)",
+			"nodes_common": 359,
+			"nodes_guard": 359,
+			"physical_equal": true,
+			"plan_seed": 1094324094,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 18,
+			"coord": "(-7, 2)",
+			"nodes_common": 3,
+			"nodes_guard": 3,
+			"physical_equal": true,
+			"plan_seed": 1094324094,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 18,
+			"coord": "(-7, 4)",
+			"nodes_common": 101,
+			"nodes_guard": 101,
+			"physical_equal": true,
+			"plan_seed": 1094324094,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 19,
+			"coord": "(2, 1)",
+			"nodes_common": 126,
+			"nodes_guard": 109,
+			"physical_equal": true,
+			"plan_seed": 2138292497,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 19,
+			"coord": "(-1, -1)",
+			"nodes_common": 195,
+			"nodes_guard": 195,
+			"physical_equal": true,
+			"plan_seed": 2138292497,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 19,
+			"coord": "(0, -2)",
+			"nodes_common": 256,
+			"nodes_guard": 256,
+			"physical_equal": true,
+			"plan_seed": 2138292497,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 19,
+			"coord": "(2, 0)",
+			"nodes_common": 202,
+			"nodes_guard": 202,
+			"physical_equal": true,
+			"plan_seed": 2138292497,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 19,
+			"coord": "(4, -2)",
+			"nodes_common": 105,
+			"nodes_guard": 105,
+			"physical_equal": true,
+			"plan_seed": 2138292497,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 19,
+			"coord": "(4, -4)",
+			"nodes_common": 96,
+			"nodes_guard": 96,
+			"physical_equal": true,
+			"plan_seed": 2138292497,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 19,
+			"coord": "(5, 1)",
+			"nodes_common": 212,
+			"nodes_guard": 212,
+			"physical_equal": true,
+			"plan_seed": 2138292497,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 20,
+			"coord": "(-5, 3)",
+			"nodes_common": 233,
+			"nodes_guard": 233,
+			"physical_equal": true,
+			"plan_seed": 579809992,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 20,
+			"coord": "(-5, 4)",
+			"nodes_common": 277,
+			"nodes_guard": 277,
+			"physical_equal": true,
+			"plan_seed": 579809992,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 20,
+			"coord": "(-2, 9)",
+			"nodes_common": 109,
+			"nodes_guard": 109,
+			"physical_equal": true,
+			"plan_seed": 579809992,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 20,
+			"coord": "(-1, 3)",
+			"nodes_common": 213,
+			"nodes_guard": 213,
+			"physical_equal": true,
+			"plan_seed": 579809992,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 20,
+			"coord": "(-3, 3)",
+			"nodes_common": 212,
+			"nodes_guard": 212,
+			"physical_equal": true,
+			"plan_seed": 579809992,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 20,
+			"coord": "(-2, 6)",
+			"nodes_common": 195,
+			"nodes_guard": 195,
+			"physical_equal": true,
+			"plan_seed": 579809992,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 21,
+			"coord": "(-1, -5)",
+			"nodes_common": 226,
+			"nodes_guard": 216,
+			"physical_equal": true,
+			"plan_seed": 169449375,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 21,
+			"coord": "(-5, -5)",
+			"nodes_common": 364,
+			"nodes_guard": 364,
+			"physical_equal": true,
+			"plan_seed": 169449375,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 21,
+			"coord": "(-4, -6)",
+			"nodes_common": 314,
+			"nodes_guard": 314,
+			"physical_equal": true,
+			"plan_seed": 169449375,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 21,
+			"coord": "(-3, -5)",
+			"nodes_common": 137,
+			"nodes_guard": 137,
+			"physical_equal": true,
+			"plan_seed": 169449375,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 21,
+			"coord": "(-2, -7)",
+			"nodes_common": 244,
+			"nodes_guard": 244,
+			"physical_equal": true,
+			"plan_seed": 169449375,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 22,
+			"coord": "(0, 0)",
+			"nodes_common": 352,
+			"nodes_guard": 352,
+			"physical_equal": true,
+			"plan_seed": 1213417778,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 22,
+			"coord": "(0, 1)",
+			"nodes_common": 364,
+			"nodes_guard": 364,
+			"physical_equal": true,
+			"plan_seed": 1213417778,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 22,
+			"coord": "(8, 0)",
+			"nodes_common": 207,
+			"nodes_guard": 207,
+			"physical_equal": true,
+			"plan_seed": 1213417778,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 22,
+			"coord": "(8, 1)",
+			"nodes_common": 165,
+			"nodes_guard": 165,
+			"physical_equal": true,
+			"plan_seed": 1213417778,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 22,
+			"coord": "(6, 1)",
+			"nodes_common": 217,
+			"nodes_guard": 203,
+			"physical_equal": true,
+			"plan_seed": 1213417778,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 22,
+			"coord": "(7, -2)",
+			"nodes_common": 207,
+			"nodes_guard": 207,
+			"physical_equal": true,
+			"plan_seed": 1213417778,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 23,
+			"coord": "(-3, 1)",
+			"nodes_common": 311,
+			"nodes_guard": 311,
+			"physical_equal": true,
+			"plan_seed": 273079459,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 23,
+			"coord": "(-3, 2)",
+			"nodes_common": 372,
+			"nodes_guard": 372,
+			"physical_equal": true,
+			"plan_seed": 273079459,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 23,
+			"coord": "(1, 3)",
+			"nodes_common": 232,
+			"nodes_guard": 215,
+			"physical_equal": true,
+			"plan_seed": 273079459,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 23,
+			"coord": "(-1, 2)",
+			"nodes_common": 212,
+			"nodes_guard": 212,
+			"physical_equal": true,
+			"plan_seed": 273079459,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 23,
+			"coord": "(0, 2)",
+			"nodes_common": 4,
+			"nodes_guard": 4,
+			"physical_equal": true,
+			"plan_seed": 273079459,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 24,
+			"coord": "(-3, -7)",
+			"nodes_common": 167,
+			"nodes_guard": 167,
+			"physical_equal": true,
+			"plan_seed": 915683568,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 24,
+			"coord": "(-3, -6)",
+			"nodes_common": 251,
+			"nodes_guard": 251,
+			"physical_equal": true,
+			"plan_seed": 915683568,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 24,
+			"coord": "(1, -8)",
+			"nodes_common": 3,
+			"nodes_guard": 3,
+			"physical_equal": true,
+			"plan_seed": 915683568,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 24,
+			"coord": "(-1, -7)",
+			"nodes_common": 141,
+			"nodes_guard": 141,
+			"physical_equal": true,
+			"plan_seed": 915683568,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 24,
+			"coord": "(0, -7)",
+			"nodes_common": 205,
+			"nodes_guard": 205,
+			"physical_equal": true,
+			"plan_seed": 915683568,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 25,
+			"coord": "(-11, 1)",
+			"nodes_common": 349,
+			"nodes_guard": 349,
+			"physical_equal": true,
+			"plan_seed": 1959651971,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 25,
+			"coord": "(-11, 2)",
+			"nodes_common": 327,
+			"nodes_guard": 327,
+			"physical_equal": true,
+			"plan_seed": 1959651971,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 25,
+			"coord": "(-4, -1)",
+			"nodes_common": 154,
+			"nodes_guard": 154,
+			"physical_equal": true,
+			"plan_seed": 1959651971,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 25,
+			"coord": "(-4, 2)",
+			"nodes_common": 255,
+			"nodes_guard": 255,
+			"physical_equal": true,
+			"plan_seed": 1959651971,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 25,
+			"coord": "(-4, 3)",
+			"nodes_common": 201,
+			"nodes_guard": 201,
+			"physical_equal": true,
+			"plan_seed": 1959651971,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 26,
+			"coord": "(-2, 1)",
+			"nodes_common": 265,
+			"nodes_guard": 265,
+			"physical_equal": true,
+			"plan_seed": 1619263790,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 26,
+			"coord": "(-2, 2)",
+			"nodes_common": 360,
+			"nodes_guard": 360,
+			"physical_equal": true,
+			"plan_seed": 1619263790,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 26,
+			"coord": "(5, 4)",
+			"nodes_common": 105,
+			"nodes_guard": 105,
+			"physical_equal": true,
+			"plan_seed": 1619263790,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 26,
+			"coord": "(-1, 3)",
+			"nodes_common": 218,
+			"nodes_guard": 218,
+			"physical_equal": true,
+			"plan_seed": 1619263790,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 26,
+			"coord": "(0, 3)",
+			"nodes_common": 209,
+			"nodes_guard": 209,
+			"physical_equal": true,
+			"plan_seed": 1619263790,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 27,
+			"coord": "(-2, -1)",
+			"nodes_common": 355,
+			"nodes_guard": 355,
+			"physical_equal": true,
+			"plan_seed": 1900105129,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 27,
+			"coord": "(-2, 0)",
+			"nodes_common": 261,
+			"nodes_guard": 261,
+			"physical_equal": true,
+			"plan_seed": 1900105129,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 27,
+			"coord": "(4, -3)",
+			"nodes_common": 140,
+			"nodes_guard": 140,
+			"physical_equal": true,
+			"plan_seed": 1900105129,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 27,
+			"coord": "(4, -2)",
+			"nodes_common": 209,
+			"nodes_guard": 209,
+			"physical_equal": true,
+			"plan_seed": 1900105129,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 28,
+			"coord": "(5, 0)",
+			"nodes_common": 73,
+			"nodes_guard": 56,
+			"physical_equal": true,
+			"plan_seed": 1034777252,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 28,
+			"coord": "(-2, -1)",
+			"nodes_common": 305,
+			"nodes_guard": 305,
+			"physical_equal": true,
+			"plan_seed": 1034777252,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 28,
+			"coord": "(-1, -4)",
+			"nodes_common": 227,
+			"nodes_guard": 217,
+			"physical_equal": true,
+			"plan_seed": 1034777252,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 28,
+			"coord": "(5, 1)",
+			"nodes_common": 106,
+			"nodes_guard": 106,
+			"physical_equal": true,
+			"plan_seed": 1034777252,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 28,
+			"coord": "(0, -2)",
+			"nodes_common": 97,
+			"nodes_guard": 97,
+			"physical_equal": true,
+			"plan_seed": 1034777252,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 28,
+			"coord": "(1, 1)",
+			"nodes_common": 114,
+			"nodes_guard": 114,
+			"physical_equal": true,
+			"plan_seed": 1034777252,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 29,
+			"coord": "(-4, -8)",
+			"nodes_common": 77,
+			"nodes_guard": 65,
+			"physical_equal": true,
+			"plan_seed": 2078745655,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 29,
+			"coord": "(-8, -5)",
+			"nodes_common": 354,
+			"nodes_guard": 354,
+			"physical_equal": true,
+			"plan_seed": 2078745655,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 29,
+			"coord": "(-8, -4)",
+			"nodes_common": 355,
+			"nodes_guard": 355,
+			"physical_equal": true,
+			"plan_seed": 2078745655,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 29,
+			"coord": "(-3, -8)",
+			"nodes_common": 111,
+			"nodes_guard": 111,
+			"physical_equal": true,
+			"plan_seed": 2078745655,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 29,
+			"coord": "(-3, -5)",
+			"nodes_common": 111,
+			"nodes_guard": 111,
+			"physical_equal": true,
+			"plan_seed": 2078745655,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 29,
+			"coord": "(-6, -5)",
+			"nodes_common": 206,
+			"nodes_guard": 206,
+			"physical_equal": true,
+			"plan_seed": 2078745655,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 29,
+			"coord": "(-5, -5)",
+			"nodes_common": 147,
+			"nodes_guard": 147,
+			"physical_equal": true,
+			"plan_seed": 2078745655,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 30,
+			"coord": "(-4, 0)",
+			"nodes_common": 168,
+			"nodes_guard": 158,
+			"physical_equal": true,
+			"plan_seed": 236372154,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 30,
+			"coord": "(-11, -1)",
+			"nodes_common": 180,
+			"nodes_guard": 170,
+			"physical_equal": true,
+			"plan_seed": 236372154,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 30,
+			"coord": "(-11, 0)",
+			"nodes_common": 290,
+			"nodes_guard": 290,
+			"physical_equal": true,
+			"plan_seed": 236372154,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 30,
+			"coord": "(-7, -1)",
+			"nodes_common": 106,
+			"nodes_guard": 106,
+			"physical_equal": true,
+			"plan_seed": 236372154,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 30,
+			"coord": "(-10, 1)",
+			"nodes_common": 253,
+			"nodes_guard": 253,
+			"physical_equal": true,
+			"plan_seed": 236372154,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 30,
+			"coord": "(-10, 3)",
+			"nodes_common": 107,
+			"nodes_guard": 107,
+			"physical_equal": true,
+			"plan_seed": 236372154,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 31,
+			"coord": "(-3, -9)",
+			"nodes_common": 310,
+			"nodes_guard": 310,
+			"physical_equal": true,
+			"plan_seed": 2019198813,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 31,
+			"coord": "(-3, -8)",
+			"nodes_common": 268,
+			"nodes_guard": 251,
+			"physical_equal": true,
+			"plan_seed": 2019198813,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 31,
+			"coord": "(-1, -2)",
+			"nodes_common": 106,
+			"nodes_guard": 106,
+			"physical_equal": true,
+			"plan_seed": 2019198813,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 31,
+			"coord": "(-1, -1)",
+			"nodes_common": 152,
+			"nodes_guard": 152,
+			"physical_equal": true,
+			"plan_seed": 2019198813,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 31,
+			"coord": "(0, -7)",
+			"nodes_common": 158,
+			"nodes_guard": 158,
+			"physical_equal": true,
+			"plan_seed": 2019198813,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 32,
+			"coord": "(2, -3)",
+			"nodes_common": 126,
+			"nodes_guard": 112,
+			"physical_equal": true,
+			"plan_seed": 1872230376,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 32,
+			"coord": "(0, -2)",
+			"nodes_common": 241,
+			"nodes_guard": 241,
+			"physical_equal": true,
+			"plan_seed": 1872230376,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 32,
+			"coord": "(0, -1)",
+			"nodes_common": 328,
+			"nodes_guard": 328,
+			"physical_equal": true,
+			"plan_seed": 1872230376,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 32,
+			"coord": "(2, -2)",
+			"nodes_common": 106,
+			"nodes_guard": 106,
+			"physical_equal": true,
+			"plan_seed": 1872230376,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 32,
+			"coord": "(7, -4)",
+			"nodes_common": 153,
+			"nodes_guard": 153,
+			"physical_equal": true,
+			"plan_seed": 1872230376,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 32,
+			"coord": "(6, -1)",
+			"nodes_common": 262,
+			"nodes_guard": 262,
+			"physical_equal": true,
+			"plan_seed": 1872230376,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 32,
+			"coord": "(7, -7)",
+			"nodes_common": 134,
+			"nodes_guard": 134,
+			"physical_equal": true,
+			"plan_seed": 1872230376,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 33,
+			"coord": "(2, 3)",
+			"nodes_common": 176,
+			"nodes_guard": 166,
+			"physical_equal": true,
+			"plan_seed": 768715131,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 33,
+			"coord": "(-2, -1)",
+			"nodes_common": 355,
+			"nodes_guard": 355,
+			"physical_equal": true,
+			"plan_seed": 768715131,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 33,
+			"coord": "(-2, 0)",
+			"nodes_common": 210,
+			"nodes_guard": 210,
+			"physical_equal": true,
+			"plan_seed": 768715131,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 33,
+			"coord": "(2, 6)",
+			"nodes_common": 100,
+			"nodes_guard": 100,
+			"physical_equal": true,
+			"plan_seed": 768715131,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 33,
+			"coord": "(4, 5)",
+			"nodes_common": 100,
+			"nodes_guard": 100,
+			"physical_equal": true,
+			"plan_seed": 768715131,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 34,
+			"coord": "(-5, 5)",
+			"nodes_common": 268,
+			"nodes_guard": 268,
+			"physical_equal": true,
+			"plan_seed": 1812683534,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 34,
+			"coord": "(-4, 4)",
+			"nodes_common": 367,
+			"nodes_guard": 367,
+			"physical_equal": true,
+			"plan_seed": 1812683534,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 34,
+			"coord": "(0, 7)",
+			"nodes_common": 52,
+			"nodes_guard": 52,
+			"physical_equal": true,
+			"plan_seed": 1812683534,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 34,
+			"coord": "(1, 7)",
+			"nodes_common": 110,
+			"nodes_guard": 110,
+			"physical_equal": true,
+			"plan_seed": 1812683534,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 35,
+			"coord": "(-4, -3)",
+			"nodes_common": 76,
+			"nodes_guard": 64,
+			"physical_equal": true,
+			"plan_seed": 709168289,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 35,
+			"coord": "(-6, -7)",
+			"nodes_common": 325,
+			"nodes_guard": 325,
+			"physical_equal": true,
+			"plan_seed": 709168289,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 35,
+			"coord": "(-6, -5)",
+			"nodes_common": 257,
+			"nodes_guard": 257,
+			"physical_equal": true,
+			"plan_seed": 709168289,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 35,
+			"coord": "(-3, -3)",
+			"nodes_common": 153,
+			"nodes_guard": 153,
+			"physical_equal": true,
+			"plan_seed": 709168289,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 35,
+			"coord": "(-4, -6)",
+			"nodes_common": 203,
+			"nodes_guard": 203,
+			"physical_equal": true,
+			"plan_seed": 709168289,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 35,
+			"coord": "(-1, -3)",
+			"nodes_common": 215,
+			"nodes_guard": 215,
+			"physical_equal": true,
+			"plan_seed": 709168289,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 36,
+			"coord": "(-5, -5)",
+			"nodes_common": 299,
+			"nodes_guard": 299,
+			"physical_equal": true,
+			"plan_seed": 1991324060,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 36,
+			"coord": "(-5, -4)",
+			"nodes_common": 207,
+			"nodes_guard": 207,
+			"physical_equal": true,
+			"plan_seed": 1991324060,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 36,
+			"coord": "(-3, -5)",
+			"nodes_common": 112,
+			"nodes_guard": 112,
+			"physical_equal": true,
+			"plan_seed": 1991324060,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 36,
+			"coord": "(-1, -5)",
+			"nodes_common": 58,
+			"nodes_guard": 58,
+			"physical_equal": true,
+			"plan_seed": 1991324060,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 37,
+			"coord": "(7, 3)",
+			"nodes_common": 271,
+			"nodes_guard": 261,
+			"physical_equal": true,
+			"plan_seed": 887808815,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 37,
+			"coord": "(-1, 0)",
+			"nodes_common": 239,
+			"nodes_guard": 239,
+			"physical_equal": true,
+			"plan_seed": 887808815,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 37,
+			"coord": "(-1, 1)",
+			"nodes_common": 310,
+			"nodes_guard": 310,
+			"physical_equal": true,
+			"plan_seed": 887808815,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 37,
+			"coord": "(8, 3)",
+			"nodes_common": 53,
+			"nodes_guard": 53,
+			"physical_equal": true,
+			"plan_seed": 887808815,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 37,
+			"coord": "(4, 3)",
+			"nodes_common": 260,
+			"nodes_guard": 260,
+			"physical_equal": true,
+			"plan_seed": 887808815,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 37,
+			"coord": "(4, 4)",
+			"nodes_common": 205,
+			"nodes_guard": 205,
+			"physical_equal": true,
+			"plan_seed": 887808815,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 38,
+			"coord": "(-2, -1)",
+			"nodes_common": 360,
+			"nodes_guard": 360,
+			"physical_equal": true,
+			"plan_seed": 1931777218,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 38,
+			"coord": "(-2, 0)",
+			"nodes_common": 311,
+			"nodes_guard": 311,
+			"physical_equal": true,
+			"plan_seed": 1931777218,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 38,
+			"coord": "(5, 0)",
+			"nodes_common": 202,
+			"nodes_guard": 202,
+			"physical_equal": true,
+			"plan_seed": 1931777218,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 38,
+			"coord": "(-1, -1)",
+			"nodes_common": 52,
+			"nodes_guard": 52,
+			"physical_equal": true,
+			"plan_seed": 1931777218,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 38,
+			"coord": "(0, -1)",
+			"nodes_common": 159,
+			"nodes_guard": 159,
+			"physical_equal": true,
+			"plan_seed": 1931777218,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 39,
+			"coord": "(-7, -2)",
+			"nodes_common": 213,
+			"nodes_guard": 213,
+			"physical_equal": true,
+			"plan_seed": 828261973,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 39,
+			"coord": "(-6, -3)",
+			"nodes_common": 311,
+			"nodes_guard": 311,
+			"physical_equal": true,
+			"plan_seed": 828261973,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 39,
+			"coord": "(1, 0)",
+			"nodes_common": 195,
+			"nodes_guard": 195,
+			"physical_equal": true,
+			"plan_seed": 828261973,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 39,
+			"coord": "(-5, -2)",
+			"nodes_common": 133,
+			"nodes_guard": 123,
+			"physical_equal": true,
+			"plan_seed": 828261973,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 39,
+			"coord": "(-4, -4)",
+			"nodes_common": 161,
+			"nodes_guard": 161,
+			"physical_equal": true,
+			"plan_seed": 828261973,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 40,
+			"coord": "(-4, 3)",
+			"nodes_common": 352,
+			"nodes_guard": 352,
+			"physical_equal": true,
+			"plan_seed": 1634043008,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 40,
+			"coord": "(-4, 4)",
+			"nodes_common": 361,
+			"nodes_guard": 361,
+			"physical_equal": true,
+			"plan_seed": 1634043008,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 40,
+			"coord": "(-1, 7)",
+			"nodes_common": 55,
+			"nodes_guard": 55,
+			"physical_equal": true,
+			"plan_seed": 1634043008,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 40,
+			"coord": "(-2, 4)",
+			"nodes_common": 165,
+			"nodes_guard": 165,
+			"physical_equal": true,
+			"plan_seed": 1634043008,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 40,
+			"coord": "(-1, 4)",
+			"nodes_common": 215,
+			"nodes_guard": 215,
+			"physical_equal": true,
+			"plan_seed": 1634043008,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 41,
+			"coord": "(-6, 0)",
+			"nodes_common": 123,
+			"nodes_guard": 106,
+			"physical_equal": true,
+			"plan_seed": 1852248831,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 41,
+			"coord": "(-9, -5)",
+			"nodes_common": 301,
+			"nodes_guard": 301,
+			"physical_equal": true,
+			"plan_seed": 1852248831,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 41,
+			"coord": "(-9, -4)",
+			"nodes_common": 383,
+			"nodes_guard": 368,
+			"physical_equal": true,
+			"plan_seed": 1852248831,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 41,
+			"coord": "(-6, -1)",
+			"nodes_common": 211,
+			"nodes_guard": 211,
+			"physical_equal": true,
+			"plan_seed": 1852248831,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 41,
+			"coord": "(-4, -4)",
+			"nodes_common": 104,
+			"nodes_guard": 104,
+			"physical_equal": true,
+			"plan_seed": 1852248831,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 41,
+			"coord": "(-7, -5)",
+			"nodes_common": 159,
+			"nodes_guard": 159,
+			"physical_equal": true,
+			"plan_seed": 1852248831,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 41,
+			"coord": "(-7, -3)",
+			"nodes_common": 220,
+			"nodes_guard": 220,
+			"physical_equal": true,
+			"plan_seed": 1852248831,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 42,
+			"coord": "(-10, 2)",
+			"nodes_common": 315,
+			"nodes_guard": 315,
+			"physical_equal": true,
+			"plan_seed": 1574496166,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 42,
+			"coord": "(-10, 3)",
+			"nodes_common": 284,
+			"nodes_guard": 269,
+			"physical_equal": true,
+			"plan_seed": 1574496166,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 42,
+			"coord": "(-8, 1)",
+			"nodes_common": 105,
+			"nodes_guard": 105,
+			"physical_equal": true,
+			"plan_seed": 1574496166,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 42,
+			"coord": "(-6, 3)",
+			"nodes_common": 155,
+			"nodes_guard": 155,
+			"physical_equal": true,
+			"plan_seed": 1574496166,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 43,
+			"coord": "(-3, 5)",
+			"nodes_common": 122,
+			"nodes_guard": 110,
+			"physical_equal": true,
+			"plan_seed": 470980921,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 43,
+			"coord": "(-5, 7)",
+			"nodes_common": 362,
+			"nodes_guard": 362,
+			"physical_equal": true,
+			"plan_seed": 470980921,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 43,
+			"coord": "(-5, 9)",
+			"nodes_common": 296,
+			"nodes_guard": 295,
+			"physical_equal": true,
+			"plan_seed": 470980921,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 43,
+			"coord": "(-4, 8)",
+			"nodes_common": 115,
+			"nodes_guard": 115,
+			"physical_equal": true,
+			"plan_seed": 470980921,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 43,
+			"coord": "(-1, 7)",
+			"nodes_common": 158,
+			"nodes_guard": 158,
+			"physical_equal": true,
+			"plan_seed": 470980921,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 43,
+			"coord": "(-2, 2)",
+			"nodes_common": 155,
+			"nodes_guard": 155,
+			"physical_equal": true,
+			"plan_seed": 470980921,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 43,
+			"coord": "(-2, 9)",
+			"nodes_common": 157,
+			"nodes_guard": 157,
+			"physical_equal": true,
+			"plan_seed": 470980921,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 44,
+			"coord": "(3, -3)",
+			"nodes_common": 125,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 1753136692,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 44,
+			"coord": "(0, -2)",
+			"nodes_common": 162,
+			"nodes_guard": 162,
+			"physical_equal": true,
+			"plan_seed": 1753136692,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 44,
+			"coord": "(0, -1)",
+			"nodes_common": 376,
+			"nodes_guard": 376,
+			"physical_equal": true,
+			"plan_seed": 1753136692,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 44,
+			"coord": "(6, -1)",
+			"nodes_common": 97,
+			"nodes_guard": 97,
+			"physical_equal": true,
+			"plan_seed": 1753136692,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 44,
+			"coord": "(5, 4)",
+			"nodes_common": 168,
+			"nodes_guard": 168,
+			"physical_equal": true,
+			"plan_seed": 1753136692,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 44,
+			"coord": "(6, 1)",
+			"nodes_common": 55,
+			"nodes_guard": 55,
+			"physical_equal": true,
+			"plan_seed": 1753136692,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 45,
+			"coord": "(3, -4)",
+			"nodes_common": 225,
+			"nodes_guard": 213,
+			"physical_equal": true,
+			"plan_seed": 649621447,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 45,
+			"coord": "(0, -2)",
+			"nodes_common": 326,
+			"nodes_guard": 326,
+			"physical_equal": true,
+			"plan_seed": 649621447,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 45,
+			"coord": "(0, -1)",
+			"nodes_common": 344,
+			"nodes_guard": 343,
+			"physical_equal": true,
+			"plan_seed": 649621447,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 45,
+			"coord": "(3, -3)",
+			"nodes_common": 152,
+			"nodes_guard": 152,
+			"physical_equal": true,
+			"plan_seed": 649621447,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 45,
+			"coord": "(3, -5)",
+			"nodes_common": 152,
+			"nodes_guard": 152,
+			"physical_equal": true,
+			"plan_seed": 649621447,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 45,
+			"coord": "(4, -3)",
+			"nodes_common": 105,
+			"nodes_guard": 105,
+			"physical_equal": true,
+			"plan_seed": 649621447,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 46,
+			"coord": "(1, 2)",
+			"nodes_common": 73,
+			"nodes_guard": 56,
+			"physical_equal": true,
+			"plan_seed": 1693589850,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 46,
+			"coord": "(-2, 0)",
+			"nodes_common": 289,
+			"nodes_guard": 279,
+			"physical_equal": true,
+			"plan_seed": 1693589850,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 46,
+			"coord": "(-2, 1)",
+			"nodes_common": 287,
+			"nodes_guard": 287,
+			"physical_equal": true,
+			"plan_seed": 1693589850,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 46,
+			"coord": "(8, 3)",
+			"nodes_common": 152,
+			"nodes_guard": 152,
+			"physical_equal": true,
+			"plan_seed": 1693589850,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 46,
+			"coord": "(6, 3)",
+			"nodes_common": 54,
+			"nodes_guard": 54,
+			"physical_equal": true,
+			"plan_seed": 1693589850,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 46,
+			"coord": "(7, 3)",
+			"nodes_common": 5,
+			"nodes_guard": 5,
+			"physical_equal": true,
+			"plan_seed": 1693589850,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 47,
+			"coord": "(-2, 3)",
+			"nodes_common": 325,
+			"nodes_guard": 325,
+			"physical_equal": true,
+			"plan_seed": 590074605,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 47,
+			"coord": "(-2, 7)",
+			"nodes_common": 342,
+			"nodes_guard": 332,
+			"physical_equal": true,
+			"plan_seed": 590074605,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 47,
+			"coord": "(0, 3)",
+			"nodes_common": 158,
+			"nodes_guard": 158,
+			"physical_equal": true,
+			"plan_seed": 590074605,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 47,
+			"coord": "(1, 9)",
+			"nodes_common": 114,
+			"nodes_guard": 114,
+			"physical_equal": true,
+			"plan_seed": 590074605,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 47,
+			"coord": "(-1, 7)",
+			"nodes_common": 109,
+			"nodes_guard": 109,
+			"physical_equal": true,
+			"plan_seed": 590074605,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 47,
+			"coord": "(0, 1)",
+			"nodes_common": 61,
+			"nodes_guard": 61,
+			"physical_equal": true,
+			"plan_seed": 590074605,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 48,
+			"coord": "(-2, 3)",
+			"nodes_common": 76,
+			"nodes_guard": 64,
+			"physical_equal": true,
+			"plan_seed": 201121464,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 48,
+			"coord": "(-4, 8)",
+			"nodes_common": 296,
+			"nodes_guard": 297,
+			"physical_equal": true,
+			"plan_seed": 201121464,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 48,
+			"coord": "(-3, 3)",
+			"nodes_common": 296,
+			"nodes_guard": 296,
+			"physical_equal": true,
+			"plan_seed": 201121464,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 48,
+			"coord": "(-1, 3)",
+			"nodes_common": 109,
+			"nodes_guard": 109,
+			"physical_equal": true,
+			"plan_seed": 201121464,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 48,
+			"coord": "(2, 2)",
+			"nodes_common": 116,
+			"nodes_guard": 116,
+			"physical_equal": true,
+			"plan_seed": 201121464,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 48,
+			"coord": "(1, 5)",
+			"nodes_common": 163,
+			"nodes_guard": 163,
+			"physical_equal": true,
+			"plan_seed": 201121464,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 48,
+			"coord": "(1, 6)",
+			"nodes_common": 204,
+			"nodes_guard": 204,
+			"physical_equal": true,
+			"plan_seed": 201121464,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 49,
+			"coord": "(-6, -10)",
+			"nodes_common": 361,
+			"nodes_guard": 361,
+			"physical_equal": true,
+			"plan_seed": 1245089867,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 49,
+			"coord": "(-5, -11)",
+			"nodes_common": 300,
+			"nodes_guard": 300,
+			"physical_equal": true,
+			"plan_seed": 1245089867,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 49,
+			"coord": "(-3, -4)",
+			"nodes_common": 99,
+			"nodes_guard": 99,
+			"physical_equal": true,
+			"plan_seed": 1245089867,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 49,
+			"coord": "(-1, -8)",
+			"nodes_common": 208,
+			"nodes_guard": 208,
+			"physical_equal": true,
+			"plan_seed": 1245089867,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 49,
+			"coord": "(-4, -10)",
+			"nodes_common": 103,
+			"nodes_guard": 103,
+			"physical_equal": true,
+			"plan_seed": 1245089867,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 49,
+			"coord": "(-3, -10)",
+			"nodes_common": 162,
+			"nodes_guard": 162,
+			"physical_equal": true,
+			"plan_seed": 1245089867,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 50,
+			"coord": "(-3, 5)",
+			"nodes_common": 309,
+			"nodes_guard": 309,
+			"physical_equal": true,
+			"plan_seed": 588816630,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 50,
+			"coord": "(-3, 6)",
+			"nodes_common": 292,
+			"nodes_guard": 286,
+			"physical_equal": true,
+			"plan_seed": 588816630,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 50,
+			"coord": "(-1, 6)",
+			"nodes_common": 50,
+			"nodes_guard": 50,
+			"physical_equal": true,
+			"plan_seed": 588816630,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 50,
+			"coord": "(0, -1)",
+			"nodes_common": 214,
+			"nodes_guard": 214,
+			"physical_equal": true,
+			"plan_seed": 588816630,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 50,
+			"coord": "(1, -1)",
+			"nodes_common": 151,
+			"nodes_guard": 151,
+			"physical_equal": true,
+			"plan_seed": 588816630,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 51,
+			"coord": "(-5, -1)",
+			"nodes_common": 175,
+			"nodes_guard": 165,
+			"physical_equal": true,
+			"plan_seed": 1185543025,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 51,
+			"coord": "(-10, -2)",
+			"nodes_common": 256,
+			"nodes_guard": 242,
+			"physical_equal": true,
+			"plan_seed": 1185543025,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 51,
+			"coord": "(-10, -1)",
+			"nodes_common": 312,
+			"nodes_guard": 312,
+			"physical_equal": true,
+			"plan_seed": 1185543025,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 51,
+			"coord": "(-6, -1)",
+			"nodes_common": 96,
+			"nodes_guard": 96,
+			"physical_equal": true,
+			"plan_seed": 1185543025,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 51,
+			"coord": "(-8, -1)",
+			"nodes_common": 273,
+			"nodes_guard": 273,
+			"physical_equal": true,
+			"plan_seed": 1185543025,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 51,
+			"coord": "(-5, -2)",
+			"nodes_common": 111,
+			"nodes_guard": 111,
+			"physical_equal": true,
+			"plan_seed": 1185543025,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 52,
+			"coord": "(3, 6)",
+			"nodes_common": 59,
+			"nodes_guard": 45,
+			"physical_equal": true,
+			"plan_seed": 320215148,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 52,
+			"coord": "(-5, 8)",
+			"nodes_common": 362,
+			"nodes_guard": 362,
+			"physical_equal": true,
+			"plan_seed": 320215148,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 52,
+			"coord": "(-5, 9)",
+			"nodes_common": 319,
+			"nodes_guard": 319,
+			"physical_equal": true,
+			"plan_seed": 320215148,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 52,
+			"coord": "(-1, 9)",
+			"nodes_common": 129,
+			"nodes_guard": 140,
+			"physical_equal": true,
+			"plan_seed": 320215148,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 52,
+			"coord": "(2, 6)",
+			"nodes_common": 160,
+			"nodes_guard": 160,
+			"physical_equal": true,
+			"plan_seed": 320215148,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 52,
+			"coord": "(-2, 9)",
+			"nodes_common": 150,
+			"nodes_guard": 150,
+			"physical_equal": true,
+			"plan_seed": 320215148,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 52,
+			"coord": "(-1, 6)",
+			"nodes_common": 103,
+			"nodes_guard": 103,
+			"physical_equal": true,
+			"plan_seed": 320215148,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 53,
+			"coord": "(-3, -8)",
+			"nodes_common": 356,
+			"nodes_guard": 356,
+			"physical_equal": true,
+			"plan_seed": 1364183551,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 53,
+			"coord": "(-2, -10)",
+			"nodes_common": 363,
+			"nodes_guard": 363,
+			"physical_equal": true,
+			"plan_seed": 1364183551,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 53,
+			"coord": "(4, -6)",
+			"nodes_common": 265,
+			"nodes_guard": 265,
+			"physical_equal": true,
+			"plan_seed": 1364183551,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 53,
+			"coord": "(4, -3)",
+			"nodes_common": 210,
+			"nodes_guard": 210,
+			"physical_equal": true,
+			"plan_seed": 1364183551,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 54,
+			"coord": "(3, 1)",
+			"nodes_common": 124,
+			"nodes_guard": 114,
+			"physical_equal": true,
+			"plan_seed": 260668306,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 54,
+			"coord": "(0, -1)",
+			"nodes_common": 318,
+			"nodes_guard": 318,
+			"physical_equal": true,
+			"plan_seed": 260668306,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 54,
+			"coord": "(0, 0)",
+			"nodes_common": 312,
+			"nodes_guard": 312,
+			"physical_equal": true,
+			"plan_seed": 260668306,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 54,
+			"coord": "(6, 4)",
+			"nodes_common": 96,
+			"nodes_guard": 96,
+			"physical_equal": true,
+			"plan_seed": 260668306,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 54,
+			"coord": "(3, 2)",
+			"nodes_common": 104,
+			"nodes_guard": 104,
+			"physical_equal": true,
+			"plan_seed": 260668306,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 54,
+			"coord": "(3, 3)",
+			"nodes_common": 108,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 260668306,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 55,
+			"coord": "(3, 3)",
+			"nodes_common": 174,
+			"nodes_guard": 164,
+			"physical_equal": true,
+			"plan_seed": 1304636709,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 55,
+			"coord": "(-1, 0)",
+			"nodes_common": 314,
+			"nodes_guard": 314,
+			"physical_equal": true,
+			"plan_seed": 1304636709,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 55,
+			"coord": "(-1, 1)",
+			"nodes_common": 209,
+			"nodes_guard": 209,
+			"physical_equal": true,
+			"plan_seed": 1304636709,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 55,
+			"coord": "(2, 2)",
+			"nodes_common": 201,
+			"nodes_guard": 201,
+			"physical_equal": true,
+			"plan_seed": 1304636709,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 55,
+			"coord": "(3, 2)",
+			"nodes_common": 164,
+			"nodes_guard": 164,
+			"physical_equal": true,
+			"plan_seed": 1304636709,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 55,
+			"coord": "(2, 0)",
+			"nodes_common": 207,
+			"nodes_guard": 207,
+			"physical_equal": true,
+			"plan_seed": 1304636709,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 55,
+			"coord": "(3, 4)",
+			"nodes_common": 257,
+			"nodes_guard": 257,
+			"physical_equal": true,
+			"plan_seed": 1304636709,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 56,
+			"coord": "(2, 0)",
+			"nodes_common": 130,
+			"nodes_guard": 120,
+			"physical_equal": true,
+			"plan_seed": 2110417744,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 56,
+			"coord": "(-3, -5)",
+			"nodes_common": 326,
+			"nodes_guard": 326,
+			"physical_equal": true,
+			"plan_seed": 2110417744,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 56,
+			"coord": "(-2, -10)",
+			"nodes_common": 253,
+			"nodes_guard": 253,
+			"physical_equal": true,
+			"plan_seed": 2110417744,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 56,
+			"coord": "(0, -4)",
+			"nodes_common": 220,
+			"nodes_guard": 220,
+			"physical_equal": true,
+			"plan_seed": 2110417744,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 56,
+			"coord": "(1, -9)",
+			"nodes_common": 202,
+			"nodes_guard": 202,
+			"physical_equal": true,
+			"plan_seed": 2110417744,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 57,
+			"coord": "(2, 3)",
+			"nodes_common": 73,
+			"nodes_guard": 56,
+			"physical_equal": true,
+			"plan_seed": 1006902499,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 57,
+			"coord": "(-2, 1)",
+			"nodes_common": 205,
+			"nodes_guard": 205,
+			"physical_equal": true,
+			"plan_seed": 1006902499,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 57,
+			"coord": "(-2, 2)",
+			"nodes_common": 129,
+			"nodes_guard": 129,
+			"physical_equal": true,
+			"plan_seed": 1006902499,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 57,
+			"coord": "(2, 2)",
+			"nodes_common": 94,
+			"nodes_guard": 94,
+			"physical_equal": true,
+			"plan_seed": 1006902499,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 57,
+			"coord": "(1, 0)",
+			"nodes_common": 207,
+			"nodes_guard": 207,
+			"physical_equal": true,
+			"plan_seed": 1006902499,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 57,
+			"coord": "(2, -1)",
+			"nodes_common": 212,
+			"nodes_guard": 212,
+			"physical_equal": true,
+			"plan_seed": 1006902499,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 58,
+			"coord": "(-11, -3)",
+			"nodes_common": 310,
+			"nodes_guard": 310,
+			"physical_equal": true,
+			"plan_seed": 342553358,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 58,
+			"coord": "(-11, -2)",
+			"nodes_common": 369,
+			"nodes_guard": 369,
+			"physical_equal": true,
+			"plan_seed": 342553358,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 58,
+			"coord": "(-10, 0)",
+			"nodes_common": 201,
+			"nodes_guard": 201,
+			"physical_equal": true,
+			"plan_seed": 342553358,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 58,
+			"coord": "(-9, 1)",
+			"nodes_common": 160,
+			"nodes_guard": 160,
+			"physical_equal": true,
+			"plan_seed": 342553358,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 58,
+			"coord": "(-8, 1)",
+			"nodes_common": 101,
+			"nodes_guard": 101,
+			"physical_equal": true,
+			"plan_seed": 342553358,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 59,
+			"coord": "(-3, -8)",
+			"nodes_common": 239,
+			"nodes_guard": 224,
+			"physical_equal": true,
+			"plan_seed": 947355657,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 59,
+			"coord": "(-3, -7)",
+			"nodes_common": 264,
+			"nodes_guard": 264,
+			"physical_equal": true,
+			"plan_seed": 947355657,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 59,
+			"coord": "(1, -7)",
+			"nodes_common": 157,
+			"nodes_guard": 157,
+			"physical_equal": true,
+			"plan_seed": 947355657,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 59,
+			"coord": "(3, -7)",
+			"nodes_common": 138,
+			"nodes_guard": 138,
+			"physical_equal": true,
+			"plan_seed": 947355657,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 59,
+			"coord": "(0, -8)",
+			"nodes_common": 52,
+			"nodes_guard": 52,
+			"physical_equal": true,
+			"plan_seed": 947355657,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 59,
+			"coord": "(1, -8)",
+			"nodes_common": 110,
+			"nodes_guard": 110,
+			"physical_equal": true,
+			"plan_seed": 947355657,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 60,
+			"coord": "(0, -6)",
+			"nodes_common": 226,
+			"nodes_guard": 216,
+			"physical_equal": true,
+			"plan_seed": 82027780,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 60,
+			"coord": "(-4, -7)",
+			"nodes_common": 289,
+			"nodes_guard": 284,
+			"physical_equal": true,
+			"plan_seed": 82027780,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 60,
+			"coord": "(-4, -5)",
+			"nodes_common": 366,
+			"nodes_guard": 366,
+			"physical_equal": true,
+			"plan_seed": 82027780,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 60,
+			"coord": "(1, -6)",
+			"nodes_common": 204,
+			"nodes_guard": 204,
+			"physical_equal": true,
+			"plan_seed": 82027780,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 60,
+			"coord": "(2, -8)",
+			"nodes_common": 156,
+			"nodes_guard": 156,
+			"physical_equal": true,
+			"plan_seed": 82027780,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 60,
+			"coord": "(-2, -6)",
+			"nodes_common": 151,
+			"nodes_guard": 151,
+			"physical_equal": true,
+			"plan_seed": 82027780,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 60,
+			"coord": "(-2, -5)",
+			"nodes_common": 3,
+			"nodes_guard": 3,
+			"physical_equal": true,
+			"plan_seed": 82027780,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 61,
+			"coord": "(2, 2)",
+			"nodes_common": 230,
+			"nodes_guard": 216,
+			"physical_equal": true,
+			"plan_seed": 1125996183,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 61,
+			"coord": "(0, 0)",
+			"nodes_common": 304,
+			"nodes_guard": 304,
+			"physical_equal": true,
+			"plan_seed": 1125996183,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 61,
+			"coord": "(0, 1)",
+			"nodes_common": 259,
+			"nodes_guard": 259,
+			"physical_equal": true,
+			"plan_seed": 1125996183,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 61,
+			"coord": "(6, 3)",
+			"nodes_common": 98,
+			"nodes_guard": 98,
+			"physical_equal": true,
+			"plan_seed": 1125996183,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 61,
+			"coord": "(2, 3)",
+			"nodes_common": 204,
+			"nodes_guard": 204,
+			"physical_equal": true,
+			"plan_seed": 1125996183,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 61,
+			"coord": "(3, 2)",
+			"nodes_common": 154,
+			"nodes_guard": 154,
+			"physical_equal": true,
+			"plan_seed": 1125996183,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 62,
+			"coord": "(-5, -5)",
+			"nodes_common": 324,
+			"nodes_guard": 324,
+			"physical_equal": true,
+			"plan_seed": 38124186,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 62,
+			"coord": "(-5, -4)",
+			"nodes_common": 357,
+			"nodes_guard": 357,
+			"physical_equal": true,
+			"plan_seed": 38124186,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 62,
+			"coord": "(-3, -5)",
+			"nodes_common": 160,
+			"nodes_guard": 160,
+			"physical_equal": true,
+			"plan_seed": 38124186,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 62,
+			"coord": "(2, -4)",
+			"nodes_common": 108,
+			"nodes_guard": 108,
+			"physical_equal": true,
+			"plan_seed": 38124186,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 62,
+			"coord": "(-2, -4)",
+			"nodes_common": 147,
+			"nodes_guard": 147,
+			"physical_equal": true,
+			"plan_seed": 38124186,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 62,
+			"coord": "(-1, -4)",
+			"nodes_common": 109,
+			"nodes_guard": 109,
+			"physical_equal": true,
+			"plan_seed": 38124186,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 63,
+			"coord": "(2, 2)",
+			"nodes_common": 127,
+			"nodes_guard": 115,
+			"physical_equal": true,
+			"plan_seed": 1066449341,
+			"role": "secondary_reward_building"
+		},
+		{
+			"attempt_seed": 63,
+			"coord": "(-1, -1)",
+			"nodes_common": 255,
+			"nodes_guard": 255,
+			"physical_equal": true,
+			"plan_seed": 1066449341,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 63,
+			"coord": "(-1, 1)",
+			"nodes_common": 324,
+			"nodes_guard": 324,
+			"physical_equal": true,
+			"plan_seed": 1066449341,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 63,
+			"coord": "(3, 2)",
+			"nodes_common": 213,
+			"nodes_guard": 213,
+			"physical_equal": true,
+			"plan_seed": 1066449341,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 63,
+			"coord": "(8, 4)",
+			"nodes_common": 101,
+			"nodes_guard": 101,
+			"physical_equal": true,
+			"plan_seed": 1066449341,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 63,
+			"coord": "(3, 3)",
+			"nodes_common": 150,
+			"nodes_guard": 150,
+			"physical_equal": true,
+			"plan_seed": 1066449341,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 63,
+			"coord": "(9, 3)",
+			"nodes_common": 194,
+			"nodes_guard": 194,
+			"physical_equal": true,
+			"plan_seed": 1066449341,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 64,
+			"coord": "(-9, -5)",
+			"nodes_common": 361,
+			"nodes_guard": 361,
+			"physical_equal": true,
+			"plan_seed": 73232045,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 64,
+			"coord": "(-9, -4)",
+			"nodes_common": 348,
+			"nodes_guard": 347,
+			"physical_equal": true,
+			"plan_seed": 73232045,
+			"role": "district_fill"
+		},
+		{
+			"attempt_seed": 64,
+			"coord": "(-8, -3)",
+			"nodes_common": 53,
+			"nodes_guard": 53,
+			"physical_equal": true,
+			"plan_seed": 73232045,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 64,
+			"coord": "(-6, -3)",
+			"nodes_common": 203,
+			"nodes_guard": 203,
+			"physical_equal": true,
+			"plan_seed": 73232045,
+			"role": "secondary_route"
+		},
+		{
+			"attempt_seed": 64,
+			"coord": "(-6, -1)",
+			"nodes_common": 213,
+			"nodes_guard": 213,
+			"physical_equal": true,
+			"plan_seed": 73232045,
+			"role": "service_lane"
+		},
+		{
+			"attempt_seed": 64,
+			"coord": "(-3, -2)",
+			"nodes_common": 100,
+			"nodes_guard": 100,
+			"physical_equal": true,
+			"plan_seed": 73232045,
+			"role": "service_lane"
+		}
+	],
+	"selected_native_cases": {
+		"east": {
+			"attempt_seed": 16102026,
+			"building_id": 1272508659,
+			"chunk_x": -3,
+			"chunk_y": 4,
+			"city_role": "civic",
+			"coord": "(-3, 4)",
+			"door_direction": "(1, 0)",
+			"doors": "[{ \"pos\": (8, 15), \"dir\": (1, 0), \"width\": 2 }]",
+			"footprint": "[(64.0, 640.0), (576.0, 640.0), (576.0, 1344.0), (64.0, 1344.0)]",
+			"form_signature": "d3d31a0ef350f8458dc6763cbaa149f4da6f80bd491753994a45cc3abd36dd53",
+			"irregular": false,
+			"plan_seed": 1532982726,
+			"profile": "checkpoint_guard_loggia",
+			"role": "district_fill"
+		},
+		"irregular": {
+			"attempt_seed": 211,
+			"building_id": 265571229,
+			"chunk_x": 4,
+			"chunk_y": -5,
+			"city_role": "civic",
+			"coord": "(4, -5)",
+			"door_direction": "(1, 0)",
+			"doors": "[{ \"pos\": (15, 10), \"dir\": (1, 0), \"width\": 2 }]",
+			"footprint": "[(704.0, 192.0), (1088.0, 192.0), (1088.0, 448.0), (1024.0, 448.0), (1024.0, 768.0), (1088.0, 768.0), (1088.0, 1024.0), (576.0, 1024.0), (576.0, 576.0), (704.0, 576.0)]",
+			"form_signature": "d1adb5301c63883b114100fd37e0b9b962ff994d607068506a12d35f063370ac",
+			"irregular": true,
+			"plan_seed": 1173896510,
+			"profile": "checkpoint_guard_loggia",
+			"role": "service_lane"
+		},
+		"north": {
+			"attempt_seed": 211,
+			"building_id": 93140343,
+			"chunk_x": 2,
+			"chunk_y": 2,
+			"city_role": "civic",
+			"coord": "(2, 2)",
+			"door_direction": "(0, -1)",
+			"doors": "[{ \"pos\": (24, 22), \"dir\": (0, -1), \"width\": 2 }]",
+			"footprint": "[(1216.0, 1408.0), (1856.0, 1408.0), (1856.0, 1920.0), (1216.0, 1920.0)]",
+			"form_signature": "63d7fc9d13e8c88d6a71d196304b52c592be5f730fd6ab791bf3ca6991609258",
+			"irregular": false,
+			"plan_seed": 1173896510,
+			"profile": "checkpoint_guard_loggia",
+			"role": "secondary_reward_building"
+		},
+		"south": {
+			"attempt_seed": 1,
+			"building_id": 1517657286,
+			"chunk_x": 2,
+			"chunk_y": -5,
+			"city_role": "civic",
+			"coord": "(2, -5)",
+			"door_direction": "(0, 1)",
+			"doors": "[{ \"pos\": (7, 15), \"dir\": (0, 1), \"width\": 2 }]",
+			"footprint": "[(192.0, 512.0), (768.0, 512.0), (768.0, 1024.0), (192.0, 1024.0)]",
+			"form_signature": "352d83e1f421da724e3746515759dcd254bcf14fdadd4262cc1efebb3509685c",
+			"irregular": false,
+			"plan_seed": 1721464603,
+			"profile": "checkpoint_guard_loggia",
+			"role": "secondary_reward_building"
+		},
+		"west": {
+			"attempt_seed": 16102026,
+			"building_id": 974809560,
+			"chunk_x": -3,
+			"chunk_y": 4,
+			"city_role": "civic",
+			"coord": "(-3, 4)",
+			"door_direction": "(-1, 0)",
+			"doors": "[{ \"pos\": (22, 25), \"dir\": (-1, 0), \"width\": 2 }]",
+			"footprint": "[(1408.0, 1280.0), (1984.0, 1280.0), (1984.0, 1984.0), (1408.0, 1984.0)]",
+			"form_signature": "419a031c1ac748470d408e5887647ccbab8096e1d0caa3a5870c68a322a1a7c3",
+			"irregular": false,
+			"plan_seed": 1532982726,
+			"profile": "checkpoint_guard_loggia",
+			"role": "district_fill"
+		}
+	}
+}
