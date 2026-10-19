@@ -356,8 +356,8 @@ func _update_focus_ring() -> void:
 		control.focus_neighbor_bottom = control.get_path_to(next)
 		control.focus_neighbor_left = control.get_path_to(previous)
 		control.focus_neighbor_right = control.get_path_to(next)
-	var owner := get_viewport().gui_get_focus_owner()
-	if owner != null and _root.is_ancestor_of(owner) and not targets.has(owner):
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	if focus_owner != null and _root.is_ancestor_of(focus_owner) and not targets.has(focus_owner):
 		targets[0].grab_focus()
 
 func _focus_arrival() -> void:

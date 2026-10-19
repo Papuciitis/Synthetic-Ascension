@@ -1,0 +1,55 @@
+{
+  "status": "Reported compiler-warning cleanup verified; 14 behavior suites pass, resource-warmup timing gate remains unresolved",
+  "scope": "Exactly 29 reported warnings in 14 production scripts; local name cleanup, explicit nonnegative truncation, two redundant synchronous awaits. Ordinary style rollout remains on HOLD; enabled_for still requires segment==2.",
+  "reported_warnings_before": 29,
+  "reported_warnings_after": 0,
+  "warning_categories": 7,
+  "target_scripts": 14,
+  "startup_severities_strict": true,
+  "autoload_context": true,
+  "compiler_exit": 0,
+  "compiler_diagnostics": [],
+  "project_warning_policy_changed": false,
+  "audited_source_hash_mismatches": 0,
+  "dependency_comparison": {
+    "files": 1536,
+    "missing": 0,
+    "mismatches": 0,
+    "path": "after-final/dependency-equivalence.json"
+  },
+  "fixture_diagnostic": {
+    "suite": "AuthoredCoverDepthTest",
+    "passed": 114,
+    "failed": 0,
+    "diagnostic": "WARNING: [ChunkManager] Player not found (group 'player').",
+    "classification": "Unchanged fixture constructs/adds ChunkManager at lines116-121 without a player-group node. Existing ChunkManager._ready warning remains unchanged. This is separate from the reported compiler warnings and native production diagnostics."
+  },
+  "preserved_contracts": [
+    "composed_street_area retains the dynamically inspected paving-owner state.",
+    "Library search midpoint and positive image-center coordinates retain truncation through floori on floating halves.",
+    "Explicit S1 initialization-frame awaits and guards stay in place.",
+    "Clipped continuation roof pieces retain the same ShaderMaterial and whole-wing bounds."
+  ],
+  "verification_limits": [
+    "Before and intermediate direct-file checks contain dependency/singleton errors and are retained as diagnostic runs. Only after-final is the complete-context acceptance run.",
+    "No claim that the entire human editor warning panel has been inventoried or refreshed.",
+    "Generated .uid/.import sidecars are excluded from dependency comparison; sources/resources and all 14 target scripts match.",
+    "Provisional CitySegmentCoverageTest files and the independently owned style inventory are excluded from this cleanup."
+  ],
+  "publication": "Scoped commit authorized after passing verification; no push authorized.",
+  "behavior": {
+    "passed_suites": 14,
+    "failed_suites": [
+      "TransitionResourceWarmupTest"
+    ],
+    "initial_warmup_largest_ms": 465.0,
+    "retry_warmup_largest_ms": 279.9,
+    "warmup_limit_ms": 250.0,
+    "pre_cleanup_control_largest_ms": 212.775,
+    "pre_cleanup_control_passed": true,
+    "preparation_source_equal_after_timer_name_normalization": true,
+    "normalized_source_revision": "65f8860c8dba91dd3edb4d8bcebdd431de55ff33",
+    "scope": "No production timing/scheduling or test-threshold edits. Timing remains unresolved for this tree; source equality does not prove stable performance. Failed runs retained."
+  },
+  "review": "Root and independent code reviewer found no remaining actionable production issue after correcting the continuation material reference; split-roof and odd/even real-texture regressions pass."
+}

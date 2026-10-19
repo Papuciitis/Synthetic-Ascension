@@ -197,12 +197,12 @@ func _ready() -> void:
 	if progressive_initialization and not is_inside_tree():
 		return
 	_initialization_stage = &"ground_stamps"
-	await _build_ground_stamps()
+	_build_ground_stamps()
 	await _initialization_frame()
 	if progressive_initialization and not is_inside_tree():
 		return
 	_initialization_stage = &"geometry"
-	await _spawn_planned_geometry()
+	_spawn_planned_geometry()
 	await _initialization_frame()
 	if progressive_initialization and not is_inside_tree():
 		return

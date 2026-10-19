@@ -110,13 +110,13 @@ func _draw() -> void:
 	if _tail == null:
 		return
 	var selected := _held or button_pressed or has_focus() or is_hovered()
-	var material := tint.lightened(0.05) if active else tint
+	var ribbon_tint := tint.lightened(0.05) if active else tint
 	if selected and not disabled:
-		material = material.lightened(0.10)
+		ribbon_tint = ribbon_tint.lightened(0.10)
 	if disabled:
-		material = material.darkened(0.35)
+		ribbon_tint = ribbon_tint.darkened(0.35)
 	var geometry := tail_geometry()
 	if _root != null and geometry.root.has_area():
-		draw_texture_rect(_root, geometry.root, false, material)
-	draw_texture_rect(_tail, geometry.tail, false, material)
+		draw_texture_rect(_root, geometry.root, false, ribbon_tint)
+	draw_texture_rect(_tail, geometry.tail, false, ribbon_tint)
 	draw_string(FONT, Vector2(size.x * 0.07, geometry.baseline), label, HORIZONTAL_ALIGNMENT_CENTER, size.x * 0.86, geometry.font_size, Color(1.0, 0.93, 0.76))

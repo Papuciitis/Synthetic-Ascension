@@ -1,0 +1,36 @@
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+   at: GDScript::reload (res://core/actors/enemy/enemy.gd:237)
+ERROR: Failed to load script "res://core/actors/enemy/enemy.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+   at: GDScript::reload (res://scenes/world/pickups/ItemPickup.gd:184)
+ERROR: Failed to load script "res://scenes/world/pickups/ItemPickup.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+   at: GDScript::reload (res://scenes/world/pickups/PickupVfx.gd:101)
+ERROR: Failed to load script "res://scenes/world/pickups/PickupVfx.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+   at: GDScript::reload (res://core/systems/vfx/VfxKit.gd:106)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://assets/vfx/world/sets/conduit/VFX_ShockRing.gd:0)
+ERROR: Failed to load script "res://assets/vfx/world/sets/conduit/VFX_ShockRing.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder
+   at: GDScript::reload (res://core/systems/world/ChunkManager.gd:400)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://core/combat/projectile/EnemyProjectile.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scenes/world/bosses/BossAttackScope.gd:0)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+   at: GDScript::reload (res://core/settings/AccessibilityPresentation.gd:25)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scenes/world/bosses/BossGroundWarning.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://core/combat/hazards/DamageCircle.gd:0)
+ERROR: Failed to load script "res://core/combat/hazards/DamageCircle.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+   at: GDScript::reload (res://scenes/world/bosses/BossBulldozerBrain.gd:228)
+ERROR: Failed to load script "res://scenes/world/bosses/BossBulldozerBrain.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

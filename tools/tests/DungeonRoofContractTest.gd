@@ -23,6 +23,7 @@ func _run() -> void:
 	add_child(head)
 	var occlusion := preload("res://core/actors/player/PlayerRoofOcclusion.gd").new()
 	occlusion.configure(body,head)
+	_test_split_roof_material()
 	for size: Vector2i in [Vector2i(60,28),Vector2i(28,60),Vector2i(60,60)]:
 		for side in range(4):
 			var region := Rect2i(Vector2i(2,2),size)
@@ -70,6 +71,24 @@ func _run() -> void:
 			for chunk: Node2D in chunks: chunk.free()
 	print("DungeonRoofContractTest: %d passed, %d failed" % [passed,failed])
 	get_tree().quit(1 if failed else 0)
+
+func _test_split_roof_material() -> void:
+	var roof := preload("res://scenes/world/buildings/DungeonRoof.gd").new()
+	add_child(roof)
+	var wing := Rect2(0,0,640,320)
+	var coverage: Array[Rect2] = [wing]
+	var holes: Array[Rect2] = [Rect2(288,-100,64,600)]
+	roof.configure_slice(wing,wing,coverage,0.0,false,holes)
+	var plane := roof.get_node("RoofPoly") as Polygon2D
+	var continuations: Array[Polygon2D] = []
+	for child: Node in plane.get_children():
+		if child is Polygon2D and child.get_meta(&"city_roof_form",&"") == &"dungeon_continuation": continuations.append(child)
+	_check(continuations.size() == 1,"Through-cut produces two actual roof pieces")
+	for continuation: Polygon2D in continuations:
+		_check(continuation.material is ShaderMaterial and continuation.material == plane.material,"Every clipped continuation retains the roof shader material")
+		if continuation.material is ShaderMaterial:
+			_check((continuation.material as ShaderMaterial).get_shader_parameter("bounds") == Vector4(12,0,628,306),"Continuation shader keeps complete-wing bounds rather than restarting at the cut")
+	roof.free()
 
 func _area(points: PackedVector2Array) -> float:
 	var value := 0.0

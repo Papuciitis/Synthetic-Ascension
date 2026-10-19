@@ -25,18 +25,18 @@ static func attach(chunk: Node2D, plan: Dictionary, offset: Vector2i, cells_per_
 		# Compact halls are indoors even when their surrounding segment uses
 		# mossy street paving. Restrict this opt-in floor to the real enclosure.
 		var area := Rect2(Vector2(region.position)*cell_px,Vector2(region.size)*cell_px).grow(-24)
-		var floor := _panel(host,area,clip,Color(0.78,0.81,0.78),-92)
-		if floor != null:
-			floor.name = "DungeonInteriorFloor"
-			floor.texture = KIT._texture("paving.png")
-			floor.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-			floor.texture_scale = Vector2.ONE*3.0
+		var interior_floor := _panel(host,area,clip,Color(0.78,0.81,0.78),-92)
+		if interior_floor != null:
+			interior_floor.name = "DungeonInteriorFloor"
+			interior_floor.texture = KIT._texture("paving.png")
+			interior_floor.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+			interior_floor.texture_scale = Vector2.ONE*3.0
 			var material := ShaderMaterial.new()
 			material.shader = preload("res://scenes/world/buildings/city_paving.gdshader")
 			material.set_shader_parameter("area",Vector4(area.position.x,area.position.y,area.end.x,area.end.y))
 			material.set_shader_parameter("edge_feather",2.0)
 			material.set_shader_parameter("surface_contrast",0.30)
-			floor.material = material
+			interior_floor.material = material
 	var covered: Array[Rect2] = []
 	for wing: Rect2i in plan.roofs:
 		var interior := wing.intersection(region.grow(-1))

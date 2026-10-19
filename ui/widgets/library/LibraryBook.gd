@@ -65,8 +65,8 @@ func title_layout() -> Dictionary:
 			lines.append(line)
 		widths.clear()
 		var fits := true
-		for text: String in lines:
-			var width := TITLE_FONT.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		for line_text: String in lines:
+			var width := TITLE_FONT.get_string_size(line_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 			widths.append(width)
 			fits = fits and width <= bounds.size.x
 		if fits and TITLE_FONT.get_height(font_size) * lines.size() <= bounds.size.y:
@@ -78,12 +78,12 @@ func title_layout() -> Dictionary:
 func _draw() -> void:
 	var lifted := is_hovered() or has_focus()
 	var lift := -4.0 if lifted else 0.0
-	var material := tint if discovered_pages > 0 else tint.darkened(0.12)
+	var spine_tint := tint if discovered_pages > 0 else tint.darkened(0.12)
 	if _spine != null:
 		draw_set_transform(Vector2(3, size.y + lift + 4), -PI / 2.0)
 		draw_texture_rect(_spine, Rect2(Vector2.ZERO, Vector2(size.y, size.x)), false, Color(0, 0, 0, 0.45))
 		draw_set_transform(Vector2(0, size.y + lift), -PI / 2.0)
-		draw_texture_rect(_spine, Rect2(Vector2.ZERO, Vector2(size.y, size.x)), false, material)
+		draw_texture_rect(_spine, Rect2(Vector2.ZERO, Vector2(size.y, size.x)), false, spine_tint)
 		draw_set_transform(Vector2.ZERO)
 	var layout := title_layout()
 	var bounds: Rect2 = layout.bounds
@@ -92,8 +92,8 @@ func _draw() -> void:
 	var font_size: int = layout.font_size
 	var baseline := bounds.position.y + (bounds.size.y - line_height * lines.size()) * 0.5 + TITLE_FONT.get_ascent(font_size) + lift
 	var ink := Kit.GOLD_BRIGHT if lifted else Kit.PARCHMENT
-	for text: String in lines:
-		draw_string(TITLE_FONT, Vector2(bounds.position.x, baseline), text, HORIZONTAL_ALIGNMENT_CENTER, bounds.size.x, font_size, ink)
+	for line_text: String in lines:
+		draw_string(TITLE_FONT, Vector2(bounds.position.x, baseline), line_text, HORIZONTAL_ALIGNMENT_CENTER, bounds.size.x, font_size, ink)
 		baseline += line_height
 	# Keep completion counts in the tooltip; short leather bindings carry only words.
 	if _marker != null and unread_pages > 0:

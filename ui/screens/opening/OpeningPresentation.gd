@@ -208,12 +208,12 @@ func _release_illustration() -> void:
 
 
 ## How much of a still layer is painted in: 0 none, 1 the plain painting.
-func _reveal_of(layer: TextureRect) -> float:
-	return float((layer.material as ShaderMaterial).get_shader_parameter(&"reveal"))
+func _reveal_of(still_layer: TextureRect) -> float:
+	return float((still_layer.material as ShaderMaterial).get_shader_parameter(&"reveal"))
 
 
-func _set_reveal(value: float, layer: TextureRect = null) -> void:
-	var target := layer if layer != null else _illustration
+func _set_reveal(value: float, still_layer: TextureRect = null) -> void:
+	var target := still_layer if still_layer != null else _illustration
 	(target.material as ShaderMaterial).set_shader_parameter(&"reveal", clampf(value, 0.0, 1.0))
 
 
@@ -256,25 +256,25 @@ func _reduced_motion() -> bool:
 
 ## Keeps the reveal pattern in the rect's own pixels and the push-in centred
 ## on the still's focal point as the window resizes.
-func _fit_still_layer(layer: TextureRect) -> void:
-	(layer.material as ShaderMaterial).set_shader_parameter(&"rect_size", layer.size)
-	layer.pivot_offset = layer.size * (layer.get_meta(&"focus", Vector2(0.5, 0.5)) as Vector2)
+func _fit_still_layer(still_layer: TextureRect) -> void:
+	(still_layer.material as ShaderMaterial).set_shader_parameter(&"rect_size", still_layer.size)
+	still_layer.pivot_offset = still_layer.size * (still_layer.get_meta(&"focus", Vector2(0.5, 0.5)) as Vector2)
 
 
 func _make_still_layer(label: String) -> TextureRect:
-	var layer := TextureRect.new()
-	layer.name = label
-	layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	layer.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.visible = false
+	var still_layer := TextureRect.new()
+	still_layer.name = label
+	still_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	still_layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	still_layer.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	still_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	still_layer.visible = false
 	var material := ShaderMaterial.new()
 	material.shader = STILL_SHADER
 	material.set_shader_parameter(&"reveal", 1.0)
-	layer.material = material
-	layer.resized.connect(_fit_still_layer.bind(layer))
-	return layer
+	still_layer.material = material
+	still_layer.resized.connect(_fit_still_layer.bind(still_layer))
+	return still_layer
 
 
 ## The stroke pattern the stills paint in with: seamless smooth noise (no

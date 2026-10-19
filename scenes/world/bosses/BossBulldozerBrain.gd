@@ -739,7 +739,7 @@ func _enter_recovery(overshoot: float = 0.0, seconds: float = TEACHING_RECOVERY)
 	_set_teaching_state(&"recovery")
 	_stop_trail()
 
-func _add_warning(pos: Vector2, radius: float, duration: float, kind: StringName = &"generic") -> void:
+func _add_warning(pos: Vector2, radius: float, _duration: float, kind: StringName = &"generic") -> void:
 	var warning: Node2D = GroundWarning.new()
 	warning.call("set_attack_style", kind)
 	# The controller drives every warning's progress on the gameplay clock.

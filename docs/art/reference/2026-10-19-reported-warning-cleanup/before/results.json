@@ -1,0 +1,198 @@
+{
+  "snapshot": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\warning-snapshot-be755f79",
+  "warning_categories": [
+    "shadowed_variable_base_class",
+    "unused_private_class_variable",
+    "unused_parameter",
+    "shadowed_global_identifier",
+    "confusable_local_declaration",
+    "integer_division",
+    "redundant_await"
+  ],
+  "targets": [
+    {
+      "path": "scenes/world/buildings/RoofOverlay.gd",
+      "source_sha256": "5CC300ABBE3D5363F8535C251B8A21EBEFD065935B3E728522A6391D91D87A6C",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/RoofOverlay.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "source_sha256": "E5236708089F899D56F2A37B1406EB6F277B5A7435C2E1E47B044E397E244EC1",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/DungeonRoof.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "source_sha256": "05800F594ACCA156F997ED74CD3310490530518B5FB89C4F10E992F295D8DBBC",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The parameter \"role\" is never used in the function \"enabled_for()\". If this is intended, prefix it with an underscore: \"_role\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The variable \"floor\" has the same name as a built-in function. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The local variable \"owner\" is shadowing an already-declared property in the base class \"Node\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The variable \"cast\" is declared below in the parent block. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The class variable \"_street_area\" is declared but never used in the class. (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/CityBlockKit.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "source_sha256": "720F86B73240AAA3A28F8D6EBACB1C064EFBC6C227747FFEDB32A8543989E698",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The variable \"floor\" has the same name as a built-in function. (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/DungeonBuilding.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "core/systems/world/ChunkManager.gd",
+      "source_sha256": "E1EA17E50266D616DF50A61B1D5370E587E546183A5002B1BC5E2C6F2FB23931",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://core/systems/world/ChunkManager.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "ui/screens/CityDevelopmentScreen.gd",
+      "source_sha256": "D11C7BE1EEDBFE6C0BC6B34E61E5E9530EBFC9F5AA33E305901D4556A2DE070F",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The local variable \"owner\" is shadowing an already-declared property in the base class \"Node\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://ui/screens/CityDevelopmentScreen.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "ui/widgets/library/LibraryBook.gd",
+      "source_sha256": "4DB3D50E8A32D2F12625B19BFE64C09A49FB5EC99FB5D6B224F4B1CA6322FE50",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The local \"for\" iterator variable \"text\" is shadowing an already-declared property in the base class \"Button\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The local \"for\" iterator variable \"text\" is shadowing an already-declared property in the base class \"Button\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://ui/widgets/library/LibraryBook.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "ui/widgets/library/LibraryOpenBook.gd",
+      "source_sha256": "F8555127948945185F4D91AE9AA3B0B5F6B163CEBB2F3ACAC58E510A0A5D2471",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The local variable \"position\" is shadowing an already-declared property in the base class \"Control\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: Integer division. Decimal part will be discarded. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: Integer division. Decimal part will be discarded. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://ui/widgets/library/LibraryOpenBook.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "ui/widgets/library/LibraryRibbon.gd",
+      "source_sha256": "D222D969727C1D2985131930C9681C826C1C98F7912DBF6FDBF3BD100C531FAB",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://ui/widgets/library/LibraryRibbon.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "ui/widgets/library/LibraryPagination.gd",
+      "source_sha256": "D9ADCF97D881F67DE291FA56F7EF1FE4A57594DD49B32A29699C785F58712F58",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: Integer division. Decimal part will be discarded. (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://ui/widgets/library/LibraryPagination.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "ui/screens/opening/OpeningPresentation.gd",
+      "source_sha256": "A67E2E883D9CFD3CCC7BC9FAC8DCBD686FDDD14009A88B54900003882680917E",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The local function parameter \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The local function parameter \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The local function parameter \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The local variable \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://ui/screens/opening/OpeningPresentation.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "core/systems/world/Level1Builder.gd",
+      "source_sha256": "2A67BF887ED57FD816892DB04F7FE26365D20BD16C46C0B3527789288E856092",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/PickupVfx.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: RunEvents",
+        "ERROR: Failed to load script \"res://scenes/world/volumes/IndoorVolume.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/ExplorationLootSpawner.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Parse Error: \"await\" keyword is unnecessary because the expression isn't a coroutine nor a signal. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: \"await\" keyword is unnecessary because the expression isn't a coroutine nor a signal. (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://core/systems/world/Level1Builder.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "scenes/world/bosses/BossBulldozerBrain.gd",
+      "source_sha256": "2E148243131F2C478F83B4B5C73B6FA5309EC9DA9BE995CF1A66B6CD72BA671C",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://core/actors/enemy/enemy.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/PickupVfx.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "ERROR: Failed to load script \"res://assets/vfx/world/sets/conduit/VFX_ShockRing.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)",
+        "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "ERROR: Failed to load script \"res://core/combat/hazards/DamageCircle.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Parse Error: The parameter \"duration\" is never used in the function \"_add_warning()\". If this is intended, prefix it with an underscore: \"_duration\". (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://scenes/world/bosses/BossBulldozerBrain.gd\" with error \"Parse error\"."
+      ]
+    },
+    {
+      "path": "core/systems/world/objectives/BreachSealObjective.gd",
+      "source_sha256": "D58600D8A255EF39EA1922E09B71350488297A5DF22A4B9BCAD8B3FC648C99C3",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: The variable \"at\" is declared below in the parent block. (Warning treated as error.)",
+        "ERROR: Failed to load script \"res://core/systems/world/objectives/BreachSealObjective.gd\" with error \"Parse error\"."
+      ]
+    }
+  ],
+  "failed_scripts": 14,
+  "project_settings_file_unchanged": true,
+  "limit": "Check-only compiler diagnostics may report only the first warning per file; dependencies can also appear. This audits the reported categories in the 14 target scripts, not the complete human editor warning panel."
+}

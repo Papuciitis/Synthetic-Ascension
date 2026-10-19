@@ -1,0 +1,173 @@
+{
+  "snapshot": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\warning-snapshot-3a52d399",
+  "warning_categories": [
+    "shadowed_variable_base_class",
+    "unused_private_class_variable",
+    "unused_parameter",
+    "shadowed_global_identifier",
+    "confusable_local_declaration",
+    "integer_division",
+    "redundant_await"
+  ],
+  "targets": [
+    {
+      "path": "scenes/world/buildings/RoofOverlay.gd",
+      "source_sha256": "DD2015D5A752249DACAB2F551C19F396E84FB0BD3E2121F50127B1A857F205C6",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/RoofOverlay.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "source_sha256": "281B464530487031638D55646D1DFD8E76BA6ED87A9F02022BCBA965BD87B7CC",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/DungeonRoof.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "source_sha256": "D688520A195F02704583AA53067CF20A9EAEA3BAC1362F2EC0F942025916BAB4",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/CityBlockKit.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "source_sha256": "2434A65234A22BF680BB91645B3C3FE9B9086B8C8B9517AFEA07673A5A3F100D",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "ERROR: Failed to load script \"res://scenes/world/buildings/DungeonBuilding.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "core/systems/world/ChunkManager.gd",
+      "source_sha256": "3A797EC7AF44D642F08A24576F96EAB5DF284309E26611AAB93C8C780BDB9CD3",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder",
+        "ERROR: Failed to load script \"res://core/systems/world/ChunkManager.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "ui/screens/CityDevelopmentScreen.gd",
+      "source_sha256": "985A677C4ADA8E045A9486984AA1FB7E0D806A54F9147F2558B053F3619DE04F",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: SfxManager",
+        "ERROR: Failed to load script \"res://ui/screens/CityDevelopmentScreen.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "ui/widgets/library/LibraryBook.gd",
+      "source_sha256": "66E793EF44FA7A839E0DDE1846101BB000C801B1B6799EC3A62F30E07B581CE8",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": []
+    },
+    {
+      "path": "ui/widgets/library/LibraryOpenBook.gd",
+      "source_sha256": "D55E2347089FF8B5BF1FFF42BFB57C4D4665BC72983706099BED30ADEBD078B4",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": []
+    },
+    {
+      "path": "ui/widgets/library/LibraryRibbon.gd",
+      "source_sha256": "5C3FCBD473457103B3BB7149E157547062955A1E65B5D7055E02C26A70217B96",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": []
+    },
+    {
+      "path": "ui/widgets/library/LibraryPagination.gd",
+      "source_sha256": "33A70278D4B28F9AF1B3339089AFB2B46A775DD953002E3CA3ED1025F8045C81",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": []
+    },
+    {
+      "path": "ui/screens/opening/OpeningPresentation.gd",
+      "source_sha256": "A23E2FD69C5504175C1899E66F382D65F63DBA6AF72431D91C664D530A9709CE",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "ERROR: Failed to load script \"res://ui/screens/opening/OpeningPresentation.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "core/systems/world/Level1Builder.gd",
+      "source_sha256": "85F263DAC8920834C772C5183B8F55AAD804C8ABFF2B4EAA4059B148F7906F36",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/PickupVfx.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: RunEvents",
+        "ERROR: Failed to load script \"res://scenes/world/volumes/IndoorVolume.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/ExplorationLootSpawner.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://core/systems/world/Level1Builder.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "scenes/world/bosses/BossBulldozerBrain.gd",
+      "source_sha256": "B9A4A65680A396D69D2BC040646642D7665A885E4BA3EC03A5E3F101A2C15B27",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://core/actors/enemy/enemy.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "ERROR: Failed to load script \"res://scenes/world/pickups/PickupVfx.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "ERROR: Failed to load script \"res://assets/vfx/world/sets/conduit/VFX_ShockRing.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+        "ERROR: Failed to load script \"res://core/combat/hazards/DamageCircle.gd\" with error \"Compilation failed\".",
+        "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+        "ERROR: Failed to load script \"res://scenes/world/bosses/BossBulldozerBrain.gd\" with error \"Compilation failed\"."
+      ]
+    },
+    {
+      "path": "core/systems/world/objectives/BreachSealObjective.gd",
+      "source_sha256": "F1097CA421FE35B62245B1D0D1547DBEB67ADD33F97F6A2C09EEC922D0C9413A",
+      "exit": 1,
+      "timeout": false,
+      "diagnostics": [
+        "SCRIPT ERROR: Compile Error: Identifier not found: RunEvents",
+        "ERROR: Failed to load script \"res://core/systems/world/objectives/BreachSealObjective.gd\" with error \"Compilation failed\"."
+      ]
+    }
+  ],
+  "failed_scripts": 10,
+  "project_settings_file_unchanged": true,
+  "limit": "Check-only compiler diagnostics may report only the first warning per file; dependencies can also appear. This audits the reported categories in the 14 target scripts, not the complete human editor warning panel."
+}

@@ -140,8 +140,8 @@ func _update_turn_layers() -> void:
 		_held_plane.queue_redraw()
 
 func paper_rect(side: int) -> Rect2:
-	var position := Vector2(0.08 if side == 0 else 0.505, 0.08) * size
-	return Rect2(position, size * Vector2(0.415, 0.84))
+	var paper_origin := Vector2(0.08 if side == 0 else 0.505, 0.08) * size
+	return Rect2(paper_origin, size * Vector2(0.415, 0.84))
 
 func opening_paper_rect(side: int, at: float = open_progress) -> Rect2:
 	if side == 1:
@@ -196,7 +196,7 @@ func cover_texture() -> Texture2D:
 	if image == null or image.is_empty():
 		return _cover
 	# A newly allocated transparent render target is not a captured cover yet.
-	if image.get_pixel(image.get_width() / 2, image.get_height() / 2).a <= 0.01:
+	if image.get_pixel(floori(image.get_width() / 2.0), floori(image.get_height() / 2.0)).a <= 0.01:
 		return _cover
 	return ImageTexture.create_from_image(image)
 
@@ -395,11 +395,11 @@ func _draw_cover() -> void:
 	if absf(projection[1].x - projection[0].x) < 0.1:
 		return
 	var shade := 1.0 - sin(open_progress * PI) * 0.26
-	var material := cover_tint * Color(shade, shade, shade, 1)
+	var cover_color := cover_tint * Color(shade, shade, shade, 1)
 	var uvs := PackedVector2Array([Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)])
 	if texture is AtlasTexture:
 		var atlas := texture as AtlasTexture
 		for index: int in uvs.size():
 			uvs[index] = (atlas.region.position + uvs[index] * atlas.region.size) / atlas.atlas.get_size()
 		texture = atlas.atlas
-	_cover_plane.draw_polygon(projection, PackedColorArray([material]), uvs, texture)
+	_cover_plane.draw_polygon(projection, PackedColorArray([cover_color]), uvs, texture)

@@ -448,8 +448,8 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 	else:
 		# L/recessed parcels retain their real silhouette. Never stretch a
 		# rectangular compound over the courtyard notch or its walkable bay.
-		var material := _poly.material as ShaderMaterial
-		material.set_shader_parameter("gable",1.0)
+		var roof_material := _poly.material as ShaderMaterial
+		roof_material.set_shader_parameter("gable",1.0)
 		_poly.set_meta(&"city_roof_form", &"irregular_hall")
 		preload("res://scenes/world/buildings/CityBlockRoofForms.gd")._chimney(_poly,_poly,civic)
 

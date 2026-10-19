@@ -15,7 +15,7 @@ var _facade: Texture2D
 var _south_front := false
 var _facade_alpha := 1.0
 var _facade_height := 116.0
-var _street_area := Rect2()
+var composed_street_area := Rect2()
 var _street_h := Rect2()
 var _street_v := Rect2()
 var _chunk_extent := Vector2.ZERO
@@ -28,7 +28,7 @@ var _irregular := false
 static var preview_original_materials := false
 static var _texture_cache: Dictionary = {}
 
-static func enabled_for(role: StringName, segment: int) -> bool:
+static func enabled_for(_role: StringName, segment: int) -> bool:
 	return not preview_original_materials and segment == 2
 
 func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_civic: bool, irregular_outline: PackedVector2Array = PackedVector2Array(), shared_ground: bool = false) -> void:
@@ -152,24 +152,24 @@ static func _road_vector(rect: Rect2) -> Vector4:
 	return Vector4(rect.position.x, rect.position.y, rect.end.x, rect.end.y) if rect.has_area() else Vector4.ZERO
 
 func _add_interior_floor(cell_px: int) -> void:
-	var floor := Polygon2D.new()
-	floor.name = "CityInteriorFloor"
+	var interior_floor := Polygon2D.new()
+	interior_floor.name = "CityInteriorFloor"
 	var area := bounds.grow(-float(cell_px))
-	floor.polygon = PackedVector2Array([area.position, Vector2(area.end.x, area.position.y), area.end, Vector2(area.position.x, area.end.y)])
-	floor.texture = _texture("paving.png")
-	floor.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-	floor.texture_scale = Vector2.ONE * 3.0
-	floor.color = Color(0.65, 0.71, 0.70)
+	interior_floor.polygon = PackedVector2Array([area.position, Vector2(area.end.x, area.position.y), area.end, Vector2(area.position.x, area.end.y)])
+	interior_floor.texture = _texture("paving.png")
+	interior_floor.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	interior_floor.texture_scale = Vector2.ONE * 3.0
+	interior_floor.color = Color(0.65, 0.71, 0.70)
 	# Parent is -2: effective -93, above legacy indoor stamps at -94 in
 	# both splat and non-splat rendering, still below walls and actors.
-	floor.z_index = -91
+	interior_floor.z_index = -91
 	var surface := ShaderMaterial.new()
 	surface.shader = preload("res://scenes/world/buildings/city_paving.gdshader")
 	surface.set_shader_parameter("area", Vector4(area.position.x, area.position.y, area.end.x, area.end.y))
 	surface.set_shader_parameter("edge_feather", 2.0)
 	surface.set_shader_parameter("surface_contrast", 0.23)
-	floor.material = surface
-	add_child(floor)
+	interior_floor.material = surface
+	add_child(interior_floor)
 
 func _add_entry_ground() -> void:
 	if not _south_front: return
@@ -244,15 +244,15 @@ static func compose_street(chunk: Node2D, footprints: Array[Rect2i], lane_h: Rec
 			if child.has_meta(&"city_paving"):
 				kit.remove_child(child)
 				child.queue_free()
-		kit.set("_street_area", Rect2())
-	var owner: Node2D = kits[0]
-	owner.set("_street_area", area)
-	owner.set("_chunk_extent", Vector2.ONE*chunk_cells*cell_px)
-	owner.set("_street_h", Rect2(Vector2(lane_h.position)*cell_px, Vector2(lane_h.size)*cell_px))
-	owner.set("_street_v", Rect2(Vector2(lane_v.position)*cell_px, Vector2(lane_v.size)*cell_px))
-	owner.call("_add_frontage_ground", area)
+		kit.set("composed_street_area", Rect2())
+	var paving_owner: Node2D = kits[0]
+	paving_owner.set("composed_street_area", area)
+	paving_owner.set("_chunk_extent", Vector2.ONE*chunk_cells*cell_px)
+	paving_owner.set("_street_h", Rect2(Vector2(lane_h.position)*cell_px, Vector2(lane_h.size)*cell_px))
+	paving_owner.set("_street_v", Rect2(Vector2(lane_v.position)*cell_px, Vector2(lane_v.size)*cell_px))
+	paving_owner.call("_add_frontage_ground", area)
 	for kit in kits: kit.call("trim_paving", footprints, cell_px)
-	owner.queue_redraw()
+	paving_owner.queue_redraw()
 
 func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 	# Parcel composition knows all neighbours only after the frontage pass.
@@ -447,8 +447,8 @@ func _draw() -> void:
 		draw_texture_rect_region(_facade, Rect2(door_left, top, _door_width, _facade_height), Rect2(tex_size.x * opening_left, 0, tex_size.x * (opening_right - opening_left), tex_size.y), tint)
 		draw_texture_rect_region(_facade, Rect2(door_right, top, x1 - door_right, _facade_height), Rect2(tex_size.x * opening_right, 0, tex_size.x * (1.0 - opening_right), tex_size.y), tint)
 		if _awning_cast.has_area():
-			var cast := _awning_cast
-			draw_polygon(PackedVector2Array([cast.position,Vector2(cast.end.x,cast.position.y),cast.end,Vector2(cast.position.x,cast.end.y)]),PackedColorArray([Color(0.08,0.14,0.16,0.22*_facade_alpha),Color(0.08,0.14,0.16,0.22*_facade_alpha),Color(0.08,0.14,0.16,0),Color(0.08,0.14,0.16,0)]))
+			var awning_shadow := _awning_cast
+			draw_polygon(PackedVector2Array([awning_shadow.position,Vector2(awning_shadow.end.x,awning_shadow.position.y),awning_shadow.end,Vector2(awning_shadow.position.x,awning_shadow.end.y)]),PackedColorArray([Color(0.08,0.14,0.16,0.22*_facade_alpha),Color(0.08,0.14,0.16,0.22*_facade_alpha),Color(0.08,0.14,0.16,0),Color(0.08,0.14,0.16,0)]))
 		if civic:
 			# Shaded soffit/jambs and a receding floor make the real opening a
 			# volume, while actors continue drawing above this shallow frontage.

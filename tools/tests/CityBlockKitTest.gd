@@ -173,7 +173,7 @@ func _run() -> void:
 	var street_owners := 0
 	var passage_paved := false
 	for kit: Node2D in kits:
-		if (kit.get("_street_area") as Rect2).has_area(): street_owners += 1
+		if (kit.get("composed_street_area") as Rect2).has_area(): street_owners += 1
 		_check(kit.get_node_or_null("CityInteriorFloor") != null, "shared street preserves separate indoor floor")
 		for strip: Node in kit.get_children():
 			if not (strip is Polygon2D and strip.has_meta(&"city_paving")): continue

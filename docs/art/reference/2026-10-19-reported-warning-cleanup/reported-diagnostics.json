@@ -1,0 +1,156 @@
+{
+  "reported_warnings_before": 29,
+  "reported_warnings_after": 0,
+  "target_scripts": 14,
+  "categories": 7,
+  "before_limit": "Direct file checks reproduce all 29 reported locations but also include missing-singleton/dependency errors; not a production runtime failure.",
+  "after_context": "after-final/audit.json uses complete source roots and real autoload registration; all targets reload successfully under startup error severities, engine exit0, diagnostics0.",
+  "project_warning_policy_changed": false,
+  "records": [
+    {
+      "path": "scenes/world/buildings/RoofOverlay.gd",
+      "line": 451,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "line": 44,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "line": 31,
+      "message": "SCRIPT ERROR: Parse Error: The parameter \"role\" is never used in the function \"enabled_for()\". If this is intended, prefix it with an underscore: \"_role\". (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "line": 155,
+      "message": "SCRIPT ERROR: Parse Error: The variable \"floor\" has the same name as a built-in function. (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "line": 248,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"owner\" is shadowing an already-declared property in the base class \"Node\". (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "line": 450,
+      "message": "SCRIPT ERROR: Parse Error: The variable \"cast\" is declared below in the parent block. (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/buildings/CityBlockKit.gd",
+      "line": 18,
+      "message": "SCRIPT ERROR: Parse Error: The class variable \"_street_area\" is declared but never used in the class. (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "line": 28,
+      "message": "SCRIPT ERROR: Parse Error: The variable \"floor\" has the same name as a built-in function. (Warning treated as error.)"
+    },
+    {
+      "path": "core/systems/world/ChunkManager.gd",
+      "line": 235,
+      "message": "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)"
+    },
+    {
+      "path": "core/systems/world/ChunkManager.gd",
+      "line": 251,
+      "message": "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)"
+    },
+    {
+      "path": "core/systems/world/ChunkManager.gd",
+      "line": 257,
+      "message": "SCRIPT ERROR: Parse Error: The variable \"started\" is declared below in the parent block. (Warning treated as error.)"
+    },
+    {
+      "path": "ui/screens/CityDevelopmentScreen.gd",
+      "line": 359,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"owner\" is shadowing an already-declared property in the base class \"Node\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryBook.gd",
+      "line": 68,
+      "message": "SCRIPT ERROR: Parse Error: The local \"for\" iterator variable \"text\" is shadowing an already-declared property in the base class \"Button\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryBook.gd",
+      "line": 81,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryBook.gd",
+      "line": 95,
+      "message": "SCRIPT ERROR: Parse Error: The local \"for\" iterator variable \"text\" is shadowing an already-declared property in the base class \"Button\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryOpenBook.gd",
+      "line": 143,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"position\" is shadowing an already-declared property in the base class \"Control\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryOpenBook.gd",
+      "line": 199,
+      "message": "SCRIPT ERROR: Parse Error: Integer division. Decimal part will be discarded. (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryOpenBook.gd",
+      "line": 199,
+      "message": "SCRIPT ERROR: Parse Error: Integer division. Decimal part will be discarded. (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryOpenBook.gd",
+      "line": 398,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryRibbon.gd",
+      "line": 113,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"material\" is shadowing an already-declared property in the base class \"CanvasItem\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/widgets/library/LibraryPagination.gd",
+      "line": 55,
+      "message": "SCRIPT ERROR: Parse Error: Integer division. Decimal part will be discarded. (Warning treated as error.)"
+    },
+    {
+      "path": "ui/screens/opening/OpeningPresentation.gd",
+      "line": 211,
+      "message": "SCRIPT ERROR: Parse Error: The local function parameter \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/screens/opening/OpeningPresentation.gd",
+      "line": 215,
+      "message": "SCRIPT ERROR: Parse Error: The local function parameter \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/screens/opening/OpeningPresentation.gd",
+      "line": 259,
+      "message": "SCRIPT ERROR: Parse Error: The local function parameter \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)"
+    },
+    {
+      "path": "ui/screens/opening/OpeningPresentation.gd",
+      "line": 265,
+      "message": "SCRIPT ERROR: Parse Error: The local variable \"layer\" is shadowing an already-declared property in the base class \"CanvasLayer\". (Warning treated as error.)"
+    },
+    {
+      "path": "core/systems/world/Level1Builder.gd",
+      "line": 200,
+      "message": "SCRIPT ERROR: Parse Error: \"await\" keyword is unnecessary because the expression isn't a coroutine nor a signal. (Warning treated as error.)"
+    },
+    {
+      "path": "core/systems/world/Level1Builder.gd",
+      "line": 205,
+      "message": "SCRIPT ERROR: Parse Error: \"await\" keyword is unnecessary because the expression isn't a coroutine nor a signal. (Warning treated as error.)"
+    },
+    {
+      "path": "scenes/world/bosses/BossBulldozerBrain.gd",
+      "line": 742,
+      "message": "SCRIPT ERROR: Parse Error: The parameter \"duration\" is never used in the function \"_add_warning()\". If this is intended, prefix it with an underscore: \"_duration\". (Warning treated as error.)"
+    },
+    {
+      "path": "core/systems/world/objectives/BreachSealObjective.gd",
+      "line": 266,
+      "message": "SCRIPT ERROR: Parse Error: The variable \"at\" is declared below in the parent block. (Warning treated as error.)"
+    }
+  ]
+}

@@ -52,7 +52,7 @@ static func _page_end(plain: String, start: int, boundaries: PackedInt32Array, f
 	var high := boundaries.size() - 1
 	var best := first
 	while low <= high:
-		var middle := (low + high) / 2
+		var middle := floori((low + high) / 2.0)
 		var end := boundaries[middle]
 		if _fits(plain.substr(start, end - start), font, font_size, width, height):
 			best = middle

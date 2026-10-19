@@ -232,9 +232,9 @@ static func prepare_transition_resources(tree: SceneTree) -> void:
 	for index in _WORLD_ART.ground_texture_count():
 		if not _WORLD_ART.ground_texture_is_cached(index):
 			_transition_resource_stage = StringName("ground_%d" % index)
-			var started := Time.get_ticks_usec()
+			var ground_started := Time.get_ticks_usec()
 			_WORLD_ART.ground_texture(index)
-			_trace_transition_resource_step(started)
+			_trace_transition_resource_step(ground_started)
 			await _finish_transition_resource_frame(tree)
 	if not _WORLD_ART.ground_material_array_is_cached():
 		_transition_resource_stage = &"baked_array"
@@ -248,15 +248,15 @@ static func prepare_transition_resources(tree: SceneTree) -> void:
 			if _WORLD_ART.ground_material_array_is_cached():
 				break
 			_transition_resource_stage = StringName("layer_%d" % index)
-			var started := Time.get_ticks_usec()
+			var layer_started := Time.get_ticks_usec()
 			layers.append(_WORLD_ART.prepare_ground_material_layer(index))
-			_trace_transition_resource_step(started)
+			_trace_transition_resource_step(layer_started)
 			await _finish_transition_resource_frame(tree)
 		if not _WORLD_ART.ground_material_array_is_cached():
 			_transition_resource_stage = &"array_upload"
-			var started := Time.get_ticks_usec()
+			var upload_started := Time.get_ticks_usec()
 			_WORLD_ART.cache_ground_material_layers(layers)
-			_trace_transition_resource_step(started)
+			_trace_transition_resource_step(upload_started)
 			await _finish_transition_resource_frame(tree)
 	_transition_resource_stage = &"noise"
 	var started := Time.get_ticks_usec()

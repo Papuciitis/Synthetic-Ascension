@@ -1,0 +1,8 @@
+SCRIPT ERROR: Parse Error: The local "for" iterator variable "text" is shadowing an already-declared property in the base class "Button". (Warning treated as error.)
+   at: GDScript::reload (res://ui/widgets/library/LibraryBook.gd:68)
+SCRIPT ERROR: Parse Error: The local variable "material" is shadowing an already-declared property in the base class "CanvasItem". (Warning treated as error.)
+   at: GDScript::reload (res://ui/widgets/library/LibraryBook.gd:81)
+SCRIPT ERROR: Parse Error: The local "for" iterator variable "text" is shadowing an already-declared property in the base class "Button". (Warning treated as error.)
+   at: GDScript::reload (res://ui/widgets/library/LibraryBook.gd:95)
+ERROR: Failed to load script "res://ui/widgets/library/LibraryBook.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

@@ -1,0 +1,26 @@
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+   at: GDScript::reload (res://scenes/world/pickups/ItemPickup.gd:184)
+ERROR: Failed to load script "res://scenes/world/pickups/ItemPickup.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+   at: GDScript::reload (res://scenes/world/pickups/PickupVfx.gd:101)
+ERROR: Failed to load script "res://scenes/world/pickups/PickupVfx.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+   at: GDScript::reload (res://scenes/world/volumes/IndoorVolume.gd:138)
+ERROR: Failed to load script "res://scenes/world/volumes/IndoorVolume.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+   at: GDScript::reload (res://scenes/world/pickups/ExplorationLootSpawner.gd:46)
+ERROR: Failed to load script "res://scenes/world/pickups/ExplorationLootSpawner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Parse Error: "await" keyword is unnecessary because the expression isn't a coroutine nor a signal. (Warning treated as error.)
+   at: GDScript::reload (res://core/systems/world/Level1Builder.gd:200)
+SCRIPT ERROR: Parse Error: "await" keyword is unnecessary because the expression isn't a coroutine nor a signal. (Warning treated as error.)
+   at: GDScript::reload (res://core/systems/world/Level1Builder.gd:205)
+ERROR: Failed to load script "res://core/systems/world/Level1Builder.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+WARNING: 1 RID of type "Canvas" was leaked.
+   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2733)
+WARNING: 17 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

@@ -155,6 +155,7 @@ func _run() -> void:
 			var center: float = paper.atlas.get_image().get_pixel(550, 650).a
 			_check(alpha < 0.05 and center > 0.95, "paper texture preserves transparent stepped corners and opaque reading surface")
 	if DisplayServer.get_name() != "headless" and open.has_method("capture_leaf"):
+		_cover_center_regressions()
 		open.set("open_progress", 0.5)
 		await RenderingServer.frame_post_draw
 		open.set("open_progress", 1.0)
@@ -276,6 +277,32 @@ func _run() -> void:
 	await get_tree().process_frame
 	print("LibraryPhysicalArtTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+func _cover_center_regressions() -> void:
+	# Actual odd/even textures catch rounding up at the center and accepting
+	# an unrendered transparent cover. These are not viewport mocks.
+	var sample_book: Control = OPEN_BOOK.new()
+	var fallback := AtlasTexture.new()
+	fallback.atlas = ImageTexture.create_from_image(Image.create(1,1,false,Image.FORMAT_RGBA8))
+	sample_book.set("_cover",fallback)
+	sample_book.set("_cover_rendered",true)
+	for sample: Dictionary in [{"size":Vector2i(1,1),"center":Vector2i(0,0)},{"size":Vector2i(5,7),"center":Vector2i(2,3)},{"size":Vector2i(6,8),"center":Vector2i(3,4)}]:
+		var dimensions: Vector2i = sample.size
+		var center: Vector2i = sample.center
+		var pixels := Image.create(dimensions.x,dimensions.y,false,Image.FORMAT_RGBA8)
+		pixels.fill(Color.TRANSPARENT)
+		sample_book.set("_cover_texture",ImageTexture.create_from_image(pixels))
+		_check(sample_book.call("cover_texture") == fallback,"Transparent cover uses original art at %s" % dimensions)
+		pixels.set_pixelv(center,Color.WHITE)
+		sample_book.set("_cover_texture",ImageTexture.create_from_image(pixels))
+		var captured := sample_book.call("cover_texture") as Texture2D
+		_check(captured != fallback and captured.get_image().get_pixelv(center).a > 0.99,"Cover samples the truncated center pixel at %s" % dimensions)
+	var odd_pixels := Image.create(5,7,false,Image.FORMAT_RGBA8)
+	odd_pixels.fill(Color.TRANSPARENT)
+	odd_pixels.set_pixel(3,4,Color.WHITE)
+	sample_book.set("_cover_texture",ImageTexture.create_from_image(odd_pixels))
+	_check(sample_book.call("cover_texture") == fallback,"Opaque rounded-up neighbor cannot replace a transparent odd-sized center")
+	sample_book.free()
 
 func _motion_regressions() -> void:
 	var viewport := SubViewport.new()
