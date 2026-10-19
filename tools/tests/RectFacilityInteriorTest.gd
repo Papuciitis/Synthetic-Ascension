@@ -67,7 +67,7 @@ func _run() -> void:
 	var overlay := SiteOverlayImpl.new()
 	var site_baselines := {Vector2i(-16,-22):"b6bd7c08b71256b66fa63221e843111c1354c53dff4fbef016cef8162b0eafdc",Vector2i(-14,-22):"180742beba38c2ec6354cebaba537dad5ebb56272aff6b2a0634065da3b36c31"}
 	for root: Vector2i in [Vector2i(-16,-22),Vector2i(-14,-22)]:
-		var site := overlay._get_plan(root,manager,{"site_padding_cells":2})
+		var site := overlay._get_plan(root,manager,{"site_padding_cells":2,"dungeon_architecture":false})
 		var carve := site.carve
 		var site_signature := str([site.site_seed,site.region,site.size_chunks,site.door_pos,site.door_width,carve.wall_cells.keys(),carve.window_cells.keys(),carve.floor_stamps,carve.half_cover_cells]).sha256_text()
 		_check(site_signature == site_baselines[root],"Captured actual facility retains its full pre-repair output at %s" % root)

@@ -102,7 +102,7 @@ func _run() -> void:
 						# only floor inside that ring proves a usable street door.
 						# Parcel volumes already cover just the walled interior.
 						var inner := Rect2i(local, volume.size_cells)
-						if not volume.exploration_loot_enabled:
+						if not volume.exploration_loot_enabled and not volume.has_meta(&"dungeon_roof_volume"):
 							inner = inner.grow(-2)
 						for y in range(inner.position.y, inner.end.y):
 							for x in range(inner.position.x, inner.end.x):

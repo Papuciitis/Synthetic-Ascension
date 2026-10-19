@@ -1,0 +1,15 @@
+{
+  "scene": "res://tools/tests/DungeonRoofContractTest.tscn",
+  "pid": 58932,
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-roof-return-red-60b8ed4c",
+  "native_exit": 1,
+  "timeout": false,
+  "diagnostics": [
+    "ERROR: Lower raised stone return participates in actor silhouette without relying on adjacent roofs",
+    "ERROR: Raised return/gable never paints over real cardinal doorway: [(60, 28), 1]",
+    "ERROR: Raised return/gable never paints over real cardinal doorway: [(60, 28), 3]"
+  ],
+  "summary": [
+    "DungeonRoofContractTest: 84 passed, 24 failed"
+  ]
+}

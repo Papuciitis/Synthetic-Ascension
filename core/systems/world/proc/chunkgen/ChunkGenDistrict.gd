@@ -2,6 +2,8 @@ extends Object
 const LOOT_SPAWNER_SCENE: PackedScene = preload("res://scenes/world/pickups/ExplorationLootSpawner.tscn")
 const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
 const _BOSS_ARENA_SPACE := preload("res://core/systems/world/proc/BossArenaSpace.gd")
+const DUNGEON := preload("res://core/systems/world/proc/DungeonLayout.gd")
+const DUNGEON_BUILDING := preload("res://scenes/world/buildings/DungeonBuilding.gd")
 
 # Direction bits used by `conn_mask` (must match the producer of conn_mask).
 const _DIR_N: int = 1
@@ -367,6 +369,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	# - Keeps the street cores open (your bullet-heaven needs space)
 	# - Makes the "built" parts read like rooms + corridors instead of random wall lines
 	var used_donjon: bool = false
+	var enclosed_dungeon_walls: Dictionary = {}
+	var dungeon_plans: Array[Dictionary] = []
+	var dungeon_regions: Array[Dictionary] = []
 	var door_gaps: Array[Array] = [] # Array[Array[Vector2i]]
 
 	# Track biggest Donjon-carved region in this chunk for guaranteed dungeon loot.
@@ -405,6 +410,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				continue
 			if has_plaza and r.intersects(plaza_rect.grow(1)):
 				continue
+			var enclosure := DUNGEON.fit_region(r,keepout_rects)
+			dungeon_regions.append({"original_region":r,"enclosure":enclosure})
 
 			# --- dungeon loot anchor selection (largest region) ---
 			var score: int = int(r.size.x) * int(r.size.y)
@@ -462,6 +469,28 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				3, # room floor: stone tiles
 				4  # corridor floor: dirt path
 			)
+			# Consume the original cave-carver RNG sequence, then deliberately use
+			# an enclosed architectural plan inside FINAL protected-space bounds.
+			# Original region keys still own identity/reward selection.
+			var dungeon_seed := gen._mix_seed_int(base_seed,r.position.x*101+r.position.y*307)
+			var architecture: Dictionary = {}
+			if enclosure.has_area():
+				var opening := Vector2i(enclosure.get_center())
+				if has_h:
+					opening.y = enclosure.end.y-1 if r.position.y < donjon_lane_y0 else enclosure.position.y
+					opening.x = clampi(lane_cx,enclosure.position.x+2,enclosure.end.x-3)
+					gap_cells = [opening,opening+Vector2i.RIGHT]
+				else:
+					opening.x = enclosure.end.x-1 if r.position.x < donjon_lane_x0 else enclosure.position.x
+					opening.y = clampi(lane_cy,enclosure.position.y+2,enclosure.end.y-3)
+					gap_cells = [opening,opening+Vector2i.DOWN]
+				architecture = DUNGEON.build(enclosure,dungeon_seed,gap_cells)
+				architecture["original_region"] = r
+				dungeon_plans.append(architecture)
+				result = architecture.carve
+				for cell: Vector2i in result.wall_cells: enclosed_dungeon_walls[cell] = true
+			# No fit retains original carver/reward bookkeeping as an outdoor
+			# ruin/cache, without an inaccurate indoor volume over protected lanes.
 
 			# If this is the chosen 'best' region, refine the loot anchor to a real floor stamp center.
 			if best_dungeon_region.size != Vector2i.ZERO and r == best_dungeon_region and result != null:
@@ -509,13 +538,18 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 
 			# Mark connected Donjon rooms as interiors so ambient spawns stay on
 			# streets until the player actually enters the structure.
-			if INDOOR_VOLUME_SCENE != null:
-				var indoor_volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
-				if indoor_volume != null:
-					var global_tl: Vector2i = coord * cells + r.position
-					var building_id: int = int(gen._mix_seed_int(base_seed, r.position.x * 101 + r.position.y * 307) & 0x7fffffff) + 1
-					indoor_volume.configure(global_tl, r.size, gen.cell_size_px, building_id, {"exploration_loot_enabled": false})
-					chunk.add_child(indoor_volume)
+			if INDOOR_VOLUME_SCENE != null and not architecture.is_empty():
+				for wing: Rect2i in architecture.roofs:
+					var covered := wing.intersection(enclosure.grow(-1))
+					var indoor_volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
+					if indoor_volume != null and covered.has_area():
+						var global_tl: Vector2i = coord * cells + covered.position
+						var building_id: int = int(dungeon_seed & 0x7fffffff) + 1
+						indoor_volume.configure(global_tl,covered.size,gen.cell_size_px,building_id,{"exploration_loot_enabled":false})
+						indoor_volume.set_meta(&"dungeon_roof_volume",true)
+						chunk.add_child(indoor_volume)
+					elif indoor_volume != null: indoor_volume.free()
+			if not architecture.is_empty(): DUNGEON_BUILDING.attach(chunk,architecture,Vector2i.ZERO,cells,gen.cell_size_px)
 
 			used_donjon = true
 
@@ -621,6 +655,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	# Prune tiny wall bits (prevents wall confetti)
 	gen._prune_small_wall_components(wall_cells, 12)
 	gen._trim_wall_spurs(wall_cells, 2)
+	# A deliberately complete enclosure is not ruin debris. It was fitted to
+	# protected space before construction, so no lane is refilled here.
+	for cell: Vector2i in enclosed_dungeon_walls: wall_cells[cell] = true
 	for k in window_cells.keys():
 		if not wall_cells.has(k):
 			window_cells.erase(k)
@@ -628,6 +665,13 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	steps["wall_lines"] = Time.get_ticks_usec() - step_started_usec
 	step_started_usec = Time.get_ticks_usec()
 	gen._spawn_wall_cells(chunk, wall_cells, window_cells)
+	var dungeon_data: ChunkBuildData = gen.cm.get("_active_build_data")
+	if dungeon_data != null:
+		for cell: Vector2i in enclosed_dungeon_walls:
+			var index := dungeon_data._index(cell)
+			if index >= 0: dungeon_data.blocker_variant[index] |= ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE | ChunkBlockVisualCatalog.VARIANT_CITY_STONE
+	if not dungeon_plans.is_empty(): chunk.set_meta(&"dungeon_plans",dungeon_plans)
+	if not dungeon_regions.is_empty(): chunk.set_meta(&"dungeon_regions",dungeon_regions)
 	steps["walls"] = Time.get_ticks_usec() - step_started_usec
 	step_started_usec = Time.get_ticks_usec()
 

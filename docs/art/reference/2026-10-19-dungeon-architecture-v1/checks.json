@@ -1,0 +1,547 @@
+{
+  "status": "PASS: bounded first dungeon implementation; coordinating designer accepted final samples",
+  "publication": "Applicable scoped commits authorized; no new push requested",
+  "tests": [
+    {
+      "scene": "res://tools/tests/CityBlockKitTest.tscn",
+      "pid": 24400,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-CityBlockKitTest-e1529563",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockKitTest: 1298 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/CityBlockProceduralTest.tscn",
+      "pid": 30764,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-CityBlockProceduralTest-6cc265b6",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityBlockProceduralTest: 5430 passed, 0 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 76 styled kit instances across 22 sizes"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/CityPlannedBuildingTest.tscn",
+      "pid": 58444,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-CityPlannedBuildingTest-970afbed",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "CityPlannedBuildingTest: chunks=20 styled_buildings=60 families=2 directions=4 failures=0"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/DungeonArchitectureTest.tscn",
+      "pid": 31036,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-DungeonArchitectureTest-0c91a6f6",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "DungeonArchitectureTest: 33001 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/DungeonProductionTest.tscn",
+      "pid": 25884,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-DungeonProductionTest-0957a968",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "DungeonProductionTest: 762 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/DungeonRoofContractTest.tscn",
+      "pid": 53124,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-DungeonRoofContractTest-91fb21de",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "DungeonRoofContractTest: 96 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/PlayerRoofOcclusionTest.tscn",
+      "pid": 25344,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-PlayerRoofOcclusionTest-ce5b6311",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "PlayerRoofOcclusionTest: 11 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/ProcChunkReachabilityTest.tscn",
+      "pid": 61516,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-ProcChunkReachabilityTest-b2bf71db",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "ProcChunkReachabilityTest: 3840 chunks, 2538 doors, 1728 rewards, 0 failures"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/RectFacilityInteriorTest.tscn",
+      "pid": 62244,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-RectFacilityInteriorTest-010c1ee6",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "RectFacilityInteriorTest: 161 passed, 0 failed"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/ScriptParseAuditTest.tscn",
+      "pid": 25784,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-ScriptParseAuditTest-576df331",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "ScriptParseAuditTest: 546 passed, 0 failed (checked 546 scripts across 8 roots)"
+      ]
+    },
+    {
+      "scene": "res://tools/tests/SiteWallContinuityTest.tscn",
+      "pid": 44772,
+      "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-18-city-block\\dungeon-final-SiteWallContinuityTest-1bce1db6",
+      "native_exit": 0,
+      "timeout": false,
+      "diagnostics": [],
+      "summary": [
+        "SiteWallContinuityTest: 21547 passed, 0 failed; 2x1/1x2/2x2 sites, normal/reverse reload order"
+      ]
+    }
+  ],
+  "native_packets": [
+    {
+      "name": "facilities",
+      "folder": "final-facilities-v2",
+      "captures": 38,
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes": 25,
+      "source_drift": [],
+      "missing_captures": [],
+      "notes": [
+        {
+          "door_exit_position": "(-32696.34, -43712.0)",
+          "family": {
+            "actual_streamed_data": {
+              "bad_intact_flags": 0,
+              "bad_masks": 0,
+              "missing": 0,
+              "source_wall_cells": 413
+            },
+            "building_id": 756382052.0,
+            "door_world": "(-32608.0, -43712.0)",
+            "family": "multi_chunk_dungeon_compound",
+            "overview_camera_zoom": 0.239999994635582,
+            "overview_hud_hidden": true,
+            "region_cells": "[P: (2, 2), S: (60, 60)]",
+            "roof_present": true,
+            "root": "(-16, -22)",
+            "site_seed_decimal": "3877677113319717220",
+            "size_chunks": "(2, 2)"
+          },
+          "physical_entry_inside": true,
+          "seam_rays": [
+            {
+              "at": "(-30720.0, -44896.0)",
+              "hit": true,
+              "seam": "x"
+            },
+            {
+              "at": "(-32608.0, -43008.0)",
+              "hit": true,
+              "seam": "y"
+            }
+          ]
+        },
+        {
+          "door_exit_position": "(-27264.0, -44984.33)",
+          "family": {
+            "actual_streamed_data": {
+              "bad_intact_flags": 0,
+              "bad_masks": 0,
+              "missing": 0,
+              "source_wall_cells": 301
+            },
+            "building_id": 158799869.0,
+            "door_world": "(-27264.0, -44896.0)",
+            "family": "multi_chunk_dungeon_compound",
+            "overview_camera_zoom": 0.430000007152557,
+            "overview_hud_hidden": true,
+            "region_cells": "[P: (2, 2), S: (60, 28)]",
+            "roof_present": true,
+            "root": "(-14, -22)",
+            "site_seed_decimal": "5498485523409737725",
+            "size_chunks": "(2, 1)"
+          },
+          "physical_entry_inside": true,
+          "seam_rays": [
+            {
+              "at": "(-26624.0, -44896.0)",
+              "hit": true,
+              "seam": "x"
+            }
+          ]
+        },
+        {
+          "door_exit_position": "(-47175.51, -32254.56)",
+          "family": {
+            "actual_streamed_data": {
+              "bad_intact_flags": 0,
+              "bad_masks": 0,
+              "missing": 0,
+              "source_wall_cells": 254
+            },
+            "building_id": 1135889672.0,
+            "door_world": "(-47264.0, -32256.0)",
+            "family": "multi_chunk_dungeon_compound",
+            "overview_camera_zoom": 0.239999994635582,
+            "overview_hud_hidden": true,
+            "region_cells": "[P: (2, 2), S: (28, 60)]",
+            "roof_present": true,
+            "root": "(-24, -16)",
+            "site_seed_decimal": "6460149350016503048",
+            "size_chunks": "(1, 2)"
+          },
+          "physical_entry_inside": true,
+          "seam_rays": [
+            {
+              "at": "(-48992.0, -30720.0)",
+              "hit": true,
+              "seam": "y"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "runtime",
+      "folder": "final-runtime",
+      "captures": 18,
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes": 25,
+      "source_drift": [],
+      "missing_captures": [],
+      "notes": [
+        {
+          "door_exit_position": "(-27264.0, -44984.33)",
+          "family": {
+            "actual_streamed_data": {
+              "bad_intact_flags": 0,
+              "bad_masks": 0,
+              "missing": 0,
+              "source_wall_cells": 301
+            },
+            "building_id": 158799869.0,
+            "door_world": "(-27264.0, -44896.0)",
+            "family": "multi_chunk_dungeon_compound",
+            "overview_camera_zoom": 0.430000007152557,
+            "overview_hud_hidden": true,
+            "region_cells": "[P: (2, 2), S: (60, 28)]",
+            "roof_present": true,
+            "root": "(-14, -22)",
+            "site_seed_decimal": "5498485523409737725",
+            "size_chunks": "(2, 1)"
+          },
+          "physical_entry_inside": true,
+          "seam_rays": [
+            {
+              "at": "(-26624.0, -44896.0)",
+              "hit": true,
+              "seam": "x"
+            }
+          ]
+        },
+        {
+          "local_security_enabled": false,
+          "reload_equal": true,
+          "reloaded_cutaway_roofs": 9,
+          "runtime": "physical_hall_and_reload",
+          "security_contract": "Existing facilities have no local security encounter; no guards/reward rebalance added.",
+          "walked_cells": 79
+        },
+        {
+          "combat_flashes": "off",
+          "combat_window": "(1280, 720)",
+          "controlled_population": 20,
+          "deaths": 9,
+          "fires": 20,
+          "frames": 16,
+          "god_mode": true,
+          "hits": 18,
+          "reduced_motion": true,
+          "scripted_input": true,
+          "timing_limit": "Readback fixture, not a performance benchmark"
+        },
+        {
+          "combat_flashes": "off",
+          "combat_window": "(960, 540)",
+          "controlled_population": 20,
+          "deaths": 8,
+          "fires": 19,
+          "frames": 16,
+          "god_mode": true,
+          "hits": 19,
+          "reduced_motion": true,
+          "scripted_input": true,
+          "timing_limit": "Readback fixture, not a performance benchmark"
+        }
+      ]
+    },
+    {
+      "name": "district",
+      "folder": "final-district",
+      "captures": 10,
+      "failures": 0,
+      "save_writes": 0,
+      "source_hashes": 25,
+      "source_drift": [],
+      "missing_captures": [],
+      "notes": [
+        {
+          "actual_regions": [
+            {
+              "building_id": 1482198406,
+              "cell_tl": "(-93, -93)",
+              "size_cells": "(2, 10)"
+            },
+            {
+              "building_id": 1482198406,
+              "cell_tl": "(-85, -93)",
+              "size_cells": "(2, 10)"
+            },
+            {
+              "building_id": 1482198406,
+              "cell_tl": "(-91, -93)",
+              "size_cells": "(6, 10)"
+            },
+            {
+              "building_id": 1091520824,
+              "cell_tl": "(-75, -93)",
+              "size_cells": "(2, 10)"
+            },
+            {
+              "building_id": 1091520824,
+              "cell_tl": "(-69, -93)",
+              "size_cells": "(2, 10)"
+            },
+            {
+              "building_id": 1091520824,
+              "cell_tl": "(-73, -93)",
+              "size_cells": "(4, 10)"
+            }
+          ],
+          "donjon_candidate": {
+            "attempt_seed": 2026.0,
+            "connector_mask": 4.0,
+            "coord": [
+              -3.0,
+              -3.0
+            ],
+            "method": "Production plan/theme/RNG/keepouts/parcel chance; no forced Donjon. Ground recording and final environment dressing omitted without changing body-generation RNG.",
+            "mixed_world_seed": 2057449438.0,
+            "regions": [
+              {
+                "building_id": 1482198406.0,
+                "cell_tl": [
+                  -94.0,
+                  -94.0
+                ],
+                "size_cells": [
+                  15.0,
+                  28.0
+                ]
+              },
+              {
+                "building_id": 1091520824.0,
+                "cell_tl": [
+                  -76.0,
+                  -94.0
+                ],
+                "size_cells": [
+                  10.0,
+                  28.0
+                ]
+              }
+            ],
+            "role": "secondary_alley_cache",
+            "segment": 3.0,
+            "urban_access": 11.0,
+            "walls": 5.0
+          }
+        },
+        {
+          "building_id": 1482198406,
+          "compact_physical_entry_exit_cells": 22,
+          "exploration_loot_enabled": false,
+          "reload_equal": true,
+          "reward_contract": "Original independent dungeon spawner/ID/counts retained"
+        }
+      ]
+    }
+  ],
+  "moving_frames": 32,
+  "natural_ca_selection": {
+    "seeds": 16,
+    "checked_eligible_chunks": 156,
+    "selected_chunks": 6,
+    "selected_regions": 7,
+    "enclosed_regions": 7,
+    "outdoor_fallbacks_observed": 0,
+    "reward_and_selection_mismatches": 0,
+    "record": "verification/selected-ca-audit-v2.json"
+  },
+  "diagnostic_sets": [
+    {
+      "folder": "early-2x1",
+      "status": "REWORK art",
+      "reason": "Bland roofs and gradient walls"
+    },
+    {
+      "folder": "early-2x1-v2",
+      "status": "REWORK art",
+      "reason": "Weak gatehouse mass and flattened masonry"
+    },
+    {
+      "folder": "early-2x1-v3",
+      "status": "Accepted bounded art snapshot; superseded roof-return fixes"
+    },
+    {
+      "folder": "district",
+      "status": "Compact floor correction superseded"
+    },
+    {
+      "folder": "final-facilities",
+      "status": "FAILED capture fixture",
+      "failures": 4,
+      "reason": "Long portrait route exceeded straight-movement time limit; corrected with physical blocker-grid path following in final-facilities-v2"
+    }
+  ],
+  "limits": [
+    "Isolated scripted native input with god mode, disabled ambient spawner and controlled exterior crowd; not a human continuous playthrough.",
+    "Capture readback is not a performance benchmark.",
+    "Overview zoom is explicit; gameplay detail zoom is1; staged hall poses labelled separately from physical routes.",
+    "No-fit outdoor ruin/cache branch is unit/static reviewed; expanded natural sample did not encounter no-fit regions.",
+    "Mixed planned/default multi-chunk anchor completeness is a separate preexisting limit, not certified by all-default facility candidates.",
+    "Long roof bands, sparse court and interior dressing remain further art refinement.",
+    "Generic duplicate IndoorVolume ownership issue remains deferred."
+  ],
+  "source_hashes": [
+    {
+      "path": "core/systems/world/proc/SiteOverlayImpl.gd",
+      "sha256": "e9052fac40cb1a72039984b79937aa2cc684ebfc89160b0e12272979286284a7"
+    },
+    {
+      "path": "core/systems/world/proc/RectFacilityCarver.gd",
+      "sha256": "19831055637b899d146f9e3b67cf8867ff990fead39663deb30efaf57991f6c5"
+    },
+    {
+      "path": "core/systems/world/proc/DonjonCarver.gd",
+      "sha256": "42850a329b0d2ee8250fbe7ee01c6858c271c4f65f80ca9aa6964d03f551e688"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "41f213adcbfb4600d68848902c1f3b1aaa552114e63d1502d21114441e508b6b"
+    },
+    {
+      "path": "core/systems/world/proc/SiteParcelsImpl.gd",
+      "sha256": "2ece5966181eb7addbe0635a193a6600d3a54dc7efd97789c3c2aaba6887fbe1"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "sha256": "5d988a4e67c375a9b0d6109254c0765c050a069ba1855ea6186e363e43aa9454"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "sha256": "ccfc0e71846014d64905bf121aceed749c715390c16010143ded3b557cabd8cc"
+    },
+    {
+      "path": "core/systems/world/chunks/ChunkBlockPhysics.gd",
+      "sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb"
+    },
+    {
+      "path": "core/systems/world/ChunkManager.gd",
+      "sha256": "e1ea17e50266d616df50a61b1d5370e587e546183a5002b1bc5e2c6f2fb23931"
+    },
+    {
+      "path": "core/systems/world/proc/DungeonLayout.gd",
+      "sha256": "cf1ffaf56360e3f11018bac2b29f995b159409c7338e6fd3c8845c17a26a7771"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "sha256": "720f86b73240aaa3a28f8d6ebacb1c064efbc6c227747ffedb32a8543989e698"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "sha256": "e5236708089f899d56f2a37b1406eb6f277b5a7435c2e1e47b044e397e244ec1"
+    },
+    {
+      "path": "assets/world/city_block/donjon_gate_arch.png",
+      "sha256": "741917d475e8353cd3dcd0354a1e31a1b40b9225d312f6455f9df45eaccbea01"
+    },
+    {
+      "path": "assets/world/city_block/donjon_cell_grille.png",
+      "sha256": "3569d772baf2e4bd256e91e2c339a423d5f3d14ca8ae421d80da0e90854dd2d2"
+    },
+    {
+      "path": "core/actors/player/PlayerRoofOcclusion.gd",
+      "sha256": "4d3c53eec0b47d08c30eb3fe40d750fea55094cfc3eb25e386ef28911cbc65bb"
+    },
+    {
+      "path": "assets/world/city_block/donjon_masonry_bay.png",
+      "sha256": "683a347243c4f20ffbe82f362c3b0993b55f4ab02ac5d3756c9310da056c282f"
+    },
+    {
+      "path": "assets/world/city_block/slate.png",
+      "sha256": "bb09a59686a36a1d33bac41ca568a8c872e859fc78cdea02d198840cb70e3247"
+    },
+    {
+      "path": "assets/world/city_block/clay.png",
+      "sha256": "f636529852fe4d6d406010ccbd8b379fa18bb3a24b9d4efa62d4988f902d4f60"
+    },
+    {
+      "path": "assets/world/city_block/paving.png",
+      "sha256": "5e0db453ec02930531475eb2e4873bdfe9c04fd1571faabe65807d3f5fc03316"
+    },
+    {
+      "path": "assets/world/city_block/wall_lantern.png",
+      "sha256": "d26858acf4a7aebe8b7566d9980c27db4135c8c14136ce7fbceb85a025206e4e"
+    },
+    {
+      "path": "assets/world/city_block/pressure_plant.png",
+      "sha256": "a7d3eb0cba45c42b68a67fcab2771e91ad72c245f77eecb03fd881e392901d33"
+    },
+    {
+      "path": "assets/world/city_block/planted_corner.png",
+      "sha256": "e2330237491733d53a559af7e0addfdece37397649b4989ff7f9eaa64dbcb316"
+    },
+    {
+      "path": "assets/world/city_block/temperate_tree.png",
+      "sha256": "c8a2dfe0b7ce901e2d92db2a4b0e1e813f859d41a8eaefddbe287fed7f0357ef"
+    },
+    {
+      "path": "scenes/world/buildings/roof.gdshader",
+      "sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8"
+    },
+    {
+      "path": "scenes/world/buildings/city_paving.gdshader",
+      "sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031"
+    }
+  ]
+}

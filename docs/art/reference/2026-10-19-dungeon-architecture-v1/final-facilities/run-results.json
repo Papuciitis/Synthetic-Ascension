@@ -1,0 +1,86 @@
+{
+  "mode": "facilities",
+  "scene": "res://tools/dev/DungeonArchitecturePreview.tscn",
+  "pid": 13244,
+  "native_exit": 1,
+  "timeout": false,
+  "diagnostics": [
+    "ERROR: S10BossTelegraphPreview: Physical large-site door route blocked at (-47496.75, -31830.84) toward (-47968.0, -30688.0)",
+    "ERROR: S10BossTelegraphPreview: Physical large-site door route blocked at (-47902.69, -32047.88) toward (-48352.0, -32288.0)",
+    "ERROR: S10BossTelegraphPreview: Physical large-site door route blocked at (-48247.32, -32258.64) toward (-48352.0, -32416.0)",
+    "ERROR: S10BossTelegraphPreview: Physical large-site door route blocked at (-47502.73, -31834.05) toward (-47496.75, -31830.84)"
+  ],
+  "source_hashes_before": [
+    {
+      "path": "core/systems/world/proc/DungeonLayout.gd",
+      "sha256": "CF1FFAF56360E3F11018BAC2B29F995B159409C7338E6FD3C8845C17A26A7771"
+    },
+    {
+      "path": "core/systems/world/proc/SiteOverlayImpl.gd",
+      "sha256": "E9052FAC40CB1A72039984B79937AA2CC684EBFC89160B0E12272979286284A7"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "41F213ADCBFB4600D68848902C1F3B1AAA552114E63D1502D21114441E508B6B"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "sha256": "720F86B73240AAA3A28F8D6EBACB1C064EFBC6C227747FFEDB32A8543989E698"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "sha256": "E5236708089F899D56F2A37B1406EB6F277B5A7435C2E1E47B044E397E244EC1"
+    },
+    {
+      "path": "core/actors/player/PlayerRoofOcclusion.gd",
+      "sha256": "4D3C53EEC0B47D08C30EB3FE40D750FEA55094CFC3EB25E386EF28911CBC65BB"
+    },
+    {
+      "path": "tools/dev/DungeonArchitecturePreview.gd",
+      "sha256": "90DE6292D8F859611315BC3DD9D82B2777C0B9F89BB64C3E2B0F611C977482FB"
+    },
+    {
+      "path": "tools/capture/run_dungeon_preview.ps1",
+      "sha256": "A30368FBC4912D61D7AFA6D3668B3DAAE5FC950755829053F068D56EC0F8DF38"
+    }
+  ],
+  "source_hashes_after": [
+    {
+      "path": "core/systems/world/proc/DungeonLayout.gd",
+      "sha256": "CF1FFAF56360E3F11018BAC2B29F995B159409C7338E6FD3C8845C17A26A7771"
+    },
+    {
+      "path": "core/systems/world/proc/SiteOverlayImpl.gd",
+      "sha256": "E9052FAC40CB1A72039984B79937AA2CC684EBFC89160B0E12272979286284A7"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "41F213ADCBFB4600D68848902C1F3B1AAA552114E63D1502D21114441E508B6B"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "sha256": "720F86B73240AAA3A28F8D6EBACB1C064EFBC6C227747FFEDB32A8543989E698"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "sha256": "E5236708089F899D56F2A37B1406EB6F277B5A7435C2E1E47B044E397E244EC1"
+    },
+    {
+      "path": "core/actors/player/PlayerRoofOcclusion.gd",
+      "sha256": "4D3C53EEC0B47D08C30EB3FE40D750FEA55094CFC3EB25E386EF28911CBC65BB"
+    },
+    {
+      "path": "tools/dev/DungeonArchitecturePreview.gd",
+      "sha256": "90DE6292D8F859611315BC3DD9D82B2777C0B9F89BB64C3E2B0F611C977482FB"
+    },
+    {
+      "path": "tools/capture/run_dungeon_preview.ps1",
+      "sha256": "A30368FBC4912D61D7AFA6D3668B3DAAE5FC950755829053F068D56EC0F8DF38"
+    }
+  ],
+  "source_drift": [],
+  "summary": [
+    "DungeonFinalCapture: captures=38 failures=4 save_writes=0"
+  ],
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-19-dungeon-preview\\facilities-3073069f"
+}

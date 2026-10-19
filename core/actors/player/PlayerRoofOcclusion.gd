@@ -33,6 +33,17 @@ func update(view: Node2D, feet: Vector2, sprite_bounds: Rect2) -> void:
 		_append(poly, sprite_bounds, strength, regions, projection)
 		for child: Node in poly.find_children("*", "Polygon2D", true, false):
 			if child.has_meta(&"city_roof_form"):
+				if child.get_meta(&"roof_occlusion_full_form",false):
+					# A raised upright return reaches from the projected eave back
+					# to its real ground contact. Re-shifting the footprint by roof
+					# height would discard its lower face. These explicitly tagged
+					# forms already clip doors/chunks and belong to a rectangular
+					# wing; the roof's real front-edge check above still applies.
+					if not child.is_visible_in_tree(): continue
+					var points := PackedVector2Array()
+					for point: Vector2 in (child as Polygon2D).polygon: points.append((child as Polygon2D).to_global(point))
+					_append_triangles(points,sprite_bounds,strength)
+					continue
 				var shift := projection + poly.global_transform.basis_xform(Vector2(0, -float(child.get_meta(&"city_roof_lift", 0.0))))
 				_append(child as Polygon2D, sprite_bounds, strength, regions, shift)
 	if _triangles.is_empty():

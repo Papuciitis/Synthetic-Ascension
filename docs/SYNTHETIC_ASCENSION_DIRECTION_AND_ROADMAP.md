@@ -2627,3 +2627,74 @@ layout issue. Facility seam work and its native proof have a separate owner.
 Publication remains on hold pending combined review. The generic duplicate
 IndoorVolume ownership issue is deferred by designer direction. See the
 [current house verification packet](art/reference/2026-10-19-house-wall-repair-v1/checks.json).
+
+## 2026-10-19 — Small-house redundant inner shell corrected
+
+The ordinary-house double wall was physical layout, not only art. When fewer
+than two rooms fitted, RectFacilityCarver inset its fallback room another cell
+inside the parcel envelope. The boundary-wall pass then enclosed that room a
+second time, producing 13 redundant inner cells in the reproduced 8×7 parcel
+and a blocked lane inside the east entrance. The fallback now uses the existing
+envelope as one usable room. Its cover stays inside the room and clear of door
+approaches. Successful multi-room layouts retain their partitions.
+
+The focused regression first failed 12 checks, then passed all 161. The larger
+four-room fixture retains all 80 partition cells, full floor/window/cover output
+and RNG state. Exact before/after comparisons of all three actual captured
+facility plans retain 684, 368 and 421 wall cells, identical masks, windows,
+floors, cover, doors and identities. Their native captures predate the shared
+carver edit; this output comparison does not claim their old source hashes match.
+
+Fresh checks pass 1,298 kit assertions, 5,430 procedural assertions, 60 actual
+styled buildings in 20 chunks, 21,547 site-continuity assertions, roof occlusion,
+3,840-chunk reachability and all 543 script parses. A native reduced-motion run
+at the rejected ordinary-house location now shows the inner shell and entry
+bars removed. It passes physical entry, five-guard clearance, exit/roof
+restoration, streamed reload and controlled combat: 147 frames, 61 weapon fires,
+60 hits, 29 deaths, zero failures/diagnostics/save writes. All 40 runner hashes
+and the 16-entry supplemental source record match. Scripted input and god mode
+remain fixture limits; designer acceptance is pending.
+
+The human requested a progress checkpoint, superseding the earlier publication
+hold without granting aesthetic approval. The sole integration owner created
+commit `3aa358c5`; final evidence packaging here is a later uncommitted update.
+No independent commit or push was performed by the house repair chat. See the
+[version-two verification packet](art/reference/2026-10-19-house-wall-repair-v2/checks.json).
+
+## 2026-10-19 — Enclosed procedural Donjons, first implementation
+
+Large sites now generate enclosed stone compounds with three roofed wings, an
+outdoor court and a connected west hall/cell/service sequence. Compact district
+Donjons use enclosed halls and side chambers fitted around protected access.
+Original site/region reward identities and rules remain; a no-fit region stays
+an honest outdoor ruin/cache rather than receiving false indoor tags over roads.
+Ordinary house geometry and room-carver RNG baselines are retained.
+
+Original modular gate, grille and masonry art supports actual carved openings.
+Raised gatehouse caps, a restrained clay service roof, wall lamps and deliberate
+court planting give the family a first architectural identity. Roofs and upright
+returns clip per streamed slice, cut away under actual indoor ownership and keep
+actors visible behind opaque forms. Courts remain outdoors; compact halls have a
+continuous quiet interior floor. Existing large-site seam topology remains intact.
+
+All eleven relevant automated runs pass, including 33,001 layout checks, 96 raised
+roof/door checks, 762 actual compact-production checks, existing house/city/site
+regressions, 3,840-chunk reachability and 546 script parses. A natural 16-seed
+comparison finds six selected chunks/seven enclosed regions with unchanged reward
+IDs and selection counts; its sample contains no no-fit cases.
+
+Final native evidence includes 66 normal/small stills across actual 2×2 west,
+2×1 north, 1×2 east and S3 compact dungeons, plus 32 moving fight frames. Physical
+hall travel, real doorway entry/exit, streamed reload while inside, roof restoration
+and controlled exterior combat pass with no failures, diagnostics or save writes.
+All 75 final product-source/asset hash checks match. These are scripted god-mode
+fixtures and sampled art reviews, not human continuous-play or performance approval.
+
+The coordinating designer accepts this bounded first implementation. Long roof
+bands, sparse courts and interior dressing remain refinement. Mixed planned/default
+multi-chunk anchor completeness is a preexisting separate whole-city limit; the
+three facility candidates have all-default slices. Generic duplicate IndoorVolume
+ownership is still deferred. Failed/superseded captures are retained and labelled.
+See the [implementation audit](audits/2026-10-19-dungeon-architecture.md) and
+[verification packet](art/reference/2026-10-19-dungeon-architecture-v1/checks.json).
+The human authorized applicable commits; this batch has no new push request.

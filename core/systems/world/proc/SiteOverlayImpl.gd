@@ -10,6 +10,8 @@ class_name SiteOverlayImpl
 
 const DONJON := preload("res://core/systems/world/proc/DonjonCarver.gd")
 const RECT_FAC := preload("res://core/systems/world/proc/RectFacilityCarver.gd")
+const DUNGEON := preload("res://core/systems/world/proc/DungeonLayout.gd")
+const DUNGEON_BUILDING := preload("res://scenes/world/buildings/DungeonBuilding.gd")
 const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
 
 class SitePlan:
@@ -23,6 +25,7 @@ class SitePlan:
 	var door_pos: Vector2i = Vector2i.ZERO # site-local cell on region border
 	var door_width: int = 2
 	var carve: DONJON.CarveResult
+	var architecture: Dictionary = {}
 
 var _cache: Dictionary = {} # Vector2i(root_chunk)->SitePlan
 var _cache_order: Array[Vector2i] = []
@@ -133,6 +136,7 @@ func decorate_chunk(
 			var index := build_data._index(cell)
 			if index >= 0:
 				build_data.blocker_variant[index] |= ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE
+				if not chosen.architecture.is_empty(): build_data.blocker_variant[index] |= ChunkBlockVisualCatalog.VARIANT_CITY_STONE
 
 	# Some half-cover props from carve (clipped)
 	steps["walls"] = Time.get_ticks_usec() - step_started_usec
@@ -156,6 +160,8 @@ func decorate_chunk(
 	steps["door"] = Time.get_ticks_usec() - step_started_usec
 	step_started_usec = Time.get_ticks_usec()
 	_spawn_indoor_volumes(chunk_manager, chunk, coord, chosen, cfg)
+	if not chosen.architecture.is_empty():
+		DUNGEON_BUILDING.attach(chunk,chosen.architecture,chunk_offset_cells,cpc,int(chunk_manager.cell_size_px))
 	steps["volumes"] = Time.get_ticks_usec() - step_started_usec
 	steps["coord"] = str(coord)
 	debug_last_step_usec = steps
@@ -261,6 +267,12 @@ func _get_plan(root: Vector2i, chunk_manager: Node, cfg: Dictionary) -> SitePlan
 		floor_room_tex,
 		floor_corr_tex
 	)
+	if bool(cfg.get("dungeon_architecture",true)):
+		var perp := Vector2i(-dir.y,dir.x)
+		var cells: Array[Vector2i] = []
+		for offset in range(plan.door_width): cells.append(plan.door_pos+perp*(offset-(plan.door_width>>1)))
+		plan.architecture = DUNGEON.build(region,plan.site_seed,cells)
+		plan.carve = plan.architecture.carve
 
 
 	# Cache
@@ -274,6 +286,15 @@ func _get_plan(root: Vector2i, chunk_manager: Node, cfg: Dictionary) -> SitePlan
 
 
 func _spawn_indoor_volumes(chunk_manager: Node, chunk: Node2D, coord: Vector2i, plan: SitePlan, cfg: Dictionary) -> void:
+	if not plan.architecture.is_empty():
+		# Court remains outdoors. All roofed wings retain one canonical site reward
+		# identity and the original total-site loot classification across streaming.
+		for wing: Rect2i in plan.architecture.roofs:
+			_spawn_indoor_slice(chunk_manager,chunk,coord,plan,cfg,wing.intersection(plan.region.grow(-1)))
+		return
+	_spawn_indoor_slice(chunk_manager,chunk,coord,plan,cfg,plan.region.grow(-1))
+
+func _spawn_indoor_slice(chunk_manager: Node, chunk: Node2D, coord: Vector2i, plan: SitePlan, cfg: Dictionary, coverage: Rect2i) -> void:
 	if INDOOR_VOLUME_SCENE == null:
 		return
 	var cpc: int = int(chunk_manager._cells_per_chunk())
@@ -285,7 +306,7 @@ func _spawn_indoor_volumes(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 	if interior.size.x <= 0 or interior.size.y <= 0:
 		return
 
-	var inter := interior.intersection(chunk_rect)
+	var inter := coverage.intersection(chunk_rect)
 	if inter.size.x <= 0 or inter.size.y <= 0:
 		return
 

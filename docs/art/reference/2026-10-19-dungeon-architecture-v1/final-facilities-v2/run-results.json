@@ -1,0 +1,81 @@
+{
+  "mode": "facilities",
+  "scene": "res://tools/dev/DungeonArchitecturePreview.tscn",
+  "pid": 61356,
+  "native_exit": 0,
+  "timeout": false,
+  "diagnostics": [],
+  "source_hashes_before": [
+    {
+      "path": "core/systems/world/proc/DungeonLayout.gd",
+      "sha256": "CF1FFAF56360E3F11018BAC2B29F995B159409C7338E6FD3C8845C17A26A7771"
+    },
+    {
+      "path": "core/systems/world/proc/SiteOverlayImpl.gd",
+      "sha256": "E9052FAC40CB1A72039984B79937AA2CC684EBFC89160B0E12272979286284A7"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "41F213ADCBFB4600D68848902C1F3B1AAA552114E63D1502D21114441E508B6B"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "sha256": "720F86B73240AAA3A28F8D6EBACB1C064EFBC6C227747FFEDB32A8543989E698"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "sha256": "E5236708089F899D56F2A37B1406EB6F277B5A7435C2E1E47B044E397E244EC1"
+    },
+    {
+      "path": "core/actors/player/PlayerRoofOcclusion.gd",
+      "sha256": "4D3C53EEC0B47D08C30EB3FE40D750FEA55094CFC3EB25E386EF28911CBC65BB"
+    },
+    {
+      "path": "tools/dev/DungeonArchitecturePreview.gd",
+      "sha256": "C0DDED407BDB43C6EF2CD99CBC40C2B5A2FE361B1215F0A42FF21595883EA41B"
+    },
+    {
+      "path": "tools/capture/run_dungeon_preview.ps1",
+      "sha256": "DBC722955924E2B45275D9763D950CA35A7A079407F70882D7EBEFBD8ECE8747"
+    }
+  ],
+  "source_hashes_after": [
+    {
+      "path": "core/systems/world/proc/DungeonLayout.gd",
+      "sha256": "CF1FFAF56360E3F11018BAC2B29F995B159409C7338E6FD3C8845C17A26A7771"
+    },
+    {
+      "path": "core/systems/world/proc/SiteOverlayImpl.gd",
+      "sha256": "E9052FAC40CB1A72039984B79937AA2CC684EBFC89160B0E12272979286284A7"
+    },
+    {
+      "path": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "sha256": "41F213ADCBFB4600D68848902C1F3B1AAA552114E63D1502D21114441E508B6B"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonBuilding.gd",
+      "sha256": "720F86B73240AAA3A28F8D6EBACB1C064EFBC6C227747FFEDB32A8543989E698"
+    },
+    {
+      "path": "scenes/world/buildings/DungeonRoof.gd",
+      "sha256": "E5236708089F899D56F2A37B1406EB6F277B5A7435C2E1E47B044E397E244EC1"
+    },
+    {
+      "path": "core/actors/player/PlayerRoofOcclusion.gd",
+      "sha256": "4D3C53EEC0B47D08C30EB3FE40D750FEA55094CFC3EB25E386EF28911CBC65BB"
+    },
+    {
+      "path": "tools/dev/DungeonArchitecturePreview.gd",
+      "sha256": "C0DDED407BDB43C6EF2CD99CBC40C2B5A2FE361B1215F0A42FF21595883EA41B"
+    },
+    {
+      "path": "tools/capture/run_dungeon_preview.ps1",
+      "sha256": "DBC722955924E2B45275D9763D950CA35A7A079407F70882D7EBEFBD8ECE8747"
+    }
+  ],
+  "source_drift": [],
+  "summary": [
+    "DungeonFinalCapture: captures=38 failures=0 save_writes=0"
+  ],
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-19-dungeon-preview\\facilities-2515a543"
+}
