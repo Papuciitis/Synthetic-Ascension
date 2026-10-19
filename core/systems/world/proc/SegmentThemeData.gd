@@ -146,6 +146,7 @@ static func blend(a: SegmentThemeData, b: SegmentThemeData, t: float) -> Segment
 func apply_to_chunk_manager(cm: ChunkManager) -> void:
 	if cm == null:
 		return
+	cm.district_family = district_family
 	cm.weight_empty = weight_empty
 	cm.weight_building = weight_building
 	cm.weight_ruins = weight_ruins

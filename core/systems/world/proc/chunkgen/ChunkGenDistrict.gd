@@ -32,6 +32,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	# intentionally have no road connectors, so they cannot create fake streets.
 	if role == &"district_fill" and conn_mask == 0 and gen._site_mgr != null:
 		var fill_cfg: Dictionary = {
+			"district_family": gen.district_family,
+			"district_common_base_preview": gen.district_common_base_preview,
 			"city_block_style": preload("res://scenes/world/buildings/CityBlockKit.gd").enabled_for(role, Global.attempt_segment),
 			"city_shared_ground": true,
 			"courtyard_floor_tex": 8,
@@ -293,6 +295,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	if gen.parcels_enabled and gen._site_mgr != null and rng.randf() < parcel_roll_chance and not has_plaza:
 		if (has_h or has_v) and (archetype == &"street" or archetype == &"district"):
 			var pcfg := {
+				"district_family": gen.district_family,
+				"district_common_base_preview": gen.district_common_base_preview,
 				"city_block_style": preload("res://scenes/world/buildings/CityBlockKit.gd").enabled_for(role, Global.attempt_segment),
 				# Composed paving belongs only to the accepted S2 prototype block.
 				# Later districts retain their terrain and semantic route materials.

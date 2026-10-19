@@ -2,6 +2,10 @@ extends Node2D
 class_name ChunkManager
 
 @export var world_seed: int = 1337
+## Selected from the original attempt seed before the manager receives its
+## mixed plan seed. Presentation must never reroll this identity.
+@export var district_family: StringName = &""
+var district_common_base_preview: bool = false
 
 @export_group("Chunk Streaming")
 @export var chunk_size_px: int = 2048

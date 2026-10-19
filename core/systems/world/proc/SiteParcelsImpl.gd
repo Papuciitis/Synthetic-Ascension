@@ -5,6 +5,7 @@ const RECT_FAC := preload("res://core/systems/world/proc/RectFacilityCarver.gd")
 const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
 const ROOF_OVERLAY_SCENE: PackedScene = preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const CITY_KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
+const DISTRICT_PROFILES := preload("res://scenes/world/buildings/DistrictVisualProfiles.gd")
 const _DIR_N: int = 1
 const _DIR_E: int = 2
 const _DIR_S: int = 4
@@ -544,7 +545,7 @@ func _spawn_building_rect(
 						var kit := CITY_KIT.new()
 						chunk.add_child(kit)
 						var civic := building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
-						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)))
+						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id))
 
 	placed.append(build_rect)
 	return true
@@ -753,10 +754,18 @@ func _spawn_building_footprint(
 				if bool(cfg.get("city_block_style", false)):
 					var kit := CITY_KIT.new()
 					chunk.add_child(kit)
-					kit.configure(build_rect, cell_px, visual_doors, roof, template == &"workshop" and building_id % 3 == 0, outline, bool(cfg.get("city_shared_ground", false)))
+					kit.configure(build_rect, cell_px, visual_doors, roof, template == &"workshop" and building_id % 3 == 0, outline, bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id))
 
 	placed.append(build_rect)
 	return true
+
+
+func _district_profile(cfg: Dictionary, building_id: int) -> Dictionary:
+	var family := StringName(cfg.get("district_family", &""))
+	var profile := DISTRICT_PROFILES.resolve(&"" if bool(cfg.get("district_common_base_preview", false)) else family)
+	profile["family_id"] = family
+	profile["visual_seed"] = building_id
+	return profile
 
 
 ## The closed outline of an orthogonal cell set, in pixels: boundary edges

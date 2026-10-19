@@ -31,6 +31,8 @@ static var debug_last_content_steps: Dictionary = {}
 
 # Mirrored settings from ChunkManager (sync_from_chunk_manager()).
 var world_seed: int = 1337
+var district_family: StringName = &""
+var district_common_base_preview: bool = false
 var chunk_size_px: int = 2048
 var load_radius: int = 2
 var unload_radius: int = 3
@@ -110,6 +112,8 @@ func sync_from_chunk_manager() -> void:
 	if cm == null:
 		return
 	world_seed = cm.world_seed
+	district_family = cm.district_family
+	district_common_base_preview = cm.district_common_base_preview
 	chunk_size_px = cm.chunk_size_px
 	load_radius = cm.load_radius
 	unload_radius = cm.unload_radius

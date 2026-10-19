@@ -25,6 +25,7 @@ var _lamp_light := Vector2.ZERO
 var _awning_cast := Rect2()
 var _doors: Array = []
 var _irregular := false
+var _district_profile: Dictionary = {}
 static var preview_original_materials := false
 static var _texture_cache: Dictionary = {}
 
@@ -33,9 +34,14 @@ static func enabled_for(_role: StringName, segment: int) -> bool:
 	# Authored Institution and Hub architecture have separate ownership.
 	return not preview_original_materials and segment >= 2
 
-func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_civic: bool, irregular_outline: PackedVector2Array = PackedVector2Array(), shared_ground: bool = false) -> void:
+func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_civic: bool, irregular_outline: PackedVector2Array = PackedVector2Array(), shared_ground: bool = false, visual_profile: Dictionary = {}) -> void:
 	bounds = Rect2(Vector2(rect.position) * cell_px, Vector2(rect.size) * cell_px)
 	civic = is_civic
+	_district_profile = visual_profile.duplicate()
+	if not civic:
+		for profile_key: String in ["profile_id", "roof_form_set_id", "facade_form_set_id"]:
+			_district_profile[profile_key] = &"common_base"
+	set_meta(&"district_visual_profile", StringName(_district_profile.get("profile_id", &"common_base")))
 	_facade_height = 184.0 if civic else 148.0
 	_roof = roof
 	_doors = doors
