@@ -122,8 +122,15 @@ reviews found no important correctness defect. Final packet audit reconciled34
 process records,19 scoped bindings,9 captures and3 videos/102 raw frames.
 Lead keep/rework is still needed
 on the bounded L2 result; tests do not close art findings. ART_STATUS is unchanged.
-Publication of this new packet is pending the normal own-branch push; use
-`git push -u origin codex/linux-world-production` if a human relay is needed.
+Evidence commit: `d4b647a1b5ef51c10b7e4d98ab599ce2b7a259c7`. Root verified
+all151 packet artifact hashes/lengths from those committed Git blobs. The normal
+own-branch push was attempted after committing and failed:
+`fatal: could not read Username for 'https://github.com': terminal prompts disabled`.
+This machine still lacks HTTPS credentials; the local implementation/evidence
+commits remain intact. Human relay command:
+`git push -u origin codex/linux-world-production`.
+Push the current branch tip, including this publication-status update. No push
+to the integration branch was attempted.
 
 ## 20 October — Windows review received
 
