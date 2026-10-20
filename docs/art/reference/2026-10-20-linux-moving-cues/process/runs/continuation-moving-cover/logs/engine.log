@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+[Game] ready seg=2 race=human style=ranged seed=16102026
+ERROR: EliteCrowdFightPreview: Physical collision prevented route at (7, 115)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail (res://tools/dev/EliteCrowdFightPreview.gd:394)
+       [1] _walk_to (res://tools/dev/CityBlockPlayablePreview.gd:596)
+CityMovingCoverPreview: frames=111 sim=30.23 distance=3487.9 ambient=89 covered_projectiles=21 covered_tells=2 collected=true failures=1 save_writes=0

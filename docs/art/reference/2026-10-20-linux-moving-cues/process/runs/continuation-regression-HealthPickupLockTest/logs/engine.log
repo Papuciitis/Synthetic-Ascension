@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: fixture: healing is sealed
+PASS: touching it while sealed leaves it in the world
+PASS: and heals nothing
+PASS: a sealed player does not draw it in
+PASS: an exempt source is not blocked
+PASS: fixture: the seal has lifted
+PASS: after the seal the same pickup heals (50.0 -> 70.0)
+PASS: and is consumed
+HealthPickupLockTest: 8 passed, 0 failed

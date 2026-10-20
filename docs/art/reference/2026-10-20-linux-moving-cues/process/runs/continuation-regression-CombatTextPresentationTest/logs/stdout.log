@@ -1,0 +1,65 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: damage shapes its actual glyphs with the HUD's strong figure face
+PASS: named combat text uses the HUD caption face (84.0 vs 84.0)
+PASS: callouts accept explicit status IDs without inferring their words
+PASS: generated combat icons have a dedicated semantic registry
+PASS: armoured loads its authored badge
+PASS: armoured reuses the loaded badge
+PASS: vampiric loads its authored badge
+PASS: vampiric reuses the loaded badge
+PASS: shielded loads its authored badge
+PASS: shielded reuses the loaded badge
+PASS: splitting loads its authored badge
+PASS: splitting reuses the loaded badge
+PASS: fast loads its authored badge
+PASS: fast reuses the loaded badge
+PASS: unknown status IDs omit safely
+PASS: burn loads its implemented-status badge
+PASS: bleed loads its implemented-status badge
+PASS: stun loads its implemented-status badge
+PASS: slow loads its implemented-status badge
+PASS: warded loads its implemented-status badge
+PASS: haste loads its implemented-status badge
+PASS: fading loads its implemented-status badge
+PASS: execution_mark loads its implemented-status badge
+PASS: wound loads its implemented-status badge
+PASS: cracked loads its implemented-status badge
+PASS: prime loads its implemented-status badge
+PASS: weak_point loads its implemented-status badge
+PASS: fracture loads its implemented-status badge
+PASS: link loads its implemented-status badge
+PASS: blood_rite loads its implemented-status badge
+PASS: healing_sealed loads its implemented-status badge
+PASS: jam loads its implemented-status badge
+PASS: debt loads its implemented-status badge
+PASS: anchored loads its implemented-status badge
+PASS: marked loads its implemented-status badge
+PASS: scarred loads its implemented-status badge
+PASS: a callout keeps its own modifier IDs when the caller reuses the array
+PASS: merging an untagged message removes its previous badges
+PASS: progress merges replace their badge metadata with the message
+PASS: pool compaction keeps each surviving line with its own badge
+PASS: damage reusing a callout slot never inherits an icon
+PASS: reused text cache changes from caption to figure face
+PASS: identical text and size still rebuild the cache when a figure slot becomes a caption
+PASS: stacked badge callouts reserve enough vertical space to clear each other
+PASS: a damage key cannot overwrite a named callout sharing the same integer
+PASS: that damage stays iconless and outside the callout column
+PASS: a popup key cannot convert an existing damage number into a caption
+PASS: a progress key likewise stays in the named callout channel
+PASS: modifier announcements accept semantic IDs and retain each name's own colour
+PASS: modifier names keep copied IDs when a caller or another slot is cleared
+PASS: compaction cannot transfer modifier colours into a surviving plain callout
+PASS: a damage number reusing a modifier slot has no coloured spans
+PASS: compaction retains a moved modifier's own coloured spans
+PASS: implemented statuses share canonical names, colours and authored badges
+PASS: a single burn callout resolves the canonical name, orange text and burn badge
+PASS: status feedback preserves authored text and emphasis
+PASS: mixed statuses filter duplicates and unknown IDs while copying the caller's order
+PASS: generic status names are shaped with the same pooled coloured-span renderer as elite names
+PASS: the elite wrapper retains its five-modifier filtering
+PASS: unknown semantic status does not create an empty callout
+PASS: a plain popup replacing a status line clears its coloured spans
+PASS: progress replacing a status line clears coloured spans and adopts its requested colour
+CombatTextPresentationTest: 62 passed, 0 failed

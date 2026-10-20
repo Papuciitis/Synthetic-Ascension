@@ -1,0 +1,37 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: eligible pickup icons have a cover adapter
+PASS: pickup cover accepts the live icon and refreshes its ground depth
+PASS: both ordinary and exploration equipment wire the real icon adapter
+PASS: cover preserves native atlas resource and crop
+PASS: covered presentation preserves the locked POS tint and alpha
+PASS: NEG equipment retains its authored polarity tint
+PASS: coverage never unlocks equipment or removes its exploration marker
+PASS: unlock restores the preexisting POS presentation
+PASS: cover cannot reveal an explicitly hidden icon
+PASS: refresh reuses the persistent icon material
+PASS: protected pickups refresh ground depth before the magnet's early return
+PASS: an existing material owner is preserved
+PASS: healing icon and its duplicate glow both receive cover presentation
+PASS: health glow keeps its original tint and alpha
+PASS: atlas icon renders its selected art without the green neighbor
+PASS: transparent atlas pixels retain the ground
+PASS: opaque roof applies the quiet silhouette to covered icon pixels
+PASS: uncovered pixels of the same atlas icon keep their normal color
+PASS: partial roof alpha smoothly blends the pickup silhouette
+PASS: a protected pickup in front uses ground depth instead of its thrown icon offset
+PASS: cutaway roof restores the normal pickup icon
+PASS: a covered hidden icon emits no visible hint
+PASS: streamed roof removal clears stale pickup coverage
+PASS: opaque foliage covers the actual equipment icon
+PASS: a transparent leaf gap preserves the uncovered equipment pixels
+PASS: foliage composition retains the reduced alpha of a locked icon
+PASS: a leaf gap keeps the original locked icon alpha
+PASS: temporary icon scale and offset retain world-space foliage coverage
+PASS: scaled icon pixels inside a leaf gap retain their authored color
+PASS: the duplicate healing glow cannot repaint bright art over foliage coverage
+PASS: native cover composition retains health glow modulation
+PASS: pickup removal releases icons without keeping their owners alive
+PASS: cover presentation performs no save writes
+PickupCoverTest passes=33 failures=0

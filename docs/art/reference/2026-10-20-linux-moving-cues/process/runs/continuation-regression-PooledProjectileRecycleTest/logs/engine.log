@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: PoolManager autoload is present
+PASS: projectile.tscn is obtainable from the pool
+PASS: two hitboxes in one physics flush produce exactly one hit (got 1)
+PASS: projectile is back in the pool after the flush
+PASS: pooled projectile is parked under PoolManager
+PASS: pool hands the recycled projectile back out
+PASS: reused projectile registers its overlap again and hits exactly once (got 1)
+PASS: reused projectile returns to the pool again
+PooledProjectileRecycleTest: 8 passed, 0 failed

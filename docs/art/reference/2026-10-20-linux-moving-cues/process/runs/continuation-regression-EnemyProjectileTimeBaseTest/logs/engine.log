@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: an unbanked frame advances at most one tick of headroom (16.7 px, tick = 16.7 px)
+PASS: a frame spends the banked physics time, not the render delta (50.0 px, expected ~50.0)
+PASS: a long stall cannot bank more than the catch-up cap (50.0 px, cap+headroom = 50.0)
+PASS: the same physics time travels the same distance in 1 frame or 8 (50.0 vs 50.0)
+EnemyProjectileTimeBaseTest: 4 passed, 0 failed

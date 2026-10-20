@@ -1,0 +1,381 @@
+extends Node2D
+class_name VFX_EliteModifierMark
+
+## Dedicated painted tells keep every modifier identifiable beside its body
+## sheen: plates, a blood ring, a ward, a fissure and a wind ribbon. Reduced
+## motion retains all static tells while stopping body pulses and trails.
+const TellArt = preload("res://core/systems/vfx/EliteTellArt.gd")
+
+@export var line_width: float = 3.0
+@export var glow_width: float = 9.0
+@export var plate_count: int = 6
+@export var plate_gap: float = 0.18
+@export var body_radius: float = 26.0
+@export var streak_length: float = 34.0
+@export var vampiric_pulse_hz: float = 1.6
+# FAST's still tell: a row of chevrons under the body, the fast-forward glyph.
+@export var fast_chevron_count: int = 3
+@export var fast_chevron_size: float = 10.0
+@export var fast_chevron_spacing: float = 9.0
+@export var fast_chevron_offset: float = 6.0
+# Seconds the VAMPIRIC ring stays brightened after a feed.
+@export var feed_flash_seconds: float = 0.35
+# The plate ring sits this far outside the body radius.
+@export var plate_ring_offset: float = 4.0
+# The VAMPIRIC ring sits this far inside the body radius and swells by
+# vampiric_ring_pulse_px at the top of the pulse.
+@export var vampiric_ring_inset: float = 4.0
+@export var vampiric_ring_pulse_px: float = 3.0
+# The streak draws from streak_min_speed and reaches full length at
+# streak_full_speed; streak_lines lines, streak_spacing px apart.
+@export var streak_min_speed: float = 20.0
+@export var streak_full_speed: float = 300.0
+@export var streak_lines: int = 3
+@export var streak_spacing: float = 7.0
+
+# Beyond this distance the mark cannot matter to the player; skip drawing
+# rather than tessellating rings for the elite's whole lifetime.
+const DRAW_MAX_PLAYER_DIST := 1200.0
+const REDRAW_INTERVAL := 1.0 / 30.0
+# Line alphas: plate, seam and chevrons are solid marks; hexagon and streak
+# sit lighter; the hexagon's fill is a wash.
+const SOLID_LINE_ALPHA := 0.95
+const SOLID_GLOW_ALPHA := 0.35
+const LINE_ALPHA := 0.85
+const GLOW_ALPHA := 0.30
+const SHIELD_FILL_ALPHA := 0.05
+# Seam, chevrons and streak carry a narrower glow than the rings.
+const THIN_GLOW_WIDTH_MULT := 0.6
+# The plate ring's line is this many times line_width.
+const PLATE_LINE_WIDTH_MULT := 2.0
+# Arc tessellation: per plate, and for the full VAMPIRIC ring.
+const PLATE_ARC_SEGMENTS := 6
+const RING_SEGMENTS := 24
+# VAMPIRIC scales the first modifier's body brightness without changing its
+# hue or alpha; its own ring carries red when it is a secondary modifier.
+const VAMPIRIC_PULSE_BRIGHTNESS := 1.4
+const VAMPIRIC_TINT_MIX_MIN := 0.25
+const VAMPIRIC_TINT_MIX_RANGE := 0.75
+# VAMPIRIC ring alpha runs RING_ALPHA_MIN..MAX over the pulse, the glow at
+# GLOW_ALPHA_MULT of it; under reduced_motion the pulse holds at STILL_PHASE.
+const VAMPIRIC_RING_ALPHA_MIN := 0.25
+const VAMPIRIC_RING_ALPHA_MAX := 0.75
+const VAMPIRIC_GLOW_ALPHA_MULT := 0.5
+const VAMPIRIC_STILL_PHASE := 0.5
+# A secondary blood tell cannot rely on a red body sheen. Keep its collar
+# outside the inner pulse with enough colour left even at the trough.
+const SECONDARY_VAMPIRIC_COLLAR_OFFSET := 5.0
+const SECONDARY_VAMPIRIC_ALPHA_MIN := 0.65
+const SECONDARY_VAMPIRIC_ALPHA_MAX := 0.9
+const TELL_UNDERLAY_COLOR := Color(0.025, 0.015, 0.02, 0.9)
+const TELL_UNDERLAY_PAD := 2.0
+const SEAM_SPAN_MULT := 1.4
+const SEAM_HEIGHT_MULT := 1.1
+# Streak length is streak_length x (speed / streak_full_speed) clamped to
+# these; it starts START_FRACTION of the body radius behind centre and the
+# outer lines fade by SIDE_FADE per line from the middle.
+const STREAK_LENGTH_MIN_MULT := 0.4
+const STREAK_LENGTH_MAX_MULT := 1.6
+const STREAK_START_FRACTION := 0.6
+const STREAK_SIDE_FADE := 0.35
+# last_drawn_bits flag for the streak, outside the EliteModifiers bit range:
+# the streak is motion, not the FAST mark that survives reduced_motion.
+const DRAWN_STREAK := 1 << 8
+
+# What the last draw pass put on the canvas: each modifier's bit when its
+# mark drew (FAST for the chevrons), plus DRAWN_STREAK.
+var last_drawn_bits: int = 0
+
+var _enemy: EnemyActor = null
+var _sprite: CanvasItem = null
+var _body_marks: Node2D = null
+var _ids: Array[StringName] = []
+var _bits: int = 0
+var _base_tint: Color = Color.WHITE
+var _t: float = 0.0
+var _redraw_accum: float = 0.0
+var _reduced_motion: bool = false
+var _drawn_static: bool = false
+var _feed_flash: float = 0.0
+var _released: bool = false
+
+
+func setup(enemy: EnemyActor, ids: Array[StringName], base_tint: Color) -> void:
+	_enemy = enemy
+	_ids = ids.duplicate()
+	_bits = 0
+	for id in _ids:
+		_bits |= EliteModifiers.bit_for(id)
+	_base_tint = base_tint
+	_sprite = enemy.get_node_or_null("Sprite2D") as CanvasItem if enemy != null else null
+
+
+## VAMPIRIC just fed: brighten the ring for a beat so the feed is visible.
+func note_feed() -> void:
+	_feed_flash = feed_flash_seconds
+	if not _animated():
+		_queue_marks_redraw()
+
+
+## The enemy is dropping the mark. A queued free lands at the end of the
+## frame; from here on no step writes the sprite's modulate, so the colour
+## the enemy restores stays.
+func release() -> void:
+	_released = true
+	set_process(false)
+	if SettingsManager != null and SettingsManager.settings_changed.is_connected(_on_settings_changed):
+		SettingsManager.settings_changed.disconnect(_on_settings_changed)
+
+
+func _ready() -> void:
+	# Keep the large shield-radius wash and motion trails behind the body.
+	position = Vector2.ZERO
+	z_index = -1
+	material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self)
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_sync_draw_depth()
+	if (_bits & (EliteModifiers.BIT_SPLITTING | EliteModifiers.BIT_VAMPIRIC)) != 0:
+		_body_marks = Node2D.new()
+		_body_marks.name = "BodyMarks"
+		# The rear marks sit one layer below the actual body; its seam and
+		# blood collar sit one layer above, including under the proxy root.
+		_body_marks.z_index = 2
+		_body_marks.draw.connect(_draw_body_marks)
+		add_child(_body_marks)
+		_body_marks.material = material
+	_reduced_motion = (
+		SettingsManager != null
+		and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+	)
+	if SettingsManager != null:
+		SettingsManager.settings_changed.connect(_on_settings_changed)
+	set_process(true)
+	_queue_marks_redraw()
+
+
+func _on_settings_changed(section: StringName, key: StringName, value: Variant) -> void:
+	if _released or section != &"accessibility" or key != &"reduced_motion":
+		return
+	_reduced_motion = bool(value)
+	_drawn_static = false
+	_redraw_accum = REDRAW_INTERVAL
+	# Stop on the authored tint, rather than freezing at a bright point in
+	# the blood pulse. Every modifier keeps its static tell after the redraw.
+	if _reduced_motion and (_bits & EliteModifiers.BIT_VAMPIRIC) != 0 and is_instance_valid(_sprite):
+		_sprite.modulate = _base_tint
+	_queue_marks_redraw()
+
+
+func _queue_marks_redraw() -> void:
+	queue_redraw()
+	if _body_marks != null:
+		_body_marks.queue_redraw()
+
+
+func _sync_draw_depth() -> void:
+	if _enemy == null or not is_instance_valid(_enemy):
+		return
+	var body := _sprite
+	var renderer_id := int(_enemy.get("_batched_renderer_id"))
+	if renderer_id != 0:
+		var renderer := instance_from_id(renderer_id) as CanvasItem
+		if renderer != null:
+			body = renderer
+	if body != null and is_instance_valid(body):
+		# Batched bodies belong to a separate scene branch. Match their
+		# effective canvas depth rather than the hidden sprite's local z.
+		z_index = _effective_canvas_z(body) - _effective_canvas_z(_enemy) - 1
+
+
+func _effective_canvas_z(item: CanvasItem) -> int:
+	var depth := 0
+	while item != null:
+		depth += item.z_index
+		if not item.z_as_relative:
+			break
+		item = item.get_parent() as CanvasItem
+	return depth
+
+
+func is_animated() -> bool:
+	return _animated()
+
+
+func _animated() -> bool:
+	# Only the pulse and the streak move; plate ring, hexagon, seam and
+	# chevrons draw once.
+	return not _reduced_motion and (_bits & (EliteModifiers.BIT_VAMPIRIC | EliteModifiers.BIT_FAST)) != 0
+
+
+func _fast_needs_still_tell() -> bool:
+	# Retain FAST's ribbon between movements, including when it owns the hue.
+	return (_bits & EliteModifiers.BIT_FAST) != 0
+
+
+func _process(dt: float) -> void:
+	if _released:
+		return
+	if _enemy == null or not is_instance_valid(_enemy) or _enemy.dead:
+		release()
+		queue_free()
+		return
+	_sync_draw_depth()
+	var player := _enemy.player
+	if player == null or not is_instance_valid(player):
+		return
+	var dist_sq := _enemy.global_position.distance_squared_to(player.global_position)
+	if dist_sq > DRAW_MAX_PLAYER_DIST * DRAW_MAX_PLAYER_DIST:
+		if visible:
+			visible = false
+		return
+	if not visible:
+		visible = true
+		_drawn_static = false
+	_t += dt
+	var feed_was_active := _feed_flash > 0.0
+	if feed_was_active:
+		_feed_flash = maxf(_feed_flash - dt, 0.0)
+	if _animated():
+		_redraw_accum += dt
+		if _redraw_accum >= REDRAW_INTERVAL:
+			_redraw_accum = 0.0
+			_pulse_tint()
+			_queue_marks_redraw()
+	elif not _drawn_static or feed_was_active:
+		_drawn_static = true
+		# Static tells still need the feed's fading alpha and its final
+		# unlit frame; this never steps the reduced-motion body pulse.
+		_queue_marks_redraw()
+
+
+func _pulse_tint() -> void:
+	if _sprite == null or not is_instance_valid(_sprite) or (_bits & EliteModifiers.BIT_VAMPIRIC) == 0:
+		return
+	var k := 0.5 + 0.5 * sin(_t * vampiric_pulse_hz * TAU)
+	var brightness := lerpf(1.0, VAMPIRIC_PULSE_BRIGHTNESS, VAMPIRIC_TINT_MIX_MIN + VAMPIRIC_TINT_MIX_RANGE * k)
+	_sprite.modulate = Color(_base_tint.r * brightness, _base_tint.g * brightness, _base_tint.b * brightness, _base_tint.a)
+
+
+func _draw() -> void:
+	if _enemy == null or not is_instance_valid(_enemy):
+		return
+	# The mark inherits the body's scale; world-sized marks (the shield radius)
+	# divide it back out, body-sized marks scale with the body on purpose.
+	var world_scale := maxf(absf(global_scale.x), 0.01)
+	last_drawn_bits = 0
+	if (_bits & EliteModifiers.BIT_SHIELDED) != 0:
+		_draw_shield_hexagon(EliteModifiers.SHIELD_RADIUS / world_scale)
+		last_drawn_bits |= EliteModifiers.BIT_SHIELDED
+	if (_bits & EliteModifiers.BIT_ARMOURED) != 0:
+		_draw_plate_ring()
+		last_drawn_bits |= EliteModifiers.BIT_ARMOURED
+	if _fast_needs_still_tell():
+		_draw_fast_chevrons()
+		last_drawn_bits |= EliteModifiers.BIT_FAST
+	if (_bits & EliteModifiers.BIT_FAST) != 0 and not _reduced_motion:
+		_draw_streak(world_scale)
+
+
+func _draw_body_marks() -> void:
+	if _enemy == null or not is_instance_valid(_enemy):
+		return
+	if (_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
+		_draw_vampiric_ring(_body_marks)
+		last_drawn_bits |= EliteModifiers.BIT_VAMPIRIC
+	if (_bits & EliteModifiers.BIT_SPLITTING) != 0:
+		_draw_seam(_body_marks)
+		last_drawn_bits |= EliteModifiers.BIT_SPLITTING
+
+
+func _draw_shield_hexagon(radius: float) -> void:
+	var tint := EliteModifiers.tint(EliteModifiers.SHIELDED)
+	if TellArt.draw_radial(self, EliteModifiers.SHIELDED, radius, Color(tint.r, tint.g, tint.b, LINE_ALPHA)):
+		return
+	# Pixel-art kit (Batch C, 2026-09-27): one hexagon sprite (faint fill baked in) in the line colour replaces the fill polygon and the glow+core polylines.
+	VfxKit.draw_hexagon(self, Vector2.ZERO, radius, Color(tint.r, tint.g, tint.b, LINE_ALPHA), 0.0, line_width)
+
+
+func _draw_plate_ring() -> void:
+	var tint := EliteModifiers.tint(EliteModifiers.ARMOURED)
+	var r := body_radius + plate_ring_offset
+	if TellArt.draw_radial(self, EliteModifiers.ARMOURED, r, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA)):
+		return
+	# Pixel-art kit (Batch C, 2026-09-27): one six-plate sprite in the line colour replaces the per-plate glow+core arcs.
+	VfxKit.draw_plates(self, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), 0.0, line_width * PLATE_LINE_WIDTH_MULT)
+
+
+func _draw_vampiric_ring(canvas: CanvasItem) -> void:
+	var tint := EliteModifiers.tint(EliteModifiers.VAMPIRIC)
+	var k := VAMPIRIC_STILL_PHASE if _reduced_motion else 0.5 + 0.5 * sin(_t * vampiric_pulse_hz * TAU)
+	var secondary := _ids.find(EliteModifiers.VAMPIRIC) > 0
+	var alpha_min := SECONDARY_VAMPIRIC_ALPHA_MIN if secondary else VAMPIRIC_RING_ALPHA_MIN
+	var alpha_max := SECONDARY_VAMPIRIC_ALPHA_MAX if secondary else VAMPIRIC_RING_ALPHA_MAX
+	var alpha := lerpf(alpha_min, alpha_max, k) + _feed_flash
+	var r := body_radius - vampiric_ring_inset + (0.0 if _reduced_motion else vampiric_ring_pulse_px * k)
+	if secondary:
+		r += SECONDARY_VAMPIRIC_COLLAR_OFFSET
+		if not TellArt.draw_radial(canvas, EliteModifiers.VAMPIRIC, r + TELL_UNDERLAY_PAD, TELL_UNDERLAY_COLOR):
+			VfxKit.draw_ring(canvas, Vector2.ZERO, r, TELL_UNDERLAY_COLOR, line_width + TELL_UNDERLAY_PAD * 2.0)
+	if TellArt.draw_radial(canvas, EliteModifiers.VAMPIRIC, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0))):
+		return
+	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite in the line colour replaces the glow+core full arcs.
+	VfxKit.draw_ring(canvas, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0)), line_width)
+
+
+func _draw_seam(canvas: CanvasItem) -> void:
+	# A jagged crack across the body: where it will come apart.
+	var tint := EliteModifiers.tint(EliteModifiers.SPLITTING)
+	var r := body_radius * SEAM_SPAN_MULT
+	var start := Vector2(-r, -r * 0.35)
+	var end := Vector2(r, r * 0.4)
+	var size := Vector2(start.distance_to(end), body_radius * SEAM_HEIGHT_MULT)
+	var at := (start + end) * 0.5
+	var angle := (end - start).angle()
+	# A dark edge separates the branches from neighbouring armour and flashes.
+	if not TellArt.draw_strip(canvas, EliteModifiers.SPLITTING, at, size + Vector2.ONE * TELL_UNDERLAY_PAD * 2.0, TELL_UNDERLAY_COLOR, angle):
+		VfxKit.draw_crack(canvas, start, end, glow_width * THIN_GLOW_WIDTH_MULT + TELL_UNDERLAY_PAD * 2.0, TELL_UNDERLAY_COLOR)
+	if TellArt.draw_strip(canvas, EliteModifiers.SPLITTING, at, size, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), angle):
+		return
+	# Pixel-art kit (Batch C, 2026-09-27): one crack sprite stretched between the old seam's end points replaces the glow+core zig-zag polylines.
+	# The kink band scales with the width: the thin glow width (~5.4 px) gives
+	# the crack the bite the old 13 px zig-zag had on a 26 px body.
+	VfxKit.draw_crack(canvas, start, end, glow_width * THIN_GLOW_WIDTH_MULT, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA))
+
+
+func _draw_fast_chevrons() -> void:
+	var tint := EliteModifiers.tint(EliteModifiers.FAST)
+	var y := body_radius + fast_chevron_offset
+	var first_x := -fast_chevron_spacing * float(fast_chevron_count - 1) * 0.5
+	var col := Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA)
+	var ribbon_size := Vector2(fast_chevron_spacing * float(fast_chevron_count - 1) + fast_chevron_size * 2.0, fast_chevron_size * 1.4)
+	if TellArt.draw_strip(self, EliteModifiers.FAST, Vector2(0.0, y), ribbon_size, col):
+		return
+	for i in range(fast_chevron_count):
+		var x := first_x + fast_chevron_spacing * float(i)
+		# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite pointing +X, centred where the old glyph was, replaces the glow+core polyline pair.
+		VfxKit.draw_chevron(self, Vector2(x, y), 0.0, fast_chevron_size, col, line_width)
+
+
+func _draw_streak(world_scale: float) -> void:
+	var velocity := _enemy.velocity
+	var speed := velocity.length()
+	if speed < streak_min_speed:
+		return
+	last_drawn_bits |= DRAWN_STREAK
+	var tint := EliteModifiers.tint(EliteModifiers.FAST)
+	var back := -(velocity / speed)
+	var length := streak_length * clampf(speed / streak_full_speed, STREAK_LENGTH_MIN_MULT, STREAK_LENGTH_MAX_MULT) / world_scale
+	var ribbon_head := back * (body_radius * STREAK_START_FRACTION)
+	var ribbon_size := Vector2(length, line_width + streak_spacing * 1.2)
+	if TellArt.draw_strip(self, EliteModifiers.FAST, ribbon_head + back * length * 0.5, ribbon_size, Color(tint.r, tint.g, tint.b, LINE_ALPHA), velocity.angle()):
+		return
+	var side := back.orthogonal()
+	var middle := float(streak_lines - 1) * 0.5
+	for i in range(streak_lines):
+		var lines_from_middle := float(i) - middle
+		var offset := side * lines_from_middle * streak_spacing
+		var fade := 1.0 - absf(lines_from_middle) * STREAK_SIDE_FADE
+		var head := offset + back * (body_radius * STREAK_START_FRACTION)
+		var tail := head + back * length * fade
+		# Pixel-art kit (Batch B, 2026-09-27): one streak sprite per line, bright end at the body, replaces the glow+core line pair.
+		VfxKit.draw_streak(self, tail, head, line_width, Color(tint.r, tint.g, tint.b, LINE_ALPHA * fade))

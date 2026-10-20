@@ -1,0 +1,6 @@
+ERROR: ordinary node projectile emission covered pixels receive quiet depth presentation (0/38)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux/video-tool/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-xerror",
+    "-threads",
+    "1",
+    "-i",
+    "/home/user/Nauris/Synthetic-Ascension/docs/art/reference/2026-10-20-linux-moving-cues/moving-route.mp4",
+    "-map",
+    "0:v:0",
+    "-fps_mode",
+    "passthrough",
+    "-enc_time_base",
+    "1:1000000",
+    "-f",
+    "null",
+    "-"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "video_sha256": "d2f39be5ab22f96d804c802b0137a02b600f13fe337b7ed033687321e88c13d2"
+}

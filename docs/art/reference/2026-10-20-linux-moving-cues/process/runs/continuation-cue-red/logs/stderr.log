@@ -1,0 +1,97 @@
+ERROR: shooter windup covered pixels receive quiet depth presentation (0/44)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: charge fan covered pixels receive quiet depth presentation (0/322)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: herald ground ring covered pixels receive quiet depth presentation (0/793)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: warden shield frame covered pixels receive quiet depth presentation (0/426)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: pickup lock/exploration frames covered pixels receive quiet depth presentation (0/120)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: batched projectile native covered pixels receive quiet depth presentation (0/364)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: batched projectile needle covered pixels receive quiet depth presentation (0/364)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: batched projectile tracer covered pixels receive quiet depth presentation (0/364)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: batched projectile enemy covered pixels receive quiet depth presentation (0/369)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: Condition "p_scene && p_scene->get_parent() != root" is true.
+   at: set_current_scene (scene/main/scene_tree.cpp:1665)
+   GDScript backtrace (most recent call first):
+       [0] _sniper_probe (res://tools/tests/WorldCueCoverRenderTest.gd:221)
+       [1] _run (res://tools/tests/WorldCueCoverRenderTest.gd:156)
+       [2] _projectile_probes (res://tools/tests/WorldCueCoverRenderTest.gd:197)
+       [3] _retire (res://tools/tests/WorldCueCoverRenderTest.gd:78)
+ERROR: sniper telegraph and additive layers renders actual pixels behind the cover edge
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:68)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: sniper telegraph and additive layers covered pixels receive quiet depth presentation (0/0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: sniper telegraph and additive layers exposed/front-depth pixels retain authored presentation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:70)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: pooled world callout covered pixels receive quiet depth presentation (0/381)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: ordinary fallback sprite covered pixels receive quiet depth presentation (0/512)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: elite fallback sprite covered pixels receive quiet depth presentation (0/512)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)

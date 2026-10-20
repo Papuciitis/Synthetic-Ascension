@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: the renderer composited the identity atlas from the generator PNGs
+PASS: a native shot rides the shared body (0)
+PASS: a Precision root rides the needle (1)
+PASS: a Barrage root rides the tracer (2)
+PASS: removal swaps the tracer's identity along with its slot
+PASS: a reused slot re-reads its own provenance
+PASS: the atlas path keeps the render budget clamp
+ProjectileIdentityTest: 7 passed, 0 failed

@@ -1,0 +1,60 @@
+ERROR: shooter ground cone covered pixels receive quiet depth presentation (0/3809)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: shooter muzzle flash covered pixels receive quiet depth presentation (0/37)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: bomber actual perimeter and fuse covered pixels receive quiet depth presentation (0/3010)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: bomber actual fuse separately covered pixels receive quiet depth presentation (0/374)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: elite secondary marks [&"armoured", &"shielded", &"fast"] covered pixels receive quiet depth presentation (0/3815)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: elite secondary marks [&"vampiric", &"splitting"] covered pixels receive quiet depth presentation (0/338)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: bomber actual blast covered pixels receive quiet depth presentation (0/7448)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: batched impact emission covered pixels receive quiet depth presentation (0/704)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: ordinary node projectile emission renders actual pixels behind the cover edge
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:68)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+ERROR: ordinary node projectile emission covered pixels receive quiet depth presentation (0/6)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)

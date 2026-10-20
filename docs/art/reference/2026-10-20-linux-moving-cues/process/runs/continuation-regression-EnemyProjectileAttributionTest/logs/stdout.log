@@ -1,0 +1,79 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[BalanceRecorder] Recording to /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-regression-EnemyProjectileAttributionTest/data/godot/app_userdata/Synthetic Ascension/enemy_projectile_attribution_8163960/2026-10-20/2026-10-20_19-27-00_141592_8163981_1
+PASS: reference batch applies one 60-raw cap, unknown-source Trauma and 100 armour
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: freed-shooter attribution preserves the exact reference HP loss
+PASS: two impacts remain one unchanged source/kind/raw batch and one health change
+PASS: same-origin impacts retain one honest enemy identity and both hit contributions
+PASS: canonical health and resolved damage see the same temporary context, then it clears
+PASS: the actual recorder attributes the freed-shooter health loss to its retained identity
+PASS: the health-reconciliation source uses the same retained identity
+PASS: telemetry identity cannot change Trauma's existing gameplay category
+PASS: the real health ledger reconciles the attributed impact with observed HP
+PASS: hostile projectile enters the real simulation
+PASS: a living boss Node retains its original larger cap, source, kind and Trauma result
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: a mixed-source batch names both identities without assigning the entire batch to one
+PASS: mixed telemetry preserves the existing single damage batch and defences (loss 7.000000; [{ "raw": 20.0, "adjusted": 7.0, "applied": 7.0, "source": <null>, "kind": &"unknown", "outcome": &"hit", "context": { "source_id": "mixed", "member_ids": ["enemy_herald", "enemy_spitter"], "members_overflow": false, "hit_count": 2 } }])
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: an unavailable member remains explicitly unknown inside a mixed batch
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: swap-removal moves the surviving projectile's telemetry identity
+PASS: hostile projectile enters the real simulation
+PASS: a reused slot clears stale enemy ancestry
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: member identities stay bounded while all twenty original damage contributions remain
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: hostile projectile enters the real simulation
+PASS: an unknown contributor remains explicit even when it arrives after the member cap
+PASS: hostile projectile enters the real simulation
+PASS: an outer context survives a nested ordinary damage call
+PASS: nested ordinary damage cannot inherit projectile attribution and the context stack empties
+PASS: a two-argument legacy target keeps its existing delivery API
+[BalanceRecorder] suspended — /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-regression-EnemyProjectileAttributionTest/data/godot/app_userdata/Synthetic Ascension/enemy_projectile_attribution_8163960/2026-10-20/2026-10-20_19-27-00_141592_8163981_1/report.md
+PASS: hostile projectile enters the real simulation
+PASS: unrecorded damage does not write incoming telemetry into hit contributions
+EnemyProjectileAttributionTest: 74 passed, 0 failed

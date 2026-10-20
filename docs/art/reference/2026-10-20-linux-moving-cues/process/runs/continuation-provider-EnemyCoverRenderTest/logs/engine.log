@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: uncovered proxy renders its authored red atlas frame
+PASS: uncovered materialized actor renders its selected green frame
+PASS: fixture renders ordinary and elite proxies alongside two materialized bodies
+PASS: retained half-rate proxy keeps its existing pose
+PASS: retained proxy receives live opaque-roof coverage (got (0.1686, 0.1725, 0.2078, 1.0))
+PASS: exposed pixels of the same proxy retain authored colour
+PASS: front-depth proxy stays normal where its artwork overlaps the roof
+PASS: ordinary materialized batch receives coverage (got (0.1333, 0.2078, 0.2078, 1.0))
+PASS: elite materialized batch receives coverage after its own surface (got (0.1686, 0.1725, 0.2078, 1.0))
+PASS: elite data-only batch receives coverage during a representation shortage (got (0.1686, 0.1725, 0.2078, 1.0))
+PASS: cover never fills a transparent hole in the enemy's atlas frame
+PASS: partial roof opacity produces partial silhouette strength
+PASS: cutaway roof restores the proxy's current authored presentation
+PASS: cutaway restores ordinary materialized modulation
+PASS: cutaway restores the existing elite surface
+PASS: cutaway restores the data-only elite surface
+PASS: full proxy flash still composes beneath quiet cover (got (0.1686, 0.2078, 0.2392, 1.0))
+PASS: full elite flash still composes beneath quiet cover (got (0.1686, 0.2078, 0.2392, 1.0))
+PASS: full data-only elite flash still composes beneath quiet cover (got (0.1686, 0.2078, 0.2392, 1.0))
+PASS: full flash remains white on exposed enemy pixels
+PASS: reduced proxy flash still composes beneath quiet cover (got (0.1686, 0.1882, 0.2196, 1.0))
+PASS: reduced elite flash still composes beneath quiet cover (got (0.1686, 0.1882, 0.2196, 1.0))
+PASS: reduced data-only elite flash still composes beneath quiet cover (got (0.1686, 0.1882, 0.2196, 1.0))
+PASS: reduced flash retains its intermediate exposed intensity
+PASS: off proxy flash still composes beneath quiet cover (got (0.1686, 0.1725, 0.2078, 1.0))
+PASS: off elite flash still composes beneath quiet cover (got (0.1686, 0.1725, 0.2078, 1.0))
+PASS: off data-only elite flash still composes beneath quiet cover (got (0.1686, 0.1725, 0.2078, 1.0))
+PASS: flashes off leaves exposed enemy pixels authored
+PASS: clearing cover restores a live full flash rather than resetting the enemy to plain colour
+PASS: live ordinary-to-elite batch switch keeps coverage (got (0.1333, 0.2078, 0.2078, 1.0))
+PASS: elite surface promotion draws exactly one body
+PASS: pooled actor leaves the covered drawing population
+PASS: pooled actor reuse restores one covered ordinary body (got (0.1333, 0.2078, 0.2078, 1.0))
+PASS: pool reuse leaves no duplicate body
+PASS: streaming removal clears retained proxy cover
+PASS: streaming removal clears materialized cover
+PASS: coverage changes preserve authoritative enemy-world population
+PASS: coverage changes preserve authoritative enemy positions and health
+EnemyCoverRenderTest passes=38 failures=0

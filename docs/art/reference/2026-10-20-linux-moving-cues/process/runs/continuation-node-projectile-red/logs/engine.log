@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+ERROR: ordinary node projectile emission covered pixels receive quiet depth presentation (0/38)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCueCoverRenderTest.gd:28)
+       [1] _probe (res://tools/tests/WorldCueCoverRenderTest.gd:69)
+       [2] _pixels (res://tools/tests/WorldCueCoverRenderTest.gd:38)
+WorldCueCoverRenderTest probe=ordinary node projectile emission hidden=38 changed=0 exposed=306 delta=0.0000 restored=0.0000
+WorldCueAdditionalRenderTest: 4 passed, 1 failed

@@ -1,0 +1,768 @@
+{
+  "actual_exit": 1,
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/home/user/Nauris/Synthetic-Ascension",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-cue-green/logs/engine.log",
+    "--flush-output",
+    "--rendering-driver",
+    "opengl3",
+    "--audio-driver",
+    "Dummy",
+    "--verbose",
+    "res://tools/tests/WorldCueCoverRenderTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /home/user/Nauris/Synthetic-Ascension --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-cue-green/logs/engine.log --flush-output --rendering-driver opengl3 --audio-driver Dummy --verbose res://tools/tests/WorldCueCoverRenderTest.tscn",
+  "curation_classification": "failed_runtime_attempt",
+  "curation_note": "Autoload binding tried adding WorldCover while root added children, orphaning service/resources. Animated glint also changed static screenshot comparison. Not GREEN.",
+  "diagnostics": [
+    "ERROR: 4 RID allocations of type 'N5GLES38MaterialE' were leaked at exit.",
+    "ERROR: 2 RID allocations of type 'N5GLES36ShaderE' were leaked at exit.",
+    "ERROR: 4 RID allocations of type 'N5GLES37TextureE' were leaked at exit.",
+    "Leaked instance: GDScriptNativeClass:9223372050679202559 - Reference count: 1",
+    "Leaked instance: GDScript:9223372099886778132 - Reference count: 1",
+    "Leaked instance: Shader:9223372100121659158 - Reference count: 2",
+    "Leaked instance: Shader:9223372100423649047 - Reference count: 2",
+    "Leaked instance: ShaderInclude:9223372100239099672 - Reference count: 2",
+    "Leaked instance: Node:374366800766 - Node path: ",
+    "Leaked instance: WeakRef:9223372411271908224 - Reference count: 1",
+    "Leaked instance: WeakRef:9223372411355794308 - Reference count: 1",
+    "Leaked instance: ShaderMaterial:9223372411506789255 - Reference count: 1",
+    "Leaked instance: WeakRef:9223372411439680392 - Reference count: 1",
+    "Leaked instance: WeakRef:9223372411523566476 - Reference count: 1",
+    "Leaked instance: ShaderMaterial:9223372411624229777 - Reference count: 1",
+    "Leaked instance: WeakRef:9223372411641006994 - Reference count: 1",
+    "Leaked instance: Texture2DArray:9223372422277762024 - Reference count: 2",
+    "Leaked instance: ImageTexture:9223372422311316457 - Reference count: 2",
+    "Leaked instance: ImageTexture:9223372422344870890 - Reference count: 2",
+    "Leaked instance: ImageTexture:9223372422378425323 - Reference count: 2",
+    "Leaked instance: ShaderMaterial:9223372433216506915 - Reference count: 1",
+    "Leaked instance: WeakRef:9223372433233284132 - Reference count: 1",
+    "Leaked instance: ShaderMaterial:9223372433250061349 - Reference count: 1",
+    "Leaked instance: WeakRef:9223372433266838566 - Reference count: 1",
+    "Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).",
+    "Orphan StringName: world_cue_add_anchor (static: 0, total: 1)",
+    "Orphan StringName: shader_parameter/world_cover_data_width (static: 0, total: 2)",
+    "Orphan StringName: world_cover_data (static: 0, total: 8)",
+    "Orphan StringName: VIEW_MARGIN (static: 0, total: 1)",
+    "Orphan StringName: _origin (static: 0, total: 4)",
+    "Orphan StringName: CELL_PX (static: 0, total: 1)",
+    "Orphan StringName: get_for (static: 0, total: 1)",
+    "Orphan StringName: _frame (static: 0, total: 4)",
+    "Orphan StringName: shader_parameter/world_cover_indices (static: 0, total: 2)",
+    "Orphan StringName: BUFFER_WIDTH (static: 0, total: 1)",
+    "Orphan StringName: _ready (static: 1, total: 2)",
+    "Orphan StringName: world_cover_alpha (static: 0, total: 8)",
+    "Orphan StringName: shader_parameter/accent_strength (static: 0, total: 1)",
+    "Orphan StringName: shader_parameter/world_cover_grid (static: 0, total: 2)",
+    "Orphan StringName: _exit_tree (static: 1, total: 2)",
+    "Orphan StringName: world_cover_cell_px (static: 0, total: 6)",
+    "Orphan StringName: shader_parameter/world_cover_alpha_size (static: 0, total: 2)",
+    "Orphan StringName: _refresh_usec (static: 0, total: 4)",
+    "Orphan StringName: shader_parameter/world_cover_enabled (static: 0, total: 4)",
+    "Orphan StringName: world_cue_add_ground (static: 0, total: 1)",
+    "Orphan StringName: shader_parameter/world_cover_data (static: 0, total: 2)",
+    "Orphan StringName: _footprint_spans (static: 0, total: 1)",
+    "Orphan StringName: _index_count (static: 0, total: 4)",
+    "Orphan StringName: accent_strength (static: 0, total: 2)",
+    "Orphan StringName: _prepare_alpha (static: 0, total: 1)",
+    "Orphan StringName: _materials (static: 0, total: 3)",
+    "Orphan StringName: _effective_alpha (static: 0, total: 1)",
+    "Orphan StringName: _generation (static: 0, total: 4)",
+    "Orphan StringName: _peak_refresh_usec (static: 0, total: 4)",
+    "Orphan StringName: metadata/world_cue_mix_anchor (static: 0, total: 1)",
+    "Orphan StringName: shader_parameter/world_cover_index_width (static: 0, total: 2)",
+    "Orphan StringName: _source_reads (static: 0, total: 4)",
+    "Orphan StringName: world_cover_data_width (static: 0, total: 6)",
+    "Orphan StringName: metadata/world_cue_mix_ground (static: 0, total: 1)",
+    "Orphan StringName: _upload_snapshot (static: 0, total: 1)",
+    "Orphan StringName: _alpha_keys (static: 0, total: 3)",
+    "Orphan StringName: shader_parameter/ground_points (static: 0, total: 4)",
+    "Orphan StringName: world_cover_alpha_size (static: 0, total: 6)",
+    "Orphan StringName: _roof_geometry (static: 0, total: 1)",
+    "Orphan StringName: strength_at (static: 0, total: 1)",
+    "Orphan StringName: _indices (static: 0, total: 3)",
+    "Orphan StringName: _alpha (static: 0, total: 3)",
+    "Orphan StringName: _grid (static: 0, total: 3)",
+    "Orphan StringName: shader_parameter/world_cover_grid_size (static: 0, total: 2)",
+    "Orphan StringName: shader_parameter/world_cover_alpha (static: 0, total: 2)",
+    "Orphan StringName: shader_parameter/world_cover_cell_px (static: 0, total: 2)",
+    "Orphan StringName: _instances (static: 0, total: 1)",
+    "Orphan StringName: _peak_primitives (static: 0, total: 4)",
+    "Orphan StringName: _clip_roof_piece (static: 0, total: 1)",
+    "Orphan StringName: _upload (static: 0, total: 1)",
+    "Orphan StringName: world_cover_indices (static: 0, total: 8)",
+    "Orphan StringName: _data (static: 0, total: 3)",
+    "Orphan StringName: _process (static: 3, total: 4)",
+    "Orphan StringName: _roof_cache (static: 0, total: 3)",
+    "Orphan StringName: metadata/world_cue_add_anchor (static: 0, total: 1)",
+    "Orphan StringName: _bind (static: 0, total: 1)",
+    "Orphan StringName: world_cue_mix_anchor (static: 0, total: 1)",
+    "Orphan StringName: _max_candidates (static: 0, total: 4)",
+    "Orphan StringName: world_cover_enabled (static: 0, total: 10)",
+    "Orphan StringName: _records (static: 0, total: 3)",
+    "Orphan StringName: _collect_solid_faces (static: 0, total: 1)",
+    "Orphan StringName: refresh (static: 0, total: 1)",
+    "Orphan StringName: shader_parameter/world_cover_origin (static: 0, total: 2)",
+    "Orphan StringName: Node (static: 4, total: 5)",
+    "Orphan StringName: world_cover_grid_size (static: 0, total: 6)",
+    "Orphan StringName: _triangulate (static: 0, total: 1)",
+    "Orphan StringName: _grid_size (static: 0, total: 4)",
+    "Orphan StringName: _peak_candidates (static: 0, total: 4)",
+    "Orphan StringName: metadata/world_cue_add_ground (static: 0, total: 1)",
+    "Orphan StringName: world_cover_index_width (static: 0, total: 6)",
+    "Orphan StringName: world_cue_mix_ground (static: 0, total: 1)",
+    "Orphan StringName: ground_points (static: 0, total: 10)",
+    "Orphan StringName: WorldCover (static: 0, total: 1)",
+    "Orphan StringName: _source_cache (static: 0, total: 3)",
+    "Orphan StringName: world_cover_origin (static: 0, total: 6)",
+    "Orphan StringName: bind_material (static: 0, total: 1)",
+    "Orphan StringName: \"core/systems/world/visibility/WorldCover.gd\" (static: 0, total: 1)",
+    "Orphan StringName: _alpha_size (static: 0, total: 4)",
+    "Orphan StringName: FOREGROUND (static: 0, total: 1)",
+    "Orphan StringName: snapshot_stats (static: 0, total: 1)",
+    "Orphan StringName: _solid_cache (static: 0, total: 3)",
+    "Orphan StringName: world_cover_grid (static: 0, total: 8)",
+    "Orphan StringName: changed (static: 0, total: 5)",
+    "ERROR: Parent node is busy setting up children, `add_child()` failed. Consider using `add_child.call_deferred(child)` instead.",
+    "ERROR: elite fallback sprite actual cutaway restores current presentation",
+    "ERROR: 2 shaders of type CanvasShaderGLES3 were never freed",
+    "ERROR: Texture with GL ID of 223: leaked 4 bytes.",
+    "ERROR: Texture with GL ID of 224: leaked 320 bytes.",
+    "ERROR: Texture with GL ID of 225: leaked 4096 bytes.",
+    "ERROR: Texture with GL ID of 226: leaked 4096 bytes.",
+    "WARNING: 21 ObjectDB instances were leaked at exit (run with `--verbose` for details).",
+    "ERROR: Cannot get path of node as it is not in a scene tree.",
+    "ERROR: 4 resources still in use at exit."
+  ],
+  "elapsed_seconds": 11.585,
+  "ended_utc": "2026-10-20T16:03:17.615376+00:00",
+  "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+  "limits": {
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096,
+    "timeout_seconds": 300.0
+  },
+  "original_run_results_sha256": "e1c37920dd84600561581d72630ba67a2b263a64ca146b616af37d0ce8e04a9d",
+  "other_godot_pids": [],
+  "pid": 131542,
+  "project_root": "/home/user/Nauris/Synthetic-Ascension",
+  "resource_samples": [
+    {
+      "available_mb": 19879.078125,
+      "cpu_seconds": 0,
+      "elapsed_seconds": 0,
+      "pids": [],
+      "rss_mb": 0
+    },
+    {
+      "available_mb": 19762.3515625,
+      "cpu_seconds": 0.05,
+      "elapsed_seconds": 0.0,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 46.9453125
+    },
+    {
+      "available_mb": 19751.83203125,
+      "cpu_seconds": 0.17,
+      "elapsed_seconds": 0.161,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 59.59375
+    },
+    {
+      "available_mb": 19710.578125,
+      "cpu_seconds": 0.22,
+      "elapsed_seconds": 0.31,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 111.37109375
+    },
+    {
+      "available_mb": 19623.62109375,
+      "cpu_seconds": 0.39,
+      "elapsed_seconds": 0.484,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 141.03125
+    },
+    {
+      "available_mb": 19596.07421875,
+      "cpu_seconds": 0.54,
+      "elapsed_seconds": 0.658,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 164.453125
+    },
+    {
+      "available_mb": 19613.203125,
+      "cpu_seconds": 0.69,
+      "elapsed_seconds": 0.808,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 168.8046875
+    },
+    {
+      "available_mb": 19612.9609375,
+      "cpu_seconds": 0.83,
+      "elapsed_seconds": 0.953,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 173.0234375
+    },
+    {
+      "available_mb": 19608.875,
+      "cpu_seconds": 0.98,
+      "elapsed_seconds": 1.094,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 181.359375
+    },
+    {
+      "available_mb": 19604.66796875,
+      "cpu_seconds": 1.14,
+      "elapsed_seconds": 1.234,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 184.609375
+    },
+    {
+      "available_mb": 19604.67578125,
+      "cpu_seconds": 1.3,
+      "elapsed_seconds": 1.389,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 184.609375
+    },
+    {
+      "available_mb": 19604.67578125,
+      "cpu_seconds": 1.45,
+      "elapsed_seconds": 1.545,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 184.609375
+    },
+    {
+      "available_mb": 19630.80078125,
+      "cpu_seconds": 1.63,
+      "elapsed_seconds": 1.69,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 199.01171875
+    },
+    {
+      "available_mb": 19615.22265625,
+      "cpu_seconds": 1.78,
+      "elapsed_seconds": 1.857,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 228.5234375
+    },
+    {
+      "available_mb": 19582.8359375,
+      "cpu_seconds": 1.93,
+      "elapsed_seconds": 2.012,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 259.5546875
+    },
+    {
+      "available_mb": 19558.921875,
+      "cpu_seconds": 2.08,
+      "elapsed_seconds": 2.155,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 286.6796875
+    },
+    {
+      "available_mb": 19543.23828125,
+      "cpu_seconds": 2.23,
+      "elapsed_seconds": 2.306,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 300.5546875
+    },
+    {
+      "available_mb": 19448.8515625,
+      "cpu_seconds": 2.39,
+      "elapsed_seconds": 2.452,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 314.5234375
+    },
+    {
+      "available_mb": 19357.78515625,
+      "cpu_seconds": 2.54,
+      "elapsed_seconds": 2.605,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 314.62890625
+    },
+    {
+      "available_mb": 19275.66015625,
+      "cpu_seconds": 2.69,
+      "elapsed_seconds": 2.752,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 306.11328125
+    },
+    {
+      "available_mb": 19187.75390625,
+      "cpu_seconds": 2.84,
+      "elapsed_seconds": 2.899,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 315.42578125
+    },
+    {
+      "available_mb": 19187.75390625,
+      "cpu_seconds": 2.98,
+      "elapsed_seconds": 3.046,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 315.42578125
+    },
+    {
+      "available_mb": 19224.85546875,
+      "cpu_seconds": 3.14,
+      "elapsed_seconds": 3.192,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 315.42578125
+    },
+    {
+      "available_mb": 19224.85546875,
+      "cpu_seconds": 3.29,
+      "elapsed_seconds": 3.337,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 319.80078125
+    },
+    {
+      "available_mb": 19209.47265625,
+      "cpu_seconds": 3.43,
+      "elapsed_seconds": 3.48,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 334.3125
+    },
+    {
+      "available_mb": 19188.78515625,
+      "cpu_seconds": 3.58,
+      "elapsed_seconds": 3.625,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 352.5625
+    },
+    {
+      "available_mb": 19180.8515625,
+      "cpu_seconds": 3.72,
+      "elapsed_seconds": 3.77,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 358.4375
+    },
+    {
+      "available_mb": 19146.0625,
+      "cpu_seconds": 3.87,
+      "elapsed_seconds": 3.914,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.51953125
+    },
+    {
+      "available_mb": 19145.81640625,
+      "cpu_seconds": 4.01,
+      "elapsed_seconds": 4.058,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.51953125
+    },
+    {
+      "available_mb": 19127.68359375,
+      "cpu_seconds": 4.16,
+      "elapsed_seconds": 4.198,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 358.59765625
+    },
+    {
+      "available_mb": 19112.28515625,
+      "cpu_seconds": 4.31,
+      "elapsed_seconds": 4.345,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.34765625
+    },
+    {
+      "available_mb": 19097.1328125,
+      "cpu_seconds": 4.46,
+      "elapsed_seconds": 4.487,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19120.12109375,
+      "cpu_seconds": 4.6,
+      "elapsed_seconds": 4.633,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19139.78125,
+      "cpu_seconds": 4.76,
+      "elapsed_seconds": 4.78,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19148.55078125,
+      "cpu_seconds": 4.9,
+      "elapsed_seconds": 4.927,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19148.55078125,
+      "cpu_seconds": 5.05,
+      "elapsed_seconds": 5.073,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19148.55078125,
+      "cpu_seconds": 5.2,
+      "elapsed_seconds": 5.219,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19148.56640625,
+      "cpu_seconds": 5.35,
+      "elapsed_seconds": 5.366,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19148.56640625,
+      "cpu_seconds": 5.51,
+      "elapsed_seconds": 5.512,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19156.2578125,
+      "cpu_seconds": 5.66,
+      "elapsed_seconds": 5.666,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19156.2578125,
+      "cpu_seconds": 5.81,
+      "elapsed_seconds": 5.815,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19094.37890625,
+      "cpu_seconds": 5.96,
+      "elapsed_seconds": 5.962,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.47265625
+    },
+    {
+      "available_mb": 19085.890625,
+      "cpu_seconds": 6.11,
+      "elapsed_seconds": 6.103,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 370.59765625
+    },
+    {
+      "available_mb": 19072.15234375,
+      "cpu_seconds": 6.29,
+      "elapsed_seconds": 6.25,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19066.875,
+      "cpu_seconds": 6.43,
+      "elapsed_seconds": 6.422,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19065.9140625,
+      "cpu_seconds": 6.59,
+      "elapsed_seconds": 6.572,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19065.71484375,
+      "cpu_seconds": 6.75,
+      "elapsed_seconds": 6.721,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19064.00390625,
+      "cpu_seconds": 6.9,
+      "elapsed_seconds": 6.87,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19060.58203125,
+      "cpu_seconds": 7.04,
+      "elapsed_seconds": 7.019,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19052.59765625,
+      "cpu_seconds": 7.2,
+      "elapsed_seconds": 7.161,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19050.03125,
+      "cpu_seconds": 7.36,
+      "elapsed_seconds": 7.317,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19039.6796875,
+      "cpu_seconds": 7.52,
+      "elapsed_seconds": 7.47,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 371.015625
+    },
+    {
+      "available_mb": 19137.74609375,
+      "cpu_seconds": 7.71,
+      "elapsed_seconds": 7.627,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 377.6015625
+    },
+    {
+      "available_mb": 19084.625,
+      "cpu_seconds": 7.87,
+      "elapsed_seconds": 7.83,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 379.30078125
+    },
+    {
+      "available_mb": 19074.40625,
+      "cpu_seconds": 8.02,
+      "elapsed_seconds": 7.993,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 379.42578125
+    },
+    {
+      "available_mb": 19058.4765625,
+      "cpu_seconds": 8.19,
+      "elapsed_seconds": 8.146,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 379.42578125
+    },
+    {
+      "available_mb": 19053.484375,
+      "cpu_seconds": 8.23,
+      "elapsed_seconds": 8.297,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 382.42578125
+    },
+    {
+      "available_mb": 19051.20703125,
+      "cpu_seconds": 8.29,
+      "elapsed_seconds": 8.472,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 382.42578125
+    },
+    {
+      "available_mb": 19053.8359375,
+      "cpu_seconds": 8.42,
+      "elapsed_seconds": 8.65,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 382.55078125
+    },
+    {
+      "available_mb": 19053.74609375,
+      "cpu_seconds": 8.46,
+      "elapsed_seconds": 8.798,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 384.2265625
+    },
+    {
+      "available_mb": 19053.796875,
+      "cpu_seconds": 8.49,
+      "elapsed_seconds": 8.959,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 384.2265625
+    },
+    {
+      "available_mb": 19053.796875,
+      "cpu_seconds": 8.55,
+      "elapsed_seconds": 9.113,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 384.2265625
+    },
+    {
+      "available_mb": 19053.02734375,
+      "cpu_seconds": 8.72,
+      "elapsed_seconds": 9.265,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 384.4921875
+    },
+    {
+      "available_mb": 19052.5234375,
+      "cpu_seconds": 8.78,
+      "elapsed_seconds": 9.438,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 386.2421875
+    },
+    {
+      "available_mb": 19157.4375,
+      "cpu_seconds": 8.87,
+      "elapsed_seconds": 9.601,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 386.2421875
+    },
+    {
+      "available_mb": 19156.96875,
+      "cpu_seconds": 9.05,
+      "elapsed_seconds": 9.846,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 386.58203125
+    },
+    {
+      "available_mb": 19457.56640625,
+      "cpu_seconds": 9.16,
+      "elapsed_seconds": 10.064,
+      "pids": [
+        131542
+      ],
+      "rss_mb": 384.5859375
+    },
+    {
+      "available_mb": 19726.62890625,
+      "cpu_seconds": 0,
+      "elapsed_seconds": 10.339,
+      "pids": [],
+      "rss_mb": 0
+    }
+  ],
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-cue-green",
+  "runner_exit": 1,
+  "source_hashes_ref": "process/source-sets/a22152b303bb5ec058fbe797262d231e69f09d3db5d116fcb9e3c6ef44da70fc.json",
+  "source_untracked_ref": "process/source-sets/f8696ce9e3dcb848d4500d9072cd47c6ca6ff344ca483b29891c5e88600be212.json",
+  "started_utc": "2026-10-20T16:03:06.030031+00:00",
+  "stop_reason": "nonzero_exit"
+}

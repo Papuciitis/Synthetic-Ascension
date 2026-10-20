@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: elite callout physical birth contact is independent of its raised paint anchor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/EnemyCalloutContactTest.gd:15)
+       [1] _run (res://tools/tests/EnemyCalloutContactTest.gd:36)
+EnemyCalloutContactTest: 2 passed, 1 failed

@@ -1,0 +1,517 @@
+[
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "WorldCueCoverRenderTest",
+      44,
+      15
+    ],
+    "classification": "invalid_fixture",
+    "diagnostics": [
+      "ERROR: shooter windup covered pixels receive quiet depth presentation (0/44)",
+      "ERROR: charge fan covered pixels receive quiet depth presentation (0/322)",
+      "ERROR: herald ground ring covered pixels receive quiet depth presentation (0/793)",
+      "ERROR: warden shield frame covered pixels receive quiet depth presentation (0/426)",
+      "ERROR: pickup lock/exploration frames covered pixels receive quiet depth presentation (0/120)",
+      "ERROR: batched projectile native covered pixels receive quiet depth presentation (0/364)",
+      "ERROR: batched projectile needle covered pixels receive quiet depth presentation (0/364)",
+      "ERROR: batched projectile tracer covered pixels receive quiet depth presentation (0/364)",
+      "ERROR: batched projectile enemy covered pixels receive quiet depth presentation (0/369)",
+      "ERROR: Condition \"p_scene && p_scene->get_parent() != root\" is true.",
+      "ERROR: sniper telegraph and additive layers renders actual pixels behind the cover edge",
+      "ERROR: sniper telegraph and additive layers covered pixels receive quiet depth presentation (0/0)",
+      "ERROR: sniper telegraph and additive layers exposed/front-depth pixels retain authored presentation",
+      "ERROR: pooled world callout covered pixels receive quiet depth presentation (0/381)",
+      "ERROR: ordinary fallback sprite covered pixels receive quiet depth presentation (0/512)",
+      "ERROR: elite fallback sprite covered pixels receive quiet depth presentation (0/512)"
+    ],
+    "elapsed_seconds": 10.784,
+    "note": "Sniper attempted invalid current_scene parenting, blank sniper probes. Other missing-cover assertions observed; this is not the accepted RED.",
+    "run": "continuation-cue-red"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "WorldCueCoverRenderTest",
+      46,
+      13
+    ],
+    "classification": "valid_red",
+    "diagnostics": [
+      "ERROR: shooter windup covered pixels receive quiet depth presentation (0/44)",
+      "ERROR: charge fan covered pixels receive quiet depth presentation (0/322)",
+      "ERROR: herald ground ring covered pixels receive quiet depth presentation (0/793)",
+      "ERROR: warden shield frame covered pixels receive quiet depth presentation (0/426)",
+      "ERROR: pickup lock/exploration frames covered pixels receive quiet depth presentation (0/120)",
+      "ERROR: batched projectile native covered pixels receive quiet depth presentation (0/364)",
+      "ERROR: batched projectile needle covered pixels receive quiet depth presentation (0/364)",
+      "ERROR: batched projectile tracer covered pixels receive quiet depth presentation (0/364)",
+      "ERROR: batched projectile enemy covered pixels receive quiet depth presentation (0/369)",
+      "ERROR: sniper telegraph and additive layers covered pixels receive quiet depth presentation (0/5248)",
+      "ERROR: pooled world callout covered pixels receive quiet depth presentation (0/381)",
+      "ERROR: ordinary fallback sprite covered pixels receive quiet depth presentation (0/512)",
+      "ERROR: elite fallback sprite covered pixels receive quiet depth presentation (0/512)"
+    ],
+    "elapsed_seconds": 11.094,
+    "note": "Corrected real sniper owners; only 13 missing covered-presentation assertions.",
+    "run": "continuation-cue-red2"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "WorldCueCoverRenderTest",
+      58,
+      1
+    ],
+    "classification": "failed_runtime_attempt",
+    "diagnostics": [
+      "ERROR: 4 RID allocations of type 'N5GLES38MaterialE' were leaked at exit.",
+      "ERROR: 2 RID allocations of type 'N5GLES36ShaderE' were leaked at exit.",
+      "ERROR: 4 RID allocations of type 'N5GLES37TextureE' were leaked at exit.",
+      "Leaked instance: GDScriptNativeClass:9223372050679202559 - Reference count: 1",
+      "Leaked instance: GDScript:9223372099886778132 - Reference count: 1",
+      "Leaked instance: Shader:9223372100121659158 - Reference count: 2",
+      "Leaked instance: Shader:9223372100423649047 - Reference count: 2",
+      "Leaked instance: ShaderInclude:9223372100239099672 - Reference count: 2",
+      "Leaked instance: Node:374366800766 - Node path: ",
+      "Leaked instance: WeakRef:9223372411271908224 - Reference count: 1",
+      "Leaked instance: WeakRef:9223372411355794308 - Reference count: 1",
+      "Leaked instance: ShaderMaterial:9223372411506789255 - Reference count: 1",
+      "Leaked instance: WeakRef:9223372411439680392 - Reference count: 1",
+      "Leaked instance: WeakRef:9223372411523566476 - Reference count: 1",
+      "Leaked instance: ShaderMaterial:9223372411624229777 - Reference count: 1",
+      "Leaked instance: WeakRef:9223372411641006994 - Reference count: 1",
+      "Leaked instance: Texture2DArray:9223372422277762024 - Reference count: 2",
+      "Leaked instance: ImageTexture:9223372422311316457 - Reference count: 2",
+      "Leaked instance: ImageTexture:9223372422344870890 - Reference count: 2",
+      "Leaked instance: ImageTexture:9223372422378425323 - Reference count: 2",
+      "Leaked instance: ShaderMaterial:9223372433216506915 - Reference count: 1",
+      "Leaked instance: WeakRef:9223372433233284132 - Reference count: 1",
+      "Leaked instance: ShaderMaterial:9223372433250061349 - Reference count: 1",
+      "Leaked instance: WeakRef:9223372433266838566 - Reference count: 1",
+      "Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).",
+      "Orphan StringName: world_cue_add_anchor (static: 0, total: 1)",
+      "Orphan StringName: shader_parameter/world_cover_data_width (static: 0, total: 2)",
+      "Orphan StringName: world_cover_data (static: 0, total: 8)",
+      "Orphan StringName: VIEW_MARGIN (static: 0, total: 1)",
+      "Orphan StringName: _origin (static: 0, total: 4)",
+      "Orphan StringName: CELL_PX (static: 0, total: 1)",
+      "Orphan StringName: get_for (static: 0, total: 1)",
+      "Orphan StringName: _frame (static: 0, total: 4)",
+      "Orphan StringName: shader_parameter/world_cover_indices (static: 0, total: 2)",
+      "Orphan StringName: BUFFER_WIDTH (static: 0, total: 1)",
+      "Orphan StringName: _ready (static: 1, total: 2)",
+      "Orphan StringName: world_cover_alpha (static: 0, total: 8)",
+      "Orphan StringName: shader_parameter/accent_strength (static: 0, total: 1)",
+      "Orphan StringName: shader_parameter/world_cover_grid (static: 0, total: 2)",
+      "Orphan StringName: _exit_tree (static: 1, total: 2)",
+      "Orphan StringName: world_cover_cell_px (static: 0, total: 6)",
+      "Orphan StringName: shader_parameter/world_cover_alpha_size (static: 0, total: 2)",
+      "Orphan StringName: _refresh_usec (static: 0, total: 4)",
+      "Orphan StringName: shader_parameter/world_cover_enabled (static: 0, total: 4)",
+      "Orphan StringName: world_cue_add_ground (static: 0, total: 1)",
+      "Orphan StringName: shader_parameter/world_cover_data (static: 0, total: 2)",
+      "Orphan StringName: _footprint_spans (static: 0, total: 1)",
+      "Orphan StringName: _index_count (static: 0, total: 4)",
+      "Orphan StringName: accent_strength (static: 0, total: 2)",
+      "Orphan StringName: _prepare_alpha (static: 0, total: 1)",
+      "Orphan StringName: _materials (static: 0, total: 3)",
+      "Orphan StringName: _effective_alpha (static: 0, total: 1)",
+      "Orphan StringName: _generation (static: 0, total: 4)",
+      "Orphan StringName: _peak_refresh_usec (static: 0, total: 4)",
+      "Orphan StringName: metadata/world_cue_mix_anchor (static: 0, total: 1)",
+      "Orphan StringName: shader_parameter/world_cover_index_width (static: 0, total: 2)",
+      "Orphan StringName: _source_reads (static: 0, total: 4)",
+      "Orphan StringName: world_cover_data_width (static: 0, total: 6)",
+      "Orphan StringName: metadata/world_cue_mix_ground (static: 0, total: 1)",
+      "Orphan StringName: _upload_snapshot (static: 0, total: 1)",
+      "Orphan StringName: _alpha_keys (static: 0, total: 3)",
+      "Orphan StringName: shader_parameter/ground_points (static: 0, total: 4)",
+      "Orphan StringName: world_cover_alpha_size (static: 0, total: 6)",
+      "Orphan StringName: _roof_geometry (static: 0, total: 1)",
+      "Orphan StringName: strength_at (static: 0, total: 1)",
+      "Orphan StringName: _indices (static: 0, total: 3)",
+      "Orphan StringName: _alpha (static: 0, total: 3)",
+      "Orphan StringName: _grid (static: 0, total: 3)",
+      "Orphan StringName: shader_parameter/world_cover_grid_size (static: 0, total: 2)",
+      "Orphan StringName: shader_parameter/world_cover_alpha (static: 0, total: 2)",
+      "Orphan StringName: shader_parameter/world_cover_cell_px (static: 0, total: 2)",
+      "Orphan StringName: _instances (static: 0, total: 1)",
+      "Orphan StringName: _peak_primitives (static: 0, total: 4)",
+      "Orphan StringName: _clip_roof_piece (static: 0, total: 1)",
+      "Orphan StringName: _upload (static: 0, total: 1)",
+      "Orphan StringName: world_cover_indices (static: 0, total: 8)",
+      "Orphan StringName: _data (static: 0, total: 3)",
+      "Orphan StringName: _process (static: 3, total: 4)",
+      "Orphan StringName: _roof_cache (static: 0, total: 3)",
+      "Orphan StringName: metadata/world_cue_add_anchor (static: 0, total: 1)",
+      "Orphan StringName: _bind (static: 0, total: 1)",
+      "Orphan StringName: world_cue_mix_anchor (static: 0, total: 1)",
+      "Orphan StringName: _max_candidates (static: 0, total: 4)",
+      "Orphan StringName: world_cover_enabled (static: 0, total: 10)",
+      "Orphan StringName: _records (static: 0, total: 3)",
+      "Orphan StringName: _collect_solid_faces (static: 0, total: 1)",
+      "Orphan StringName: refresh (static: 0, total: 1)",
+      "Orphan StringName: shader_parameter/world_cover_origin (static: 0, total: 2)",
+      "Orphan StringName: Node (static: 4, total: 5)",
+      "Orphan StringName: world_cover_grid_size (static: 0, total: 6)",
+      "Orphan StringName: _triangulate (static: 0, total: 1)",
+      "Orphan StringName: _grid_size (static: 0, total: 4)",
+      "Orphan StringName: _peak_candidates (static: 0, total: 4)",
+      "Orphan StringName: metadata/world_cue_add_ground (static: 0, total: 1)",
+      "Orphan StringName: world_cover_index_width (static: 0, total: 6)",
+      "Orphan StringName: world_cue_mix_ground (static: 0, total: 1)",
+      "Orphan StringName: ground_points (static: 0, total: 10)",
+      "Orphan StringName: WorldCover (static: 0, total: 1)",
+      "Orphan StringName: _source_cache (static: 0, total: 3)",
+      "Orphan StringName: world_cover_origin (static: 0, total: 6)",
+      "Orphan StringName: bind_material (static: 0, total: 1)",
+      "Orphan StringName: \"core/systems/world/visibility/WorldCover.gd\" (static: 0, total: 1)",
+      "Orphan StringName: _alpha_size (static: 0, total: 4)",
+      "Orphan StringName: FOREGROUND (static: 0, total: 1)",
+      "Orphan StringName: snapshot_stats (static: 0, total: 1)",
+      "Orphan StringName: _solid_cache (static: 0, total: 3)",
+      "Orphan StringName: world_cover_grid (static: 0, total: 8)",
+      "Orphan StringName: changed (static: 0, total: 5)",
+      "ERROR: Parent node is busy setting up children, `add_child()` failed. Consider using `add_child.call_deferred(child)` instead.",
+      "ERROR: elite fallback sprite actual cutaway restores current presentation",
+      "ERROR: 2 shaders of type CanvasShaderGLES3 were never freed",
+      "ERROR: Texture with GL ID of 223: leaked 4 bytes.",
+      "ERROR: Texture with GL ID of 224: leaked 320 bytes.",
+      "ERROR: Texture with GL ID of 225: leaked 4096 bytes.",
+      "ERROR: Texture with GL ID of 226: leaked 4096 bytes.",
+      "WARNING: 21 ObjectDB instances were leaked at exit (run with `--verbose` for details).",
+      "ERROR: Cannot get path of node as it is not in a scene tree.",
+      "ERROR: 4 resources still in use at exit."
+    ],
+    "elapsed_seconds": 11.585,
+    "note": "Autoload binding tried adding WorldCover while root added children, orphaning service/resources. Animated glint also changed static screenshot comparison. Not GREEN.",
+    "run": "continuation-cue-green"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "WorldCueCoverRenderTest",
+      58,
+      1
+    ],
+    "classification": "invalid_fixture",
+    "diagnostics": [
+      "ERROR: sniper telegraph and additive layers covered pixels receive quiet depth presentation (0/5248)"
+    ],
+    "elapsed_seconds": 11.192,
+    "note": "Autoload lifecycle fixed/no leaks; sniper fixture cross-bound one cached material between two viewport services. Not GREEN.",
+    "run": "continuation-cue-green2"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "WorldCueCoverRenderTest",
+      59,
+      0
+    ],
+    "classification": "clean_historical_check",
+    "diagnostics": [],
+    "elapsed_seconds": 12.645,
+    "note": "First scope after real sniper attachment was reapplied following explicit fixture viewport move; precedes secondary/contact tests.",
+    "run": "continuation-cue-green3"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "BattleTextColumnTest",
+      41,
+      0
+    ],
+    "classification": "clean_historical_check",
+    "diagnostics": [],
+    "elapsed_seconds": 7.575,
+    "note": "Initial text-column regression before final contact/source additions.",
+    "run": "continuation-battletext"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "WorldCueAdditionalRenderTest",
+      27,
+      10
+    ],
+    "classification": "qualified_red",
+    "diagnostics": [
+      "ERROR: shooter ground cone covered pixels receive quiet depth presentation (0/3809)",
+      "ERROR: shooter muzzle flash covered pixels receive quiet depth presentation (0/37)",
+      "ERROR: bomber actual perimeter and fuse covered pixels receive quiet depth presentation (0/3010)",
+      "ERROR: bomber actual fuse separately covered pixels receive quiet depth presentation (0/374)",
+      "ERROR: elite secondary marks [&\"armoured\", &\"shielded\", &\"fast\"] covered pixels receive quiet depth presentation (0/3815)",
+      "ERROR: elite secondary marks [&\"vampiric\", &\"splitting\"] covered pixels receive quiet depth presentation (0/338)",
+      "ERROR: bomber actual blast covered pixels receive quiet depth presentation (0/7448)",
+      "ERROR: batched impact emission covered pixels receive quiet depth presentation (0/704)",
+      "ERROR: ordinary node projectile emission renders actual pixels behind the cover edge",
+      "ERROR: ordinary node projectile emission covered pixels receive quiet depth presentation (0/6)"
+    ],
+    "elapsed_seconds": 11.02,
+    "note": "Eight secondary draw-owner missing-cover assertions are valid. Ordinary node bolt had only 6 covered pixels and failed its >8 presence guard; corrected isolated RED follows.",
+    "run": "continuation-cue-additional-red"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "WorldCueAdditionalRenderTest",
+      4,
+      1
+    ],
+    "classification": "valid_red",
+    "diagnostics": [
+      "ERROR: ordinary node projectile emission covered pixels receive quiet depth presentation (0/38)"
+    ],
+    "elapsed_seconds": 10.037,
+    "note": "Corrected actual bolt core has 38 covered pixels; only missing presentation fails.",
+    "run": "continuation-node-projectile-red"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "WorldCueCoverRenderTest",
+      65,
+      2
+    ],
+    "classification": "valid_red",
+    "diagnostics": [
+      "ERROR: shared visual column preserves front birth depth exposed/front-depth pixels retain authored presentation",
+      "ERROR: fallback resized atlas region contact covered pixels receive quiet depth presentation (0/512)"
+    ],
+    "elapsed_seconds": 11.369,
+    "note": "Real resized atlas-region contact and front owner sharing a visual text column fail.",
+    "run": "continuation-cue-contact-red"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": [
+      "EnemyCalloutContactTest",
+      2,
+      1
+    ],
+    "classification": "valid_red",
+    "diagnostics": [
+      "ERROR: elite callout physical birth contact is independent of its raised paint anchor"
+    ],
+    "elapsed_seconds": 8.617,
+    "note": "Real elite announcer preserves layout but reports raised paint Y instead of physical birth Y.",
+    "run": "continuation-caller-red"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "WorldCueCoverRenderTest",
+      67,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 12.341,
+    "note": "Native raw pixels: covered/exposed/restored cues, projectile families, sniper, text, atlas and owner-ground contacts.",
+    "run": "continuation-cue-final"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "WorldCueAdditionalRenderTest",
+      39,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 11.342,
+    "note": "Native actual cone/muzzle, bomber perimeter/fuse/front-fuse/blast, elite secondary marks, impacts and ordinary node bolt.",
+    "run": "continuation-cue-additional-green"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "EnemyCalloutContactTest",
+      3,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 7.8,
+    "note": "Actual elite caller retains both existing visual raises and physical birth contact.",
+    "run": "continuation-caller-green"
+  },
+  {
+    "actual_exit": 1,
+    "assertion_footer": null,
+    "classification": "failed_route",
+    "diagnostics": [
+      "ERROR: EliteCrowdFightPreview: Physical collision prevented route at (7, 115)"
+    ],
+    "elapsed_seconds": 83.399,
+    "note": "Live occupied attempt demonstrates cues/collection/cutaway but abandons final westbound destination at cell(7,115). Not acceptance.",
+    "run": "continuation-moving-cover"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "CombatTextPresentationTest",
+      62,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 7.709,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-CombatTextPresentationTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "BattleTextColumnTest",
+      41,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 8.023,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-BattleTextColumnTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "EnemyVisualBatchingTest",
+      9,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 8.331,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-EnemyVisualBatchingTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "EliteTellArtTest",
+      12,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 8.282,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-EliteTellArtTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "ProjectileIdentityTest",
+      7,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 9.159,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-ProjectileIdentityTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "EnemyProjectileTimeBaseTest",
+      4,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 8.499,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-EnemyProjectileTimeBaseTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "EnemyProjectileAttributionTest",
+      74,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 9.659,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-EnemyProjectileAttributionTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "PooledProjectileRecycleTest",
+      8,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 8.438,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-PooledProjectileRecycleTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "PickupCoverTest",
+      16,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 7.829,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-PickupCoverTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "HealthPickupLockTest",
+      8,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 8.882,
+    "note": "Focused existing headless regression.",
+    "run": "continuation-regression-HealthPickupLockTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "EnemyCoverRenderTest",
+      38,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 10.24,
+    "note": "Existing native enemy body/proxy/materialized presentation remains covered.",
+    "run": "continuation-provider-EnemyCoverRenderTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": [
+      "PickupCoverTest",
+      33,
+      0
+    ],
+    "classification": "clean_check",
+    "diagnostics": [],
+    "elapsed_seconds": 10.011,
+    "note": "Existing native ordinary/healing icon/glow coverage remains correct.",
+    "run": "continuation-provider-PickupCoverTest"
+  },
+  {
+    "actual_exit": 0,
+    "assertion_footer": null,
+    "classification": "clean_moving_route",
+    "diagnostics": [],
+    "elapsed_seconds": 87.236,
+    "note": "Final actual-Game route with mandatory arrivals and normal live producers.",
+    "run": "continuation-moving-cover2"
+  }
+]

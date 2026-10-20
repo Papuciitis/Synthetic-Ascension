@@ -1,0 +1,5 @@
+ERROR: EliteCrowdFightPreview: Physical collision prevented route at (7, 115)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail (res://tools/dev/EliteCrowdFightPreview.gd:394)
+       [1] _walk_to (res://tools/dev/CityBlockPlayablePreview.gd:596)

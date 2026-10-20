@@ -1,0 +1,550 @@
+{
+  "commit": "7875d1981c79e85f049a07b5c696889b0350a1c4",
+  "native_execution_bindings": [
+    {
+      "matching_execution_scope": [
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberBlast.gd",
+          "sha256": "48874299626d1c483df4eb1ad94185d20071301515da976118c26867fc15654e"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberHazardRing.gd",
+          "sha256": "64d0030f8d08a067ec6983c5008078c10d7a0562871072228168bc050b598862"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_ChargeWindup.gd",
+          "sha256": "3398d1c1f6d226319cfca0030d475d4af899a1eb2370682575df4cbb3f96c7a0"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EliteModifierMark.gd",
+          "sha256": "78177dde9037cc2521e77169764d09b9ef178428d2a7ba5b7d7e58cb84e6da23"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyMuzzleFlash.gd",
+          "sha256": "ba3be599e475c4fbce49a54bf77fa6e8d1b7d583c538d02c6b9fbf5f3d976d6b"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShootCone.gd",
+          "sha256": "2157b57e40005c99dd00132ccce72087d0deeecba48c1c8b2ef4caf429e67d75"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShotWindup.gd",
+          "sha256": "ade97277ee345dc519354cd8811b2ec0116704d6f5192f1c534f14ae120aa771"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_HeraldPulseRing.gd",
+          "sha256": "40cd4888e7a8fddce7eacfd1a1a7f0a6730ee429ec6ba0a02b4c7047de30021e"
+        },
+        {
+          "path": "core/actors/enemy/FrontShieldVisual.gd",
+          "sha256": "2a8ad948784002098bb63cdc4ec9fb742b44b77209a6d3c84f9a5639962e9627"
+        },
+        {
+          "path": "core/actors/enemy/enemy.gd",
+          "sha256": "af51da2bb473ef78ed3a26aab489fa2165f731e929b3e3b90b869ffe9c80f3b0"
+        },
+        {
+          "path": "core/actors/enemy/modules/EnemySniper.gd",
+          "sha256": "4902c60d6d06074653d758c04c5ec76ccc0c405898636116ab03801a970e8307"
+        },
+        {
+          "path": "core/combat/BattleTextRenderer.gd",
+          "sha256": "444eae41e3b3a2571623590244ff0a3c9f72949ad1c2b7bb0de7cc55b98af868"
+        },
+        {
+          "path": "core/combat/projectile/AttackProjectileLight.gdshader",
+          "sha256": "4bd68750481e65b263e68a3c1cf69f85e60a009ee04bad871ca89d97694e1a2f"
+        },
+        {
+          "path": "core/combat/projectile/EnemyProjectile.gd",
+          "sha256": "164382208dc97afffa4f9ba8f71b8625a144c7e5ec02f32682296788bc121728"
+        },
+        {
+          "path": "core/combat/projectile/ImpactBurstRenderer.gd",
+          "sha256": "722923409a090b52382173ab8df0d44d03b62bc77bd03765e39d9d5b35f675a8"
+        },
+        {
+          "path": "core/combat/projectile/ProjectileSimulationManager.gd",
+          "sha256": "adf917859c90c81d3ef5a785fef48a4cd00bd32dea582d487d5dc1d78f2f9a17"
+        },
+        {
+          "path": "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+          "sha256": "784d19e574caf440fd76697134058949c0c9be15b488cd7b06e824bdc91ee747"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueCover.gd",
+          "sha256": "7f1a21d986bc73af56a30727b1b78f26d14683b2eacc5175e9e318ba9a3cb414"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueMix.gdshader",
+          "sha256": "df89320651eddec5e45e92d42df2320a5d022025ed9e5bdd3a883d3372efeae1"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueAdd.gdshader",
+          "sha256": "14022898f9bc5dcfaab4124ff1bfebbc04436fe1f1263e2c6f11cedc3fd6741f"
+        },
+        {
+          "path": "scenes/world/pickups/PickupVfx.gd",
+          "sha256": "7b2839c83e0ef8b8b632aa1ebf74be5b49fe80e69067d38b85b69ed5d2b53f03"
+        },
+        {
+          "path": "tools/tests/WorldCueCoverRenderTest.gd",
+          "sha256": "f1d5723124b7ea94d74f0db408432f8f077619fa1ea0ac6f54d82362371c9430"
+        },
+        {
+          "path": "tools/tests/WorldCueCoverRenderTest.tscn",
+          "sha256": "9a613fd34ef5ff57f77bfabb38c585bbf4498640acf3f40b935f5b7ae0b282ec"
+        }
+      ],
+      "monitor_unhashed_paths": [],
+      "run": "continuation-cue-final"
+    },
+    {
+      "matching_execution_scope": [
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberBlast.gd",
+          "sha256": "48874299626d1c483df4eb1ad94185d20071301515da976118c26867fc15654e"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberHazardRing.gd",
+          "sha256": "64d0030f8d08a067ec6983c5008078c10d7a0562871072228168bc050b598862"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_ChargeWindup.gd",
+          "sha256": "3398d1c1f6d226319cfca0030d475d4af899a1eb2370682575df4cbb3f96c7a0"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EliteModifierMark.gd",
+          "sha256": "78177dde9037cc2521e77169764d09b9ef178428d2a7ba5b7d7e58cb84e6da23"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyMuzzleFlash.gd",
+          "sha256": "ba3be599e475c4fbce49a54bf77fa6e8d1b7d583c538d02c6b9fbf5f3d976d6b"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShootCone.gd",
+          "sha256": "2157b57e40005c99dd00132ccce72087d0deeecba48c1c8b2ef4caf429e67d75"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShotWindup.gd",
+          "sha256": "ade97277ee345dc519354cd8811b2ec0116704d6f5192f1c534f14ae120aa771"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_HeraldPulseRing.gd",
+          "sha256": "40cd4888e7a8fddce7eacfd1a1a7f0a6730ee429ec6ba0a02b4c7047de30021e"
+        },
+        {
+          "path": "core/actors/enemy/FrontShieldVisual.gd",
+          "sha256": "2a8ad948784002098bb63cdc4ec9fb742b44b77209a6d3c84f9a5639962e9627"
+        },
+        {
+          "path": "core/actors/enemy/enemy.gd",
+          "sha256": "af51da2bb473ef78ed3a26aab489fa2165f731e929b3e3b90b869ffe9c80f3b0"
+        },
+        {
+          "path": "core/actors/enemy/modules/EnemySniper.gd",
+          "sha256": "4902c60d6d06074653d758c04c5ec76ccc0c405898636116ab03801a970e8307"
+        },
+        {
+          "path": "core/combat/BattleTextRenderer.gd",
+          "sha256": "444eae41e3b3a2571623590244ff0a3c9f72949ad1c2b7bb0de7cc55b98af868"
+        },
+        {
+          "path": "core/combat/projectile/AttackProjectileLight.gdshader",
+          "sha256": "4bd68750481e65b263e68a3c1cf69f85e60a009ee04bad871ca89d97694e1a2f"
+        },
+        {
+          "path": "core/combat/projectile/EnemyProjectile.gd",
+          "sha256": "164382208dc97afffa4f9ba8f71b8625a144c7e5ec02f32682296788bc121728"
+        },
+        {
+          "path": "core/combat/projectile/ImpactBurstRenderer.gd",
+          "sha256": "722923409a090b52382173ab8df0d44d03b62bc77bd03765e39d9d5b35f675a8"
+        },
+        {
+          "path": "core/combat/projectile/ProjectileSimulationManager.gd",
+          "sha256": "adf917859c90c81d3ef5a785fef48a4cd00bd32dea582d487d5dc1d78f2f9a17"
+        },
+        {
+          "path": "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+          "sha256": "784d19e574caf440fd76697134058949c0c9be15b488cd7b06e824bdc91ee747"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueCover.gd",
+          "sha256": "7f1a21d986bc73af56a30727b1b78f26d14683b2eacc5175e9e318ba9a3cb414"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueMix.gdshader",
+          "sha256": "df89320651eddec5e45e92d42df2320a5d022025ed9e5bdd3a883d3372efeae1"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueAdd.gdshader",
+          "sha256": "14022898f9bc5dcfaab4124ff1bfebbc04436fe1f1263e2c6f11cedc3fd6741f"
+        },
+        {
+          "path": "scenes/world/pickups/PickupVfx.gd",
+          "sha256": "7b2839c83e0ef8b8b632aa1ebf74be5b49fe80e69067d38b85b69ed5d2b53f03"
+        },
+        {
+          "path": "tools/tests/WorldCueAdditionalRenderTest.gd",
+          "sha256": "3fc6dc78f3078b98cae0c4b3041ee49b80a09819cad0a2f7713b36aaa9e51765"
+        },
+        {
+          "path": "tools/tests/WorldCueAdditionalRenderTest.tscn",
+          "sha256": "ee0eca1bb3756b8475014b1abf042711ec5544f0c4c453f57d56472bbb2a0a0d"
+        },
+        {
+          "path": "tools/tests/WorldCueCoverRenderTest.gd",
+          "sha256": "f1d5723124b7ea94d74f0db408432f8f077619fa1ea0ac6f54d82362371c9430"
+        }
+      ],
+      "monitor_unhashed_paths": [],
+      "run": "continuation-cue-additional-green"
+    },
+    {
+      "matching_execution_scope": [
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberBlast.gd",
+          "sha256": "48874299626d1c483df4eb1ad94185d20071301515da976118c26867fc15654e"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberHazardRing.gd",
+          "sha256": "64d0030f8d08a067ec6983c5008078c10d7a0562871072228168bc050b598862"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_ChargeWindup.gd",
+          "sha256": "3398d1c1f6d226319cfca0030d475d4af899a1eb2370682575df4cbb3f96c7a0"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EliteModifierMark.gd",
+          "sha256": "78177dde9037cc2521e77169764d09b9ef178428d2a7ba5b7d7e58cb84e6da23"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyMuzzleFlash.gd",
+          "sha256": "ba3be599e475c4fbce49a54bf77fa6e8d1b7d583c538d02c6b9fbf5f3d976d6b"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShootCone.gd",
+          "sha256": "2157b57e40005c99dd00132ccce72087d0deeecba48c1c8b2ef4caf429e67d75"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShotWindup.gd",
+          "sha256": "ade97277ee345dc519354cd8811b2ec0116704d6f5192f1c534f14ae120aa771"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_HeraldPulseRing.gd",
+          "sha256": "40cd4888e7a8fddce7eacfd1a1a7f0a6730ee429ec6ba0a02b4c7047de30021e"
+        },
+        {
+          "path": "core/actors/enemy/FrontShieldVisual.gd",
+          "sha256": "2a8ad948784002098bb63cdc4ec9fb742b44b77209a6d3c84f9a5639962e9627"
+        },
+        {
+          "path": "core/actors/enemy/enemy.gd",
+          "sha256": "af51da2bb473ef78ed3a26aab489fa2165f731e929b3e3b90b869ffe9c80f3b0"
+        },
+        {
+          "path": "core/actors/enemy/modules/EnemySniper.gd",
+          "sha256": "4902c60d6d06074653d758c04c5ec76ccc0c405898636116ab03801a970e8307"
+        },
+        {
+          "path": "core/combat/BattleTextRenderer.gd",
+          "sha256": "444eae41e3b3a2571623590244ff0a3c9f72949ad1c2b7bb0de7cc55b98af868"
+        },
+        {
+          "path": "core/combat/projectile/AttackProjectileLight.gdshader",
+          "sha256": "4bd68750481e65b263e68a3c1cf69f85e60a009ee04bad871ca89d97694e1a2f"
+        },
+        {
+          "path": "core/combat/projectile/EnemyProjectile.gd",
+          "sha256": "164382208dc97afffa4f9ba8f71b8625a144c7e5ec02f32682296788bc121728"
+        },
+        {
+          "path": "core/combat/projectile/ImpactBurstRenderer.gd",
+          "sha256": "722923409a090b52382173ab8df0d44d03b62bc77bd03765e39d9d5b35f675a8"
+        },
+        {
+          "path": "core/combat/projectile/ProjectileSimulationManager.gd",
+          "sha256": "adf917859c90c81d3ef5a785fef48a4cd00bd32dea582d487d5dc1d78f2f9a17"
+        },
+        {
+          "path": "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+          "sha256": "784d19e574caf440fd76697134058949c0c9be15b488cd7b06e824bdc91ee747"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueCover.gd",
+          "sha256": "7f1a21d986bc73af56a30727b1b78f26d14683b2eacc5175e9e318ba9a3cb414"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueMix.gdshader",
+          "sha256": "df89320651eddec5e45e92d42df2320a5d022025ed9e5bdd3a883d3372efeae1"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueAdd.gdshader",
+          "sha256": "14022898f9bc5dcfaab4124ff1bfebbc04436fe1f1263e2c6f11cedc3fd6741f"
+        },
+        {
+          "path": "scenes/world/pickups/PickupVfx.gd",
+          "sha256": "7b2839c83e0ef8b8b632aa1ebf74be5b49fe80e69067d38b85b69ed5d2b53f03"
+        },
+        {
+          "path": "tools/tests/EnemyCalloutContactTest.gd",
+          "sha256": "08ec39ec1d0fa942b1346fe85dfe1da6cee684cc6e8b5b306befd3c40a7e0b6a"
+        },
+        {
+          "path": "tools/tests/EnemyCalloutContactTest.tscn",
+          "sha256": "ef1cd9e3e8a36b1a01401e0c3f8e5b8c3f5cd0f4ae16c669b5a8a7d3b00e882f"
+        }
+      ],
+      "monitor_unhashed_paths": [],
+      "run": "continuation-caller-green"
+    },
+    {
+      "matching_execution_scope": [
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberBlast.gd",
+          "sha256": "48874299626d1c483df4eb1ad94185d20071301515da976118c26867fc15654e"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_BomberHazardRing.gd",
+          "sha256": "64d0030f8d08a067ec6983c5008078c10d7a0562871072228168bc050b598862"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_ChargeWindup.gd",
+          "sha256": "3398d1c1f6d226319cfca0030d475d4af899a1eb2370682575df4cbb3f96c7a0"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EliteModifierMark.gd",
+          "sha256": "78177dde9037cc2521e77169764d09b9ef178428d2a7ba5b7d7e58cb84e6da23"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyMuzzleFlash.gd",
+          "sha256": "ba3be599e475c4fbce49a54bf77fa6e8d1b7d583c538d02c6b9fbf5f3d976d6b"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShootCone.gd",
+          "sha256": "2157b57e40005c99dd00132ccce72087d0deeecba48c1c8b2ef4caf429e67d75"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_EnemyShotWindup.gd",
+          "sha256": "ade97277ee345dc519354cd8811b2ec0116704d6f5192f1c534f14ae120aa771"
+        },
+        {
+          "path": "assets/vfx/world/enemies/VFX_HeraldPulseRing.gd",
+          "sha256": "40cd4888e7a8fddce7eacfd1a1a7f0a6730ee429ec6ba0a02b4c7047de30021e"
+        },
+        {
+          "path": "core/actors/enemy/FrontShieldVisual.gd",
+          "sha256": "2a8ad948784002098bb63cdc4ec9fb742b44b77209a6d3c84f9a5639962e9627"
+        },
+        {
+          "path": "core/actors/enemy/enemy.gd",
+          "sha256": "af51da2bb473ef78ed3a26aab489fa2165f731e929b3e3b90b869ffe9c80f3b0"
+        },
+        {
+          "path": "core/actors/enemy/modules/EnemySniper.gd",
+          "sha256": "4902c60d6d06074653d758c04c5ec76ccc0c405898636116ab03801a970e8307"
+        },
+        {
+          "path": "core/combat/BattleTextRenderer.gd",
+          "sha256": "444eae41e3b3a2571623590244ff0a3c9f72949ad1c2b7bb0de7cc55b98af868"
+        },
+        {
+          "path": "core/combat/projectile/AttackProjectileLight.gdshader",
+          "sha256": "4bd68750481e65b263e68a3c1cf69f85e60a009ee04bad871ca89d97694e1a2f"
+        },
+        {
+          "path": "core/combat/projectile/EnemyProjectile.gd",
+          "sha256": "164382208dc97afffa4f9ba8f71b8625a144c7e5ec02f32682296788bc121728"
+        },
+        {
+          "path": "core/combat/projectile/ImpactBurstRenderer.gd",
+          "sha256": "722923409a090b52382173ab8df0d44d03b62bc77bd03765e39d9d5b35f675a8"
+        },
+        {
+          "path": "core/combat/projectile/ProjectileSimulationManager.gd",
+          "sha256": "adf917859c90c81d3ef5a785fef48a4cd00bd32dea582d487d5dc1d78f2f9a17"
+        },
+        {
+          "path": "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+          "sha256": "784d19e574caf440fd76697134058949c0c9be15b488cd7b06e824bdc91ee747"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueCover.gd",
+          "sha256": "7f1a21d986bc73af56a30727b1b78f26d14683b2eacc5175e9e318ba9a3cb414"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueMix.gdshader",
+          "sha256": "df89320651eddec5e45e92d42df2320a5d022025ed9e5bdd3a883d3372efeae1"
+        },
+        {
+          "path": "core/systems/world/visibility/WorldCueAdd.gdshader",
+          "sha256": "14022898f9bc5dcfaab4124ff1bfebbc04436fe1f1263e2c6f11cedc3fd6741f"
+        },
+        {
+          "path": "scenes/world/pickups/PickupVfx.gd",
+          "sha256": "7b2839c83e0ef8b8b632aa1ebf74be5b49fe80e69067d38b85b69ed5d2b53f03"
+        },
+        {
+          "path": "tools/tests/WorldCueCoverRenderTest.gd",
+          "sha256": "f1d5723124b7ea94d74f0db408432f8f077619fa1ea0ac6f54d82362371c9430"
+        },
+        {
+          "path": "tools/tests/WorldCueCoverRenderTest.tscn",
+          "sha256": "9a613fd34ef5ff57f77bfabb38c585bbf4498640acf3f40b935f5b7ae0b282ec"
+        },
+        {
+          "path": "tools/tests/WorldCueAdditionalRenderTest.gd",
+          "sha256": "3fc6dc78f3078b98cae0c4b3041ee49b80a09819cad0a2f7713b36aaa9e51765"
+        },
+        {
+          "path": "tools/tests/WorldCueAdditionalRenderTest.tscn",
+          "sha256": "ee0eca1bb3756b8475014b1abf042711ec5544f0c4c453f57d56472bbb2a0a0d"
+        },
+        {
+          "path": "tools/tests/EnemyCalloutContactTest.gd",
+          "sha256": "08ec39ec1d0fa942b1346fe85dfe1da6cee684cc6e8b5b306befd3c40a7e0b6a"
+        },
+        {
+          "path": "tools/tests/EnemyCalloutContactTest.tscn",
+          "sha256": "ef1cd9e3e8a36b1a01401e0c3f8e5b8c3f5cd0f4ae16c669b5a8a7d3b00e882f"
+        },
+        {
+          "path": "tools/dev/CityMovingCoverPreview.gd",
+          "sha256": "f0c1a14a3ada6b2ac21e124094ee7e0b546b517f52314326acde199169f98fa3"
+        },
+        {
+          "path": "tools/dev/CityMovingCoverPreview.tscn",
+          "sha256": "313dc9f769e35dedd956452ea04c9c80d5082e38d01f9456143e1a85be471b63"
+        }
+      ],
+      "monitor_unhashed_paths": [
+        "tools/tests/WorldCueCoverRenderTest.gd.uid"
+      ],
+      "run": "continuation-moving-cover2"
+    }
+  ],
+  "owned_commit_files": [
+    {
+      "path": "assets/vfx/world/enemies/VFX_BomberBlast.gd",
+      "sha256": "48874299626d1c483df4eb1ad94185d20071301515da976118c26867fc15654e"
+    },
+    {
+      "path": "assets/vfx/world/enemies/VFX_BomberHazardRing.gd",
+      "sha256": "64d0030f8d08a067ec6983c5008078c10d7a0562871072228168bc050b598862"
+    },
+    {
+      "path": "assets/vfx/world/enemies/VFX_ChargeWindup.gd",
+      "sha256": "3398d1c1f6d226319cfca0030d475d4af899a1eb2370682575df4cbb3f96c7a0"
+    },
+    {
+      "path": "assets/vfx/world/enemies/VFX_EliteModifierMark.gd",
+      "sha256": "78177dde9037cc2521e77169764d09b9ef178428d2a7ba5b7d7e58cb84e6da23"
+    },
+    {
+      "path": "assets/vfx/world/enemies/VFX_EnemyMuzzleFlash.gd",
+      "sha256": "ba3be599e475c4fbce49a54bf77fa6e8d1b7d583c538d02c6b9fbf5f3d976d6b"
+    },
+    {
+      "path": "assets/vfx/world/enemies/VFX_EnemyShootCone.gd",
+      "sha256": "2157b57e40005c99dd00132ccce72087d0deeecba48c1c8b2ef4caf429e67d75"
+    },
+    {
+      "path": "assets/vfx/world/enemies/VFX_EnemyShotWindup.gd",
+      "sha256": "ade97277ee345dc519354cd8811b2ec0116704d6f5192f1c534f14ae120aa771"
+    },
+    {
+      "path": "assets/vfx/world/enemies/VFX_HeraldPulseRing.gd",
+      "sha256": "40cd4888e7a8fddce7eacfd1a1a7f0a6730ee429ec6ba0a02b4c7047de30021e"
+    },
+    {
+      "path": "core/actors/enemy/FrontShieldVisual.gd",
+      "sha256": "2a8ad948784002098bb63cdc4ec9fb742b44b77209a6d3c84f9a5639962e9627"
+    },
+    {
+      "path": "core/actors/enemy/enemy.gd",
+      "sha256": "af51da2bb473ef78ed3a26aab489fa2165f731e929b3e3b90b869ffe9c80f3b0"
+    },
+    {
+      "path": "core/actors/enemy/modules/EnemySniper.gd",
+      "sha256": "4902c60d6d06074653d758c04c5ec76ccc0c405898636116ab03801a970e8307"
+    },
+    {
+      "path": "core/combat/BattleTextRenderer.gd",
+      "sha256": "444eae41e3b3a2571623590244ff0a3c9f72949ad1c2b7bb0de7cc55b98af868"
+    },
+    {
+      "path": "core/combat/projectile/AttackProjectileLight.gdshader",
+      "sha256": "4bd68750481e65b263e68a3c1cf69f85e60a009ee04bad871ca89d97694e1a2f"
+    },
+    {
+      "path": "core/combat/projectile/EnemyProjectile.gd",
+      "sha256": "164382208dc97afffa4f9ba8f71b8625a144c7e5ec02f32682296788bc121728"
+    },
+    {
+      "path": "core/combat/projectile/ImpactBurstRenderer.gd",
+      "sha256": "722923409a090b52382173ab8df0d44d03b62bc77bd03765e39d9d5b35f675a8"
+    },
+    {
+      "path": "core/combat/projectile/ProjectileSimulationManager.gd",
+      "sha256": "adf917859c90c81d3ef5a785fef48a4cd00bd32dea582d487d5dc1d78f2f9a17"
+    },
+    {
+      "path": "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+      "sha256": "784d19e574caf440fd76697134058949c0c9be15b488cd7b06e824bdc91ee747"
+    },
+    {
+      "path": "core/systems/world/visibility/WorldCueCover.gd",
+      "sha256": "7f1a21d986bc73af56a30727b1b78f26d14683b2eacc5175e9e318ba9a3cb414"
+    },
+    {
+      "path": "core/systems/world/visibility/WorldCueMix.gdshader",
+      "sha256": "df89320651eddec5e45e92d42df2320a5d022025ed9e5bdd3a883d3372efeae1"
+    },
+    {
+      "path": "core/systems/world/visibility/WorldCueAdd.gdshader",
+      "sha256": "14022898f9bc5dcfaab4124ff1bfebbc04436fe1f1263e2c6f11cedc3fd6741f"
+    },
+    {
+      "path": "scenes/world/pickups/PickupVfx.gd",
+      "sha256": "7b2839c83e0ef8b8b632aa1ebf74be5b49fe80e69067d38b85b69ed5d2b53f03"
+    },
+    {
+      "path": "tools/tests/WorldCueCoverRenderTest.gd",
+      "sha256": "f1d5723124b7ea94d74f0db408432f8f077619fa1ea0ac6f54d82362371c9430"
+    },
+    {
+      "path": "tools/tests/WorldCueCoverRenderTest.tscn",
+      "sha256": "9a613fd34ef5ff57f77bfabb38c585bbf4498640acf3f40b935f5b7ae0b282ec"
+    },
+    {
+      "path": "tools/tests/WorldCueAdditionalRenderTest.gd",
+      "sha256": "3fc6dc78f3078b98cae0c4b3041ee49b80a09819cad0a2f7713b36aaa9e51765"
+    },
+    {
+      "path": "tools/tests/WorldCueAdditionalRenderTest.tscn",
+      "sha256": "ee0eca1bb3756b8475014b1abf042711ec5544f0c4c453f57d56472bbb2a0a0d"
+    },
+    {
+      "path": "tools/tests/EnemyCalloutContactTest.gd",
+      "sha256": "08ec39ec1d0fa942b1346fe85dfe1da6cee684cc6e8b5b306befd3c40a7e0b6a"
+    },
+    {
+      "path": "tools/tests/EnemyCalloutContactTest.tscn",
+      "sha256": "ef1cd9e3e8a36b1a01401e0c3f8e5b8c3f5cd0f4ae16c669b5a8a7d3b00e882f"
+    },
+    {
+      "path": "tools/tests/WorldCueCoverRenderTest.gd.uid",
+      "sha256": "9b1c49b6dcd2d6a0f7c1ed7df6fdc1286f724a4932e61be7b4fa166a9040f8ca"
+    },
+    {
+      "path": "tools/dev/CityMovingCoverPreview.gd",
+      "sha256": "f0c1a14a3ada6b2ac21e124094ee7e0b546b517f52314326acde199169f98fa3"
+    },
+    {
+      "path": "tools/dev/CityMovingCoverPreview.tscn",
+      "sha256": "313dc9f769e35dedd956452ea04c9c80d5082e38d01f9456143e1a85be471b63"
+    }
+  ],
+  "qualification": "All 30 owned files match actual Git blobs. The monitor hashes 29 of them for the final moving run; the UID sidecar is committed/staging-verified but not a monitor-hashed runtime input. Native probe execution scopes omit unused moving/test files. This establishes the bounded cue slice, not a full integrated-Game checkout or later household edits."
+}
