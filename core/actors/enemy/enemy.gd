@@ -700,11 +700,50 @@ func _register_batched_visual() -> void:
 	_batched_renderer_id = renderer_id
 
 
+var _fallback_cover_material: ShaderMaterial
+
+
+func _configure_fallback_cover() -> void:
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if sprite == null:
+		return
+	# Preserve boss/authored surfaces. Only ordinary defaults and our existing
+	# elite surface participate in this fallback adapter.
+	if sprite.material == null:
+		if _fallback_cover_material == null:
+			_fallback_cover_material = ShaderMaterial.new()
+			_fallback_cover_material.shader = preload("res://core/systems/enemy_world/EnemyProxyRegion.gdshader")
+			_fallback_cover_material.set_shader_parameter(&"use_instance_region", false)
+		sprite.material = _fallback_cover_material
+	if sprite.material != _fallback_cover_material and sprite.material != _elite_sprite_material:
+		return
+	if not sprite.item_rect_changed.is_connected(_refresh_fallback_cover_feet):
+		# Atlas region/offset changes alter the displayed frame without changing
+		# its texture or Sprite2D frame ID. Watch actual local draw geometry.
+		sprite.item_rect_changed.connect(_refresh_fallback_cover_feet)
+	preload("res://core/systems/world/visibility/WorldCueCover.gd").bind_material(sprite, sprite.material as ShaderMaterial)
+	_refresh_fallback_cover_feet()
+
+
+func _refresh_fallback_cover_feet() -> void:
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if sprite == null or (sprite.material != _fallback_cover_material and sprite.material != _elite_sprite_material):
+		return
+	var surface := sprite.material as ShaderMaterial
+	if surface == null:
+		return
+	var rect := sprite.get_rect()
+	surface.set_shader_parameter(&"cover_sprite_feet", Vector2(rect.get_center().x, rect.end.y))
+	surface.set_shader_parameter(&"cover_sprite_enabled", true)
+
+
 func _unregister_batched_visual() -> void:
 	# Exact inverse of registration: leave the registry (publish() walks every
 	# entry each frame, so it must track live enemies only) and draw the own
 	# sprite again, so an unbatched node is never invisible - whichever scene
 	# or renderer it is reused in.
+	if is_inside_tree() and visible:
+		_configure_fallback_cover()
 	if not _visual_batched:
 		return
 	var renderer := instance_from_id(_batched_renderer_id) as Node
@@ -1108,6 +1147,8 @@ func _apply_elite_surface() -> void:
 	_elite_sprite_material.set_shader_parameter("glint_phase", float(get_instance_id() % 997) / 997.0)
 	_elite_sprite_material.set_shader_parameter("glint_motion", not bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false)))
 	sprite.material = _elite_sprite_material
+	if not _visual_batched:
+		_configure_fallback_cover()
 	if not SettingsManager.settings_changed.is_connected(_on_elite_surface_setting):
 		SettingsManager.settings_changed.connect(_on_elite_surface_setting)
 
@@ -1218,7 +1259,7 @@ func _announce_elite_modifiers(ids: Array[StringName], tint: Color) -> void:
 		return
 	_elite_intro_pending = false
 	if BattleText != null:
-		BattleText.modifier_popup(global_position + ELITE_LABEL_OFFSET, ids, ELITE_LABEL_SCALE)
+		BattleText.modifier_popup(global_position + ELITE_LABEL_OFFSET, ids, ELITE_LABEL_SCALE, global_position.y)
 	if RunEvents == null or not RunEvents.has_signal("illustrated_tutorial_tip"):
 		return
 	for id in ids:

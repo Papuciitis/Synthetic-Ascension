@@ -12,6 +12,7 @@ var _up := true
 
 func _ready() -> void:
 	z_index = 3
+	material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self)
 	queue_redraw()
 
 

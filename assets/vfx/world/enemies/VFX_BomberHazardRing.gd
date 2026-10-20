@@ -16,6 +16,7 @@ var _r: float = 96.0
 var _t: float = 0.0
 var _perimeter: Sprite2D
 var _fuse_core: Sprite2D
+var _fuse_surface: ShaderMaterial
 # Accessibility, read when it changes rather than twice per bomber per frame.
 var _reduced_motion := false
 var _flash_level: StringName = &"full"
@@ -69,6 +70,8 @@ func _ready() -> void:
 	_perimeter.texture = load(PERIMETER_PATH) as Texture2D if ResourceLoader.exists(PERIMETER_PATH) else null
 	_perimeter.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	add_child(_perimeter)
+	var cue_cover := preload("res://core/systems/world/visibility/WorldCueCover.gd")
+	_perimeter.material = cue_cover.material_for(_perimeter, false, true)
 	_fuse_core = Sprite2D.new()
 	_fuse_core.name = "FuseEmbers"
 	_fuse_core.texture = load(BLAST_PATH) as Texture2D if ResourceLoader.exists(BLAST_PATH) else null
@@ -80,6 +83,12 @@ func _ready() -> void:
 	_fuse_core.position = Vector2(0.0, -20.0)
 	_fuse_core.scale = Vector2.ONE * minf(18.0, _r * 0.2) / BLAST_CONTENT_RADIUS
 	add_child(_fuse_core)
+	# The flame rotates at an offset above its owner. Its physical contact is
+	# the owner ground point, independent of that painted/animated transform.
+	_fuse_surface = cue_cover.material_for(_fuse_core).duplicate() as ShaderMaterial
+	_fuse_surface.set_shader_parameter(&"use_ground_anchor_override", true)
+	cue_cover.bind_material(_fuse_core, _fuse_surface)
+	_fuse_core.material = _fuse_surface
 	set_process(true)
 	_update_sprites()
 
@@ -116,5 +125,7 @@ func _update_sprites() -> void:
 	var alpha := lerpf(maxf(base_alpha, 0.25), hot_alpha, 0.25 + 0.75 * progress) if lit else maxf(base_alpha, 0.25)
 	_perimeter.modulate = Color(1.0, 1.0, 1.0, alpha)
 	_fuse_core.visible = lit
+	if lit:
+		_fuse_surface.set_shader_parameter(&"ground_anchor_y", _enemy.global_position.y)
 	_fuse_core.rotation = 0.0 if _reduced_motion else _t * 0.35
 	_fuse_core.modulate = Color(1.0, 1.0, 1.0, AccessibilityPresentation.flash_alpha(0.3 + 0.5 * progress, _flash_level))

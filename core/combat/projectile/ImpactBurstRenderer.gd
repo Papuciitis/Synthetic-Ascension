@@ -56,6 +56,7 @@ func _ready() -> void:
 	burst_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	_instance.material = burst_material
 	add_child(_instance)
+	_instance.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(_instance, true)
 	_positions.resize(MAX_BURSTS)
 	_ages.resize(MAX_BURSTS)
 	_rotations.resize(MAX_BURSTS)

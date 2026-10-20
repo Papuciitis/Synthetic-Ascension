@@ -1,5 +1,8 @@
 shader_type canvas_item;
 render_mode blend_mix;
+#include "res://core/systems/world/visibility/world_cover.gdshaderinc"
+varying vec2 cover_world_position;
+varying flat float cover_feet_y;
 
 // Player families only: keeps native/needle/tracer silhouettes and the same
 // MultiMesh count. Hostile textures, tint and telegraph hues are untouched.
@@ -11,6 +14,8 @@ void vertex() {
 	instance_color = COLOR;
 	// Room for a soft halo while the sampled body keeps its original size.
 	VERTEX *= vec2(1.18, 2.6);
+	cover_world_position = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
+	cover_feet_y = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).y;
 }
 
 void fragment() {
@@ -27,4 +32,5 @@ void fragment() {
 	float combined = body.a + light_alpha * (1.0 - body.a);
 	vec3 rgb = (body.rgb * body.a + light * light_alpha * (1.0 - body.a)) / max(combined, 0.0001);
 	COLOR = vec4(mix(rgb, max(rgb, light), core * accent_strength * 0.55), combined);
+	COLOR = world_cover_composite(COLOR, world_cover_strength(cover_world_position, cover_feet_y));
 }

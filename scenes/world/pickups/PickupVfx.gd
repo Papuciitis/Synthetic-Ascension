@@ -23,6 +23,9 @@ var _t: float = 0.0
 var _base_scale: Vector2 = Vector2.ONE
 var _base_modulate: Color = Color(1,1,1,1)
 
+func _ready() -> void:
+	material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self)
+
 func bind_icon(s: Sprite2D) -> void:
 	icon = s
 	if icon == null:
@@ -126,6 +129,7 @@ func _ensure_lock_ring() -> void:
 	_lock_ring.texture = _make_ring_texture(lock_ring_px, lock_ring_thickness)
 	_lock_ring.modulate = Color(1.0, 0.55, 0.20, 0.45)
 	add_child(_lock_ring)
+	_lock_ring.material = material
 
 func _draw() -> void:
 	if not _exploration or not show_exploration_indicator:

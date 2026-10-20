@@ -25,7 +25,7 @@ var _ring := Color(0.25, 0.65, 1.0, 0.8)
 
 func _ready() -> void:
 	z_index = 6
-	material = null  # pixel-art kit: the sprites blend normally
+	material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self, false, true)
 	visible = false
 
 

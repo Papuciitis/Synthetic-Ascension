@@ -15,6 +15,8 @@ uniform float hit_flash_strength : hint_range(0.0, 1.0) = 1.0;
 // The same surface also serves unbatched Sprite2Ds. Their native REGION_RECT
 // follows animated atlas frames without a second per-enemy animation update.
 uniform bool use_instance_region = true;
+uniform bool cover_sprite_enabled = false;
+uniform vec2 cover_sprite_feet = vec2(0.0);
 uniform bool elite_enabled = false;
 uniform bool glint_motion = true;
 uniform float glint_phase = 0.0;
@@ -31,7 +33,8 @@ void vertex() {
 	cover_world_position = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
 	// Both proxy and materialized batches use a Y-inverted unit quad. This
 	// is the same lower-frame-center anchor used by their cast shadows.
-	cover_feet_y = (MODEL_MATRIX * vec4(0.0, -0.5, 0.0, 1.0)).y;
+	vec2 feet = use_instance_region ? vec2(0.0, -0.5) : cover_sprite_feet;
+	cover_feet_y = (MODEL_MATRIX * vec4(feet, 0.0, 1.0)).y;
 	vertex_modulate = COLOR;
 	hit_flash = 0.0;
 	phase = glint_phase;
@@ -93,9 +96,9 @@ void fragment() {
 	}
 	// Damage feedback wins over the decorative sheen.
 	COLOR.rgb = mix(COLOR.rgb, vec3(1.0), hit_flash * hit_flash_strength);
-	if (use_instance_region) {
+	if (use_instance_region || cover_sprite_enabled) {
 		// Coverage composes with the completed body/elite/hurt presentation.
-		// Sprite fallback materials retain their existing owner and geometry.
+		// Owned ordinary/elite fallback surfaces supply their real frame feet.
 		COLOR = world_cover_composite(COLOR, world_cover_strength(cover_world_position, cover_feet_y));
 	}
 }

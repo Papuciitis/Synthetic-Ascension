@@ -131,7 +131,7 @@ func _ready() -> void:
 	# Keep the large shield-radius wash and motion trails behind the body.
 	position = Vector2.ZERO
 	z_index = -1
-	material = null  # Painted tells use normal alpha blending.
+	material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self)
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_sync_draw_depth()
 	if (_bits & (EliteModifiers.BIT_SPLITTING | EliteModifiers.BIT_VAMPIRIC)) != 0:
@@ -142,6 +142,7 @@ func _ready() -> void:
 		_body_marks.z_index = 2
 		_body_marks.draw.connect(_draw_body_marks)
 		add_child(_body_marks)
+		_body_marks.material = material
 	_reduced_motion = (
 		SettingsManager != null
 		and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))

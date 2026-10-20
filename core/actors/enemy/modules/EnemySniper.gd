@@ -513,6 +513,18 @@ func _ensure_telegraph() -> void:
 	_tele.set_meta("_glow_id", glow.get_instance_id())
 	_tele.set_meta("_mark_id", mark.get_instance_id())
 	_tele.set_meta("_t", 0.0)
+	_bind_telegraph_cover()
+
+
+func _bind_telegraph_cover() -> void:
+	if not is_instance_valid(_tele) or not _tele.is_inside_tree():
+		return
+	var cue_cover := preload("res://core/systems/world/visibility/WorldCueCover.gd")
+	_tele.material = cue_cover.material_for(_tele, false, true)
+	for key: String in ["_glow_id", "_mark_id"]:
+		var layer := instance_from_id(int(_tele.get_meta(key, 0))) as Line2D
+		if layer != null:
+			layer.material = cue_cover.material_for(layer, true, true)
 
 
 func _update_telegraph() -> void:
@@ -656,6 +668,7 @@ func _spawn_beam_flash(from: Vector2, to: Vector2, width: float) -> void:
 	flash.add_point(to)
 
 	_owner.get_tree().current_scene.add_child(flash)
+	flash.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(flash, true, true)
 
 	var tw := flash.create_tween()
 	tw.tween_property(flash, "modulate", Color(1, 1, 1, 0), 0.09)
@@ -688,6 +701,7 @@ func _spawn_end_pop(pos: Vector2, dir: Vector2, width: float) -> void:
 	pop.add_point(pos + perp * r)
 
 	_owner.get_tree().current_scene.add_child(pop)
+	pop.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(pop, true, true)
 
 	var tw := pop.create_tween()
 	tw.tween_property(pop, "modulate", Color(1, 1, 1, 0), 0.10)

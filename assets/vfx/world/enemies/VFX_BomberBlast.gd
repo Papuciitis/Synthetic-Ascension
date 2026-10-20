@@ -25,6 +25,7 @@ func _ready() -> void:
 	_blast.texture = load(ART_PATH) as Texture2D if ResourceLoader.exists(ART_PATH) else null
 	_blast.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	add_child(_blast)
+	_blast.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(_blast, false, true)
 	_update_sprite()
 
 

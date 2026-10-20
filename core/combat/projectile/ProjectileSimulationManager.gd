@@ -8,6 +8,7 @@ enum Team { PLAYER, ENEMY }
 enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
 const ImpactBurstRendererScript := preload("res://core/combat/projectile/ImpactBurstRenderer.gd")
+const CUE_COVER := preload("res://core/systems/world/visibility/WorldCueCover.gd")
 const PLAYER_LIGHT_SHADER := preload("res://core/combat/projectile/AttackProjectileLight.gdshader")
 ## The accent last written to the player-family light materials (-1: none yet).
 var _accent_strength := -1.0
@@ -873,6 +874,22 @@ func _build_renderer() -> void:
 	_renderer = _identity_instances[0]
 	if identity_split:
 		_build_enemy_halo(quad)
+	# Autoload _ready runs while the root viewport is adding children.
+	# Create/bind its shared cover service only after that traversal ends.
+	_bind_cover_renderers.call_deferred()
+
+
+func _bind_cover_renderers() -> void:
+	if not is_inside_tree():
+		return
+	for instance: MultiMeshInstance2D in _identity_instances:
+		if instance.material is ShaderMaterial:
+			CUE_COVER.bind_material(instance, instance.material as ShaderMaterial)
+		else:
+			var additive := instance.material is CanvasItemMaterial and (instance.material as CanvasItemMaterial).blend_mode == CanvasItemMaterial.BLEND_MODE_ADD
+			instance.material = CUE_COVER.material_for(instance, additive)
+	if is_instance_valid(_enemy_halo_instance):
+		_enemy_halo_instance.material = CUE_COVER.material_for(_enemy_halo_instance, true)
 
 
 func _build_enemy_halo(quad: QuadMesh) -> void:

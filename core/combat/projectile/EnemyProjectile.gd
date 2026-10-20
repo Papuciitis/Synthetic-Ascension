@@ -91,6 +91,8 @@ func _ready() -> void:
 			_shared_additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 		material = _shared_additive
 
+	if not has_meta(BossAttacks.SCOPE_META):
+		material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self, true)
 	set_process(true)
 	set_physics_process(true)
 	if has_meta(BossAttacks.SCOPE_META):

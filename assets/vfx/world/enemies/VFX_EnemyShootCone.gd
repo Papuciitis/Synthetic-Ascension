@@ -26,7 +26,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = z
-	material = null  # pixel-art kit (Batch C): the sprite blends normally
+	material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self, false, true)
 	set_process(true)
 	queue_redraw()
 

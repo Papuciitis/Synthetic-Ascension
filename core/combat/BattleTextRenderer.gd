@@ -3,7 +3,9 @@ extends Node2D
 # Batched floating combat text (damage numbers, EVADED, LUCKY, ...).
 # The genre shows hundreds of hits per second, so this follows the same
 # architecture as the batched bullets/impacts: every entry is drawn from
-# ONE canvas item in a ring buffer — no Label nodes, no per-hit churn.
+# pooled canvas slots in a ring buffer — no Label nodes, no per-hit churn.
+# Each persistent slot carries its birth/column ground contact independently
+# of the rising text, while all slots share one foreground-cover material.
 # Autoloaded as BattleText; world-positioned like the other autoload
 # renderers (ProjectileManager).
 #
@@ -78,6 +80,10 @@ const FALLING := -1
 
 var _texts: PackedStringArray = PackedStringArray()
 var _positions := PackedVector2Array()
+var _feet_y := PackedFloat32Array()
+var _fixed_ground_contact := PackedByteArray()
+var _entry_canvases: Array[RID] = []
+var _cover_material: ShaderMaterial
 var _ages := PackedFloat32Array()
 var _lifetimes := PackedFloat32Array()
 var _colors: PackedColorArray = PackedColorArray()
@@ -130,6 +136,9 @@ func _ready() -> void:
 	_callout_font = HUD_THEME.get_font(&"font", &"HudCaption")
 	_texts.resize(MAX_ENTRIES)
 	_positions.resize(MAX_ENTRIES)
+	_feet_y.resize(MAX_ENTRIES)
+	_fixed_ground_contact.resize(MAX_ENTRIES)
+	_bind_cover_material.call_deferred()
 	_ages.resize(MAX_ENTRIES)
 	_lifetimes.resize(MAX_ENTRIES)
 	_colors.resize(MAX_ENTRIES)
@@ -158,6 +167,15 @@ func _ready() -> void:
 	set_process(false)
 
 
+func _bind_cover_material() -> void:
+	if not is_inside_tree():
+		return
+	_cover_material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(self)
+	for canvas: RID in _entry_canvases:
+		RenderingServer.canvas_item_set_material(canvas, _cover_material.get_rid())
+	queue_redraw()
+
+
 func enabled() -> bool:
 	if SettingsManager == null:
 		return true
@@ -183,6 +201,7 @@ func damage(world_pos: Vector2, amount: float, crit: bool = false, merge_key: in
 				_amounts[i] += amount
 				_texts[i] = _format_amount(_amounts[i])
 				_positions[i] = world_pos + Vector2(0.0, -20.0)
+				_feet_y[i] = world_pos.y
 				_ages[i] = 0.0
 				# A crit that lands on a number still climbing used to vanish
 				# into it, white and small: the 1% event the player most wants
@@ -203,14 +222,15 @@ func damage(world_pos: Vector2, amount: float, crit: bool = false, merge_key: in
 		entry_scale,
 		CRIT_LIFETIME if crit else LIFETIME,
 		amount,
-		merge_key
+		merge_key,
+		world_pos.y
 	)
 
 
 func player_damage(world_pos: Vector2, amount: float) -> void:
 	if amount < 0.5 or not enabled():
 		return
-	var slot := _spawn(_format_amount(amount), world_pos + PLAYER_DAMAGE_OFFSET, Color(1.0, 0.35, 0.3, 1.0), 1.15, LIFETIME, amount, 0)
+	var slot := _spawn(_format_amount(amount), world_pos + PLAYER_DAMAGE_OFFSET, Color(1.0, 0.35, 0.3, 1.0), 1.15, LIFETIME, amount, 0, world_pos.y)
 	_columns[slot] = FALLING
 
 
@@ -279,7 +299,7 @@ func status_popup(world_pos: Vector2, id: StringName, text_override: String = ""
 
 ## Each semantic name keeps its own colour, including a mixed announcement
 ## of elite and applied statuses. Separators use the neutral combat colour.
-func statuses_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0) -> void:
+func statuses_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0, ground_y: float = NAN) -> void:
 	if not callouts_enabled():
 		return
 	var known: Array[StringName] = []
@@ -294,15 +314,20 @@ func statuses_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: flo
 	_set_icons(slot, known)
 	_modifier_ids[slot].assign(known)
 	_stack_callout(slot, world_pos)
+	if not is_nan(ground_y):
+		# An explicitly raised owner anchor may join a nearby visual column;
+		# its physical birth contact remains the owner's even in that column.
+		_feet_y[slot] = ground_y
+		_fixed_ground_contact[slot] = 1
 
 
 ## Elite callers keep their original five-modifier scope and colour source.
-func modifier_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0) -> void:
+func modifier_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0, ground_y: float = NAN) -> void:
 	var known: Array[StringName] = []
 	for id in ids:
 		if EliteModifiers.is_known(id):
 			known.append(id)
-	statuses_popup(world_pos, known, entry_scale)
+	statuses_popup(world_pos, known, entry_scale, ground_y)
 
 
 func _icon_count(slot: int) -> int:
@@ -323,7 +348,7 @@ func _entry_descent(slot: int) -> float:
 	return maxf(size * LINE_DESCENT_EM, ICON_SIZE * _scales[slot] * 0.5 - size * 0.28) if _icon_count(slot) > 0 else size * LINE_DESCENT_EM
 
 
-func _spawn(text: String, world_pos: Vector2, color: Color, entry_scale: float, lifetime: float, amount: float, merge_key: int) -> int:
+func _spawn(text: String, world_pos: Vector2, color: Color, entry_scale: float, lifetime: float, amount: float, merge_key: int, feet_y: float = NAN) -> int:
 	var slot: int
 	if _count < MAX_ENTRIES:
 		slot = _count
@@ -335,6 +360,8 @@ func _spawn(text: String, world_pos: Vector2, color: Color, entry_scale: float, 
 	var jitter := float((Time.get_ticks_usec() % 17) - 8)
 	_texts[slot] = text
 	_positions[slot] = world_pos + Vector2(jitter, 0.0)
+	_feet_y[slot] = world_pos.y if is_nan(feet_y) else feet_y
+	_fixed_ground_contact[slot] = 0
 	_ages[slot] = 0.0
 	_lifetimes[slot] = lifetime
 	_colors[slot] = color
@@ -373,12 +400,15 @@ func _format_amount(amount: float) -> String:
 ## Put a freshly spawned callout at the base of its column and push the
 ## column's older lines up to make room.
 func _stack_callout(slot: int, world_pos: Vector2) -> void:
+	_feet_y[slot] = world_pos.y
 	var column := _column_for(world_pos)
 	if column == 0:
 		return
 	_columns[slot] = column
 	_column_members[column - 1] += 1
 	_positions[slot] = _column_bases[column - 1]
+	if column == PLAYER_COLUMN:
+		_feet_y[slot] = _column_bases[column - 1].y - CALLOUT_RAISE.y
 	_settle_column(column, slot)
 
 
@@ -389,6 +419,7 @@ func _stack_callout(slot: int, world_pos: Vector2) -> void:
 func _refresh_callout(slot: int, world_pos: Vector2, lifetime: float) -> void:
 	var column := _columns[slot]
 	if column > 0 and column == _column_for(world_pos):
+		_feet_y[slot] = _column_bases[column - 1].y - CALLOUT_RAISE.y if column == PLAYER_COLUMN else world_pos.y
 		var drift := RISE_SPEED * _ages[slot]
 		_lifts[slot] += drift
 		_lift_targets[slot] += drift
@@ -522,6 +553,8 @@ func _process(delta: float) -> void:
 				_lifts[i] = lift
 			if column == PLAYER_COLUMN:
 				_positions[i] = player_base
+				if _fixed_ground_contact[i] == 0:
+					_feet_y[i] = player_base.y - CALLOUT_RAISE.y
 			# Pushed out of the top of its column: already faded to nothing.
 			if RISE_SPEED * age + lift >= COLUMN_CEILING + COLUMN_FADE_SPAN:
 				_remove_at(i)
@@ -538,6 +571,8 @@ func _remove_at(slot: int) -> void:
 	var last := _count - 1
 	_texts[slot] = _texts[last]
 	_positions[slot] = _positions[last]
+	_feet_y[slot] = _feet_y[last]
+	_fixed_ground_contact[slot] = _fixed_ground_contact[last]
 	_ages[slot] = _ages[last]
 	_lifetimes[slot] = _lifetimes[last]
 	_colors[slot] = _colors[last]
@@ -592,15 +627,31 @@ func _exit_tree() -> void:
 	for i in range(_lines.size()):
 		_lines[i] = null
 		_modifier_lines[i].clear()
+	for canvas: RID in _entry_canvases:
+		RenderingServer.free_rid(canvas)
+	_entry_canvases.clear()
+	_cover_material = null
 	_font = null
 	_callout_font = null
 
 
 func _draw() -> void:
-	if _font == null:
+	# Slots are retained up to the high-water mark (at most MAX_ENTRIES).
+	# Retiring or clearing text also clears its previous server commands.
+	for old_canvas: RID in _entry_canvases:
+		RenderingServer.canvas_item_clear(old_canvas)
+	if _font == null or _cover_material == null:
 		return
-	var canvas := get_canvas_item()
+	while _entry_canvases.size() < _count:
+		var entry := RenderingServer.canvas_item_create()
+		RenderingServer.canvas_item_set_parent(entry, get_canvas_item())
+		RenderingServer.canvas_item_set_material(entry, _cover_material.get_rid())
+		RenderingServer.canvas_item_set_default_texture_filter(entry, RenderingServer.CANVAS_ITEM_TEXTURE_FILTER_LINEAR)
+		_entry_canvases.append(entry)
 	for i in range(_count):
+		var canvas := _entry_canvases[i]
+		var origin := Vector2(_positions[i].x, _feet_y[i])
+		RenderingServer.canvas_item_set_transform(canvas, Transform2D(0.0, origin))
 		var life_t := clampf(_ages[i] / maxf(_lifetimes[i], 0.01), 0.0, 1.0)
 		var alpha := 1.0 if life_t < 0.55 else 1.0 - (life_t - 0.55) / 0.45
 		var rise := RISE_SPEED * _ages[i]
@@ -614,7 +665,7 @@ func _draw() -> void:
 					continue
 		elif column == FALLING:
 			rise = -rise
-		var badge_baseline := _positions[i] + Vector2(0.0, -rise)
+		var badge_baseline := _positions[i] - origin + Vector2(0.0, -rise)
 		# Crit pop: brief overshoot at birth.
 		var pop := 1.0 + maxf(0.0, 0.25 - _ages[i] * 2.0) * (_scales[i] - 1.0) * 4.0
 		var font_size := int(round(FONT_SIZE * _scales[i] * pop))
@@ -622,7 +673,7 @@ func _draw() -> void:
 			# In a column the pop grows DOWN from the line's top edge rather
 			# than up into the line it just pushed, which is still easing away.
 			rise -= (float(font_size) - FONT_SIZE * _scales[i]) * LINE_ASCENT_EM
-		var draw_pos := _positions[i] + Vector2(-LINE_WIDTH * 0.5, -rise)
+		var draw_pos := _positions[i] - origin + Vector2(-LINE_WIDTH * 0.5, -rise)
 		var color := _colors[i]
 		color.a = alpha
 		var outline := Color(0.05, 0.05, 0.08, alpha * 0.9)
@@ -631,13 +682,13 @@ func _draw() -> void:
 		if icon_count > 0:
 			var icon_size := ICON_SIZE * _scales[i]
 			var row_width := icon_size * icon_count + ICON_SEPARATION * (icon_count - 1)
-			var badge_x := _positions[i].x - (line.get_line_width() + ICON_TEXT_GAP + row_width) * 0.5
+			var badge_x := _positions[i].x - origin.x - (line.get_line_width() + ICON_TEXT_GAP + row_width) * 0.5
 			var badge_y := badge_baseline.y - FONT_SIZE * _scales[i] * 0.28 - icon_size * 0.5
 			for id: StringName in _icon_ids[i]:
 				var art := StatusIcons.texture(id)
 				if art == null:
 					continue
-				draw_texture_rect(art, Rect2(badge_x, badge_y, icon_size, icon_size), false, Color(1.0, 1.0, 1.0, alpha))
+				RenderingServer.canvas_item_add_texture_rect(canvas, Rect2(badge_x, badge_y, icon_size, icon_size), art.get_rid(), false, Color(1.0, 1.0, 1.0, alpha))
 				badge_x += icon_size + ICON_SEPARATION
 			draw_pos.x += (row_width + ICON_TEXT_GAP) * 0.5
 		# TextLine draws from the top-left of its box; draw_string took the
