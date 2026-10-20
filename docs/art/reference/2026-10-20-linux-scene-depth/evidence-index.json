@@ -1,0 +1,928 @@
+{
+  "packet": "2026-10-20-linux-scene-depth",
+  "runs": 36,
+  "pngs": 10,
+  "scope": "Explicit named native plates, capture records, monitored process records and logs only; no raw fight frames/cache/userdata.",
+  "files": [
+    {
+      "path": ".gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "README.md",
+      "bytes": 9799,
+      "sha256": "8f212e3a3f1975d8e9fe4d1946060b042b107c3b1fd0b19d77683154ba7e291d"
+    },
+    {
+      "path": "baseline-small/capture-info.json",
+      "bytes": 7649,
+      "sha256": "55f20b6fa011d87498a980d19c45a224eb8c2879812b0b20f958144216371ce5"
+    },
+    {
+      "path": "baseline-small/ground-before.png",
+      "bytes": 730091,
+      "sha256": "9fdd9530209acf09eb1c0cfc7dfb0db26616550632a9b11cfa3b374428f89b00"
+    },
+    {
+      "path": "code-commit-bindings.json",
+      "bytes": 130482,
+      "sha256": "f3303ac57d15dcd5fda498ef76703de7a9dfa5d541612f783d557fafee2fada6"
+    },
+    {
+      "path": "comparisons.json",
+      "bytes": 4273,
+      "sha256": "4c00f8e5a92d7d324d36d8f9145e678fef611eef02adc08883c99fb31ec6971b"
+    },
+    {
+      "path": "paving-after/capture-info.json",
+      "bytes": 28118,
+      "sha256": "3699596e37da7ec6048e5a9e977e38417508e7dc22231cd633a0722df36fec64"
+    },
+    {
+      "path": "paving-after/ground-before.png",
+      "bytes": 779188,
+      "sha256": "59b459d952b435f60036053c75dca0007157ddc1e8e4b893cff69f4111504ac2"
+    },
+    {
+      "path": "paving-before/capture-info.json",
+      "bytes": 28095,
+      "sha256": "faf265b472e795d2bcaea0b6072321418edc7d691f3d03d897baf7b12087e481"
+    },
+    {
+      "path": "paving-before/ground-before.png",
+      "bytes": 778981,
+      "sha256": "179404c500221ddcd054d0c2c1d5c10d2c9822415b9b2ca4144151ddd88edee9"
+    },
+    {
+      "path": "process/logs/l2-seam-after-paving/engine.log",
+      "bytes": 360,
+      "sha256": "3a721c1b608f3019db8617bfda4817095e6ea66c25a6412d25b6d09021594539"
+    },
+    {
+      "path": "process/logs/l2-seam-after-paving/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/l2-seam-after-paving/stdout.log",
+      "bytes": 360,
+      "sha256": "3a721c1b608f3019db8617bfda4817095e6ea66c25a6412d25b6d09021594539"
+    },
+    {
+      "path": "process/logs/l2-seam-core/engine.log",
+      "bytes": 360,
+      "sha256": "3a721c1b608f3019db8617bfda4817095e6ea66c25a6412d25b6d09021594539"
+    },
+    {
+      "path": "process/logs/l2-seam-core/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/l2-seam-core/stdout.log",
+      "bytes": 360,
+      "sha256": "3a721c1b608f3019db8617bfda4817095e6ea66c25a6412d25b6d09021594539"
+    },
+    {
+      "path": "process/logs/roof-CheckpointOfficeRefinementTest/engine.log",
+      "bytes": 126,
+      "sha256": "f1cccb5a4b08d6586a319ca01473b5712edbe7195b069ce701c1272754391aaa"
+    },
+    {
+      "path": "process/logs/roof-CheckpointOfficeRefinementTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-CheckpointOfficeRefinementTest/stdout.log",
+      "bytes": 126,
+      "sha256": "f1cccb5a4b08d6586a319ca01473b5712edbe7195b069ce701c1272754391aaa"
+    },
+    {
+      "path": "process/logs/roof-CityBlockKitTest/engine.log",
+      "bytes": 113,
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec"
+    },
+    {
+      "path": "process/logs/roof-CityBlockKitTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-CityBlockKitTest/stdout.log",
+      "bytes": 113,
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec"
+    },
+    {
+      "path": "process/logs/roof-CityBlockProceduralTest/engine.log",
+      "bytes": 237,
+      "sha256": "012da26c0e24a8044d4f25518e3d09bac4b7a15156c82684bcc80987f0607ab0"
+    },
+    {
+      "path": "process/logs/roof-CityBlockProceduralTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-CityBlockProceduralTest/stdout.log",
+      "bytes": 237,
+      "sha256": "012da26c0e24a8044d4f25518e3d09bac4b7a15156c82684bcc80987f0607ab0"
+    },
+    {
+      "path": "process/logs/roof-DungeonRoofContractTest/engine.log",
+      "bytes": 118,
+      "sha256": "e97a5ee995c6638c430d598c04f728a851a59df91feef008007f15118d7724c2"
+    },
+    {
+      "path": "process/logs/roof-DungeonRoofContractTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-DungeonRoofContractTest/stdout.log",
+      "bytes": 118,
+      "sha256": "e97a5ee995c6638c430d598c04f728a851a59df91feef008007f15118d7724c2"
+    },
+    {
+      "path": "process/logs/roof-WorldCoverTest/engine.log",
+      "bytes": 1689,
+      "sha256": "c1b843db10c8a878844cd26e3eb5f28f2cc22ca91493bd5d345b3ae02bf1d19b"
+    },
+    {
+      "path": "process/logs/roof-WorldCoverTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-WorldCoverTest/stdout.log",
+      "bytes": 1689,
+      "sha256": "c1b843db10c8a878844cd26e3eb5f28f2cc22ca91493bd5d345b3ae02bf1d19b"
+    },
+    {
+      "path": "process/logs/roof-bed-normal/engine.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/roof-bed-normal/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-bed-normal/stdout.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/roof-bed-small/engine.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/roof-bed-small/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-bed-small/stdout.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/roof-depth-pair-normal/engine.log",
+      "bytes": 361,
+      "sha256": "cac0fe52e01f79d241e71f450703268ba0059324ce88806d482a14c6837b55a5"
+    },
+    {
+      "path": "process/logs/roof-depth-pair-normal/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-depth-pair-normal/stdout.log",
+      "bytes": 361,
+      "sha256": "cac0fe52e01f79d241e71f450703268ba0059324ce88806d482a14c6837b55a5"
+    },
+    {
+      "path": "process/logs/roof-depth-pair-small/engine.log",
+      "bytes": 361,
+      "sha256": "cac0fe52e01f79d241e71f450703268ba0059324ce88806d482a14c6837b55a5"
+    },
+    {
+      "path": "process/logs/roof-depth-pair-small/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-depth-pair-small/stdout.log",
+      "bytes": 361,
+      "sha256": "cac0fe52e01f79d241e71f450703268ba0059324ce88806d482a14c6837b55a5"
+    },
+    {
+      "path": "process/logs/roof-uv-final-small/engine.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/roof-uv-final-small/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/roof-uv-final-small/stdout.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/scene-baseline-import/engine.log",
+      "bytes": 363470,
+      "sha256": "db914b04e7a4f63c3db48a13cd9fbe12f381884988e2b081b48c2dd81cff8f5b"
+    },
+    {
+      "path": "process/logs/scene-baseline-import/stderr.log",
+      "bytes": 10073,
+      "sha256": "7f879ae5e0c7c7c88b66a3cc98963db312410a90a96224372e87928470543f33"
+    },
+    {
+      "path": "process/logs/scene-baseline-import/stdout.log",
+      "bytes": 523878,
+      "sha256": "3e2a8c45ebe43f87fe871ec45501d6cbe2c408e3685d585232b24a98116f235e"
+    },
+    {
+      "path": "process/logs/scene-baseline-runtime/engine.log",
+      "bytes": 113,
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec"
+    },
+    {
+      "path": "process/logs/scene-baseline-runtime/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-baseline-runtime/stdout.log",
+      "bytes": 113,
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec"
+    },
+    {
+      "path": "process/logs/scene-bed-small/engine.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/scene-bed-small/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-bed-small/stdout.log",
+      "bytes": 361,
+      "sha256": "aa92ef6ca00f801b2a685dcc27cec34f5a2ed1166c76235cee322a629c128a15"
+    },
+    {
+      "path": "process/logs/scene-edge-green2/engine.log",
+      "bytes": 197853,
+      "sha256": "88c40059e4a770836030494de32b8e2207470ab85cf88d79f2ff727924764a1b"
+    },
+    {
+      "path": "process/logs/scene-edge-green2/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-edge-green2/stdout.log",
+      "bytes": 198045,
+      "sha256": "419ebf7c462c823750c5091c8e943e8032c41a8f267cc736e581a0fc159c5888"
+    },
+    {
+      "path": "process/logs/scene-edge-red-valid/engine.log",
+      "bytes": 986,
+      "sha256": "bf0c2db37ad90a5228241ee0c0cccd3973dc9c6b154340583297e891c290d80f"
+    },
+    {
+      "path": "process/logs/scene-edge-red-valid/stderr.log",
+      "bytes": 900,
+      "sha256": "7771b9552c6a43934e8963bd8d468ba3e72e59c35489d790731d6631b74d1aa8"
+    },
+    {
+      "path": "process/logs/scene-edge-red-valid/stdout.log",
+      "bytes": 331,
+      "sha256": "eb6e32629cc6bb8ec16faf04666f313c46d8babf1684b27dbb4eacc9050153d2"
+    },
+    {
+      "path": "process/logs/scene-edge-red/engine.log",
+      "bytes": 526,
+      "sha256": "b3c1509af6d5f41c815e5c4445b42f6de2f3ff3abfa62e5cb42c14defdc89b9e"
+    },
+    {
+      "path": "process/logs/scene-edge-red/stderr.log",
+      "bytes": 334,
+      "sha256": "3070f4a9a46afaf0996f8b7ec35f59f550b70ced774fb76c1ccbd28665289661"
+    },
+    {
+      "path": "process/logs/scene-edge-red/stdout.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d"
+    },
+    {
+      "path": "process/logs/scene-final-CheckpointOfficeRefinementTest/engine.log",
+      "bytes": 194563,
+      "sha256": "e263be12e188200aa0b6af60f64421aca6b3ed8209384fcdd406c55abfe53b0d"
+    },
+    {
+      "path": "process/logs/scene-final-CheckpointOfficeRefinementTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-final-CheckpointOfficeRefinementTest/stdout.log",
+      "bytes": 194712,
+      "sha256": "c005ed711c6e011679752a8fe366aa60a5b3a507a788e0f79e57290072862449"
+    },
+    {
+      "path": "process/logs/scene-final-CityFootprintShadowTest/engine.log",
+      "bytes": 192513,
+      "sha256": "25503e7a296d48700a64f8cbcbbae43e85ba57eea0523881301cdaddc17d58a6"
+    },
+    {
+      "path": "process/logs/scene-final-CityFootprintShadowTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-final-CityFootprintShadowTest/stdout.log",
+      "bytes": 192662,
+      "sha256": "cda4ba5e9f80f0bd316de769dc5b81f6645ed64a475514b57ed8d556f0304a7b"
+    },
+    {
+      "path": "process/logs/scene-final-CityIrregularRoofPlaneRenderTest/engine.log",
+      "bytes": 197434,
+      "sha256": "506c686553a820802419c5e0956a9cbe13a6406a93c567f1a29d41bcf7aa109a"
+    },
+    {
+      "path": "process/logs/scene-final-CityIrregularRoofPlaneRenderTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-final-CityIrregularRoofPlaneRenderTest/stdout.log",
+      "bytes": 197626,
+      "sha256": "11fec975732878e2be862c1bd55d884e21f0d64f379809581cd4b307657c75bb"
+    },
+    {
+      "path": "process/logs/scene-final-CityIrregularRoofTextureRenderTest/engine.log",
+      "bytes": 197645,
+      "sha256": "506ed15558bf29ff62853c4e034899a427130cc2856ee48f8b0f15daff05082f"
+    },
+    {
+      "path": "process/logs/scene-final-CityIrregularRoofTextureRenderTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-final-CityIrregularRoofTextureRenderTest/stdout.log",
+      "bytes": 197837,
+      "sha256": "826fd290fc1b312a2760d67c1ddf728999bca9028ff5ec2ad186b2338a8c9f6c"
+    },
+    {
+      "path": "process/logs/scene-final-CityNonGuardFootprintShadowTest/engine.log",
+      "bytes": 191305,
+      "sha256": "4c5e81510542a87fc0c7832ad96fd69cc26db9fdf33c24a86e2904052073d47e"
+    },
+    {
+      "path": "process/logs/scene-final-CityNonGuardFootprintShadowTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-final-CityNonGuardFootprintShadowTest/stdout.log",
+      "bytes": 191454,
+      "sha256": "4d71fe73065a1057612866141043eb17c4b45f8b90996fe8848e0b0c62c09bf2"
+    },
+    {
+      "path": "process/logs/scene-footway-red/engine.log",
+      "bytes": 758,
+      "sha256": "ae40e59e4ff80b313c4e0108ef0f68cbc1d6789ab851c971fa9962df99ef87e9"
+    },
+    {
+      "path": "process/logs/scene-footway-red/stderr.log",
+      "bytes": 641,
+      "sha256": "422b5cbf2a8ce56af1e818d2c0822cc050667d345b9281cb7819ee176c7b4c75"
+    },
+    {
+      "path": "process/logs/scene-footway-red/stdout.log",
+      "bytes": 117,
+      "sha256": "163b34d5ffd12e09365dd8aa7f22bd4313009f72b074189344fd97f2ff9c7d9b"
+    },
+    {
+      "path": "process/logs/scene-geometry-green2/engine.log",
+      "bytes": 192921,
+      "sha256": "88ef4eda8b2ae2a9a0f6b587f96e5bbd6627d6e36e43bc0063ba46554a807515"
+    },
+    {
+      "path": "process/logs/scene-geometry-green2/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-geometry-green2/stdout.log",
+      "bytes": 193070,
+      "sha256": "a674b77cabc7f9d1c2b65a9b291406fc817719a4b23454f3acee953aa8ef12af"
+    },
+    {
+      "path": "process/logs/scene-green-CityFootprintShadowTest/engine.log",
+      "bytes": 192513,
+      "sha256": "25503e7a296d48700a64f8cbcbbae43e85ba57eea0523881301cdaddc17d58a6"
+    },
+    {
+      "path": "process/logs/scene-green-CityFootprintShadowTest/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-green-CityFootprintShadowTest/stdout.log",
+      "bytes": 192662,
+      "sha256": "cda4ba5e9f80f0bd316de769dc5b81f6645ed64a475514b57ed8d556f0304a7b"
+    },
+    {
+      "path": "process/logs/scene-green-CityFootwayGeometryTest/engine.log",
+      "bytes": 193817,
+      "sha256": "3133651bd1d95ffbc72ebe690fab9cdb88c4c45285757a167943127ba0dccc92"
+    },
+    {
+      "path": "process/logs/scene-green-CityFootwayGeometryTest/stderr.log",
+      "bytes": 966,
+      "sha256": "a0a403937f4e65c2becd685d2f2131f9bb880808ef481332be90f68611b7b571"
+    },
+    {
+      "path": "process/logs/scene-green-CityFootwayGeometryTest/stdout.log",
+      "bytes": 193070,
+      "sha256": "a674b77cabc7f9d1c2b65a9b291406fc817719a4b23454f3acee953aa8ef12af"
+    },
+    {
+      "path": "process/logs/scene-kit-green/engine.log",
+      "bytes": 113,
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec"
+    },
+    {
+      "path": "process/logs/scene-kit-green/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-kit-green/stdout.log",
+      "bytes": 113,
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec"
+    },
+    {
+      "path": "process/logs/scene-later-shadow-red/engine.log",
+      "bytes": 3780,
+      "sha256": "c26411a817d600c57c73abc56ab41e1e7894e59da48341ee7b1a369c71a27e08"
+    },
+    {
+      "path": "process/logs/scene-later-shadow-red/stderr.log",
+      "bytes": 2728,
+      "sha256": "18d9f22634bc731e48d52044ddafc0cafc4dc8bbd108a4b0fd68b765b32b074f"
+    },
+    {
+      "path": "process/logs/scene-later-shadow-red/stdout.log",
+      "bytes": 1052,
+      "sha256": "31711bee147a82e1a9931b37a5ee0dc60e34ed2123eb42dbc31f42c5fe460f2b"
+    },
+    {
+      "path": "process/logs/scene-procedural-check/engine.log",
+      "bytes": 237,
+      "sha256": "012da26c0e24a8044d4f25518e3d09bac4b7a15156c82684bcc80987f0607ab0"
+    },
+    {
+      "path": "process/logs/scene-procedural-check/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-procedural-check/stdout.log",
+      "bytes": 237,
+      "sha256": "012da26c0e24a8044d4f25518e3d09bac4b7a15156c82684bcc80987f0607ab0"
+    },
+    {
+      "path": "process/logs/scene-roof-plane-green/engine.log",
+      "bytes": 197434,
+      "sha256": "74ae86d0b7dda8606d80504539592970de67a40460d0b38e7e9a0357700b9159"
+    },
+    {
+      "path": "process/logs/scene-roof-plane-green/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process/logs/scene-roof-plane-green/stdout.log",
+      "bytes": 197626,
+      "sha256": "cfbba47fb6170263f0339df48554cbd672d1e3f81e47ba547d612b44308b75cb"
+    },
+    {
+      "path": "process/logs/scene-roof-plane-red/engine.log",
+      "bytes": 199135,
+      "sha256": "6e33b7a7964b1f374c078dc14ecbcf20efee853995bccfbf52c0d5a6f91858fa"
+    },
+    {
+      "path": "process/logs/scene-roof-plane-red/stderr.log",
+      "bytes": 1701,
+      "sha256": "e8055e24e05f22bde2b9ac97497cb43a054203010d697a79cb056496c6e32bb8"
+    },
+    {
+      "path": "process/logs/scene-roof-plane-red/stdout.log",
+      "bytes": 197626,
+      "sha256": "cff23e265e8655d988f66ea6119f0d8aa155d9a3418e9b9904c3400fd5d230e1"
+    },
+    {
+      "path": "process/logs/scene-roof-texture-red/engine.log",
+      "bytes": 198429,
+      "sha256": "148c37323eca9f37c0a61676b50516df0552d342117411bcdc100e203a788a2b"
+    },
+    {
+      "path": "process/logs/scene-roof-texture-red/stderr.log",
+      "bytes": 995,
+      "sha256": "852b0c61e39b92220be77eba79e6520738d4305870b6f75f7eb1f3a1480d8f9b"
+    },
+    {
+      "path": "process/logs/scene-roof-texture-red/stdout.log",
+      "bytes": 198320,
+      "sha256": "eccfb6109caa2d7291b24fa57eb41463adf8346d92c3b39addb6226c4adbd619"
+    },
+    {
+      "path": "process/logs/scene-roof-texture-valid-red/engine.log",
+      "bytes": 198430,
+      "sha256": "545980f4cf3940eebf3a789f9c4550d2c5d83313669e0444e253df80ad995667"
+    },
+    {
+      "path": "process/logs/scene-roof-texture-valid-red/stderr.log",
+      "bytes": 783,
+      "sha256": "4292a3ab6b2c7412a5b425a54b1cc190487740dd2b62a89aafa303ce495ecbbd"
+    },
+    {
+      "path": "process/logs/scene-roof-texture-valid-red/stdout.log",
+      "bytes": 197839,
+      "sha256": "e5f03091cff3e389a2671ce341c074170552826f1f56b32ae4bb5ac3c5277b49"
+    },
+    {
+      "path": "process/logs/scene-shadow-red/engine.log",
+      "bytes": 2001,
+      "sha256": "06fb079c2653719cc724edbb2207e34397837bd90c4d2322bc1fd2f67e7a0b2f"
+    },
+    {
+      "path": "process/logs/scene-shadow-red/stderr.log",
+      "bytes": 1884,
+      "sha256": "bf3712e0b8f707af5b9c6ce76ea370b10554749a06d3b597d7244ed708964596"
+    },
+    {
+      "path": "process/logs/scene-shadow-red/stdout.log",
+      "bytes": 117,
+      "sha256": "2fd2737c81bf8631ab6b4fdb92cfda2a2c484bbc711d569fb4a62ae779b64d54"
+    },
+    {
+      "path": "process/logs/scene-warm-import/engine.log",
+      "bytes": 218665,
+      "sha256": "8da424db473e28d490dcf11edff35f54e047b937d3837fc5e15d37f404f80daa"
+    },
+    {
+      "path": "process/logs/scene-warm-import/stderr.log",
+      "bytes": 5231,
+      "sha256": "959258e5f99e34b99a5b6882f9ebcdb1f5e0dbf1164b3787e41d082436db0377"
+    },
+    {
+      "path": "process/logs/scene-warm-import/stdout.log",
+      "bytes": 316387,
+      "sha256": "434f8e2e66ee63a29a10459d1a4539a44f848934434a52ba921232453420bc50"
+    },
+    {
+      "path": "process/package-scene.py",
+      "bytes": 24402,
+      "sha256": "9e009040d9f1b5271faf178b91ee99bcc106b908e3cbf8e7fb6ea3eec19d18e0"
+    },
+    {
+      "path": "process/runs/l2-seam-after-paving.json",
+      "bytes": 32686,
+      "sha256": "c63a9282da97b2a1d006964e7b64bac97a54bbd5de6cfa35710aa7c60ad701d1"
+    },
+    {
+      "path": "process/runs/l2-seam-core.json",
+      "bytes": 32951,
+      "sha256": "10ea22112aca09046cf065b9a1642587037b519e81afa0a437158f8b6d5bb463"
+    },
+    {
+      "path": "process/runs/roof-CheckpointOfficeRefinementTest.json",
+      "bytes": 9971,
+      "sha256": "57d9ae5950957333b9ac7e82dd1bc35b745d3d6ec0892753d22fa24169010afa"
+    },
+    {
+      "path": "process/runs/roof-CityBlockKitTest.json",
+      "bytes": 10042,
+      "sha256": "5de09f6da37820d0531e5fb583553200642d96262d6ee033f28c1edd4c50a183"
+    },
+    {
+      "path": "process/runs/roof-CityBlockProceduralTest.json",
+      "bytes": 11000,
+      "sha256": "c077955a420cc0b8a9c9c195ee00e4218d3dfe70744913d007626160ae442641"
+    },
+    {
+      "path": "process/runs/roof-DungeonRoofContractTest.json",
+      "bytes": 9915,
+      "sha256": "e0694110ee7effd5b8399e9eb955e9c1c8a5ad08e8e420544008cc72e2e00657"
+    },
+    {
+      "path": "process/runs/roof-WorldCoverTest.json",
+      "bytes": 9333,
+      "sha256": "edeeb51f9720360f322a0bfc10c44c4dbc020e51db1956f59beff4228a8ff23e"
+    },
+    {
+      "path": "process/runs/roof-bed-normal.json",
+      "bytes": 30887,
+      "sha256": "98977d4335e30ba8f78b50d198a9a98577ac980b72f9ebc74256f8a684ea60d9"
+    },
+    {
+      "path": "process/runs/roof-bed-small.json",
+      "bytes": 32992,
+      "sha256": "6d6bf932b7f20aeef87944d98b2ab362aea6ebeff412b27890dd00a8d7858e58"
+    },
+    {
+      "path": "process/runs/roof-depth-pair-normal.json",
+      "bytes": 31562,
+      "sha256": "44ab5d54cd15bb7b90a9b3cccbd52b3aa79bdde2bc8923419094e7cf7f23185e"
+    },
+    {
+      "path": "process/runs/roof-depth-pair-small.json",
+      "bytes": 30734,
+      "sha256": "1cb8002dd35dbe25e8f1bd4b479f28a2cef463f08b7023a8116fe5f9c9291ac5"
+    },
+    {
+      "path": "process/runs/roof-uv-final-small.json",
+      "bytes": 30712,
+      "sha256": "f75814bad94bf791d8a16f94e3c68a378718a18556e7b81c0eb7f0138ab44a5e"
+    },
+    {
+      "path": "process/runs/scene-baseline-import.json",
+      "bytes": 164641,
+      "sha256": "065f3043894216688157792135c4564d95b36ab7279c44498f6a21539cbb6532"
+    },
+    {
+      "path": "process/runs/scene-baseline-runtime.json",
+      "bytes": 10739,
+      "sha256": "3f9a8e83d56ff0040c5112afee53c3ad41581291ec12891e57109864ee8e7354"
+    },
+    {
+      "path": "process/runs/scene-bed-small.json",
+      "bytes": 31133,
+      "sha256": "7d98b23102519a8f19adf067d0bb00e52ac380abbf3ab67c4b6286a340185ff7"
+    },
+    {
+      "path": "process/runs/scene-edge-green2.json",
+      "bytes": 12311,
+      "sha256": "6e8660d1324b66e0926937b2d704191aa58ffec793a36a58f81e06f9e4407f4f"
+    },
+    {
+      "path": "process/runs/scene-edge-red-valid.json",
+      "bytes": 12397,
+      "sha256": "022e12f23801aa00794ee5f8922eae0e3ce821da388f8ee29c969ef4b58b117e"
+    },
+    {
+      "path": "process/runs/scene-edge-red.json",
+      "bytes": 159955,
+      "sha256": "e1c6305bd67b0278579e1803e03eb04e2879108e6108eb3d7a9547c68d15140c"
+    },
+    {
+      "path": "process/runs/scene-final-CheckpointOfficeRefinementTest.json",
+      "bytes": 10048,
+      "sha256": "088cf8efb615b2570dca33330d2436444cefa09cbfe6532e3e115ff9f5bf85cc"
+    },
+    {
+      "path": "process/runs/scene-final-CityFootprintShadowTest.json",
+      "bytes": 9841,
+      "sha256": "9c117e7d56f70359dbd81f8888c0fe449e7e2e483977c5837d6ec0357305d6b6"
+    },
+    {
+      "path": "process/runs/scene-final-CityIrregularRoofPlaneRenderTest.json",
+      "bytes": 12269,
+      "sha256": "d796ab668490a5ab2fe396e9d35ca05b9c179725076d599133dd37480f7b50f9"
+    },
+    {
+      "path": "process/runs/scene-final-CityIrregularRoofTextureRenderTest.json",
+      "bytes": 12440,
+      "sha256": "813e89f96c5b860e6b51543f42730458c0c5ba7f5e0b2838282327912017aad9"
+    },
+    {
+      "path": "process/runs/scene-final-CityNonGuardFootprintShadowTest.json",
+      "bytes": 9906,
+      "sha256": "94a3516aec9a36ba2054e3e08f6f80e3da8e748fa641b0e9706a450a5ba99b96"
+    },
+    {
+      "path": "process/runs/scene-footway-red.json",
+      "bytes": 9885,
+      "sha256": "ba7268b61da4513f8deac766102e0db1b34f303921b2570a0c068c4c38ba2957"
+    },
+    {
+      "path": "process/runs/scene-geometry-green2.json",
+      "bytes": 9986,
+      "sha256": "75efcdd0d6f2a6dad8fb1ee97eab6c26e3ba916476cfe15a7bb599dc0c819b99"
+    },
+    {
+      "path": "process/runs/scene-green-CityFootprintShadowTest.json",
+      "bytes": 9960,
+      "sha256": "5f120333e5590354d03d20d02b2c8dfa5938b68cf7fcd1422eb9dc574b8db4dd"
+    },
+    {
+      "path": "process/runs/scene-green-CityFootwayGeometryTest.json",
+      "bytes": 10262,
+      "sha256": "4276a2bd587dacabd0a6593bf29c554b10ce4cae6e3d1b42dfb20dcc0a2ced1b"
+    },
+    {
+      "path": "process/runs/scene-kit-green.json",
+      "bytes": 10075,
+      "sha256": "e347f85b25c376d0c4e9bef7b48c277cf7c45b0b74bcfc1bc58815b13394d265"
+    },
+    {
+      "path": "process/runs/scene-later-shadow-red.json",
+      "bytes": 9925,
+      "sha256": "144a31e2d00b690165b27c3e932f5e778cf8585899daea1bbc7bc4091cb3d967"
+    },
+    {
+      "path": "process/runs/scene-procedural-check.json",
+      "bytes": 10899,
+      "sha256": "74a0bd71e8d8184cdebecc37976ef8f14b3dfd194ca7fe6f9fbe97e72024cd39"
+    },
+    {
+      "path": "process/runs/scene-roof-plane-green.json",
+      "bytes": 12118,
+      "sha256": "fea82dc5656f2b889724f806df3024bb228794043357087a018b26bfea4f005d"
+    },
+    {
+      "path": "process/runs/scene-roof-plane-red.json",
+      "bytes": 12513,
+      "sha256": "317e8089eb466b82bc5680087b4e5d95eebc4e086b801542e8c56e46849ba9ef"
+    },
+    {
+      "path": "process/runs/scene-roof-texture-red.json",
+      "bytes": 13119,
+      "sha256": "44cb0caf4eb778e2082c086a716c84a8831bafff4fa629a1ab64f8647dc4034b"
+    },
+    {
+      "path": "process/runs/scene-roof-texture-valid-red.json",
+      "bytes": 12479,
+      "sha256": "c2ac53d815aa96090454217268b36d6daa275c1b77580cde5ac3c6b2509438a7"
+    },
+    {
+      "path": "process/runs/scene-shadow-red.json",
+      "bytes": 10482,
+      "sha256": "3df66b0339e08384a70154be5882dc12c087bef01eb6a2e6e5c37b389ec5b4c7"
+    },
+    {
+      "path": "process/runs/scene-warm-import.json",
+      "bytes": 68389,
+      "sha256": "5e79a980cec95ef3535009d12b148946d3ebf183b13464e6d67e854bdcfe31a0"
+    },
+    {
+      "path": "process/scoped-inputs.json",
+      "bytes": 156358,
+      "sha256": "8b49d3d7da4fe5c590ffc75a45acb5fd22b35142187561d82f9371be480795b9"
+    },
+    {
+      "path": "process/sources/101ca03ca7c22c74cae54e43b1ffa59294a57c1a5b9fe38c03b0bf4488ea709a.json",
+      "bytes": 249561,
+      "sha256": "716338e3d342741c0ec34998a1be63e74686eebbd2b38c31a62f2f83b1bf3b4c"
+    },
+    {
+      "path": "process/sources/23f4b8fdbeec3aa9cad7b87e57a3b1c98627ebbfedd7b98a0acdbbeb97422b0f.json",
+      "bytes": 254273,
+      "sha256": "62b202ed4df0c79dec04a4f2ab003a629ddd20c60e8487f4fddd94f73a6433c1"
+    },
+    {
+      "path": "process/sources/2ea6190a64dcb1fa42e71e562c48c87dbefad2e1366f1108aec45183063b6acd.json",
+      "bytes": 256699,
+      "sha256": "63f1e356d968d6cccf132d51c62b76fcbbbee5bb838e719cca31d05381e08aab"
+    },
+    {
+      "path": "process/sources/38821cec8307dd9c69efad12f1083663df17a79e62302f22feef54147c74e72f.json",
+      "bytes": 255418,
+      "sha256": "c956eb7b543b2b6391b166279855b72c5ec6c4a32f4b127e51cea7fb37fd1026"
+    },
+    {
+      "path": "process/sources/4eeb7a7eeb5d69d0ae2e079ee423d1ad8d41cdfc443d08128fb3d256b9ae6dfa.json",
+      "bytes": 254421,
+      "sha256": "766aa8c714a3ad7fe6ec9d8f9dd758c9411bfbde70945f1c33709e9bb47222fb"
+    },
+    {
+      "path": "process/sources/69b5a096069c20959e06869bd6056bc71cb98a26d4a8a10628594c0870191754.json",
+      "bytes": 254694,
+      "sha256": "d7fbda359a63f8037a9642b2ec37e4f8105397ac7822a80a6ed0b78e64d4e3f7"
+    },
+    {
+      "path": "process/sources/889804b58d4f0b1d1d9a94c0de73ee776a7609c9f2e466869549fce0f447404c.json",
+      "bytes": 253322,
+      "sha256": "da82aed9e39c5d3a7f693a2a73ffe56f2fc9689f7c4df73d5b79e004d1c159e5"
+    },
+    {
+      "path": "process/sources/8d9815172385ca74a023de3623a5d963d288a6fa1982dafdcb66d2e7183049b9.json",
+      "bytes": 254771,
+      "sha256": "6762d17ab6e13f60aa140ea263c81077d206109779b05e282f57b3e6c8d9d510"
+    },
+    {
+      "path": "process/sources/9984948f77b3d85256c4a07e4df703ece733df43497d754fe5d874eab3bcb7c0.json",
+      "bytes": 254771,
+      "sha256": "b4a5c758d79bebf3baab1e84ce748d5441a05ccff11e0772de36f7a05ecda119"
+    },
+    {
+      "path": "process/sources/aafbe5c5aab01aab44d934eca59010526a6a314a369f32032ae06b10901ff1aa.json",
+      "bytes": 254421,
+      "sha256": "46065210590576b171eb0eeef3beb8290688998d5cb028cc5135a49b65e7836c"
+    },
+    {
+      "path": "process/sources/abf99d68f1c96359949891115fa7589d4a7be25b2426741619e7e8028e18a726.json",
+      "bytes": 255062,
+      "sha256": "b449f043ae76e862bdadf4a1fd8c29744dc018f97fb6b64f23098d9d33be98a7"
+    },
+    {
+      "path": "process/sources/d58a76f7185377e404e037fece68dcdd1bf596f03825cf2d47a9dc3263558c87.json",
+      "bytes": 254694,
+      "sha256": "6b3eebc10750804e7db62a4f3f183ec87257578a4f6e7da47ab1e0c0430f2a8b"
+    },
+    {
+      "path": "process/sources/dbb98e21e51e3dba92de492d8b9d506206018dc169fb9b985b995e19267f0739.json",
+      "bytes": 255418,
+      "sha256": "563e422bf5dece896f389370c0d9624d0b0af2591159fbc961f5387ac40830a1"
+    },
+    {
+      "path": "process/sources/e5ad498aa13007fb35e4602ceda36b99d7962890e6dbdbeda06483972a51a99c.json",
+      "bytes": 256395,
+      "sha256": "f994b13dd441e4a13a676500366892a0dcc3a68dc775fd1a43b3ba31427da591"
+    },
+    {
+      "path": "process/sources/f681a9acb613c1919bb4218360aec19218c053cf5c6bd8ac307720675d7cc16c.json",
+      "bytes": 255418,
+      "sha256": "d613a89a858f403f75fd27bf328ae7f519d7329b2d25dd78166a50c10694c83b"
+    },
+    {
+      "path": "process/summary.json",
+      "bytes": 50058,
+      "sha256": "c2a171e7dd899d79bf96af1593d3d4a705d3658af83a6fb06af58bb5a1d18a4b"
+    },
+    {
+      "path": "rejected-lighting-only-normal/capture-info.json",
+      "bytes": 7652,
+      "sha256": "d08e53839c6fce0bb7f3706a139fdcd5f0936f44b30410dde1b30850e41f4af4"
+    },
+    {
+      "path": "rejected-lighting-only-normal/ground-before.png",
+      "bytes": 1288069,
+      "sha256": "1fefb1a5be8b4a960131eded4ec9f4962beda1327692090350d88ca4cb759e4e"
+    },
+    {
+      "path": "rejected-lighting-only-small/capture-info.json",
+      "bytes": 7647,
+      "sha256": "4192745458cf627901f9a7756d4f2b2c509d9890c5184a67262a4bfcbb369551"
+    },
+    {
+      "path": "rejected-lighting-only-small/ground-before.png",
+      "bytes": 731226,
+      "sha256": "3d3e2c2b0012826942cb53e2450a7d850640742800dc04107eaa502fa29c1849"
+    },
+    {
+      "path": "roof-pair-normal/capture-info.json",
+      "bytes": 10763,
+      "sha256": "bd41de83493688a5dcb6ad255b0ed032a76bd3f393dce9be8c2d4a3452af34d5"
+    },
+    {
+      "path": "roof-pair-normal/connected-roof-planes.png",
+      "bytes": 1295007,
+      "sha256": "1e3cba1e708d9621e7530fad9f92eec27a9407341fc315919744a468a743e20f"
+    },
+    {
+      "path": "roof-pair-normal/legacy-whole-roof.png",
+      "bytes": 1289338,
+      "sha256": "44b7b2210a5c608ff07b74613936a71c167a93368ba2866b034f128181ff56bf"
+    },
+    {
+      "path": "roof-pair-small/capture-info.json",
+      "bytes": 10759,
+      "sha256": "6b6ce800db4b70706b5213edad5bceb5a8bc41e9933dc9a7f3134f2b41eabe28"
+    },
+    {
+      "path": "roof-pair-small/connected-roof-planes.png",
+      "bytes": 735028,
+      "sha256": "66f3ae2324ba43c835a919cff3129080b02c3ee51424cf935c2cd84db6694bdc"
+    },
+    {
+      "path": "roof-pair-small/legacy-whole-roof.png",
+      "bytes": 733871,
+      "sha256": "a0545937fd8974e2636b2ff4512eff01ce402aa16997fdcd163383fae32e5e86"
+    },
+    {
+      "path": "supplemental-final-small/capture-info.json",
+      "bytes": 7667,
+      "sha256": "0c91589243735aefcdd440175d44260db836533556b179f69256381f7e5fa757"
+    },
+    {
+      "path": "supplemental-final-small/ground-before.png",
+      "bytes": 735137,
+      "sha256": "bc5cb08ac047ee06e7cac6e6a6556e755c5a2a66814b4991d12d84471b436dfa"
+    }
+  ]
+}

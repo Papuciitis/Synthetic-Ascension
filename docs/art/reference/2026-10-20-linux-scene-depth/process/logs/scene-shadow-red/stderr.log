@@ -1,0 +1,29 @@
+ERROR: configured production kit: no phantom caster over the empty northwest notch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFootprintShadowTest.gd:17)
+       [1] _probes (res://tools/tests/CityFootprintShadowTest.gd:21)
+       [2] _run (res://tools/tests/CityFootprintShadowTest.gd:39)
+ERROR: configured production kit: the real east wing casts into its empty L notch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFootprintShadowTest.gd:17)
+       [1] _probes (res://tools/tests/CityFootprintShadowTest.gd:22)
+       [2] _run (res://tools/tests/CityFootprintShadowTest.gd:39)
+ERROR: after actual parcel trimming: no phantom caster over the empty northwest notch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFootprintShadowTest.gd:17)
+       [1] _probes (res://tools/tests/CityFootprintShadowTest.gd:21)
+       [2] _run (res://tools/tests/CityFootprintShadowTest.gd:43)
+ERROR: after actual parcel trimming: the real east wing casts into its empty L notch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFootprintShadowTest.gd:17)
+       [1] _probes (res://tools/tests/CityFootprintShadowTest.gd:22)
+       [2] _run (res://tools/tests/CityFootprintShadowTest.gd:43)
+ERROR: neighbor's empty concave ground does not erase the bed wing cast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFootprintShadowTest.gd:17)
+       [1] _run (res://tools/tests/CityFootprintShadowTest.gd:58)

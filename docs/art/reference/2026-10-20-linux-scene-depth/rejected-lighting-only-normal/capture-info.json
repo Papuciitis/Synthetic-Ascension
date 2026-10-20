@@ -1,0 +1,273 @@
+{
+	"ambient_spawner": false,
+	"args": [
+		"--visible",
+		"--ground-review",
+		"--review=normal",
+		"--world-seed=16102026",
+		"--segment=2",
+		"--target-building-id=944996572",
+		"--target-chunk=0,3",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/roof-bed-normal-plates"
+	],
+	"attempt_seed": 16102026,
+	"building_id": 944996572,
+	"building_usage": "row_house",
+	"camera": {
+		"position": "(544.0, 6936.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(1280, 720)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityBlockPlayablePreview.tscn",
+	"captured_frames": 0,
+	"closed_arch_bays": 0,
+	"controlled_enemies": false,
+	"coord": "(0, 3)",
+	"deaths": 0,
+	"district_family": "service_courtyards",
+	"doors": "[{ \"pos\": (8, 16), \"dir\": (0, 1), \"width\": 2 }]",
+	"failures": 0,
+	"fixed_camera": true,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"footprint": "[(192.0, 768.0), (384.0, 768.0), (384.0, 576.0), (896.0, 576.0), (896.0, 1088.0), (192.0, 1088.0)]",
+	"frames": [],
+	"garden": [
+		{
+			"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+			"name": "TendedDomesticBed",
+			"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+			"position": "(0.0, 0.0)",
+			"rotation": 0.0,
+			"scale": "(1.0, 1.0)",
+			"variant": 0,
+			"z_index": -90
+		},
+		{
+			"contact": "(266.0, 1102.0)",
+			"name": "DomesticHerbBed",
+			"position": "(265.9673, 1097.233)",
+			"rotation": 0.0,
+			"scale": "(0.065304, 0.065304)",
+			"texture": "res://assets/world/domestic_gardens/v1/flower_herb_bed.png",
+			"z_index": 1
+		}
+	],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 14,
+			"local_bounds": "[P: (0, 13), S: (2, 4)]",
+			"max_byte": 255,
+			"nonzero": 15,
+			"sha256": "3e4a9ae08d458a5b94d63411faf0544f7eac2765c55e0c4005ce33439a053aea",
+			"sum_bytes": 1899
+		},
+		"chunk_material_counts": {
+			"0": 716,
+			"2": 125,
+			"3": 6,
+			"4": 177
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "318bfb23d557e8f43efb402a52306f87c2b2bad2aac29a4873abc1fa8f9c2fc0",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				9,
+				115
+			],
+			"material": 4,
+			"walkable": true,
+			"world_px": [
+				608.0,
+				7392.0
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "f8b7f1084dbbd171eaaf0e95cf53b8cd30c4d9906d4de23e00d53ac2629998bc",
+					"layer_sha256": "00176083b44a2b2b44e64da4307bf5cbc7bca1987155d9ae9313e1c22d23fbc9",
+					"path": "res://assets/world/ground/ground_mud_wet_01.png",
+					"sha256": "bf8aa7800993cdd33c826681a1ca3217ea8dc0764e89b9012b27a4768655d0dc"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "true",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_layer": [
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0,
+				320.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "grass"
+	},
+	"ground_context_world_px": [],
+	"ground_review": true,
+	"has_watch": false,
+	"hits": 0,
+	"image_size": "(1280, 720)",
+	"initial_fight_population": 0,
+	"irregular": true,
+	"limits": "Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance.",
+	"local_security": 0,
+	"max_projectiles": 0,
+	"normal_hud": true,
+	"occupied_comparison": false,
+	"optional_details_hidden": false,
+	"plan_seed": 436524753,
+	"player_god_mode": true,
+	"profile": "common_base",
+	"reduced_motion": false,
+	"requested_simulation_seconds": 0.0,
+	"review": "normal",
+	"role": "service_lane",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "3e4a9ae08d458a5b94d63411faf0544f7eac2765c55e0c4005ce33439a053aea",
+			"equal": true,
+			"event": "streamed_reload",
+			"garden_equal": true,
+			"gardens": [
+				[
+					{
+						"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+						"name": "TendedDomesticBed",
+						"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+						"position": "(0.0, 0.0)",
+						"rotation": 0.0,
+						"scale": "(1.0, 1.0)",
+						"variant": 0,
+						"z_index": -90
+					},
+					{
+						"contact": "(266.0, 1102.0)",
+						"name": "DomesticHerbBed",
+						"position": "(265.9673, 1097.233)",
+						"rotation": 0.0,
+						"scale": "(0.065304, 0.065304)",
+						"texture": "res://assets/world/domestic_gardens/v1/flower_herb_bed.png",
+						"z_index": 1
+					}
+				],
+				[
+					{
+						"contact": "(136.0, 1963.0)",
+						"name": "CityTemperateTree",
+						"position": "(130.8644, 1841.756)",
+						"rotation": 0.0,
+						"scale": "(0.223285, 0.223285)",
+						"texture": "res://assets/world/city_block/temperate_tree.png",
+						"z_index": 1
+					}
+				]
+			],
+			"restored_visual_instances": 1582,
+			"unloaded_visual_instances": 0
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scripted_input": true,
+	"seed": 16102026,
+	"segment": 2,
+	"simulation_fight_seconds": 0.0,
+	"theme": "service_courtyards",
+	"wall_seconds": 0.0,
+	"watch_fallback": "base",
+	"weapon_fires": 0,
+	"world_cover": {
+		"cell_px": 256.0,
+		"foreground_sources": 3,
+		"generation": 601,
+		"grid_cells": 80,
+		"index_count": 181,
+		"materials": 2,
+		"max_candidates": 15,
+		"peak_candidates": 17,
+		"peak_primitives": 49,
+		"peak_refresh_usec": 70790,
+		"primitive_count": 48,
+		"refresh_usec": 4542,
+		"source_reads": 3
+	}
+}

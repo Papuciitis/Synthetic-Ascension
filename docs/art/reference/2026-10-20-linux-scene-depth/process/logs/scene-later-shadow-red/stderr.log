@@ -1,0 +1,40 @@
+ERROR: S4 actual L has no phantom bounding-box caster; false positives=50
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:90)
+ERROR: S4 actual L keeps casts in its true concave ground; false negatives=41
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:91)
+ERROR: S4 actual L has no phantom bounding-box caster; false positives=50
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:90)
+ERROR: S4 actual L keeps casts in its true concave ground; false negatives=40
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:91)
+ERROR: S7 actual L has no phantom bounding-box caster; false positives=50
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:90)
+ERROR: S7 actual L keeps casts in its true concave ground; false negatives=41
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:91)
+ERROR: S7 actual L has no phantom bounding-box caster; false positives=50
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:90)
+ERROR: S7 actual L keeps casts in its true concave ground; false negatives=40
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityNonGuardFootprintShadowTest.gd:19)
+       [1] _test_segment (res://tools/tests/CityNonGuardFootprintShadowTest.gd:91)

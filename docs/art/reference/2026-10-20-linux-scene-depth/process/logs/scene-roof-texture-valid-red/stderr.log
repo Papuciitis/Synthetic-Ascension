@@ -1,0 +1,11 @@
+ERROR: NS main roof maps source barrel Y across world X instead of down its ridge
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityIrregularRoofTextureRenderTest.gd:21)
+       [1] _test_segment (res://tools/tests/CityIrregularRoofTextureRenderTest.gd:90)
+       [2] _run (res://tools/tests/CityIrregularRoofTextureRenderTest.gd:143)
+ERROR: native NS main roof source-Y variation runs across X; xy=(0.0, 0.120429)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityIrregularRoofTextureRenderTest.gd:21)
+       [1] _test_segment (res://tools/tests/CityIrregularRoofTextureRenderTest.gd:114)

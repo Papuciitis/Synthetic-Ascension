@@ -1,0 +1,1759 @@
+{
+	"ambient_spawner": false,
+	"args": [
+		"--visible",
+		"--ground-review",
+		"--seam-review",
+		"--review=small",
+		"--world-seed=16102026",
+		"--segment=2",
+		"--ground-context=0,7136",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-l2-correction-20261020/seam-after-paving"
+	],
+	"attempt_seed": 16102026,
+	"building_id": 0,
+	"camera": {
+		"position": "(0.0, 7136.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(960, 540)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityBlockPlayablePreview.tscn",
+	"captured_frames": 0,
+	"controlled_enemies": false,
+	"coord": "(0, 3)",
+	"deaths": 0,
+	"district_family": "service_courtyards",
+	"failures": 0,
+	"fixed_camera": true,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"frames": [],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 10,
+			"local_bounds": "[P: (0, 13), S: (2, 4)]",
+			"max_byte": 255,
+			"nonzero": 15,
+			"sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+			"sum_bytes": 2728
+		},
+		"chunk_material_counts": {
+			"0": 716,
+			"2": 125,
+			"3": 6,
+			"4": 177
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+		"probe": {
+			"care": 1.0,
+			"cell": [
+				0,
+				111
+			],
+			"material": 0,
+			"walkable": true,
+			"world_px": [
+				0.0,
+				7136.0
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+					"layer_sha256": "d150b1bc0fcab5ff989af99d6243e4d45df56e18ef6d2ca06f0dcc2e8e956098",
+					"path": "res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+					"sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "true",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_layer": [
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0,
+				320.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "grass"
+	},
+	"ground_context_world_px": [
+		0.0,
+		7136.0
+	],
+	"ground_correction": {
+		"neighbor_signatures_equal": true,
+		"seam_after": [
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					108
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					108
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					0,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					1,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					2,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					108
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					108
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					108
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					109
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					109
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 73,
+				"cell": [
+					0,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 155,
+				"cell": [
+					1,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 55,
+				"cell": [
+					2,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					109
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					109
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					109
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					110
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					110
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 234,
+				"cell": [
+					0,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					1,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 234,
+				"cell": [
+					2,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					110
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					110
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					110
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					111
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					111
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					0,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					1,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					2,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					111
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					111
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					111
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					112
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					112
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 225,
+				"cell": [
+					0,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					1,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 234,
+				"cell": [
+					2,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					112
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					112
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					112
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					113
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					113
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 52,
+				"cell": [
+					0,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 140,
+				"cell": [
+					1,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 51,
+				"cell": [
+					2,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					113
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					113
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					113
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					0,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					1,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					2,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			}
+		],
+		"seam_before": [
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					108
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					108
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					0,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					1,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					2,
+					108
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					108
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					108
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					108
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					109
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					109
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 73,
+				"cell": [
+					0,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 155,
+				"cell": [
+					1,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 55,
+				"cell": [
+					2,
+					109
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					109
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					109
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					109
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					110
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					110
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 234,
+				"cell": [
+					0,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					1,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 234,
+				"cell": [
+					2,
+					110
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					110
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					110
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					110
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					111
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					111
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					0,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					1,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					2,
+					111
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					111
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					111
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					111
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					112
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					112
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 225,
+				"cell": [
+					0,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 255,
+				"cell": [
+					1,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 234,
+				"cell": [
+					2,
+					112
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					112
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					112
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					112
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					113
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					113
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": false
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 52,
+				"cell": [
+					0,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 140,
+				"cell": [
+					1,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 51,
+				"cell": [
+					2,
+					113
+				],
+				"material": 0,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					113
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					113
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					113
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-4,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-3,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-2,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					-1,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					0,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					1,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					2,
+					114
+				],
+				"material": 2,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					3,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					4,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			},
+			{
+				"brightness_byte": 127,
+				"care_byte": 0,
+				"cell": [
+					5,
+					114
+				],
+				"material": 4,
+				"stain_byte": 0,
+				"walkable": true
+			}
+		],
+		"seam_cell_grids_equal": true
+	},
+	"ground_review": true,
+	"hits": 0,
+	"image_size": "(960, 540)",
+	"initial_fight_population": 0,
+	"limits": "Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance.",
+	"local_security": 0,
+	"max_projectiles": 0,
+	"normal_hud": true,
+	"occupied_comparison": false,
+	"optional_details_hidden": false,
+	"plan_seed": 436524753,
+	"player_god_mode": true,
+	"reduced_motion": false,
+	"requested_simulation_seconds": 0.0,
+	"review": "small",
+	"role": "service_lane",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+			"coord": "(0, 3)",
+			"equal": true,
+			"event": "ground_context_streamed_reload"
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scripted_input": true,
+	"seed": 16102026,
+	"segment": 2,
+	"simulation_fight_seconds": 0.0,
+	"theme": "service_courtyards",
+	"wall_seconds": 0.0,
+	"weapon_fires": 0,
+	"world_cover": {
+		"cell_px": 256.0,
+		"foreground_sources": 3,
+		"generation": 669,
+		"grid_cells": 70,
+		"index_count": 206,
+		"materials": 2,
+		"max_candidates": 17,
+		"peak_candidates": 17,
+		"peak_primitives": 58,
+		"peak_refresh_usec": 61707,
+		"primitive_count": 58,
+		"refresh_usec": 2354,
+		"source_reads": 3
+	}
+}

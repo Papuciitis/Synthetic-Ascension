@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: north-facing inner L door gets a landing on its real exposed edge
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFootwayGeometryTest.gd:18)
+       [1] _run (res://tools/tests/CityFootwayGeometryTest.gd:38)
+ERROR: inner L entry does not paint a phantom landing along the bounding-box north wall
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFootwayGeometryTest.gd:18)
+       [1] _run (res://tools/tests/CityFootwayGeometryTest.gd:39)
+CityFootwayGeometryTest: 8 passed, 2 failed

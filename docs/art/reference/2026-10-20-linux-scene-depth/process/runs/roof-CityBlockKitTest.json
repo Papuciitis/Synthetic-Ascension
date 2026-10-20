@@ -1,0 +1,455 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/tmp/synthetic-ascension-linux-scene-20261020",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/roof-CityBlockKitTest/logs/engine.log",
+    "--flush-output",
+    "--headless",
+    "res://tools/tests/CityBlockKitTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /tmp/synthetic-ascension-linux-scene-20261020 --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/roof-CityBlockKitTest/logs/engine.log --flush-output --headless res://tools/tests/CityBlockKitTest.tscn",
+  "project_root": "/tmp/synthetic-ascension-linux-scene-20261020",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/roof-CityBlockKitTest",
+  "actual_exit": 0,
+  "stop_reason": "completed",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20151.421875,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 53.14453125,
+      "cpu_seconds": 0.05,
+      "available_mb": 20079.296875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 0.164,
+      "rss_mb": 82.0546875,
+      "cpu_seconds": 0.2,
+      "available_mb": 20009.16796875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 0.309,
+      "rss_mb": 115.25,
+      "cpu_seconds": 0.34,
+      "available_mb": 19975.31640625,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 0.457,
+      "rss_mb": 144.1796875,
+      "cpu_seconds": 0.49,
+      "available_mb": 19949.0234375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 0.604,
+      "rss_mb": 169.4296875,
+      "cpu_seconds": 0.64,
+      "available_mb": 19922.29296875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 0.751,
+      "rss_mb": 180.5546875,
+      "cpu_seconds": 0.79,
+      "available_mb": 19906.37109375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 0.901,
+      "rss_mb": 181.140625,
+      "cpu_seconds": 0.94,
+      "available_mb": 19905.984375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 1.048,
+      "rss_mb": 185.015625,
+      "cpu_seconds": 1.08,
+      "available_mb": 19905.984375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 1.19,
+      "rss_mb": 224.765625,
+      "cpu_seconds": 1.23,
+      "available_mb": 19866.6328125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 1.335,
+      "rss_mb": 271.640625,
+      "cpu_seconds": 1.4,
+      "available_mb": 19814.55859375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 1.521,
+      "rss_mb": 303.640625,
+      "cpu_seconds": 1.56,
+      "available_mb": 19767.11328125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 1.676,
+      "rss_mb": 343.390625,
+      "cpu_seconds": 1.72,
+      "available_mb": 19721.37109375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 1.832,
+      "rss_mb": 343.515625,
+      "cpu_seconds": 1.89,
+      "available_mb": 19702.234375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 2.063,
+      "rss_mb": 356.390625,
+      "cpu_seconds": 2.04,
+      "available_mb": 19686.8359375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 2.204,
+      "rss_mb": 364.390625,
+      "cpu_seconds": 2.19,
+      "available_mb": 19679.13671875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 2.351,
+      "rss_mb": 387.88671875,
+      "cpu_seconds": 2.33,
+      "available_mb": 19659.4609375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 2.497,
+      "rss_mb": 387.88671875,
+      "cpu_seconds": 2.47,
+      "available_mb": 19659.4140625,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 2.642,
+      "rss_mb": 394.6640625,
+      "cpu_seconds": 2.62,
+      "available_mb": 19659.1796875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 2.789,
+      "rss_mb": 397.0390625,
+      "cpu_seconds": 2.76,
+      "available_mb": 19655.51171875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 2.937,
+      "rss_mb": 406.9140625,
+      "cpu_seconds": 2.91,
+      "available_mb": 19643.55078125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 3.082,
+      "rss_mb": 406.9140625,
+      "cpu_seconds": 3.06,
+      "available_mb": 19643.19140625,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 3.225,
+      "rss_mb": 407.0390625,
+      "cpu_seconds": 3.2,
+      "available_mb": 19645.1875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 3.372,
+      "rss_mb": 407.1640625,
+      "cpu_seconds": 3.35,
+      "available_mb": 19644.51953125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 3.519,
+      "rss_mb": 407.1640625,
+      "cpu_seconds": 3.5,
+      "available_mb": 19644.51953125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 3.671,
+      "rss_mb": 407.1640625,
+      "cpu_seconds": 3.65,
+      "available_mb": 19644.51953125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 3.821,
+      "rss_mb": 407.1640625,
+      "cpu_seconds": 3.8,
+      "available_mb": 19677.8046875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 3.975,
+      "rss_mb": 407.1640625,
+      "cpu_seconds": 3.96,
+      "available_mb": 19677.2421875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 4.126,
+      "rss_mb": 407.1640625,
+      "cpu_seconds": 4.1,
+      "available_mb": 19677.2421875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 4.271,
+      "rss_mb": 407.1640625,
+      "cpu_seconds": 4.25,
+      "available_mb": 19677.2421875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 4.422,
+      "rss_mb": 419.5390625,
+      "cpu_seconds": 4.4,
+      "available_mb": 19661.84375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 4.572,
+      "rss_mb": 433.1640625,
+      "cpu_seconds": 4.55,
+      "available_mb": 19653.8984375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 4.718,
+      "rss_mb": 433.47265625,
+      "cpu_seconds": 4.7,
+      "available_mb": 19651.9296875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 4.87,
+      "rss_mb": 433.47265625,
+      "cpu_seconds": 4.85,
+      "available_mb": 19654.4140625,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 5.021,
+      "rss_mb": 433.47265625,
+      "cpu_seconds": 5.0,
+      "available_mb": 19653.921875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 5.164,
+      "rss_mb": 433.47265625,
+      "cpu_seconds": 5.13,
+      "available_mb": 19654.16796875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 5.31,
+      "rss_mb": 433.47265625,
+      "cpu_seconds": 5.29,
+      "available_mb": 19653.69921875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 5.457,
+      "rss_mb": 435.22265625,
+      "cpu_seconds": 5.44,
+      "available_mb": 19642.33203125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 5.617,
+      "rss_mb": 439.47265625,
+      "cpu_seconds": 5.61,
+      "available_mb": 19641.5,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 5.772,
+      "rss_mb": 440.47265625,
+      "cpu_seconds": 5.75,
+      "available_mb": 19621.6640625,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 5.923,
+      "rss_mb": 441.59765625,
+      "cpu_seconds": 5.9,
+      "available_mb": 19622.78125,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 6.071,
+      "rss_mb": 461.50390625,
+      "cpu_seconds": 6.04,
+      "available_mb": 19599.3984375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 6.213,
+      "rss_mb": 487.0546875,
+      "cpu_seconds": 6.19,
+      "available_mb": 19581.6484375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 6.367,
+      "rss_mb": 507.6796875,
+      "cpu_seconds": 6.38,
+      "available_mb": 19578.375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 6.548,
+      "rss_mb": 523.328125,
+      "cpu_seconds": 6.53,
+      "available_mb": 19561.71484375,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 6.71,
+      "rss_mb": 399.43359375,
+      "cpu_seconds": 6.65,
+      "available_mb": 19557.7421875,
+      "pids": [
+        95516
+      ]
+    },
+    {
+      "elapsed_seconds": 6.873,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 19861.09765625,
+      "pids": []
+    }
+  ],
+  "diagnostics": [],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T13:53:03.966302+00:00",
+  "limits": {
+    "timeout_seconds": 90.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+  "pid": 95516,
+  "elapsed_seconds": 7.914,
+  "ended_utc": "2026-10-20T13:53:11.879910+00:00",
+  "runner_exit": 0,
+  "original_run_results_sha256": "27dc54bed5f3b6279393024b7a8819073ae07f2a575ee4660e1a494a81511d18",
+  "source_provenance": "../sources/d58a76f7185377e404e037fece68dcdd1bf596f03825cf2d47a9dc3263558c87.json",
+  "packet_classification": "clean_check",
+  "packet_note": "Existing kit regression after connected planes, before UV rework. Full command/exits/resources/logs retained; source records moved losslessly. Machine-wide Git status omitted. Local command/output paths are historical provenance, not a bundled-file claim."
+}

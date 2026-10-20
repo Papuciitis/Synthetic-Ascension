@@ -1,0 +1,558 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/tmp/synthetic-ascension-linux-scene-20261020",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/scene-roof-plane-green/logs/engine.log",
+    "--flush-output",
+    "--rendering-driver",
+    "opengl3",
+    "--audio-driver",
+    "Dummy",
+    "--verbose",
+    "res://tools/tests/CityIrregularRoofPlaneRenderTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /tmp/synthetic-ascension-linux-scene-20261020 --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/scene-roof-plane-green/logs/engine.log --flush-output --rendering-driver opengl3 --audio-driver Dummy --verbose res://tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+  "project_root": "/tmp/synthetic-ascension-linux-scene-20261020",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/scene-roof-plane-green",
+  "actual_exit": 0,
+  "stop_reason": "completed",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20272.15625,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 53.4609375,
+      "cpu_seconds": 0.07,
+      "available_mb": 20242.7265625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 0.187,
+      "rss_mb": 59.1171875,
+      "cpu_seconds": 0.23,
+      "available_mb": 20172.44921875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 0.382,
+      "rss_mb": 59.1171875,
+      "cpu_seconds": 0.23,
+      "available_mb": 20150.83984375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 0.547,
+      "rss_mb": 137.8359375,
+      "cpu_seconds": 0.4,
+      "available_mb": 20018.65234375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 0.723,
+      "rss_mb": 164.0078125,
+      "cpu_seconds": 0.64,
+      "available_mb": 19977.66015625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 0.988,
+      "rss_mb": 165.60546875,
+      "cpu_seconds": 0.79,
+      "available_mb": 19969.1796875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 1.135,
+      "rss_mb": 173.01171875,
+      "cpu_seconds": 0.94,
+      "available_mb": 19963.88671875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 1.279,
+      "rss_mb": 175.88671875,
+      "cpu_seconds": 1.08,
+      "available_mb": 19962.765625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 1.424,
+      "rss_mb": 184.37109375,
+      "cpu_seconds": 1.24,
+      "available_mb": 19962.671875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 1.571,
+      "rss_mb": 184.37109375,
+      "cpu_seconds": 1.39,
+      "available_mb": 19962.734375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 1.711,
+      "rss_mb": 184.49609375,
+      "cpu_seconds": 1.53,
+      "available_mb": 19962.73828125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 1.855,
+      "rss_mb": 189.24609375,
+      "cpu_seconds": 1.68,
+      "available_mb": 19918.5546875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 2.004,
+      "rss_mb": 227.05078125,
+      "cpu_seconds": 1.84,
+      "available_mb": 19894.046875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 2.152,
+      "rss_mb": 253.53515625,
+      "cpu_seconds": 1.99,
+      "available_mb": 19862.2890625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 2.298,
+      "rss_mb": 281.53515625,
+      "cpu_seconds": 2.13,
+      "available_mb": 19844.17578125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 2.44,
+      "rss_mb": 297.58203125,
+      "cpu_seconds": 2.28,
+      "available_mb": 19870.98046875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 2.59,
+      "rss_mb": 299.70703125,
+      "cpu_seconds": 2.43,
+      "available_mb": 19870.98046875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 2.733,
+      "rss_mb": 299.890625,
+      "cpu_seconds": 2.58,
+      "available_mb": 19870.98046875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 2.878,
+      "rss_mb": 316.765625,
+      "cpu_seconds": 2.73,
+      "available_mb": 19811.3828125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 3.023,
+      "rss_mb": 335.515625,
+      "cpu_seconds": 2.88,
+      "available_mb": 19762.9140625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 3.169,
+      "rss_mb": 337.765625,
+      "cpu_seconds": 3.03,
+      "available_mb": 19636.08984375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 3.318,
+      "rss_mb": 337.765625,
+      "cpu_seconds": 3.18,
+      "available_mb": 19542.8203125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 3.467,
+      "rss_mb": 337.765625,
+      "cpu_seconds": 3.33,
+      "available_mb": 19492.0625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 3.61,
+      "rss_mb": 342.390625,
+      "cpu_seconds": 3.47,
+      "available_mb": 19484.63671875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 3.75,
+      "rss_mb": 351.515625,
+      "cpu_seconds": 3.62,
+      "available_mb": 19476.41796875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 3.897,
+      "rss_mb": 366.15625,
+      "cpu_seconds": 3.77,
+      "available_mb": 19460.734375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 4.047,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 3.92,
+      "available_mb": 19452.203125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 4.194,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 4.07,
+      "available_mb": 19450.87109375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 4.343,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 4.22,
+      "available_mb": 19439.9375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 4.493,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 4.37,
+      "available_mb": 19409.88671875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 4.632,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 4.52,
+      "available_mb": 19409.65625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 4.776,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 4.66,
+      "available_mb": 19409.65625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 4.922,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 4.81,
+      "available_mb": 19409.72265625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 5.071,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 4.97,
+      "available_mb": 19409.72265625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 5.222,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 5.14,
+      "available_mb": 19408.52734375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 5.39,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 5.3,
+      "available_mb": 19410.546875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 5.538,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 5.44,
+      "available_mb": 19410.55078125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 5.687,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 5.6,
+      "available_mb": 19413.68359375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 5.837,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 5.75,
+      "available_mb": 19413.23828125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 5.981,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 5.9,
+      "available_mb": 19404.9765625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 6.13,
+      "rss_mb": 369.28125,
+      "cpu_seconds": 6.04,
+      "available_mb": 19345.11328125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 6.274,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 6.2,
+      "available_mb": 19355.15625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 6.433,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 6.36,
+      "available_mb": 19358.19140625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 6.581,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 6.52,
+      "available_mb": 19358.16796875,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 6.729,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 6.67,
+      "available_mb": 19358.19140625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 6.878,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 6.81,
+      "available_mb": 19358.19140625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 7.024,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 6.96,
+      "available_mb": 19353.30859375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 7.17,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 7.12,
+      "available_mb": 19339.3359375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 7.322,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 7.27,
+      "available_mb": 19352.4609375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 7.472,
+      "rss_mb": 369.78125,
+      "cpu_seconds": 7.42,
+      "available_mb": 19351.03125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 7.618,
+      "rss_mb": 375.94140625,
+      "cpu_seconds": 7.6,
+      "available_mb": 19404.75390625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 7.827,
+      "rss_mb": 388.6171875,
+      "cpu_seconds": 7.78,
+      "available_mb": 19361.6328125,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 8.031,
+      "rss_mb": 389.2109375,
+      "cpu_seconds": 7.95,
+      "available_mb": 19355.9765625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 8.202,
+      "rss_mb": 390.16015625,
+      "cpu_seconds": 8.13,
+      "available_mb": 19355.6484375,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 8.363,
+      "rss_mb": 390.40625,
+      "cpu_seconds": 8.2,
+      "available_mb": 19350.7265625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 8.538,
+      "rss_mb": 372.68359375,
+      "cpu_seconds": 8.32,
+      "available_mb": 19383.4140625,
+      "pids": [
+        94231
+      ]
+    },
+    {
+      "elapsed_seconds": 8.722,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 19942.59375,
+      "pids": []
+    }
+  ],
+  "diagnostics": [],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T13:49:15.241091+00:00",
+  "limits": {
+    "timeout_seconds": 300.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+  "pid": 94231,
+  "elapsed_seconds": 10.06,
+  "ended_utc": "2026-10-20T13:49:25.300692+00:00",
+  "runner_exit": 0,
+  "original_run_results_sha256": "76a309bb9253d5dc4538aaad44752f920ed869986b48d074b29da431dbe3b1ec",
+  "source_provenance": "../sources/d58a76f7185377e404e037fece68dcdd1bf596f03825cf2d47a9dc3263558c87.json",
+  "packet_classification": "clean_check",
+  "packet_note": "Fitted union, slope, fractional alpha and live WorldCover controls; before UV rework. Full command/exits/resources/logs retained; source records moved losslessly. Machine-wide Git status omitted. Local command/output paths are historical provenance, not a bundled-file claim."
+}

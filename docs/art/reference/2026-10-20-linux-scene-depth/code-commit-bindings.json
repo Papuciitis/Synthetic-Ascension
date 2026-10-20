@@ -1,0 +1,2630 @@
+{
+  "implementation_commit": "346518eee60c8003c2cbe005af31076d6bf6d5b3",
+  "verification": "Read-only git ls-tree established scoped path membership; git show COMMIT:path supplied exact committed bytes; git rev-parse COMMIT:path supplied blob OIDs. SHA256 comparison covers only the explicit recorded code/test/tool scope. No Git mutation, engine run or complete asset equivalence is implied.",
+  "requested_scope": [
+    "scenes/world/buildings/CityBlockKit.gd",
+    "scenes/world/buildings/CityFootprintGeometry.gd",
+    "scenes/world/buildings/CityStreetFrontage.gd",
+    "scenes/world/buildings/city_footway.gdshader",
+    "scenes/world/buildings/CityBlockRoofForms.gd",
+    "scenes/world/buildings/RoofOverlay.gd",
+    "scenes/world/buildings/RoofOverlay.tscn",
+    "scenes/world/buildings/roof.gdshader",
+    "scenes/world/buildings/CityBlockFrontages.gd",
+    "scenes/world/buildings/CityDomesticInterior.gd",
+    "scenes/world/buildings/domestic_plaster.gdshader",
+    "scenes/world/buildings/domestic_stone.gdshader",
+    "core/systems/world/WorldDepthStyle.gd",
+    "core/systems/world/WorldArt.gd",
+    "core/systems/world/visibility/WorldCover.gd",
+    "core/systems/world/visibility/world_cover.gdshaderinc",
+    "tools/tests/CitySceneDepthFixture.gd",
+    "tools/tests/CityFootprintShadowTest.gd",
+    "tools/tests/CityFootprintShadowTest.tscn",
+    "tools/tests/CityFootwayGeometryTest.gd",
+    "tools/tests/CityFootwayGeometryTest.tscn",
+    "tools/tests/CityFootwayEdgeRenderTest.gd",
+    "tools/tests/CityFootwayEdgeRenderTest.tscn",
+    "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+    "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+    "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+    "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+    "tools/tests/CityNonGuardFootprintShadowTest.gd",
+    "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+    "tools/dev/CityBlockPlayablePreview.gd",
+    "tools/dev/CityBlockPlayablePreview.tscn",
+    "tools/dev/CityRoofDepthPreview.gd",
+    "tools/dev/CityRoofDepthPreview.tscn",
+    "tools/dev/CityGroundCorrectionPreview.gd",
+    "tools/dev/CityGroundCorrectionPreview.tscn",
+    "tools/capture/run_city_linux.py"
+  ],
+  "committed_scope": [
+    "scenes/world/buildings/CityBlockKit.gd",
+    "scenes/world/buildings/CityFootprintGeometry.gd",
+    "scenes/world/buildings/CityStreetFrontage.gd",
+    "scenes/world/buildings/city_footway.gdshader",
+    "scenes/world/buildings/CityBlockRoofForms.gd",
+    "scenes/world/buildings/RoofOverlay.gd",
+    "scenes/world/buildings/RoofOverlay.tscn",
+    "scenes/world/buildings/roof.gdshader",
+    "scenes/world/buildings/CityBlockFrontages.gd",
+    "scenes/world/buildings/CityDomesticInterior.gd",
+    "scenes/world/buildings/domestic_stone.gdshader",
+    "core/systems/world/WorldDepthStyle.gd",
+    "core/systems/world/WorldArt.gd",
+    "core/systems/world/visibility/WorldCover.gd",
+    "core/systems/world/visibility/world_cover.gdshaderinc",
+    "tools/tests/CitySceneDepthFixture.gd",
+    "tools/tests/CityFootprintShadowTest.gd",
+    "tools/tests/CityFootprintShadowTest.tscn",
+    "tools/tests/CityFootwayGeometryTest.gd",
+    "tools/tests/CityFootwayGeometryTest.tscn",
+    "tools/tests/CityFootwayEdgeRenderTest.gd",
+    "tools/tests/CityFootwayEdgeRenderTest.tscn",
+    "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+    "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+    "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+    "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+    "tools/tests/CityNonGuardFootprintShadowTest.gd",
+    "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+    "tools/dev/CityBlockPlayablePreview.gd",
+    "tools/dev/CityBlockPlayablePreview.tscn",
+    "tools/dev/CityRoofDepthPreview.gd",
+    "tools/dev/CityRoofDepthPreview.tscn",
+    "tools/dev/CityGroundCorrectionPreview.gd",
+    "tools/dev/CityGroundCorrectionPreview.tscn",
+    "tools/capture/run_city_linux.py"
+  ],
+  "paths_absent_from_commit": [
+    "scenes/world/buildings/domestic_plaster.gdshader"
+  ],
+  "committed_inputs": {
+    "scenes/world/buildings/CityBlockKit.gd": {
+      "sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+      "git_blob_oid": "d19481f6a3b5af744f1e813e8d14e4deb1238b6b"
+    },
+    "scenes/world/buildings/CityFootprintGeometry.gd": {
+      "sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+      "git_blob_oid": "87e6a832c7f56c02bed0359264e8cbb26282dab1"
+    },
+    "scenes/world/buildings/CityStreetFrontage.gd": {
+      "sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+      "git_blob_oid": "acae3af926c0eeb46c3e4bbd02068f627ed3866a"
+    },
+    "scenes/world/buildings/city_footway.gdshader": {
+      "sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+      "git_blob_oid": "391d609f28e233e2076d08112cbef1416d553de3"
+    },
+    "scenes/world/buildings/CityBlockRoofForms.gd": {
+      "sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+      "git_blob_oid": "5f7fdf97ca3d7177d1cf07ebf38103b94c737c0a"
+    },
+    "scenes/world/buildings/RoofOverlay.gd": {
+      "sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+      "git_blob_oid": "890fbde2cd8e55adaeae003110ce00c8df4cc8d1"
+    },
+    "scenes/world/buildings/RoofOverlay.tscn": {
+      "sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+      "git_blob_oid": "8cc2f900d2146fe8876c8fe3c56c76bcfdff4674"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+      "git_blob_oid": "f8252642d6eaab9a157c3d0ae9ed77f8d4799950"
+    },
+    "scenes/world/buildings/CityBlockFrontages.gd": {
+      "sha256": "f77e66a1175d669dc1a30e46787ac08b757ab0a0742342425eb52bef2bd6289d",
+      "git_blob_oid": "49b4014eecb2a2c8723e1a9401d4e7c693626a2a"
+    },
+    "scenes/world/buildings/CityDomesticInterior.gd": {
+      "sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+      "git_blob_oid": "445c3418ca9882ec9386eba925f0e990a4335dac"
+    },
+    "scenes/world/buildings/domestic_stone.gdshader": {
+      "sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+      "git_blob_oid": "98570f420169f286890cb80484a89276e4d4e2d4"
+    },
+    "core/systems/world/WorldDepthStyle.gd": {
+      "sha256": "9966a37d74ae76cf58b892ca55513597b6a78a6d1604a5c41053c48cc855187e",
+      "git_blob_oid": "682a478e6952e245ba3b7ddf15f5784b8aee9149"
+    },
+    "core/systems/world/WorldArt.gd": {
+      "sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "git_blob_oid": "35aaff6e345f4b4a07cc13bdfc745223d21f2a48"
+    },
+    "core/systems/world/visibility/WorldCover.gd": {
+      "sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+      "git_blob_oid": "1afd77063ab4ea2ec50de247cdc2458f33f41938"
+    },
+    "core/systems/world/visibility/world_cover.gdshaderinc": {
+      "sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+      "git_blob_oid": "d4727f53073bbaa956d1cd5b53eefc29e49bb450"
+    },
+    "tools/tests/CitySceneDepthFixture.gd": {
+      "sha256": "d08b724325680043006bbd6334b2a6ab3c77c544e72667452cb8313b979ab387",
+      "git_blob_oid": "2f7edab7fe9f9955f58000b51911e64c56df5dfe"
+    },
+    "tools/tests/CityFootprintShadowTest.gd": {
+      "sha256": "b4bba50adf880c0ab17d2a4ed00e41ffc22d48a38c0dea0dab8c3365c0e56606",
+      "git_blob_oid": "b6980e604d8f55f7dba94abc8f8a94eba0eb4d01"
+    },
+    "tools/tests/CityFootprintShadowTest.tscn": {
+      "sha256": "96400ee0a54c59c61987f909ce0d666cb1caa9a0a53ccad0f007fd89efe433f3",
+      "git_blob_oid": "85b1786e7781a449f89e0baa894518c2033f145e"
+    },
+    "tools/tests/CityFootwayGeometryTest.gd": {
+      "sha256": "4265fc7f7ccb4b6cdeaa9c4f9f87939510b2236fa0f2529c8609e50976ff176d",
+      "git_blob_oid": "2c00091359c0186e0d795f66653fa1d604a50d46"
+    },
+    "tools/tests/CityFootwayGeometryTest.tscn": {
+      "sha256": "1cd25d6838c74b5926c980d2710d84add6850074d4785406d0a1c211dfb9c155",
+      "git_blob_oid": "2709659c769b597b1b054172403c497aff800251"
+    },
+    "tools/tests/CityFootwayEdgeRenderTest.gd": {
+      "sha256": "d4c6070b6c2a65885ff59fde0c33e37a452b39711a1d586a990a1528bb7fc126",
+      "git_blob_oid": "9a4de23c6790f1e7c4dd1ea92b570ea7e515a212"
+    },
+    "tools/tests/CityFootwayEdgeRenderTest.tscn": {
+      "sha256": "828def047638214e6e11f459dc2e5943b753877ed09f2a61b91761d8268315d2",
+      "git_blob_oid": "647b7cfb6f96321a9158b5ef2895c43383a1575a"
+    },
+    "tools/tests/CityIrregularRoofPlaneRenderTest.gd": {
+      "sha256": "e1c870d0735502704db6e7195e724a7e3a1115cd405eb34e6b3696b3f3455b34",
+      "git_blob_oid": "023af3a6940d8b28637009ab5d06d7db4031df05"
+    },
+    "tools/tests/CityIrregularRoofPlaneRenderTest.tscn": {
+      "sha256": "9ac250a943acaedc8f2835d7ac31f29c94e0b17e7bb77f5daf836a20d24662f0",
+      "git_blob_oid": "e7bc8565616bd0faad71cfc7c92868656e45d139"
+    },
+    "tools/tests/CityIrregularRoofTextureRenderTest.gd": {
+      "sha256": "97a5d26d78ceaef9efe0c09a6f0b3e1bf1cb3db952809f4d07c961b13b246061",
+      "git_blob_oid": "d58b07c0c33a3b028b858e317c3ab383ce529c92"
+    },
+    "tools/tests/CityIrregularRoofTextureRenderTest.tscn": {
+      "sha256": "b2f8b752c818011ce7cff73045a402da0c4fc27f8e23e86204b8ab9e64540b06",
+      "git_blob_oid": "39362820ae311289cff86bf7b560200c1be56666"
+    },
+    "tools/tests/CityNonGuardFootprintShadowTest.gd": {
+      "sha256": "763b21c766a6e87fc35a759c239441e69687578a46f44ebf93ac5dd9de08258a",
+      "git_blob_oid": "e8fe995d947187236c3f4db7612a297b61b71895"
+    },
+    "tools/tests/CityNonGuardFootprintShadowTest.tscn": {
+      "sha256": "68f4aa7e0acc661dceabf959f5d6a9ccd3f3476b54eff8ceb18481503c6612f7",
+      "git_blob_oid": "4ccb0d3c186be5c36b69c6e02e2ab7d7350ebf9b"
+    },
+    "tools/dev/CityBlockPlayablePreview.gd": {
+      "sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+      "git_blob_oid": "f4796e5ffde67c46e41c4dc8faf364d19aa1bf12"
+    },
+    "tools/dev/CityBlockPlayablePreview.tscn": {
+      "sha256": "c30d765a8e706853bea50f7bf6f933c5e843bdd9265b7be93401b8df6c670209",
+      "git_blob_oid": "2ced1db43b82b84bd6ffd7b397435d0261f820c0"
+    },
+    "tools/dev/CityRoofDepthPreview.gd": {
+      "sha256": "17517ca875ee45ff7a4a552a902171d48aa73ba98aaeb5cc0cfbec2519a171f5",
+      "git_blob_oid": "2fc61272f9a7a8bed2f8678e43c6c375bc65ce2b"
+    },
+    "tools/dev/CityRoofDepthPreview.tscn": {
+      "sha256": "7c1e480d146d8aacb6c4fa8e3b403162c91fb1e75031b596e496152b78f280b9",
+      "git_blob_oid": "c74f58b641b4738abc2bcc47de8f8ea1a5733d13"
+    },
+    "tools/dev/CityGroundCorrectionPreview.gd": {
+      "sha256": "7f3895f79718adb50ad2db5a6ec087aea2d27a2347894da0dee5b7199fff2f37",
+      "git_blob_oid": "5213f0178511cccf6dd523b97061e779fa6d536f"
+    },
+    "tools/dev/CityGroundCorrectionPreview.tscn": {
+      "sha256": "352c64184efc6c7def735bb84789f565c8300c14d97f937d807c0dced65be4e2",
+      "git_blob_oid": "bf4ef7033d84c031fca5120ce4a62db2731a7fab"
+    },
+    "tools/capture/run_city_linux.py": {
+      "sha256": "87a94903059be3d863085f497c271745c3d3cc68a98eb9ed75b8f60b48479530",
+      "git_blob_oid": "270a58016ae79a4d5323345db1b88aa80ac2f76e"
+    }
+  },
+  "runs": [
+    {
+      "run": "scene-baseline-import",
+      "classification": "failed_setup",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "b4bd86e98e530848829939fbce814ba6462b26a2fff6210f128437587fba3e1b",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-warm-import",
+      "classification": "failed_setup",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "10dc32eb97576fd75780c28c17e79de21f7f378f75a41ef51092b986db138d5d",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityFootwayEdgeRenderTest.gd",
+          "recorded_sha256": "4c45de0d9995a97dfc791cb99276b2228eabb99315c0d257ece50c79c8b298b0",
+          "commit_sha256": "d4c6070b6c2a65885ff59fde0c33e37a452b39711a1d586a990a1528bb7fc126"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-baseline-runtime",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "ffef172645dd6ed57c3c8d912de9d173281e384326899bd4312035dff34460d2",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityFootwayEdgeRenderTest.gd",
+          "recorded_sha256": "4c45de0d9995a97dfc791cb99276b2228eabb99315c0d257ece50c79c8b298b0",
+          "commit_sha256": "d4c6070b6c2a65885ff59fde0c33e37a452b39711a1d586a990a1528bb7fc126"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-shadow-red",
+      "classification": "clean_feature_red",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "fc72c76b424af0ddf1c60c11f766d9e672de3b21407cf91615e56fb4aa6ae506",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityFootwayEdgeRenderTest.gd",
+          "recorded_sha256": "4c45de0d9995a97dfc791cb99276b2228eabb99315c0d257ece50c79c8b298b0",
+          "commit_sha256": "d4c6070b6c2a65885ff59fde0c33e37a452b39711a1d586a990a1528bb7fc126"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-footway-red",
+      "classification": "clean_feature_red",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "da644ba6fce82fe9ccc5eefe898a43fb058880dc89a48cab7c9295196365f918",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityFootwayEdgeRenderTest.gd",
+          "recorded_sha256": "4c45de0d9995a97dfc791cb99276b2228eabb99315c0d257ece50c79c8b298b0",
+          "commit_sha256": "d4c6070b6c2a65885ff59fde0c33e37a452b39711a1d586a990a1528bb7fc126"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-edge-red",
+      "classification": "invalid_fixture",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "065bb586cb23946b1d7d20126e7487250271af722d545f066d94f1370d7632bb",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityFootwayEdgeRenderTest.gd",
+          "recorded_sha256": "4c45de0d9995a97dfc791cb99276b2228eabb99315c0d257ece50c79c8b298b0",
+          "commit_sha256": "d4c6070b6c2a65885ff59fde0c33e37a452b39711a1d586a990a1528bb7fc126"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-edge-red-valid",
+      "classification": "feature_red_with_fixture_diagnostics",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "7d808f23d18548d924682d4bc3a436c00cbfb7bae0aa96cc04cb541d3deda2fd",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityFootwayEdgeRenderTest.gd",
+          "recorded_sha256": "2cd3c181de4c0a96b670485f5dbce376f31f26e1a6af18cbd29994a0426c08b4",
+          "commit_sha256": "d4c6070b6c2a65885ff59fde0c33e37a452b39711a1d586a990a1528bb7fc126"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-green-CityFootprintShadowTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "8e8ebc9574fb56c46c075abeb6a6b02bbee8e701369456377c59c5ecb4158ed5",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "73e867532d2b63201b7d399313a6c5e002171c58fb3ba71e70a0c40f959536d2",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-green-CityFootwayGeometryTest",
+      "classification": "failed_runtime_attempt",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "8e93e6486a7f1c14a05d08a0113ea398168707291f8abc797f90f361d317fba3",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "73e867532d2b63201b7d399313a6c5e002171c58fb3ba71e70a0c40f959536d2",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-geometry-green2",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "0c2a7982b45ccb62e7fbfc748cfc553c47d1e520a490bf8e4ea4bcd451005241",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-edge-green2",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "c2aacc66c5391232fec36286f57bcb196440a5ac7fa13d477025a0b763f607fe",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-kit-green",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "32f435ecfc67508b9bf2549f9019a68bb3805e3246de0359fde0c9ab6d419c41",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-procedural-check",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "cf8f9e349e3ed820b06a6254417e99f4dbb7843c5bfa6ca79bd7e4ffbceb1541",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-bed-small",
+      "classification": "native_plate",
+      "recorded_monitor_git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+      "original_run_results_sha256": "b93bcde70aa659ef7d82fc74f885de05e37f75bcc546f4004ba853561d56b459",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-roof-plane-red",
+      "classification": "clean_feature_red",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "493b55dfe964f8a17be8d9c5059c8165105db52a9ec5dee6566003631c7cc460",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+          "recorded_sha256": "a6afb4e99e04926cdd37e6dab36e1aebb9328c2ef4543d2168f00a766f6f4468",
+          "commit_sha256": "e1c870d0735502704db6e7195e724a7e3a1115cd405eb34e6b3696b3f3455b34"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-roof-plane-green",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "76a309bb9253d5dc4538aaad44752f920ed869986b48d074b29da431dbe3b1ec",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-CityBlockKitTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "27dc54bed5f3b6279393024b7a8819073ae07f2a575ee4660e1a494a81511d18",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-CityBlockProceduralTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "f029eb1e901447079482866077780a55c2e2933c7b64c2d8a0f1ec26820984f8",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-DungeonRoofContractTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "8941f713f392463d86e6b383893a053a047b51a3a06080b57a42b326174af716",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-CheckpointOfficeRefinementTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "fde688745cdf0826e3c7bbc41fc18ceeccb4b2b05867c51e6117424c5a3ec96e",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-WorldCoverTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "abd672cb0a0b08dda3697b82998ee7cd7e634f9a844c7c3d311b412897739618",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-bed-small",
+      "classification": "rejected_native_interim",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "3e00e8e53accb65e15e7f87c566b422e4fb81015d53beaafd6c0273eaf2e676f",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-bed-normal",
+      "classification": "rejected_native_interim",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "810c66d5135064e065269b8a2f7e65cd1f038b0905054b17d24bc3c33edb0c81",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-roof-texture-red",
+      "classification": "feature_red_with_fixture_diagnostics",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "f1f6fb393716b24d28d848bcaec4b29e909204a99b58f36b9ae41f6738241415",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+          "recorded_sha256": "79d176ddf0cd6c2f70d60075fa66e5f6b465a11e371eb0720a89edab56827186",
+          "commit_sha256": "97a5d26d78ceaef9efe0c09a6f0b3e1bf1cb3db952809f4d07c961b13b246061"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-roof-texture-valid-red",
+      "classification": "clean_feature_red",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "904b2452ed7f35301cc86853b4feb56d6614709aa530e0ef8c1e483e080f7b25",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-later-shadow-red",
+      "classification": "clean_feature_red",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "e87545e783e09ef6159275d264d566323173272efe3372a84d7204ae21ee5389",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "02c7b9a83b7441f40fccfe339537c8b5e2419850145345c0379c1fb251558fff",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+          "recorded_sha256": "79d176ddf0cd6c2f70d60075fa66e5f6b465a11e371eb0720a89edab56827186",
+          "commit_sha256": "97a5d26d78ceaef9efe0c09a6f0b3e1bf1cb3db952809f4d07c961b13b246061"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-final-CityIrregularRoofTextureRenderTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "c8fcd64d05ac844980b28f92a305a879e3dbf5496d6e3f74d460e6dd2c06723b",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-final-CityIrregularRoofPlaneRenderTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "39ff6ee682309ea4946314f6bd38e007323316a14e1f243e46be837bbe9dd6fa",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-final-CityNonGuardFootprintShadowTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "c86ec5e7d834ece78ef7039ac109e5dc7c910becd3b2489ff858cc7bdf8e8d6f",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-final-CityFootprintShadowTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "587d79c482a585f5630633a3912aa3910849066cdb34d0941bc65385007b63e9",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "scene-final-CheckpointOfficeRefinementTest",
+      "classification": "clean_check",
+      "recorded_monitor_git_head": "9eab80dcc770d3458fae14f4606073ecfa39e055",
+      "original_run_results_sha256": "1ab2d860423c290a07e5f3a640c65cef4a0d1b0ddacaa1079cd676b28ebcd760",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-uv-final-small",
+      "classification": "native_plate",
+      "recorded_monitor_git_head": "4c4a6cb28450fc8a37289970bc36cc42bae7e287",
+      "original_run_results_sha256": "823b1f8fd48a699088c0d751fed92aaa6397cf8f7666ec3f1b138cdabeb375cf",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn"
+      ],
+      "different_inputs": [],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-depth-pair-small",
+      "classification": "native_plate",
+      "recorded_monitor_git_head": "4c4a6cb28450fc8a37289970bc36cc42bae7e287",
+      "original_run_results_sha256": "4c99892476f448fab1f6314598a642ebc1df720c75fc30bc6415b4c9b229c351",
+      "all_scoped_committed_inputs_match": true,
+      "complete_scoped_commit_binding": true,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [],
+      "different_inputs": [],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "roof-depth-pair-normal",
+      "classification": "native_plate",
+      "recorded_monitor_git_head": "4c4a6cb28450fc8a37289970bc36cc42bae7e287",
+      "original_run_results_sha256": "755bde1f2fe5abe34e7f361b20e95cfe76add10dfc6cc1641bad1cfb839bc13d",
+      "all_scoped_committed_inputs_match": true,
+      "complete_scoped_commit_binding": true,
+      "matching_inputs": [
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityBlockRoofForms.gd",
+        "scenes/world/buildings/RoofOverlay.gd",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [],
+      "different_inputs": [],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "l2-seam-core",
+      "classification": "native_plate",
+      "recorded_monitor_git_head": "0daa8ea5aae62e47fbcbd7514ac50422be878434",
+      "original_run_results_sha256": "64882aea3da237fb9465fa0c75de93089f58c2321ee46c4c2009c4912b38cb77",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityStreetFrontage.gd",
+          "recorded_sha256": "9235d9ae57c8b748251d1cb06768f2ad9c758be2a14b4d4f1885d1048e59be71",
+          "commit_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+          "commit_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4"
+        },
+        {
+          "path": "tools/dev/CityGroundCorrectionPreview.gd",
+          "recorded_sha256": "600a75efe810fc353987c521d30447ebcc094012f14c1f43ec8d76c5a446e695",
+          "commit_sha256": "7f3895f79718adb50ad2db5a6ec087aea2d27a2347894da0dee5b7199fff2f37"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    },
+    {
+      "run": "l2-seam-after-paving",
+      "classification": "native_plate",
+      "recorded_monitor_git_head": "2d812e272b74a8b15a39ea0374d7763280cf00f6",
+      "original_run_results_sha256": "e82f69c7c47bca55f49ce7107f1275efa024d4523d56cf74dd87bfe23b5221d2",
+      "all_scoped_committed_inputs_match": false,
+      "complete_scoped_commit_binding": false,
+      "matching_inputs": [
+        "scenes/world/buildings/CityFootprintGeometry.gd",
+        "scenes/world/buildings/CityStreetFrontage.gd",
+        "scenes/world/buildings/city_footway.gdshader",
+        "scenes/world/buildings/RoofOverlay.tscn",
+        "scenes/world/buildings/roof.gdshader",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "core/systems/world/WorldDepthStyle.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/tests/CitySceneDepthFixture.gd",
+        "tools/tests/CityFootprintShadowTest.gd",
+        "tools/tests/CityFootprintShadowTest.tscn",
+        "tools/tests/CityFootwayGeometryTest.gd",
+        "tools/tests/CityFootwayGeometryTest.tscn",
+        "tools/tests/CityFootwayEdgeRenderTest.gd",
+        "tools/tests/CityFootwayEdgeRenderTest.tscn",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/dev/CityBlockPlayablePreview.tscn",
+        "tools/dev/CityGroundCorrectionPreview.gd",
+        "tools/dev/CityGroundCorrectionPreview.tscn",
+        "tools/capture/run_city_linux.py"
+      ],
+      "missing_committed_inputs": [
+        "scenes/world/buildings/CityDomesticInterior.gd",
+        "scenes/world/buildings/domestic_stone.gdshader",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+        "tools/tests/CityIrregularRoofPlaneRenderTest.tscn",
+        "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+        "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+        "tools/tests/CityNonGuardFootprintShadowTest.gd",
+        "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+        "tools/dev/CityRoofDepthPreview.gd",
+        "tools/dev/CityRoofDepthPreview.tscn"
+      ],
+      "different_inputs": [
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded_sha256": "39f9e9fb0ea96a15d726fdfbc553613b26fcd44b505f1a16d2abf6ce3575c738",
+          "commit_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockRoofForms.gd",
+          "recorded_sha256": "1943044b44de2c665d4973dfdf9aa0d3e01fa0f0033ce58fe3e6cec6d8e774a2",
+          "commit_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+        },
+        {
+          "path": "scenes/world/buildings/RoofOverlay.gd",
+          "recorded_sha256": "5b7c60cd8b7cd70710d4051d241d67cb0d8a9e92ac32c12c794aa2643bbb6e52",
+          "commit_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+        }
+      ],
+      "recorded_inputs_absent_from_commit": [],
+      "unrecorded_paths_absent_from_commit": [
+        "scenes/world/buildings/domestic_plaster.gdshader"
+      ]
+    }
+  ],
+  "qualification": "Five scene-final focused tests precede4c4a6cb2 domestic/ground-purpose integration and retain their own individually listed source differences. Final actual roof pairs use that integration plus the roof/shadow slice. Complete binding is claimed only where every scoped committed input is recorded/matching and no scoped recorded input is outside the commit. The later-frontage plaster shader is absent from346518ee; unrecorded launch entries do not independently prove runtime absence. Later integrated-main regressions remain separate."
+}

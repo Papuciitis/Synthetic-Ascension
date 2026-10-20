@@ -1,0 +1,98 @@
+[
+  {
+    "first": "scene-bed-small",
+    "second": "roof-bed-small",
+    "same_camera_record": true,
+    "same_physical_footprint_record": true,
+    "changed_scoped_inputs": [
+      "scenes/world/buildings/CityBlockRoofForms.gd",
+      "scenes/world/buildings/RoofOverlay.gd",
+      "tools/tests/CityIrregularRoofPlaneRenderTest.gd",
+      "tools/tests/CityIrregularRoofPlaneRenderTest.tscn"
+    ],
+    "limits": "Final integrated plates also include selected ground/domestic work. Same camera/house does not isolate every changed material, moving particle or time-dependent pixel. Different window sizes are separate native samples."
+  },
+  {
+    "first": "roof-bed-small",
+    "second": "roof-uv-final-small",
+    "same_camera_record": true,
+    "same_physical_footprint_record": true,
+    "changed_scoped_inputs": [
+      "scenes/world/buildings/CityBlockKit.gd",
+      "scenes/world/buildings/CityBlockRoofForms.gd",
+      "scenes/world/buildings/CityDomesticInterior.gd",
+      "scenes/world/buildings/domestic_stone.gdshader",
+      "core/systems/world/WorldArt.gd",
+      "tools/tests/CityIrregularRoofTextureRenderTest.gd",
+      "tools/tests/CityIrregularRoofTextureRenderTest.tscn",
+      "tools/tests/CityNonGuardFootprintShadowTest.gd",
+      "tools/tests/CityNonGuardFootprintShadowTest.tscn",
+      "tools/dev/CityGroundCorrectionPreview.gd",
+      "tools/dev/CityGroundCorrectionPreview.tscn"
+    ],
+    "limits": "Final integrated plates also include selected ground/domestic work. Same camera/house does not isolate every changed material, moving particle or time-dependent pixel. Different window sizes are separate native samples."
+  },
+  {
+    "first": "roof-depth-pair-small",
+    "second": "roof-depth-pair-normal",
+    "same_camera_record": false,
+    "same_physical_footprint_record": true,
+    "changed_scoped_inputs": [],
+    "limits": "Final integrated plates also include selected ground/domestic work. Same camera/house does not isolate every changed material, moving particle or time-dependent pixel. Different window sizes are separate native samples."
+  },
+  {
+    "run": "roof-depth-pair-small",
+    "pair": [
+      "legacy-whole-roof.png",
+      "connected-roof-planes.png"
+    ],
+    "same_frozen_scene": true,
+    "exact_host_restoration": true,
+    "physical_signature_preserved": true,
+    "cover_probe": {
+      "before": 1.0,
+      "feet_y": 6890.0,
+      "legacy": 1.0,
+      "point": "(544.0, 6874.0)",
+      "restored": 1.0
+    },
+    "limits": "Within one frozen actual Game: only connected-composition visibility and duplicate base draw alpha change. The common chimney, ground, domestic purpose and HUD remain. The whole-mesh control recreates its original shader orientation, not every historical runtime source."
+  },
+  {
+    "run": "roof-depth-pair-normal",
+    "pair": [
+      "legacy-whole-roof.png",
+      "connected-roof-planes.png"
+    ],
+    "same_frozen_scene": true,
+    "exact_host_restoration": true,
+    "physical_signature_preserved": true,
+    "cover_probe": {
+      "before": 1.0,
+      "feet_y": 6890.0,
+      "legacy": 1.0,
+      "point": "(544.0, 6874.0)",
+      "restored": 1.0
+    },
+    "limits": "Within one frozen actual Game: only connected-composition visibility and duplicate base draw alpha change. The common chimney, ground, domestic purpose and HUD remain. The whole-mesh control recreates its original shader orientation, not every historical runtime source."
+  },
+  {
+    "first": "l2-seam-core",
+    "second": "l2-seam-after-paving",
+    "same_camera_record": true,
+    "same_sampled_seam_grid": true,
+    "sampled_stain_bytes": [
+      0
+    ],
+    "sampled_material5_count": 0,
+    "care_hashes": [
+      "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+      "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba"
+    ],
+    "ground_cache_hashes": [
+      "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5",
+      "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7"
+    ],
+    "limits": "Wet source/cache changed between runs. The recorded70-cell seam grid is identical, has stainG0 and no material5, with identical care masks; this qualifies a local paving/cast view, not complete source equality for the whole image."
+  }
+]
