@@ -51,6 +51,17 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ### Review 6554c100 continuation
 
+**Publication:** the checked continuation through `64de40a8cba7c39429687b5dc526d72bff9b7304` is local.
+The 20 October noninteractive `git push -u origin codex/linux-world-production`
+attempt exited128: `could not read Username for 'https://github.com': terminal
+prompts disabled`. No remote ref was updated by that attempt. The earlier
+human-published `fd80106a` acknowledgment above remains valid. This status note
+is a subsequent documentation-only commit; relay the current branch tip with:
+
+```bash
+git push -u origin codex/linux-world-production
+```
+
 Checked stages include household composition `50a8e64c`, exact shared-cover
 reuse `73fa746b`, road/garden/pale material correction `5e1646c4`, remaining cue
 adapters `7875d198`, the [moving cue packet](../art/reference/2026-10-20-linux-moving-cues/README.md)
