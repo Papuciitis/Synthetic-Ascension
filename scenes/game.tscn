@@ -23,7 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://wardstone1" path="res://scenes/world/wardstones/Wardstone.tscn" id="18_ward"]
 [ext_resource type="PackedScene" uid="uid://exitrite1" path="res://scenes/world/gates/ExitRite.tscn" id="19_exit"]
 [ext_resource type="Texture2D" uid="uid://bcrp5vy2jvaa3" path="res://assets/textures/backgrounds/fog_soft_01.png" id="20_fog"]
-[ext_resource type="PackedScene" path="res://scenes/world/atmosphere/AtmosFireflies.tscn" id="21_fireflies"]
+[ext_resource type="Script" path="res://core/systems/world/atmosphere/GameAtmosphereBinder.gd" id="21_atmosphere"]
 [ext_resource type="PackedScene" path="res://scenes/vision/VisionRig.tscn" id="22_vision"]
 [ext_resource type="PackedScene" path="res://ui/widgets/PerformanceOverlay.tscn" id="23_perf"]
 
@@ -54,7 +54,8 @@ region_enabled = true
 region_rect = Rect2(-2048, -2048, 4096, 4096)
 script = ExtResource("10_vtaks")
 
-[node name="Fireflies" parent="." unique_id=863342733 instance=ExtResource("21_fireflies")]
+[node name="AtmosphereBinder" type="Node" parent="."]
+script = ExtResource("21_atmosphere")
 
 [node name="VisionRig" parent="." unique_id=927509306 instance=ExtResource("22_vision")]
 
