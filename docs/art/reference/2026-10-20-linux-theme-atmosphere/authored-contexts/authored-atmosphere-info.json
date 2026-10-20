@@ -1,0 +1,649 @@
+{
+	"args": [
+		"--review=small",
+		"--authored-context=both",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/atmo-authored-contexts-plates"
+	],
+	"contexts": [
+		{
+			"actual_segment": 1,
+			"atmosphere": {
+				"air_z": -8,
+				"environment_scans": 0,
+				"frozen_phase": 0.0,
+				"ground_receiver_enabled": false,
+				"mask_cell_px": 0.0,
+				"mask_origin": "(inf, inf)",
+				"mask_rebuilds": 0,
+				"mask_size": "(0, 0)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.98, 0.99, 1.0, 1.0)",
+					"cloud_opacity": 0.0,
+					"cloud_scale_px": 880.0,
+					"cloud_velocity": "(0.0, 0.0)",
+					"context": "institution",
+					"direct_light": 1.0,
+					"enabled": false,
+					"environment_tint": "(1.0, 1.0, 1.0, 1.0)",
+					"id": "institution",
+					"label": "Authored environment",
+					"mist_opacity": 0.0,
+					"mist_tint": "(0.72, 0.75, 0.72, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(0.0, 0.0)"
+				},
+				"reduced_motion": false,
+				"roof_material_count": 0,
+				"room_count": 0,
+				"sun_shadow_count": 0,
+				"vignette_strength": 0.0,
+				"weather_frozen": false,
+				"weather_time": 0.0
+			},
+			"atmosphere_nodes": {
+				"atmospheres": [
+					{
+						"canvas": "RID(382252089344)",
+						"class": "Node2D",
+						"id": 749153032200,
+						"path": "/root/Game/ChunkManager/WorldAtmosphere",
+						"processing": true,
+						"script": "res://core/systems/world/atmosphere/WorldAtmosphere.gd",
+						"visible_in_tree": false,
+						"world_id": -9223372006940998108
+					}
+				],
+				"binders": [
+					{
+						"class": "Node",
+						"id": 694325087783,
+						"path": "/root/Game/AtmosphereBinder",
+						"processing": true,
+						"script": "res://core/systems/world/atmosphere/GameAtmosphereBinder.gd"
+					}
+				]
+			},
+			"atmosphere_owner": {
+				"canvas": "RID(382252089344)",
+				"class": "Node2D",
+				"id": 749153032200,
+				"path": "/root/Game/ChunkManager/WorldAtmosphere",
+				"processing": true,
+				"script": "res://core/systems/world/atmosphere/WorldAtmosphere.gd",
+				"visible_in_tree": false,
+				"world_id": -9223372006940998108
+			},
+			"builder_process_after_ready": false,
+			"camera": {
+				"centre": "(992.0, 1632.0)",
+				"owner": {
+					"canvas": "RID(382252089344)",
+					"class": "Camera2D",
+					"id": 694174092830,
+					"path": "/root/Game/Player/Camera2D",
+					"processing": false,
+					"script": "",
+					"visible_in_tree": true,
+					"world_id": -9223372006940998108
+				},
+				"world": "(992.0, 1632.0)",
+				"zoom": "(1.0, 1.0)"
+			},
+			"context": "institution",
+			"indoor_volumes": 5,
+			"level_owner": {
+				"canvas": "RID(382252089344)",
+				"class": "Node2D",
+				"id": 707109327128,
+				"path": "/root/Game/Level1",
+				"processing": false,
+				"script": "res://core/systems/world/Level1Builder.gd",
+				"visible_in_tree": true,
+				"world_id": -9223372006940998108
+			},
+			"normal_hud": true,
+			"opening_completed_fixture": true,
+			"player_physics": false,
+			"player_world": "(992.0, 1632.0)",
+			"scene": "res://scenes/game.tscn",
+			"screenshot": {
+				"file": "s1-institution.png",
+				"image_size": "(960, 540)",
+				"logical_viewport": "(1920.0, 1080.0)"
+			},
+			"seed": 16102026,
+			"spawner_process_mode": 4,
+			"vision": {
+				"actual_indoors": true,
+				"authored_indoor_strength": 0.22,
+				"fog_visible": false,
+				"inner_radius": 0.7,
+				"lightweight": true,
+				"material_id": -9223371326960430736,
+				"owner": {
+					"canvas": "RID(382252089344)",
+					"class": "Node2D",
+					"id": 694341865000,
+					"path": "/root/Game/VisionRig",
+					"processing": true,
+					"script": "res://core/systems/vision/VisionRig.gd",
+					"visible_in_tree": true,
+					"world_id": -9223372006940998108
+				},
+				"owns_material_copy": true,
+				"rite_signal_connected": true,
+				"same_scene_shader": true,
+				"scene_material_id": -9223371557630375319,
+				"strength": 0.22,
+				"vignette_owner": {
+					"canvas": "RID(2164663517188)",
+					"class": "ColorRect",
+					"id": 694425751085,
+					"path": "/root/Game/VisionRig/VignetteLayer/Vignette",
+					"processing": false,
+					"script": "",
+					"visible_in_tree": true,
+					"world_id": -9223372006940998108
+				},
+				"vignette_visible": true
+			}
+		},
+		{
+			"actual_segment": 3,
+			"atmosphere_nodes": {
+				"atmospheres": [],
+				"binders": []
+			},
+			"camera": {
+				"centre": "(1024.0, 704.0)",
+				"owner": {
+					"canvas": "RID(382252089344)",
+					"class": "Camera2D",
+					"id": 1031748456441,
+					"path": "/root/HubWorld/Player/Camera2D",
+					"processing": false,
+					"script": "",
+					"visible_in_tree": true,
+					"world_id": -9223372006940998108
+				},
+				"world": "(1024.0, 704.0)",
+				"zoom": "(1.0, 1.0)"
+			},
+			"camera_overview_fixture": true,
+			"canvas_modulates": [
+				{
+					"color": [
+						0.579999983310699,
+						0.540000021457672,
+						0.620000004768372,
+						1.0
+					],
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "CanvasModulate",
+						"id": 1031127699409,
+						"path": "/root/HubWorld/@CanvasModulate@1999",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					}
+				}
+			],
+			"completed_segment_fixture": 2,
+			"context": "authored_hub",
+			"conversation_camera_processing": false,
+			"crowd_seed": 16102026,
+			"owner": {
+				"canvas": "RID(382252089344)",
+				"class": "Node2D",
+				"id": 995643887116,
+				"path": "/root/HubWorld",
+				"processing": true,
+				"script": "res://scenes/hub/HubWorld.gd",
+				"visible_in_tree": true,
+				"world_id": -9223372006940998108
+			},
+			"player_physics": false,
+			"player_world": "(1024.0, 1142.0)",
+			"practical_lights": [
+				{
+					"centre_in_view": false,
+					"color": [
+						1.0,
+						0.720000028610229,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.699999988079071,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031178031061,
+						"path": "/root/HubWorld/@PointLight2D@2000",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.20000004768372,
+					"world": "(12.8, 204.8)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.720000028610229,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.699999988079071,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031194808280,
+						"path": "/root/HubWorld/@PointLight2D@2001",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.20000004768372,
+					"world": "(588.8, 211.2)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.720000028610229,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.699999988079071,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031211585497,
+						"path": "/root/HubWorld/@PointLight2D@2002",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.20000004768372,
+					"world": "(1472.0, 192.0)"
+				},
+				{
+					"centre_in_view": false,
+					"color": [
+						1.0,
+						0.720000028610229,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.699999988079071,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031228362714,
+						"path": "/root/HubWorld/@PointLight2D@2003",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.20000004768372,
+					"world": "(2035.2, 204.8)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.660000026226044,
+						0.340000003576279,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.649999976158142,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031245139931,
+						"path": "/root/HubWorld/@PointLight2D@2004",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.29999995231628,
+					"world": "(867.2, 411.6)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.660000026226044,
+						0.340000003576279,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.649999976158142,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031261917148,
+						"path": "/root/HubWorld/@PointLight2D@2005",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.29999995231628,
+					"world": "(1180.8, 411.6)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.660000026226044,
+						0.340000003576279,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.649999976158142,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031278694365,
+						"path": "/root/HubWorld/@PointLight2D@2006",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.29999995231628,
+					"world": "(867.2, 750.8)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.660000026226044,
+						0.340000003576279,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.649999976158142,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031295471582,
+						"path": "/root/HubWorld/@PointLight2D@2007",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.29999995231628,
+					"world": "(1180.8, 750.8)"
+				},
+				{
+					"centre_in_view": false,
+					"color": [
+						1.0,
+						0.740000009536743,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.850000023841858,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031312248799,
+						"path": "/root/HubWorld/@PointLight2D@2008",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.5,
+					"world": "(876.8, 68.39999)"
+				},
+				{
+					"centre_in_view": false,
+					"color": [
+						1.0,
+						0.740000009536743,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.850000023841858,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031329026016,
+						"path": "/root/HubWorld/@PointLight2D@2009",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.5,
+					"world": "(1171.2, 68.39999)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.740000009536743,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.850000023841858,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031345803233,
+						"path": "/root/HubWorld/@PointLight2D@2010",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.5,
+					"world": "(870.4, 1015.6)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.740000009536743,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.850000023841858,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031362580450,
+						"path": "/root/HubWorld/@PointLight2D@2011",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.5,
+					"world": "(1177.6, 1015.6)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.740000009536743,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.850000023841858,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031379357667,
+						"path": "/root/HubWorld/@PointLight2D@2012",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.5,
+					"world": "(166.4, 542.0)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.740000009536743,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.850000023841858,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031396134884,
+						"path": "/root/HubWorld/@PointLight2D@2013",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.5,
+					"world": "(1881.6, 542.0)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.5,
+						0.200000002980232,
+						1.0
+					],
+					"enabled": true,
+					"energy": 1.0,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031412912101,
+						"path": "/root/HubWorld/@PointLight2D@2014",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.60000002384186,
+					"world": "(1459.2, 192.0)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.699999988079071,
+						0.400000005960464,
+						1.0
+					],
+					"enabled": true,
+					"energy": 0.600000023841858,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031429689318,
+						"path": "/root/HubWorld/@PointLight2D@2015",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 1.10000002384186,
+					"world": "(256.0, 742.4)"
+				},
+				{
+					"centre_in_view": true,
+					"color": [
+						1.0,
+						0.779999971389771,
+						0.349999994039536,
+						1.0
+					],
+					"enabled": true,
+					"energy": 1.10000002384186,
+					"owner": {
+						"canvas": "RID(382252089344)",
+						"class": "PointLight2D",
+						"id": 1031446466535,
+						"path": "/root/HubWorld/@PointLight2D@2016",
+						"processing": false,
+						"script": "",
+						"visible_in_tree": true,
+						"world_id": -9223372006940998108
+					},
+					"texture_present": true,
+					"texture_scale": 2.40000009536743,
+					"world": "(1024.0, 563.2)"
+				}
+			],
+			"scene": "res://scenes/hub/HubWorld.tscn",
+			"screenshot": {
+				"file": "hub-authored-dusk.png",
+				"image_size": "(960, 540)",
+				"logical_viewport": "(1920.0, 1080.0)"
+			},
+			"station_count": 6,
+			"visible_light_centres": 13
+		}
+	],
+	"failures": 0,
+	"limits": "Stationary native owner regression in an isolated process. S1 opening is already completed, ambient spawner and player physics/attacks are muted, and progression stops after construction. Hub uses the production completed-S2 arrival transaction with mandatory UI choices cleared for this fixture, a fixed crowd seed and a staged overview camera. Authored lighting and VisionRig are not replaced. This is not prologue, traversal, combat, balance or all-theme acceptance.",
+	"passes": 13,
+	"save_writes": 0,
+	"source_hashes": {
+		"res://core/systems/vision/VisionRig.gd": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+		"res://core/systems/world/atmosphere/GameAtmosphereBinder.gd": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+		"res://core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+		"res://core/systems/world/atmosphere/WorldAtmosphere.gd": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+		"res://core/systems/world/atmosphere/ground_air.gdshader": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+		"res://core/systems/world/atmosphere/world_atmosphere.gdshader": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+		"res://scenes/game.gd": "f7c942b5a2fd144e24900a885b80169c1f94fd557bc48524206ce9630bc117dc",
+		"res://scenes/game.tscn": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+		"res://scenes/hub/HubWorld.gd": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+		"res://tools/dev/AuthoredAtmospherePreview.gd": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0"
+	},
+	"tool": "res://tools/dev/AuthoredAtmospherePreview.tscn"
+}

@@ -1,0 +1,571 @@
+{
+  "source": "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+  "source_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+  "method": "Literal source extraction, not a new engine evaluation or theme selection.",
+  "profiles": [
+    {
+      "label": "Open courtyard daylight",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 1.0,
+      "environment_tint": [
+        1.0,
+        0.995,
+        0.98,
+        1.0
+      ],
+      "cloud_opacity": 0.045,
+      "cloud_scale_px": 880.0,
+      "cloud_velocity": [
+        -5.0,
+        1.2
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.3333333333333333,
+        0.08
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "service_courtyards",
+      "context": "procedural",
+      "segment_ownership": "S2; S11+ fallback"
+    },
+    {
+      "label": "Cool broken cloud over inspection lanes",
+      "enabled": true,
+      "ambient_fill": [
+        0.96,
+        0.98,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.72,
+      "environment_tint": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "cloud_opacity": 0.1,
+      "cloud_scale_px": 760.0,
+      "cloud_velocity": [
+        -7.0,
+        1.8
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.4666666666666667,
+        0.12000000000000001
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "checkpoint_lanes",
+      "context": "procedural",
+      "segment_ownership": "S3"
+    },
+    {
+      "label": "Dry exposed masonry and passing cloud",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.9,
+      "environment_tint": [
+        1.0,
+        0.985,
+        0.96,
+        1.0
+      ],
+      "cloud_opacity": 0.065,
+      "cloud_scale_px": 880.0,
+      "cloud_velocity": [
+        -9.0,
+        2.4
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.6,
+        0.16
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "collapsed_ward",
+      "context": "procedural",
+      "segment_ownership": "S4"
+    },
+    {
+      "label": "Sheltered plaster daylight",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.95,
+      "environment_tint": [
+        1.0,
+        0.99,
+        0.965,
+        1.0
+      ],
+      "cloud_opacity": 0.035,
+      "cloud_scale_px": 900.0,
+      "cloud_velocity": [
+        -3.0,
+        0.8
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.2,
+        0.05333333333333334
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "civilian_cutthrough",
+      "context": "procedural",
+      "segment_ownership": "S4"
+    },
+    {
+      "label": "Open gate court under a pale sky",
+      "enabled": true,
+      "ambient_fill": [
+        0.97,
+        0.98,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.8,
+      "environment_tint": [
+        0.985,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "cloud_opacity": 0.075,
+      "cloud_scale_px": 880.0,
+      "cloud_velocity": [
+        -6.0,
+        1.5
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.4,
+        0.1
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "inner_district_gate",
+      "context": "procedural",
+      "segment_ownership": "S5"
+    },
+    {
+      "label": "Neutral workshop daylight",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.78,
+      "environment_tint": [
+        0.995,
+        0.985,
+        0.965,
+        1.0
+      ],
+      "cloud_opacity": 0.07,
+      "cloud_scale_px": 680.0,
+      "cloud_velocity": [
+        -6.5,
+        1.6
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.43333333333333335,
+        0.10666666666666667
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "industrial_cutthrough",
+      "context": "procedural",
+      "segment_ownership": "S6"
+    },
+    {
+      "label": "Wind over dry abandoned services",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.88,
+      "environment_tint": [
+        1.0,
+        0.98,
+        0.95,
+        1.0
+      ],
+      "cloud_opacity": 0.08,
+      "cloud_scale_px": 740.0,
+      "cloud_velocity": [
+        -10.0,
+        2.7
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.6666666666666666,
+        0.18000000000000002
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "ruined_services",
+      "context": "procedural",
+      "segment_ownership": "S6"
+    },
+    {
+      "label": "Cool sheltered service air",
+      "enabled": true,
+      "ambient_fill": [
+        0.95,
+        0.98,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.5,
+      "environment_tint": [
+        0.965,
+        0.985,
+        1.0,
+        1.0
+      ],
+      "cloud_opacity": 0.08,
+      "cloud_scale_px": 980.0,
+      "cloud_velocity": [
+        -2.8,
+        0.6
+      ],
+      "mist_opacity": 0.018,
+      "mist_tint": [
+        0.69,
+        0.73,
+        0.7,
+        1.0
+      ],
+      "wind": [
+        -0.18666666666666665,
+        0.04
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "underpass_veins",
+      "context": "procedural",
+      "segment_ownership": "S7"
+    },
+    {
+      "label": "Diffuse damp canal-service daylight",
+      "enabled": true,
+      "ambient_fill": [
+        0.95,
+        0.985,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.6,
+      "environment_tint": [
+        0.965,
+        0.99,
+        0.985,
+        1.0
+      ],
+      "cloud_opacity": 0.1,
+      "cloud_scale_px": 1040.0,
+      "cloud_velocity": [
+        -4.5,
+        1.0
+      ],
+      "mist_opacity": 0.038,
+      "mist_tint": [
+        0.7,
+        0.75,
+        0.71,
+        1.0
+      ],
+      "wind": [
+        -0.3,
+        0.06666666666666667
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "canal_services",
+      "context": "procedural",
+      "segment_ownership": "S7"
+    },
+    {
+      "label": "Exposed dry loading-ground sun",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 1.0,
+      "environment_tint": [
+        1.0,
+        0.99,
+        0.97,
+        1.0
+      ],
+      "cloud_opacity": 0.025,
+      "cloud_scale_px": 1120.0,
+      "cloud_velocity": [
+        -13.0,
+        3.0
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.8666666666666667,
+        0.2
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "rail_yard",
+      "context": "procedural",
+      "segment_ownership": "S8"
+    },
+    {
+      "label": "Cool open muster-ground sky",
+      "enabled": true,
+      "ambient_fill": [
+        0.965,
+        0.985,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.75,
+      "environment_tint": [
+        0.985,
+        0.995,
+        0.985,
+        1.0
+      ],
+      "cloud_opacity": 0.09,
+      "cloud_scale_px": 860.0,
+      "cloud_velocity": [
+        -9.5,
+        2.5
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.6333333333333333,
+        0.16666666666666666
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "military_staging",
+      "context": "procedural",
+      "segment_ownership": "S8"
+    },
+    {
+      "label": "Clear windy outer approaches",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 1.0,
+      "environment_tint": [
+        0.995,
+        0.995,
+        0.985,
+        1.0
+      ],
+      "cloud_opacity": 0.03,
+      "cloud_scale_px": 1240.0,
+      "cloud_velocity": [
+        -15.0,
+        3.5
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -1.0,
+        0.23333333333333334
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "outer_wall",
+      "context": "procedural",
+      "segment_ownership": "S9"
+    },
+    {
+      "label": "Wind and sun over stone service yards",
+      "enabled": true,
+      "ambient_fill": [
+        0.98,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.82,
+      "environment_tint": [
+        1.0,
+        0.98,
+        0.96,
+        1.0
+      ],
+      "cloud_opacity": 0.085,
+      "cloud_scale_px": 820.0,
+      "cloud_velocity": [
+        -11.0,
+        2.8
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.7333333333333333,
+        0.18666666666666665
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "siege_services",
+      "context": "procedural",
+      "segment_ownership": "S9"
+    },
+    {
+      "label": "Pale daylight over the departure court",
+      "enabled": true,
+      "ambient_fill": [
+        0.97,
+        0.985,
+        1.0,
+        1.0
+      ],
+      "direct_light": 0.85,
+      "environment_tint": [
+        0.985,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "cloud_opacity": 0.07,
+      "cloud_scale_px": 1080.0,
+      "cloud_velocity": [
+        -7.5,
+        1.9
+      ],
+      "mist_opacity": 0.0,
+      "mist_tint": [
+        0.72,
+        0.75,
+        0.72,
+        1.0
+      ],
+      "wind": [
+        -0.5,
+        0.12666666666666665
+      ],
+      "particle_kind": "none",
+      "particle_density": 0.0,
+      "vignette_strength": 0.0,
+      "id": "gate_district",
+      "context": "procedural",
+      "segment_ownership": "S10"
+    }
+  ],
+  "authored_contexts": {
+    "institution": "Actual S1 Game: disabled, full reset; VisionRig retains its own indoor vignette.",
+    "hub": "Actual Hub: no procedural binder/atmosphere; authored CanvasModulate/practicals."
+  }
+}

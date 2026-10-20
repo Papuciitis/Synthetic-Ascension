@@ -1,0 +1,5 @@
+ERROR: FAIL: weather owns actual wet-ground and environment direct/fill receivers
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ThemeAtmosphereReceiversTest.gd:34)
+       [1] _run (res://tools/tests/ThemeAtmosphereReceiversTest.gd:40)

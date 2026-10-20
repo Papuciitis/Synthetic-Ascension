@@ -1,0 +1,375 @@
+[
+  {
+    "label": "atmosphere-uid-baseline",
+    "classification": "clean_check",
+    "note": "Prepared same-machine Linux class/UID/import-cache baseline; not a fresh-clone proof.",
+    "assertions": {
+      "test": "CityBlockKitTest",
+      "passed": 1300,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmosphere-uid-red",
+    "classification": "clean_feature_red",
+    "note": "Expected absent physical profile API.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 0,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: FAIL: actual district themes have physical atmosphere profiles"
+    ]
+  },
+  {
+    "label": "atmosphere-core-green",
+    "classification": "failed_runtime_attempt",
+    "note": "Invalid SubViewport.own_world_2d fixture and shutdown leaks despite exit0; not GREEN.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 84,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "runtime_diagnostics",
+    "diagnostics": [
+      "ERROR: 1 RID allocations of type 'N16RendererViewport8ViewportE' were leaked at exit.",
+      "ERROR: 1 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.",
+      "Leaked instance: SubViewport:382839295114 - Node path: ",
+      "Leaked instance: World2D:9223372419710848146 - Reference count: 1",
+      "Leaked instance: ViewportTexture:9223372419727625363 - Reference count: 1",
+      "Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).",
+      "Orphan StringName: _vp_unhandled_key_input382839295114 (static: 0, total: 1)",
+      "Orphan StringName: _vp_shortcut_input382839295114 (static: 0, total: 1)",
+      "Orphan StringName: _vp_input382839295114 (static: 0, total: 1)",
+      "Orphan StringName: _vp_unhandled_input382839295114 (static: 0, total: 1)",
+      "SCRIPT ERROR: Invalid assignment of property or key 'own_world_2d' with value of type 'bool' on a base object of type 'SubViewport'.",
+      "WARNING: 1 RID of type \"Canvas\" was leaked.",
+      "WARNING: 3 ObjectDB instances were leaked at exit (run with `--verbose` for details).",
+      "ERROR: Cannot get path of node as it is not in a scene tree."
+    ]
+  },
+  {
+    "label": "atmosphere-core-green2",
+    "classification": "clean_check",
+    "note": "Repaired real World2D fixture; complete profile/reset/scoping assertions.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 87,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmosphere-native-green2",
+    "classification": "clean_check",
+    "note": "Native world-anchor, reduced motion and indoor control.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 92,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmosphere-receivers-red",
+    "classification": "clean_feature_red",
+    "note": "Expected absent physical ground/roof/shadow receiver API.",
+    "assertions": {
+      "test": "ThemeAtmosphereReceiversTest",
+      "passed": 0,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: FAIL: weather owns actual wet-ground and environment direct/fill receivers"
+    ]
+  },
+  {
+    "label": "atmo-receivers-green",
+    "classification": "clean_check",
+    "note": "Initial actual direct-light and wet/moss/stain receiver contract.",
+    "assertions": {
+      "test": "ThemeAtmosphereReceiversTest",
+      "passed": 20,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-receivers-native-green",
+    "classification": "failed_stain_probe",
+    "note": "Fixed cell centre was legitimately outside visible stain; no production eligibility relaxation.",
+    "assertions": {
+      "test": "ThemeAtmosphereReceiversTest",
+      "passed": 25,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: FAIL: native canal air reaches the actual mud stain without replacing its dry-earth material"
+    ]
+  },
+  {
+    "label": "atmo-receivers-native-green2",
+    "classification": "clean_check",
+    "note": "225-pixel actual stain-on/off scan isolates visible stain contribution.",
+    "assertions": {
+      "test": "ThemeAtmosphereReceiversTest",
+      "passed": 26,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-core-receivers-headless",
+    "classification": "clean_check",
+    "note": "Core after physical receiver integration.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 87,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-core-receivers-native",
+    "classification": "failed_runtime_attempt",
+    "note": "Pure-wet host with unset stain uniform exposed float(null), followed by low-air assertion failure.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 91,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "SCRIPT ERROR: Invalid call. Nonexistent 'float' constructor.",
+      "ERROR: FAIL: native low air paints eligible outdoor ground using its actual material"
+    ]
+  },
+  {
+    "label": "atmo-default-headless-ThemeAtmosphereReceiversTest",
+    "classification": "clean_check",
+    "note": "Actual shader defaults and raw-null reset cases.",
+    "assertions": {
+      "test": "ThemeAtmosphereReceiversTest",
+      "passed": 29,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-default-headless-ThemeAtmosphereTest",
+    "classification": "clean_check",
+    "note": "Core after actual shader-default handling.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 87,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-default-native-ThemeAtmosphereReceiversTest",
+    "classification": "clean_check",
+    "note": "Native default/receiver/material reset controls.",
+    "assertions": {
+      "test": "ThemeAtmosphereReceiversTest",
+      "passed": 35,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-default-native-ThemeAtmosphereTest",
+    "classification": "clean_check",
+    "note": "Native core after shader-default handling.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 92,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-dry-guard-red",
+    "classification": "insufficient_probe",
+    "note": "False G0 term at .038 rounded below an 8-bit step. Passing footer did not demonstrate a valid RED.",
+    "assertions": {
+      "test": "ThemeAtmosphereDryReceiverTest",
+      "passed": 6,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-dry-guard-valid-red",
+    "classification": "clean_feature_red",
+    "note": "Allowed .06 diagnostic ceiling exposes invented G0 air at real noise peak; profile remains .038.",
+    "assertions": {
+      "test": "ThemeAtmosphereDryReceiverTest",
+      "passed": 5,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: FAIL: native clean dry G0 ground receives no invented stain air at a noise peak"
+    ]
+  },
+  {
+    "label": "atmo-final-dry-guard",
+    "classification": "clean_check",
+    "note": "Exact host stainG>.01 guard; real stained positive control retained.",
+    "assertions": {
+      "test": "ThemeAtmosphereDryReceiverTest",
+      "passed": 6,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-final-receivers",
+    "classification": "clean_check",
+    "note": "Final focused native physical receiver/default/scoping/reset check.",
+    "assertions": {
+      "test": "ThemeAtmosphereReceiversTest",
+      "passed": 35,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-final-core",
+    "classification": "clean_check",
+    "note": "Final focused native complete profile and render controls.",
+    "assertions": {
+      "test": "ThemeAtmosphereTest",
+      "passed": 92,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-s2-small",
+    "classification": "failed_pan_probe",
+    "note": "Actual Game roof restore completed, but boundary-floor pan probe selected row269 instead of270. Retained as failed diagnostic, not accepted final.",
+    "assertions": null,
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: EliteCrowdFightPreview: Actual Game fixed-world sample changed during the fixed-phase camera pan"
+    ]
+  },
+  {
+    "label": "atmo-s2-small-final",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-s2-normal",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-s3-small",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-s3-normal",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-s7-small",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-s7-normal",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-s7-reduced-fight",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "atmo-authored-contexts",
+    "classification": "native_capture",
+    "note": "Explicit root-selected actual native final; controlled fixture qualifications retained.",
+    "assertions": {
+      "test": "AuthoredAtmospherePreview",
+      "passed": 13,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  }
+]

@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+[Game] ready seg=2 race=human style=ranged seed=16102026
+ERROR: EliteCrowdFightPreview: Actual Game fixed-world sample changed during the fixed-phase camera pan
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail (res://tools/dev/EliteCrowdFightPreview.gd:394)
+       [1] _still (res://tools/dev/ThemeAtmospherePreview.gd:114)
+       [2] _still (res://tools/dev/CityBlockPlayablePreview.gd:555)
+CityBlockEntryPreview: segment=2 building=944996572 inside=0.00 outside=1.00 failures=1

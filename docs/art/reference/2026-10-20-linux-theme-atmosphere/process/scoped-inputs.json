@@ -1,0 +1,331 @@
+{
+  "source_root": "/tmp/synthetic-ascension-linux-atmosphere-20261020",
+  "note": "Earlier focused histories retain their own exact snapshots; not relabeled integrated-main regressions. Authored capture precedes the procedural preview's bounded texel-centre correction; that unused procedural tool hash remains recorded separately.",
+  "inputs": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "current_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+      "final_captures": {
+        "s2-small": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "s2-normal": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "s3-small": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "s3-normal": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "s7-small": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "s7-normal": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "s7-reduced-fight": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "authored-contexts": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5"
+      }
+    },
+    "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+      "current_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+      "final_captures": {
+        "s2-small": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "s2-normal": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "s3-small": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "s3-normal": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "s7-small": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "s7-normal": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "s7-reduced-fight": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "authored-contexts": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b"
+      }
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "current_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+      "final_captures": {
+        "s2-small": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "s2-normal": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "s3-small": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "s3-normal": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "s7-small": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "s7-normal": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "s7-reduced-fight": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "authored-contexts": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731"
+      }
+    },
+    "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+      "current_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+      "final_captures": {
+        "s2-small": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "s2-normal": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "s3-small": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "s3-normal": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "s7-small": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "s7-normal": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "s7-reduced-fight": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "authored-contexts": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95"
+      }
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "current_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+      "final_captures": {
+        "s2-small": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "s2-normal": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "s3-small": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "s3-normal": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "s7-small": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "s7-normal": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "s7-reduced-fight": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "authored-contexts": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346"
+      }
+    },
+    "scenes/game.tscn": {
+      "current_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+      "final_captures": {
+        "s2-small": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "s2-normal": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "s3-small": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "s3-normal": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "s7-small": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "s7-normal": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "s7-reduced-fight": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "authored-contexts": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44"
+      }
+    },
+    "scenes/world/buildings/RoofOverlay.gd": {
+      "current_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+      "final_captures": {
+        "s2-small": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "s2-normal": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "s3-small": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "s3-normal": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "s7-small": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "s7-normal": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "s7-reduced-fight": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "authored-contexts": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9"
+      }
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "current_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+      "final_captures": {
+        "s2-small": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "s2-normal": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "s3-small": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "s3-normal": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "s7-small": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "s7-normal": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "s7-reduced-fight": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "authored-contexts": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8"
+      }
+    },
+    "scenes/world/buildings/CityBlockRoofForms.gd": {
+      "current_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+      "final_captures": {
+        "s2-small": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "s2-normal": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "s3-small": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "s3-normal": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "s7-small": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "s7-normal": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "s7-reduced-fight": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "authored-contexts": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc"
+      }
+    },
+    "scenes/world/buildings/CityBlockKit.gd": {
+      "current_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+      "final_captures": {
+        "s2-small": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "s2-normal": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "s3-small": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "s3-normal": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "s7-small": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "s7-normal": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "s7-reduced-fight": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "authored-contexts": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e"
+      }
+    },
+    "scenes/world/buildings/CityBlockFrontages.gd": {
+      "current_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+      "final_captures": {
+        "s2-small": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "s2-normal": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "s3-small": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "s3-normal": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "s7-small": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "s7-normal": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "s7-reduced-fight": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "authored-contexts": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871"
+      }
+    },
+    "scenes/world/buildings/CityDomesticInterior.gd": {
+      "current_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+      "final_captures": {
+        "s2-small": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "s2-normal": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "s3-small": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "s3-normal": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "s7-small": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "s7-normal": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "s7-reduced-fight": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "authored-contexts": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f"
+      }
+    },
+    "core/systems/world/ground/GroundSplatRenderer.gd": {
+      "current_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+      "final_captures": {
+        "s2-small": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "s2-normal": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "s3-small": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "s3-normal": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "s7-small": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "s7-normal": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "s7-reduced-fight": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "authored-contexts": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+      }
+    },
+    "core/systems/world/ground/ground_splat.gdshader": {
+      "current_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+      "final_captures": {
+        "s2-small": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "s2-normal": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "s3-small": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "s3-normal": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "s7-small": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "s7-normal": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "s7-reduced-fight": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "authored-contexts": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343"
+      }
+    },
+    "core/systems/vision/VisionRig.gd": {
+      "current_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+      "final_captures": {
+        "s2-small": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+        "s2-normal": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+        "s3-small": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+        "s3-normal": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+        "s7-small": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+        "s7-normal": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+        "s7-reduced-fight": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+        "authored-contexts": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00"
+      }
+    },
+    "scenes/hub/HubWorld.gd": {
+      "current_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+      "final_captures": {
+        "s2-small": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+        "s2-normal": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+        "s3-small": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+        "s3-normal": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+        "s7-small": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+        "s7-normal": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+        "s7-reduced-fight": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+        "authored-contexts": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923"
+      }
+    },
+    "tools/dev/ThemeAtmospherePreview.gd": {
+      "current_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+      "final_captures": {
+        "s2-small": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+        "s2-normal": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+        "s3-small": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+        "s3-normal": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+        "s7-small": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+        "s7-normal": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+        "s7-reduced-fight": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+        "authored-contexts": "9aae1154aec2902b15c7427f8217048bb43188c55e89fff680b99bae47a6d439"
+      }
+    },
+    "tools/dev/ThemeAtmospherePreview.tscn": {
+      "current_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+      "final_captures": {
+        "s2-small": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+        "s2-normal": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+        "s3-small": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+        "s3-normal": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+        "s7-small": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+        "s7-normal": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+        "s7-reduced-fight": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+        "authored-contexts": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c"
+      }
+    },
+    "tools/dev/theme_atmosphere_legacy.gdshader": {
+      "current_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+      "final_captures": {
+        "s2-small": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+        "s2-normal": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+        "s3-small": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+        "s3-normal": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+        "s7-small": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+        "s7-normal": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+        "s7-reduced-fight": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+        "authored-contexts": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb"
+      }
+    },
+    "tools/dev/CityBlockPlayablePreview.gd": {
+      "current_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+      "final_captures": {
+        "s2-small": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "s2-normal": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "s3-small": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "s3-normal": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "s7-small": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "s7-normal": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "s7-reduced-fight": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "authored-contexts": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7"
+      }
+    },
+    "tools/dev/AuthoredAtmospherePreview.gd": {
+      "current_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+      "final_captures": {
+        "s2-small": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+        "s2-normal": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+        "s3-small": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+        "s3-normal": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+        "s7-small": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+        "s7-normal": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+        "s7-reduced-fight": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+        "authored-contexts": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0"
+      }
+    },
+    "tools/dev/AuthoredAtmospherePreview.tscn": {
+      "current_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+      "final_captures": {
+        "s2-small": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+        "s2-normal": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+        "s3-small": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+        "s3-normal": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+        "s7-small": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+        "s7-normal": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+        "s7-reduced-fight": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+        "authored-contexts": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86"
+      }
+    },
+    "tools/tests/ThemeAtmosphereTest.gd": {
+      "current_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+      "final_captures": {
+        "s2-small": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+        "s2-normal": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+        "s3-small": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+        "s3-normal": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+        "s7-small": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+        "s7-normal": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+        "s7-reduced-fight": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+        "authored-contexts": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4"
+      }
+    },
+    "tools/tests/ThemeAtmosphereReceiversTest.gd": {
+      "current_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+      "final_captures": {
+        "s2-small": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+        "s2-normal": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+        "s3-small": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+        "s3-normal": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+        "s7-small": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+        "s7-normal": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+        "s7-reduced-fight": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+        "authored-contexts": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e"
+      }
+    },
+    "tools/tests/ThemeAtmosphereDryReceiverTest.gd": {
+      "current_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+      "final_captures": {
+        "s2-small": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+        "s2-normal": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+        "s3-small": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+        "s3-normal": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+        "s7-small": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+        "s7-normal": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+        "s7-reduced-fight": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+        "authored-contexts": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714"
+      }
+    }
+  }
+}

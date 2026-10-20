@@ -1,0 +1,1248 @@
+{
+  "schema": "synthetic-ascension.scoped-code-commit-bindings.v1",
+  "source_commit": "de93d886a2b6392b1ff21d46147c3dd0cbf9287e",
+  "head_at_verification": "de93d886a2b6392b1ff21d46147c3dd0cbf9287e",
+  "source_commit_subject": "feat: give procedural districts coherent daylight and damp-ground atmosphere",
+  "method": {
+    "git_operations_read_only": [
+      [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      [
+        "git",
+        "rev-parse",
+        "de93d886a2b6392b1ff21d46147c3dd0cbf9287e:<scoped-path>"
+      ],
+      [
+        "git",
+        "show",
+        "de93d886a2b6392b1ff21d46147c3dd0cbf9287e:<scoped-path>"
+      ]
+    ],
+    "hash": "SHA-256 of exact git show stdout bytes compared with retained launch source_hashes; Git blob OID is also recorded independently.",
+    "scope": "Existing packet scoped-inputs plus the three owned atmosphere test scene files. This is 28 paths, not every project input or imported asset.",
+    "chronology": "Native captures precede this source commit. Exact content matches retrospectively bind their recorded scoped source bytes to the later commit; no capture rerun of the committed checkout is claimed.",
+    "authored_tool_exception": "Authored preview source extends EliteCrowdFightPreview and contains no ThemeAtmospherePreview reference. The old procedural tool was unused by that authored route. Its mismatching hash remains explicit.",
+    "source_record_integrity": "Retained source maps and monitored run records were checked against the pre-existing exhaustive evidence manifest before this binding was written."
+  },
+  "summary": {
+    "capture_launches": 8,
+    "scoped_paths": 28,
+    "launch_content_comparisons": 224,
+    "exact_content_matches": 223,
+    "qualified_nonmatches": 1,
+    "required_runtime_paths": 6,
+    "required_runtime_launch_matches": 48,
+    "all_required_runtime_launches_match": true,
+    "all_current_scoped_files_match_commit": true
+  },
+  "required_runtime_paths": [
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+    "core/systems/world/atmosphere/GameAtmosphereBinder.gd",
+    "core/systems/world/atmosphere/WorldAtmosphere.gd",
+    "core/systems/world/atmosphere/world_atmosphere.gdshader",
+    "core/systems/world/atmosphere/ground_air.gdshader",
+    "scenes/game.tscn"
+  ],
+  "launch_records": {
+    "s2-small": {
+      "run_label": "atmo-s2-small-final",
+      "monitor_record": "process/atmo-s2-small-final/run-results.json",
+      "monitor_record_sha256": "59f4fc271f12a4e5e114960ed63d73a501d801f327d0642a64298e3f4fc3eafe",
+      "source_record": "process/sources/f508321522394f44dac77b282ddb494a4f97f81a391be63d068349fef413c637.json",
+      "source_record_sha256": "b134f2982b58465eff1928937f28afe655270fff162a02802466e9cb054bf875",
+      "original_run_results_sha256": "bbbe2dd2e5d2712d10ac08c14f53281fd6ab6a1fbfd3fc10bade35eb2aaa6ce0"
+    },
+    "s2-normal": {
+      "run_label": "atmo-s2-normal",
+      "monitor_record": "process/atmo-s2-normal/run-results.json",
+      "monitor_record_sha256": "9f449358969ffbc07a6dea87994f1db8fcb2a9ee504396dcf649cf5cfed64d74",
+      "source_record": "process/sources/f508321522394f44dac77b282ddb494a4f97f81a391be63d068349fef413c637.json",
+      "source_record_sha256": "b134f2982b58465eff1928937f28afe655270fff162a02802466e9cb054bf875",
+      "original_run_results_sha256": "5547b46a1f568678f3b62d690e1c5643fa9b4656fd73258ae711b5e44a19ed17"
+    },
+    "s3-small": {
+      "run_label": "atmo-s3-small",
+      "monitor_record": "process/atmo-s3-small/run-results.json",
+      "monitor_record_sha256": "692d446d19c420973b926f8ff35dc77e2ece82ee8a1c82e00dc1f65dbb5a5e42",
+      "source_record": "process/sources/f508321522394f44dac77b282ddb494a4f97f81a391be63d068349fef413c637.json",
+      "source_record_sha256": "b134f2982b58465eff1928937f28afe655270fff162a02802466e9cb054bf875",
+      "original_run_results_sha256": "d7f3a5dacefc80e773e7fafba1af66858948f6b79099fb57ffa0e80ae73aba55"
+    },
+    "s3-normal": {
+      "run_label": "atmo-s3-normal",
+      "monitor_record": "process/atmo-s3-normal/run-results.json",
+      "monitor_record_sha256": "df1a632c934ff3930709a15446676371dc592ba49db7dff7b77e49ed7cfd5104",
+      "source_record": "process/sources/f508321522394f44dac77b282ddb494a4f97f81a391be63d068349fef413c637.json",
+      "source_record_sha256": "b134f2982b58465eff1928937f28afe655270fff162a02802466e9cb054bf875",
+      "original_run_results_sha256": "6c02596eb661035167c5ff3695ffe8baeb7204b0085a19b2f1f176d1f5bc0833"
+    },
+    "s7-small": {
+      "run_label": "atmo-s7-small",
+      "monitor_record": "process/atmo-s7-small/run-results.json",
+      "monitor_record_sha256": "75c1e541b591fe9d4f165bb95fb51db82478fced3e77525b50ea31e871db7f39",
+      "source_record": "process/sources/f508321522394f44dac77b282ddb494a4f97f81a391be63d068349fef413c637.json",
+      "source_record_sha256": "b134f2982b58465eff1928937f28afe655270fff162a02802466e9cb054bf875",
+      "original_run_results_sha256": "64d145f4c618db6e21e1e528145b44939096edfc6ff60d3175bc8136ce7abf09"
+    },
+    "s7-normal": {
+      "run_label": "atmo-s7-normal",
+      "monitor_record": "process/atmo-s7-normal/run-results.json",
+      "monitor_record_sha256": "c68dbac73ec83b437568c64d0d08c3405fe2b41f3dabb51674b05a3edf43a8e3",
+      "source_record": "process/sources/f508321522394f44dac77b282ddb494a4f97f81a391be63d068349fef413c637.json",
+      "source_record_sha256": "b134f2982b58465eff1928937f28afe655270fff162a02802466e9cb054bf875",
+      "original_run_results_sha256": "975c02654a8555edec246019c9082de5bb744d98fe465b70ee31340d7f079c32"
+    },
+    "s7-reduced-fight": {
+      "run_label": "atmo-s7-reduced-fight",
+      "monitor_record": "process/atmo-s7-reduced-fight/run-results.json",
+      "monitor_record_sha256": "b14900b48f7d809af53bcccf34630321cd7edcab3bfbd3f51277240f5a9e24f9",
+      "source_record": "process/sources/f508321522394f44dac77b282ddb494a4f97f81a391be63d068349fef413c637.json",
+      "source_record_sha256": "b134f2982b58465eff1928937f28afe655270fff162a02802466e9cb054bf875",
+      "original_run_results_sha256": "e296660b1ef53d60e02c5623da8770326d092194f7dc4d4ec6a1d1793c56bac1"
+    },
+    "authored-contexts": {
+      "run_label": "atmo-authored-contexts",
+      "monitor_record": "process/atmo-authored-contexts/run-results.json",
+      "monitor_record_sha256": "c4da226aefd07c5577248a53a36826ac10fe58e430cc70c02a1c345214e2af7e",
+      "source_record": "process/sources/cd4474164e577836bb12ea77a1de65ecd30418dcb6e8c60eba9efb1263537ab2.json",
+      "source_record_sha256": "a646465fa359dd1ca45c7968969ee76d0d03e4a8bd5376c2cf0df618e8ca9e91",
+      "original_run_results_sha256": "6d6da234ad50dd2af199ce0f16ec1602a4d1f7e3ce24c332333adb516864649f"
+    }
+  },
+  "qualified_nonmatches": [
+    {
+      "capture": "authored-contexts",
+      "path": "tools/dev/ThemeAtmospherePreview.gd",
+      "launch_sha256": "9aae1154aec2902b15c7427f8217048bb43188c55e89fff680b99bae47a6d439",
+      "matches_committed_content": false,
+      "qualification": "Unused procedural preview tool was recorded before the bounded texel-centre pan-probe correction. Actual authored capture instantiates AuthoredAtmospherePreview, whose script and scene match this commit. This launch hash does not match the committed procedural tool and is not represented as a match.",
+      "committed_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465"
+    }
+  ],
+  "files": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "git_blob_oid": "1808796bac0033fad71abf1d76a6de9a194d358a",
+      "git_blob_content_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+      "git_blob_bytes": 5289,
+      "working_tree_sha256_at_verification": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+      "git_blob_oid": "9837903499161c95f4f889a58cabc18cfe4c6f61",
+      "git_blob_content_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+      "git_blob_bytes": 1052,
+      "working_tree_sha256_at_verification": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "git_blob_oid": "bbeed42793f0f38d179de800694e41becd8c1a9f",
+      "git_blob_content_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+      "git_blob_bytes": 17094,
+      "working_tree_sha256_at_verification": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+      "git_blob_oid": "7ad2b094a7cc6df7502f04646df3ec4e78ab3f5b",
+      "git_blob_content_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+      "git_blob_bytes": 1544,
+      "working_tree_sha256_at_verification": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "git_blob_oid": "4d9e276fe42c7219ccf76a0a4d873138deccd5fa",
+      "git_blob_content_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+      "git_blob_bytes": 3632,
+      "working_tree_sha256_at_verification": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/game.tscn": {
+      "git_blob_oid": "e379a5c5ab9f0da639cc989ed2ec4ef1003cd15f",
+      "git_blob_content_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+      "git_blob_bytes": 5566,
+      "working_tree_sha256_at_verification": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/world/buildings/RoofOverlay.gd": {
+      "git_blob_oid": "890fbde2cd8e55adaeae003110ce00c8df4cc8d1",
+      "git_blob_content_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+      "git_blob_bytes": 20410,
+      "working_tree_sha256_at_verification": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "git_blob_oid": "f8252642d6eaab9a157c3d0ae9ed77f8d4799950",
+      "git_blob_content_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+      "git_blob_bytes": 2051,
+      "working_tree_sha256_at_verification": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/world/buildings/CityBlockRoofForms.gd": {
+      "git_blob_oid": "5f7fdf97ca3d7177d1cf07ebf38103b94c737c0a",
+      "git_blob_content_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+      "git_blob_bytes": 15457,
+      "working_tree_sha256_at_verification": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/world/buildings/CityBlockKit.gd": {
+      "git_blob_oid": "d19481f6a3b5af744f1e813e8d14e4deb1238b6b",
+      "git_blob_content_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+      "git_blob_bytes": 39048,
+      "working_tree_sha256_at_verification": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/world/buildings/CityBlockFrontages.gd": {
+      "git_blob_oid": "2e6e592789c55e89a42f650591058acaeaf8ebcc",
+      "git_blob_content_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+      "git_blob_bytes": 14641,
+      "working_tree_sha256_at_verification": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/world/buildings/CityDomesticInterior.gd": {
+      "git_blob_oid": "445c3418ca9882ec9386eba925f0e990a4335dac",
+      "git_blob_content_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+      "git_blob_bytes": 11651,
+      "working_tree_sha256_at_verification": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "core/systems/world/ground/GroundSplatRenderer.gd": {
+      "git_blob_oid": "44c79a7f3ec48f1d3ef3b0470f687f96adca75a6",
+      "git_blob_content_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+      "git_blob_bytes": 17684,
+      "working_tree_sha256_at_verification": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "core/systems/world/ground/ground_splat.gdshader": {
+      "git_blob_oid": "d6783c940f70d8f74a05fe51b554e6363815e0b8",
+      "git_blob_content_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+      "git_blob_bytes": 5718,
+      "working_tree_sha256_at_verification": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "core/systems/vision/VisionRig.gd": {
+      "git_blob_oid": "b84b0eb92cb6ea0baef76a64914f3a99e84c9e26",
+      "git_blob_content_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+      "git_blob_bytes": 23532,
+      "working_tree_sha256_at_verification": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "c5de94fbefcc2c37f83e106ebf28d95441e2451510648eafbeb4498aba22cb00",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "scenes/hub/HubWorld.gd": {
+      "git_blob_oid": "5f4ba28d3b85278beeb68289dd7d1d46f33ab77d",
+      "git_blob_content_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+      "git_blob_bytes": 46327,
+      "working_tree_sha256_at_verification": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "cf0219080e957d3093825bc22ac9c46434f642409476f83ff0579de526860923",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/dev/ThemeAtmospherePreview.gd": {
+      "git_blob_oid": "a3cdf58e5962c0f621b5dac9e6e23ca5c1111ab0",
+      "git_blob_content_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+      "git_blob_bytes": 9439,
+      "working_tree_sha256_at_verification": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "d3abf2a36dbcc2dfdfaeec21674b9648added646facdd3327ed1c49cea975465",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "9aae1154aec2902b15c7427f8217048bb43188c55e89fff680b99bae47a6d439",
+          "matches_committed_content": false,
+          "qualification": "Unused procedural preview tool was recorded before the bounded texel-centre pan-probe correction. Actual authored capture instantiates AuthoredAtmospherePreview, whose script and scene match this commit. This launch hash does not match the committed procedural tool and is not represented as a match."
+        }
+      }
+    },
+    "tools/dev/ThemeAtmospherePreview.tscn": {
+      "git_blob_oid": "f2cf09c69f3b0956fd3c0d8527ae65ef12066131",
+      "git_blob_content_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+      "git_blob_bytes": 193,
+      "working_tree_sha256_at_verification": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "8ccbef0b76270e8309fab99e9175ed75693bca2440e7a025a0e7a70f2dab698c",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/dev/theme_atmosphere_legacy.gdshader": {
+      "git_blob_oid": "2e9dc7859b406319646e4a96155acd81033dc86c",
+      "git_blob_content_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+      "git_blob_bytes": 693,
+      "working_tree_sha256_at_verification": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "efd6b0e618b9721a95f6075d306f75c65a4e0b6a36bd7a2db5bf88d7d01ebedb",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/dev/CityBlockPlayablePreview.gd": {
+      "git_blob_oid": "f4796e5ffde67c46e41c4dc8faf364d19aa1bf12",
+      "git_blob_content_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+      "git_blob_bytes": 35081,
+      "working_tree_sha256_at_verification": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/dev/AuthoredAtmospherePreview.gd": {
+      "git_blob_oid": "5b0396c0d0c46dc28576fb66d8a11d1ec5ed8edf",
+      "git_blob_content_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+      "git_blob_bytes": 15573,
+      "working_tree_sha256_at_verification": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "81bf99171acbea71c04e400ee0cd430acdb7f788006f52d1634982b1bfae5eb0",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/dev/AuthoredAtmospherePreview.tscn": {
+      "git_blob_oid": "81c95189da9a577c2a5c15b3431f9d41bf382c17",
+      "git_blob_content_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+      "git_blob_bytes": 199,
+      "working_tree_sha256_at_verification": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "1575393b937d171df8375b6914b0ef1c26534292d4a2b53179b64204d973fe86",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/tests/ThemeAtmosphereTest.gd": {
+      "git_blob_oid": "75906615de75b7c1d219e46851ac38fb26b392d0",
+      "git_blob_content_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+      "git_blob_bytes": 14945,
+      "working_tree_sha256_at_verification": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "d898e773e0dcce782569fa05ecf5e4ec63774f0c47c32bc1b23274331f0bc6f4",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/tests/ThemeAtmosphereReceiversTest.gd": {
+      "git_blob_oid": "4d8a9aa85e540d3337d0cff8b9f8aaa97bb8bd4c",
+      "git_blob_content_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+      "git_blob_bytes": 18913,
+      "working_tree_sha256_at_verification": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "e167211cd46c3c6df794868434e069c94adde6f5a1a2e3aa726566d03146e34e",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/tests/ThemeAtmosphereDryReceiverTest.gd": {
+      "git_blob_oid": "ed38756a67524f8b3bc3bdb959fba11207633ea5",
+      "git_blob_content_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+      "git_blob_bytes": 4843,
+      "working_tree_sha256_at_verification": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/tests/ThemeAtmosphereTest.tscn": {
+      "git_blob_oid": "9e25c1c7898e14fa7c20dd4765943eb65a716bca",
+      "git_blob_content_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+      "git_blob_bytes": 193,
+      "working_tree_sha256_at_verification": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "ca5ed7dc8262f59dd2bb305218888ffadc39e270448e26625f24fe02de6289e2",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/tests/ThemeAtmosphereReceiversTest.tscn": {
+      "git_blob_oid": "ee1d69ec761ca9337ff4907d7a5362dd4de9a09f",
+      "git_blob_content_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+      "git_blob_bytes": 209,
+      "working_tree_sha256_at_verification": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "38b97a75e11aff6d16edecddb43adef57b6a6630b0081b2502507f89d3c07e9c",
+          "matches_committed_content": true
+        }
+      }
+    },
+    "tools/tests/ThemeAtmosphereDryReceiverTest.tscn": {
+      "git_blob_oid": "2a97b2fd8b1cd376d36bfef49e11a262576c5a49",
+      "git_blob_content_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+      "git_blob_bytes": 211,
+      "working_tree_sha256_at_verification": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+      "launches": {
+        "s2-small": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        },
+        "s2-normal": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        },
+        "s3-small": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        },
+        "s3-normal": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        },
+        "s7-small": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        },
+        "s7-normal": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        },
+        "s7-reduced-fight": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        },
+        "authored-contexts": {
+          "launch_sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+          "matches_committed_content": true
+        }
+      }
+    }
+  }
+}

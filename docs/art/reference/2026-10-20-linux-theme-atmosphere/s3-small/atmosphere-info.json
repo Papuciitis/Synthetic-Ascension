@@ -1,0 +1,110 @@
+{
+	"args": [
+		"--visible",
+		"--weather-phase=120",
+		"--atmosphere-pan",
+		"--review=small",
+		"--segment=3",
+		"--world-seed=1",
+		"--target-building-id=1517657286",
+		"--target-chunk=2,-5",
+		"--still-only",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/atmo-s3-small-plates"
+	],
+	"failures": 0,
+	"limits": "Controlled native samples only; no acceptance inferred for all fourteen themes, continuous human play, or performance/balance.",
+	"plates": [
+		{
+			"actual_theme": "checkpoint_lanes",
+			"ambient_spawner": false,
+			"camera_world": [
+				4576.0,
+				-9512.0
+			],
+			"enemies": 0,
+			"god_mode": true,
+			"image_size_px": "(960, 540)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "exterior",
+			"player_world": [
+				4640.0,
+				-9056.0
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 73,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 0.0,
+				"mask_origin": "(inf, inf)",
+				"mask_rebuilds": 0,
+				"mask_size": "(0, 0)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.96, 0.98, 1.0, 1.0)",
+					"cloud_opacity": 0.1,
+					"cloud_scale_px": 760.0,
+					"cloud_velocity": "(-7.0, 1.8)",
+					"context": "procedural",
+					"direct_light": 0.72,
+					"enabled": true,
+					"environment_tint": "(0.98, 0.99, 1.0, 1.0)",
+					"id": "checkpoint_lanes",
+					"label": "Cool broken cloud over inspection lanes",
+					"mist_opacity": 0.0,
+					"mist_tint": "(0.72, 0.75, 0.72, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.466667, 0.12)"
+				},
+				"reduced_motion": false,
+				"roof_material_count": 268,
+				"room_count": 0,
+				"sun_shadow_count": 305,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 0,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"save_writes_during_pair": 0,
+			"seed": 1,
+			"segment": 3,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.0,
+				"first_centre_residual": [
+					0.0,
+					0.0
+				],
+				"first_fractional": [
+					480.5,
+					270.5
+				],
+				"first_screen": "(480, 270)",
+				"moved_centre_residual": [
+					0.0,
+					0.0
+				],
+				"moved_fractional": [
+					432.5,
+					270.5
+				],
+				"moved_screen": "(432, 270)",
+				"selection": "initial rendered texel centre through inverse canvas transform",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				4577.0,
+				-9511.0
+			]
+		}
+	],
+	"scene": "res://scenes/game.tscn",
+	"tool": "res://tools/dev/ThemeAtmospherePreview.tscn"
+}

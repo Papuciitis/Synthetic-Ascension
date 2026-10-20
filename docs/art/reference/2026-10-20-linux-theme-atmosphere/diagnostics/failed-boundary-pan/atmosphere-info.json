@@ -1,0 +1,239 @@
+{
+	"args": [
+		"--visible",
+		"--segment=2",
+		"--world-seed=16102026",
+		"--target-building-id=944996572",
+		"--target-chunk=0,3",
+		"--review=small",
+		"--weather-phase=120",
+		"--atmosphere-pan",
+		"--entry-only",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/atmo-s2-small-plates"
+	],
+	"failures": 1,
+	"limits": "Controlled native samples only; no acceptance inferred for all fourteen themes, continuous human play, or performance/balance.",
+	"plates": [
+		{
+			"actual_theme": "service_courtyards",
+			"ambient_spawner": false,
+			"camera_world": [
+				748.0,
+				7232.0
+			],
+			"enemies": 0,
+			"god_mode": true,
+			"image_size_px": "(960, 540)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "exterior",
+			"player_world": [
+				608.0,
+				7392.0
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 49,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 0.0,
+				"mask_origin": "(inf, inf)",
+				"mask_rebuilds": 0,
+				"mask_size": "(0, 0)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.98, 0.99, 1.0, 1.0)",
+					"cloud_opacity": 0.045,
+					"cloud_scale_px": 880.0,
+					"cloud_velocity": "(-5.0, 1.2)",
+					"context": "procedural",
+					"direct_light": 1.0,
+					"enabled": true,
+					"environment_tint": "(1.0, 0.995, 0.98, 1.0)",
+					"id": "service_courtyards",
+					"label": "Open courtyard daylight",
+					"mist_opacity": 0.0,
+					"mist_tint": "(0.72, 0.75, 0.72, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.333333, 0.08)"
+				},
+				"reduced_motion": false,
+				"roof_material_count": 91,
+				"room_count": 0,
+				"sun_shadow_count": 74,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 0,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"save_writes_during_pair": 0,
+			"seed": 16102026,
+			"segment": 2,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.00392156839370728,
+				"first_screen": "(480, 270)",
+				"moved_screen": "(432, 270)",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				748.0,
+				7232.0
+			]
+		},
+		{
+			"actual_theme": "service_courtyards",
+			"ambient_spawner": false,
+			"camera_world": [
+				748.0,
+				6982.8544921875
+			],
+			"enemies": 0,
+			"god_mode": true,
+			"image_size_px": "(960, 540)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "interior",
+			"player_world": [
+				608.0,
+				7142.8544921875
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 58,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 0.0,
+				"mask_origin": "(inf, inf)",
+				"mask_rebuilds": 0,
+				"mask_size": "(0, 0)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.98, 0.99, 1.0, 1.0)",
+					"cloud_opacity": 0.045,
+					"cloud_scale_px": 880.0,
+					"cloud_velocity": "(-5.0, 1.2)",
+					"context": "procedural",
+					"direct_light": 1.0,
+					"enabled": true,
+					"environment_tint": "(1.0, 0.995, 0.98, 1.0)",
+					"id": "service_courtyards",
+					"label": "Open courtyard daylight",
+					"mist_opacity": 0.0,
+					"mist_tint": "(0.72, 0.75, 0.72, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.333333, 0.08)"
+				},
+				"reduced_motion": false,
+				"roof_material_count": 91,
+				"room_count": 0,
+				"sun_shadow_count": 74,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 0,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": 0.0,
+			"roof_inside_count": 1,
+			"save_writes_during_pair": 0,
+			"seed": 16102026,
+			"segment": 2,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.0,
+				"first_screen": "(480, 270)",
+				"moved_screen": "(432, 270)",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				748.0,
+				6982.85546875
+			]
+		},
+		{
+			"actual_theme": "service_courtyards",
+			"ambient_spawner": false,
+			"camera_world": [
+				748.0,
+				7160.9013671875
+			],
+			"enemies": 0,
+			"god_mode": true,
+			"image_size_px": "(960, 540)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "restored-exterior",
+			"player_world": [
+				608.0,
+				7320.9013671875
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 65,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 0.0,
+				"mask_origin": "(inf, inf)",
+				"mask_rebuilds": 0,
+				"mask_size": "(0, 0)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.98, 0.99, 1.0, 1.0)",
+					"cloud_opacity": 0.045,
+					"cloud_scale_px": 880.0,
+					"cloud_velocity": "(-5.0, 1.2)",
+					"context": "procedural",
+					"direct_light": 1.0,
+					"enabled": true,
+					"environment_tint": "(1.0, 0.995, 0.98, 1.0)",
+					"id": "service_courtyards",
+					"label": "Open courtyard daylight",
+					"mist_opacity": 0.0,
+					"mist_tint": "(0.72, 0.75, 0.72, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.333333, 0.08)"
+				},
+				"reduced_motion": false,
+				"roof_material_count": 91,
+				"room_count": 0,
+				"sun_shadow_count": 74,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 0,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"save_writes_during_pair": 0,
+			"seed": 16102026,
+			"segment": 2,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.0470588207244873,
+				"first_screen": "(480, 270)",
+				"moved_screen": "(432, 269)",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				748.0,
+				7160.900390625
+			]
+		}
+	],
+	"scene": "res://scenes/game.tscn",
+	"tool": "res://tools/dev/ThemeAtmospherePreview.tscn"
+}

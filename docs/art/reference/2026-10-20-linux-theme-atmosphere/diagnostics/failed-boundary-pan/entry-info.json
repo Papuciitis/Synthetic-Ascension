@@ -1,0 +1,265 @@
+{
+	"attempt_seed": 16102026,
+	"building_id": 944996572,
+	"building_usage": "row_house",
+	"camera": {
+		"position": "(748.0, 7160.901)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(960, 540)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"closed_arch_bays": 0,
+	"coord": "(0, 3)",
+	"district_family": "service_courtyards",
+	"doors": "[{ \"pos\": (8, 16), \"dir\": (0, 1), \"width\": 2 }]",
+	"failures": 1,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"footprint": "[(192.0, 768.0), (384.0, 768.0), (384.0, 576.0), (896.0, 576.0), (896.0, 1088.0), (192.0, 1088.0)]",
+	"garden": [
+		{
+			"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+			"name": "TendedDomesticBed",
+			"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+			"position": "(0.0, 0.0)",
+			"rotation": 0.0,
+			"scale": "(1.0, 1.0)",
+			"variant": 0,
+			"z_index": -90
+		},
+		{
+			"contact": "(266.0, 1102.0)",
+			"name": "DomesticHerbBed",
+			"position": "(265.9673, 1097.233)",
+			"rotation": 0.0,
+			"scale": "(0.065304, 0.065304)",
+			"texture": "",
+			"z_index": 1
+		}
+	],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 10,
+			"local_bounds": "[P: (0, 13), S: (2, 4)]",
+			"max_byte": 255,
+			"nonzero": 15,
+			"sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+			"sum_bytes": 2728
+		},
+		"chunk_material_counts": {
+			"0": 716,
+			"2": 125,
+			"3": 6,
+			"4": 177
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				9,
+				114
+			],
+			"material": 4,
+			"walkable": true,
+			"world_px": [
+				608.0,
+				7320.9013671875
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+					"layer_sha256": "d150b1bc0fcab5ff989af99d6243e4d45df56e18ef6d2ca06f0dcc2e8e956098",
+					"path": "res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+					"sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "true",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_layer": [
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0,
+				320.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "grass"
+	},
+	"has_watch": false,
+	"inside_alpha": 0.0,
+	"irregular": true,
+	"local_security": false,
+	"native_entry_only": true,
+	"outside_alpha": 1.0,
+	"plan_seed": 436524753,
+	"profile": "common_base",
+	"role": "service_lane",
+	"save_writes": 0,
+	"segment": 2,
+	"streamed_reload": [
+		{
+			"care_equal": true,
+			"care_sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+			"equal": true,
+			"event": "streamed_reload",
+			"garden_equal": true,
+			"gardens": [
+				[
+					{
+						"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+						"name": "TendedDomesticBed",
+						"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+						"position": "(0.0, 0.0)",
+						"rotation": 0.0,
+						"scale": "(1.0, 1.0)",
+						"variant": 0,
+						"z_index": -90
+					},
+					{
+						"contact": "(266.0, 1102.0)",
+						"name": "DomesticHerbBed",
+						"position": "(265.9673, 1097.233)",
+						"rotation": 0.0,
+						"scale": "(0.065304, 0.065304)",
+						"texture": "",
+						"z_index": 1
+					}
+				],
+				[
+					{
+						"contact": "(136.0, 1963.0)",
+						"name": "CityTemperateTree",
+						"position": "(130.8644, 1841.756)",
+						"rotation": 0.0,
+						"scale": "(0.223285, 0.223285)",
+						"texture": "",
+						"z_index": 1
+					}
+				]
+			],
+			"restored_visual_instances": 680,
+			"unloaded_visual_instances": 0
+		},
+		{
+			"arrived": "(608.0, 7334.505)",
+			"desired": "(576.0, 7296.0)",
+			"event": "walk",
+			"path_cells": 1,
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(608.0, 7328.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(608.0, 7142.854)",
+			"desired": "(576.0, 7136.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 32.0,
+			"resolved": "(608.0, 7136.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(608.0, 7320.901)",
+			"desired": "(576.0, 7296.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(608.0, 7328.0)",
+			"strict_perimeter": false
+		}
+	],
+	"watch_fallback": "base",
+	"world_cover": {
+		"cell_px": 256.0,
+		"foreground_sources": 3,
+		"generation": 1049,
+		"grid_cells": 80,
+		"index_count": 187,
+		"materials": 2,
+		"max_candidates": 23,
+		"peak_candidates": 23,
+		"peak_primitives": 63,
+		"peak_refresh_usec": 70724,
+		"primitive_count": 63,
+		"refresh_usec": 3546,
+		"source_reads": 3
+	}
+}

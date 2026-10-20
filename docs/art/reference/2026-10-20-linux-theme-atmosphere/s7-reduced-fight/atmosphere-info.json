@@ -1,0 +1,289 @@
+{
+	"args": [
+		"--visible",
+		"--weather-phase=120",
+		"--atmosphere-pan",
+		"--review=reduced",
+		"--segment=7",
+		"--world-seed=4",
+		"--ground-context=-2016,96",
+		"--ground-fight",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/atmo-s7-reduced-fight-plates"
+	],
+	"failures": 0,
+	"limits": "Controlled native samples only; no acceptance inferred for all fourteen themes, continuous human play, or performance/balance.",
+	"plates": [
+		{
+			"actual_theme": "canal_services",
+			"ambient_spawner": false,
+			"camera_world": [
+				-2016.0,
+				96.0
+			],
+			"enemies": 0,
+			"god_mode": true,
+			"image_size_px": "(960, 540)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "ground-before",
+			"player_world": [
+				-2016.0,
+				96.0
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 54,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 32.0,
+				"mask_origin": "(-3072.0, -512.0)",
+				"mask_rebuilds": 27,
+				"mask_size": "(66, 38)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.95, 0.985, 1.0, 1.0)",
+					"cloud_opacity": 0.1,
+					"cloud_scale_px": 1040.0,
+					"cloud_velocity": "(-4.5, 1.0)",
+					"context": "procedural",
+					"direct_light": 0.6,
+					"enabled": true,
+					"environment_tint": "(0.965, 0.99, 0.985, 1.0)",
+					"id": "canal_services",
+					"label": "Diffuse damp canal-service daylight",
+					"mist_opacity": 0.038,
+					"mist_tint": "(0.7, 0.75, 0.71, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.3, 0.066667)"
+				},
+				"reduced_motion": true,
+				"roof_material_count": 142,
+				"room_count": 54,
+				"sun_shadow_count": 151,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 0,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": -1.0,
+			"roof_inside_count": -1,
+			"save_writes_during_pair": 0,
+			"seed": 4,
+			"segment": 7,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.00392156839370728,
+				"first_centre_residual": [
+					0.0,
+					0.0
+				],
+				"first_fractional": [
+					480.5,
+					270.5
+				],
+				"first_screen": "(480, 270)",
+				"moved_centre_residual": [
+					0.0,
+					0.0
+				],
+				"moved_fractional": [
+					432.5,
+					270.5
+				],
+				"moved_screen": "(432, 270)",
+				"selection": "initial rendered texel centre through inverse canvas transform",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				-2015.0,
+				97.0
+			]
+		},
+		{
+			"actual_theme": "canal_services",
+			"ambient_spawner": false,
+			"camera_world": [
+				-2016.0,
+				96.0
+			],
+			"enemies": 19,
+			"god_mode": true,
+			"image_size_px": "(960, 540)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "fight",
+			"player_world": [
+				-1876.41259765625,
+				188.79084777832
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 62,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 32.0,
+				"mask_origin": "(-3072.0, -512.0)",
+				"mask_rebuilds": 31,
+				"mask_size": "(66, 38)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.95, 0.985, 1.0, 1.0)",
+					"cloud_opacity": 0.1,
+					"cloud_scale_px": 1040.0,
+					"cloud_velocity": "(-4.5, 1.0)",
+					"context": "procedural",
+					"direct_light": 0.6,
+					"enabled": true,
+					"environment_tint": "(0.965, 0.99, 0.985, 1.0)",
+					"id": "canal_services",
+					"label": "Diffuse damp canal-service daylight",
+					"mist_opacity": 0.038,
+					"mist_tint": "(0.7, 0.75, 0.71, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.3, 0.066667)"
+				},
+				"reduced_motion": true,
+				"roof_material_count": 142,
+				"room_count": 54,
+				"sun_shadow_count": 151,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 2,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": -1.0,
+			"roof_inside_count": -1,
+			"save_writes_during_pair": 0,
+			"seed": 4,
+			"segment": 7,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.00392156839370728,
+				"first_centre_residual": [
+					0.0,
+					0.0
+				],
+				"first_fractional": [
+					480.5,
+					270.5
+				],
+				"first_screen": "(480, 270)",
+				"moved_centre_residual": [
+					0.0,
+					0.0
+				],
+				"moved_fractional": [
+					432.5,
+					270.5
+				],
+				"moved_screen": "(432, 270)",
+				"selection": "initial rendered texel centre through inverse canvas transform",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				-2015.0,
+				97.0
+			]
+		},
+		{
+			"actual_theme": "canal_services",
+			"ambient_spawner": false,
+			"camera_world": [
+				-2016.0,
+				96.0
+			],
+			"enemies": 13,
+			"god_mode": true,
+			"image_size_px": "(960, 540)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "fight-ending",
+			"player_world": [
+				-1853.63220214844,
+				201.843612670898
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 71,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 32.0,
+				"mask_origin": "(-3072.0, -512.0)",
+				"mask_rebuilds": 35,
+				"mask_size": "(66, 38)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.95, 0.985, 1.0, 1.0)",
+					"cloud_opacity": 0.1,
+					"cloud_scale_px": 1040.0,
+					"cloud_velocity": "(-4.5, 1.0)",
+					"context": "procedural",
+					"direct_light": 0.6,
+					"enabled": true,
+					"environment_tint": "(0.965, 0.99, 0.985, 1.0)",
+					"id": "canal_services",
+					"label": "Diffuse damp canal-service daylight",
+					"mist_opacity": 0.038,
+					"mist_tint": "(0.7, 0.75, 0.71, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.3, 0.066667)"
+				},
+				"reduced_motion": true,
+				"roof_material_count": 142,
+				"room_count": 54,
+				"sun_shadow_count": 151,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 3,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": -1.0,
+			"roof_inside_count": -1,
+			"save_writes_during_pair": 0,
+			"seed": 4,
+			"segment": 7,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.00392156839370728,
+				"first_centre_residual": [
+					0.0,
+					0.0
+				],
+				"first_fractional": [
+					480.5,
+					270.5
+				],
+				"first_screen": "(480, 270)",
+				"moved_centre_residual": [
+					0.0,
+					0.0
+				],
+				"moved_fractional": [
+					432.5,
+					270.5
+				],
+				"moved_screen": "(432, 270)",
+				"selection": "initial rendered texel centre through inverse canvas transform",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				-2015.0,
+				97.0
+			]
+		}
+	],
+	"scene": "res://scenes/game.tscn",
+	"tool": "res://tools/dev/ThemeAtmospherePreview.tscn"
+}

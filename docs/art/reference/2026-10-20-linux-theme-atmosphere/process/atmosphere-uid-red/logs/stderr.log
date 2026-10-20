@@ -1,0 +1,5 @@
+ERROR: FAIL: actual district themes have physical atmosphere profiles
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ThemeAtmosphereTest.gd:38)
+       [1] _run (res://tools/tests/ThemeAtmosphereTest.gd:42)

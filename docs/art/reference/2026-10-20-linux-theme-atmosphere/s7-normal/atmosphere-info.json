@@ -1,0 +1,111 @@
+{
+	"args": [
+		"--visible",
+		"--weather-phase=120",
+		"--atmosphere-pan",
+		"--review=normal",
+		"--segment=7",
+		"--world-seed=4",
+		"--ground-context=-2016,96",
+		"--atmosphere-motion-seconds=3",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/atmo-s7-normal-plates"
+	],
+	"failures": 0,
+	"limits": "Controlled native samples only; no acceptance inferred for all fourteen themes, continuous human play, or performance/balance.",
+	"plates": [
+		{
+			"actual_theme": "canal_services",
+			"ambient_spawner": false,
+			"camera_world": [
+				-2016.0,
+				96.0
+			],
+			"enemies": 0,
+			"god_mode": true,
+			"image_size_px": "(1280, 720)",
+			"legacy_ablation": "Same paused actual Game/camera/actors; previous daylight shader only. Current profile roof/shadow factors retained. Former randomized blue flies omitted from both plates.",
+			"logical_viewport_size": "(1920.0, 1080.0)",
+			"normal_hud": true,
+			"plate": "ground-before",
+			"player_world": [
+				-2016.0,
+				96.0
+			],
+			"profile": {
+				"air_z": -8,
+				"environment_scans": 52,
+				"frozen_phase": 120.0,
+				"ground_receiver_enabled": true,
+				"mask_cell_px": 32.0,
+				"mask_origin": "(-3072.0, -512.0)",
+				"mask_rebuilds": 27,
+				"mask_size": "(66, 38)",
+				"particle_count": 0,
+				"profile": {
+					"ambient_fill": "(0.95, 0.985, 1.0, 1.0)",
+					"cloud_opacity": 0.1,
+					"cloud_scale_px": 1040.0,
+					"cloud_velocity": "(-4.5, 1.0)",
+					"context": "procedural",
+					"direct_light": 0.6,
+					"enabled": true,
+					"environment_tint": "(0.965, 0.99, 0.985, 1.0)",
+					"id": "canal_services",
+					"label": "Diffuse damp canal-service daylight",
+					"mist_opacity": 0.038,
+					"mist_tint": "(0.7, 0.75, 0.71, 1.0)",
+					"particle_density": 0.0,
+					"particle_kind": "none",
+					"vignette_strength": 0.0,
+					"wind": "(-0.3, 0.066667)"
+				},
+				"reduced_motion": false,
+				"roof_material_count": 142,
+				"room_count": 54,
+				"sun_shadow_count": 151,
+				"vignette_strength": 0.0,
+				"weather_frozen": true,
+				"weather_time": 120.0
+			},
+			"projectiles": 0,
+			"rng_unchanged_during_pair": true,
+			"roof_alpha": -1.0,
+			"roof_inside_count": -1,
+			"save_writes_during_pair": 0,
+			"seed": 4,
+			"segment": 7,
+			"weather_frame_step_seconds": 0.125,
+			"weather_frames": 25,
+			"weather_motion_qualifier": "Only presentation phase advances in optional weather frames; gameplay is paused for this pair. Parent traversal/fight frames remain live.",
+			"world_anchor_probe": {
+				"delta": 0.0,
+				"first_centre_residual": [
+					0.0,
+					0.0
+				],
+				"first_fractional": [
+					640.5,
+					360.5
+				],
+				"first_screen": "(640, 360)",
+				"moved_centre_residual": [
+					0.0,
+					0.0
+				],
+				"moved_fractional": [
+					576.5,
+					360.5
+				],
+				"moved_screen": "(576, 360)",
+				"selection": "initial rendered texel centre through inverse canvas transform",
+				"tolerance": 0.012
+			},
+			"world_probe": [
+				-2015.25,
+				96.75
+			]
+		}
+	],
+	"scene": "res://scenes/game.tscn",
+	"tool": "res://tools/dev/ThemeAtmospherePreview.tscn"
+}
