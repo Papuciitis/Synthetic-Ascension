@@ -5,37 +5,45 @@ const GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd
 const EDGE_SHADER := preload("res://scenes/world/buildings/city_footway.gdshader")
 
 static func plan(box: Rect2, doors: Array, cell: int, extent: Rect2, lane_h: Rect2 = Rect2(), lane_v: Rect2 = Rect2(), outline: PackedVector2Array = PackedVector2Array()) -> Array[Rect2]:
-	var areas: Array[Rect2] = []
+	var bounds: Array[Rect2] = []
+	for polygon: PackedVector2Array in _approaches(box,doors,cell,extent,lane_h,lane_v,outline):
+		bounds.append(GEOMETRY.bounds_of(polygon))
+	return bounds
+
+
+## A doorway-sized walking approach with shoulders opening toward the street.
+## It does not pave the full house frontage. The small fixed asymmetry follows
+## the door position; no procedural RNG or walkability is consumed/changed.
+static func _approaches(box: Rect2, doors: Array, cell: int, extent: Rect2, lane_h: Rect2, lane_v: Rect2, outline: PackedVector2Array) -> Array[PackedVector2Array]:
+	var result: Array[PackedVector2Array] = []
 	for door: Dictionary in doors:
 		var direction: Vector2i = door.dir
+		var outward := Vector2(direction)
+		var tangent := Vector2(direction.y,-direction.x)
 		var edge := _entry_edge(box,outline,door,cell)
-		var apron := box
-		if direction.y != 0:
-			var front := edge.x
-			apron.position.x = edge.y-cell*0.25
-			apron.size.x = edge.z-edge.y+cell*0.5
-			var reach := cell*1.75
-			if lane_h.has_area():
-				var distance_to_lane := lane_h.position.y-front if direction.y > 0 else front-lane_h.end.y
-				if distance_to_lane >= 0 and distance_to_lane <= cell*4: reach = distance_to_lane+cell*0.5
-			apron.position.y = front if direction.y > 0 else front-reach
-			apron.size.y = reach
-		else:
-			var front := edge.x
-			var reach := cell*1.75
-			if lane_v.has_area():
-				var distance_to_lane := lane_v.position.x-front if direction.x > 0 else front-lane_v.end.x
-				if distance_to_lane >= 0 and distance_to_lane <= cell*4: reach = distance_to_lane+cell*0.5
-			apron.position.x = front if direction.x > 0 else front-reach
-			apron.size.x = reach
-			# A side entry has a local landing, not a slab along the entire house.
-			var center := _door_center(door,cell).y
-			var half_width := (maxi(1,int(door.get("width",2)))+1)*cell*0.5
-			apron.position.y = maxf(edge.y-cell*0.25,center-half_width)
-			apron.size.y = minf(edge.z+cell*0.25,center+half_width)-apron.position.y
-		var clipped := apron.intersection(extent)
-		if clipped.has_area(): areas.append(clipped)
-	return areas
+		var center := _door_center(door,cell)
+		if direction.y != 0: center.y = edge.x
+		else: center.x = edge.x
+		var reach := cell*1.75
+		var lane := lane_h if direction.y != 0 else lane_v
+		if lane.has_area():
+			var distance_to_lane := 0.0
+			if direction == Vector2i.DOWN: distance_to_lane = lane.position.y-center.y
+			elif direction == Vector2i.UP: distance_to_lane = center.y-lane.end.y
+			elif direction == Vector2i.RIGHT: distance_to_lane = lane.position.x-center.x
+			else: distance_to_lane = center.x-lane.end.x
+			if distance_to_lane >= 0.0 and distance_to_lane <= cell*4.0:
+				reach = distance_to_lane+cell*0.5
+		var neck := maxi(1,int(door.get("width",2)))*cell*0.5+cell*0.5
+		var shoulder := neck+cell*0.5
+		var drift := sin(center.x*0.013+center.y*0.009)*cell*0.12
+		var shape := PackedVector2Array()
+		for point: Vector2 in [Vector2(-neck,0),Vector2(neck,0),Vector2(neck+cell*0.18,reach*0.32),Vector2(shoulder+drift,reach*0.75),Vector2(shoulder-cell*0.25+drift,reach),Vector2(-shoulder+cell*0.3+drift,reach),Vector2(-shoulder+drift,reach*0.68),Vector2(-neck-cell*0.12,reach*0.28)]:
+			shape.append(center+tangent*point.x+outward*point.y)
+		for clipped: PackedVector2Array in Geometry2D.intersect_polygons(shape,GEOMETRY.rect_polygon(extent)):
+			result.append(clipped)
+	return result
+
 
 static func _door_center(door: Dictionary, cell: int) -> Vector2:
 	var direction: Vector2i = door.dir
@@ -82,14 +90,14 @@ static func subtract(areas: Array, cuts: Array[Rect2]) -> Array[Rect2]:
 	return pieces
 
 static func compose(chunk: Node2D, footprints: Array[Rect2i], cell: int, cells: int, lane_h: Rect2i = Rect2i(), lane_v: Rect2i = Rect2i()) -> void:
-	var areas: Array[Rect2] = []
+	var areas: Array[PackedVector2Array] = []
 	var extent := Rect2(0,0,cells*cell,cells*cell)
 	var horizontal := Rect2(Vector2(lane_h.position)*cell,Vector2(lane_h.size)*cell)
 	var vertical := Rect2(Vector2(lane_v.position)*cell,Vector2(lane_v.size)*cell)
 	var cuts := GEOMETRY.occupied_parts(chunk,footprints,cell)
 	for kit: Node in chunk.get_children():
 		if not kit.is_in_group(&"city_block_building"): continue
-		areas.append_array(plan(kit.get("bounds"),kit.get("_doors"),cell,extent,horizontal,vertical,GEOMETRY.outline_for(kit)))
+		areas.append_array(_approaches(kit.get("bounds"),kit.get("_doors"),cell,extent,horizontal,vertical,GEOMETRY.outline_for(kit)))
 	# Subtract earlier surfaces too: overlaps must not darken at lot joins.
 	var occupied: Array[PackedVector2Array] = cuts.duplicate()
 	var group := Node2D.new()
@@ -101,6 +109,9 @@ static func compose(chunk: Node2D, footprints: Array[Rect2i], cell: int, cells: 
 	# neighbor/parcel cut is not a new verge and must not grow an alpha seam.
 	var material := ShaderMaterial.new()
 	material.shader = EDGE_SHADER
+	for entry: Array in [["street_h",horizontal],["street_v",vertical]]:
+		var lane: Rect2 = entry[1]
+		material.set_shader_parameter(entry[0],Vector4(lane.position.x,lane.position.y,lane.end.x,lane.end.y) if lane.has_area() else Vector4.ZERO)
 	var edges := _external_edges(areas,cuts,[horizontal,vertical])
 	var edge_image := Image.create(maxi(1,edges.size()),1,false,Image.FORMAT_RGBAF)
 	for index in edges.size():
@@ -108,8 +119,8 @@ static func compose(chunk: Node2D, footprints: Array[Rect2i], cell: int, cells: 
 		edge_image.set_pixel(index,0,Color(edge.x,edge.y,edge.z,edge.w))
 	material.set_shader_parameter("external_edges",ImageTexture.create_from_image(edge_image))
 	material.set_shader_parameter("external_edge_count",edges.size())
-	for area: Rect2 in areas:
-		var candidates: Array[PackedVector2Array] = [GEOMETRY.rect_polygon(area)]
+	for area: PackedVector2Array in areas:
+		var candidates := GEOMETRY.convex_parts(area)
 		for piece: PackedVector2Array in GEOMETRY.difference(candidates,occupied):
 			var paving := Polygon2D.new()
 			paving.name = "ParcelFootway"
@@ -124,36 +135,45 @@ static func compose(chunk: Node2D, footprints: Array[Rect2i], cell: int, cells: 
 ## Only the outside of the complete footway union is a fading verge.
 ## A float texel per segment avoids a fixed shader cap or a material per
 ## subtraction piece. This small descriptor lives/frees with its chunk.
-static func _external_edges(areas: Array[Rect2], cuts: Array[PackedVector2Array], lanes: Array[Rect2]) -> Array[Vector4]:
+static func _external_edges(areas: Array[PackedVector2Array], cuts: Array[PackedVector2Array], lanes: Array[Rect2]) -> Array[Vector4]:
 	var result: Array[Vector4] = []
 	var seen: Dictionary = {}
-	var split_rects: Array[Rect2] = areas.duplicate()
-	for cut: PackedVector2Array in cuts: split_rects.append(GEOMETRY.bounds_of(cut))
-	split_rects.append_array(lanes)
-	for area: Rect2 in areas:
-		var corners := GEOMETRY.rect_polygon(area)
-		for side in 4:
-			var a := corners[side]
-			var b := corners[(side+1)%4]
-			var horizontal := is_equal_approx(a.y,b.y)
-			var normal := Vector2((b-a).y,-(b-a).x).normalized()
-			var low := minf(a.x,b.x) if horizontal else minf(a.y,b.y)
-			var high := maxf(a.x,b.x) if horizontal else maxf(a.y,b.y)
-			var levels: Array[float] = [low,high]
-			for other: Rect2 in split_rects:
-				var boundaries: Array[float] = []
-				if horizontal: boundaries.assign([other.position.x,other.end.x])
-				else: boundaries.assign([other.position.y,other.end.y])
-				for value: float in boundaries:
-					if value > low and value < high and not levels.has(value): levels.append(value)
+	var boundaries: Array[PackedVector2Array] = areas.duplicate()
+	boundaries.append_array(cuts)
+	for lane: Rect2 in lanes:
+		if lane.has_area(): boundaries.append(GEOMETRY.rect_polygon(lane))
+	for area: PackedVector2Array in areas:
+		for side: int in area.size():
+			var a := area[side]
+			var b := area[(side+1)%area.size()]
+			var direction := b-a
+			if direction.length_squared() < 0.001: continue
+			var normal := Vector2(direction.y,-direction.x).normalized()
+			# Clipper winding is not an outward-normal contract.
+			if Geometry2D.is_point_in_polygon((a+b)*0.5+normal*0.1,area): normal = -normal
+			var levels: Array[float] = [0.0,1.0]
+			for other: PackedVector2Array in boundaries:
+				for edge: int in other.size():
+					var c := other[edge]
+					var d := other[(edge+1)%other.size()]
+					var crossing: Variant = Geometry2D.segment_intersects_segment(a,b,c,d)
+					if crossing != null:
+						var along := ((crossing as Vector2)-a).dot(direction)/direction.length_squared()
+						if along > 0.0001 and along < 0.9999 and not levels.has(along): levels.append(along)
+					# Collinear joins still need their endpoints to split a side.
+					for point: Vector2 in [c,d]:
+						if absf(direction.cross(point-a)) > 0.01: continue
+						var along := (point-a).dot(direction)/direction.length_squared()
+						if along > 0.0001 and along < 0.9999 and not levels.has(along): levels.append(along)
 			levels.sort()
-			for index in range(levels.size()-1):
-				var start := Vector2(levels[index],a.y) if horizontal else Vector2(a.x,levels[index])
-				var end := Vector2(levels[index+1],a.y) if horizontal else Vector2(a.x,levels[index+1])
+			for index: int in range(levels.size()-1):
+				if levels[index+1]-levels[index] < 0.0001: continue
+				var start := a+direction*levels[index]
+				var end := a+direction*levels[index+1]
 				var outside := (start+end)*0.5+normal*0.1
 				var boundary := true
-				for other: Rect2 in areas:
-					if other.has_point(outside): boundary = false
+				for other: PackedVector2Array in areas:
+					if Geometry2D.is_point_in_polygon(outside,other): boundary = false
 				for cut: PackedVector2Array in cuts:
 					if Geometry2D.is_point_in_polygon(outside,cut): boundary = false
 				for lane: Rect2 in lanes:

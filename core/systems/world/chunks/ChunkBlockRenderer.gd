@@ -38,6 +38,7 @@ var _cell_size := 64
 var _batches: Dictionary = {}
 var _city_material: ShaderMaterial
 var _domestic_material: ShaderMaterial
+var _s2_pale_material: ShaderMaterial
 
 func _city_stone_material() -> ShaderMaterial:
 	if _city_material == null:
@@ -51,6 +52,14 @@ func _domestic_stone_material() -> ShaderMaterial:
 		_domestic_material = ShaderMaterial.new()
 		_domestic_material.shader = DOMESTIC_STONE
 	return _domestic_material
+
+
+func _s2_pale_stone_material() -> ShaderMaterial:
+	if _s2_pale_material == null:
+		_s2_pale_material = ShaderMaterial.new()
+		_s2_pale_material.shader = CITY_STONE
+		_s2_pale_material.set_shader_parameter("source_relief",0.65)
+	return _s2_pale_material
 
 
 func configure(host: Node2D, chunk_size: int, cell_size: int) -> void:
@@ -101,9 +110,17 @@ func add_chunk(data: ChunkBuildData) -> void:
 		var domestic_stone := wall_like and (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE) != 0
 		if domestic_stone:
 			key += "#domestic_stone"
+		# Select an explicit batch owner while loading this world's chunk.
+		# The material caches themselves have fixed profiles: later S3 loads
+		# cannot mutate or reuse a surviving S2 owner's relief material.
+		var s2_pale := city_stone and not domestic_stone and Global.attempt_segment == 2
+		if s2_pale:
+			key += "#city_s2_pale"
 		var batch := _get_or_create_batch(key, texture, false, kit, z)
 		if domestic_stone:
 			batch.visual.material = _domestic_stone_material()
+		elif s2_pale:
+			batch.visual.material = _s2_pale_stone_material()
 		elif city_stone and not batch.visual.material is ShaderMaterial:
 			batch.visual.material = _city_stone_material()
 		if not touched.has(key):
@@ -167,10 +184,15 @@ func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vecto
 		var city_stone := (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_CITY_STONE) != 0
 		var domestic_stone := (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE) != 0
 		var key := _texture_key(texture) + ("#under_roof" if under_roof else "") + ("#city_stone" if city_stone else "") + ("#domestic_stone" if domestic_stone else "")
+		var s2_pale := city_stone and not domestic_stone and Global.attempt_segment == 2
+		if s2_pale:
+			key += "#city_s2_pale"
 		var fill_z := ChunkBlockVisualCatalog.PROP_Z if under_roof else ChunkBlockVisualCatalog.FILL_Z
 		var batch := _get_or_create_batch(key, texture, true, false, fill_z)
 		if domestic_stone:
 			batch.visual.material = _domestic_stone_material()
+		elif s2_pale:
+			batch.visual.material = _s2_pale_stone_material()
 		elif city_stone:
 			batch.visual.material = _city_stone_material()
 		if not touched.has(key):

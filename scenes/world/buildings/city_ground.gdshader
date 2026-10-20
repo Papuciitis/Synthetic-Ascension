@@ -91,6 +91,10 @@ void fragment() {
 	alpha*=mix(1.0,pockets,smoothstep(-3.0,24.0,outer_d));
 	// The paved road itself stays opaque at continuing chunk connectors.
 	alpha=max(alpha,(1.0-smoothstep(0.0,8.0,road_d))*(1.0-smoothstep(70.0,112.0,outer_d)));
+	// The merged parcel rectangle bounds this draw, but does not own a paved
+	// courtyard. Keep only the real lane and its short irregular shoulder;
+	// separate doorway approaches connect the homes across the shared ground.
+	alpha*=1.0-smoothstep(12.0,68.0,road_d+(fine-0.5)*10.0);
 	// Return to the shared organic ground before crossing a streamed boundary.
 	// This also prevents a straight painted frontage edge in the neighbor's grass.
 	if(chunk_extent.x>0.0) {

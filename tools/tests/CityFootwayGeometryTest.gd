@@ -34,6 +34,11 @@ func _run() -> void:
 			if direction == Vector2i.DOWN:
 				_check(FIXTURE.footway_covers(group,Vector2(544,1120)),"actual bed south door retains an opaque geometrical approach core")
 				_check(not FIXTURE.footway_covers(group,Vector2(544,528)),"south entry does not manufacture pavement behind its roof")
+				_check(not FIXTURE.footway_covers(group,Vector2(240,1150)) and not FIXTURE.footway_covers(group,Vector2(848,1150)),"household approach leaves the distant frontage corners as ground, not a house-width rectangular pad")
+				var near_width := _covered_width(group,1100)
+				var far_width := _covered_width(group,1170)
+				_check(near_width >= 160 and far_width >= 160,"shaped household approach retains the complete two-cell door and walking margin")
+				_check(absi(far_width-near_width) >= 16,"actual approach silhouette changes width between doorway and street rather than merely feathering a rectangle")
 			else:
 				_check(FIXTURE.footway_covers(group,Vector2(288,736)),"north-facing inner L door gets a landing on its real exposed edge")
 				_check(not FIXTURE.footway_covers(group,Vector2(640,528)),"inner L entry does not paint a phantom landing along the bounding-box north wall")
@@ -47,3 +52,11 @@ func _run() -> void:
 	Global.attempt_segment = old_segment
 	print("CityFootwayGeometryTest: %d passed, %d failed" % [_passes,_failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+func _covered_width(group: Node, y: int) -> int:
+	var count := 0
+	for x: int in range(1024):
+		if FIXTURE.footway_covers(group,Vector2(x+0.5,y+0.5)):
+			count += 1
+	return count

@@ -465,15 +465,47 @@ func _add_domestic_garden_bed(width: float, variant: int) -> void:
 	var front := _front+8
 	var depth := 48.0 if variant == 0 else 72.0
 	var bed := PackedVector2Array([Vector2(left,front),Vector2(left+width-14,front+3),Vector2(left+width,front+depth*0.52),Vector2(left+width-24,front+depth),Vector2(left+16,front+depth-9),Vector2(left-7,front+depth*0.42)])
-	var soil := _flat(self,bed,Color("535842"))
+	var soil := _flat(self,bed,Color("514b39"))
 	soil.name = "TendedDomesticBed"
 	soil.z_index = -90
 	soil.set_meta(&"city_domestic_garden",variant)
+	# A planted pocket sits in the same earth as the surrounding ground.
+	# Feather its mesh edge instead of leaving an opaque flat polygon sticker.
+	var center := Vector2.ZERO
+	for point: Vector2 in bed: center += point
+	center /= bed.size()
+	var points := bed.duplicate()
+	var colors := PackedColorArray()
+	var faces: Array[PackedInt32Array] = []
+	for point: Vector2 in bed:
+		points.append(point.lerp(center,0.24))
+		colors.append(Color(1,1,1,0))
+	for index: int in bed.size(): colors.append(Color.WHITE)
+	points.append(center)
+	colors.append(Color.WHITE)
+	for index: int in bed.size():
+		var next := (index+1)%bed.size()
+		faces.append(PackedInt32Array([index,next,next+bed.size(),index+bed.size()]))
+		faces.append(PackedInt32Array([bed.size()*2,index+bed.size(),next+bed.size()]))
+	soil.polygon = points
+	soil.polygons = faces
+	soil.vertex_colors = colors
+	soil.texture = _texture("res://assets/world/ground/ground_dirt_01.png")
+	soil.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	soil.color = Color(0.82,0.77,0.65)
+	var soil_uv := PackedVector2Array()
+	for point: Vector2 in points:
+		soil_uv.append(to_global(point)*soil.texture.get_size()/300.0)
+	soil.uv = soil_uv
 	if variant != 1:
 		var bed_sprite := Sprite2D.new()
 		bed_sprite.name = "DomesticHerbBed"
 		bed_sprite.texture = _texture("res://assets/world/domestic_gardens/v1/flower_herb_bed.png")
 		bed_sprite.scale = Vector2.ONE*(minf(width,115.0)/1761.0)
+		# Original art is reduced roughly fifteen-fold. Its mip chain keeps
+		# fine leaves/stone from becoming isolated bright sampling speckles.
+		bed_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		bed_sprite.modulate = Color(0.94,0.93,0.87)
 		var contact := Vector2(left+width*0.5,front+22)
 		bed_sprite.position = contact+(bed_sprite.texture.get_size()*0.5-Vector2(955,485))*bed_sprite.scale
 		bed_sprite.z_index = 1

@@ -7,6 +7,8 @@ uniform int external_edge_count = 0;
 uniform float edge_feather = 18.0;
 uniform float surface_contrast = 0.27;
 uniform vec3 surface_mid = vec3(0.57, 0.59, 0.55);
+uniform vec4 street_h = vec4(0.0);
+uniform vec4 street_v = vec4(0.0);
 varying vec2 point;
 varying vec2 world_point;
 varying vec4 surface_tint;
@@ -21,6 +23,12 @@ float noise(vec2 p) {
 	t = t * t * (3.0 - 2.0 * t);
 	return mix(mix(hash(base), hash(base + vec2(1.0, 0.0)), t.x),
 		mix(hash(base + vec2(0.0, 1.0)), hash(base + vec2(1.0, 1.0)), t.x), t.y);
+}
+
+float lane_distance(vec2 p, vec4 lane) {
+	if (lane.z <= lane.x || lane.w <= lane.y) return 100000.0;
+	vec2 q = abs(p - (lane.xy + lane.zw) * 0.5) - (lane.zw - lane.xy) * 0.5;
+	return length(max(q,vec2(0.0))) + min(max(q.x,q.y),0.0);
 }
 
 void vertex() {
@@ -41,5 +49,9 @@ void fragment() {
 	// painted soil/grass halo, and building contacts/road joins stay opaque.
 	float wear = noise(world_point / 57.0) * 7.0 + noise(world_point / 17.0) * 3.0;
 	float alpha = smoothstep(0.0, edge_feather, distance_to_edge - wear);
+	// The generated road already owns its surface underneath. Let the short
+	// approach merge into that paving instead of stamping a pale slab over it.
+	float road_distance = min(lane_distance(point,street_h),lane_distance(point,street_v));
+	alpha *= smoothstep(-32.0,16.0,road_distance);
 	COLOR = vec4(mix(surface_mid * surface_tint.rgb, COLOR.rgb, surface_contrast), COLOR.a * alpha);
 }
