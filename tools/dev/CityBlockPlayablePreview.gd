@@ -401,6 +401,9 @@ func _district_evidence() -> Dictionary:
 	result["camera"] = {"position":str(_camera.global_position),"rotation":_camera.rotation,"zoom":str(_camera.zoom),"viewport":str(get_viewport().get_visible_rect().size),"window":str(get_window().size)}
 	result["fixture"] = {"scripted_input":not _playable,"player_god_mode":not _playable,"ambient_spawner":false,"streaming_frozen_after_reload":not _playable,"optional_details_hidden":_hide_district_details,"video_adapter":RenderingServer.get_video_adapter_name(),"renderer":RenderingServer.get_current_rendering_method()}
 	result["ground"] = _ground_evidence(coord)
+	var cover_script: GDScript = load("res://core/systems/world/visibility/WorldCover.gd")
+	var cover: Node = cover_script.call("get_for",_player)
+	result["world_cover"] = cover.call("snapshot_stats")
 	if _roof == null or _volume == null: return result
 	result["doors"] = str(_roof._doors)
 	result["footprint"] = str(_roof.footprint_outline_px)

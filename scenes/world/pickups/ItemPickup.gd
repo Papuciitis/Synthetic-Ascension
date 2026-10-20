@@ -57,6 +57,7 @@ var _picked: bool = false
 var ground_serial: int = 0
 var _magnet_cooldown: float = 0.0
 var _player_ref: Node2D = null
+var _cover: RefCounted = preload("res://core/systems/world/visibility/PickupCover.gd").new()
 
 
 func _ready() -> void:
@@ -83,6 +84,7 @@ func _ready() -> void:
 		vfx.set_locked(true)
 		if vfx.has_method("set_exploration"):
 			vfx.call("set_exploration", is_exploration_loot)
+	_cover.configure(self, icon_sprite)
 
 	_enable_pickup_later()
 	_expire_later()
@@ -94,6 +96,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	# Locked, protected and distant pickups still render. Their presentation
+	# must refresh independently of magnet eligibility and its idle polling.
+	_cover.update()
 	# Loot magnet: enemy/world drops drift to the player at close range.
 	# Deliberate player drops (persistent_world_drop) stay where they were
 	# put. The close-range retry un-latches bag-full pickups once space

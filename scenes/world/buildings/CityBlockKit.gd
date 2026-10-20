@@ -5,6 +5,7 @@ extends Node2D
 const ART := preload("res://core/systems/world/WorldArt.gd")
 const ROOT := "res://assets/world/city_block/"
 const GUARD_ROOT := "res://assets/world/districts/checkpoint_lanes/"
+const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
 var bounds := Rect2()
 var civic := false
 var _door_x := 0.0
@@ -73,6 +74,7 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	if south:
 		_south_front = true
 	_facade = _texture("civic_arcade.png" if civic else "house_front.png")
+	if not _irregular and not _is_guard(): _add_facade_faces(bounds.end.y)
 	if roof != null:
 		roof.cover_alpha_changed.connect(_on_roof_alpha)
 		var roof_profile := _district_profile.duplicate()
@@ -420,6 +422,8 @@ func _add_planting() -> void:
 		plant.modulate = Color(1.04,1.08,0.99)
 		plant.z_index = 1
 		add_child(plant)
+		if plant.name == &"CityTemperateTree":
+			preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd").register(plant, feet)
 		var projection := preload("res://core/systems/world/WorldDepthStyle.gd").project_transform(plant.transform,feet)
 		var half := source.get_size()*0.5
 		var uv := PackedVector2Array([Vector2.ZERO,Vector2(source.get_width(),0),source.get_size(),Vector2(0,source.get_height())])
@@ -518,6 +522,52 @@ static func _texture(file: String) -> Texture2D:
 	if texture != null: _texture_cache[file] = texture
 	return texture
 
+func _add_facade_faces(ground_y: float) -> void:
+	if _facade == null: return
+	# The former texture draw calls preceded every parent-drawn shadow and
+	# service prop. Behind-parent sprites preserve that ordering and natural Z.
+	var group := Node2D.new()
+	group.name = "FacadeFaces"
+	group.show_behind_parent = true
+	group.set_meta(&"city_facade_detail",true)
+	group.modulate.a = _facade_alpha
+	add_child(group)
+	var tex_size := _facade.get_size()
+	if _south_front:
+		var opening_left := 0.402 if civic else 0.425
+		var opening_right := 0.598 if civic else 0.575
+		var x0 := bounds.position.x+16.0
+		var x1 := bounds.end.x-16.0
+		var door_left := _door_x-_door_width*0.5
+		var door_right := _door_x+_door_width*0.5
+		var top := _front-_facade_height
+		_facade_face(group,"FacadeLeft",Rect2(x0,top,door_left-x0,_facade_height),Rect2(0,0,tex_size.x*opening_left,tex_size.y),ground_y)
+		_facade_face(group,"FacadeEntrance",Rect2(door_left,top,_door_width,_facade_height),Rect2(tex_size.x*opening_left,0,tex_size.x*(opening_right-opening_left),tex_size.y),ground_y)
+		_facade_face(group,"FacadeRight",Rect2(door_right,top,x1-door_right,_facade_height),Rect2(tex_size.x*opening_right,0,tex_size.x*(1.0-opening_right),tex_size.y),ground_y)
+	else:
+		var source := Rect2(Vector2.ZERO,Vector2(tex_size.x*(0.39 if civic else 0.40),tex_size.y))
+		var width := bounds.size.x-32.0
+		var nominal := source.size.x/source.size.y*_facade_height
+		var count := maxi(1,int(round(width/nominal)))
+		var bay_width := width/count
+		for index in count:
+			var at := Vector2(bounds.position.x+16+index*bay_width,_front-_facade_height)
+			_facade_face(group,"FacadeClosedBay",Rect2(at,Vector2(bay_width,_facade_height)),source,ground_y)
+
+func _facade_face(parent: Node2D, face_name: String, target: Rect2, source: Rect2, ground_y: float) -> void:
+	if not target.has_area() or not source.has_area(): return
+	var face := Sprite2D.new()
+	face.name = face_name
+	face.texture = _facade
+	face.region_enabled = true
+	face.region_rect = source
+	face.region_filter_clip_enabled = true
+	face.centered = false
+	face.position = target.position
+	face.scale = target.size/source.size
+	parent.add_child(face)
+	FOREGROUND.register(face,Vector2(target.get_center().x,ground_y))
+
 func _draw() -> void:
 	if _is_guard(): return
 	if _facade != null and not _south_front and not _irregular:
@@ -525,18 +575,8 @@ func _draw() -> void:
 	if _facade != null and _south_front and not _irregular:
 		# Slice into wings and entrance: generated opening is fitted to the
 		# carver's exact two-cell gap, never used as a collision proxy.
-		var tex_size := _facade.get_size()
-		var opening_left := 0.402 if civic else 0.425
-		var opening_right := 0.598 if civic else 0.575
-		var x0 := bounds.position.x + 16.0
-		var x1 := bounds.end.x - 16.0
 		var door_left := _door_x - _door_width * 0.5
 		var door_right := _door_x + _door_width * 0.5
-		var top := _front - _facade_height
-		var tint := Color(1, 1, 1, _facade_alpha)
-		draw_texture_rect_region(_facade, Rect2(x0, top, door_left - x0, _facade_height), Rect2(0, 0, tex_size.x * opening_left, tex_size.y), tint)
-		draw_texture_rect_region(_facade, Rect2(door_left, top, _door_width, _facade_height), Rect2(tex_size.x * opening_left, 0, tex_size.x * (opening_right - opening_left), tex_size.y), tint)
-		draw_texture_rect_region(_facade, Rect2(door_right, top, x1 - door_right, _facade_height), Rect2(tex_size.x * opening_right, 0, tex_size.x * (1.0 - opening_right), tex_size.y), tint)
 		if _awning_cast.has_area():
 			var awning_shadow := _awning_cast
 			draw_polygon(PackedVector2Array([awning_shadow.position,Vector2(awning_shadow.end.x,awning_shadow.position.y),awning_shadow.end,Vector2(awning_shadow.position.x,awning_shadow.end.y)]),PackedColorArray([Color(0.08,0.14,0.16,0.22*_facade_alpha),Color(0.08,0.14,0.16,0.22*_facade_alpha),Color(0.08,0.14,0.16,0),Color(0.08,0.14,0.16,0)]))
@@ -631,14 +671,7 @@ func _draw() -> void:
 func _draw_closed_frontage() -> void:
 	# Reuse only the closed side bay, at its native aspect ratio. Repeating
 	# complete window/arcade bays avoids stretching an entire facade to fit.
-	var source := Rect2(Vector2.ZERO, Vector2(_facade.get_width() * (0.39 if civic else 0.40), _facade.get_height()))
 	var width := bounds.size.x - 32.0
-	var nominal := source.size.x / source.size.y * _facade_height
-	var count := maxi(1, int(round(width / nominal)))
-	var bay_width := width / count
-	for index in count:
-		var at := Vector2(bounds.position.x + 16 + index * bay_width, _front - _facade_height)
-		draw_texture_rect_region(_facade, Rect2(at, Vector2(bay_width, _facade_height)), source, Color(1,1,1,_facade_alpha))
 	draw_rect(Rect2(bounds.position.x+16,_front-_facade_height,width,12),Color(0.08,0.14,0.17,0.28*_facade_alpha))
 
 func _draw_street_border(from: Vector2, to: Vector2, portal: Rect2) -> void:

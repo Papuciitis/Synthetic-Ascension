@@ -3,6 +3,7 @@ extends Node2D
 
 const Types = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
 const DEPTH_STYLE := preload("res://core/systems/world/WorldDepthStyle.gd")
+const WORLD_COVER := preload("res://core/systems/world/visibility/WorldCover.gd")
 
 # Transform2D (8, padded) + colour (4) + custom data (4): the custom vec4 is
 # the atlas region an instance shows, see EnemyProxyRegion.gdshader.
@@ -40,6 +41,7 @@ var _diagnostic_texture: ImageTexture = null
 var _region_material: ShaderMaterial = null
 var _elite_material: ShaderMaterial = null
 var _shadow_material: ShaderMaterial = null
+var _world_cover: Node = null
 var _visible_count := 0
 var _last_upload_usec := 0
 var _profile_sweep_counter := 0
@@ -132,6 +134,11 @@ func publish(
 	proxy_interval: float = 0.0,
 ) -> int:
 	var started := Time.get_ticks_usec()
+	var cover := _cover_service()
+	if cover != null:
+		# Roof fade and streamed foreground stay live even when the proxy
+		# instance buffers are retained for a half-rate publication.
+		cover.call("refresh", self)
 	_visible_count = 0
 	if _world == null or not is_instance_valid(_world):
 		_visible_proxy_count = 0
@@ -848,6 +855,27 @@ func _profile_for(handle: int) -> Dictionary:
 	return profile
 
 
+func _cover_service() -> Node:
+	if is_instance_valid(_world_cover):
+		return _world_cover
+	# Setup is also used before the renderer joins a viewport. Resolve on
+	# first publish in that case, then bind both existing shared surfaces.
+	if not is_inside_tree():
+		return null
+	_world_cover = WORLD_COVER.get_for(self)
+	if _world_cover != null:
+		for material: ShaderMaterial in [_region_material, _elite_material]:
+			if material != null:
+				_world_cover.call("bind_material", material)
+	return _world_cover
+
+
+func _bind_cover_material(material: ShaderMaterial) -> void:
+	var cover := _cover_service()
+	if cover != null:
+		cover.call("bind_material", material)
+
+
 func _ensure_region_material(elite: bool = false) -> ShaderMaterial:
 	if elite:
 		if _elite_material == null:
@@ -855,11 +883,13 @@ func _ensure_region_material(elite: bool = false) -> ShaderMaterial:
 			_elite_material.shader = REGION_SHADER
 			_elite_material.set_shader_parameter("elite_enabled", true)
 			_elite_material.set_shader_parameter("glint_motion", not bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false)))
+			_bind_cover_material(_elite_material)
 			_apply_flash_strength()
 		return _elite_material
 	if _region_material == null:
 		_region_material = ShaderMaterial.new()
 		_region_material.shader = REGION_SHADER
+		_bind_cover_material(_region_material)
 		_apply_flash_strength()
 	return _region_material
 

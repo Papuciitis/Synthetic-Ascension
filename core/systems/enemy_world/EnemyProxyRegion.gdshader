@@ -1,5 +1,7 @@
 shader_type canvas_item;
 
+#include "res://core/systems/world/visibility/world_cover.gdshaderinc"
+
 // Proxy batches draw one unit quad per instance. INSTANCE_CUSTOM carries the
 // atlas region (x, y, w, h in 0..1 of the batch texture) so a single batch can
 // show any frame of an enemy sheet; a whole-texture instance passes (0,0,1,1).
@@ -22,8 +24,14 @@ varying flat float hit_flash;
 varying flat vec4 frame_region;
 varying flat float phase;
 varying vec4 vertex_modulate;
+varying vec2 cover_world_position;
+varying flat float cover_feet_y;
 
 void vertex() {
+	cover_world_position = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
+	// Both proxy and materialized batches use a Y-inverted unit quad. This
+	// is the same lower-frame-center anchor used by their cast shadows.
+	cover_feet_y = (MODEL_MATRIX * vec4(0.0, -0.5, 0.0, 1.0)).y;
 	vertex_modulate = COLOR;
 	hit_flash = 0.0;
 	phase = glint_phase;
@@ -85,4 +93,9 @@ void fragment() {
 	}
 	// Damage feedback wins over the decorative sheen.
 	COLOR.rgb = mix(COLOR.rgb, vec3(1.0), hit_flash * hit_flash_strength);
+	if (use_instance_region) {
+		// Coverage composes with the completed body/elite/hurt presentation.
+		// Sprite fallback materials retain their existing owner and geometry.
+		COLOR = world_cover_composite(COLOR, world_cover_strength(cover_world_position, cover_feet_y));
+	}
 }

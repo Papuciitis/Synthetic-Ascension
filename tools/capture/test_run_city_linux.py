@@ -318,6 +318,7 @@ class MemoryAndProvenanceTest(unittest.TestCase):
         (self.root / "tools/tests").mkdir(parents=True)
         (self.root / "assets/world").mkdir(parents=True)
         (self.root / "tools/tests/NewTest.gd").write_text("extends SceneTree\n")
+        (self.root / "tools/tests/shared.gdshaderinc").write_text("float shared_cover() { return 1.0; }\n")
         (self.root / "assets/world/ground.png").write_bytes(b"source pixels")
         (self.root / "assets/world/ground.png.import").write_text("filter=false\n")
         def git_output(command, **kwargs):
@@ -326,14 +327,15 @@ class MemoryAndProvenanceTest(unittest.TestCase):
             if "status" in command:
                 return b"?? tools/tests/NewTest.gd\n"
             if "--others" in command or "-co" in command:
-                return b"tools/tests/NewTest.gd\0assets/world/ground.png\0assets/world/ground.png.import\0"
+                return b"tools/tests/NewTest.gd\0assets/world/ground.png\0assets/world/ground.png.import\0tools/tests/shared.gdshaderinc\0"
             return b"assets/world/ground.png\0"
         with mock.patch.object(self.runner.subprocess, "check_output", side_effect=git_output):
             result = self.runner.provenance(self.root)
         self.assertEqual(result["git_head"], "0123456789abcdef")
-        self.assertEqual(result["source_untracked"], ["tools/tests/NewTest.gd", "assets/world/ground.png.import"])
+        self.assertEqual(result["source_untracked"], ["tools/tests/NewTest.gd", "assets/world/ground.png.import", "tools/tests/shared.gdshaderinc"])
         self.assertIn("assets/world/ground.png.import", result["source_hashes"])
         self.assertIn("tools/tests/NewTest.gd", result["source_hashes"])
+        self.assertIn("tools/tests/shared.gdshaderinc", result["source_hashes"])
         self.assertEqual(result["source_hashes"]["assets/world/ground.png"],
                          "698963b4b559dd76e612eb2ea91bc82098bc644be414832d9ebb21084cd663b0")
 

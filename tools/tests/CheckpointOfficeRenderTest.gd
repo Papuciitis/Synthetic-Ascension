@@ -4,6 +4,7 @@ const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const PROFILES := preload("res://scenes/world/buildings/DistrictVisualProfiles.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const MASK := preload("res://core/actors/player/PlayerRoofOcclusion.gd")
+const WORLD_COVER := preload("res://core/systems/world/visibility/WorldCover.gd")
 var passed := 0
 var failed := 0
 
@@ -18,20 +19,22 @@ func _check(ok: bool, message: String) -> void:
 
 func _budget_reference(mask: RefCounted, actor: Node2D, roofs: Array[RoofOverlay], feet: Vector2, bounds: Rect2) -> Array:
 	# Isolate each real roof so its independent geometry cannot consume another
-	# roof's budget. Their union is the reference for the shared capped mask.
+	# roof's legacy diagnostic budget. Their union independently references
+	# the new uncapped rendering snapshot as well as the retained diagnostic.
 	var reference: Array = []
 	for roof: RoofOverlay in roofs: roof.remove_from_group(&"roof_occluders")
 	for roof: RoofOverlay in roofs:
 		roof.add_to_group(&"roof_occluders")
 		mask.update(actor,feet,bounds)
-		_check(mask._triangles.size()<32,"Each isolated reference roof is below the coverage cap")
+		mask.call("_refresh_roof_diagnostics")
+		_check(mask._triangles.size()<32,"Each isolated legacy diagnostic reference stays below32 triangles")
 		for index: int in mask._triangles.size():
 			reference.append({"triangle":mask._triangles[index].duplicate(),"strength":mask._strengths[index]})
 		roof.remove_from_group(&"roof_occluders")
 	for roof: RoofOverlay in roofs: roof.add_to_group(&"roof_occluders")
 	return reference
 
-func _budget_samples_match(mask: RefCounted, reference: Array, bounds: Rect2) -> bool:
+func _budget_samples_match(mask: RefCounted, reference: Array, bounds: Rect2, shared: Node = null, feet_y: float = 0.0) -> bool:
 	# Dense interior/edge grid detects loss on either the guard or its neighbours;
 	# checking a cap centroid alone could miss discarded late triangles.
 	var samples := PackedVector2Array()
@@ -49,7 +52,8 @@ func _budget_samples_match(mask: RefCounted, reference: Array, bounds: Rect2) ->
 		var expected := 0.0
 		for row: Dictionary in reference:
 			if Geometry2D.is_point_in_polygon(point,row.triangle): expected=maxf(expected,row.strength)
-		if not is_equal_approx(mask.strength_at(point),expected): return false
+		var actual := float(shared.call("strength_at",point,feet_y)) if shared != null else float(mask.strength_at(point))
+		if not is_equal_approx(actual,expected): return false
 	return true
 
 func _fixture(direction: Vector2i, irregular: bool) -> Dictionary:
@@ -74,6 +78,7 @@ func _fixture(direction: Vector2i, irregular: bool) -> Dictionary:
 	return {"roof":roof,"kit":kit,"doors":doors}
 
 func _run() -> void:
+	var shared := WORLD_COVER.get_for(self)
 	for path: String in ["res://assets/world/districts/checkpoint_lanes/guard_arch_open.png","res://assets/world/districts/checkpoint_lanes/guard_arch_closed.png"]:
 		var texture := KIT._texture(path)
 		_check(texture != null,"Required original guard module is available through the production asset loader")
@@ -119,6 +124,8 @@ func _run() -> void:
 						roof._set_alpha(alpha_value)
 						mask.update(actor,feet,bounds)
 						_check(is_equal_approx(mask.strength_at(sample),alpha_value),"Raised roof pixel visibility follows the real roof alpha")
+						shared.call("refresh",actor,true)
+						_check(is_equal_approx(float(shared.call("strength_at",sample,feet.y)),alpha_value),"Uncapped shared coverage preserves raised guard roof opacity")
 						for face_name: String in ["GuardWatchFront","GuardWatchSide"]:
 							var face := roof.find_children(face_name,"Polygon2D",true,false)[0] as Polygon2D
 							var face_sample := Vector2.ZERO
@@ -126,6 +133,7 @@ func _run() -> void:
 							face_sample /= face.polygon.size()
 							mask.update(actor,feet,Rect2(face_sample-Vector2(55,75),Vector2(110,150)))
 							_check(is_equal_approx(mask.strength_at(face_sample),alpha_value),"Full upright watch face follows its owning roof's visibility")
+							_check(is_equal_approx(float(shared.call("strength_at",face_sample,feet.y)),alpha_value),"Uncapped shared coverage retains visible watch faces and their transparent helper masks")
 					var neighbour := ROOF.instantiate() as RoofOverlay
 					add_child(neighbour)
 					neighbour.position = Vector2(80,-40)
@@ -148,15 +156,18 @@ func _run() -> void:
 						budget_kits.append(extra_fixture.kit)
 						reference = _budget_reference(mask,actor,budget_roofs,feet,bounds)
 					print("Guard coverage stress dir=%s irregular=%s reference_triangles=%d roofs=%d" % [direction,irregular,reference.size(),budget_roofs.size()])
-					_check(reference.size()>=28,"Neighbour fixture genuinely pressures the 32-triangle shared budget")
+					_check(reference.size()>=28,"Neighbour fixture genuinely pressures the legacy32-triangle diagnostic budget")
 					for reverse_order: bool in [false,true]:
 						move_child(roof,get_child_count()-1 if reverse_order else 0)
 						mask.update(actor,feet,bounds)
-						_check(mask._triangles.size()==mini(reference.size(),32),"Shared mask reaches the reference count or the actual fixed capacity")
-						_check(_budget_samples_match(mask,reference,bounds),"Both roof stream orders match uncapped union coverage over the whole actor")
+						mask.call("_refresh_roof_diagnostics")
+						_check(mask._triangles.size()==mini(reference.size(),32),"Legacy diagnostic reaches its reference count or32-triangle capacity")
+						_check(_budget_samples_match(mask,reference,bounds),"Legacy diagnostic retains accepted guard coverage in both roof stream orders")
+						shared.call("refresh",actor,true)
+						_check(_budget_samples_match(mask,reference,bounds,shared,feet.y),"Uncapped rendered-world query matches independent guard union across dense edge/interior samples in both stream orders")
 					mask.update(actor,feet,bounds)
 					_check(mask.strength_at(sample)>0.99,"Neighbouring roof cannot exhaust coverage of the raised guard mass")
-					_check(mask._triangles.size()<=32,"Guard family stays within the existing actor coverage capacity")
+					_check(mask._triangles.size()<=32,"Retained legacy guard diagnostic stays bounded by32 triangles")
 					for extra: RoofOverlay in budget_roofs.slice(2): extra.free()
 					for extra_kit: Node2D in budget_kits: extra_kit.free()
 					neighbour.free()
@@ -164,14 +175,20 @@ func _run() -> void:
 					for point: Vector2 in roof.footprint_outline_px: front_y = maxf(front_y,point.y)
 					mask.update(actor,Vector2(sample.x,front_y+1),bounds)
 					_check(is_zero_approx(mask.strength_at(sample)),"Actor in front of the whole building keeps ordinary appearance")
+					shared.call("refresh",actor,true)
+					_check(is_zero_approx(float(shared.call("strength_at",sample,front_y+1))),"Shared guard coverage leaves an actor in front normal")
 					roof._inside_count = 1
 					roof._set_alpha(1.0)
 					mask.update(actor,feet,bounds)
 					_check(is_zero_approx(mask.strength_at(sample)),"Indoor ownership retains normal actor appearance")
+					shared.call("refresh",actor,true)
+					_check(is_zero_approx(float(shared.call("strength_at",sample,feet.y))),"Shared guard cutaway retains normal actor appearance")
 					roof._inside_count = 0
 					remove_child(roof)
 					mask.update(actor,feet,bounds)
 					_check(is_zero_approx(mask.strength_at(sample)),"Streaming the form out clears actor coverage")
+					shared.call("refresh",actor,true)
+					_check(is_zero_approx(float(shared.call("strength_at",sample,feet.y))),"Shared guard streaming removal clears uncapped coverage")
 					add_child(roof)
 				actor.free()
 			kit.free()

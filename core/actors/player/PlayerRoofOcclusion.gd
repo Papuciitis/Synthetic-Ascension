@@ -1,13 +1,18 @@
 extends RefCounted
-## Roof-only per-pixel silhouette. Sprite animation, hurt tint and indoor
-## cutaways keep their owners; no actor depth or physical geometry changes.
+## Shared per-pixel roof/foreground silhouette. Sprite animation, hurt tint
+## and indoor cutaways keep their owners. Legacy actor-local roof probes are
+## computed only when diagnostics request them; rendering has no32-triangle cap.
 
 const MAX_TRIANGLES := 32
 const SHADER := preload("res://core/actors/player/player_roof_occlusion.gdshader")
 var _material: ShaderMaterial
 var _triangles: Array[PackedVector2Array] = []
 var _strengths := PackedFloat32Array()
-var _last_count := 0
+var _probe_view: WeakRef
+var _probe_feet := Vector2.ZERO
+var _probe_bounds := Rect2()
+var _probe_dirty := true
+var _world_cover: Node
 
 func configure(body: AnimatedSprite2D, head: AnimatedSprite2D) -> void:
 	_material = ShaderMaterial.new()
@@ -16,13 +21,38 @@ func configure(body: AnimatedSprite2D, head: AnimatedSprite2D) -> void:
 	head.material = _material
 
 func update(view: Node2D, feet: Vector2, sprite_bounds: Rect2) -> void:
+	# Keep the established roof probes while sharing view-wide roof/foreground
+	# coverage with batch and pickup consumers. Actor feet remain this visual's
+	# measured origin; CharacterBody position is not its ground anchor.
+	if not is_instance_valid(_world_cover):
+		var script: GDScript = load("res://core/systems/world/visibility/WorldCover.gd")
+		_world_cover = script.call("get_for",view)
+		_world_cover.call("bind_material",_material)
+	_world_cover.call("refresh",view)
+	_material.set_shader_parameter("world_cover_feet_y",feet.y)
+	_probe_view = weakref(view)
+	_probe_feet = feet
+	_probe_bounds = sprite_bounds
+	_probe_dirty = true
+	_triangles.clear()
+	_strengths.clear()
+
+func _refresh_roof_diagnostics() -> void:
+	if not _probe_dirty or _probe_view == null:
+		return
+	_probe_dirty = false
+	var view := _probe_view.get_ref() as Node2D
+	if view == null or not view.is_inside_tree():
+		return
+	var feet := _probe_feet
+	var sprite_bounds := _probe_bounds
 	_triangles.clear()
 	_strengths.clear()
 	for node: Node in view.get_tree().get_nodes_in_group(&"roof_occluders"):
 		var roof := node as RoofOverlay
 		if roof == null or not roof.is_visible_in_tree() or roof._inside_count > 0: continue
 		var poly := roof.get_node("RoofPoly") as Polygon2D
-		var strength := poly.modulate.a
+		var strength := float(_world_cover.call("_effective_alpha",poly))
 		if strength < 0.01 or roof.footprint_outline_px.is_empty(): continue
 		var footprint := Rect2(roof.to_global(roof.footprint_outline_px[0]), Vector2.ZERO)
 		for point: Vector2 in roof.footprint_outline_px: footprint = footprint.expand(roof.to_global(point))
@@ -46,22 +76,6 @@ func update(view: Node2D, feet: Vector2, sprite_bounds: Rect2) -> void:
 					continue
 				var shift := projection + poly.global_transform.basis_xform(Vector2(0, -float(child.get_meta(&"city_roof_lift", 0.0))))
 				_append(child as Polygon2D, sprite_bounds, strength, regions, shift)
-	if _triangles.is_empty():
-		if _last_count > 0: _material.set_shader_parameter("triangle_count", 0)
-		_last_count = 0
-		return
-	var ab := PackedVector4Array()
-	var ca := PackedVector4Array()
-	ab.resize(MAX_TRIANGLES)
-	ca.resize(MAX_TRIANGLES)
-	for index in _triangles.size():
-		var points := _triangles[index]
-		ab[index] = Vector4(points[0].x, points[0].y, points[1].x, points[1].y)
-		ca[index] = Vector4(points[2].x, points[2].y, _strengths[index], 0)
-	_material.set_shader_parameter("triangle_count", _triangles.size())
-	_material.set_shader_parameter("triangle_ab", ab)
-	_material.set_shader_parameter("triangle_ca", ca)
-	_last_count = _triangles.size()
 
 func _behind_regions(roof: RoofOverlay, feet_y: float) -> Array[Rect2]:
 	# Partition the real footprint into vertical filled spans. Each span's
@@ -111,6 +125,7 @@ func _append_triangles(points: PackedVector2Array, bounds: Rect2, strength: floa
 		if _triangles.size() >= MAX_TRIANGLES: return
 
 func strength_at(point: Vector2) -> float:
+	_refresh_roof_diagnostics()
 	var strength := 0.0
 	for index in _triangles.size():
 		if Geometry2D.is_point_in_polygon(point, _triangles[index]):

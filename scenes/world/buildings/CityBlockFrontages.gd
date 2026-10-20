@@ -1,6 +1,10 @@
 extends RefCounted
 ## Geometry around real cardinal openings; painted facades stay north-up.
 
+const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
+const SOLID_GROUP := &"foreground_solid_occluders"
+const GROUND_META := &"foreground_ground_contact"
+
 static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVector2Array, lantern_texture: Texture2D = null, portal_masonry: Texture2D = null) -> void:
 	var group := Node2D.new()
 	group.name = "CardinalWallReturns"
@@ -49,6 +53,7 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 					var upper := _panel(group,Rect2(run.x,b.y-16-height,run.y-run.x,height-112),Color.WHITE)
 					var upper_finish := finish if finish != null else portal_masonry
 					if upper_finish != null: _plaster(upper,upper_finish,Color("b9b9a8"))
+					_register_solid(upper,Vector2((run.x+run.y)*0.5,b.y))
 	for door: Dictionary in doors:
 		if door.dir == Vector2i.DOWN and outline.is_empty(): continue
 		var gap := _door_box(door,cell_px)
@@ -117,6 +122,8 @@ static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float,
 	right_jamb.name = "RightJamb"
 	var lintel := _panel(portal,Rect2(left-15,top+8,gap.size.x+30,14),Color("b0b19c"))
 	lintel.name = "Lintel"
+	for face: Polygon2D in [left_jamb,right_jamb,lintel]:
+		_register_solid(face,Vector2((left+right)*0.5,gap.end.y))
 	# Crop only the original entrance's masonry components, without a door
 	# leaf or surrounding window bays. The shared roof still owns the eave.
 	if facade != null:
@@ -151,10 +158,18 @@ static func _panel(parent: Node2D, rect: Rect2, color: Color) -> Polygon2D:
 	parent.add_child(shape)
 	return shape
 
+static func _register_solid(shape: Polygon2D, ground_parent_local: Vector2) -> void:
+	# Only known opaque upright planes enter this class. Recesses, thresholds
+	# and decorative translucent shadows keep their existing presentation.
+	if shape == null: return
+	shape.set_meta(GROUND_META,ground_parent_local)
+	shape.add_to_group(SOLID_GROUP)
+
 static func _wall_bays(parent: Node2D, texture: Texture2D, run: Vector2, bottom: float, height: float, civic: bool) -> void:
 	if texture == null or run.y-run.x < 12: return
 	if run.y-run.x < 80:
-		_panel(parent,Rect2(run.x,bottom-height,run.y-run.x,height),Color("9ca18f"))
+		var infill := _panel(parent,Rect2(run.x,bottom-height,run.y-run.x,height),Color("9ca18f"))
+		_register_solid(infill,Vector2((run.x+run.y)*0.5,bottom+16))
 		return
 	var region := Rect2(0,0,texture.get_width()*(0.39 if civic else 0.40),texture.get_height())
 	var nominal := region.size.x/region.size.y*height
@@ -171,3 +186,4 @@ static func _wall_bays(parent: Node2D, texture: Texture2D, run: Vector2, bottom:
 		bay.position = Vector2(run.x+index*width,bottom-height)
 		bay.set_meta(&"wall_span",Rect2(bay.position,Vector2(width,height)))
 		parent.add_child(bay)
+		FOREGROUND.register(bay,Vector2(bay.position.x+width*0.5,bottom+16))

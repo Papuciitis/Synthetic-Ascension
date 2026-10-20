@@ -111,7 +111,7 @@ def provenance(project):
         for relative in paths:
             path = project / relative
             if relative and path.is_file() and (relative == "project.godot" or
-                    path.suffix in {".gd", ".gdshader", ".tscn", ".tres", ".res", ".py", ".ps1"} or
+                    path.suffix in {".gd", ".gdshader", ".gdshaderinc", ".tscn", ".tres", ".res", ".py", ".ps1"} or
                     (relative.startswith("assets/") and path.suffix == ".json") or
                     (relative.startswith("assets/world/") and path.suffix.lower() in
                      {".png", ".jpg", ".jpeg", ".webp", ".svg", ".exr", ".hdr", ".import"})):

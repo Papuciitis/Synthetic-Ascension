@@ -25,6 +25,7 @@ var _glow_start: Vector2 = Vector2.ZERO
 var _magnet_cooldown: float = 0.0
 var _player_ref: Node2D = null
 var ground_serial: int = 0
+var _cover: RefCounted = preload("res://core/systems/world/visibility/PickupCover.gd").new()
 
 
 func _ready() -> void:
@@ -32,6 +33,9 @@ func _ready() -> void:
 	monitorable = false
 	_icon_start = icon.position
 	_glow_start = glow.position
+	# Glow is a translucent duplicate of the healing icon. It must share
+	# coverage so it cannot repaint bright artwork over the quiet silhouette.
+	_cover.configure(self, icon, glow)
 	ground_serial = GroundLootCap.next_serial()
 	add_to_group(GroundLootCap.HEALTH_GROUP)
 	GroundLootCap.enforce(get_tree(), GroundLootCap.HEALTH_GROUP, GroundLootCap.HEALTH_CAP, self)
@@ -45,6 +49,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_cover.update()
 	_age += delta
 	if _age >= lifetime_seconds:
 		queue_free()
