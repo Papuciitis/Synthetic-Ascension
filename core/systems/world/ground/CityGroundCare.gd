@@ -71,7 +71,9 @@ static func _field(center: Vector2, normal: Vector2, tangent: Vector2, points: P
 		var along := relative.dot(tangent)/2.6
 		var outward := relative.dot(normal)/2.1
 		var radius := Vector2(along,outward).length()/variation[index]
-		field[index] = roundi((1.0-smoothstep(0.20,1.05,radius))*255.0)
+		# Keep the existing irregular support while giving its legal center a
+		# useful short-grass area; the outer edge and all ground vetoes stay put.
+		field[index] = roundi((1.0-smoothstep(0.50,1.05,radius))*255.0)
 	return field
 
 

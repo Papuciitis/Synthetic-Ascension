@@ -1,0 +1,189 @@
+{
+	"args": [
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-l2-correction-20261020/core-natural.json"
+	],
+	"chunks": 8,
+	"decals_deco_sites_enabled": false,
+	"failures": [],
+	"ground_enabled": true,
+	"ground_splat_enabled": true,
+	"parcels_chunk_chance": 0.95,
+	"s7": {
+		"adjacent_pairs_tested": 1,
+		"pair_limit": 8,
+		"plan_seed": 745886440,
+		"sample": {
+			"care_at_point": 0.0,
+			"cell": [
+				-32,
+				1
+			],
+			"classification": "natural_moss_mud_paving_boundary",
+			"coord": "(-1, 0)",
+			"material_at_point": 12,
+			"material_counts": {
+				"12": 55,
+				"2": 19,
+				"5": 112,
+				"7": 64,
+				"paving": 83
+			},
+			"material_window_half_extent_cells": [
+				12,
+				8
+			],
+			"moss_coord": "(-1, 0)",
+			"moss_stability": {
+				"base_stamp_reset_empty": true,
+				"care_sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+				"cared_cells": 0,
+				"global_rng_equal": true,
+				"physical_equal": true,
+				"rebuilt_exact": true,
+				"repeated_exact": true,
+				"run_rng_equal": true,
+				"semantic_coverage_equal": true
+			},
+			"mud_coord": "(-2, 0)",
+			"mud_stability": {
+				"base_stamp_reset_empty": true,
+				"care_sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+				"cared_cells": 0,
+				"global_rng_equal": true,
+				"physical_equal": true,
+				"rebuilt_exact": true,
+				"repeated_exact": true,
+				"run_rng_equal": true,
+				"semantic_coverage_equal": true
+			},
+			"walkable": true,
+			"world_px": [
+				-2016.0,
+				96.0
+			]
+		},
+		"seed": 4,
+		"segment": 7,
+		"theme": "canal_services"
+	},
+	"samples": [
+		{
+			"building_ids": [
+				944996572
+			],
+			"care_spec": "{ \"footprint_px\": [(192.0, 768.0), (384.0, 768.0), (384.0, 576.0), (896.0, 576.0), (896.0, 1088.0), (192.0, 1088.0)], \"doors\": [{ \"pos\": (8, 16), \"dir\": (0, 1), \"width\": 2 }], \"visual_seed\": 944996572, \"garden_contact_px\": (266.0, 1102.0) }",
+			"cared_cells_near_actual_garden": 15,
+			"civic": false,
+			"coord": "(0, 3)",
+			"garden_variant": 0,
+			"generated_chunks_for_seed": 4,
+			"optional_untended_home": {},
+			"plan_seed": 436524753,
+			"search_limit": 24,
+			"seed": 16102026,
+			"segment": 2,
+			"stability": {
+				"base_stamp_reset_empty": true,
+				"care_sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+				"cared_cells": 15,
+				"global_rng_equal": true,
+				"physical_equal": true,
+				"rebuilt_exact": true,
+				"repeated_exact": true,
+				"run_rng_equal": true,
+				"semantic_coverage_equal": true
+			},
+			"target_building_id": 944996572,
+			"theme": "service_courtyards",
+			"usage": "row_house",
+			"visual_seed": 944996572,
+			"wild": {
+				"care": 0.0,
+				"cell": [
+					3,
+					105
+				],
+				"classification": "actual_uncared_wild_ground",
+				"coord": "(0, 3)",
+				"distance_from_garden_px": 495.782196044922,
+				"material": 0,
+				"uncared_walkable_overgrowth_cells_in_5x5": 25,
+				"walkable": true,
+				"world_px": [
+					224.0,
+					6752.0
+				]
+			}
+		},
+		{
+			"building_ids": [
+				2128236757
+			],
+			"care_spec": "{ \"footprint_px\": [(192.0, 960.0), (960.0, 960.0), (960.0, 1472.0), (192.0, 1472.0)], \"doors\": [{ \"pos\": (9, 15), \"dir\": (0, -1), \"width\": 2 }], \"visual_seed\": 2128236757, \"garden_contact_px\": (200.0, 1451.0) }",
+			"cared_cells_near_actual_garden": 19,
+			"civic": false,
+			"coord": "(-3, 5)",
+			"garden_variant": 1,
+			"generated_chunks_for_seed": 2,
+			"optional_untended_home": {
+				"building_ids": [
+					1647847571
+				],
+				"care_spec_empty": true,
+				"classification": "actual_non_civic_row_house_variant_three",
+				"coord": "(-1, 5)",
+				"garden_variant": 3,
+				"stability": {
+					"base_stamp_reset_empty": true,
+					"care_sha256": "b4143b9a81a7f2f67133dfd4aceae397b6c2aed355cc14bb74bda11a3479c5fc",
+					"cared_cells": 17,
+					"global_rng_equal": true,
+					"physical_equal": true,
+					"rebuilt_exact": true,
+					"repeated_exact": true,
+					"run_rng_equal": true,
+					"semantic_coverage_equal": true
+				},
+				"visual_seed": 1647847571
+			},
+			"plan_seed": 1794636640,
+			"search_limit": 24,
+			"seed": 17,
+			"segment": 2,
+			"stability": {
+				"base_stamp_reset_empty": true,
+				"care_sha256": "562502bebc63614a2c09b236b85b6df1560cac297957fc8ddd5e0f2142ae9c07",
+				"cared_cells": 19,
+				"global_rng_equal": true,
+				"physical_equal": true,
+				"rebuilt_exact": true,
+				"repeated_exact": true,
+				"run_rng_equal": true,
+				"semantic_coverage_equal": true
+			},
+			"target_building_id": 2128236757,
+			"theme": "service_courtyards",
+			"usage": "row_house",
+			"visual_seed": 2128236757,
+			"wild": {
+				"care": 0.0,
+				"cell": [
+					-88,
+					185
+				],
+				"classification": "actual_uncared_wild_ground",
+				"coord": "(-3, 5)",
+				"distance_from_garden_px": 388.711975097656,
+				"material": 0,
+				"uncared_walkable_overgrowth_cells_in_5x5": 25,
+				"walkable": true,
+				"world_px": [
+					-5600.0,
+					11872.0
+				]
+			}
+		}
+	],
+	"scene": "res://tools/tests/CityGroundCareNaturalTest.tscn",
+	"sidewalk_cells": 1
+}

@@ -192,6 +192,13 @@ func _test_production_footway_pockets() -> void:
 				if care >= 0.7: strong += 1
 		if int(sample.id) == 944996572:
 			_check(counts == {0:716,2:125,3:6,4:177},"the bed fixture retains the production floor ownership from the failed native trial")
+			var compact_core := true
+			for core_y in range(14,17):
+				for core_x in range(0,3):
+					if splat.care_at(coord*32+Vector2i(core_x,core_y)) < 0.7:
+						compact_core = false
+			_check(compact_core,"the legal three-by-three bed pocket reads as a useful cared core rather than a thin strip")
+			_check(positive >= 15,"readability correction preserves the existing fifteen-cell legal bed support")
 		_check(eligible,"production-footway care stays on actual available vegetation id=%d" % int(sample.id))
 		_check(positive >= 8,"production footways leave at least eight cared vegetation cells near the kept garden id=%d actual=%d" % [int(sample.id),positive])
 		_check(strong >= 3,"the actual garden has at least three substantial lawn cells beyond paving id=%d actual=%d" % [int(sample.id),strong])

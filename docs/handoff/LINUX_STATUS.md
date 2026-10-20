@@ -34,6 +34,17 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Current bounded packet
 
+Local checked continuation,20October: the household care inner plateau is now
+0.50 instead of0.20, preserving the bed’s15-cell support while filling its legal
+3×3 core. Care125/0, natural preservation8chunks/0failures, splat33/0 and two
+native same-camera seam runs are clean; both neighbor signatures survive streamed
+reload. See [ground-core checkpoint](../art/reference/2026-10-20-linux-ground-core/README.md).
+Cross-chunk shape continuation, wet/dry selection and complete L2 acceptance
+remain open. Paving/actual-footprint casts, purposeful domestic interiors and
+theme-specific physical atmosphere are being checked in isolated local branches.
+The user explicitly requested continuing autonomously and committing as work is
+checked; publication is not a work blocker.
+
 L0 and the L1 evidence packet are complete; Windows has kept the sampled garden
 fit while leaving complete-street acceptance open. Windows received L2 as
 qualified WIP: keep moss and the care foundation; correct lawn readability,
