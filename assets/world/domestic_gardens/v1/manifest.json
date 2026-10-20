@@ -1,0 +1,497 @@
+{
+  "schema_version": 2,
+  "title": "Synthetic Ascension domestic gardens v1",
+  "created_local_date": "2026-10-20",
+  "timezone": "Europe/Riga",
+  "status": "Garden handoff closed: both overhead tree v2 and flower/herb bed provisionally kept by lead as sources suitable for integration testing. No native/fit/final aesthetic acceptance.",
+  "scope": "Two logical garden assets: original tree and bed plus one explicitly requested targeted tree projection edit. Three preserved raster files total; two initial built-in generations and one built-in edit, no further variations.",
+  "coordinate_convention": {
+    "origin": "top-left of original PNG",
+    "x": "right",
+    "y": "down",
+    "bounds": "[left,top,right,bottom], right/bottom exclusive",
+    "units": "actual original source pixels",
+    "alpha_threshold_note": "Thresholds are measurements only, not altered files. Raw alpha>0 bounds include faint residue and must not be used as placement/collision bounds."
+  },
+  "references": [
+    {
+      "path": "docs/art/concepts/2026-10-18-city-directions/08-mediterranean-medieval-industrial-city.png",
+      "role": "Accepted temperate palette, city/material language and daylight; simplify over-lined detail and depth.",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/city_block/temperate_tree.png",
+      "role": "Existing painterly foliage/trunk source rendering and silhouette.",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/city_block/planted_corner.png",
+      "role": "Existing foliage/limestone rendering; new bed intentionally much lower and irregular.",
+      "personally_viewed": true
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-lead-design-audit/native-s2-16102026/service_lane-1-960x540.png",
+      "role": "Actual camera/scale context; controlled frozen environment plate, not normal play.",
+      "personally_viewed": true
+    }
+  ],
+  "authority": {
+    "lead": "Originating Audit art direction and game visuals chat",
+    "production": "Separate production chat owns all game code/integration/engine/Git.",
+    "asset_only": "Garden folder only: three preserved source PNGs (two logical assets including tree version history), README, manifest and prompts. No product/engine/Git actions.",
+    "engine_started": false,
+    "engine_import_test_capture": false,
+    "git_mutations": false,
+    "code_integration": false
+  },
+  "assets": [
+    {
+      "tool": "image_gen.imagegen",
+      "mode": "built-in",
+      "intent": "targeted_projection_edit",
+      "use_case": "style-transfer",
+      "transparent_background": true,
+      "source_bytes_preserved": true,
+      "visual_review": "Personally viewed original output with view_image at original detail; no gameplay/runtime/aesthetic approval.",
+      "ownership": "Outdoor domestic planting. Anchor to actual parcel/ground data. Not a wall-mounted facade texture and not automatically owned by an interior roof cutaway.",
+      "occlusion": "Production owns placement, sorting, actor visibility and any roof/facade mask decisions. Never infer a collider from canopy, bed perimeter, alpha or this handoff.",
+      "processing": "No trimming, recoloring, resizing, compositing, alpha cleanup, or re-encoding. PNG copied byte-for-byte.",
+      "id": "fruit_tree",
+      "file": "fruit_tree_overhead_v2.png",
+      "tool_output_source_path": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a1586b-b69a-7d30-a6ac-49d746d881c9/exec-e916cf68-9a2b-4335-a7c3-001ec6bc96a0.png",
+      "source_dimensions_px": [
+        1254,
+        1254
+      ],
+      "file_bytes": 2057277,
+      "sha256": "9ef6f26a024704bbb9eafe8739568a9280a7efe5e243fab7b62a43f52f52ab60",
+      "color_mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "zero_pixels": 691336,
+        "fully_opaque_pixels": 29,
+        "partial_pixels": 881151,
+        "residue_pixels_alpha_1_to_15": 40099,
+        "dominant_nonzero_values": [
+          252,
+          251,
+          253
+        ],
+        "bounds_gt0": [
+          0,
+          23,
+          1251,
+          1243
+        ],
+        "bounds_ge8": [
+          44,
+          68,
+          1213,
+          1141
+        ],
+        "bounds_ge16": [
+          44,
+          69,
+          1213,
+          1141
+        ],
+        "bounds_ge128": [
+          45,
+          70,
+          1212,
+          1140
+        ],
+        "bounds_ge240": [
+          46,
+          72,
+          1211,
+          1139
+        ]
+      },
+      "visible_size_at_alpha_ge128_px": [
+        1167,
+        1070
+      ],
+      "ground_contact_anchor_px": [
+        660,
+        1060
+      ],
+      "ground_contact_anchor_normalized": [
+        0.5263157894736842,
+        0.8452950558213717
+      ],
+      "anchor_pixel_rgba": [
+        44,
+        40,
+        27,
+        251
+      ],
+      "anchor_method": "Manually selected central root-flare contact on actual edited 1254x1254 output, then checked pixel alpha. Short trunk/root partly hidden by foliage. Approximate visual uncertainty +/-16 source pixels.",
+      "ground_contact_region_estimate_px": [
+        550,
+        985,
+        790,
+        1140
+      ],
+      "ground_contact_region_note": "Approximate visible root spread, not a collision prescription or calibrated physical footprint.",
+      "runtime_sizing": {
+        "cell_size_world_px": 64,
+        "intended_visible_width_world_px": [
+          100,
+          170
+        ],
+        "lead_interface_source_fit_visible_width_world_px": 164,
+        "uniform_source_scale_range": [
+          0.0856898029134533,
+          0.1456726649528706
+        ],
+        "suggested_first_review_visible_width_world_px": 164,
+        "suggested_first_review_uniform_scale": 0.1405312767780634,
+        "first_review_full_image_size_world_px": [
+          176.22622107969153,
+          176.22622107969153
+        ],
+        "first_review_visible_size_world_px": [
+          164,
+          150.36846615252784
+        ],
+        "source_visible_aspect_width_over_height": 1.0906542056074766,
+        "note": "Use164 as the lead's existing-interface fitting starting point, preserve source aspect. Native fit is production-owned. Never squash original/v2 vertically to imply overhead projection."
+      },
+      "visual_findings": {
+        "true_alpha": true,
+        "visible_baked_background": false,
+        "visible_checkerboard": false,
+        "pedestal": false,
+        "surrounding_ground_patch": false,
+        "large_baked_shadow_rectangle": false,
+        "root_contact_visible": true,
+        "fruit": "Muted apple accents and painterly wood/light retained.",
+        "projection": "Less exposed trunk and more compact crown coverage than v1. Still has a high/triangular lobe and an oblique tall silhouette; not a strict plan-view crown. Single requested edit performed; lead review remains required.",
+        "edges": "Meaningful alpha>=8 silhouette has44px left/68px top margin. Low-alpha residue outside and warm fine leaf fringes remain. No cleanup."
+      },
+      "selection_status": "Lead KEEP provisionally as a compact crown/short-trunk candidate for modest native integration testing. No further tree generation before in-game review; no native or final aesthetic approval.",
+      "edited_from_file": "fruit_tree.png"
+    },
+    {
+      "tool": "image_gen.imagegen",
+      "mode": "built-in",
+      "intent": "generate_original",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "source_bytes_preserved": true,
+      "visual_review": "Personally viewed original output with view_image at original detail; no gameplay/runtime/aesthetic approval.",
+      "ownership": "Outdoor domestic planting. Anchor to actual parcel/ground data. Not a wall-mounted facade texture and not automatically owned by an interior roof cutaway.",
+      "occlusion": "Production owns placement, sorting, actor visibility and any roof/facade mask decisions. Never infer a collider from canopy, bed perimeter, alpha or this handoff.",
+      "processing": "No trimming, recoloring, resizing, compositing, alpha cleanup, or re-encoding. PNG copied byte-for-byte.",
+      "id": "flower_herb_bed",
+      "file": "flower_herb_bed.png",
+      "tool_output_source_path": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a1586b-b69a-7d30-a6ac-49d746d881c9/exec-e28d81c4-af5e-47b6-ba0e-0646c93e2adb.png",
+      "source_dimensions_px": [
+        1909,
+        824
+      ],
+      "file_bytes": 1864757,
+      "sha256": "3edf26c408f71668d0977151118a2f978c7d1cfa7bd1b39e19e22e7f1a40f2f7",
+      "color_mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "zero_pixels": 930076,
+        "fully_opaque_pixels": 111,
+        "partial_pixels": 642829,
+        "residue_pixels_alpha_1_to_15": 37521,
+        "dominant_nonzero_values": [
+          252,
+          253,
+          251
+        ],
+        "bounds_gt0": [
+          43,
+          0,
+          1895,
+          824
+        ],
+        "bounds_ge8": [
+          73,
+          173,
+          1836,
+          670
+        ],
+        "bounds_ge16": [
+          73,
+          173,
+          1836,
+          669
+        ],
+        "bounds_ge128": [
+          74,
+          174,
+          1835,
+          669
+        ],
+        "bounds_ge240": [
+          76,
+          175,
+          1834,
+          668
+        ],
+        "top_edge_alpha_max": 1,
+        "bottom_edge_alpha_max": 1
+      },
+      "visible_size_at_alpha_ge128_px": [
+        1761,
+        495
+      ],
+      "ground_contact_anchor_px": [
+        955,
+        485
+      ],
+      "ground_contact_anchor_normalized": [
+        0.500261917234154,
+        0.5885922330097088
+      ],
+      "anchor_pixel_rgba": [
+        111,
+        105,
+        50,
+        252
+      ],
+      "anchor_method": "Manually selected ground-footprint center in actual 1909x824 output, then validated pixel alpha. Not image center, top foliage point, or frontmost stone. Approximate visual uncertainty +/-25 source pixels.",
+      "secondary_front_contact_px": [
+        1150,
+        659
+      ],
+      "secondary_front_contact_pixel_rgba": [
+        87,
+        72,
+        48,
+        251
+      ],
+      "ground_contact_region_estimate_px": [
+        80,
+        300,
+        1835,
+        669
+      ],
+      "ground_contact_region_note": "Approximate root-earth/stone ground footprint, including its irregular edge; foliage obscures rear boundary. No calibrated physical depth or collider is asserted.",
+      "runtime_sizing": {
+        "cell_size_world_px": 64,
+        "brief_visible_width_world_px": [
+          80,
+          140
+        ],
+        "recommended_first_review_visible_width_world_px": [
+          100,
+          140
+        ],
+        "recommended_visible_width_cells": [
+          1.5625,
+          2.1875
+        ],
+        "uniform_source_scale_range": [
+          0.05678591709256105,
+          0.07950028392958547
+        ],
+        "suggested_first_review_visible_width_world_px": 115,
+        "suggested_first_review_uniform_scale": 0.0653038046564452,
+        "first_review_full_image_size_world_px": [
+          124.66496308915389,
+          53.81033503691084
+        ],
+        "first_review_visible_size_world_px": [
+          115,
+          32.325383304940374
+        ],
+        "estimated_ground_depth_at_recommended_width_world_px": [
+          20.954003407155025,
+          29.335604770017035
+        ],
+        "note": "Uniform scale only. At 100-140 visible width estimated ground depth is about21-29 worldpx; 115 is about24. An 80px width makes ground depth about17 and may be too slight. Ground estimate is visual, not verified engine geometry.",
+        "lead_interface_placeholder": {
+          "visible_width_world_px": [
+            80,
+            128
+          ],
+          "projected_depth_world_px": [
+            48,
+            72
+          ],
+          "status": "Existing placeholder dimensions only. Not a distortion requirement. Production must fit geometry to actual source aspect/depth."
+        },
+        "actual_source_fitting_at_visible_width_80_to_128": {
+          "visible_total_height_world_px": [
+            22.487223168654175,
+            35.97955706984668
+          ],
+          "estimated_ground_depth_world_px": [
+            16.76320272572402,
+            26.821124361158432
+          ],
+          "source_visible_aspect_width_over_height": 3.5575757575757576,
+          "note": "Actual source bed is substantially shallower than placeholder48–72px depth. Keep natural aspect; production fit pending."
+        }
+      },
+      "visual_findings": {
+        "true_alpha": true,
+        "visible_baked_background": false,
+        "visible_checkerboard": false,
+        "pedestal": false,
+        "rigid_rectangle": false,
+        "giant_planter": false,
+        "surrounding_ground_patch": false,
+        "large_baked_shadow_rectangle": false,
+        "character": "One low elongated irregular household planting, visible earth confined to root footprint, loose worn stones, sage/thyme-like groups, muted violet/cream flowers.",
+        "projection": "Steep down view with shallow south/front edge; taller sage leaf groups remain visually low when scaled as suggested. Actual actor overlap untested.",
+        "edges": "Faint alpha residue reaches top/bottom rows. Fine leaf/flower detail and warm fringes remain; tiny flower detail will merge at game size."
+      },
+      "selection_status": "Lead KEEP as a provisional source; not native/fit approval."
+    }
+  ],
+  "verification": {
+    "method": "Read-only Pillow metadata/histograms/pixel samples plus SHA256 comparison of original and selected bytes; personal visual inspection.",
+    "source_copy_hash_match": true,
+    "source_pngs_reencoded": false,
+    "visual_check_limits": "No game run, engine import, renderer, gameplay scale capture or actor/roof interaction verification was performed. These are source-level observations."
+  },
+  "updated_local_date": "2026-10-20",
+  "source_history": [
+    {
+      "tool": "image_gen.imagegen",
+      "mode": "built-in",
+      "intent": "generate_original",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "source_bytes_preserved": true,
+      "visual_review": "Personally viewed original output with view_image at original detail; no gameplay/runtime/aesthetic approval.",
+      "ownership": "Outdoor domestic planting. Anchor to actual parcel/ground data. Not a wall-mounted facade texture and not automatically owned by an interior roof cutaway.",
+      "occlusion": "Production owns placement, sorting, actor visibility and any roof/facade mask decisions. Never infer a collider from canopy, bed perimeter, alpha or this handoff.",
+      "processing": "No trimming, recoloring, resizing, compositing, alpha cleanup, or re-encoding. PNG copied byte-for-byte.",
+      "id": "fruit_tree",
+      "file": "fruit_tree.png",
+      "tool_output_source_path": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a1586b-b69a-7d30-a6ac-49d746d881c9/exec-d4e9f21e-7d75-4e93-bb97-6f4e592581e8.png",
+      "source_dimensions_px": [
+        1254,
+        1254
+      ],
+      "file_bytes": 1919995,
+      "sha256": "29c9d90afbb24efdde35c12f9f6604ecb014545b325bd4a83f603cfd385d2d48",
+      "color_mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "zero_pixels": 755130,
+        "fully_opaque_pixels": 85,
+        "partial_pixels": 817301,
+        "residue_pixels_alpha_1_to_15": 64655,
+        "dominant_nonzero_values": [
+          252,
+          251,
+          250
+        ],
+        "bounds_gt0": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "bounds_ge8": [
+          64,
+          8,
+          1217,
+          1182
+        ],
+        "bounds_ge16": [
+          65,
+          8,
+          1217,
+          1182
+        ],
+        "bounds_ge128": [
+          65,
+          9,
+          1216,
+          1181
+        ],
+        "bounds_ge240": [
+          67,
+          11,
+          1213,
+          1177
+        ],
+        "top_edge_alpha_max": 2,
+        "bottom_edge_alpha_max": 1
+      },
+      "visible_size_at_alpha_ge128_px": [
+        1151,
+        1172
+      ],
+      "ground_contact_anchor_px": [
+        674,
+        1123
+      ],
+      "ground_contact_anchor_normalized": [
+        0.5374800637958532,
+        0.8955342902711324
+      ],
+      "anchor_pixel_rgba": [
+        60,
+        59,
+        33,
+        251
+      ],
+      "anchor_method": "Manually selected central root-flare contact on actual 1254x1254 output, then validated pixel alpha. Ground placement pivot, not bottommost root tip or canopy center. Approximate visual uncertainty +/-16 source pixels.",
+      "ground_contact_region_estimate_px": [
+        528,
+        1050,
+        820,
+        1181
+      ],
+      "ground_contact_region_note": "Approximate visible root spread, not a collision prescription or calibrated physical footprint.",
+      "runtime_sizing": {
+        "cell_size_world_px": 64,
+        "intended_visible_width_world_px": [
+          100,
+          170
+        ],
+        "intended_visible_width_cells": [
+          1.5625,
+          2.65625
+        ],
+        "uniform_source_scale_range": [
+          0.08688097306689835,
+          0.1476976542137272
+        ],
+        "suggested_first_review_visible_width_world_px": 135,
+        "suggested_first_review_uniform_scale": 0.11728931364031277,
+        "first_review_full_image_size_world_px": [
+          147.08079930495222,
+          147.08079930495222
+        ],
+        "first_review_root_spread_world_px": [
+          34.24847958297133,
+          15.364900086880972
+        ],
+        "note": "Set scale from meaningful visible width, preserve aspect ratio; engine/camera review still required. Source margin must be included in pivot math."
+      },
+      "visual_findings": {
+        "true_alpha": true,
+        "visible_baked_background": false,
+        "visible_checkerboard": false,
+        "pedestal": false,
+        "surrounding_ground_patch": false,
+        "large_baked_shadow_rectangle": false,
+        "root_contact_visible": true,
+        "fruit": "Scattered muted russet/green apples; small accents at proposed use scale, no glow.",
+        "projection": "Canopy is more upright/oblique than a strict steep overhead projection, similar to the existing tree source. Judge with actual camera before integration.",
+        "edges": "Very faint alpha residue reaches full canvas; alpha>=8 has 8px top margin. Warm/yellow-green fine leaf fringes and dense source detail remain. No cleanup performed."
+      },
+      "history_status": "Original tree preserved unchanged. Lead requested correction because tiers/exposed trunk read too frontally upright; superseded as selected candidate by fruit_tree_overhead_v2.png."
+    }
+  ],
+  "selected_candidates": {
+    "fruit_tree": "fruit_tree_overhead_v2.png",
+    "flower_herb_bed": "flower_herb_bed.png"
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "method": "Read-only measurements and explicitly requested derived QA previews only. No source changes. Seam metrics are descriptive, not seamlessness certification.",
+  "records": [
+    {
+      "file": "cared_lawn.png",
+      "tool_output_source_path": "C:\\Users\\NaurisKri\u0161j\u0101nis\\.codex\\generated_images\\01a1586b-b69a-7d30-a6ac-49d746d881c9\\exec-3d447716-4b3b-465e-b617-23e155e16274.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "file_bytes": 4202044,
+      "sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+      "opaque": true,
+      "alpha_channel_present": false,
+      "alpha_extrema": null,
+      "mean_rgb": [
+        82.1748,
+        86.0182,
+        42.6809
+      ],
+      "stddev_rgb": [
+        25.7277,
+        25.1976,
+        16.8131
+      ],
+      "mean_pillow_luma": 79.9302,
+      "stddev_pillow_luma": 24.2449,
+      "edge_metrics_native": {
+        "left_right_wrap_rgb_mae": 16.5941,
+        "top_bottom_wrap_rgb_mae": 14.49761,
+        "mean_internal_x_neighbor_rgb_mae": 14.62649,
+        "mean_internal_y_neighbor_rgb_mae": 14.77824,
+        "lr_wrap_to_internal_ratio": 1.1345,
+        "tb_wrap_to_internal_ratio": 0.981
+      },
+      "previews": [
+        {
+          "file": "qa/cared_lawn_native_wrap.png",
+          "dimensions": [
+            768,
+            768
+          ],
+          "method": "Unscaled native source four-corner periodic wrap cross, joins at image center. Preview only.",
+          "sha256": "fcf3de49a8b093d4dba10b927367b3da0ae0bb64cbbd43cca8266955f95a4dbd"
+        },
+        {
+          "file": "qa/cared_lawn_repeat_320.png",
+          "dimensions": [
+            960,
+            960
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 320,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 1.0,
+          "sha256": "696b79fc42dc3cfe4f799ef18308d33476bcc03a2560daf030801667dfcf1e11"
+        },
+        {
+          "file": "qa/cared_lawn_repeat_160.png",
+          "dimensions": [
+            480,
+            480
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 160,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 0.5,
+          "sha256": "ff61fa273741650fd533a44ebeea85c2f900e975979f814aa834d2079692d55d"
+        }
+      ],
+      "edge_metrics_repeat_tile_320": {
+        "left_right_wrap_rgb_mae": 11.78021,
+        "top_bottom_wrap_rgb_mae": 10.70625,
+        "mean_internal_x_neighbor_rgb_mae": 11.6861,
+        "mean_internal_y_neighbor_rgb_mae": 11.15745,
+        "lr_wrap_to_internal_ratio": 1.0081,
+        "tb_wrap_to_internal_ratio": 0.9596
+      },
+      "edge_metrics_repeat_tile_160": {
+        "left_right_wrap_rgb_mae": 7.58958,
+        "top_bottom_wrap_rgb_mae": 8.17708,
+        "mean_internal_x_neighbor_rgb_mae": 8.05884,
+        "mean_internal_y_neighbor_rgb_mae": 7.68809,
+        "lr_wrap_to_internal_ratio": 0.9418,
+        "tb_wrap_to_internal_ratio": 1.0636
+      }
+    },
+    {
+      "file": "damp_moss_soil.png",
+      "tool_output_source_path": "C:\\Users\\NaurisKri\u0161j\u0101nis\\.codex\\generated_images\\01a1586b-b69a-7d30-a6ac-49d746d881c9\\exec-516ca1e9-d178-4e88-8891-b8e3cf81cf9d.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "file_bytes": 4206083,
+      "sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+      "opaque": true,
+      "alpha_channel_present": false,
+      "alpha_extrema": null,
+      "mean_rgb": [
+        79.0169,
+        74.0609,
+        41.6858
+      ],
+      "stddev_rgb": [
+        27.9596,
+        28.507,
+        20.9665
+      ],
+      "mean_pillow_luma": 71.8518,
+      "stddev_pillow_luma": 27.235,
+      "edge_metrics_native": {
+        "left_right_wrap_rgb_mae": 18.35699,
+        "top_bottom_wrap_rgb_mae": 18.41334,
+        "mean_internal_x_neighbor_rgb_mae": 14.38476,
+        "mean_internal_y_neighbor_rgb_mae": 15.75865,
+        "lr_wrap_to_internal_ratio": 1.2761,
+        "tb_wrap_to_internal_ratio": 1.1685
+      },
+      "previews": [
+        {
+          "file": "qa/damp_moss_soil_native_wrap.png",
+          "dimensions": [
+            768,
+            768
+          ],
+          "method": "Unscaled native source four-corner periodic wrap cross, joins at image center. Preview only.",
+          "sha256": "58f7822e6cace8bcd362bf36961ffa69a22ed8bb39fc031d19b58dab5fa130a6"
+        },
+        {
+          "file": "qa/damp_moss_soil_repeat_320.png",
+          "dimensions": [
+            960,
+            960
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 320,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 1.0,
+          "sha256": "31152c72b2686e6b2416b1055af630153a55b2b5e8e930309af084133b049926"
+        },
+        {
+          "file": "qa/damp_moss_soil_repeat_160.png",
+          "dimensions": [
+            480,
+            480
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 160,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 0.5,
+          "sha256": "51e3d81cd8357f306779f22778a8f7437a3af5eb65308875cea2fab572b0e8f8"
+        }
+      ],
+      "edge_metrics_repeat_tile_320": {
+        "left_right_wrap_rgb_mae": 14.02917,
+        "top_bottom_wrap_rgb_mae": 15.84375,
+        "mean_internal_x_neighbor_rgb_mae": 13.87217,
+        "mean_internal_y_neighbor_rgb_mae": 14.28359,
+        "lr_wrap_to_internal_ratio": 1.0113,
+        "tb_wrap_to_internal_ratio": 1.1092
+      },
+      "edge_metrics_repeat_tile_160": {
+        "left_right_wrap_rgb_mae": 10.04583,
+        "top_bottom_wrap_rgb_mae": 12.68542,
+        "mean_internal_x_neighbor_rgb_mae": 10.89499,
+        "mean_internal_y_neighbor_rgb_mae": 10.88919,
+        "lr_wrap_to_internal_ratio": 0.9221,
+        "tb_wrap_to_internal_ratio": 1.165
+      }
+    }
+  ]
+}

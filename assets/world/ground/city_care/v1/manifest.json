@@ -1,0 +1,375 @@
+{
+  "schema_version": 1,
+  "title": "Synthetic Ascension city-care ground materials v1",
+  "created_local_date": "2026-10-20",
+  "timezone": "Europe/Riga",
+  "scope": "Exactly two original opaque square material masters; one built-in imagegen call each. Six derivative QA images only, not six extra material sources. No recolor catalogue or additional variants.",
+  "status": "Lead KEEP both sources provisionally for native integration; no regeneration requested. No runtime/aesthetic acceptance or seamless certification.",
+  "references": [
+    {
+      "path": "docs/art/concepts/2026-10-18-city-directions/08-mediterranean-medieval-industrial-city.png",
+      "role": "Accepted temperate city/material/daylight language, simplify detail",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/ground/ground_grass_01.png",
+      "role": "Existing reuse candidate and quiet ground family",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/ground/ground_grass_02.png",
+      "role": "Neglected localized undergrowth context, not a lawn model",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/ground/ground_grass_dry_01.png",
+      "role": "Existing dry grass material context",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/ground/ground_dirt_01.png",
+      "role": "Existing subdued neutral earth/reuse candidate",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/ground/ground_mud_wet_01.png",
+      "role": "Existing damp neutral earth/reuse candidate",
+      "personally_viewed": true
+    },
+    {
+      "path": "assets/world/ground/ground_moss_01.png",
+      "role": "Rejected cyan/blue/purple broad-leaf carpet, negative reference",
+      "personally_viewed": true
+    },
+    {
+      "path": "docs/art/reference/2026-10-19-city-foundation/native-s7/exterior.png",
+      "role": "Actual prior S7 scene showing rejected ground; context only, no new run",
+      "personally_viewed": true
+    }
+  ],
+  "assets": [
+    {
+      "id": "cared_lawn",
+      "file": "cared_lawn.png",
+      "tool": "image_gen.imagegen",
+      "mode": "built-in",
+      "intent": "generate_original",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "tool_output_source_path": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a1586b-b69a-7d30-a6ac-49d746d881c9/exec-3d447716-4b3b-465e-b617-23e155e16274.png",
+      "source_dimensions_px": [
+        1254,
+        1254
+      ],
+      "color_mode": "RGB",
+      "file_bytes": 4202044,
+      "sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+      "opaque_verification": {
+        "opaque": true,
+        "alpha_channel_present": false,
+        "alpha_extrema": null,
+        "method": "Decoded original PNG is RGB, with no alpha channel or transparency entry. Full-frame material, all pixels opaque."
+      },
+      "source_bytes_preserved": true,
+      "processing": "Original PNG copied unchanged; no resizing, color adjustment, seam repair, alpha processing or re-encoding. Derivative QA previews are separate.",
+      "placement": {
+        "kind": "Full opaque material plane",
+        "uv_origin_px": [
+          0,
+          0
+        ],
+        "source_footprint_px": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "ground_contact_anchor": null,
+        "note": "Not an object sprite. Source has no patch perimeter; production owns world UVs and irregular ground blending, not a collider/physical footprint from this square."
+      },
+      "source_statistics": {
+        "mean_rgb": [
+          82.1748,
+          86.0182,
+          42.6809
+        ],
+        "stddev_rgb": [
+          25.7277,
+          25.1976,
+          16.8131
+        ],
+        "mean_pillow_luma": 79.9302,
+        "stddev_pillow_luma": 24.2449,
+        "note": "8-bit ungraded source statistics, not scene brightness or aesthetic acceptance."
+      },
+      "repeat_guide": {
+        "world_repeat_px": 320,
+        "cell_size_world_px": 64,
+        "cells_per_repeat": 5,
+        "source_pixels_per_world_pixel": 3.91875,
+        "basis": "Read-only WorldArt.gd: _GROUND_GRASS_REPEAT_WORLD_PX=320 and grass-like indices include existing grass/moss. No integration/index mapping performed.",
+        "preview_screen_pixels_per_world_pixel": [
+          1,
+          0.5
+        ],
+        "note": "320px and160px preview tile widths bracket two scale assumptions. They do not confirm the actual current camera zoom, texture-array preprocessing, grading, blending or lighting."
+      },
+      "seam_measurements": {
+        "native": {
+          "left_right_wrap_rgb_mae": 16.5941,
+          "top_bottom_wrap_rgb_mae": 14.49761,
+          "mean_internal_x_neighbor_rgb_mae": 14.62649,
+          "mean_internal_y_neighbor_rgb_mae": 14.77824,
+          "lr_wrap_to_internal_ratio": 1.1345,
+          "tb_wrap_to_internal_ratio": 0.981
+        },
+        "preview_320": {
+          "left_right_wrap_rgb_mae": 11.78021,
+          "top_bottom_wrap_rgb_mae": 10.70625,
+          "mean_internal_x_neighbor_rgb_mae": 11.6861,
+          "mean_internal_y_neighbor_rgb_mae": 11.15745,
+          "lr_wrap_to_internal_ratio": 1.0081,
+          "tb_wrap_to_internal_ratio": 0.9596
+        },
+        "preview_160": {
+          "left_right_wrap_rgb_mae": 7.58958,
+          "top_bottom_wrap_rgb_mae": 8.17708,
+          "mean_internal_x_neighbor_rgb_mae": 8.05884,
+          "mean_internal_y_neighbor_rgb_mae": 7.68809,
+          "lr_wrap_to_internal_ratio": 0.9418,
+          "tb_wrap_to_internal_ratio": 1.0636
+        },
+        "meaning": "RGB absolute-difference wrap statistics versus adjacent pixel means; diagnostic only, not pass/fail or seamlessness proof."
+      },
+      "qa_previews": [
+        {
+          "file": "qa/cared_lawn_native_wrap.png",
+          "dimensions": [
+            768,
+            768
+          ],
+          "method": "Unscaled native source four-corner periodic wrap cross, joins at image center. Preview only.",
+          "sha256": "fcf3de49a8b093d4dba10b927367b3da0ae0bb64cbbd43cca8266955f95a4dbd"
+        },
+        {
+          "file": "qa/cared_lawn_repeat_320.png",
+          "dimensions": [
+            960,
+            960
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 320,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 1,
+          "sha256": "696b79fc42dc3cfe4f799ef18308d33476bcc03a2560daf030801667dfcf1e11"
+        },
+        {
+          "file": "qa/cared_lawn_repeat_160.png",
+          "dimensions": [
+            480,
+            480
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 160,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 0.5,
+          "sha256": "ff61fa273741650fd533a44ebeea85c2f900e975979f814aa834d2079692d55d"
+        }
+      ],
+      "visual_review": {
+        "personally_viewed_original": true,
+        "personally_viewed_native_wrap": true,
+        "personally_viewed_repeat_320": true,
+        "personally_viewed_repeat_160": true,
+        "subject": "Short fine irregular grass, muted olive with straw wear and thinning; no rosettes, props, border or patch silhouette.",
+        "native_wrap": "No dominant straight seam at inspected source-pixel wrap cross; individual blade flow still changes at wrap. Not pixel-exact seam certification.",
+        "scaled_repeat": "No strong rectangular tile boundary at320px or160px repeat samples. Recurrent wispy diagonal flow and low-frequency wear cadence can be identified in a3x3 field.",
+        "limits": "Fine pale/wiry blades remain more detailed than broad paint at source resolution; judge muted olive warmth, cared-lawn identity and actor contrast in actual S2. No source repainting or seam repair.",
+        "lead_decision": "KEEP provisionally",
+        "lead_retained_limits": "Slight dry olive lawn character and broad repeated mottling; judge actual S2 with actors."
+      },
+      "status": "Lead KEEP provisionally for native integration. No regeneration before native review; not runtime/aesthetic approval or seamless certification."
+    },
+    {
+      "id": "damp_moss_soil",
+      "file": "damp_moss_soil.png",
+      "tool": "image_gen.imagegen",
+      "mode": "built-in",
+      "intent": "generate_original",
+      "use_case": "stylized-concept",
+      "transparent_background": false,
+      "tool_output_source_path": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a1586b-b69a-7d30-a6ac-49d746d881c9/exec-516ca1e9-d178-4e88-8891-b8e3cf81cf9d.png",
+      "source_dimensions_px": [
+        1254,
+        1254
+      ],
+      "color_mode": "RGB",
+      "file_bytes": 4206083,
+      "sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+      "opaque_verification": {
+        "opaque": true,
+        "alpha_channel_present": false,
+        "alpha_extrema": null,
+        "method": "Decoded original PNG is RGB, with no alpha channel or transparency entry. Full-frame material, all pixels opaque."
+      },
+      "source_bytes_preserved": true,
+      "processing": "Original PNG copied unchanged; no resizing, color adjustment, seam repair, alpha processing or re-encoding. Derivative QA previews are separate.",
+      "placement": {
+        "kind": "Full opaque material plane",
+        "uv_origin_px": [
+          0,
+          0
+        ],
+        "source_footprint_px": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "ground_contact_anchor": null,
+        "note": "Not an object sprite. Source has no patch perimeter; production owns world UVs and irregular ground blending, not a collider/physical footprint from this square."
+      },
+      "source_statistics": {
+        "mean_rgb": [
+          79.0169,
+          74.0609,
+          41.6858
+        ],
+        "stddev_rgb": [
+          27.9596,
+          28.507,
+          20.9665
+        ],
+        "mean_pillow_luma": 71.8518,
+        "stddev_pillow_luma": 27.235,
+        "note": "8-bit ungraded source statistics, not scene brightness or aesthetic acceptance."
+      },
+      "repeat_guide": {
+        "world_repeat_px": 320,
+        "cell_size_world_px": 64,
+        "cells_per_repeat": 5,
+        "source_pixels_per_world_pixel": 3.91875,
+        "basis": "Read-only WorldArt.gd: _GROUND_GRASS_REPEAT_WORLD_PX=320 and grass-like indices include existing grass/moss. No integration/index mapping performed.",
+        "preview_screen_pixels_per_world_pixel": [
+          1,
+          0.5
+        ],
+        "note": "320px and160px preview tile widths bracket two scale assumptions. They do not confirm the actual current camera zoom, texture-array preprocessing, grading, blending or lighting."
+      },
+      "seam_measurements": {
+        "native": {
+          "left_right_wrap_rgb_mae": 18.35699,
+          "top_bottom_wrap_rgb_mae": 18.41334,
+          "mean_internal_x_neighbor_rgb_mae": 14.38476,
+          "mean_internal_y_neighbor_rgb_mae": 15.75865,
+          "lr_wrap_to_internal_ratio": 1.2761,
+          "tb_wrap_to_internal_ratio": 1.1685
+        },
+        "preview_320": {
+          "left_right_wrap_rgb_mae": 14.02917,
+          "top_bottom_wrap_rgb_mae": 15.84375,
+          "mean_internal_x_neighbor_rgb_mae": 13.87217,
+          "mean_internal_y_neighbor_rgb_mae": 14.28359,
+          "lr_wrap_to_internal_ratio": 1.0113,
+          "tb_wrap_to_internal_ratio": 1.1092
+        },
+        "preview_160": {
+          "left_right_wrap_rgb_mae": 10.04583,
+          "top_bottom_wrap_rgb_mae": 12.68542,
+          "mean_internal_x_neighbor_rgb_mae": 10.89499,
+          "mean_internal_y_neighbor_rgb_mae": 10.88919,
+          "lr_wrap_to_internal_ratio": 0.9221,
+          "tb_wrap_to_internal_ratio": 1.165
+        },
+        "meaning": "RGB absolute-difference wrap statistics versus adjacent pixel means; diagnostic only, not pass/fail or seamlessness proof."
+      },
+      "qa_previews": [
+        {
+          "file": "qa/damp_moss_soil_native_wrap.png",
+          "dimensions": [
+            768,
+            768
+          ],
+          "method": "Unscaled native source four-corner periodic wrap cross, joins at image center. Preview only.",
+          "sha256": "58f7822e6cace8bcd362bf36961ffa69a22ed8bb39fc031d19b58dab5fa130a6"
+        },
+        {
+          "file": "qa/damp_moss_soil_repeat_320.png",
+          "dimensions": [
+            960,
+            960
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 320,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 1,
+          "sha256": "31152c72b2686e6b2416b1055af630153a55b2b5e8e930309af084133b049926"
+        },
+        {
+          "file": "qa/damp_moss_soil_repeat_160.png",
+          "dimensions": [
+            480,
+            480
+          ],
+          "method": "3x3 direct periodic repeat; source reduced with Pillow LANCZOS for QA only. No color adjustment, edge blending, offset repair or scene shader.",
+          "tile_size_preview_px": 160,
+          "world_repeat_assumption_px": 320,
+          "screen_px_per_world_px_assumption": 0.5,
+          "sha256": "51e3d81cd8357f306779f22778a8f7437a3af5eb65308875cea2fab572b0e8f8"
+        }
+      ],
+      "visual_review": {
+        "personally_viewed_original": true,
+        "personally_viewed_native_wrap": true,
+        "personally_viewed_repeat_320": true,
+        "personally_viewed_repeat_160": true,
+        "subject": "Low fine olive/brown-green moss, neutral damp soil and small subdued grit; no cyan/blue/purple broad leaves, flowers, water scene or patch outline.",
+        "native_wrap": "Small edge-structure discontinuities remain visible in the native wrap cross, especially along the horizontal join; no repaired seam was substituted.",
+        "scaled_repeat": "No strong rectangular tile boundary at320px/160px samples, but repeated mottled soil/grit clusters remain identifiable in a3x3 field. Slightly stronger texture/value variation than lawn.",
+        "limits": "Mean source luma is about8 levels lower than lawn. Moss is earthy/warm and has fine gritty speckles; native S7 appearance and actor subordination remain pending. Not certified seamless.",
+        "lead_decision": "KEEP provisionally",
+        "lead_retained_limits": "Broad repeated mottling and moss grit at320px repeat; judge actual S7 with actors."
+      },
+      "status": "Lead KEEP provisionally for native integration. No regeneration before native review; not runtime/aesthetic approval or seamless certification."
+    }
+  ],
+  "qa": {
+    "folder": "qa",
+    "engine_import_excluded_by": "qa/.gdignore",
+    "method": "Pillow only, explicitly requested separate QA: native768x768 periodic corner-wrap with no scaling, and3x3 repeat previews after LANCZOS reduction to320px and160px tiles. No source pixel/file changes.",
+    "no_scene_simulation": true,
+    "measurement_file": "qa/measurements.json",
+    "note": "QA previews are not runtime art and must not be registered as ground masters."
+  },
+  "authority": {
+    "asset_only": true,
+    "production_owns": "WorldArt/cache/material arrays, irregular blending, actual S2/S7 integration, all engine/import/test/capture and Git.",
+    "engine_started": false,
+    "native_renderer": false,
+    "product_code_edits": false,
+    "existing_ground_source_edits": false,
+    "cache_edits": false,
+    "git_mutations": false
+  },
+  "verification": {
+    "original_source_bytes_preserved": true,
+    "opaque_rgb_verified": true,
+    "square_dimensions_verified": true,
+    "personal_visual_review": true,
+    "seamless_certification": false,
+    "method": "Read-only decoded PNG inspection, statistics, original/selected SHA256/byte comparison and separate requested Pillow QA previews."
+  },
+  "packet_status": "Bounded asset packet closed. No additional ground or furniture generation without a concrete lead request.",
+  "lead_review": {
+    "local_date": "2026-10-20",
+    "decision": "KEEP both provisionally for native integration; no regeneration needed before native review.",
+    "reported_review": "Lead personally viewed both originals and320px repeats; lead reports an independent visual reviewer also viewed160px repeats/native wrap. Lead independently verified selected source hashes against generated originals and handed exact source paths to production.",
+    "source_strengths": "Fine short-lawn structure and mineral moss/soil structure are distinct; sources remove the rejected blue broad-leaf carpet language.",
+    "retained_limits": [
+      "Slight dry olive character in lawn.",
+      "Broad repeated mottling remains.",
+      "Moss grit is visible at320px repeat.",
+      "Source-only acceptance; actual S2/S7 fit, actor subordination, blending, grading and runtime aesthetics are pending."
+    ]
+  }
+}

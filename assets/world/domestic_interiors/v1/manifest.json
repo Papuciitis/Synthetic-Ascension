@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "title": "Synthetic Ascension domestic interiors v1",
+  "created_local_date": "2026-10-20",
+  "timezone": "Europe/Riga",
+  "status": "Both original source props provisionally kept by lead for native fitting; no native fit, final aesthetic, collision, cover or placement approval.",
+  "scope": "Exactly two small household props, one built-in imagegen generation call each. No furnishing catalogue, variants or edits.",
+  "coordinate_convention": {
+    "origin": "original PNG upper-left",
+    "x": "right",
+    "y": "down",
+    "units": "actual original source pixels",
+    "bounds": "[left,top,right,bottom], right/bottom exclusive",
+    "anchor_note": "A placement datum may be in transparent space, as for the cot's midpoint between feet. Support points are also supplied.",
+    "alpha_note": "Threshold bounds are measurements only. Raw alpha>0 includes residue; do not infer tight crop, collision or physical footprint from it."
+  },
+  "references": [
+    {
+      "path": "docs/art/concepts/2026-10-18-city-directions/08-mediterranean-medieval-industrial-city.png",
+      "role": "Accepted temperate European painterly materials/daylight, simplify detail.",
+      "personally_viewed": true
+    },
+    {
+      "path": "docs/art/reference/2026-10-19-house-wall-repair-v1/seed-16102026/frontage-irregular-entered-960x540.png",
+      "role": "Actual empty clay-domestic cutaway camera, actor and room scale; prior controlled native sample, not a current runtime acceptance.",
+      "personally_viewed": true
+    },
+    {
+      "path": "docs/art/2026-10-20-medieval-gardens-and-domestic-interiors.md",
+      "role": "Current source-backed household brief; bed/cooking purpose cues, preserve real wall/roof/entry geometry.",
+      "read": true
+    }
+  ],
+  "assets": [
+    {
+      "tool": "image_gen.imagegen",
+      "mode": "built-in",
+      "intent": "generate_original",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "source_bytes_preserved": true,
+      "processing": "Original PNG copied unchanged; no resize, trim, alpha cleanup, repaint, compositing or re-encoding.",
+      "status": "Lead KEEP provisionally for native fitting. Alpha must stay intact. Not natively approved; no extra furniture generated.",
+      "ownership": "Interior ground prop fitted to a real dwelling and its room/roof ownership. Production owns room attachment, sorting, cutaway visibility, cover/collision and clear routes.",
+      "measurement_method": "Dimensions, alpha and pixel values read from actual original PNG using Pillow; placement anchors/ground footprints manually selected from viewed image. Footprint is approximate where height occludes the rear contact plane.",
+      "id": "timber_cot",
+      "file": "timber_cot.png",
+      "tool_output_source_path": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a1586b-b69a-7d30-a6ac-49d746d881c9/exec-1c72f371-61f8-4972-bde5-abe46a5ad985.png",
+      "source_dimensions_px": [
+        1024,
+        1536
+      ],
+      "file_bytes": 2286038,
+      "sha256": "22549e75329ee9164f9f41fbefcdea2e6b028309a7c358362b4c11a2fc69c143",
+      "color_mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 254,
+        "zero_pixels": 885360,
+        "fully_opaque_pixels": 0,
+        "partial_pixels": 687504,
+        "residue_pixels_alpha_1_to_15": 13657,
+        "dominant_nonzero_values": [
+          253,
+          254,
+          252
+        ],
+        "bounds_gt0": [
+          105,
+          23,
+          988,
+          1504
+        ],
+        "bounds_ge8": [
+          214,
+          112,
+          848,
+          1360
+        ],
+        "bounds_ge16": [
+          214,
+          112,
+          848,
+          1360
+        ],
+        "bounds_ge128": [
+          215,
+          113,
+          847,
+          1359
+        ],
+        "bounds_ge240": [
+          216,
+          113,
+          846,
+          1358
+        ]
+      },
+      "visible_size_at_alpha_ge128_px": [
+        632,
+        1246
+      ],
+      "ground_contact_anchor_px": [
+        530,
+        1345
+      ],
+      "ground_contact_anchor_normalized": [
+        0.517578125,
+        0.8756510416666666
+      ],
+      "anchor_pixel_rgba": [
+        43,
+        34,
+        23,
+        0
+      ],
+      "anchor_definition": "Midpoint datum on the two visible south/front foot-contact baseline, intentionally in transparent space between feet. Not the blanket center and not a painted support pixel.",
+      "support_contacts_px": [
+        {
+          "point": [
+            250,
+            1345
+          ],
+          "rgba": [
+            64,
+            54,
+            41,
+            253
+          ]
+        },
+        {
+          "point": [
+            800,
+            1345
+          ],
+          "rgba": [
+            49,
+            42,
+            30,
+            252
+          ]
+        }
+      ],
+      "secondary_ground_center_estimate_px": [
+        530,
+        800
+      ],
+      "ground_footprint_estimate_bounds_px": [
+        215,
+        230,
+        847,
+        1359
+      ],
+      "ground_footprint_estimate_size_px": [
+        632,
+        1129
+      ],
+      "ground_footprint_uncertainty_px": 30,
+      "orientation": "Head/pillow at north/top; long axis north-south, exactly image vertical. Warm upper-right light.",
+      "runtime_sizing": {
+        "cell_size_world_px": 64,
+        "brief_width_world_px": [
+          55,
+          75
+        ],
+        "brief_ground_length_world_px": [
+          90,
+          120
+        ],
+        "source_visible_aspect_width_over_height": 0.507223113964687,
+        "source_ground_aspect_width_over_length_estimate": 0.5597874224977857,
+        "suggested_first_review_visible_width_world_px": 60,
+        "suggested_first_review_uniform_scale": 0.0949367088607595,
+        "first_review_visible_size_world_px": [
+          60,
+          118.29113924050633
+        ],
+        "first_review_ground_footprint_estimate_world_px": [
+          60,
+          107.18354430379746
+        ],
+        "first_review_full_image_size_world_px": [
+          97.21518987341773,
+          145.8227848101266
+        ],
+        "range_at_brief_width": {
+          "visible_height_world_px": [
+            108.43354430379746,
+            147.8639240506329
+          ],
+          "estimated_ground_length_world_px": [
+            98.25158227848101,
+            133.97943037974684
+          ]
+        },
+        "note": "Start near60px width for about107px estimated ground length. At75px width the unchanged source is about134px estimated ground length, outside the brief's length range. Fit using uniform scale, never stretch; source projection/feet must be checked in actual room."
+      },
+      "visual_findings": {
+        "personally_viewed": true,
+        "human_bed": true,
+        "pillow_count": 1,
+        "blanket": "Muted grey-sage wool with worn cream linen.",
+        "projection": "Strong top-facing mattress with north-south alignment and shallow frame planes. Narrow adult cot silhouette, more front board than pure plan view.",
+        "true_alpha": true,
+        "surrounding_room_or_floor": false,
+        "opaque_scene_background": false,
+        "large_visible_shadow_rectangle": false,
+        "preview_note": "RGB channels contain a broad brown surround, but checked surround samples have alpha0 and alpha>=8 bounds hug the bed. Preserve RGBA; an RGB-only or alpha-ignoring preview can show the hidden surround. Faint low-alpha residue remains.",
+        "limits": "Dense woven source texture may merge at runtime; rear foot contact is occluded by the frame. Actual human/room scale, visible solid furniture and collider/cover contract remain untested."
+      }
+    },
+    {
+      "tool": "image_gen.imagegen",
+      "mode": "built-in",
+      "intent": "generate_original",
+      "use_case": "stylized-concept",
+      "transparent_background": true,
+      "source_bytes_preserved": true,
+      "processing": "Original PNG copied unchanged; no resize, trim, alpha cleanup, repaint, compositing or re-encoding.",
+      "status": "Lead KEEP provisionally for native fitting. Alpha must stay intact. Not natively approved; no extra furniture generated.",
+      "ownership": "Interior ground prop fitted to a real dwelling and its room/roof ownership. Production owns room attachment, sorting, cutaway visibility, cover/collision and clear routes.",
+      "measurement_method": "Dimensions, alpha and pixel values read from actual original PNG using Pillow; placement anchors/ground footprints manually selected from viewed image. Footprint is approximate where height occludes the rear contact plane.",
+      "id": "cooking_hearth",
+      "file": "cooking_hearth.png",
+      "tool_output_source_path": "C:/Users/NaurisKrišjānis/.codex/generated_images/01a1586b-b69a-7d30-a6ac-49d746d881c9/exec-133d3011-e960-46e9-84de-a2b930d521d9.png",
+      "source_dimensions_px": [
+        1593,
+        987
+      ],
+      "file_bytes": 2346914,
+      "sha256": "fd6a6434311135e5c7b09ca6b2c3c3ca47333c33b78fed69f826527c9bc7e26b",
+      "color_mode": "RGBA",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "zero_pixels": 684339,
+        "fully_opaque_pixels": 240,
+        "partial_pixels": 887712,
+        "residue_pixels_alpha_1_to_15": 17874,
+        "dominant_nonzero_values": [
+          252,
+          253,
+          251
+        ],
+        "bounds_gt0": [
+          0,
+          0,
+          1569,
+          987
+        ],
+        "bounds_ge8": [
+          67,
+          174,
+          1535,
+          820
+        ],
+        "bounds_ge16": [
+          68,
+          174,
+          1535,
+          820
+        ],
+        "bounds_ge128": [
+          69,
+          175,
+          1534,
+          819
+        ],
+        "bounds_ge240": [
+          70,
+          176,
+          1533,
+          818
+        ]
+      },
+      "visible_size_at_alpha_ge128_px": [
+        1465,
+        644
+      ],
+      "ground_contact_anchor_px": [
+        800,
+        805
+      ],
+      "ground_contact_anchor_normalized": [
+        0.5021971123666039,
+        0.8156028368794326
+      ],
+      "anchor_pixel_rgba": [
+        83,
+        72,
+        60,
+        250
+      ],
+      "anchor_definition": "South/front center contact datum just inside the low stone base edge; not pot center or image center.",
+      "secondary_ground_center_estimate_px": [
+        800,
+        540
+      ],
+      "ground_footprint_estimate_bounds_px": [
+        69,
+        265,
+        1534,
+        819
+      ],
+      "ground_footprint_estimate_size_px": [
+        1465,
+        554
+      ],
+      "ground_footprint_uncertainty_px": 40,
+      "north_wall_alignment_estimate_y_px": 265,
+      "orientation": "Back toward north/top and a future real wall; pot/recess faces south. Main assembly long axis east-west.",
+      "runtime_sizing": {
+        "cell_size_world_px": 64,
+        "brief_width_world_px": [
+          80,
+          120
+        ],
+        "brief_ground_depth_world_px": [
+          50,
+          75
+        ],
+        "source_visible_aspect_width_over_height": 2.2748447204968945,
+        "source_ground_aspect_width_over_depth_estimate": 2.6444043321299637,
+        "suggested_first_review_visible_width_world_px": 120,
+        "suggested_first_review_uniform_scale": 0.08191126279863481,
+        "first_review_visible_size_world_px": [
+          120,
+          52.75085324232082
+        ],
+        "first_review_ground_footprint_estimate_world_px": [
+          120,
+          45.37883959044368
+        ],
+        "first_review_full_image_size_world_px": [
+          130.48464163822527,
+          80.84641638225256
+        ],
+        "range_at_brief_width": {
+          "visible_height_world_px": [
+            35.16723549488054,
+            52.75085324232082
+          ],
+          "estimated_ground_depth_world_px": [
+            30.252559726962456,
+            45.37883959044368
+          ]
+        },
+        "note": "Source is shallower than the brief's50–75px ground-depth guide. At120px width total visible height is about52.75 and estimated ground depth about45.38. Preserve source aspect; production fits real ground/placement rather than stretching to a placeholder rectangle. Rear footprint y is approximate under raised stones."
+      },
+      "visual_findings": {
+        "personally_viewed": true,
+        "pot_count": 1,
+        "unlit": true,
+        "flame_or_glow": false,
+        "integrated_fuel": true,
+        "wall_panel_or_room": false,
+        "tall_chimney": false,
+        "projection": "Top stone surfaces and pot opening dominate; shallow front base. Coherent low horizontal hearth with side wood nook.",
+        "true_alpha": true,
+        "opaque_scene_background": false,
+        "large_visible_shadow_rectangle": false,
+        "limits": "Low-alpha residue and tiny colored edge fringes remain. Source stones/ash are detailed and may merge at native size. Apparent base depth is not calibrated gameplay geometry; real wall fit and room occlusion untested."
+      }
+    }
+  ],
+  "authority": {
+    "asset_only": true,
+    "production_owns": "All integration, engine/import/test/capture, product code, cover/collision/placement and Git.",
+    "engine_started": false,
+    "native_renderer": false,
+    "git_mutations": false,
+    "product_code_edits": false
+  },
+  "verification": {
+    "personally_viewed_outputs": true,
+    "dimensions_alpha_pixel_measurements": true,
+    "original_and_selected_hashes_match": true,
+    "png_reencoded": false,
+    "method": "Read-only Pillow inspection plus SHA256 and byte comparison. No image compositing or native scene rendering.",
+    "limits": "Source visual review and estimated contact/footprint measurements only; not native camera/actor fit or final aesthetics."
+  }
+}
