@@ -97,3 +97,31 @@ The user meant nonrectangular house shadows generally. Root clarified that the S
 - [x] Root observed clean S4/S7 RED16/8, exit1: each real south/east-door L fixture had50false positives and40/41false negatives. No extra diagnostics.
 - [x] Replace the exact-caster/clipping segment predicate in CityBlockKit with the explicit non-guard ownership predicate. Keep guard legacy branch untouched; do not change sun height/direction/color, RNG, physical cells or later-segment ground/roof styling.
 - [ ] Root runs later-segment GREEN, existing S2 exact shadows, WorldFootprint and accepted guard regressions, then inspects a real later-segment exterior if needed. No universal custom-family shadow claim.
+
+## Recorded execution outcome — 20 October
+
+Implementation is retained as9eab80dc (connected paving/actual S2 casts) and
+346518ee (connected roof planes, turned tile UVs and non-guard cast scope).
+The [scene packet](../../art/reference/2026-10-20-linux-scene-depth/README.md)
+retains exact REDs, rejected native iterations and two actual-Game matched
+legacy/connected roof pairs, each11checks/0failures/0saves at960×540 or1280×720.
+Focused final native roof planes21/0 and texture axes17/0 pass; S2 caster13/0,
+S4/S7 ray-reference caster24/0 and accepted guard refinement174/0 pass.
+
+Combined main-tree verification found an obsolete rectangular-interior
+assertion in the procedural survey. Seed2026's reported shadow occupies its
+empty northwest L notch; independent intersections with all three actual
+occupied outlines are empty. The corrected strict receiver check preserves
+every shadow×receiver comparison, adds transformed deliberate-interior
+positive controls and explicitly runs the intended S2 branch. It passes6318/0
+across20layouts and is committed separately as02ee8d3a. Failed/diagnostic
+records are preserved in the [integration packet](../../art/reference/2026-10-20-linux-integration/README.md), not relabeled as passes.
+
+The combined actual Game visibility run with furnishings/frontage/atmosphere
+passes11plates/0failures/0saves. Later final main footprint11/0, care125/0 and
+parse557/0 checks are clean. Ordinary/reduced occupied clips belong to the
+separate ground/domestic/atmosphere packets; they are not fixed-pixel roof
+ablation or matched performance evidence. Review of the whole generated street,
+all later district structures, general chunk-seam continuation and ordinary
+human play remain open. LINUX_STATUS and dated packets supersede historical
+unchecked execution boxes above; they distinguish every exact source snapshot.

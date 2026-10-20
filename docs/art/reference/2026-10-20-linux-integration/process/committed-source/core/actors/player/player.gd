@@ -1,0 +1,2213 @@
+extends CharacterBody2D
+
+const AimState := preload("res://core/actors/player/PlayerAimState.gd")
+const DashState := preload("res://core/actors/player/PlayerDashState.gd")
+const AimReticle := preload("res://core/actors/player/PlayerAimReticle.gd")
+
+signal hp_changed(current: float, max_hp: float)
+
+## Deliberately NOT named active_cd_changed: ActiveAbilityHUD binds the highest
+## hud_priority child of a runner that carries that signal, and a dash sharing
+## the name would silently steal the ability HUD from an equipped set ability.
+signal dash_cd_changed(time_left: float, max_cd: float)
+
+@export var speed: float = 300.0
+@export var max_hp: float = 100.0
+
+@export var contact_damage: float = 10.0
+@export var contact_tick: float = 0.5
+
+@export var base_stats: Stats
+
+@export var melee_slash_scene: PackedScene
+@export var ranged_bullet_scene: PackedScene
+@export var magic_impact_scene: PackedScene
+@export var vfx_pulse_ring_scene: PackedScene   # assign PulseRing.tscn
+@export var vfx_spokes_scene: PackedScene       # assign SpokesBurst.tscn
+
+@export var base_weapon_damage: float = 12.0
+
+## Melee used to have NO cooldown.
+##
+## It fires on the press, so the attack rate was literally the player's click
+## rate - measured, melee did 75 DPS at 4 clicks/second and 250 at 12, against
+## ranged's flat 37 at any rate. That is not a balance number, it is a reward
+## for how fast someone's hand is, and it makes the style unreadable to tune
+## and worse for anyone who cannot spam. It also meant Haste did nothing, which
+## needed a special-case follow-through mechanic to paper over.
+##
+## A real cooldown makes melee a style instead of a mash: ~3.3 swings/second
+## against ranged's 4.5, paid for by a 145-degree arc that hits everything in
+## front of it and by melee's 1.25x damage.
+@export var melee_cooldown: float = 0.30
+@export var ranged_cooldown: float = 0.22
+
+## Magic was 0.55, which put its ceiling at 25 DPS against ranged's 54 - less
+## than half - for a 48 px blast that is SMALLER than melee's crescent. It also
+## sat outside every cadence window in the Manifestation layer: at a 0.50 s gap
+## Fever Litany could never chain past one stack and Death Rattle could never
+## fire at all, so two rules were quietly dead on this style.
+##
+## 0.40 brings it inside Fever's 0.42 s chain window and pairs with the damage
+## bump below. Magic stays the slowest and heaviest of the three; it stops
+## being the worst.
+@export var magic_cooldown: float = 0.40
+
+
+# Melee keeps its passive regeneration identity. Lifesteal itself is universal,
+# style-weighted and capped per second so fast multi-hit builds cannot bypass danger.
+@export_group("Melee Sustain")
+@export var melee_regen_flat_per_sec: float = 0.35
+@export var melee_regen_bonus_hp_pct_per_sec: float = 0.004
+@export var melee_regen_delay_after_damage: float = 1.25
+
+@export_group("Style Lifesteal")
+@export_range(0.0, 0.20, 0.001) var melee_lifesteal_pct: float = 0.020
+@export_range(0.0, 0.20, 0.001) var ranged_lifesteal_pct: float = 0.008
+@export_range(0.0, 0.20, 0.001) var magic_lifesteal_pct: float = 0.006
+@export_range(0.0, 0.50, 0.005) var melee_lifesteal_cap_max_hp_per_sec: float = 0.060
+@export_range(0.0, 0.50, 0.005) var ranged_lifesteal_cap_max_hp_per_sec: float = 0.030
+@export_range(0.0, 0.50, 0.005) var magic_lifesteal_cap_max_hp_per_sec: float = 0.025
+
+@export var death_follower_cost: int = 10
+@export var respawn_invuln_time: float = 2.0
+@export var respawn_phase_time: float = 2.0
+@export var respawn_speed_mul: float = 1.35
+
+@export_group("Big-hit Protection")
+## Deaths were burst deaths (audit 2026-10-04, change 2): no post-hit
+## invulnerability and no per-hit cap, so a swarm tick, two bolts and a blast
+## could land in one half second, and at the seg-2 collapse's x11.65 one
+## contact tick was ~90% of a 242-HP player. No single hit now takes more than
+## these fractions of max HP before armour - a contact tick 22%, any other hit
+## 30%, a boss's 45% - and a hit that costs big_hit_ratio of max HP or more
+## buys big_hit_grace seconds of visible invulnerability. pay_health
+## (chip-cost builds, Death Rattle's toll) is untouched: it is not a hit.
+## Off only for suites that set up health with one oversized blow.
+@export var big_hit_protection: bool = true
+@export_range(0.05, 1.0, 0.01) var contact_tick_cap: float = 0.22
+@export_range(0.05, 1.0, 0.01) var hit_cap: float = 0.30
+@export_range(0.05, 1.0, 0.01) var boss_hit_cap: float = 0.45
+@export_range(0.0, 1.0, 0.01) var big_hit_ratio: float = 0.08
+@export_range(0.0, 2.0, 0.05) var big_hit_grace: float = 0.35
+
+@export_group("Healing Lock")
+## Heal sources a lock does not stop. Empty by default: a lock is a lock -
+## the Exit Rite's mend and the wardstone restore are sealed with regen,
+## lifesteal and pickups. The playtest can exempt &"exit_rite" here without
+## a code change.
+@export var healing_lock_exempt_sources: Array[StringName] = []
+
+var stats: Stats = null
+var hp: float = 100.0
+var spawn_pos: Vector2
+## Capture-only incoming ancestry. Nested ordinary damage pushes an empty
+## frame, so a callback cannot borrow the outer projectile's identity.
+var _balance_damage_contexts: Array[Dictionary] = []
+
+var _weapon_cd: float = 0.0
+## True only while a native attack fired by a HELD button (Hold to Attack) is
+## resolving, false for a fresh press and for attacks fired by any other caller.
+## A cadence rule that bills for panic-firing (Death Rattle) reads it: a held
+## trigger re-fires at the weapon's own cadence, which is not the mashing that
+## rule prices.
+var native_attack_repeated: bool = false
+var _alt_hold_retry: float = 0.0
+
+# sustain runtime
+var _melee_regen_block_left: float = 0.0
+var _style_damage_cb: Callable = Callable()
+var _lifesteal_window_left: float = 1.0
+var _lifesteal_healed_this_window: float = 0.0
+var _touching_enemies: int = 0
+var _damage_loop_running: bool = false
+var _contact_sources: Dictionary = {} # enemy instance id -> {node, overlap_count}
+var is_dead: bool = false
+var _cinematic_move_locked: bool = false
+var _cinematic_attack_locked: bool = false
+var _aim_state: RefCounted = AimState.new()
+var _aim_reticle: Node2D
+var _dash: PlayerDashState = DashState.new()
+var _dash_trail: Node2D = null
+
+var invulnerable_time: float = 0.0
+## Hurt feedback on the body (audit 2026-10-04, change 6): a hit that costs HP
+## tints the character red for HURT_TINT_SECONDS, and protective
+## invulnerability (respawn, a rescue, the post-hit grace) blinks it so the
+## player can see the window. A dash's own i-frames do not blink: the dash
+## is its own read. Reduced Motion holds the blink at a steady translucency.
+const HURT_TINT := Color(1.6, 0.5, 0.5, 1.0)
+const HURT_TINT_SECONDS := 0.08
+const BLINK_ALPHA := 0.4
+const BLINK_HALF_PERIOD := 0.06
+const BLINK_STEADY_ALPHA := 0.65
+var _hurt_tint_left: float = 0.0
+var _blink_left: float = 0.0
+var _blink_clock: float = 0.0
+var _visual_tinted: bool = false
+## Seconds of healing lock left - the Cursed Vault's price, a Sacrifice, a
+## ritual interference. Counted down in _process beside invulnerable_time, so
+## it pauses with the game and holds while dead.
+var _healing_lock_left: float = 0.0
+var _healing_lock_reason: StringName = &""
+const HEALING_LOCK_COLOUR := Color(0.78, 0.36, 0.90, 1.0)
+const HEALING_LOCK_TEACH := "HEALING SEALED: nothing mends you until the seal lifts - not regen, not lifesteal, not the Rite. The HP bar counts it down."
+
+var respawn_phase_left: float = 0.0
+## Reconstruction near the Exit Rite (rite_recovery_point): where the player
+## died, and the seconds of the recovery grace left (plan §6.4).
+const RITE_RECOVERY_GRACE := 5.0
+const RITE_RECOVERY_BREAKABLE_AFTER := 2.0
+const RITE_RECOVERY_RADII: Array[float] = [900.0, 1000.0, 800.0, 1100.0, 1200.0]
+const RITE_RECOVERY_ANGLES: Array[float] = [0.0, 20.0, -20.0, 40.0, -40.0, 65.0, -65.0, 90.0, -90.0, 120.0, -120.0, 150.0, -150.0, 180.0]
+const RITE_RECOVERY_CIRCLE_MARGIN := 300.0
+const RITE_RECOVERY_CROWD_RADIUS := 280.0
+const RITE_RECOVERY_MAX_CANDIDATES := 6
+const RITE_RECOVERY_FOOTPRINT: Array[Vector2] = [Vector2.ZERO, Vector2(20, 0), Vector2(-20, 0), Vector2(0, 20), Vector2(0, -20)]
+var _death_position := Vector2.INF
+var _rite_recovery_left: float = 0.0
+var _base_collision_mask: int = 0
+var _base_collision_layer: int = 0
+const ENEMY_BODY_LAYER_BIT: int = 1 << 1  # physics layer 2
+var _bound_inv: Inventory = null
+var _managed_hit_profile: HitProfileAdapter = HitProfileAdapter.new()
+var _lucky_crit_pending: bool = false
+## Last resolved curse reading, so the Run Sheet can show the same arithmetic
+## the stats used rather than recomputing it and drifting.
+var last_burden: BurdenSnapshot = null
+var _belief_refresh_pending: bool = false
+var _belief_refresh_cooldown: float = 0.0
+
+@onready var hurtbox: Area2D = $Hurtbox
+@onready var aim_pivot: Node2D = $AimPivot
+@onready var spell_caster: SpellCaster = $SpellCaster as SpellCaster
+
+
+func _ready() -> void:
+	if not is_in_group("player"):
+		add_to_group("player")
+
+	# ✅ so enemy projectiles can identify it without guessing layers
+	if hurtbox != null:
+		hurtbox.add_to_group("player_hurtbox")
+
+	_base_collision_mask = collision_mask
+	_base_collision_layer = collision_layer
+
+	if Global != null and Global.has_signal("followers_changed"):
+		var belief_cb := Callable(self, "_on_followers_changed_belief")
+		if not Global.followers_changed.is_connected(belief_cb):
+			Global.followers_changed.connect(belief_cb)
+
+	# HP init
+	hp = max_hp
+	spawn_pos = global_position
+	hp_changed.emit(hp, max_hp)
+
+	# Hurtbox signal wiring
+	if hurtbox != null:
+		if not hurtbox.area_entered.is_connected(_on_hurtbox_area_entered):
+			hurtbox.area_entered.connect(_on_hurtbox_area_entered)
+		if not hurtbox.area_exited.is_connected(_on_hurtbox_area_exited):
+			hurtbox.area_exited.connect(_on_hurtbox_area_exited)
+
+		if not hurtbox.body_entered.is_connected(_on_hurtbox_body_entered):
+			hurtbox.body_entered.connect(_on_hurtbox_body_entered)
+		if not hurtbox.body_exited.is_connected(_on_hurtbox_body_exited):
+			hurtbox.body_exited.connect(_on_hurtbox_body_exited)
+	else:
+		push_warning("Player Hurtbox node missing!")
+
+	# SpellCaster setup
+	if spell_caster == null:
+		push_error("SpellCaster missing or not typed. In player.tscn set SpellCaster node correctly.")
+	else:
+		spell_caster.setup(self)
+		sync_spells_from_global()
+
+	# Make sure inventory binding is active immediately
+	# (regen/lifesteal tick happens in _process(delta))
+	_ensure_inventory_binding()
+
+	# listen for permanent augment changes so stats refresh immediately
+	if not Global.permanent_augments_changed.is_connected(_on_permanent_augments_changed):
+		Global.permanent_augments_changed.connect(_on_permanent_augments_changed)
+
+	# If you have AugmentRunner, refresh once
+	if has_node("AugmentRunner"):
+		$AugmentRunner.call("refresh")
+
+	_connect_style_sustain_signals()
+	_aim_reticle = AimReticle.new()
+	add_child(_aim_reticle)
+
+
+func _exit_tree() -> void:
+	_release_dash_trail()
+	if Global.permanent_augments_changed.is_connected(_on_permanent_augments_changed):
+		Global.permanent_augments_changed.disconnect(_on_permanent_augments_changed)
+
+	if _bound_inv != null and _bound_inv.changed.is_connected(_on_inventory_changed):
+		_bound_inv.changed.disconnect(_on_inventory_changed)
+
+	# Style lifesteal signal cleanup
+	if _style_damage_cb.is_valid() and RunEvents != null and RunEvents.has_signal("damage_dealt"):
+		if RunEvents.damage_dealt.is_connected(_style_damage_cb):
+			RunEvents.damage_dealt.disconnect(_style_damage_cb)
+
+
+func _on_permanent_augments_changed(ids: Array[StringName]) -> void:
+	if OS.is_debug_build():
+		print("[AUG] Player received permanent_augments_changed:", ids)
+	refresh_run_state()
+
+
+func _process(delta: float) -> void:
+	if is_dead:
+		return
+	# Belief power tracks the live congregation, debounced so kill sprees
+	# don't trigger a full stat recompute per kill.
+	if _belief_refresh_cooldown > 0.0:
+		_belief_refresh_cooldown -= delta
+	if _belief_refresh_pending and _belief_refresh_cooldown <= 0.0:
+		_belief_refresh_pending = false
+		_belief_refresh_cooldown = 2.0
+		refresh_run_state()
+	if _weapon_cd > 0.0:
+		_weapon_cd = max(_weapon_cd - delta, 0.0)
+
+	if invulnerable_time > 0.0:
+		invulnerable_time = max(invulnerable_time - delta, 0.0)
+	if _visual_tinted or _hurt_tint_left > 0.0 or _blink_left > 0.0:
+		_update_hurt_visual(delta)
+
+	if _healing_lock_left > 0.0:
+		_healing_lock_left = maxf(_healing_lock_left - delta, 0.0)
+		if _healing_lock_left <= 0.0:
+			_on_healing_lock_expired()
+
+	if respawn_phase_left > 0.0:
+		respawn_phase_left = max(respawn_phase_left - delta, 0.0)
+		if respawn_phase_left <= 0.0:
+			_apply_body_phasing()
+	if _rite_recovery_left > 0.0:
+		_rite_recovery_left = maxf(_rite_recovery_left - delta, 0.0)
+
+	_tick_dash(delta)
+
+	_ensure_inventory_binding()
+
+	if OS.is_debug_build() and Input.is_action_just_pressed("debug_print_sets"):
+		if Global.run_inventory == null:
+			print("[SETS] run_inventory is null")
+		else:
+			print("[SETS] counts = ", Global.run_inventory.get_set_counts())
+
+	if not _cinematic_attack_locked:
+		_read_attack_input(delta)
+
+	_update_lifesteal_budget(delta)
+	_update_melee_sustain(delta)
+
+## Hold to Attack (controls.hold_to_attack, on by default): a held button fires
+## again as soon as the weapon is ready instead of once per press. The only
+## human capture averaged 2.4 attacks/s against a haste cap of ~8/s, so the
+## click rate, not the build, was setting the damage (audit 2026-10-04,
+## change 3). The weapon's own cooldown stays the cadence: the held path does
+## not call _fire_weapon until _weapon_cd has run out, so holding never fires
+## per frame and pays nothing between shots. A fresh press goes through
+## _fire_weapon exactly as before (its gate refuses a press on cooldown).
+const ALT_HOLD_RETRY := 0.12
+## Review fix (2026-10-04, feel review, high): Clean Cut (EX12) zeroes
+## _weapon_cd on an execution, so a held button re-fired every physics tick
+## (~60 swings/s) where a click needed a fresh press. A held repeat also waits
+## the fastest legitimate cadence - the cooldown over the haste cap, doubled by
+## Burst's post-cap window - since the last native shot.
+var _since_native_fire: float = INF
+
+
+func _read_attack_input(delta: float) -> void:
+	_step_attack_input(
+		Input.is_action_just_pressed("attack"),
+		Input.is_action_pressed("attack"),
+		Input.is_action_just_pressed("alt_attack"),
+		Input.is_action_pressed("alt_attack"),
+		delta,
+	)
+
+
+## One frame of attack input, split from the Input reads so a suite can drive
+## a held button frame by frame.
+func _step_attack_input(pressed: bool, held: bool, alt_pressed: bool, alt_held: bool, delta: float) -> void:
+	_since_native_fire += delta
+	var hold := hold_to_attack_enabled()
+	# A style with no cooldown (none ships one) would fire every frame while
+	# held, so only a real cooldown gets the held repeat.
+	var native_cd := _native_style_cooldown()
+	var repeat := not pressed and hold and held and not _hold_stops_fire() and _weapon_cd <= 0.0 and native_cd > 0.0 \
+		and _since_native_fire >= native_cd / (SHOT_HASTE_CAP * 2.0)
+	if pressed or repeat:
+		native_attack_repeated = repeat
+		_fire_weapon(_current_aim_target())
+		native_attack_repeated = false
+		_since_native_fire = 0.0
+	if spell_caster == null:
+		return
+	_alt_hold_retry = maxf(_alt_hold_retry - delta, 0.0)
+	if alt_pressed:
+		_alt_hold_retry = ALT_HOLD_RETRY
+		spell_caster.cast_all_manual()
+	elif hold and alt_held and _alt_hold_retry <= 0.0:
+		# Spells keep their own cooldowns; the retry interval only stops a
+		# spell with no valid target from searching again every frame.
+		_alt_hold_retry = ALT_HOLD_RETRY
+		spell_caster.cast_all_manual()
+
+
+## Bottomless (BRK2, V4 and V5) fires on its own and stops while the primary
+## is held - its safety. A held repeat would turn that hold back into fire
+## (feel review, high), so with BRK2 owned holding only stops the gun.
+func _hold_stops_fire() -> bool:
+	var ar := get_node_or_null("AscensionRunner") as AscensionRunner
+	return ar != null and ar.owns("BRK2")
+
+
+func hold_to_attack_enabled() -> bool:
+	if SettingsManager == null:
+		return true
+	return bool(SettingsManager.get_value(&"controls", &"hold_to_attack", true))
+
+
+func _native_style_cooldown() -> float:
+	match str(Global.selected_style_id):
+		"melee":
+			return melee_cooldown
+		"magic":
+			return magic_cooldown
+	return ranged_cooldown
+
+
+func _unhandled_input(event) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F7:
+		if OS.is_debug_build():
+			_debug_dump_sets()
+	if event is InputEventMouseMotion:
+		_aim_state.note_mouse_motion()
+
+
+func _physics_process(_delta: float) -> void:
+	if is_dead:
+		velocity = Vector2.ZERO
+		return
+
+	# The dash OWNS the frame. velocity is fully overwritten every physics tick
+	# with no acceleration or friction, so a dash cannot apply an impulse - it
+	# has to preempt the input read below. That is also why it lives on the
+	# player rather than in a child node: _physics_process dispatches
+	# parent-before-child, so a child could only ever act one frame too late.
+	if _dash.is_dashing():
+		velocity = _dash.direction * _dash.speed()
+		move_and_slide()
+	else:
+		var dir := Vector2.ZERO if _cinematic_move_locked else Input.get_vector("move_left", "move_right", "move_up", "move_down")
+
+		velocity = dir * get_effective_move_speed()
+		move_and_slide()
+
+		if dir != Vector2.ZERO:
+			rotation = dir.angle()
+
+	var deadzone := 0.2 if SettingsManager == null else float(SettingsManager.get_value(&"controls", &"controller_deadzone", 0.2))
+	var stick_aim := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
+	_aim_state.update_stick(stick_aim, deadzone)
+	var aim_direction: Vector2 = _aim_state.direction() if _aim_state.using_controller() else (get_global_mouse_position() - global_position).normalized()
+	if aim_direction == Vector2.ZERO:
+		aim_direction = Vector2.RIGHT
+	if aim_pivot != null:
+		aim_pivot.global_rotation = aim_direction.angle()
+	if _aim_reticle != null:
+		_aim_reticle.set_aim(global_position, aim_direction, _aim_state.using_controller())
+
+
+# ---------------------------------------------------------------------------
+# Dash
+# ---------------------------------------------------------------------------
+
+func _tick_dash(delta: float) -> void:
+	var was_dashing := _dash.is_dashing()
+	if _dash.tick(delta):
+		dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
+	if was_dashing and not _dash.is_dashing():
+		_end_dash()
+
+	if not _cinematic_move_locked and not Global.active_augment_input_blocked():
+		if Input.is_action_just_pressed(&"dash"):
+			_dash.request()
+
+	if _dash.can_start() and _dash.consume_request():
+		_start_dash()
+
+
+func _start_dash() -> void:
+	# Movement vector first, then the body's facing (which already tracks the
+	# last direction travelled). Never the aim vector: a standing dash toward
+	# the cursor is a mini-blink and steps on Hex Blink's identity.
+	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if dir.length_squared() < 0.0001:
+		dir = Vector2.RIGHT.rotated(rotation)
+	_dash.start(dir)
+	# Items may lengthen the dash (7-Mile Boots) the same way a Lunge sets
+	# its own distance: speed stays authored, a longer dash lasts longer.
+	var dash_items: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if dash_items != null:
+		_dash.distance *= dash_items.get_dash_distance_multiplier()
+
+	# Locked once at the start, not re-derived per frame - releasing the stick
+	# mid-dash would otherwise snap the sprite.
+	rotation = _dash.direction.angle()
+
+	grant_invulnerability(_dash.iframe_time())
+	_apply_body_phasing()
+	_spawn_dash_trail()
+	dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
+
+	if RunEvents != null and RunEvents.player_dashed.has_connections():
+		RunEvents.player_dashed.emit(self, global_position, _dash.direction)
+
+
+func _end_dash() -> void:
+	_apply_body_phasing()
+	_release_dash_trail()
+
+
+## A directed dash of `travel` px toward `dir` (a Lunge). Invulnerability
+## covers only the ordinary dash duration when `full_invulnerability` is false.
+func dash_toward(dir: Vector2, travel: float, full_invulnerability: bool = false, cooldown: float = PlayerDashState.COOLDOWN) -> bool:
+	if is_dead or dir.length_squared() < 0.0001:
+		return false
+	if _dash.is_dashing():
+		_end_dash()
+	_dash.start_toward(dir, travel, cooldown)
+	rotation = _dash.direction.angle()
+	grant_invulnerability(_dash.time_left + PlayerDashState.IFRAME_GRACE if full_invulnerability else PlayerDashState.DURATION + PlayerDashState.IFRAME_GRACE)
+	_apply_body_phasing()
+	_spawn_dash_trail()
+	dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
+	if RunEvents != null and RunEvents.player_dashed.has_connections():
+		RunEvents.player_dashed.emit(self, global_position, _dash.direction)
+	return true
+
+
+## Lengthens the current dash without invulnerability (Long Step).
+func extend_dash(travel: float) -> void:
+	_dash.extend(travel)
+
+
+func is_dashing() -> bool:
+	return _dash.is_dashing()
+
+
+## Observation only (balance recorder): could a dash start now, and how much
+## recovery is left on it. Neither call changes the dash.
+func dash_ready() -> bool:
+	return _dash.can_start()
+
+
+func dash_cooldown_left() -> float:
+	return _dash.cooldown_left
+
+
+func dash_direction() -> Vector2:
+	return _dash.direction
+
+
+## Scales what is left of the native attack recovery (Running Cut).
+func scale_native_recovery(multiplier: float) -> void:
+	_weapon_cd = maxf(0.0, _weapon_cd * multiplier)
+
+
+func cancel_dash() -> void:
+	if not _dash.is_dashing():
+		_dash.cancel()
+		return
+	_dash.cancel()
+	_end_dash()
+
+
+## The ONE writer of collision_mask. Two independent phase timers with two naive
+## write sites means a dash ending during a respawn phase restores enemy-body
+## collision two seconds early.
+##
+## Note this deliberately does NOT reuse start_respawn_phase(): that timer also
+## feeds respawn_speed_mul in get_effective_move_speed(), so a dash borrowing it
+## would leave the player 35% faster for two seconds afterwards.
+func _apply_body_phasing() -> void:
+	var phasing := respawn_phase_left > 0.0 or _dash.is_dashing()
+	collision_mask = (_base_collision_mask & ~ENEMY_BODY_LAYER_BIT) if phasing else _base_collision_mask
+
+
+func _spawn_dash_trail() -> void:
+	_release_dash_trail()
+	var script: GDScript = load("res://assets/vfx/world/common/VFX_TrailFollow2D.gd") as GDScript
+	if script == null:
+		return
+	var trail := script.new() as Node2D
+	if trail == null:
+		return
+	var host: Node = get_tree().current_scene if get_tree() != null else null
+	if host == null:
+		trail.queue_free()
+		return
+	host.add_child(trail)
+	trail.global_position = global_position
+	if "follow" in trail:
+		trail.set("follow", self)
+	_dash_trail = trail
+
+
+func _release_dash_trail() -> void:
+	if _dash_trail != null and is_instance_valid(_dash_trail):
+		if _dash_trail.has_method("stop_and_fade"):
+			_dash_trail.call("stop_and_fade")
+		else:
+			_dash_trail.queue_free()
+	_dash_trail = null
+
+
+func _current_aim_target() -> Vector2:
+	return _aim_state.resolve_target(_attack_origin(), get_global_mouse_position(), 900.0)
+
+
+func get_effective_move_speed() -> float:
+	# One authoritative value for movement and stat-sheet display. The stored
+	# speed already contains race, style, augment, equipment and set stat deltas;
+	# runtime effects are multiplicative and must be applied only once here.
+	var eff_speed: float = speed
+	if respawn_phase_left > 0.0:
+		eff_speed *= respawn_speed_mul
+
+	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
+	if sr != null:
+		eff_speed *= sr.get_move_speed_multiplier()
+
+	var ier: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier != null:
+		eff_speed *= ier.get_move_speed_multiplier()
+
+	var mr: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr != null:
+		eff_speed *= mr.get_move_speed_multiplier()
+
+	var ar: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar != null:
+		eff_speed *= ar.get_move_speed_multiplier()
+
+	return maxf(0.0, eff_speed)
+
+
+## The walk the player keeps up through a boss pattern's window, which
+## BossEscapeOracle certifies walk-outs at: the stored speed under every slow
+## it cannot shed at will. Boosts that may lapse (the respawn boost, kill and
+## surge bonuses) do not count and cannot hide a slow, and a slow the player
+## can drop now (a guard it holds Q for, a Burst it can cancel) does not count
+## either.
+func get_sustained_move_speed() -> float:
+	var kept: float = speed
+
+	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
+	if sr != null:
+		kept *= minf(1.0, sr.get_move_speed_multiplier())
+
+	var ier: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier != null:
+		kept *= minf(1.0, ier.get_move_speed_multiplier())
+
+	var mr: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr != null:
+		kept *= minf(1.0, mr.get_move_speed_multiplier())
+
+	var ar: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar != null:
+		kept *= ar.get_sustained_move_speed_multiplier()
+
+	return maxf(0.0, kept)
+
+
+func set_cinematic_input(move_locked: bool, attack_locked: bool) -> void:
+	_cinematic_move_locked = move_locked
+	_cinematic_attack_locked = attack_locked
+	if move_locked:
+		# This zeroes velocity, but the dash branch rewrites it next frame.
+		cancel_dash()
+		velocity = Vector2.ZERO
+
+
+func clear_cinematic_input() -> void:
+	set_cinematic_input(false, false)
+
+
+func _ensure_inventory_binding() -> void:
+	if Global.run_inventory == _bound_inv:
+		return
+
+	if _bound_inv != null and _bound_inv.changed.is_connected(_on_inventory_changed):
+		_bound_inv.changed.disconnect(_on_inventory_changed)
+
+	_bound_inv = Global.run_inventory
+
+	if _bound_inv != null and not _bound_inv.changed.is_connected(_on_inventory_changed):
+		_bound_inv.changed.connect(_on_inventory_changed)
+
+	_on_inventory_changed()
+
+
+func _on_inventory_changed() -> void:
+	var race: RaceData = Global.race_db.get(Global.selected_race_id, null) as RaceData
+	var style: StyleData = Global.style_db.get(Global.selected_style_id, null) as StyleData
+	recompute_run_stats(race, style)
+
+
+func apply_run_stats(new_stats: Stats, emit_hp_signal: bool = true) -> void:
+	var old_max: float = max_hp
+	var was_full: bool = is_equal_approx(hp, old_max) or hp >= (old_max - 0.001)
+
+	stats = new_stats
+	speed = stats.move_speed
+	max_hp = stats.max_hp
+
+	var old_hp: float = hp
+	if was_full:
+		hp = max_hp
+	else:
+		hp = min(hp, max_hp)
+	if not is_equal_approx(hp, old_hp) or not is_equal_approx(max_hp, old_max):
+		# A stat refresh that moved the maximum (or clamped the current value)
+		# is an adjustment, never healing or damage.
+		var reason := &"max_hp_change"
+		if was_full and not is_equal_approx(max_hp, old_max):
+			reason = &"full_health_preserved"
+		elif hp < old_hp:
+			reason = &"clamped_to_max"
+		_report_health_change(&"adjustment", "player:stats", old_hp, old_max, hp - old_hp, reason)
+
+	if emit_hp_signal:
+		hp_changed.emit(hp, max_hp)
+
+
+
+func sync_spells_from_global() -> void:
+	if spell_caster == null:
+		return
+
+	if Global.equipped_spell_ids.size() < 3:
+		Global.equipped_spell_ids.resize(3)
+
+	for i in range(SpellCaster.SLOT_COUNT):
+		var sid: String = str(Global.equipped_spell_ids[i])
+		var sd: SpellData = Global.spell_db.get(sid, null) as SpellData
+		spell_caster.set_slot(i, sd)
+
+
+func _on_followers_changed_belief(_value: int) -> void:
+	_belief_refresh_pending = true
+
+
+func refresh_run_state() -> void:
+	var race: RaceData = Global.race_db.get(Global.selected_race_id, null) as RaceData
+	var style: StyleData = Global.style_db.get(Global.selected_style_id, null) as StyleData
+	recompute_run_stats(race, style)
+	sync_spells_from_global()
+	if has_node("AugmentRunner"):
+		$AugmentRunner.call("refresh")
+	if has_node("AscensionRunner"):
+		$AscensionRunner.call("refresh")
+
+
+## What the stat pass says when the Inversion Lens moves, or "" when it has
+## not. A retarget is the Lens leaving one worn curse for a deeper one: the
+## old curse is still equipped, and its whole penalty is back. Nothing is said
+## for the first curse suppressed, the last one removed, or a curse swapped
+## out of its slot - nothing "returns" in those, and the sheet's Lens line
+## already names the new target. Reads the two snapshots only, so a test can
+## drive it without a scene.
+static func lens_retarget_message(prev: BurdenSnapshot, next: BurdenSnapshot) -> String:
+	if prev == null or next == null:
+		return ""
+	if prev.suppressed_slot < 0 or next.suppressed_slot < 0:
+		return ""
+	if prev.suppressed_slot == next.suppressed_slot:
+		return ""
+	var before: Variant = prev.entries.get(prev.suppressed_slot, null)
+	var after: Variant = next.entries.get(prev.suppressed_slot, null)
+	if not (before is Dictionary) or not (after is Dictionary):
+		return ""
+	if (before as Dictionary).get("item", null) != (after as Dictionary).get("item", null):
+		return ""
+	return "LENS: %s curse returns — %s curse inverted" % [
+		Inventory.slot_label(prev.suppressed_slot), Inventory.slot_label(next.suppressed_slot),
+	]
+
+
+func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool = true) -> void:
+	if base_stats == null:
+		push_warning("Player.base_stats is null!")
+		return
+
+	var s: Stats = base_stats.copy()
+	# The Run Sheet's per-stat ledger is this pass, recorded step by step:
+	# every row it shows is one of these readings, never a recomputation.
+	Global.stat_ledger_begin(s)
+
+	if race != null:
+		race.apply_to(s)
+		Global.stat_ledger_step("RACE", s)
+	if style != null:
+		style.apply_to(s)
+		Global.stat_ledger_step("STYLE", s)
+
+	if Global.has_method("apply_permanent_augments_to_stats"):
+		Global.call("apply_permanent_augments_to_stats", s)
+
+	if Global.has_method("apply_attempt_modifiers_to_stats"):
+		Global.call("apply_attempt_modifiers_to_stats", s)
+
+	# Followers are not just currency: belief feeds the ascension.
+	if Global.has_method("follower_belief_power"):
+		s.power += Global.follower_belief_power()
+		Global.stat_ledger_step("BELIEF", s)
+
+	if Global.run_inventory != null:
+		var inv_mods: StatDelta = Global.run_inventory.sum_mods()
+		if inv_mods != null:
+			inv_mods.apply_to(s)
+			Global.stat_ledger_step("ITEMS", s)
+
+	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
+	if sr != null:
+		sr.apply_sets_to_stats(s, Global.run_inventory)
+		Global.stat_ledger_step("SETS", s)
+
+	var ier: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier != null:
+		ier.refresh_effects(Global.run_inventory)
+		ier.apply_effects_to_stats(s)
+		Global.stat_ledger_step("ITEM EFFECTS", s)
+
+	# Manifestations run on every equipped slot, not just offhand/ring.
+	var mr: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr != null:
+		mr.refresh_effects(Global.run_inventory)
+		mr.apply_effects_to_stats(s)
+		Global.stat_ledger_step("MANIFESTATIONS", s)
+
+	# One authoritative reading of what the run's curses currently mean. Every
+	# NEG archetype below reads this rather than re-deriving severity, so they
+	# cannot disagree about the same item - and the Run Sheet can show the
+	# player the same arithmetic the stats used.
+	var burden: BurdenSnapshot = BurdenResolver.resolve(
+		Global.run_inventory, Global.permanent_augment_ids
+	)
+	# A deeper curse moving the Lens is the one change in this pass no stat
+	# explains: the old target's full penalty snaps back on what looked like
+	# an upgrade. This runs on every inventory change and is the only place
+	# the previous reading is still in hand, so it is where the player hears.
+	if Global.permanent_augment_ids.has(&"augment_inversion_lens"):
+		var retarget: String = lens_retarget_message(last_burden, burden)
+		if retarget != "" and RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+			RunEvents.tutorial_tip.emit(retarget, 3.0)
+	last_burden = burden
+
+	if Global.run_inventory != null:
+		var items: Array[ItemInstance] = Global.run_inventory.items
+		for i in range(min(items.size(), Inventory.STAT_SLOT_COUNT)):
+			var it: ItemInstance = items[i]
+			if it == null or it.data == null:
+				continue
+
+			var pct := it.active_pct()
+			# A suppressed curse does not apply its penalty. Part of its
+			# severity comes back as the stat it was ruining instead - the item
+			# is still NEG, it just is not weighing on you any more.
+			if burden.is_suppressed(i):
+				pct = BurdenResolver.inverted_return(burden.suppressed_severity)
+				# Twin Lens (the Transcended Lens) returns the whole curse and more.
+				if Global.is_augment_transcended(&"augment_inversion_lens"):
+					pct *= 2.0
+			if i == 5:
+				pct = clampf(pct, -0.9999, 0.9999)
+			else:
+				pct = clampf(pct, -0.95, 0.95)
+
+			match i:
+				0: s.max_hp *= (1.0 + pct)
+				1: s.armor *= (1.0 + pct)
+				2: s.move_speed *= (1.0 + pct)
+				3: s.power += pct
+				4: s.haste += pct
+				5: s.luck += pct
+			Global.stat_ledger_step(
+				"%s %s" % [Inventory.slot_label(i).to_upper(), "INVERTED" if burden.is_suppressed(i) else "ROLL"], s
+			)
+
+	# --- the NEG archetypes, all reading one snapshot ----------------------
+	#
+	# They deliberately disagree about the same wardrobe. Corruption Engine
+	# wants two catastrophes; the Doctrine wants six mild curses; the Lens wants
+	# one horror it can switch off. A cursed item that is a prize to one is
+	# nearly worthless to another, which is the entire point of the ecosystem.
+
+	# Corruption Engine: only the TWO most severe ACTIVE curses feed it. It runs
+	# on concentrated corruption, not wardrobe totals - total-severity would make
+	# it and the count-based Doctrine converge on one shopping list. Note it
+	# reads ACTIVE burden, so a Lens suppressing your worst curse also starves
+	# the Engine: those two augments genuinely fight each other.
+	if Global.permanent_augment_ids.has(&"augment_corruption_engine"):
+		# Heart of Ruin (Transcended): the three heaviest feed it, cap 75%.
+		var ruin: bool = Global.is_augment_transcended(&"augment_corruption_engine")
+		var corruption_total: float = burden.heaviest(3 if ruin else 2)
+		if corruption_total > 0.0:
+			var engine_rate: float = BurdenResolver.asymptotic_rate(
+				BurdenResolver.CORRUPTION_ENGINE_RATE, Global.get_augment_level(&"augment_corruption_engine")
+			)
+			var engine_cap: float = 0.75 if ruin else BurdenResolver.CORRUPTION_ENGINE_CAP
+			s.power += minf(engine_cap, corruption_total * engine_rate)
+			Global.stat_ledger_step(Global.augment_display_name(&"augment_corruption_engine").to_upper(), s)
+
+	# Doctrine of Burden: pays for COUNT, not severity, so it wants many mild
+	# curses and is actively hurt by consolidating them. Ordinary NEG merging
+	# stabilises a curse toward mild, which is exactly what this build wants -
+	# and exactly what Corruption Engine inverts.
+	if Global.permanent_augment_ids.has(&"augment_doctrine_of_burden") and burden.qualifying_count > 0:
+		var doctrine_bonus: Dictionary = BurdenResolver.doctrine_bonus(
+			Global.get_augment_level(&"augment_doctrine_of_burden"), burden.qualifying_count
+		)
+		s.armor += float(doctrine_bonus["armor"])
+		s.max_hp *= 1.0 + float(doctrine_bonus["hp"])
+		# Martyr's Frame (Transcended): every curse carried is also Power.
+		if Global.is_augment_transcended(&"augment_doctrine_of_burden"):
+			s.power += minf(0.40, 0.05 * float(burden.qualifying_count))
+		Global.stat_ledger_step(Global.augment_display_name(&"augment_doctrine_of_burden").to_upper(), s)
+
+	# Inversion Lens: the suppression itself happened in the slot loop above.
+	# What is left is the reading you can put on a card - and a small Luck
+	# kicker, because reinterpreting a catastrophe is the same fantasy Luck
+	# sells: the universe quietly rearranging itself around you.
+	if Global.permanent_augment_ids.has(&"augment_equilibrium_sigil"):
+		var equilibrium: float = BurdenResolver.equilibrium_bonus(
+			Global.get_augment_level(&"augment_equilibrium_sigil"), burden,
+			Global.is_augment_transcended(&"augment_equilibrium_sigil")
+		)
+		if equilibrium > 0.0:
+			s.power += equilibrium
+			s.haste += equilibrium
+			Global.stat_ledger_step(Global.augment_display_name(&"augment_equilibrium_sigil").to_upper(), s)
+	if Global.permanent_augment_ids.has(&"augment_inversion_lens") and burden.suppressed_slot >= 0:
+		var lens_level: int = Global.get_augment_level(&"augment_inversion_lens")
+		var kicker: float = BurdenResolver.asymptotic_rate(BurdenResolver.INVERSION_LUCK_KICKER, lens_level) * burden.suppressed_severity
+		if Global.is_augment_transcended(&"augment_inversion_lens"):
+			kicker *= 2.0
+		s.luck += kicker
+		Global.stat_ledger_step(Global.augment_display_name(&"augment_inversion_lens").to_upper(), s)
+
+	# Velocity Engine (the Transcended Sprint Servos): speed is Power. Read
+	# after every move-speed source above, before the Doctrine's last word.
+	if Global.permanent_augment_ids.has(&"augment_sprint_servos") and Global.is_augment_transcended(&"augment_sprint_servos"):
+		s.power += AugmentScaling.velocity_power(s.move_speed)
+		Global.stat_ledger_step("VELOCITY ENGINE", s)
+
+	# A Scarred augment (the Reliquary's Corruption) costs Max HP while worn.
+	if Global.has_method("apply_augment_scars"):
+		Global.call("apply_augment_scars", s)
+
+	# Doctrine prices are applied at the final ownership boundary so equipment,
+	# sets, manifestations and Burden cannot escape the Max-HP sacrifice.
+	if Global.has_method("apply_doctrine_final_stat_multipliers"):
+		Global.call("apply_doctrine_final_stat_multipliers", s)
+
+	Global.run_luck = s.luck
+
+	apply_run_stats(s, emit_hp_signal)
+	if RunEvents != null and RunEvents.player_stats_recomputed.has_connections():
+		RunEvents.player_stats_recomputed.emit(self)
+
+
+## The ceiling on the shot-rate multiplier after every runner has
+## multiplied in (NEG-versus-tree study T4): Fever Litany, Burst, the
+## Litany of Wounds and Overclock stack without one, and a x4 fire rate
+## is a frame budget, not a build.
+const SHOT_HASTE_CAP := 2.5
+
+
+static func clamp_shot_haste(multiplier: float) -> float:
+	return minf(multiplier, SHOT_HASTE_CAP)
+
+
+func _fire_weapon(mouse_pos: Vector2) -> void:
+	var style_id: String = str(Global.selected_style_id)
+
+	var haste_mul: float = 1.0
+	var power_mul: float = 1.0
+	if stats != null:
+		haste_mul = 1.0 + max(stats.haste, -0.9)
+		power_mul = 1.0 + stats.power
+
+	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
+	if sr != null:
+		haste_mul *= sr.get_haste_multiplier()
+
+	var ier3: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier3 != null:
+		haste_mul *= ier3.get_haste_multiplier()
+		power_mul *= ier3.get_power_multiplier()
+
+	var mr3: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr3 != null:
+		haste_mul *= mr3.get_haste_multiplier()
+		power_mul *= mr3.get_power_multiplier()
+
+	var ar3: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar3 != null:
+		haste_mul *= ar3.get_haste_multiplier()
+		power_mul *= ar3.get_power_multiplier()
+	var aur3: AugmentRunner = get_node_or_null("AugmentRunner") as AugmentRunner
+	if aur3 != null:
+		haste_mul *= aur3.get_haste_multiplier()
+		power_mul *= aur3.get_power_multiplier()
+	# The Engine Prays (Apotheosis Doctrine): the native weapon pays for the
+	# instruments. The tree's D reads Power, not this, so it is untouched.
+	if Global != null:
+		power_mul *= maxf(0.0, float(Global.get_doctrine_rule(&"native_damage_mul", 1.0)))
+
+	var cd: float = _native_style_cooldown()
+
+	if cd > 0.0 and _weapon_cd > 0.0:
+		return
+
+	if cd > 0.0:
+		haste_mul = clamp_shot_haste(haste_mul)
+		if ar3 != null:
+			# A time-boxed window (V5 Burst) multiplies after the cap; V4
+			# engines return 1.0 so the control behaviour is unchanged.
+			haste_mul *= ar3.get_post_cap_haste_multiplier()
+		_weapon_cd = cd / max(haste_mul, 0.05)
+
+	# Attacking ends a rite-recovery invulnerability once its first 2 s have
+	# passed; the phasing keeps its full 5 s (plan §6.4).
+	if _rite_recovery_left > 0.0 and RITE_RECOVERY_GRACE - _rite_recovery_left >= RITE_RECOVERY_BREAKABLE_AFTER:
+		invulnerable_time = maxf(0.0, invulnerable_time - _rite_recovery_left)
+		_blink_left = minf(_blink_left, invulnerable_time)
+		_rite_recovery_left = 0.0
+
+	# Charge/rhythm/tithe Manifestations empower exactly one attack. Consumed
+	# AFTER the cooldown gate above, so a blocked click never eats the payload.
+	if mr3 != null:
+		power_mul *= mr3.consume_attack_bonus()
+
+	# Lucky bonus crit: separate from any future Crit Chance stat — Luck
+	# occasionally blesses a whole attack (all pellets/impacts of it).
+	# Fortune's Engine (the Transcended Lucky Charm) doubles the chance and
+	# makes a lucky crit x2.5.
+	var fortune: bool = Global.permanent_augment_ids.has(&"augment_lucky_charm") and Global.is_augment_transcended(&"augment_lucky_charm")
+	var lucky_crit: bool = Global._rng.randf() < AugmentScaling.lucky_crit_chance(Global.run_luck, fortune)
+	var lucky_mul: float = AugmentScaling.lucky_crit_multiplier(fortune) if lucky_crit else 1.0
+	_lucky_crit_pending = lucky_crit
+	if lucky_crit and BattleText != null:
+		BattleText.popup(global_position, "LUCKY", Color(1.0, 0.84, 0.25, 1.0), 1.2)
+	if lucky_crit:
+		Global.on_lucky_crit(global_position)
+	# Reported on success AND failure: a missed Luck roll is buildable
+	# material (Misfortune), not a non-event.
+	if RunEvents != null and RunEvents.player_lucky_crit.has_connections():
+		RunEvents.player_lucky_crit.emit(self, global_position, lucky_crit)
+
+	if style_id == "melee":
+		_spawn_melee(mouse_pos, base_weapon_damage * CombatStyleTuning.MELEE_DAMAGE_MULT * power_mul * lucky_mul)
+	elif style_id == "magic":
+		_spawn_magic(mouse_pos, base_weapon_damage * CombatStyleTuning.MAGIC_DAMAGE_MULT * power_mul * lucky_mul)
+	else:
+		_spawn_ranged(mouse_pos, base_weapon_damage * power_mul * lucky_mul)
+	_lucky_crit_pending = false
+
+	RunEvents.weapon_fired.emit(self, StringName(style_id), global_position, mouse_pos, power_mul, haste_mul)
+
+
+## Second Hand (Method Doctrine, bindings-and-theses §6): the native attack
+## lands as several full hits, each one a hit for every rule the run owns.
+## The mutations predate the Doctrine (the disabled 0.75 / 0.70 / 0.72-0.64
+## Major Choices); the Doctrine pays a little more per part.
+const SECOND_HAND_TWIN_CUT := 0.85
+const SECOND_HAND_SCATTER := 0.75
+const SECOND_HAND_SIGIL_CENTRE := 0.85
+const SECOND_HAND_SIGIL_SIDE := 0.75
+
+
+func _spawn_melee(mouse_pos: Vector2, dmg: float) -> void:
+	dmg = _consume_hex_mark_bonus(dmg)
+	var origin := _attack_origin()
+	var dir := (mouse_pos - origin).normalized()
+	if dir == Vector2.ZERO:
+		dir = Vector2.RIGHT
+
+	# Major-choice style mutation: double slash
+	var dual: bool = (Global != null and Global.has_method("has_mutation") and Global.has_mutation(&"mut_melee_dual_slash"))
+	if dual:
+		var ang := deg_to_rad(18.0)
+		_spawn_melee_slash(origin, dir.rotated(-ang), dmg * SECOND_HAND_TWIN_CUT)
+		_spawn_melee_slash(origin, dir.rotated( ang), dmg * SECOND_HAND_TWIN_CUT)
+	else:
+		_spawn_melee_slash(origin, dir, dmg)
+
+
+func _spawn_melee_slash(origin: Vector2, dir: Vector2, dmg: float) -> void:
+	var forward := 10.0
+	var attack_pos := origin + dir * forward
+
+	var inst := melee_slash_scene.instantiate()
+	var slash := inst as MeleeSlash
+	if slash == null:
+		push_error("MeleeSlash scene root is not MeleeSlash (script/class_name missing on scene root).")
+		inst.queue_free()
+		return
+
+	slash.global_position = attack_pos
+	slash.rotation = dir.angle()
+	slash.damage = dmg
+	slash.set("source", self)
+	# Prepared reach and size apply only to the native weapon factory.
+	slash.arc_radius *= Global.city_development_attack_range_multiplier()
+	slash.arc_degrees = minf(360.0, slash.arc_degrees * Global.city_development_attack_size_multiplier())
+	slash.thickness *= Global.city_development_attack_size_multiplier()
+
+	if hurtbox != null:
+		slash.collision_mask = hurtbox.collision_mask
+		slash.collision_layer = hurtbox.collision_layer
+
+	slash.add_to_group("player_projectile")
+	# Lucky Crits were applied to melee and magic damage but never REPORTED as
+	# crits: the flag is consumed only on the ranged path, so BattleText showed
+	# a normal number and player_hit_landed said is_crit = false. No rule reads
+	# that yet, which is exactly why it would have stayed broken until one did.
+	if _lucky_crit_pending:
+		slash.set_meta("lucky_crit", true)
+
+	# Melee got NO scripted item or manifestation behaviour at all: the
+	# apply_to_melee_slash dispatcher existed, Firestone implemented it, and
+	# nothing ever called it. Every burn, every on-hit rider, every future
+	# effect that wants to ride an attack simply skipped a third of the game's
+	# builds. Applied before add_child so the slash carries its riders on the
+	# frame it first scans for targets.
+	var ier_m: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier_m != null:
+		ier_m.apply_to_melee_slash(slash)
+	var mr_m: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr_m != null:
+		mr_m.apply_to_melee_slash(slash)
+	var ar_m: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar_m != null:
+		ar_m.apply_to_melee_slash(slash)
+
+	get_tree().current_scene.add_child(slash)
+
+
+func _consume_hex_mark_bonus(dmg: float) -> float:
+	# Hex Blink's mark charges apply to the next attacks of ANY style —
+	# consuming them only in the ranged path made half the augment a no-op
+	# for melee and magic builds. Applies once per attack (then distributed
+	# if multi-shot).
+	var shots_left: int = 0
+	if has_meta("hex_mark_shots_left"):
+		var sv: Variant = get_meta("hex_mark_shots_left")
+		if typeof(sv) == TYPE_INT:
+			shots_left = int(sv)
+	if shots_left <= 0:
+		return dmg
+
+	# The active effect supplies a reliable native-hit payload for each charge.
+	dmg += float(get_meta("hex_mark_bonus", 0.0))
+
+	shots_left -= 1
+	if shots_left <= 0:
+		remove_meta("hex_mark_shots_left")
+		if has_meta("hex_mark_bonus"): remove_meta("hex_mark_bonus")
+	else:
+		set_meta("hex_mark_shots_left", shots_left)
+	return dmg
+
+
+func _spawn_ranged(mouse_pos: Vector2, dmg: float) -> void:
+	var origin := _attack_origin()
+	var dir := (mouse_pos - origin).normalized()
+	if dir == Vector2.ZERO:
+		dir = Vector2.RIGHT
+
+	dmg = _consume_hex_mark_bonus(dmg)
+
+	# Major-choice style mutation: shotgun spread
+	var shotgun: bool = (Global != null and Global.has_method("has_mutation") and Global.has_mutation(&"mut_ranged_shotgun"))
+	if shotgun:
+		var pellet_count := 3
+		var spread_deg := 12.0
+		var pellet_dmg := dmg * SECOND_HAND_SCATTER
+		if pellet_count <= 1:
+			_spawn_ranged_bullet(origin, dir, dmg)
+			return
+
+		for n in range(pellet_count):
+			var t := float(n) / float(pellet_count - 1) - 0.5 # -0.5..0.5
+			var a := deg_to_rad(spread_deg) * t
+			_spawn_ranged_bullet(origin, dir.rotated(a), pellet_dmg)
+		return
+
+	_spawn_ranged_bullet(origin, dir, dmg)
+
+
+func _spawn_ranged_bullet(origin: Vector2, dir: Vector2, dmg: float) -> void:
+	var projectile_manager := get_node_or_null("/root/ProjectileManager") as ProjectileSimulationManager
+	if projectile_manager != null:
+		_managed_hit_profile.reset(dmg)
+		_managed_hit_profile.critical = _lucky_crit_pending
+		var managed_effects := get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+		if managed_effects != null:
+			managed_effects.apply_to_managed_hit_profile(_managed_hit_profile, &"ranged")
+		var managed_rules := get_node_or_null("ManifestationRunner") as ManifestationRunner
+		if managed_rules != null:
+			managed_rules.apply_to_managed_hit_profile(_managed_hit_profile, &"ranged")
+		var managed_tree := get_node_or_null("AscensionRunner") as AscensionRunner
+		if managed_tree != null:
+			managed_tree.apply_to_managed_hit_profile(_managed_hit_profile, &"ranged")
+		_managed_hit_profile.max_range *= Global.city_development_attack_range_multiplier()
+		_managed_hit_profile.collision_radius *= Global.city_development_attack_size_multiplier()
+		_managed_hit_profile.body_width *= Global.city_development_attack_size_multiplier()
+		projectile_manager.spawn_player(origin, dir, _managed_hit_profile, self)
+		return
+
+	# Compatibility fallback for projects that deliberately remove the manager.
+	var inst := ranged_bullet_scene.instantiate()
+	var bullet := inst as RangedBullet
+	if bullet == null:
+		push_error("RangedBullet scene root is not RangedBullet (script/class_name missing on scene root).")
+		inst.queue_free()
+		return
+
+	bullet.source = self
+	bullet.global_position = origin
+	bullet.velocity = dir * bullet.speed
+	bullet.damage = dmg
+
+	if hurtbox != null:
+		bullet.collision_mask = hurtbox.collision_mask
+		bullet.collision_layer = hurtbox.collision_layer
+
+	bullet.add_to_group("player_projectile")
+	var ier_r: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier_r != null:
+		ier_r.apply_to_ranged_bullet(bullet, &"ranged")
+	var mr_r: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr_r != null:
+		mr_r.apply_to_ranged_bullet(bullet, &"ranged")
+	bullet.max_range *= Global.city_development_attack_range_multiplier()
+	bullet.body_width *= Global.city_development_attack_size_multiplier()
+
+	get_tree().current_scene.add_child(bullet)
+
+
+func _spawn_magic(mouse_pos: Vector2, dmg: float) -> void:
+	dmg = _consume_hex_mark_bonus(dmg)
+	var origin := _attack_origin()
+
+	# Major-choice style mutation: tri-sigil burst
+	var tri: bool = (Global != null and Global.has_method("has_mutation") and Global.has_mutation(&"mut_magic_trisigil"))
+	if tri:
+		var dir := (mouse_pos - origin).normalized()
+		if dir == Vector2.ZERO:
+			dir = Vector2.RIGHT
+		var perp := Vector2(-dir.y, dir.x)
+		var off := 38.0
+
+		_vfx_spawn_spokes(origin, 0.10, 44.0)
+		_vfx_spawn_pulse(mouse_pos, 22.0, 0.14, 5.0)
+
+		_spawn_magic_impact(mouse_pos, dmg * SECOND_HAND_SIGIL_CENTRE)
+		_spawn_magic_impact(mouse_pos + perp * off, dmg * SECOND_HAND_SIGIL_SIDE)
+		_spawn_magic_impact(mouse_pos - perp * off, dmg * SECOND_HAND_SIGIL_SIDE)
+		return
+
+	_vfx_spawn_spokes(origin, 0.10, 44.0)
+	_vfx_spawn_pulse(mouse_pos, 22.0, 0.14, 5.0)
+	_spawn_magic_impact(mouse_pos, dmg)
+
+
+func _spawn_magic_impact(pos: Vector2, dmg: float) -> void:
+	var inst := magic_impact_scene.instantiate()
+	var impact := inst as MagicImpact
+	if impact == null:
+		push_error("MagicImpact scene root is not MagicImpact (script/class_name missing on scene root).")
+		inst.queue_free()
+		return
+
+	impact.global_position = pos
+	impact.damage = dmg
+	impact.set("source", self)
+	if _lucky_crit_pending:
+		impact.set_meta("lucky_crit", true)
+
+	if hurtbox != null:
+		impact.collision_mask = hurtbox.collision_mask
+		impact.collision_layer = hurtbox.collision_layer
+
+	var ier_g: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier_g != null:
+		ier_g.apply_to_magic_impact(impact)
+	var mr_g: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr_g != null:
+		mr_g.apply_to_magic_impact(impact)
+	var ar_g: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar_g != null:
+		ar_g.apply_to_magic_impact(impact)
+	impact.radius *= Global.city_development_attack_size_multiplier()
+
+	get_tree().current_scene.add_child(impact)
+
+func _on_hurtbox_area_entered(area: Area2D) -> void:
+	if area.is_in_group("enemy_hitbox"):
+		_register_contact_source(_enemy_from_contact(area))
+
+
+func _on_hurtbox_area_exited(area: Area2D) -> void:
+	_unregister_contact_source(_tracked_contact_from(area))
+
+
+func _on_hurtbox_body_entered(body: Node) -> void:
+	if body.is_in_group("enemies"):
+		_register_contact_source(body)
+
+
+func _on_hurtbox_body_exited(body: Node) -> void:
+	_unregister_contact_source(_tracked_contact_from(body))
+
+## Exit resolves what is TRACKED, never what is currently an enemy. Entry may
+## gate on the group (only real enemies get tracked), but membership can
+## legitimately end while the body is still overlapping: a pool recycle or a
+## representation-lease quiesce parks the node and drops it from the group,
+## and the exit signal arrives afterwards. Gating exit on membership left the
+## record behind - the player kept paying swarm-scaled contact damage for an
+## enemy that was gone, until a later prune found the freed object.
+func _tracked_contact_from(node: Node) -> Node:
+	var cur := node
+	for _i in range(4):
+		if cur == null:
+			break
+		if _contact_sources.has(cur.get_instance_id()):
+			return cur
+		cur = cur.get_parent()
+	return null
+
+
+func _enemy_from_contact(node: Node) -> Node:
+	var cur := node
+	for _i in range(4):
+		if cur == null:
+			break
+		if cur.is_in_group(&"enemies"):
+			return cur
+		cur = cur.get_parent()
+	return null
+
+func _register_contact_source(enemy: Node) -> void:
+	if enemy == null or not is_instance_valid(enemy):
+		return
+	if enemy.has_meta(&"opening_non_hostile") and bool(enemy.get_meta(&"opening_non_hostile")):
+		return
+	var id := enemy.get_instance_id()
+	var record: Dictionary = _contact_sources.get(id, {}) as Dictionary
+	if record.is_empty():
+		record = {"node": enemy, "overlap_count": 0}
+	record["overlap_count"] = int(record.get("overlap_count", 0)) + 1
+	_contact_sources[id] = record
+	_touching_enemies = _contact_sources.size()
+	_start_contact_loop()
+
+func _unregister_contact_source(enemy: Node) -> void:
+	if enemy == null:
+		return
+	var id := enemy.get_instance_id()
+	if not _contact_sources.has(id):
+		return
+	var record: Dictionary = _contact_sources[id] as Dictionary
+	var remaining := int(record.get("overlap_count", 1)) - 1
+	if remaining <= 0:
+		_contact_sources.erase(id)
+	else:
+		record["overlap_count"] = remaining
+		_contact_sources[id] = record
+	_touching_enemies = _contact_sources.size()
+
+func _prune_contact_sources() -> void:
+	for id in _contact_sources.keys():
+		var record: Dictionary = _contact_sources[id] as Dictionary
+		var raw: Variant = record.get("node", null)
+		# is_instance_valid BEFORE the cast: `as Node` on a freed object is
+		# itself an error, and a freed node is exactly what this prunes.
+		if raw == null or not is_instance_valid(raw):
+			_contact_sources.erase(id)
+			continue
+		var enemy := raw as Node
+		if not enemy.is_inside_tree():
+			_contact_sources.erase(id)
+	_touching_enemies = _contact_sources.size()
+
+
+func _threat_enemy_damage_mul() -> float:
+	var td := get_node_or_null("/root/ThreatDirector") as ThreatDirectorSingleton
+	return (td.enemy_damage_mul if td != null else 1.0)
+
+
+func _damaging_contact_count() -> int:
+	var count := 0
+	for record: Dictionary in _contact_sources.values():
+		var enemy = record.get("node")
+		if not is_instance_valid(enemy):
+			continue
+		if enemy.is_queued_for_deletion() or ("dead" in enemy and bool(enemy.get("dead"))):
+			continue
+		# Keep Body/Area overlap records balanced while a committed boss move
+		# owns its contact. Other enemies still contribute ordinary pressure.
+		if bool(enemy.get_meta(&"boss_contact_suppressed", false)):
+			continue
+		count += 1
+	return count
+
+func _start_contact_loop() -> void:
+	if _damage_loop_running:
+		return
+
+	_damage_loop_running = true
+	while hp > 0:
+		_prune_contact_sources()
+		if _touching_enemies <= 0:
+			break
+		# One deterministic tick per interval. A single enemy's Area and Body are
+		# one source; extra unique enemies increase pressure with a capped curve.
+		var damaging_contacts := _damaging_contact_count()
+		if damaging_contacts > 0:
+			var swarm_mul := minf(2.25, 1.0 + float(damaging_contacts - 1) * 0.35)
+			_take_damage(contact_damage * swarm_mul * _threat_enemy_damage_mul(), null, &"contact_swarm")
+		await get_tree().create_timer(maxf(contact_tick, 0.05), false).timeout
+		# The player can be freed mid-wait (scene change, run end); the loop
+		# would otherwise resume on a freed node.
+		if not is_inside_tree():
+			break
+
+	_damage_loop_running = false
+
+
+# ✅ NEW: public wrapper so enemies/projectiles can damage you
+func take_damage(amount: float, _source: Node = null) -> void:
+	_take_damage(amount, _source)
+
+
+## The manager's source Node and the original unknown kind are unchanged:
+## this context is visible only to observers while the same damage resolves.
+func take_damage_with_balance_context(amount: float, source: Node, context: Dictionary) -> void:
+	_take_damage(amount, source, &"unknown", context if RunEvents.balance_health_changed.has_connections() else {})
+
+
+func get_balance_damage_context() -> Dictionary:
+	return _balance_damage_contexts[-1].duplicate(true) if not _balance_damage_contexts.is_empty() else {}
+
+
+func _take_damage(amount: float, source: Node = null, kind: StringName = &"unknown", balance_context: Dictionary = {}) -> void:
+	if balance_context.is_empty() and _balance_damage_contexts.is_empty():
+		_resolve_incoming_damage(amount, source, kind)
+		return
+	_balance_damage_contexts.append(balance_context)
+	_resolve_incoming_damage(amount, source, kind)
+	_balance_damage_contexts.pop_back()
+
+
+func _resolve_incoming_damage(amount: float, source: Node, kind: StringName) -> void:
+	if Global.debug_player_god_mode:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"god_mode")
+		return
+	if invulnerable_time > 0.0:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"invulnerable")
+		return
+	if is_dead:
+		return
+
+	var mr4: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+
+	# Luck as a systemic stat: the universe occasionally lets a hit miss.
+	var evade_chance: float = LuckResolver.lucky_evasion_chance(Global.run_luck)
+	if mr4 != null:
+		evade_chance = clampf(evade_chance + mr4.get_bonus_evasion_chance(), 0.0, 0.60)
+	if Global._rng.randf() < evade_chance:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"evaded")
+		if BattleText != null:
+			BattleText.popup(global_position, "EVADED", Color(0.5, 0.9, 1.0, 1.0), 1.1)
+		if RunEvents != null:
+			RunEvents.player_evaded.emit(self, global_position)
+		return
+
+	var raw_amount := amount
+	# One hit can only take so much, before armour (big-hit protection). The
+	# recorder still sees the raw blow; adjusted and applied report the cap.
+	amount = minf(amount, max_hp * incoming_hit_cap(source, kind))
+	var ier4: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier4 != null:
+		amount *= ier4.get_damage_taken_multiplier()
+		# Per-source item rules (Trauma's learned resistance).
+		amount *= ier4.get_damage_taken_multiplier_for(source, kind)
+	if mr4 != null:
+		amount *= mr4.get_damage_taken_multiplier()
+	var ar4: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar4 != null:
+		var tree_mul := ar4.get_damage_taken_multiplier_for(source, kind)
+		if tree_mul <= 0.0:
+			# A tree rule made this attack miss (REWRITE: normals' swings).
+			_report_balance_damage(raw_amount, 0.0, 0.0, source, kind, &"missed")
+			if BattleText != null:
+				BattleText.popup(global_position, "MISS", Color(0.8, 0.6, 1.0, 1.0), 1.0)
+			return
+		amount *= tree_mul
+
+	var armor_val: float = 0.0
+	if stats != null:
+		armor_val = stats.armor
+
+	var reduced: float = amount * (100.0 / (100.0 + max(armor_val, 0.0)))
+	# A companion shield (Beka) absorbs from the mitigated hit BEFORE HP
+	# lethality is tested, so a shielded nonlethal hit never spends a
+	# last-chance effect. Absorption is real damage for hit reactions but
+	# is never reported as HP loss; evasions and pay_health never get here.
+	if ier4 != null and reduced > 0.0:
+		var absorbed: float = ier4.absorb_incoming_damage(reduced)
+		if absorbed > 0.0:
+			reduced -= absorbed
+			_report_balance_damage(raw_amount, absorbed, 0.0, source, kind, &"absorbed")
+			if BattleText != null:
+				BattleText.popup(global_position, "-%d" % int(round(absorbed)), Color(0.75, 0.9, 1.0, 0.9), 0.9)
+			if reduced <= 0.001:
+				return
+	var health_before := hp
+	if reduced >= hp and ar4 != null and ar4.intercept_lethal_damage(reduced):
+		# A tree rule (Last Hit) took the killing blow: left at 1 HP.
+		hp = 1.0
+		_flash_hurt()
+		_big_hit_grace(reduced)
+		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
+		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
+		hp_changed.emit(hp, max_hp)
+		if RunEvents != null:
+			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
+		return
+	if reduced >= hp and ier4 != null and ier4.intercept_lethal_damage(reduced, source):
+		# An item rule (Plot Armor) refused the killing blow, after the tree
+		# had its chance; the item marks its own rearm condition.
+		hp = 1.0
+		_flash_hurt()
+		_big_hit_grace(reduced)
+		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
+		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
+		hp_changed.emit(hp, max_hp)
+		if RunEvents != null:
+			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
+		return
+	hp = max(hp - reduced, 0.0)
+	_flash_hurt()
+	_big_hit_grace(reduced)
+	_report_health_change(&"hit", "", health_before, max_hp, reduced, kind, source)
+	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")
+	if BattleText != null:
+		BattleText.player_damage(global_position, reduced)
+
+	# Melee passive regen pauses briefly after taking damage (LoL-style).
+	if _is_melee_style_active():
+		_melee_regen_block_left = maxf(_melee_regen_block_left, melee_regen_delay_after_damage)
+
+	hp_changed.emit(hp, max_hp)
+
+	if RunEvents != null:
+		RunEvents.player_damage_taken.emit(self, reduced, global_position)
+
+	if hp <= 0.0:
+		if not _try_doctrine_death_intercept():
+			die()
+
+
+## The largest share of max HP one hit of `kind` from `source` may take
+## (big-hit protection, see the export group); INF with the protection off.
+func incoming_hit_cap(source: Node, kind: StringName) -> float:
+	if not big_hit_protection:
+		return INF
+	if kind == &"contact_swarm":
+		return contact_tick_cap
+	if source != null and is_instance_valid(source) and (
+		source.is_in_group(&"boss_like") or source.is_in_group(&"boss") or source.is_in_group(&"miniboss")
+	):
+		return boss_hit_cap
+	return hit_cap
+
+
+func _big_hit_grace(lost: float) -> void:
+	if big_hit_protection and lost >= max_hp * big_hit_ratio:
+		_grant_visible_invulnerability(big_hit_grace)
+
+
+func _report_balance_damage(raw: float, adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
+	if RunEvents != null and RunEvents.player_damage_resolved.has_connections():
+		RunEvents.player_damage_resolved.emit(self, raw, adjusted, applied, source, kind, outcome)
+
+
+## The canonical health-change record (RunEvents.balance_health_changed):
+## called right after an HP assignment, reading the new value from `hp`.
+## Telemetry only: guarded by has_connections so an unrecorded run pays
+## nothing for it.
+func _report_health_change(category: StringName, source_id: String, hp_before: float, max_hp_before: float, requested: float, reason: StringName, source: Node = null) -> void:
+	if RunEvents == null or not RunEvents.balance_health_changed.has_connections():
+		return
+	RunEvents.balance_health_changed.emit(self, {
+		"category": String(category), "source_id": source_id, "source_node": source,
+		"hp_before": hp_before, "hp_after": hp, "max_hp_before": max_hp_before, "max_hp_after": max_hp,
+		"requested": requested, "reason": String(reason),
+	})
+
+
+func _try_doctrine_death_intercept() -> bool:
+	if Global == null or not Global.has_method("try_consume_manufactured_witness"):
+		return false
+	if not bool(Global.try_consume_manufactured_witness()):
+		return false
+	var hp_before_rescue := hp
+	hp = maxf(1.0, max_hp * 0.50)
+	_report_health_change(&"rescue", "doctrine:manufactured_witness", hp_before_rescue, max_hp, hp, &"rescue")
+	if RunEvents != null and RunEvents.player_life_event.has_connections():
+		RunEvents.player_life_event.emit(self, &"rescue")
+	_grant_visible_invulnerability(2.0)
+	hp_changed.emit(hp, max_hp)
+	return true
+
+
+func die() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	_death_position = global_position
+	if RunEvents != null and RunEvents.player_life_event.has_connections():
+		RunEvents.player_life_event.emit(self, &"death")
+	cancel_dash()
+
+	var cost: int = death_follower_cost
+	if Global != null and Global.has_method("consume_respawn_cost"):
+		cost = Global.consume_respawn_cost()
+	elif Global != null:
+		Global.transaction_followers(-death_follower_cost, &"reconstruction", {}, false, false)
+
+	var game: Node = get_parent()
+	var remaining: int = Global.followers if Global != null else 0
+	if game != null and game.has_method("present_reconstruction"):
+		await game.call("present_reconstruction", cost, remaining)
+
+	# The modal can outlive the scene if the player exits during it.
+	if not is_inside_tree():
+		return
+	if Global != null and Global.followers > 0:
+		respawn()
+	elif game != null and is_instance_valid(game) and game.has_method("end_run"):
+		game.call_deferred("end_run")
+
+func respawn() -> void:
+	# Rebuild the complete loadout snapshot before restoring HP. This prevents the
+	# first reconstruction from using a stale base speed/max-HP value when effects
+	# or inventory bindings finished refreshing while the death card was open.
+	is_dead = false
+	velocity = Vector2.ZERO
+	# An in-flight dash would otherwise continue from the checkpoint position.
+	cancel_dash()
+
+	var race: RaceData = Global.race_db.get(Global.selected_race_id, null) as RaceData
+	var style: StyleData = Global.style_db.get(Global.selected_style_id, null) as StyleData
+	recompute_run_stats(race, style, false)
+
+	# Hard reset to checkpoint using the final rebuilt maximum. Emit one coherent
+	# HP snapshot after both current and maximum HP are settled.
+	var hp_before_respawn := hp
+	hp = max_hp
+	_report_health_change(&"respawn", "player:reconstruction", hp_before_respawn, max_hp, max_hp, &"respawn")
+	# After the unseal a death near the Exit Rite rebuilds the player near it,
+	# not at a checkpoint up to 19,000 px back (see rite_recovery_point).
+	var near_rite := rite_recovery_point(_death_position if _death_position != Vector2.INF else global_position)
+	_death_position = Vector2.INF
+	global_position = near_rite if near_rite != Vector2.INF else spawn_pos
+	_contact_sources.clear()
+	_touching_enemies = 0
+	hp_changed.emit(hp, max_hp)
+
+	# Spawn protection: invulnerability + phasing through enemy bodies
+	if RunEvents != null and RunEvents.player_life_event.has_connections():
+		RunEvents.player_life_event.emit(self, &"respawn")
+	_clear_hurt_visual()
+	if near_rite != Vector2.INF:
+		# Plan §6.4: up to 5 s of invulnerability and phasing; attacking after
+		# the first 2 s ends the invulnerability (_fire_weapon), the phasing
+		# holds for all 5.
+		_grant_visible_invulnerability(RITE_RECOVERY_GRACE)
+		_rite_recovery_left = RITE_RECOVERY_GRACE
+		start_respawn_phase(RITE_RECOVERY_GRACE)
+		if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+			PerformanceFlightRecorder.record_counter_event(&"player", &"rite_recovery_respawn", 1, {
+				"x": near_rite.x, "y": near_rite.y, "checkpoint_x": spawn_pos.x, "checkpoint_y": spawn_pos.y,
+			})
+	else:
+		_grant_visible_invulnerability(respawn_invuln_time)
+		start_respawn_phase(respawn_phase_time)
+
+
+## Where a reconstruction lands near the Exit Rite, or Vector2.INF for the
+## checkpoint. The only human capture died 1,835 px from the exit after the
+## unseal and was rebuilt 19,017 px away; the 100 s walk back fed Overtime the
+## whole way (audit 2026-10-04, change 9; plan 2026-09-17 §6.4). Once the gate
+## is unsealed and a revealed, unlocked, unfinished rite exists, this tries
+## points 800-1200 px from it - well outside its channel circle - starting
+## toward where the player died and swinging round, and takes the valid one
+## with the fewest enemies near it. Valid means walkable to the spawner (its
+## own placement rule: loaded, unblocked chunk cells, authored bounds, no
+## wardstone field or excluded interior) under the player's whole footprint,
+## and clear of the world for the player's collision shape. The checkpoint
+## still wins when it is the nearer of the two to the rite, and with nothing
+## to validate against there is no relocation at all.
+func rite_recovery_point(death_position: Vector2) -> Vector2:
+	var director := get_node_or_null(^"/root/ThreatDirector")
+	if director == null or not bool(director.get("gate_unsealed")):
+		return Vector2.INF
+	var rite := _live_exit_rite()
+	if rite == null:
+		return Vector2.INF
+	var tree := get_tree()
+	var spawner: Node = tree.get_first_node_in_group(&"enemy_spawner") if tree != null else null
+	if spawner != null and not spawner.has_method("is_beat_position_valid"):
+		spawner = null
+	var chunks: Node = tree.get_first_node_in_group(&"chunk_manager") if tree != null else null
+	if spawner == null and chunks == null:
+		return Vector2.INF
+	var centre := rite.global_position
+	var circle := float(rite.get("radius")) if rite.get("radius") != null else 168.0
+	var toward := death_position - centre
+	if toward.length_squared() < 1.0:
+		toward = spawn_pos - centre
+	var heading := toward.normalized() if toward.length_squared() > 1.0 else Vector2.RIGHT
+	var best := Vector2.INF
+	var best_crowd := 1 << 30
+	var valid_found := 0
+	for angle_deg in RITE_RECOVERY_ANGLES:
+		for radius in RITE_RECOVERY_RADII:
+			var distance := maxf(radius, circle + RITE_RECOVERY_CIRCLE_MARGIN)
+			var candidate := centre + heading.rotated(deg_to_rad(angle_deg)) * distance
+			if not _is_recovery_point_valid(candidate, spawner, chunks):
+				continue
+			valid_found += 1
+			var crowd := _enemies_near(candidate, RITE_RECOVERY_CROWD_RADIUS)
+			if crowd < best_crowd:
+				best_crowd = crowd
+				best = candidate
+			if best_crowd == 0 or valid_found >= RITE_RECOVERY_MAX_CANDIDATES:
+				break
+		if best != Vector2.INF and (best_crowd == 0 or valid_found >= RITE_RECOVERY_MAX_CANDIDATES):
+			break
+	if best == Vector2.INF:
+		return Vector2.INF
+	if spawn_pos.distance_to(centre) <= best.distance_to(centre):
+		return Vector2.INF
+	return best
+
+
+func _live_exit_rite() -> Node2D:
+	var tree := get_tree()
+	if tree == null:
+		return null
+	for node in tree.get_nodes_in_group(&"exit_rite"):
+		var rite := node as Node2D
+		if rite == null or not rite.is_inside_tree():
+			continue
+		if rite.get("revealed") != true or rite.get("locked") != false or rite.get("_completed") == true:
+			continue
+		return rite
+	return null
+
+
+func _is_recovery_point_valid(point: Vector2, spawner: Node, chunks: Node) -> bool:
+	for offset in RITE_RECOVERY_FOOTPRINT:
+		var probe: Vector2 = point + offset
+		if spawner != null:
+			if not bool(spawner.call("is_beat_position_valid", probe)):
+				return false
+		elif not bool(chunks.call("is_cell_walkable", chunks.call("world_to_cell", probe))):
+			return false
+	return _clear_for_body(point)
+
+
+## True when the player's collision shape at `point` overlaps no world body
+## (enemies excluded: the respawn phases through them).
+func _clear_for_body(point: Vector2) -> bool:
+	var shape_node := get_node_or_null(^"CollisionShape2D") as CollisionShape2D
+	if shape_node == null or shape_node.shape == null or not is_inside_tree():
+		return true
+	var params := PhysicsShapeQueryParameters2D.new()
+	params.shape = shape_node.shape
+	params.transform = Transform2D(0.0, point + shape_node.position)
+	params.collision_mask = _base_collision_mask & ~ENEMY_BODY_LAYER_BIT
+	params.exclude = [get_rid()]
+	params.collide_with_bodies = true
+	params.collide_with_areas = false
+	return get_world_2d().direct_space_state.intersect_shape(params, 1).is_empty()
+
+
+func _enemies_near(point: Vector2, radius: float) -> int:
+	var index := get_node_or_null(^"/root/EnemyIndex")
+	if index == null or not index.has_method("gather_in_radius"):
+		return 0
+	var found: Array = []
+	index.call("gather_in_radius", point, radius, found)
+	return found.size()
+
+
+func start_respawn_phase(duration: float) -> void:
+	respawn_phase_left = max(respawn_phase_left, duration)
+	_apply_body_phasing()
+
+func set_checkpoint(pos: Vector2, move_player: bool = false) -> void:
+	spawn_pos = pos
+	if move_player:
+		global_position = pos
+	if Global != null and Global.has_method("set_attempt_checkpoint"):
+		Global.set_attempt_checkpoint(pos)
+
+func wardstone_full_restore() -> void:
+	# used on wardstone capture (one-time)
+	heal(max_hp, &"wardstone")
+	_weapon_cd = 0.0
+	_dash.reset()
+	dash_cd_changed.emit(0.0, PlayerDashState.COOLDOWN)
+	if spell_caster != null and spell_caster.has_method("reset_all_cooldowns"):
+		spell_caster.call("reset_all_cooldowns")
+	if has_node("AugmentRunner") and $AugmentRunner.has_method("reset_all_cooldowns"):
+		$AugmentRunner.call("reset_all_cooldowns")
+
+func grant_invulnerability(duration: float) -> void:
+	invulnerable_time = max(invulnerable_time, duration)
+
+
+## Invulnerability the player should SEE: respawn, a rescue, the post-hit
+## grace. The body blinks while it lasts.
+func _grant_visible_invulnerability(duration: float) -> void:
+	grant_invulnerability(duration)
+	_blink_left = maxf(_blink_left, duration)
+
+
+## Starts the red hurt tint; called for every hit that cost HP.
+func _flash_hurt() -> void:
+	_hurt_tint_left = HURT_TINT_SECONDS
+
+
+func _update_hurt_visual(delta: float) -> void:
+	_hurt_tint_left = maxf(_hurt_tint_left - delta, 0.0)
+	# The blink never outlasts the protection it shows.
+	_blink_left = minf(maxf(_blink_left - delta, 0.0), invulnerable_time)
+	_blink_clock += delta
+	var visual := get_node_or_null(^"Visual") as CanvasItem
+	if visual == null:
+		_visual_tinted = false
+		return
+	var colour := Color.WHITE
+	if _hurt_tint_left > 0.0:
+		# Combat Flashes Reduced / Off scale the tint like every combat flash.
+		colour = Color.WHITE.lerp(HURT_TINT, AccessibilityPresentation.current_flash_alpha(1.0))
+	if _blink_left > 0.0:
+		if SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false)):
+			colour.a = BLINK_STEADY_ALPHA
+		elif int(_blink_clock / BLINK_HALF_PERIOD) % 2 == 1:
+			colour.a = BLINK_ALPHA
+	else:
+		_blink_clock = 0.0
+	visual.modulate = colour
+	_visual_tinted = colour != Color.WHITE
+
+
+## Back to the plain sprite (respawn, cinematics).
+func _clear_hurt_visual() -> void:
+	_hurt_tint_left = 0.0
+	_blink_left = 0.0
+	_blink_clock = 0.0
+	var visual := get_node_or_null(^"Visual") as CanvasItem
+	if visual != null:
+		visual.modulate = Color.WHITE
+	_visual_tinted = false
+
+
+## Health spent on purpose by an advancement-tree rule (Tails, Backfire, Bad
+## Luck). Not a hit: no evasion, no armour, no i-frames, no on-damage rules.
+## Ordinary payments floor at 1 HP; `lethal` payments (The Bill, Loaded Dice,
+## as authored) may kill. Returns what was actually paid.
+func pay_health(amount: float, reason: StringName = &"ascension", lethal: bool = false) -> float:
+	if is_dead or amount <= 0.0 or Global.debug_player_god_mode:
+		return 0.0
+	var paid: float = minf(amount, hp if lethal else maxf(hp - 1.0, 0.0))
+	if paid <= 0.0:
+		return 0.0
+	var hp_before_payment := hp
+	hp -= paid
+	_report_health_change(&"cost", "ascension:" + String(reason), hp_before_payment, max_hp, amount, reason)
+	if BattleText != null:
+		BattleText.player_damage(global_position, paid)
+	if _is_melee_style_active():
+		_melee_regen_block_left = maxf(_melee_regen_block_left, melee_regen_delay_after_damage)
+	hp_changed.emit(hp, max_hp)
+	if RunEvents != null and RunEvents.player_paid_health.has_connections():
+		RunEvents.player_paid_health.emit(self, paid, reason)
+	if hp <= 0.0 and not _try_doctrine_death_intercept():
+		die()
+	return paid
+
+
+## Attack recovery left on the native weapon, and its removal (Clean Cut).
+func native_recovery_left() -> float:
+	return _weapon_cd
+
+
+func clear_native_recovery() -> void:
+	_weapon_cd = 0.0
+
+
+## Gives back dash recovery (Clean Cut's generated executions).
+func refund_dash_recovery(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	_dash.cooldown_left = maxf(0.0, _dash.cooldown_left - seconds)
+	dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
+
+
+# ---------------------------------------------------------------------------
+# Attacks generated by advancement-tree rules. Bare: the player is the source
+# (so kills, Followers and telemetry attribute normally) but item and
+# Manifestation riders are not applied, and no Lucky Crit is rolled. `tags` is
+# the attack's provenance (AscensionTags.make) and rides the hit payload.
+# ---------------------------------------------------------------------------
+
+func spawn_generated_slash(at: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, arc_degrees: float = -1.0, arc_radius: float = -1.0) -> Node:
+	var inst := melee_slash_scene.instantiate()
+	var slash := inst as MeleeSlash
+	if slash == null:
+		inst.queue_free()
+		return null
+	slash.global_position = at
+	slash.rotation = direction.angle() if direction.length_squared() > 0.0001 else rotation
+	slash.damage = damage
+	slash.set("source", self)
+	if arc_degrees > 0.0:
+		slash.arc_degrees = arc_degrees
+	if arc_radius > 0.0:
+		slash.arc_radius = arc_radius
+	if hurtbox != null:
+		slash.collision_mask = hurtbox.collision_mask
+		slash.collision_layer = hurtbox.collision_layer
+	slash.add_to_group("player_projectile")
+	slash.set_meta("asc_tags", tags)
+	# Kill chains can arrive inside an Area2D signal while physics queries flush.
+	if Engine.is_in_physics_frame():
+		get_tree().current_scene.call_deferred("add_child", slash)
+	else:
+		get_tree().current_scene.add_child(slash)
+	return slash
+
+
+func spawn_generated_impact(at: Vector2, damage: float, tags: PackedStringArray, radius: float = -1.0) -> Node:
+	var inst := magic_impact_scene.instantiate()
+	var impact := inst as MagicImpact
+	if impact == null:
+		inst.queue_free()
+		return null
+	impact.global_position = at
+	impact.damage = damage
+	impact.set("source", self)
+	if radius > 0.0:
+		impact.radius = radius
+	if hurtbox != null:
+		impact.collision_mask = hurtbox.collision_mask
+		impact.collision_layer = hurtbox.collision_layer
+	impact.set_meta("asc_tags", tags)
+	if Engine.is_in_physics_frame():
+		get_tree().current_scene.call_deferred("add_child", impact)
+	else:
+		get_tree().current_scene.add_child(impact)
+	return impact
+
+
+## `overrides` may set speed, max_range, collision_radius, pierce, knockback,
+## body_len, body_width and burn_* metas on the managed profile.
+func spawn_generated_bullet(origin: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, overrides: Dictionary = {}) -> bool:
+	var projectile_manager := get_node_or_null("/root/ProjectileManager") as ProjectileSimulationManager
+	if projectile_manager == null:
+		return false
+	var profile := HitProfileAdapter.new()
+	profile.reset(damage)
+	for key in overrides:
+		var value: Variant = overrides[key]
+		if String(key).begins_with("burn_"):
+			profile.set_meta(String(key), value)
+		elif key in profile:
+			profile.set(key, value)
+	profile.set_meta("asc_tags", tags)
+	var dir := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.RIGHT
+	return projectile_manager.spawn_player(origin, dir, profile, self)
+
+
+
+func _is_melee_style_active() -> bool:
+	return str(Global.selected_style_id) == "melee"
+
+func _connect_style_sustain_signals() -> void:
+	if RunEvents == null or not RunEvents.has_signal("damage_dealt"):
+		return
+
+	# Connect defensively so extra signal arguments in future patches are ignored.
+	var argc := 2
+	for signal_info in RunEvents.get_signal_list():
+		if StringName(signal_info.get("name", "")) == &"damage_dealt":
+			var args: Array = signal_info.get("args", [])
+			argc = maxi(2, args.size())
+			break
+
+	var callback := Callable(self, "_on_style_damage_dealt")
+	if argc > 2:
+		callback = callback.unbind(argc - 2)
+	_style_damage_cb = callback
+	if not RunEvents.damage_dealt.is_connected(_style_damage_cb):
+		RunEvents.damage_dealt.connect(_style_damage_cb)
+
+func _active_lifesteal_profile() -> Vector2:
+	var style_id: String = str(Global.selected_style_id) if Global != null else "ranged"
+	match style_id:
+		"melee":
+			return Vector2(melee_lifesteal_pct, melee_lifesteal_cap_max_hp_per_sec)
+		"magic":
+			return Vector2(magic_lifesteal_pct, magic_lifesteal_cap_max_hp_per_sec)
+		_:
+			return Vector2(ranged_lifesteal_pct, ranged_lifesteal_cap_max_hp_per_sec)
+
+func _update_lifesteal_budget(dt: float) -> void:
+	_lifesteal_window_left -= maxf(0.0, dt)
+	if _lifesteal_window_left <= 0.0:
+		_lifesteal_window_left = 1.0
+		_lifesteal_healed_this_window = 0.0
+
+func _on_style_damage_dealt(a, b) -> void:
+	if is_dead or hp >= max_hp - 0.001:
+		return
+
+	var source: Node = null
+	var damage_amount: float = 0.0
+	if a is Node:
+		source = a
+		damage_amount = float(b)
+	elif b is Node:
+		source = b
+		damage_amount = float(a)
+	else:
+		return
+	if source != self or damage_amount <= 0.0:
+		return
+
+	var profile: Vector2 = _active_lifesteal_profile()
+	var lifesteal_pct: float = maxf(0.0, profile.x)
+	var cap_this_second: float = maxf(0.0, max_hp * profile.y)
+	var remaining_cap: float = maxf(0.0, cap_this_second - _lifesteal_healed_this_window)
+	if lifesteal_pct <= 0.0 or remaining_cap <= 0.0:
+		return
+
+	var healing: float = minf(damage_amount * lifesteal_pct, remaining_cap)
+	healing = minf(healing, maxf(0.0, max_hp - hp))
+	if healing <= 0.0:
+		return
+	_lifesteal_healed_this_window += healing
+	heal(healing, &"lifesteal")
+
+func _update_melee_sustain(dt: float) -> void:
+	# Passive regen that scales with BONUS HP (max_hp - base_stats.max_hp), LoL-style.
+	if is_dead:
+		return
+
+	if not _is_melee_style_active():
+		_melee_regen_block_left = 0.0
+		return
+
+	if _melee_regen_block_left > 0.0:
+		_melee_regen_block_left = maxf(_melee_regen_block_left - dt, 0.0)
+		return
+
+	if hp >= (max_hp - 0.001):
+		return
+
+	var base_hp: float = max_hp
+	if base_stats != null:
+		base_hp = base_stats.max_hp
+
+	var bonus_hp := maxf(0.0, max_hp - base_hp)
+	var per_sec := melee_regen_flat_per_sec + bonus_hp * melee_regen_bonus_hp_pct_per_sec
+	if per_sec > 0.0:
+		heal(per_sec * dt, &"regen")
+
+
+
+func _attack_origin() -> Vector2:
+	if hurtbox != null:
+		return hurtbox.global_position
+	return global_position
+
+
+func heal(amount: float, source: StringName = &"generic") -> void:
+	if amount <= 0.0:
+		return
+	var requested := amount
+	# A lock is a lock: the vault's price, a Sacrifice, a ritual interference
+	# seal the Rite's mend and the wardstone with everything else unless the
+	# export says otherwise. Nothing lands and nothing is announced - a rule
+	# listening for player_healed must not hear a heal that did not happen,
+	# and the seal said its one line when it fell. The exemption list is
+	# only consulted while sealed, so the open path stays one float compare.
+	if _healing_lock_left > 0.0 and not healing_lock_exempt_sources.has(source):
+		if RunEvents != null and RunEvents.player_heal_resolved.has_connections():
+			RunEvents.player_heal_resolved.emit(self, requested, 0.0, 0.0, source, true)
+		return
+	if Global != null and Global.has_method("doctrine_healing_multiplier"):
+		amount *= float(Global.doctrine_healing_multiplier(source))
+	var ar_heal: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar_heal != null:
+		amount *= ar_heal.get_heal_multiplier()
+	# Report what LANDED, never what was asked for. Anything that reacts to a
+	# heal by taking a cut was billing the player for the overflow: at 95/100 a
+	# 30-point pickup applied 5 and announced 30, so a rule refusing 55% of it
+	# subtracted 16.5 and the pickup left you LOWER than before you touched it.
+	var applied: float = min(hp + amount, max_hp) - hp
+	var hp_before_heal := hp
+	hp += applied
+	if applied > 0.0:
+		_report_health_change(&"heal", "heal:" + String(source), hp_before_heal, max_hp, requested, source)
+	if RunEvents != null and RunEvents.player_heal_resolved.has_connections():
+		RunEvents.player_heal_resolved.emit(self, requested, amount, applied, source, false)
+	hp_changed.emit(hp, max_hp)
+	if applied <= 0.0:
+		return
+	# Guarded: passive regen calls this every frame.
+	if RunEvents != null and RunEvents.player_healed.has_connections():
+		RunEvents.player_healed.emit(self, applied)
+
+
+## Seal healing for at least `seconds` more (plan §2.5: the Cursed Vault's
+## price; roadmap §10 Sacrifice; §8.1 ritual interference). Max semantics: a
+## second lock never shortens the first, so two costs landing together cost
+## the longer one, not the later one. Speaks once per lock - the combat line,
+## the signal the HP bar listens to, the flight-recorder event and, on the
+## first seal of the run, the teach - never per refused heal.
+func lock_healing(seconds: float, reason: StringName) -> void:
+	if seconds <= 0.0 or seconds <= _healing_lock_left:
+		return
+	var extended: bool = _healing_lock_left > 0.0
+	_healing_lock_left = seconds
+	_healing_lock_reason = reason
+	if BattleText != null:
+		BattleText.status_popup(global_position, &"healing_sealed", "HEALING SEALED - %ds" % ceili(seconds), 1.2)
+	if RunEvents != null:
+		if RunEvents.has_signal("healing_lock_changed"):
+			RunEvents.healing_lock_changed.emit(_healing_lock_left, reason)
+		# The first seal of the RUN teaches (the player node is per segment).
+		if RunEvents.has_signal("illustrated_tutorial_tip") and Global.teach_once(&"healing_lock"):
+			var seal_icons: Array[StringName] = [&"healing_sealed"]
+			RunEvents.illustrated_tutorial_tip.emit(HEALING_LOCK_TEACH, 4.0, seal_icons)
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"player", &"healing_locked", 1, {
+			"reason": String(reason), "extended": extended,
+		})
+
+
+func healing_locked_seconds() -> float:
+	return _healing_lock_left
+
+
+## Whether a heal from `source` would be refused right now (the lock, minus
+## its exemptions). A health pickup asks before it is consumed: it used to be
+## eaten during a lock and heal nothing.
+func is_healing_blocked(source: StringName = &"generic") -> bool:
+	return _healing_lock_left > 0.0 and not healing_lock_exempt_sources.has(source)
+
+
+func _on_healing_lock_expired() -> void:
+	var reason: StringName = _healing_lock_reason
+	_healing_lock_reason = &""
+	if RunEvents != null and RunEvents.has_signal("healing_lock_changed"):
+		RunEvents.healing_lock_changed.emit(0.0, reason)
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"player", &"healing_lock_expired", 1, {"reason": String(reason)})
+
+
+func _debug_dump_sets() -> void:
+	print("----- SET DEBUG DUMP -----")
+	print("Global.set_db keys:", Global.set_db.keys())
+	print("Has conduit set?:", Global.set_db.has(&"conduit"))
+
+	if Global.run_inventory == null:
+		print("run_inventory = null")
+		return
+
+	for i in range(Inventory.SLOT_COUNT):
+		var it: ItemInstance = Global.run_inventory.get_at(i)
+		if it == null or it.data == null:
+			print("slot", i, ": (empty)")
+		else:
+			print("slot", i, ":", it.data.id, " set_id=", StringName(it.data.set_id))
+
+	print("get_set_counts():", Global.run_inventory.get_set_counts())
+
+	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
+	if sr == null:
+		print("Player has no SetRunner node")
+	else:
+		print("SetRunner children:", sr.get_children())
+
+	print("----- END SET DEBUG DUMP -----")
+
+
+func _vfx_spawn_pulse(pos: Vector2, radius: float, dur: float = -1.0, lw: float = -1.0) -> void:
+	if vfx_pulse_ring_scene == null:
+		return
+	var n: Node = vfx_pulse_ring_scene.instantiate()
+	if dur > 0.0:
+		n.set("duration", dur)
+	if lw > 0.0:
+		n.set("line_width", lw)
+
+	get_tree().current_scene.add_child(n)
+	if n.has_method("setup"):
+		n.call("setup", pos, radius)
+	elif n is Node2D:
+		(n as Node2D).global_position = pos
+
+
+func _vfx_spawn_spokes(pos: Vector2, dur: float = -1.0, outer: float = -1.0, core: Color = Color(), glow: Color = Color()) -> void:
+	if vfx_spokes_scene == null:
+		return
+	var n: Node = vfx_spokes_scene.instantiate()
+
+	if dur > 0.0: n.set("duration", dur)
+	if outer > 0.0: n.set("outer", outer)
+
+	if core != Color():
+		n.set("color_core", core)
+	if glow != Color():
+		n.set("color_glow", glow)
+		n.set("glow_mul", 0.45)
+
+	get_tree().current_scene.add_child(n)
+	if n.has_method("setup"):
+		n.call("setup", pos)
+	elif n is Node2D:
+		(n as Node2D).global_position = pos

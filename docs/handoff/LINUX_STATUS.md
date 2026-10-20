@@ -5,9 +5,10 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Pickup acknowledgment
 
-- State: **Visibility implementation checked and committed locally; L2 ground,
-  paving/irregular shadows, domestic interiors and theme atmosphere are active
-  next work**. L1 garden fit is retained; full ground/street acceptance remains open.
+- State: **Visibility, useful lawn core, selected wet earth, connected paving,
+  actual-footprint casts, fitted irregular roofs, furnished domestic homes
+  and theme atmosphere are committed locally. Final integration checks pass.**
+  L1 garden fit is retained; full ground/street acceptance remains open.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
 - Latest received review commit: `24d838f77df1b85ca3ec8636ec6a4900a6b19f7d`.
@@ -32,6 +33,72 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 - Run data/config/cache and logs will be isolated under `.superpowers/`;
   no existing user profile is used.
 
+## 20 October — local implementation continuation
+
+The user authorized continuing while asleep and committing checked stages.
+`4c4a6cb2` adds sparse cot, cold hearth, table and crate groups with six explicit
+streamed low-cover cells where the deterministic household fit permits.
+`276e5e15` finishes domestic plaster, upper masonry and the supported south-entry
+header. Four actual-home runs at 960×540 and 1280×720 each passed entry, four prop
+contacts, a short occupied fight, exit/roof restoration and zero save writes.
+Their plates, measured routes, source bindings and four decoded clips are in the
+[domestic packet](../art/reference/2026-10-20-linux-domestic-interiors/README.md),
+committed as `2caa696a`. Reward comparisons exercise actual chance/claim and full
+single-item factory paths, beyond planner RNG.
+
+`9eab80dc` fits footways to actual entrances and softens their external edges.
+`346518ee` adds connected S2 irregular roof planes, coherent tile directions and
+fitted fascia, and corrects actual-outline casts for non-guard families. S3 keeps
+its reviewed custom treatment. The [scene packet](../art/reference/2026-10-20-linux-scene-depth/README.md),
+committed as `eb78988e`, retains matched actual-Game roof pairs at both sizes.
+These improve the measured samples; whole-street art acceptance remains open.
+
+The procedural survey exposed a stale rectangular-interior assertion: seed 2026
+casts into its L-shaped northwest exterior notch with no intersection against
+any actual occupied outline. Test correction `02ee8d3a` checks every real receiver,
+includes deliberate transformed interior-overlap controls, and explicitly runs
+S2. It passes 6,318 assertions across 20 layouts. The failed and diagnostic
+runs remain retained.
+
+Atmosphere implementation `de93d886` uses the already selected theme,
+world-anchored cloud daylight, profile-specific direct/fill response and quiet
+damp-ground air. All eight selected Game/authored runs pass without diagnostics
+or save writes. Native samples cover S2 courtyards, S3 checkpoint lanes and S7
+canal services at both sizes; fourteen profiles have data coverage. The
+[atmosphere packet](../art/reference/2026-10-20-linux-theme-atmosphere/README.md)
+is committed as `81e9567e`. Actual S1 and Hub keep their authored owners
+(13 assertions). The first S2 pan probe's
+pixel-rounding failure is preserved; the corrected texel-center probe changes
+by at most 1/255 during fixed-phase camera pans. S7 normal includes 25 distinct
+paused weather samples; the Reduced Motion fight records 34 frames, 25 fires
+and 27 hits, with a cleanly decoded clip. No new district architecture, magic
+weather, biome reroll or gameplay/save ownership is added.
+
+The [integration packet](../art/reference/2026-10-20-linux-integration/README.md)
+retains the original failed assertion, diagnosis, corrected checks and combined
+visibility review: 11 plates, no failures, no saves and no monitor diagnostics
+with all new runtime slices present. Final main-tree
+footprint 11/0, care 125/0 and parse 557/0 checks are clean at `de93d886`. Earlier
+integrated kit 1300/0, roof 99/0, shared cover 25/0, domestic 336/0 and reward 43/0
+records keep their original launch hashes. Whole-street art review, general care
+continuation across chunk borders, missing district-specific architecture and
+ordinary human play remain open.
+
+The current continuation is retained on `codex/linux-world-production`.
+A noninteractive HTTPS push attempt failed because this process has no GitHub
+username credential; no authentication or machine settings were changed.
+The user authorized continuing locally without waiting for publication. When
+ready, publish the existing commits from this PC with:
+
+```bash
+git push -u origin codex/linux-world-production
+```
+
+Windows can then fetch this branch and review the dated evidence packets.
+Linux does not publish the integration branch. The older publication history
+below concerns previously received packets and does not establish publication
+of this newer continuation. ART_STATUS remains Windows-owned.
+
 ## Current bounded packet
 
 The supplied wet-earth candidate is selected locally for semantic5 after native
@@ -43,17 +110,18 @@ cleanly. The real dry1/no-stain3×3 control and the failed5×5 search are retain
 See [wet-earth packet](../art/reference/2026-10-20-linux-wet-earth/README.md).
 This is a production selection pending lead art review, not complete L2/street
 acceptance. Paving/actual-footprint shadows are separately committed as9eab80dc
-and merged locally; the new irregular roof-plane, interior and atmosphere work
-continues in its checked stages.
+and merged locally. The newer completed roof-plane, domestic and atmosphere
+stages are recorded above; broader art review remains open.
 
 Local checked continuation,20October: the household care inner plateau is now
 0.50 instead of0.20, preserving the bed’s15-cell support while filling its legal
 3×3 core. Care125/0, natural preservation8chunks/0failures, splat33/0 and two
 native same-camera seam runs are clean; both neighbor signatures survive streamed
 reload. See [ground-core checkpoint](../art/reference/2026-10-20-linux-ground-core/README.md).
-Cross-chunk shape continuation, wet/dry selection and complete L2 acceptance
-remain open. Paving/actual-footprint casts, purposeful domestic interiors and
-theme-specific physical atmosphere are being checked in isolated local branches.
+General cross-chunk shape continuation and complete L2 art acceptance remain
+open. Wet-earth production selection is retained pending lead art review.
+Paving/actual-footprint casts, domestic purpose and theme atmosphere have since
+been integrated locally, with their measured limits recorded above.
 The user explicitly requested continuing autonomously and committing as work is
 checked; publication is not a work blocker.
 
@@ -62,11 +130,10 @@ fit while leaving complete-street acceptance open. Windows received L2 as
 qualified WIP: keep moss and the care foundation; correct lawn readability,
 inspect the bed chunk seam and verify/correct wet earth with a real dry control.
 The user reprioritized enemy/item visibility behind buildings and trees, then
-authorized continuing the queued implementations. Finish and check that
-visibility packet, then the bounded L2 correction and L3 ordinary-home purpose
-and masonry, with separate commits. Do not
-silently expand to more district families or claim historical images validate
-new code. Windows retains art direction and source generation.
+authorized autonomous L2/L3, scene massing/paving and theme-atmosphere work.
+Those checked stages are committed separately. New district architecture and
+whole-street visual acceptance remain open; current captured samples do not
+validate every generated layout. Windows retains lead art review/source generation.
 
 Execution checklist for this packet (the existing HANDOFF is the scope/spec):
 
@@ -85,11 +152,12 @@ Execution checklist for this packet (the existing HANDOFF is the scope/spec):
   keep/rework decision (publication confirmed by remote refs and lead review).
 
 The lead keeps the measured native garden fit in these fixtures. Whole-street
-approval, ordinary human play, L2 visual acceptance and domestic furnishing
-remain open. The attached user screenshot reproduces an enemy fully coloured
-over an opaque lower wall face; roof-only coverage does not satisfy it.
-V1's checked body/icon improvement is retained below; broader tell/projectile
-depth and complete occupied-street acceptance remain open.
+approval, ordinary human play and full L2/L3 visual acceptance remain open.
+Domestic furnishing is now implemented and captured above. The earlier user
+screenshot reproduced an enemy fully coloured over an opaque lower wall;
+`31a1f6ce` corrected that body/icon fault, with the combined native check retaining
+it after the new visual work. Broader tell/projectile depth and complete occupied-
+street acceptance remain open.
 
 ## 20 October — body/icon visibility checkpoint and continued local work
 

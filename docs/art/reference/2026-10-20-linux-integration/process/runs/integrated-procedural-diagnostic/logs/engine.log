@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CityBlockProceduralTest shadow diagnostic: {"actual_occupied":[{"intersect_area":0.0,"intersections":"[]","kit_transform":"[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]","outline":"[(1216.0, 256.0), (1856.0, 256.0), (1856.0, 768.0), (1216.0, 768.0)]","rect":"[P: (19, 4), S: (10, 8)]"},{"intersect_area":0.0,"intersections":"[]","kit_transform":"[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]","outline":"[(1024.0, 1216.0), (1792.0, 1216.0), (1792.0, 1728.0), (1024.0, 1728.0)]","rect":"[P: (16, 19), S: (12, 8)]"},{"intersect_area":0.0,"intersections":"[]","kit_transform":"[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]","outline":"[(384.0, 192.0), (768.0, 192.0), (768.0, 832.0), (256.0, 832.0), (256.0, 384.0), (384.0, 384.0)]","rect":"[P: (4, 3), S: (8, 10)]"}],"bbox_area":14560.5625,"bbox_intersections":"[[(384.0, 384.0), (293.28, 384.0), (293.28, 255.0), (384.0, 192.0)]]","bbox_rect":"[P: (4, 3), S: (8, 10)]","chunk_global":"(0.0, 0.0)","lane_h":"[P: (14, 14), S: (18, 3)]","lane_v":"[P: (14, 0), S: (3, 17)]","seed":2026,"segment":1,"shadow":"[(384.0, 384.0), (293.28, 384.0), (293.28, 255.0), (384.0, 192.0)]","shadow_name":"@Polygon2D@5646","shadow_owner_rect":"[P: (4, 3), S: (8, 10)]","shadow_texture":"","shadow_transform":"[X: (1.0, 0.0), Y: (0.0, 1.0), O: (0.0, 0.0)]"}
+ERROR: building sun shadows exclude their own and neighboring interiors
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityBlockProceduralTest.gd:14)
+       [1] _check_ground (res://tools/tests/CityBlockProceduralTest.gd:176)
+       [2] _run (res://tools/tests/CityBlockProceduralTest.gd:83)
+CityBlockProceduralTest: 6092 passed, 1 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 76 styled kit instances across 22 sizes

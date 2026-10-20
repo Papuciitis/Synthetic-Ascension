@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: an L-footprint building generates on the real parcel path (seed 424242)
+  found at chunk (3, 0) with 10 roof corners
+PASS: the roof polygon is orthogonal and closed (10 corners)
+PASS: the L building has exactly two indoor volumes under one building id
+PASS: only one sub-volume owns loot rights (1)
+PASS: every covered cell is hall floor or a wall of this building (0 strangers, 5 walls)
+PASS: the open hall dominates the volume coverage (34/39 walkable)
+PASS: the interior is reachable from the street through the doorway
+PASS: a fixed seed regenerates the same blocker cells
+PASS: three-quarter walls hang no separate faces
+PASS: walls draw three-quarter pieces (512)
+PASS: caps and their ground shadows stay one-to-one
+WorldFootprintTest: 11 passed, 0 failed

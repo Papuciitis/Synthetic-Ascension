@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: building sun shadows exclude their own and neighboring interiors
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityBlockProceduralTest.gd:14)
+       [1] _check_ground (res://tools/tests/CityBlockProceduralTest.gd:173)
+       [2] _run (res://tools/tests/CityBlockProceduralTest.gd:83)
+CityBlockProceduralTest: 6092 passed, 1 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 76 styled kit instances across 22 sizes

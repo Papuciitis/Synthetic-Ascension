@@ -1,0 +1,3892 @@
+{
+  "bound_commit": "de93d886a2b6392b1ff21d46147c3dd0cbf9287e",
+  "method": "SHA-256 of explicit git show <commit>:<path> blobs compared with untouched monitor launch source_hashes; no launch HEAD is rewritten.",
+  "committed_sha256": {
+    "project.godot": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+    "scenes/game.tscn": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+    "core/actors/player/player.gd": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+    "core/actors/player/PlayerRoofOcclusion.gd": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+    "core/actors/player/player_roof_occlusion.gdshader": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+    "core/systems/enemy_world/EnemyProxyRenderer.gd": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+    "core/systems/enemy_world/EnemyProxyRegion.gdshader": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+    "core/systems/world/ChunkManager.gd": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+    "core/systems/world/chunks/ChunkBlockPhysics.gd": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+    "core/systems/world/chunks/ChunkBlockRenderer.gd": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+    "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+    "core/systems/world/proc/SiteParcelsImpl.gd": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+    "core/systems/world/ground/CityGroundCare.gd": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+    "core/systems/world/ground/GroundSplatRenderer.gd": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+    "core/systems/world/ground/ground_splat.gdshader": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+    "core/systems/world/atmosphere/GameAtmosphereBinder.gd": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+    "core/systems/world/atmosphere/ground_air.gdshader": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+    "core/systems/world/atmosphere/world_atmosphere.gdshader": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+    "core/systems/world/visibility/ForegroundSpriteCoverage.gd": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+    "core/systems/world/visibility/WorldCover.gd": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+    "core/systems/world/visibility/world_cover.gdshaderinc": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+    "core/systems/world/visibility/PickupCover.gd": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+    "core/systems/world/visibility/pickup_cover.gdshader": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+    "scenes/world/pickups/ItemPickup.gd": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+    "scenes/world/pickups/ItemPickup.tscn": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+    "scenes/world/pickups/HealthPickup.gd": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+    "scenes/world/pickups/HealthPickup.tscn": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+    "scenes/world/buildings/CityBlockKit.gd": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+    "scenes/world/buildings/CityBlockFrontages.gd": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+    "scenes/world/buildings/CityBlockRoofForms.gd": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+    "scenes/world/buildings/CityDomesticInterior.gd": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+    "scenes/world/buildings/CityFootprintGeometry.gd": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+    "scenes/world/buildings/CityStreetFrontage.gd": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+    "scenes/world/buildings/DistrictVisualProfiles.gd": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+    "scenes/world/buildings/DungeonBuilding.gd": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+    "scenes/world/buildings/DungeonRoof.gd": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+    "scenes/world/buildings/RoofOverlay.gd": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+    "scenes/world/buildings/RoofOverlay.tscn": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+    "scenes/world/buildings/roof.gdshader": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+    "scenes/world/buildings/city_ground.gdshader": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+    "scenes/world/buildings/city_footway.gdshader": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+    "scenes/world/buildings/city_paving.gdshader": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+    "scenes/world/buildings/domestic_stone.gdshader": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+    "scenes/world/buildings/domestic_plaster.gdshader": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+    "tools/dev/CityBlockPlayablePreview.gd": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+    "tools/dev/CityEntityCoverPreview.gd": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+    "tools/dev/CityEntityCoverPreview.tscn": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+    "tools/tests/CityBlockKitTest.gd": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+    "tools/tests/CityBlockKitTest.tscn": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+    "tools/tests/DungeonRoofContractTest.gd": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+    "tools/tests/DungeonRoofContractTest.tscn": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+    "tools/tests/WorldCoverTest.gd": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+    "tools/tests/WorldCoverTest.tscn": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+    "tools/tests/CityDomesticInteriorTest.gd": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+    "tools/tests/CityDomesticInteriorTest.tscn": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+    "tools/tests/DomesticRewardStabilityTest.gd": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+    "tools/tests/DomesticRewardStabilityTest.tscn": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+    "tools/tests/CityBlockProceduralTest.gd": "abf5a8f0996125049205126673bf615ffd558fd83f63467afcd357252709d062",
+    "tools/tests/CityBlockProceduralTest.tscn": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+    "tools/tests/WorldFootprintTest.gd": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+    "tools/tests/WorldFootprintTest.tscn": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+    "tools/tests/CityGroundCareTest.gd": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+    "tools/tests/CityGroundCareTest.tscn": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+    "tools/tests/ScriptParseAuditTest.gd": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+    "tools/tests/ScriptParseAuditTest.tscn": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+    "assets/world/ground/baked/ground_materials.res": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+    "assets/world/ground/baked/ground_materials.json": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+    "assets/world/ground/ground_grass_01.png": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+    "assets/world/ground/ground_grass_01.png.import": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+    "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+    "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+    "assets/world/ground/city_care/v1/damp_moss_soil.png": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+    "assets/world/ground/city_care/v1/damp_moss_soil.png.import": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+    "assets/world/ground/city_care/v1/cared_lawn.png": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+    "assets/world/ground/city_care/v1/cared_lawn.png.import": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626"
+  },
+  "content_snapshots": [
+    "project.godot",
+    "scenes/game.tscn",
+    "core/actors/player/player.gd",
+    "core/actors/player/PlayerRoofOcclusion.gd",
+    "core/actors/player/player_roof_occlusion.gdshader",
+    "core/systems/enemy_world/EnemyProxyRenderer.gd",
+    "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+    "core/systems/world/ChunkManager.gd",
+    "core/systems/world/chunks/ChunkBlockPhysics.gd",
+    "core/systems/world/chunks/ChunkBlockRenderer.gd",
+    "core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+    "core/systems/world/proc/SiteParcelsImpl.gd",
+    "core/systems/world/ground/CityGroundCare.gd",
+    "core/systems/world/ground/GroundSplatRenderer.gd",
+    "core/systems/world/ground/ground_splat.gdshader",
+    "core/systems/world/atmosphere/GameAtmosphereBinder.gd",
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+    "core/systems/world/atmosphere/WorldAtmosphere.gd",
+    "core/systems/world/atmosphere/ground_air.gdshader",
+    "core/systems/world/atmosphere/world_atmosphere.gdshader",
+    "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+    "core/systems/world/visibility/WorldCover.gd",
+    "core/systems/world/visibility/world_cover.gdshaderinc",
+    "core/systems/world/visibility/PickupCover.gd",
+    "core/systems/world/visibility/pickup_cover.gdshader",
+    "scenes/world/pickups/ItemPickup.gd",
+    "scenes/world/pickups/ItemPickup.tscn",
+    "scenes/world/pickups/HealthPickup.gd",
+    "scenes/world/pickups/HealthPickup.tscn",
+    "scenes/world/buildings/CityBlockKit.gd",
+    "scenes/world/buildings/CityBlockFrontages.gd",
+    "scenes/world/buildings/CityBlockRoofForms.gd",
+    "scenes/world/buildings/CityDomesticInterior.gd",
+    "scenes/world/buildings/CityFootprintGeometry.gd",
+    "scenes/world/buildings/CityStreetFrontage.gd",
+    "scenes/world/buildings/DistrictVisualProfiles.gd",
+    "scenes/world/buildings/DungeonBuilding.gd",
+    "scenes/world/buildings/DungeonRoof.gd",
+    "scenes/world/buildings/RoofOverlay.gd",
+    "scenes/world/buildings/RoofOverlay.tscn",
+    "scenes/world/buildings/roof.gdshader",
+    "scenes/world/buildings/city_ground.gdshader",
+    "scenes/world/buildings/city_footway.gdshader",
+    "scenes/world/buildings/city_paving.gdshader",
+    "scenes/world/buildings/domestic_stone.gdshader",
+    "scenes/world/buildings/domestic_plaster.gdshader",
+    "tools/dev/CityBlockPlayablePreview.gd",
+    "tools/dev/CityEntityCoverPreview.gd",
+    "tools/dev/CityEntityCoverPreview.tscn",
+    "tools/tests/CityBlockKitTest.gd",
+    "tools/tests/CityBlockKitTest.tscn",
+    "tools/tests/DungeonRoofContractTest.gd",
+    "tools/tests/DungeonRoofContractTest.tscn",
+    "tools/tests/WorldCoverTest.gd",
+    "tools/tests/WorldCoverTest.tscn",
+    "tools/tests/CityDomesticInteriorTest.gd",
+    "tools/tests/CityDomesticInteriorTest.tscn",
+    "tools/tests/DomesticRewardStabilityTest.gd",
+    "tools/tests/DomesticRewardStabilityTest.tscn",
+    "tools/tests/CityBlockProceduralTest.gd",
+    "tools/tests/CityBlockProceduralTest.tscn",
+    "tools/tests/WorldFootprintTest.gd",
+    "tools/tests/WorldFootprintTest.tscn",
+    "tools/tests/CityGroundCareTest.gd",
+    "tools/tests/CityGroundCareTest.tscn",
+    "tools/tests/ScriptParseAuditTest.gd",
+    "tools/tests/ScriptParseAuditTest.tscn"
+  ],
+  "asset_hashes_only": [
+    "assets/world/ground/baked/ground_materials.res",
+    "assets/world/ground/baked/ground_materials.json",
+    "assets/world/ground/ground_grass_01.png",
+    "assets/world/ground/ground_grass_01.png.import",
+    "assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+    "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import",
+    "assets/world/ground/city_care/v1/damp_moss_soil.png",
+    "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+    "assets/world/ground/city_care/v1/cared_lawn.png",
+    "assets/world/ground/city_care/v1/cared_lawn.png.import"
+  ],
+  "original_launch_matrix": {
+    "integrated-CityBlockKitTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "d7979c4b5d7b5ce55d9b23d110e3e34fe65dfe1d36b95f8be048312b01e38bce",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-DungeonRoofContractTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "d7979c4b5d7b5ce55d9b23d110e3e34fe65dfe1d36b95f8be048312b01e38bce",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-WorldCoverTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "d7979c4b5d7b5ce55d9b23d110e3e34fe65dfe1d36b95f8be048312b01e38bce",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-CityDomesticInteriorTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "d7979c4b5d7b5ce55d9b23d110e3e34fe65dfe1d36b95f8be048312b01e38bce",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-DomesticRewardStabilityTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "d7979c4b5d7b5ce55d9b23d110e3e34fe65dfe1d36b95f8be048312b01e38bce",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-CityBlockProceduralTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "d7979c4b5d7b5ce55d9b23d110e3e34fe65dfe1d36b95f8be048312b01e38bce",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-procedural-diagnostic": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "9a85e3781de8a4af0949fef10c46dda04a8173ead40d2a30a615990d1f850815",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-procedural-actual-outline": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "66a8e5ca56f94246e04d5cc1b6d632bff6c7fb765971fd434dc6f6dcdafd051f",
+        "matches_bound_commit": false
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "1f17847bec9d5118b5b55c956512b8b73e13ee227d6408d32c43ba6b7388b9ac",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": null,
+        "matches_bound_commit": false
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "4921cac3db8570fffab778033242e8a8ae6a4ca12da42cfb7455fdf0024c8f9d",
+        "matches_bound_commit": false
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "abf5a8f0996125049205126673bf615ffd558fd83f63467afcd357252709d062",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "integrated-entity-cover": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "d7979c4b5d7b5ce55d9b23d110e3e34fe65dfe1d36b95f8be048312b01e38bce",
+        "matches_bound_commit": false
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "final-WorldFootprintTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "abf5a8f0996125049205126673bf615ffd558fd83f63467afcd357252709d062",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "final-CityGroundCareTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "abf5a8f0996125049205126673bf615ffd558fd83f63467afcd357252709d062",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    },
+    "final-ScriptParseAuditTest": {
+      "project.godot": {
+        "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+        "matches_bound_commit": true
+      },
+      "scenes/game.tscn": {
+        "recorded_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player.gd": {
+        "recorded_sha256": "75b700efd2b020af4113365115ce8a35b4048d46d3e2a503816e627d0643bf56",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/PlayerRoofOcclusion.gd": {
+        "recorded_sha256": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+        "matches_bound_commit": true
+      },
+      "core/actors/player/player_roof_occlusion.gdshader": {
+        "recorded_sha256": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRenderer.gd": {
+        "recorded_sha256": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+        "matches_bound_commit": true
+      },
+      "core/systems/enemy_world/EnemyProxyRegion.gdshader": {
+        "recorded_sha256": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ChunkManager.gd": {
+        "recorded_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockPhysics.gd": {
+        "recorded_sha256": "d66341b66851e21f0eb7fbbdda4353b7ce0f2af85ff3581615221c42d8cc1dfb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+        "recorded_sha256": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": {
+        "recorded_sha256": "1001c1cc5617ad57cca0cc1e33a242ca2e7ea2e86789c1808badf42fd53e9c5f",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/proc/SiteParcelsImpl.gd": {
+        "recorded_sha256": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/CityGroundCare.gd": {
+        "recorded_sha256": "f828366d0cd1f25e721df0d43f487bbaba499fb5ec9c385773e510aa2c7e7512",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/GroundSplatRenderer.gd": {
+        "recorded_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/ground/ground_splat.gdshader": {
+        "recorded_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+        "recorded_sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+        "recorded_sha256": "d47277dadac707b61af6f630ec780b3c8eea872ec9f472546b439cae947505b5",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+        "recorded_sha256": "2e496f9b2538a7a53b12b8429ec1bcbdddf94fefa0bb2c8b7a503a9b2d6a3731",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/ground_air.gdshader": {
+        "recorded_sha256": "b93eaf8408611d45f4b12c1dbade331d31da204b4eda0f55a58128c4f1798346",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+        "recorded_sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/ForegroundSpriteCoverage.gd": {
+        "recorded_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/WorldCover.gd": {
+        "recorded_sha256": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/world_cover.gdshaderinc": {
+        "recorded_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/PickupCover.gd": {
+        "recorded_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+        "matches_bound_commit": true
+      },
+      "core/systems/world/visibility/pickup_cover.gdshader": {
+        "recorded_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.gd": {
+        "recorded_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/ItemPickup.tscn": {
+        "recorded_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.gd": {
+        "recorded_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+        "matches_bound_commit": true
+      },
+      "scenes/world/pickups/HealthPickup.tscn": {
+        "recorded_sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockKit.gd": {
+        "recorded_sha256": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockFrontages.gd": {
+        "recorded_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityBlockRoofForms.gd": {
+        "recorded_sha256": "e749dd829eb80b36de85d3ce67e602e6bcffe7c970abaa78c2f3e001d79445cc",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityDomesticInterior.gd": {
+        "recorded_sha256": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityFootprintGeometry.gd": {
+        "recorded_sha256": "fb52ebb96d08645142bdf49440cdca7044f02f1dd2372eee15a0452e5e203596",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/CityStreetFrontage.gd": {
+        "recorded_sha256": "76b0d218b81a9bf0d8e5d0876972f360ce2a2d7869cde119d95683b22b9ee344",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DistrictVisualProfiles.gd": {
+        "recorded_sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonBuilding.gd": {
+        "recorded_sha256": "2434a65234a22bf680bb91645b3c3fe9b9086b8c8b9517afea07673a5a3f100d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/DungeonRoof.gd": {
+        "recorded_sha256": "6c6e692e35b61bfd93583ba25226a23d04f401cc97a73bc38ce10115f9586fc7",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.gd": {
+        "recorded_sha256": "3aca1c2e99baf3400eaa99373f8212b00888a74d889ff51724e7c928f423c2b9",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/RoofOverlay.tscn": {
+        "recorded_sha256": "010dd09276fa06e2b4f4ba83ea2e6869e3b9f862074981594ec0ca1a9c726b1d",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/roof.gdshader": {
+        "recorded_sha256": "aec9e9fa7212438c9f5e0531c65425e3b0e0f6fe8f3f1db9276b1944f4e439e8",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_ground.gdshader": {
+        "recorded_sha256": "0e823a339da2a5e5c3b994de31151f8dbfc1960319d86ad55d1e7e19583a25bf",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_footway.gdshader": {
+        "recorded_sha256": "12b6ec914ef53a73a1fa7140988a74c146f06330f0bf6e77f5766fa26f3e3154",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/city_paving.gdshader": {
+        "recorded_sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_stone.gdshader": {
+        "recorded_sha256": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+        "matches_bound_commit": true
+      },
+      "scenes/world/buildings/domestic_plaster.gdshader": {
+        "recorded_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityBlockPlayablePreview.gd": {
+        "recorded_sha256": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.gd": {
+        "recorded_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+        "matches_bound_commit": true
+      },
+      "tools/dev/CityEntityCoverPreview.tscn": {
+        "recorded_sha256": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.gd": {
+        "recorded_sha256": "8a9a8401518e49cb36a84ad7cfb5aca7d81d683048a274c4770f8f2ab4e6681f",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockKitTest.tscn": {
+        "recorded_sha256": "8873e5b61f335fcf2d13b9a6a00f95d6f37fa5e47c1df748be0485393983eabf",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.gd": {
+        "recorded_sha256": "fc9cb49a4ee77bdde1f9c78cefebc6ac0d6f543a56af867fbbb2e452e4d64172",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DungeonRoofContractTest.tscn": {
+        "recorded_sha256": "dd0289886aded4604893e5b3aa5dbcb53915aebe63a20bcb4aff7754abd552c3",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.gd": {
+        "recorded_sha256": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldCoverTest.tscn": {
+        "recorded_sha256": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.gd": {
+        "recorded_sha256": "20b049062606792885c338521fb2fe4928f11b348d9f8c9a57938565a857c298",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityDomesticInteriorTest.tscn": {
+        "recorded_sha256": "421a9c92747331a75ad166d3dc8a8dace1c4d8dcebadf8ec50c651452879b7dd",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.gd": {
+        "recorded_sha256": "6d0824d808fcdf822ef43ba1c95df2637e6ca1a1a993b8590d050bb19d2b4d79",
+        "matches_bound_commit": true
+      },
+      "tools/tests/DomesticRewardStabilityTest.tscn": {
+        "recorded_sha256": "8afd34e3b48cc48b73809997fe04a9c5b71f0be4e299a69c2cba72baca4d162a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.gd": {
+        "recorded_sha256": "abf5a8f0996125049205126673bf615ffd558fd83f63467afcd357252709d062",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityBlockProceduralTest.tscn": {
+        "recorded_sha256": "8dea277285aee72c57fbd07cc5beb5e8b85af0d3a6bf8272f01f0d096090111c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.gd": {
+        "recorded_sha256": "188dcc6bf187644e63b439ed08ed8c68ae5989f83e24a588e1d60467a053979c",
+        "matches_bound_commit": true
+      },
+      "tools/tests/WorldFootprintTest.tscn": {
+        "recorded_sha256": "ab1a362e231856c499c72a0e224c8721e2de80d90cfba73f1ad21e1a62793aea",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.gd": {
+        "recorded_sha256": "a439ebf8017f1a2b42924a0d0d896f09478131a52f25515f3f2cb437dc1aad7a",
+        "matches_bound_commit": true
+      },
+      "tools/tests/CityGroundCareTest.tscn": {
+        "recorded_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.gd": {
+        "recorded_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+        "matches_bound_commit": true
+      },
+      "tools/tests/ScriptParseAuditTest.tscn": {
+        "recorded_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.res": {
+        "recorded_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/baked/ground_materials.json": {
+        "recorded_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png": {
+        "recorded_sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/ground_grass_01.png.import": {
+        "recorded_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+        "recorded_sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+        "recorded_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+        "recorded_sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+        "recorded_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png": {
+        "recorded_sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+        "matches_bound_commit": true
+      },
+      "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+        "recorded_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+        "matches_bound_commit": true
+      }
+    }
+  },
+  "temporary_diagnostic_source": {
+    "path": "tools/tests/CityBlockProceduralTest.gd",
+    "recorded_sha256": "9a85e3781de8a4af0949fef10c46dda04a8173ead40d2a30a615990d1f850815",
+    "content_retained": false,
+    "qualification": "The temporary uncommitted diagnostic script bytes were not retained. Its original launch hash, full stdout JSON and full engine/stderr logs remain exact; no reconstructed script is substituted."
+  }
+}

@@ -1,0 +1,391 @@
+{
+  "bound_commit": "de93d886a2b6392b1ff21d46147c3dd0cbf9287e",
+  "runs": [
+    {
+      "label": "integrated-CityBlockKitTest",
+      "classification": "clean_check",
+      "note": "Earlier integrated kit regression.",
+      "footer": {
+        "test": "CityBlockKitTest",
+        "passed": 1300,
+        "failed": 0
+      },
+      "git_head": "276e5e152e2a4d718149e044c16dcc21d938c514",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 7.895,
+      "peak_sampled_rss_mb": 523.91015625,
+      "diagnostics": [],
+      "run_results_sha256": "053fe4531c44e88da0d02d108c7a9914fbfb0308ff58f62c78f2d1e1054ee42d",
+      "log_sha256": {
+        "stdout.log": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec"
+      }
+    },
+    {
+      "label": "integrated-DungeonRoofContractTest",
+      "classification": "clean_check",
+      "note": "Earlier integrated dungeon roof contract.",
+      "footer": {
+        "test": "DungeonRoofContractTest",
+        "passed": 99,
+        "failed": 0
+      },
+      "git_head": "276e5e152e2a4d718149e044c16dcc21d938c514",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.326,
+      "peak_sampled_rss_mb": 498.37109375,
+      "diagnostics": [],
+      "run_results_sha256": "e6159f139ffabef695d924dc8e7a6d93b79970c511511563a64e714760aec66a",
+      "log_sha256": {
+        "stdout.log": "e97a5ee995c6638c430d598c04f728a851a59df91feef008007f15118d7724c2",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "e97a5ee995c6638c430d598c04f728a851a59df91feef008007f15118d7724c2"
+      }
+    },
+    {
+      "label": "integrated-WorldCoverTest",
+      "classification": "clean_check",
+      "note": "Earlier integrated shared coverage contract.",
+      "footer": {
+        "test": "WorldCoverTest",
+        "passed": 25,
+        "failed": 0
+      },
+      "git_head": "276e5e152e2a4d718149e044c16dcc21d938c514",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.127,
+      "peak_sampled_rss_mb": 442.95703125,
+      "diagnostics": [],
+      "run_results_sha256": "545b6c426d9c8b79d502d8addf39bd430b1446ade744a37fd02a56f1386dd283",
+      "log_sha256": {
+        "stdout.log": "c1b843db10c8a878844cd26e3eb5f28f2cc22ca91493bd5d345b3ae02bf1d19b",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "c1b843db10c8a878844cd26e3eb5f28f2cc22ca91493bd5d345b3ae02bf1d19b"
+      }
+    },
+    {
+      "label": "integrated-CityDomesticInteriorTest",
+      "classification": "clean_check",
+      "note": "Earlier integrated actual eligible homes and furnishing policy.",
+      "footer": {
+        "test": "CityDomesticInteriorTest",
+        "passed": 336,
+        "failed": 0
+      },
+      "git_head": "276e5e152e2a4d718149e044c16dcc21d938c514",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.047,
+      "peak_sampled_rss_mb": 581.13671875,
+      "diagnostics": [],
+      "run_results_sha256": "ec40e3b2ca064dd4cb608bf9c74e2ff860bf6bf4744c57869e6be0f54aad8dea",
+      "log_sha256": {
+        "stdout.log": "7c1f2e0dc7f58bb523c1011e494f99c4fe1eb56ac482a6a6ea6306cd5cf64531",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "7c1f2e0dc7f58bb523c1011e494f99c4fe1eb56ac482a6a6ea6306cd5cf64531"
+      }
+    },
+    {
+      "label": "integrated-DomesticRewardStabilityTest",
+      "classification": "clean_check",
+      "note": "Earlier integrated actual chance/claim and full item-factory comparison; original rolls retained.",
+      "footer": {
+        "test": "DomesticRewardStabilityTest",
+        "passed": 43,
+        "failed": 0
+      },
+      "git_head": "276e5e152e2a4d718149e044c16dcc21d938c514",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.492,
+      "peak_sampled_rss_mb": 580.33984375,
+      "diagnostics": [],
+      "run_results_sha256": "8ceef02329b57c5c3f0a9f9264289c60f54f064a43fbe05a69665c66f5ca765b",
+      "log_sha256": {
+        "stdout.log": "4f5069b7304e513dec0023bd22faa8507e4ec426abae736598609ecd37e723ff",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "4f5069b7304e513dec0023bd22faa8507e4ec426abae736598609ecd37e723ff"
+      }
+    },
+    {
+      "label": "integrated-CityBlockProceduralTest",
+      "classification": "stale_test_expectation",
+      "note": "Real assertion failure: old bounding-box interior check rejects an empty L notch.",
+      "footer": {
+        "test": "CityBlockProceduralTest",
+        "passed": 6092,
+        "failed": 1
+      },
+      "git_head": "276e5e152e2a4d718149e044c16dcc21d938c514",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 9.742,
+      "peak_sampled_rss_mb": 524.83984375,
+      "diagnostics": [
+        "ERROR: building sun shadows exclude their own and neighboring interiors"
+      ],
+      "run_results_sha256": "eea860acd23f8b88b4d84693416f074056e15948239c892ba21f1aa8d72b5c14",
+      "log_sha256": {
+        "stdout.log": "baae8a16a161ddd6a4c5d47ebbf70b9a0defd1586f73c9a0dd4c439f1b7eb56d",
+        "stderr.log": "7d33f0101e5339b20d5d3a90c5601d011bcad6258fc3356ee0e9136f7864a5b4",
+        "engine.log": "4e15898b793424ec4ec041a9ae34d1f4cadb8e8d02f44677f7ba9a9afe0b7987"
+      }
+    },
+    {
+      "label": "integrated-procedural-diagnostic",
+      "classification": "diagnostic_reproduction",
+      "note": "Same assertion plus exact bbox/occupied-outline intersections; temporary diagnostic source is identified by its recorded hash.",
+      "footer": {
+        "test": "CityBlockProceduralTest",
+        "passed": 6092,
+        "failed": 1
+      },
+      "git_head": "2caa696a9b75b1ebfdcde0c975f068d94d867932",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 9.513,
+      "peak_sampled_rss_mb": 524.484375,
+      "diagnostics": [
+        "ERROR: building sun shadows exclude their own and neighboring interiors"
+      ],
+      "run_results_sha256": "440fa6c074973c1a9c34e8ebfc0f382388b29d1f8727eec8e15bd95cf4f09b55",
+      "log_sha256": {
+        "stdout.log": "5aadf0e80a54def7bedff57d5035f8ba3f14d7d8f1033c9cbf6206e2e51f1f1a",
+        "stderr.log": "b3aeeaba28edf02fffa23c477a0b2c47f72738d572e69c441f8945392675991f",
+        "engine.log": "6f6662532bd3ef14f86b0538a35f1661cb7596f31305cdaf5ebd88699b7e1fa7"
+      }
+    },
+    {
+      "label": "integrated-procedural-actual-outline",
+      "classification": "corrected_test",
+      "note": "Independent actual receiver outlines, explicit S2 setup/restore, and a positive transformed overlap detector control; no production change.",
+      "footer": {
+        "test": "CityBlockProceduralTest",
+        "passed": 6318,
+        "failed": 0
+      },
+      "git_head": "eb78988e7a78e30fd5d40c1aebb519fd781eae72",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 10.025,
+      "peak_sampled_rss_mb": 535.91015625,
+      "diagnostics": [],
+      "run_results_sha256": "8790327015455e2e634b8687ee4d2603d38b27633b1b44dc2a2beedb942021c5",
+      "log_sha256": {
+        "stdout.log": "b6a185dab1bd4bb5ecf51782e04d974b733dad1afc24a489b517726acc12adb1",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "b6a185dab1bd4bb5ecf51782e04d974b733dad1afc24a489b517726acc12adb1"
+      }
+    },
+    {
+      "label": "integrated-entity-cover",
+      "classification": "native_combined_regression",
+      "note": "Actual generated Game with atmosphere WIP later committed as the bound runtime; eleven unedited small-window stills.",
+      "footer": null,
+      "git_head": "276e5e152e2a4d718149e044c16dcc21d938c514",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 47.383,
+      "peak_sampled_rss_mb": 543.578125,
+      "diagnostics": [],
+      "run_results_sha256": "e587e2827bfe2245c9289f61f245582183408b0aaaa5cd1364fcf4f37e66e14c",
+      "log_sha256": {
+        "stdout.log": "2588785432dc8c277ac9676dfe9105a71d3b9511fd6be1cf8295af7ba5b05a0f",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "2588785432dc8c277ac9676dfe9105a71d3b9511fd6be1cf8295af7ba5b05a0f"
+      }
+    },
+    {
+      "label": "final-WorldFootprintTest",
+      "classification": "final_committed_check",
+      "note": "Final main at the bound commit.",
+      "footer": {
+        "test": "WorldFootprintTest",
+        "passed": 11,
+        "failed": 0
+      },
+      "git_head": "de93d886a2b6392b1ff21d46147c3dd0cbf9287e",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.742,
+      "peak_sampled_rss_mb": 508.4609375,
+      "diagnostics": [],
+      "run_results_sha256": "0ca3fba1504d07294b5304d0acc023ee4d96485ea9912031c3a3f61afc2d0b36",
+      "log_sha256": {
+        "stdout.log": "0350867009b4b19e94d24d9c435a23944b36b92ceb0099028f4b10079cc2d86d",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "0350867009b4b19e94d24d9c435a23944b36b92ceb0099028f4b10079cc2d86d"
+      }
+    },
+    {
+      "label": "final-CityGroundCareTest",
+      "classification": "final_committed_check",
+      "note": "Final main at the bound commit.",
+      "footer": {
+        "test": "CityGroundCareTest",
+        "passed": 125,
+        "failed": 0
+      },
+      "git_head": "de93d886a2b6392b1ff21d46147c3dd0cbf9287e",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.975,
+      "peak_sampled_rss_mb": 589.71484375,
+      "diagnostics": [],
+      "run_results_sha256": "e8fb23d4cf2097b0fea9fbed69c3b5ddd51df6af2c9979f25268edb8bccd5738",
+      "log_sha256": {
+        "stdout.log": "a3cc5a186f0a6fd7f8614f6b2f6f22a14de1fbb46aa053a7f9518fe4b0f36d57",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "a3cc5a186f0a6fd7f8614f6b2f6f22a14de1fbb46aa053a7f9518fe4b0f36d57"
+      }
+    },
+    {
+      "label": "final-ScriptParseAuditTest",
+      "classification": "final_committed_check",
+      "note": "Final main at the bound commit; 557 scripts across 8 roots.",
+      "footer": {
+        "test": "ScriptParseAuditTest",
+        "passed": 557,
+        "failed": 0
+      },
+      "git_head": "de93d886a2b6392b1ff21d46147c3dd0cbf9287e",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 14.621,
+      "peak_sampled_rss_mb": 587.25,
+      "diagnostics": [],
+      "run_results_sha256": "a1a6191d5b5347a2f00325f4d11a6655d83a9e89cc3bb14028ba342138b0c986",
+      "log_sha256": {
+        "stdout.log": "3e0ff5d5f7d5cbb48f3bf92fefffcf0405ff23a81fed9e511be06612f7d481ba",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "engine.log": "3e0ff5d5f7d5cbb48f3bf92fefffcf0405ff23a81fed9e511be06612f7d481ba"
+      }
+    }
+  ],
+  "native": {
+    "capture_info_sha256": "103c3251aa02d75c4cc5d24f70b21829216a1bc62d21d8763e90fe765638a5af",
+    "plates": [
+      {
+        "file": "roof-covered.png",
+        "sha256": "b764dece53a7a5d1040af32dacfee6637ae4e44af97c97686f7e307746803d01",
+        "bytes": 766421,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "roof-front-controls.png",
+        "sha256": "8e80d24fe6ef03aef97acd65a431934a648536d942a4f0ffa1b713dc0faddc8b",
+        "bytes": 770868,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "facade-covered.png",
+        "sha256": "019dad8ac8e2ba7536d69e228bd27d5a9b9a4066d13484295c9c6794ea4fccba",
+        "bytes": 795059,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "facade-front-controls.png",
+        "sha256": "208551036de30cf2861a321199e194b209f852f264726db88de587ab08aba961",
+        "bytes": 800120,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "ordinary-tree-enemies-covered.png",
+        "sha256": "ab0e875d21091d1d85316d0cb9389136f35fdf21dabf1bc788fc3ae55ef693a1",
+        "bytes": 864663,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "ordinary-tree-enemies-front-controls.png",
+        "sha256": "947604a521e9c4bc4adc7a7fb4ad6cc69aa828c91cae66b6324bf3fc69b22f39",
+        "bytes": 868298,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "ordinary-tree-pickups-covered.png",
+        "sha256": "f79ee089f6f3c9b857b3b49a859391d667fa71fe8291539ecb72b90f9b9622d4",
+        "bytes": 865606,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "ordinary-tree-pickups-front-controls.png",
+        "sha256": "7dea3d0f57d647f3915daf72008745c49ebd7e1cf61462ec16a7a4f75402b4c9",
+        "bytes": 866401,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "roof-before-entry.png",
+        "sha256": "f6388032d9746f63a121f9d9424d0c254de19a8f850ca0e9faf8abd5d83b52b7",
+        "bytes": 766653,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "roof-player-inside-cutaway.png",
+        "sha256": "a58fc48e085b58965cf8f8d1f05f2c3ef60d1e3b7ce46a8ced88ddbb7e50d053",
+        "bytes": 775392,
+        "dimensions": [
+          960,
+          540
+        ]
+      },
+      {
+        "file": "roof-player-outside-restored.png",
+        "sha256": "0c5da1d17fc5edfd8aa3956ab4255160f701c067c4ed33f9145f2c2a6494b5b5",
+        "bytes": 767143,
+        "dimensions": [
+          960,
+          540
+        ]
+      }
+    ],
+    "world_cover": {
+      "cell_px": 256.0,
+      "foreground_sources": 3,
+      "generation": 1478,
+      "grid_cells": 80,
+      "index_count": 193,
+      "materials": 7,
+      "max_candidates": 23,
+      "peak_candidates": 23,
+      "peak_primitives": 67,
+      "peak_refresh_usec": 78678,
+      "primitive_count": 62,
+      "refresh_usec": 12564,
+      "source_reads": 3
+    },
+    "limits": "Controlled native visual evidence in actual generated Game. Real ordinary/elite EnemyActors, production batches and genuine equipment/health scenes; enemy physics/scheduler frozen, staged enemies carry the existing never_cull fixture metadata to preserve the same bodies during doorway traversal, ambient spawner and encounter beats disabled, staged pickup Area2D monitoring disabled to prevent collection while preserving locked/unlocked icon presentation, god-mode player, fixed cameras, streaming frozen after verified reload. Authored tutorial tips and floating callouts expire naturally before stills; no runtime VFX are hidden or deleted. Staging may use non-walkable covered points and every requested/actual position and walkability is disclosed. Not a spontaneous spawn, continuous human run, balance/performance test, collection test or proof of encounter reachability. Doorway entry/exit uses production input and Area2D signals.",
+    "original_launch_head": "276e5e152e2a4d718149e044c16dcc21d938c514"
+  },
+  "record_policy": "Every run-results.json, command, original HEAD/status, full source hashes, resource samples and full logs are copied byte for byte. Only explicit code/scene source snapshots and capture stills are bundled; no caches or user data."
+}
