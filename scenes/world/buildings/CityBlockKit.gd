@@ -109,6 +109,24 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 		if _records_board != null: _records_board.set_meta(&"district_optional_detail",true)
 	queue_redraw()
 
+## Exact chunk-local use/footprint context for the shared ground's presentation.
+## Noncivic is not sufficient: workshops and passages must retain rough ground.
+func ground_care_spec() -> Dictionary:
+	var seed_value: int = int(_district_profile.get("visual_seed",0))
+	if Global.attempt_segment != 2 or civic or StringName(_district_profile.get("building_usage",&"")) != &"row_house" or absi(seed_value)%4 == 3:
+		return {}
+	if _roof == null or not is_instance_valid(_roof) or _roof.footprint_outline_px.size() < 3 or _doors.is_empty():
+		return {}
+	var spec := {"footprint_px":_roof.footprint_outline_px.duplicate(),"doors":_doors.duplicate(true),"visual_seed":seed_value}
+	for child: Node in get_children():
+		if child.name == &"DomesticHerbBed" and child.has_meta(&"city_garden_contact"):
+			spec["garden_contact_px"] = child.get_meta(&"city_garden_contact")
+			break
+		if child.name == &"CityTemperateTree" and child.has_meta(&"city_ground_contact"):
+			spec["garden_contact_px"] = child.get_meta(&"city_ground_contact")
+	return spec
+
+
 func _is_guard() -> bool:
 	return StringName(_district_profile.get("profile_id",&"")) == &"checkpoint_guard_loggia"
 

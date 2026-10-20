@@ -243,7 +243,7 @@ static func prepare_transition_resources(tree: SceneTree) -> void:
 	if not _WORLD_ART.ground_material_array_is_cached():
 		_transition_resource_stage = &"baked_array"
 		var baked_started := Time.get_ticks_usec()
-		_WORLD_ART.prepare_baked_ground_materials()
+		await _WORLD_ART.prepare_baked_ground_materials_for_transition(tree)
 		_trace_transition_resource_step(baked_started)
 		await _finish_transition_resource_frame(tree)
 	if not _WORLD_ART.ground_material_array_is_cached():
@@ -558,6 +558,7 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 	_active_build_data = null
 	if build_data != null:
 		_activate_floor_stamps(build_data, chunk)
+	_activate_ground_care(coord,chunk)
 	var floor_finished := Time.get_ticks_usec()
 	var staged := build_data != null and _stage_blockers_now
 	if build_data != null and not staged:
@@ -1200,6 +1201,17 @@ func _activate_floor_stamps(data: ChunkBuildData, chunk: Node2D) -> void:
 			data.floor_alpha[stamp_index],
 			packed[offset + 5]
 		)
+
+
+func _activate_ground_care(coord: Vector2i, chunk: Node2D) -> void:
+	if not generation_enabled or not ground_enabled or not ground_splat_enabled or Global.attempt_segment != 2:
+		return
+	for kit: Node in chunk.get_children():
+		if not kit.is_in_group(&"city_block_building") or not kit.has_method("ground_care_spec"):
+			continue
+		var spec: Dictionary = kit.call("ground_care_spec")
+		if not spec.is_empty():
+			_ensure_ground_splat().paint_domestic_care(coord,spec)
 
 
 func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, texture_index: int, alpha: float, z: int) -> void:

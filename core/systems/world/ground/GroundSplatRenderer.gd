@@ -20,8 +20,9 @@ class_name GroundSplatRenderer
 
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const SHADER := preload("res://core/systems/world/ground/ground_splat.gdshader")
+const _CITY_GROUND_CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
 
-## Cells, wrapped. 256 cells = 16 chunks = 16384 px: larger than any streamed
+## Cells, wrapped. 256 cells = 8 chunks at 32 cells/chunk = 16384 px: larger than any streamed
 ## window, and the whole of Segment 1 fits without wrapping onto itself.
 const MAP_SIZE := 256
 const SLOTS := 8
@@ -37,7 +38,7 @@ var cells_per_chunk := 32
 ## One-hot material coverage: slots 0-3 in _cover_a, 4-7 in _cover_b.
 var _cover_a: Image
 var _cover_b: Image
-## R = brightness / 2, G = stain amount.
+## R = brightness / 2, G = stain amount, B = local household care.
 var _light: Image
 var _cover_a_texture: ImageTexture
 var _cover_b_texture: ImageTexture
@@ -85,6 +86,8 @@ func configure(p_cell_px: int, p_cells_per_chunk: int) -> void:
 	cell_px = maxi(1, p_cell_px)
 	cells_per_chunk = maxi(1, p_cells_per_chunk)
 	_material.set_shader_parameter("cell_px", float(cell_px))
+	_material.set_shader_parameter("cared_lawn_layer",float(_WORLD_ART.GROUND_CARED_LAWN_INDEX))
+	_material.set_shader_parameter("cared_lawn_repeat_px",float(_WORLD_ART.ground_repeat_world_px(_WORLD_ART.GROUND_CARED_LAWN_INDEX)))
 	var materials := _WORLD_ART.ground_material_array()
 	if materials != null:
 		_material.set_shader_parameter("materials", materials)
@@ -145,7 +148,7 @@ func get_shader_material() -> ShaderMaterial:
 
 
 ## Lay a chunk's base ground over its whole block, which also forgets any
-## stamps a chunk 16 chunks away left in the wrapped map. Generated chunks
+## stamps a chunk MAP_SIZE / cells_per_chunk chunks away left in the wrapped map. Generated chunks
 ## paint their stamps after this; authored stamps are laid back on top here.
 func set_chunk_base(coord: Vector2i, ground_index: int, brightness: float = 1.0) -> void:
 	var block := Rect2i(coord * cells_per_chunk, Vector2i(cells_per_chunk, cells_per_chunk))
@@ -201,6 +204,48 @@ func paint_chunk_stamps(data: ChunkBuildData) -> void:
 			Vector2i(packed[offset + 2], packed[offset + 3])
 		)
 		paint_rect(rect, packed[offset + 4], data.floor_alpha[index])
+
+
+## Called after the chunk's floors. This changes only presentation on existing
+## vegetated cells; lawn never requests a semantic material/coverage slot.
+func paint_domestic_care(coord: Vector2i, spec: Dictionary) -> void:
+	var origin := coord*cells_per_chunk
+	var eligible := PackedByteArray()
+	eligible.resize(cells_per_chunk*cells_per_chunk)
+	for y in cells_per_chunk:
+		for x in cells_per_chunk:
+			if _WORLD_ART.is_overgrowth_ground(material_at(origin+Vector2i(x,y))):
+				eligible[y*cells_per_chunk+x] = 1
+	var weights := _CITY_GROUND_CARE.plan(coord,spec,cell_px,cells_per_chunk,eligible)
+	for y in cells_per_chunk:
+		for x in cells_per_chunk:
+			var amount := float(weights[y*cells_per_chunk+x])/255.0
+			var cell := origin+Vector2i(x,y)
+			if amount <= 0.0 or not _WORLD_ART.is_overgrowth_ground(material_at(cell)):
+				continue
+			var at := Vector2i(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
+			var current := _light.get_pixelv(at)
+			if amount <= current.b:
+				continue
+			current.b = amount
+			_light.set_pixelv(at,current)
+			_dirty = true
+
+
+## Exact cell probes for native evidence and deterministic stream checks.
+func care_at(cell: Vector2i) -> float:
+	return _light.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).b
+
+
+func care_signature(coord: Vector2i) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	bytes.resize(cells_per_chunk*cells_per_chunk)
+	var origin := coord*cells_per_chunk
+	for y in cells_per_chunk:
+		for x in cells_per_chunk:
+			var cell := origin+Vector2i(x,y)
+			bytes[y*cells_per_chunk+x] = _light.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).b8
+	return bytes
 
 
 func clear() -> void:

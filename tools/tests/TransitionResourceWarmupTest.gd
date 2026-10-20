@@ -42,6 +42,9 @@ func _signatures(array: Texture2DArray) -> Array[String]:
 	return result
 
 func _run() -> void:
+	# This resource fixture does not exercise music. Stop the autoload's menu
+	# playback while there are still frames for the audio server to release it.
+	AudioManager.stop_all(true)
 	SaveManager.current_save = null
 	SaveManager.current_slot = -1
 	Global.debug_disable_autosave = true

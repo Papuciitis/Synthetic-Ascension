@@ -12,7 +12,7 @@ shader_type canvas_item;
 // below-left of another material gets a lip shadow (light from the top right).
 //
 // light_map: R = brightness / 2, G = stain amount (the stain draws
-// stain_layer through a noise cut, never as a rectangle).
+// stain_layer through a noise cut, never as a rectangle), B = household care.
 //
 // Budget: 7 filtered fetches and one or two material samples per pixel. (A
 // first version resolved four texel-fetched corners per lookup with hashed
@@ -28,6 +28,8 @@ uniform float map_size = 256.0;
 uniform float cell_px = 64.0;
 uniform float slot_layer[8];
 uniform float slot_index[8];
+uniform float cared_lawn_layer = 13.0;
+uniform float cared_lawn_repeat_px = 320.0;
 uniform bool city_streetscape = false;
 uniform sampler2D city_setts : source_color, filter_linear_mipmap, repeat_enable;
 uniform sampler2D city_limestone : source_color, filter_linear_mipmap, repeat_enable;
@@ -83,6 +85,7 @@ void fragment() {
 		float rep = slot_repeat_px[slot];
 		vec3 col = textureGrad(materials, vec3(world_pos / rep, slot_layer[slot]), ddx / rep, ddy / rep).rgb;
 		col *= slot_tint[slot].rgb;
+		vec4 light = texture(light_map, p / map_size);
 		if (city_streetscape) {
 			float index = slot_index[slot];
 			if (index == 4.0 || index == 7.0 || index == 8.0 || index == 9.0) {
@@ -96,12 +99,16 @@ void fragment() {
 				col = mix(vec3(0.57,0.59,0.55),limestone,0.40);
 			} else if (index == 0.0 || index >= 10.0) {
 				col = mix(vec3(0.31,0.37,0.28),col * vec3(1.12,1.16,1.05),0.48);
+				if (light.b > 0.001) {
+					vec3 lawn = textureGrad(materials,vec3(world_pos / cared_lawn_repeat_px,cared_lawn_layer),ddx / cared_lawn_repeat_px,ddy / cared_lawn_repeat_px).rgb;
+					lawn = mix(vec3(0.36,0.39,0.28),lawn * vec3(1.04,1.04,0.99),0.80);
+					col = mix(col,lawn,light.b);
+				}
 			} else if (index == 1.0 || index == 5.0) {
 				col = mix(vec3(0.38,0.37,0.30),col,0.42);
 			}
 		}
 
-		vec4 light = texture(light_map, p / map_size);
 		col *= light.r * 2.0;
 
 		if (light.g > 0.01) {

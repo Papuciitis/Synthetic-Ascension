@@ -32,7 +32,23 @@ func cm_min_guard() -> int:
 
 func _run() -> void:
 	var count: int = _WORLD_ART.ground_texture_count()
-	_check(count == 13, "thirteen ground textures are registered (%d)" % count)
+	_check(count == 14, "fourteen ground textures include the presentation-only cared lawn (%d)" % count)
+	var art_script: GDScript = _WORLD_ART
+	var constants: Dictionary = art_script.get_script_constant_map()
+	_check(int(constants.get("GROUND_CARED_LAWN_INDEX", -1)) == 13, "the care renderer can address its dedicated lawn layer")
+	var moss := _WORLD_ART.ground_texture(12)
+	var lawn := _WORLD_ART.ground_texture(13)
+	_check(moss != null and moss.resource_path == "res://assets/world/ground/city_care/v1/damp_moss_soil.png", "semantic moss draws the selected low damp moss/soil source")
+	_check(lawn != null and lawn.resource_path == "res://assets/world/ground/city_care/v1/cared_lawn.png", "local household care draws its selected short-lawn source")
+	_check(not _WORLD_ART.is_overgrowth_ground(13), "cared lawn is not a semantic overgrowth material or coverage slot")
+	_check(_WORLD_ART.ground_repeat_world_px(13) == 320, "the presentation lawn retains its reviewed 320-world-pixel repeat")
+	for wild_source: Dictionary in [
+		{"index": 0, "path": "res://assets/world/ground/ground_grass_01.png"},
+		{"index": 10, "path": "res://assets/world/ground/ground_grass_02.png"},
+		{"index": 11, "path": "res://assets/world/ground/ground_grass_dry_01.png"},
+	]:
+		var wild := _WORLD_ART.ground_texture(int(wild_source.index))
+		_check(wild != null and wild.resource_path == wild_source.path, "wild material %d retains its original source" % int(wild_source.index))
 	var all_load := true
 	for index in count:
 		if _WORLD_ART.ground_texture(index) == null:
@@ -47,6 +63,13 @@ func _run() -> void:
 		if index < 0 or index >= count:
 			in_range = false
 	_check(seen.size() == TERRAINS.size() and in_range, "the seven terrains map to seven distinct textures")
+	for mapping: Dictionary in [
+		{"terrain": &"grass", "index": 0}, {"terrain": &"dirt", "index": 1},
+		{"terrain": &"mud", "index": 5}, {"terrain": &"urban", "index": 6},
+		{"terrain": &"meadow", "index": 10}, {"terrain": &"scrub", "index": 11},
+		{"terrain": &"moss", "index": 12},
+	]:
+		_check(int(manager.call("_ground_index_for_terrain", mapping.terrain)) == int(mapping.index), "semantic terrain %s keeps material %d" % [mapping.terrain, mapping.index])
 	_check(int(manager.call("_ground_index_for_terrain", &"lava")) == 0, "an unknown terrain falls back to grass")
 	manager.free()
 	_check(_WORLD_ART.ground_repeat_world_px(10) == _WORLD_ART.ground_repeat_world_px(0) and _WORLD_ART.ground_repeat_world_px(12) == _WORLD_ART.ground_repeat_world_px(0) and _WORLD_ART.ground_repeat_world_px(6) != _WORLD_ART.ground_repeat_world_px(0), "meadow and moss repeat at the grass scale, urban does not")

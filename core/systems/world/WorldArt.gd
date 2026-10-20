@@ -18,6 +18,8 @@ const _TEX_TILE_PX: int = 1024
 const _GROUND_REPEAT_WORLD_PX: int = 384
 const _GROUND_GRASS_REPEAT_WORLD_PX: int = 320
 const _GROUND_BASE_TEX_INDEX: int = 0
+## Shader-only household care; never allocate this as a semantic terrain slot.
+const GROUND_CARED_LAWN_INDEX: int = 13
 
 const _GROUND_TEX_PATHS := [
 	"res://assets/world/ground/ground_grass_01.png",
@@ -30,12 +32,12 @@ const _GROUND_TEX_PATHS := [
 	"res://assets/world/ground/ground_civic_brick_01.png",
 	"res://assets/world/ground/ground_mossy_brick_01.png",
 	"res://assets/world/ground/ground_round_cobble_01.png",
-	# Terrain variants for the later themes (CC0, LICENSE_cethiel_cc0.txt):
-	# meadow (a greener, denser grass), scrub (dry, pale) and moss (a cold,
-	# blue-green ground for canals and underpasses).
+	# Existing meadow/scrub remain wild. Semantic moss retains index12 while
+	# drawing the selected subdued source for damp canals and underpasses.
 	"res://assets/world/ground/ground_grass_02.png",
 	"res://assets/world/ground/ground_grass_dry_01.png",
-	"res://assets/world/ground/ground_moss_01.png",
+	"res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+	"res://assets/world/ground/city_care/v1/cared_lawn.png",
 ]
 
 ## Indices that read as vegetation and repeat at the grass scale.
@@ -82,7 +84,7 @@ static func texture_tile_px() -> int:
 
 static func ground_repeat_world_px(texture_index: int = -1) -> int:
 	# The quieter patchy grass reads better slightly smaller than the masonry materials.
-	if texture_index in _GRASS_LIKE_INDICES:
+	if texture_index in _GRASS_LIKE_INDICES or texture_index == GROUND_CARED_LAWN_INDEX:
 		return _GROUND_GRASS_REPEAT_WORLD_PX
 	return _GROUND_REPEAT_WORLD_PX
 
@@ -135,6 +137,7 @@ static func release_static_caches() -> void:
 const _GROUND_ARRAY_LAYER_PX: int = 512
 const GROUND_ARRAY_CACHE_REVISION: int = 1
 const GROUND_ARRAY_CACHE_PATH := "res://assets/world/ground/baked/ground_materials.res"
+const GROUND_ARRAY_MANIFEST_PATH := "res://assets/world/ground/baked/ground_materials.json"
 static var _ground_array: Texture2DArray = null
 
 
@@ -156,13 +159,94 @@ static func ground_material_array(prefer_baked: bool = true) -> Texture2DArray:
 static func prepare_baked_ground_materials() -> bool:
 	if _ground_array != null:
 		return true
+	if not _baked_ground_materials_are_available():
+		return false
+	return _load_baked_ground_materials()
+
+
+## Keep source fingerprinting and native array loading on separate transition
+## frames. Direct startup still uses the synchronous method above.
+static func prepare_baked_ground_materials_for_transition(tree: SceneTree) -> bool:
+	if _ground_array != null:
+		return true
+	if not _baked_ground_materials_are_available():
+		return false
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+	await tree.process_frame
+	# Another request may have completed the same array during this yield.
+	return _load_baked_ground_materials()
+
+
+static func _baked_ground_materials_are_available() -> bool:
 	if not ResourceLoader.exists(GROUND_ARRAY_CACHE_PATH, "Texture2DArray"):
 		return false
+	# Source checkouts must not silently show yesterday's pixels after an art
+	# edit. Exported builds retain the resource-only contract: import sidecars
+	# and original PNG/JSON files need not be present in their package.
+	if OS.has_feature("editor"):
+		if not FileAccess.file_exists(GROUND_ARRAY_MANIFEST_PATH):
+			return false
+		var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(GROUND_ARRAY_MANIFEST_PATH))
+		if not ground_material_manifest_is_current(manifest):
+			return false
+	return true
+
+
+static func _load_baked_ground_materials() -> bool:
+	if _ground_array != null:
+		return true
 	var array := ResourceLoader.load(GROUND_ARRAY_CACHE_PATH, "Texture2DArray") as Texture2DArray
 	if array == null or array.get_layers() != _GROUND_TEX_PATHS.size() or array.get_width() != _GROUND_ARRAY_LAYER_PX or array.get_height() != _GROUND_ARRAY_LAYER_PX or array.get_format() != Image.FORMAT_RGB8:
 		return false
 	_ground_array = array
 	return true
+
+
+## Validate provenance without GPU readback. Native pixel verification still
+## compares every baked layer/mipmap with prepare_ground_material_layer().
+static func ground_material_manifest_is_current(manifest: Variant) -> bool:
+	if not manifest is Dictionary:
+		return false
+	var record: Dictionary = manifest
+	var revision: Variant = record.get("algorithm_revision")
+	var layer_size: Variant = record.get("layer_size")
+	if not (revision is int or revision is float) or revision != GROUND_ARRAY_CACHE_REVISION:
+		return false
+	if not (layer_size is int or layer_size is float) or layer_size != _GROUND_ARRAY_LAYER_PX:
+		return false
+	var format: Variant = record.get("format")
+	if not format is String or format != "RGB8 with generated mipmaps":
+		return false
+	var sources: Variant = record.get("sources")
+	if not sources is Array:
+		return false
+	var source_list: Array = sources
+	# Check the length before indexing either list, including malformed manifests.
+	if source_list.size() != _GROUND_TEX_PATHS.size():
+		return false
+	if not _ground_cache_hash_matches(record.get("cache_sha256"), GROUND_ARRAY_CACHE_PATH):
+		return false
+	for index in source_list.size():
+		if not source_list[index] is Dictionary:
+			return false
+		var entry: Dictionary = source_list[index]
+		var path: String = _GROUND_TEX_PATHS[index]
+		var recorded_path: Variant = entry.get("path")
+		if not recorded_path is String or recorded_path != path:
+			return false
+		if not _ground_cache_hash_matches(entry.get("sha256"), path):
+			return false
+		if not _ground_cache_hash_matches(entry.get("import_sha256"), path + ".import"):
+			return false
+	return true
+
+
+static func _ground_cache_hash_matches(recorded_hash: Variant, path: String) -> bool:
+	if not recorded_hash is String:
+		return false
+	var digest: String = recorded_hash
+	return digest.length() == 64 and FileAccess.file_exists(path) and digest == FileAccess.get_sha256(path)
 
 
 static func ground_material_array_is_cached() -> bool:

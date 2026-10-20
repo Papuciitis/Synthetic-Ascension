@@ -1,8 +1,11 @@
 extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ## Isolated actual-Game first-block traversal and live fight. No profile writes.
 ## -- --review=normal|small|reduced|before [--segment=2] [--world-seed=16102026] [--visible] [--playable]
+## L2: --ground-review [--ground-fight] for an explicit home, or
+## --ground-context=<world-px-x>,<world-px-y> for real wild/S7 ground.
 
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
+const GROUND_ART := preload("res://core/systems/world/WorldArt.gd")
 var _review := "normal"
 var _city_world_seed := 16102026
 var _city_segment := 2
@@ -11,6 +14,10 @@ var _district_common_base := false
 var _hide_district_details := false
 var _still_only := false
 var _entry_only := false
+var _ground_review := false
+var _ground_fight := false
+var _has_ground_context := false
+var _ground_context := Vector2.ZERO
 var _target_building_id := 0
 var _target_chunk := Vector2i.ZERO
 var _has_target_chunk := false
@@ -39,6 +46,17 @@ func _enter_tree() -> void:
 		if arg == "--hide-district-details": _hide_district_details = true
 		if arg == "--still-only": _still_only = true
 		if arg == "--entry-only": _entry_only = true
+		if arg == "--ground-review": _ground_review = true
+		if arg == "--ground-fight":
+			_ground_review = true
+			_ground_fight = true
+		if arg.begins_with("--ground-context="):
+			_ground_review = true
+			var point_parts := arg.trim_prefix("--ground-context=").split(",")
+			if point_parts.size() == 2 and point_parts[0].is_valid_float() and point_parts[1].is_valid_float():
+				_ground_context = Vector2(float(point_parts[0]),float(point_parts[1]))
+				_has_ground_context = true
+			else: _fail("Ground context requires two explicit world-pixel coordinates")
 		if arg.begins_with("--target-building-id="): _target_building_id = int(arg.trim_prefix("--target-building-id="))
 		if arg.begins_with("--target-chunk="):
 			var parts := arg.trim_prefix("--target-chunk=").split(",")
@@ -50,6 +68,13 @@ func _enter_tree() -> void:
 	KIT.preview_original_materials = _review == "before"
 
 func _run() -> void:
+	if _ground_review and (_hide_district_details or _district_common_base or _playable):
+		_fail("Ground review requires normal optional props, the production district and scripted capture mode")
+	if _ground_review and not _has_ground_context and _target_building_id <= 0:
+		_fail("Home ground review requires its explicit actual building ID and chunk")
+	if _failures > 0:
+		get_tree().quit(1)
+		return
 	if DisplayServer.get_name() == "headless":
 		_fail("Native renderer is required")
 		get_tree().quit(1)
@@ -82,7 +107,9 @@ func _run() -> void:
 	builder.set_process(false)
 	var building_id := 0
 	var destination := Vector2(544, 18944)
-	if _target_building_id > 0:
+	if _has_ground_context:
+		destination = _ground_context
+	elif _target_building_id > 0:
 		if not _has_target_chunk:
 			_fail("Explicit building sample requires its actual chunk")
 			await _shutdown()
@@ -96,9 +123,17 @@ func _run() -> void:
 				break
 	# Initial staging only. All recorded traversal uses production input,
 	# CharacterBody2D collision, and the actual Area2D entry/exit signals.
-	_player.global_position = destination + Vector2(0, 600)
+	_player.global_position = destination if _has_ground_context else destination + Vector2(0, 600)
+	if _has_ground_context:
+		_camera.global_position = destination
+		_camera.reset_smoothing()
+		_camera.force_update_scroll()
 	await _settle()
 	_dismiss_dossiers()
+	if _has_ground_context:
+		await _reload_ground_context()
+		await _capture_ground_review()
+		return
 	for candidate: Node in get_tree().get_nodes_in_group(&"indoor_volume"):
 		if candidate is IndoorVolume and _matches_volume(candidate as IndoorVolume,building_id):
 			_volume = candidate
@@ -140,6 +175,9 @@ func _run() -> void:
 		return
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out.path_join("frames")))
 	await _wait_for_temporary_tips()
+	if _ground_review:
+		await _capture_ground_review()
+		return
 	if _entry_only:
 		if _volume.local_encounter_enabled:
 			_fail("Entry-only review is for ambient parcels; guarded rewards require the full security run")
@@ -262,12 +300,110 @@ func _matches_volume(volume: IndoorVolume, secondary_id: int) -> bool:
 		return volume.building_id == _target_building_id and float(volume.get("_presentation_width")) > 0.0
 	return volume.secondary_objective_id == secondary_id
 
+func _reload_ground_context() -> void:
+	var coord := _chunks._world_to_chunk(_ground_context)
+	if not _chunks._chunks.has(coord):
+		_fail("Explicit ground context was not streamed")
+		return
+	var before := _signature(coord)
+	_chunks.set_process(false)
+	_chunks._current_center = coord+Vector2i(32,0)
+	_chunks._update_streaming()
+	await _frames(2)
+	if _chunks._chunks.has(coord): _fail("Actual ground streaming did not unload the selected context")
+	_chunks._current_center = coord
+	_chunks._update_streaming()
+	_chunks.set_process(true)
+	await _settle()
+	_chunks.set_process(false)
+	if not _chunks._chunks.has(coord):
+		_fail("Actual ground reload lost the selected context")
+		return
+	var after := _signature(coord)
+	if before != after: _fail("Actual ground reload changed physical data, garden context or exact care bytes")
+	_route_notes.append({"event":"ground_context_streamed_reload","coord":str(coord),"equal":before == after,"care_equal":before.care == after.care,"care_sha256":after.care_sha256})
+
+func _capture_ground_review() -> void:
+	if _failures > 0:
+		await _shutdown()
+		return
+	if _volume != null and _volume.local_encounter_enabled:
+		_fail("Ground home review requires its actual ambient parcel with local security zero")
+		await _shutdown()
+		return
+	if _has_ground_context:
+		_player.global_position = _free_spawn_position(_ground_context)
+		_camera.global_position = _ground_context
+		_connect_evidence_events()
+	else:
+		var bounds := Rect2(_roof.footprint_outline_px[0],Vector2.ZERO)
+		for point: Vector2 in _roof.footprint_outline_px: bounds = bounds.expand(point)
+		_camera.global_position = _roof.to_global(bounds.get_center())-Vector2(0,40)
+	_origin = _player.global_position
+	_chunks.set_process(false)
+	_player.process_mode = Node.PROCESS_MODE_INHERIT
+	_camera.reset_smoothing()
+	_camera.force_update_scroll()
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out.path_join("frames")))
+	await _wait_for_temporary_tips()
+	await _frames(4)
+	await _still("ground-before")
+	var wall_seconds := 0.0
+	if _ground_fight:
+		_spawn_encounter()
+		_initial_population = EnemyWorld.active_count()
+		_phase = "fight"
+		_began_usec = Time.get_ticks_usec()
+		_recording = true
+		_running = true
+		Input.action_press(&"attack")
+		var middle_saved := false
+		while _combat_time < 5.0:
+			await get_tree().process_frame
+			if get_tree().paused:
+				_fail("A modal paused the short ground fight")
+				break
+			if not middle_saved and _combat_time >= 2.0:
+				await _still("fight")
+				middle_saved = true
+		_running = false
+		_recording = false
+		wall_seconds = float(Time.get_ticks_usec()-_began_usec)/1_000_000.0
+		_release_inputs()
+		await _frames(2)
+		await _still("fight-ending")
+		if _weapon_fires == 0 or _player_hits == 0 or _max_projectiles == 0:
+			_fail("Short ground fight did not exercise real attacks, hits and projectiles")
+		if _pixels.size() < 2: _fail("Short ground fight did not capture enough frames for measured-time encoding")
+	get_tree().paused = true
+	for index in _pixels.size():
+		_save_image(_pixels[index],ProjectSettings.globalize_path(_out.path_join("frames/frame-%04d.png" % index)))
+		if index%20 == 0: await get_tree().process_frame
+	var writes := SaveManager.debug_save_writes-_save_writes_before
+	if writes != 0 or SaveManager.current_save != null: _fail("Unexpected ground-review profile selection or save write")
+	var security_remaining := 0
+	for candidate: Node in get_tree().get_nodes_in_group(&"indoor_volume"):
+		if candidate is IndoorVolume: security_remaining += int(candidate.get("_encounter_remaining"))
+	if security_remaining != 0: _fail("Ground-review context activated unexpected local security")
+	var info := {"review":_review,"capture_scene":"res://tools/dev/CityBlockPlayablePreview.tscn","scene":"res://scenes/game.tscn","args":OS.get_cmdline_user_args(),"seed":_city_world_seed,"attempt_seed":_city_world_seed,"segment":_city_segment,"theme":String(SegmentThemePicker.get_theme(_city_segment,_city_world_seed).id),"ground_review":true,"ground_context_world_px":[_ground_context.x,_ground_context.y] if _has_ground_context else [],"occupied_comparison":_ground_fight,"player_god_mode":true,"scripted_input":true,"ambient_spawner":false,"controlled_enemies":_ground_fight,"local_security":0,"fixed_camera":true,"normal_hud":true,"optional_details_hidden":false,"image_size":str(get_window().size),"reduced_motion":_reduced_motion,"simulation_fight_seconds":_combat_time,"requested_simulation_seconds":5.0 if _ground_fight else 0.0,"initial_fight_population":_initial_population,"weapon_fires":_weapon_fires,"hits":_player_hits,"deaths":_deaths,"max_projectiles":_max_projectiles,"frames":_capture_info,"captured_frames":_pixels.size(),"wall_seconds":wall_seconds,"route":_route_notes,"save_writes":writes,"failures":_failures,"limits":"Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance."}
+	info.merge(_district_evidence(),true)
+	info["local_security"] = security_remaining
+	var file := FileAccess.open(_out.path_join("capture-info.json"),FileAccess.WRITE)
+	file.store_string(JSON.stringify(info,"\t"))
+	file.close()
+	print("CityGroundReview: segment=%d seed=%d context=%s frames=%d fires=%d hits=%d failures=%d" % [_city_segment,_city_world_seed,_has_ground_context,_pixels.size(),_weapon_fires,_player_hits,_failures])
+	await _shutdown()
+
 func _district_evidence() -> Dictionary:
-	if _roof == null or _volume == null: return {}
-	var coord := _chunks._world_to_chunk(_volume.global_position)
-	var result := {"plan_seed":_chunks.world_seed,"building_id":_volume.building_id,"coord":str(coord),"role":String(_chunks.get_chunk_role(coord)),"doors":str(_roof._doors),"footprint":str(_roof.footprint_outline_px),"district_family":String(_chunks.district_family)}
+	if _chunks == null or (_volume == null and not _has_ground_context): return {}
+	var coord := _chunks._world_to_chunk(_ground_context if _has_ground_context else _volume.global_position)
+	var result := {"plan_seed":_chunks.world_seed,"building_id":_volume.building_id if _volume != null else 0,"coord":str(coord),"role":String(_chunks.get_chunk_role(coord)),"district_family":String(_chunks.district_family)}
 	result["camera"] = {"position":str(_camera.global_position),"rotation":_camera.rotation,"zoom":str(_camera.zoom),"viewport":str(get_viewport().get_visible_rect().size),"window":str(get_window().size)}
 	result["fixture"] = {"scripted_input":not _playable,"player_god_mode":not _playable,"ambient_spawner":false,"streaming_frozen_after_reload":not _playable,"optional_details_hidden":_hide_district_details,"video_adapter":RenderingServer.get_video_adapter_name(),"renderer":RenderingServer.get_current_rendering_method()}
+	result["ground"] = _ground_evidence(coord)
+	if _roof == null or _volume == null: return result
+	result["doors"] = str(_roof._doors)
+	result["footprint"] = str(_roof.footprint_outline_px)
 	for kit: Node in _chunks.find_children("*","",true,false):
 		if not kit.is_in_group(&"city_block_building") or kit.get("_roof") != _roof: continue
 		result["profile"] = String(kit.get_meta(&"district_visual_profile",&"missing"))
@@ -280,6 +416,51 @@ func _district_evidence() -> Dictionary:
 	result["watch_fallback"] = String(form_plan.get("fallback_reason",&"base"))
 	result["closed_arch_bays"] = (form_plan.get("arch_bays",[]) as Array).size()
 	return result
+
+func _ground_evidence(coord: Vector2i) -> Dictionary:
+	var splat := _chunks.get_ground_splat()
+	if splat == null: return {"bound":false}
+	var shader := splat.get_shader_material()
+	var array := shader.get_shader_parameter("materials") as Texture2DArray
+	var care := splat.care_signature(coord)
+	var max_care := 0
+	var fractional := 0
+	var sum_care := 0
+	for value: int in care:
+		max_care = maxi(max_care,value)
+		sum_care += value
+		if value > 0 and value < 255: fractional += 1
+	var material_counts: Dictionary = {}
+	var care_bounds := Rect2i()
+	var has_care := false
+	var side := splat.cells_per_chunk
+	for y in side:
+		for x in side:
+			var cell := coord*side+Vector2i(x,y)
+			var key := str(splat.material_at(cell))
+			material_counts[key] = int(material_counts.get(key,0))+1
+			if care[y*side+x] > 0:
+				care_bounds = care_bounds.expand(Vector2i(x,y)) if has_care else Rect2i(Vector2i(x,y),Vector2i.ONE)
+				has_care = true
+	var uniforms: Dictionary = {}
+	for key: StringName in [&"slot_index",&"slot_layer",&"slot_repeat_px",&"cared_lawn_layer",&"cared_lawn_repeat_px",&"city_streetscape",&"world_tint",&"overgrowth_a",&"overgrowth_b"]:
+		var value: Variant = shader.get_shader_parameter(key)
+		uniforms[String(key)] = Array(value) if value is PackedFloat32Array else str(value)
+	var source_records: Array = []
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(GROUND_ART.GROUND_ARRAY_MANIFEST_PATH)) if FileAccess.file_exists(GROUND_ART.GROUND_ARRAY_MANIFEST_PATH) else null
+	if manifest is Dictionary:
+		var sources: Array = manifest.get("sources",[])
+		for layer: int in [0,5,12,13]:
+			if layer < sources.size(): source_records.append({"layer":layer,"record":sources[layer]})
+	var probe := _ground_context if _has_ground_context else _player.global_position
+	var probe_cell := _chunks.world_to_cell(probe)
+	return {"bound":array != null,"bound_array_path":array.resource_path if array != null else "","bound_array_layers":array.get_layers() if array != null else 0,"bound_array_size":[array.get_width(),array.get_height()] if array != null else [],"cache_path":GROUND_ART.GROUND_ARRAY_CACHE_PATH,"cache_sha256":FileAccess.get_sha256(GROUND_ART.GROUND_ARRAY_CACHE_PATH),"manifest_path":GROUND_ART.GROUND_ARRAY_MANIFEST_PATH,"manifest_sha256":FileAccess.get_sha256(GROUND_ART.GROUND_ARRAY_MANIFEST_PATH),"selected_sources":source_records,"selected_uniforms":uniforms,"semantic_terrain":String(_chunks.get_chunk_terrain(coord)),"chunk_material_counts":material_counts,"care_mask":{"sha256":_byte_hash(care),"cells":care.size(),"nonzero":care.size()-care.count(0),"fractional":fractional,"max_byte":max_care,"sum_bytes":sum_care,"local_bounds":str(care_bounds)},"probe":{"world_px":[probe.x,probe.y],"cell":[probe_cell.x,probe_cell.y],"walkable":_chunks.is_cell_walkable(probe_cell),"material":splat.material_at(probe_cell),"care":splat.care_at(probe_cell)}}
+
+func _byte_hash(bytes: PackedByteArray) -> String:
+	var context := HashingContext.new()
+	context.start(HashingContext.HASH_SHA256)
+	context.update(bytes)
+	return context.finish().hex_encode()
 
 func _garden_evidence(kit: Node) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
@@ -326,7 +507,7 @@ func _reload_check(secondary_id: int) -> void:
 			_volume = candidate
 			break
 	if _volume == null: _fail("Actual chunk reload lost the searchable interior")
-	_route_notes.append({"event": "streamed_reload", "equal": before == after, "garden_equal":before.gardens == after.gardens,"gardens":after.gardens, "unloaded_visual_instances": int(empty_stats.instances), "restored_visual_instances": _chunks.get_block_batch_stats().instances})
+	_route_notes.append({"event": "streamed_reload", "equal": before == after, "garden_equal":before.gardens == after.gardens,"gardens":after.gardens,"care_equal":before.care == after.care,"care_sha256":after.care_sha256, "unloaded_visual_instances": int(empty_stats.instances), "restored_visual_instances": _chunks.get_block_batch_stats().instances})
 
 func _signature(coord: Vector2i) -> Dictionary:
 	var data := _chunks.get_chunk_build_data(coord)
@@ -341,7 +522,9 @@ func _signature(coord: Vector2i) -> Dictionary:
 			var roof := child.get("_roof") as RoofOverlay
 			family_forms.append([child.get_meta(&"district_visual_profile",&""),str(roof.get_meta(&"district_form_plan",{}))])
 			gardens.append(_garden_evidence(child))
-	return {"kinds": data.blocker_kind_code.duplicate(), "masks": data.blocker_mask.duplicate(), "variants": data.blocker_variant.duplicate(), "floors": data.floor_rect_and_style.duplicate(),"floor_alpha":data.floor_alpha.duplicate(), "ids": ids, "roles": roles,"family_forms":family_forms,"gardens":gardens}
+	var splat := _chunks.get_ground_splat()
+	var care := splat.care_signature(coord) if splat != null else PackedByteArray()
+	return {"kinds": data.blocker_kind_code.duplicate(), "masks": data.blocker_mask.duplicate(), "variants": data.blocker_variant.duplicate(), "floors": data.floor_rect_and_style.duplicate(),"floor_alpha":data.floor_alpha.duplicate(), "ids": ids, "roles": roles,"family_forms":family_forms,"gardens":gardens,"care":care,"care_sha256":_byte_hash(care)}
 
 func _settle() -> void:
 	for frame in range(480):
@@ -439,7 +622,7 @@ func _physics_process(delta: float) -> void:
 	_max_projectiles = maxi(_max_projectiles, ProjectileManager.active_count())
 
 func _process(delta: float) -> void:
-	if _player != null and not _playable and not _still_only:
+	if _player != null and not _playable and not _still_only and not _ground_review:
 		_camera.global_position = _player.global_position + Vector2(140, -160)
 		_camera.rotation = 0.0
 	if not _recording: return

@@ -34,6 +34,7 @@ func _run() -> void:
 	_test_stains()
 	_test_wrap_reclaims_block()
 	_test_slots()
+	_test_domestic_care_data_contract()
 	await _test_chunk_manager_path()
 	print("WorldGroundSplatTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -117,6 +118,56 @@ func _test_slots() -> void:
 	splat.paint_rect(Rect2i(10, 0, 1, 1), 9, 0.9)
 	var paving := splat.material_at(Vector2i(10, 0))
 	_check(paving != 0 and paving != 5 and paving >= 0, "a ninth paving material borrows a paving slot (%d)" % paving)
+	splat.queue_free()
+
+
+func _test_domestic_care_data_contract() -> void:
+	var splat := _splat()
+	var available := splat.has_method("paint_domestic_care") and splat.has_method("care_at") and splat.has_method("care_signature")
+	_check(available,"domestic care has a presentation-only mask API")
+	if not available:
+		splat.queue_free()
+		return
+	var spec := {"footprint_px":PackedVector2Array([Vector2(192,960),Vector2(960,960),Vector2(960,1472),Vector2(192,1472)]),"doors":[{"pos":Vector2i(9,15),"dir":Vector2i.UP,"width":2}],"visual_seed":2128236757,"garden_contact_px":Vector2(200,1451)}
+	splat.set_chunk_base(Vector2i.ZERO,0,0.93)
+	splat.paint_rect(Rect2i(3,15,12,8),2,0.9)
+	splat.paint_rect(Rect2i(7,12,5,3),4,0.9)
+	splat.paint_rect(Rect2i(1,22,1,1),5,0.12)
+	var before_a: PackedByteArray = (splat.get("_cover_a") as Image).get_data()
+	var before_b: PackedByteArray = (splat.get("_cover_b") as Image).get_data()
+	var before_light: PackedByteArray = (splat.get("_light") as Image).get_data()
+	var before_slots: PackedInt32Array = splat.get("_slot_material").duplicate()
+	splat.call("paint_domestic_care",Vector2i.ZERO,spec)
+	var signature: PackedByteArray = splat.call("care_signature",Vector2i.ZERO)
+	_check(signature.size() == 32*32,"care signatures contain exactly one byte per owning chunk cell")
+	_check(signature.count(0) < signature.size()-3,"the kept tree home receives visible care on available vegetation")
+	_check(before_a == (splat.get("_cover_a") as Image).get_data() and before_b == (splat.get("_cover_b") as Image).get_data(),"care leaves all material coverage bytes unchanged")
+	_check(before_slots == splat.get("_slot_material"),"lawn presentation allocates no ninth semantic coverage slot")
+	var after_light: PackedByteArray = (splat.get("_light") as Image).get_data()
+	var preserved := true
+	for index in before_light.size():
+		if index % 4 != 2 and before_light[index] != after_light[index]: preserved = false
+	_check(preserved,"care writes only light-map blue and preserves brightness, stains and alpha exactly")
+	_check(splat.material_at(Vector2i(1,22)) == 0 and splat.material_at(Vector2i(3,20)) == 2 and splat.material_at(Vector2i(8,14)) == 4,"care preserves vegetated, indoor and paved terrain ownership")
+	_check(float(splat.call("care_at",Vector2i(3,20))) == 0.0 and float(splat.call("care_at",Vector2i(8,14))) == 0.0,"indoor floor and door-apron stamps reject care")
+	splat.set_chunk_base(Vector2i.ZERO,0,0.93)
+	var cleared: PackedByteArray = splat.call("care_signature",Vector2i.ZERO)
+	_check(cleared.count(0) == cleared.size(),"replacing a chunk base clears its old household care")
+	splat.call("paint_domestic_care",Vector2i.ZERO,spec)
+	@warning_ignore("integer_division")
+	var far := Vector2i(GroundSplatRenderer.MAP_SIZE/32,0)
+	splat.set_chunk_base(far,0)
+	var wrapped: PackedByteArray = splat.call("care_signature",far)
+	_check(wrapped.count(0) == wrapped.size(),"wrapped map reuse cannot inherit an old home's care")
+	splat.set_chunk_base(Vector2i.ZERO,0,0.93)
+	splat.paint_rect(Rect2i(3,15,12,8),2,0.9)
+	splat.paint_rect(Rect2i(7,12,5,3),4,0.9)
+	splat.paint_rect(Rect2i(1,22,1,1),5,0.12)
+	splat.call("paint_domestic_care",Vector2i.ZERO,spec)
+	_check(signature == splat.call("care_signature",Vector2i.ZERO),"a deterministic streamed rebuild restores the exact care field")
+	splat.clear()
+	var empty: PackedByteArray = splat.call("care_signature",Vector2i.ZERO)
+	_check(empty.count(0) == empty.size(),"world clear removes household care completely")
 	splat.queue_free()
 
 
