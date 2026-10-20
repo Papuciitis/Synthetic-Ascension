@@ -5,9 +5,22 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Pickup acknowledgment
 
+- Latest received continuation review: `6554c100305ab96444af86dccab84d3420f200c9`.
+  On 20 October, `git fetch origin` followed by
+  `git merge --ff-only origin/enemy-world-work` advanced this branch from
+  `fd80106a` without conflicts. Both remote refs confirm the human published
+  `fd80106a`; the previous credential failure is historical.
+  The [current lead review](../art/reviews/2026-10-20-linux-city-continuation-review/README.md)
+  keeps the bounded ground, roof, domestic material, atmosphere and body/icon
+  improvements. Continuation now targets household/entry composition using the
+  supplied rush mat, remaining moving cue/projectile/collection depth, and
+  occupied movement/streaming cost without capture readback. Natural care
+  continuation across chunk boundaries remains open. No new district or
+  ground-source packet is planned.
 - State: **Visibility, useful lawn core, selected wet earth, connected paving,
   actual-footprint casts, fitted irregular roofs, furnished domestic homes
-  and theme atmosphere are committed locally. Final integration checks pass.**
+  and theme atmosphere through `fd80106a` are published and reviewed as WIP.
+  Their retained final integration checks pass; the next correction is active.**
   L1 garden fit is retained; full ground/street acceptance remains open.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
