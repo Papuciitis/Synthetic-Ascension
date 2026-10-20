@@ -5,7 +5,7 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Pickup acknowledgment
 
-- State: **picked up; L0 engine checks passed, L1 native review in progress**.
+- State: **L0 complete; L1 evidence prepared for Windows visual review**.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
 - Production branch: `codex/linux-world-production`, created from that tip;
@@ -30,18 +30,19 @@ new code. Windows retains art direction and source generation.
 
 Execution checklist for this packet (the existing HANDOFF is the scope/spec):
 
-- [ ] L0: implement and exercise a Linux process/resource monitor; import and
+- [x] L0: implement and exercise a Linux process/resource monitor; import and
   run the handoff's focused checks sequentially, preserving exact commands,
   exits, diagnostics and source hashes.
-- [ ] L1: emit actual runtime building IDs from the natural survey and verify
+- [x] L1: emit actual runtime building IDs from the natural survey and verify
   both named homes rather than treating a profile seed as an identity.
-- [ ] L1: capture both real homes at 960×540 and 1280×720 with natural context
+- [x] L1: capture both real homes at 960×540 and 1280×720 with natural context
   and normal HUD after transient tips; resolve observed contact/camera faults.
-- [ ] L1: capture physical entry/cutaway/exit, deterministic streamed reload,
+- [x] L1: capture physical entry/cutaway/exit, deterministic streamed reload,
   occupied moving combat and reduced-motion review; package useful stills,
   bounded moving evidence and result JSON with fixture limitations.
-- [ ] Independently review the scoped changes, publish a normal checked Linux
-  branch commit and request the Windows lead's keep/rework decision.
+- [x] Independently review the scoped changes and evidence.
+- [ ] Publish the checked Linux packet and request the Windows lead's
+  keep/rework decision (normal push pending).
 
 No native visual acceptance, ground integration or domestic furnishing work is
 claimed by this acknowledgment. L2/L3 remain queued behind the L1 review gate.
@@ -93,22 +94,69 @@ geometry; output records actual dwelling use, garden and capture conditions.
 These are tooling changes; city generation, art pixels and gameplay rules have
 not changed in this packet.
 
-## Results to publish with each packet
+## 20 October — L1 native evidence packet
 
-Replace the pending fields with facts; keep a short dated history when moving
-to the next packet.
+Implementation commit: `5f851103`. Changed paths are the Linux launcher and its
+focused Python tests, CityBlockPlayablePreview, its camera regression scene/test,
+the natural survey, and this status file. Native results are committed separately
+under [2026-10-20-linux-s2-street](../art/reference/2026-10-20-linux-s2-street/README.md).
+The received integration base remains `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
 
-- Task ID and received art/integration commit:
-- Implementation commit and changed paths:
-- Exact commands, isolated profile, exits and diagnostics:
-- Relevant test counts and source hashes:
-- Native evidence paths, seed/chunk/building ID, camera/resolution:
-- Input/spawn/god-mode/frozen-world conditions and save-write delta:
-- Resource measurements, failures or stopped attempts:
-- Remaining limitations and specific asset/review request:
-- Pushed branch/hash and next action:
+Seven monitored native runs exit 0 with no diagnostics, failures or save writes:
 
-Commit this status with the relevant implementation/evidence and push the Linux
-branch. Leave ART_STATUS to the Windows lead. Do not write a visual acceptance
-on the lead's behalf. If unable to push, report the exact command and branch/hash
-for the human to relay; do not force or reset either machine's work.
+| Run | Evidence / moving results |
+| --- | --- |
+| Bed small / normal | Whole-home exterior/contact at 960×540 and 1280×720 |
+| Tree small / normal | Whole-home exterior/contact at 960×540 and 1280×720 |
+| Bed normal walkthrough | 135 frames, 59 fires, 72 hits, 25 deaths |
+| Tree small walkthrough | 160 frames, 56 fires, 58 hits, 24 deaths |
+| Bed Reduced Motion / Combat Flashes Off | 134 frames, 57 fires, 56 hits, 23 deaths |
+
+All three walkthroughs pass five perimeter waypoints, physical entry (roof
+alpha 0), exit (alpha 1), zero remaining inside count, streamed architectural
+and garden equality, and zero wall instances after unload. Each has 12 seconds
+of occupied moving exterior combat and frame-level projectile/population
+evidence. Total 429 frames / 172 fires / 186 hits / 72 deaths. Native peak RSS
+is 816 MiB, minimum available memory 19,610 MiB. No resource stop occurred.
+
+All seven runs share 2,128 current matching script/resource/world-image/import
+hashes. Exact commands, exits, diagnostics, isolated profile paths, CPU/memory
+samples, native camera/window, contacts, source paths and identities are in the
+packet JSON/logs. Initial checks retain their actual earlier monitor revisions;
+camera RED remains labeled as an intentional regression reproduction.
+
+The final root verification passes 19 monitor tests plus 8 encoder tests with
+real FFmpeg enabled and no skips. Three bounded silent MP4s retain original
+PNG timing/dimensions and decode with exit 0 and no diagnostics. Initial decode
+verification's coarse-clock duplicate-DTS messages were resolved by an explicit
+VFR/microsecond output clock; source images and video encoding were unchanged.
+Raw frames remain local rather than publishing hundreds of individual PNGs.
+
+Independent read-only code/evidence review found no remaining blocking defect.
+It confirmed the runtime ownership join, camera regression result, both real
+home samples, physical/reload/fight records and stated evidence limits.
+
+### Limits and requested Windows decision
+
+The previews use scripted input, god mode, controlled exterior enemies and a
+disabled ambient spawner; chunk updates freeze after the reload check. These
+homes have no security encounter. Normal HUD/foliage/ground are retained; initial
+tips clear and ordinary milestone toasts can recur during combat. The north-entry
+tree walkthrough's actor-following camera crops the lower home; use the dedicated
+whole-home stills for the complete fit. Timing with viewport readback and monitor
+overhead is not a comparative benchmark. No ordinary human playtest was done.
+
+The garden sources fit without a reproduced clipping/contact/scale fault that
+warranted a runtime edit. Windows must decide keep/rework from these actual
+images. Empty pale interiors are retained as the L3 baseline. Ground care/lawn,
+S7 moss/soil, furnishings and domestic masonry are not integrated. Enemies can
+draw over the neighboring annex roof; the staged entity-visibility packet remains
+separate. No civic/S3 treatment or game generation/balance/save rules changed.
+
+Next request: Windows lead reviews both exterior sizes and the three moving
+artifacts, records a concrete keep/rework verdict in ART_STATUS, and selects the
+next correction or L2 ground/S7 work, followed by L3. No new asset request is
+needed from this first fit. New district families/S4A remain out of scope.
+
+Publication: normal push of `codex/linux-world-production` is pending. Linux
+does not push `enemy-world-work`; ART_STATUS remains Windows-owned.

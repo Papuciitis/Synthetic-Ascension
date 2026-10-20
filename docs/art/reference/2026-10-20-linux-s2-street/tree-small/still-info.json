@@ -1,0 +1,50 @@
+{
+	"attempt_seed": 17,
+	"building_id": 2128236757,
+	"building_usage": "row_house",
+	"camera": {
+		"position": "(-5568.0, 11416.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(960, 540)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"closed_arch_bays": 0,
+	"common_base": false,
+	"coord": "(-3, 5)",
+	"district_family": "service_courtyards",
+	"doors": "[{ \"pos\": (9, 15), \"dir\": (0, -1), \"width\": 2 }]",
+	"failures": 0,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"footprint": "[(192.0, 960.0), (960.0, 960.0), (960.0, 1472.0), (192.0, 1472.0)]",
+	"garden": [
+		{
+			"contact": "(200.0, 1451.0)",
+			"name": "CityTemperateTree",
+			"position": "(196.1825, 1400.91)",
+			"rotation": 0.0,
+			"scale": "(0.115681, 0.115681)",
+			"texture": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+			"z_index": 1
+		}
+	],
+	"has_watch": false,
+	"hide_optional_details": false,
+	"irregular": false,
+	"native_still_only": true,
+	"plan_seed": 1794636640,
+	"profile": "common_base",
+	"role": "service_lane",
+	"save_writes": 0,
+	"segment": 2,
+	"theme": "service_courtyards",
+	"watch_fallback": "base"
+}

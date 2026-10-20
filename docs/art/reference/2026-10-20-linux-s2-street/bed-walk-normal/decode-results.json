@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux/video-tool/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-xerror",
+    "-threads",
+    "1",
+    "-i",
+    "/home/user/Nauris/Synthetic-Ascension/docs/art/reference/2026-10-20-linux-s2-street/bed-walk-normal/walkthrough.mp4",
+    "-map",
+    "0:v:0",
+    "-fps_mode",
+    "passthrough",
+    "-enc_time_base",
+    "1:1000000",
+    "-f",
+    "null",
+    "-"
+  ],
+  "exit": 0,
+  "diagnostics": "",
+  "video_sha256": "960e74bafbdf42addb8828051b1a92097d08d3d68e186b06a0b8557f32a8b250",
+  "initial_verification_limit": "Initial null-muxer verification used a default low-resolution output time base and printed duplicate DTS diagnostics. Explicit VFR passthrough and microsecond output time base eliminate that verification artifact; captured frames and video encoding are unchanged."
+}

@@ -1,0 +1,76 @@
+[
+  {
+    "label": "l0-version",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-import",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "camera-red",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: Whole-building still framing must survive a render frame"
+    ]
+  },
+  {
+    "label": "camera-green",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-footways",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-service",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-natural",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-planned",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-kit",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-procedural",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-roof",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "l0-parse",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  }
+]
