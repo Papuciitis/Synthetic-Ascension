@@ -2,7 +2,7 @@ extends "res://tools/dev/CityBlockPlayablePreview.gd"
 ## Real generated household: whole cutaway, physical prop contacts, occupied
 ## circulation and roof restoration. All movement after initial staging is input.
 ## -- --world-seed=16102026 --target-chunk=0,3 --target-building-id=944996572
-## --review=small|normal --out=<fresh directory> [--no-occupied|--walkthrough]
+## --review=small|normal --out=<fresh directory> [--no-occupied|--walkthrough|--facade-only]
 
 var _domestic_kit: Node2D
 var _domestic_group: Node2D
@@ -14,6 +14,7 @@ var _domestic_enemies: Array[WeakRef] = []
 var _domestic_occupied := true
 var _fight_wall_seconds := 0.0
 var _domestic_walkthrough := false
+var _domestic_facade_only := false
 
 
 func _enter_tree() -> void:
@@ -26,6 +27,9 @@ func _enter_tree() -> void:
 		if arg == "--no-occupied": _domestic_occupied = false
 		if arg == "--walkthrough":
 			_domestic_walkthrough = true
+			_domestic_occupied = false
+		if arg == "--facade-only":
+			_domestic_facade_only = true
 			_domestic_occupied = false
 	if _out.begins_with("res://docs/art/reference/2026-10-18-city-block/"):
 		_out = "user://dev_previews/city_domestic_interiors/%d/%s" % [Time.get_ticks_usec(),_review]
@@ -59,6 +63,9 @@ func _capture_ground_review() -> void:
 	_frame_home()
 	await _wait_for_temporary_tips()
 	await _plate("exterior-before-entry")
+	if _domestic_facade_only:
+		await _finish_facade_still()
+		return
 	if _domestic_walkthrough:
 		_phase = "domestic-entry"
 		_began_usec = Time.get_ticks_usec()
@@ -110,6 +117,22 @@ func _capture_ground_review() -> void:
 		file.store_string(JSON.stringify(report,"\t"))
 		file.close()
 	print("CityDomesticInteriorPreview: plates=%d additions=%d contacts=%d occupied=%.2f failures=%d saves=%d -> %s" % [_domestic_plates.size(),additions.size(),_domestic_contacts.size(),_combat_time,_failures,writes,_out])
+	await _shutdown()
+
+
+func _finish_facade_still() -> void:
+	var writes: int = SaveManager.debug_save_writes-_save_writes_before
+	if writes != 0 or SaveManager.current_save != null:
+		_fail("Façade composition review wrote or selected a profile")
+	var report: Dictionary = _district_evidence()
+	report.merge({"capture_scene":"res://tools/dev/CityDomesticInteriorPreview.tscn","scene":"res://scenes/game.tscn","args":OS.get_cmdline_user_args(),"attempt_seed":_city_world_seed,"target_chunk":str(_target_chunk),"target_building_id":_target_building_id,"recording_scope":"exterior composition still only","entry_finish":_entry_evidence(),"plates":_domestic_plates,"source_hashes":_source_hashes(),"save_writes":writes,"failures":_failures,"limits":"Controlled actual generated Game household exterior after production streaming/reload setup. Inherited god mode, muted ambient spawner/encounter beats, fixed real-camera zoom and frozen streaming after reload apply. No entry, route, cutaway, contacts, occupied play or performance claim is made by this one-plate mode."},true)
+	var file := FileAccess.open(_out.path_join("capture-info.json"),FileAccess.WRITE)
+	if file == null:
+		_fail("Cannot write façade composition review manifest")
+	else:
+		file.store_string(JSON.stringify(report,"\t"))
+		file.close()
+	print("CityDomesticInteriorPreview: facade_only plates=%d failures=%d saves=%d -> %s" % [_domestic_plates.size(),_failures,writes,_out])
 	await _shutdown()
 
 
@@ -291,6 +314,8 @@ func _source_hashes() -> Dictionary:
 		result[path] = FileAccess.get_sha256(path)
 	for path: String in ["res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.png","res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.png.import"]:
 		result[path] = FileAccess.get_sha256(path)
+	for path: String in ["res://assets/world/city_block/house_front.png","res://assets/world/city_block/house_front.png.import","res://assets/world/walls/kit/wall34_10.png","res://assets/world/walls/kit/wall34_10.png.import"]:
+		result[path] = FileAccess.get_sha256(path)
 	return result
 
 
@@ -314,16 +339,22 @@ func _mat_evidence() -> Dictionary:
 
 
 func _entry_evidence() -> Dictionary:
-	var result: Dictionary = {"head_courses":[]}
+	var result: Dictionary = {"wall_fields":[],"masonry_plinths":[],"windows":[]}
 	for node: Node in _domestic_kit.find_children("*","Polygon2D",true,false):
 		var face := node as Polygon2D
-		if face.has_meta(&"domestic_upper_run"):
-			(result.head_courses as Array).append({"run":str(face.get_meta(&"domestic_upper_run")),"polygon":str(face.polygon)})
+		if face.has_meta(&"domestic_wall_field"):
+			(result.wall_fields as Array).append({"run":str(face.get_meta(&"domestic_wall_field")),"polygon":str(face.polygon)})
+		if face.has_meta(&"domestic_masonry_plinth"):
+			(result.masonry_plinths as Array).append({"run":str(face.get_meta(&"domestic_masonry_plinth")),"polygon":str(face.polygon),"source":face.texture.resource_path})
+	for node: Node in _domestic_kit.find_children("*","Sprite2D",true,false):
+		var window := node as Sprite2D
+		if window.has_meta(&"domestic_window_opening"):
+			(result.windows as Array).append({"draw":str(window.get_meta(&"domestic_window_opening")),"source":window.texture.resource_path,"source_rect":str(window.region_rect),"scale":str(window.scale)})
 	var portal := _domestic_kit.find_child("IrregularUprightPortal",true,false) as Node2D
 	if portal != null:
 		result["opening_face"] = str(portal.get_meta(&"opening_face",Rect2()))
 		result["details"] = []
-		for name: String in ["DomesticDoorHeader","DomesticOpenTimberLeft","DomesticOpenTimberRight","DomesticEntryFloor","FlushThreshold"]:
+		for name: String in ["DomesticDoorHeader","DomesticOpenTimberLeft","DomesticOpenTimberRight","DomesticOpenDoorLeaf","DomesticEntryFloor","FlushThreshold"]:
 			var face := portal.get_node_or_null(name) as Polygon2D
 			if face != null:
 				(result.details as Array).append({"name":name,"polygon":str(face.polygon),"texture":face.texture.resource_path if face.texture != null else "","solid_registered":face.is_in_group(&"foreground_solid_occluders")})

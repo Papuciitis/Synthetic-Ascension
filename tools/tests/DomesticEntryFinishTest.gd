@@ -9,14 +9,14 @@ func _run() -> void:
 	add_child(dummy)
 	var fixture: Dictionary = _fixture(2,&"row_house")
 	var kit: Node2D = fixture.kit
-	var head_fields := 0
+	var wall_fields := 0
 	for node: Node in kit.find_children("*","Polygon2D",true,false):
 		var field := node as Polygon2D
-		if not field.has_meta(&"domestic_upper_run"): continue
-		head_fields += 1
-		var run: Rect2 = field.get_meta(&"domestic_upper_run")
-		_check(run.size.y <= float(kit.get("_facade_height"))*0.25,"Domestic windows reach a restrained head course instead of sitting below a broad blank panel strip")
-	_check(head_fields == 2,"Each real window wing has one continuous upper material field")
+		_check(not field.has_meta(&"domestic_upper_run"),"Domestic wall has no separately tinted upper panel strip")
+		if not field.has_meta(&"domestic_wall_field"): continue
+		wall_fields += 1
+		_check(field.color == Color.WHITE,"Continuous upper and lower plaster preserve the same original warm source colour")
+	_check(wall_fields >= 2,"Actual window wings belong to continuous wall fields around their openings")
 	_check(kit.find_child("DomesticUpperPier",true,false) == null,"Domestic upper wall avoids disconnected repeated narrow panel seams")
 	var portal := kit.find_child("IrregularUprightPortal",true,false) as Node2D
 	_check(portal != null,"Retained home has its actual south-facing entry")
@@ -45,7 +45,7 @@ func _run() -> void:
 					solids += 1
 			_check(solids == 1,"Open timber replaces its jamb area, avoiding doubled fractional cutaway coverage")
 		var opening: Rect2 = portal.get_meta(&"opening_face",Rect2())
-		_check(opening.size == Vector2(128,128),"Domestic finish retains the existing opening width and supported-header height")
+		_check(opening.size == Vector2(128,104),"Domestic finish retains the physical opening width with a human-scale visible recess")
 	_check(kit.find_children("*","CollisionObject2D",true,false).is_empty(),"Entry composition changes no physics or door collision")
 	(fixture.roof as RoofOverlay)._set_alpha(0.0)
 	var returns := kit.get_node_or_null("CardinalWallReturns") as Node2D

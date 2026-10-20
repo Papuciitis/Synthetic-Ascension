@@ -6,6 +6,7 @@ uniform vec4 road_h;
 uniform vec4 road_v;
 uniform vec2 ground_origin;
 uniform vec2 chunk_extent;
+uniform bool limit_to_road = false;
 uniform vec2 plant_corner = vec2(-100000.0);
 uniform vec3 road_source_tint = vec3(1.28,1.34,1.35);
 uniform vec3 road_mid = vec3(0.52,0.55,0.54);
@@ -94,7 +95,7 @@ void fragment() {
 	// The merged parcel rectangle bounds this draw, but does not own a paved
 	// courtyard. Keep only the real lane and its short irregular shoulder;
 	// separate doorway approaches connect the homes across the shared ground.
-	alpha*=1.0-smoothstep(12.0,68.0,road_d+(fine-0.5)*10.0);
+	if(limit_to_road) alpha*=1.0-smoothstep(12.0,68.0,road_d+(fine-0.5)*10.0);
 	// Return to the shared organic ground before crossing a streamed boundary.
 	// This also prevents a straight painted frontage edge in the neighbor's grass.
 	if(chunk_extent.x>0.0) {

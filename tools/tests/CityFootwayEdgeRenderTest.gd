@@ -105,6 +105,18 @@ func _test_native_footway() -> void:
 		var alpha := base.get_pixel(300,y).a
 		if alpha > 0.05 and alpha < 0.95: shoulder_pixels += 1
 	_check(shoulder_pixels >= 12 and shoulder_pixels <= 70,"shared road shoulder has a bounded natural transition, partial pixels=%d" % shoulder_pixels)
+	# The S2 correction must not silently restyle the already reviewed S3
+	# street under the same shared shader.
+	Global.attempt_segment = 3
+	FIXTURE.KIT.compose_street(chunk,placed,Rect2i(0,20,32,2),Rect2i(),64,32)
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	var control := view.get_texture().get_image()
+	_check(control.get_pixel(300,190).a > 0.98,"S3 retains its reviewed shared paving ownership outside the lane")
+	control = null
+	Global.attempt_segment = 2
 	base = null
 	joined = null
 	pixels = null

@@ -1,5 +1,5 @@
 extends Node2D
-## The actual old upper-band mapping is 15x/11.84x anisotropic on this home.
+## The retained home has coherent material scale around actual detail openings.
 
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const FRONTAGES := preload("res://scenes/world/buildings/CityBlockFrontages.gd")
@@ -58,36 +58,36 @@ func _run() -> void:
 	add_child(dummy)
 	var fixture := _fixture(2,&"row_house")
 	var kit: Node2D = fixture.kit
-	var upper_count := 0
-	var upper_runs: Dictionary = {}
+	var field_count := 0
+	var wall_runs: Dictionary = {}
 	for node: Node in kit.find_children("*","Polygon2D",true,false):
 		var face := node as Polygon2D
 		if face.texture == null or face.texture.resource_path != "res://assets/world/city_block/house_front.png" or face.polygon.size() != 4:
 			continue
 		var bounds := _bounds(face.polygon)
-		if not face.has_meta(&"domestic_upper_run"):
+		if not face.has_meta(&"domestic_wall_field"):
 			continue
-		upper_count += 1
-		var run: Rect2 = face.get_meta(&"domestic_upper_run")
-		upper_runs[run] = true
-		_check(is_equal_approx(bounds.size.y,32.0) and run.size.x >= 240.0,"Continuous head courses retain a restrained height and actual window-wing ownership")
-		_check(face.uv.size() == 4,"Domestic upper fields publish source sampling coordinates")
+		field_count += 1
+		var run: Rect2 = face.get_meta(&"domestic_wall_field")
+		wall_runs[run] = true
+		_check(run.encloses(bounds) and run.size.x >= 240.0,"Continuous material belongs to each actual wall wing around its detail openings")
+		_check(face.uv.size() == 4,"Domestic wall fields publish source sampling coordinates")
 		if face.uv.size() == 4:
 			var density_x := (face.uv[1]-face.uv[0]).length()/(face.polygon[1]-face.polygon[0]).length()
 			var density_y := (face.uv[3]-face.uv[0]).length()/(face.polygon[3]-face.polygon[0]).length()
-			_check(is_equal_approx(density_x,density_y),"Real304/240px upper fields preserve isotropic source detail instead of stretched tan grain")
+			_check(is_equal_approx(density_x,density_y),"Real304/240px wall fields preserve isotropic source detail instead of stretched tan grain")
 			_check(is_equal_approx(density_x,2.0),"Plain plaster keeps a stable two-texel-per-world-pixel native material scale")
 		var material := face.material as ShaderMaterial
-		_check(material != null and material.shader != null and material.shader.resource_path == PLASTER_SHADER,"Domestic upper fields repeat only the original clean plaster region")
-		_check(face.is_in_group(&"foreground_solid_occluders"),"Finished upper mass retains actual opaque-plane coverage")
-	_check(upper_runs.size() == 2 and upper_count == 2,"The retained bed home has one quiet head course per window wing without repeated panel seams")
+		_check(material != null and material.shader != null and material.shader.resource_path == PLASTER_SHADER,"Domestic wall fields repeat only the original clean plaster region")
+		_check(face.is_in_group(&"foreground_solid_occluders"),"Finished wall mass retains actual opaque-plane coverage")
+	_check(wall_runs.size() == 2 and field_count >= 2,"The retained bed home has two continuous wall wings around distinct window details")
 	var portal := kit.find_child("IrregularUprightPortal",true,false) as Node2D
 	_check(portal != null,"The real irregular doorway retains its cardinal upright adapter")
 	if portal != null:
 		var gap := FRONTAGES._door_box(DOOR,64)
 		var opening: Rect2 = portal.get_meta(&"opening_face",Rect2())
 		_check(is_equal_approx(opening.size.x,gap.size.x) and is_equal_approx(opening.position.x,gap.position.x),"Visible entry preserves the entire physical128px opening width")
-		_check(is_equal_approx(opening.size.y,128.0) and is_equal_approx(opening.end.y,gap.end.y-16.0),"Supported header reduces the blank void while preserving its original ground baseline")
+		_check(is_equal_approx(opening.size.y,104.0) and is_equal_approx(opening.end.y,gap.end.y-16.0),"Supported header gives the entry human scale while preserving its original ground baseline")
 		var header := portal.get_node_or_null("DomesticDoorHeader") as Polygon2D
 		_check(header != null and header.is_in_group(&"foreground_solid_occluders"),"New supported entry header participates in per-pixel foreground coverage")
 		var threshold := portal.get_node_or_null("FlushThreshold") as Polygon2D

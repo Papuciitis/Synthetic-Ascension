@@ -173,6 +173,7 @@ func _add_frontage_ground(area_override: Rect2 = Rect2()) -> void:
 	surface.set_shader_parameter("road_h", _road_vector(_street_h))
 	surface.set_shader_parameter("road_v", _road_vector(_street_v))
 	surface.set_shader_parameter("chunk_extent", _chunk_extent)
+	surface.set_shader_parameter("limit_to_road", Global.attempt_segment == 2)
 	surface.set_shader_parameter("plant_corner", Vector2(bounds.position.x+4,_front) if civic and _south_front else Vector2(-100000,-100000))
 	surface.set_shader_parameter("road_texture", ART.ground_texture(2))
 	if _has_texture("worn_setts.png"):

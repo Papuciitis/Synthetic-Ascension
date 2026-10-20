@@ -50,6 +50,25 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ### Review 6554c100 continuation in progress
 
+Checked commits now include household composition50a8e64c, exact shared-cover
+reuse73fa746b, road/garden/pale material correction5e1646c4, remaining cue adapters
+7875d198 and the [moving cue packet](../art/reference/2026-10-20-linux-moving-cues/README.md)
+in2921f59a. The live route reaches all seven goals, collects the real ordinary
+ring, crosses the west chunk boundary and preserves active spawning/scheduling.
+Its120 frames cover33.296112 measured seconds; the full video decodes cleanly.
+The failed first crowded route remains recorded separately.
+
+The user's latest façade rejection prompted a second composition change: two
+distinct uniformly fitted original window details in continuous warm plaster,
+a quiet rough-masonry plinth and timber eave, plus a shorter visual entry and
+an open timber leaf outside the unchanged128px physical gap. The original PNG
+is unchanged. Native early960 review shows the former whole-house tile borders
+and green upper band removed; full two-home walkthroughs are next. Cohesion32/0,
+fade24/0, entry68/0 and frontage87/0 pass. Road/native ownership14/0 includes an
+S3/default direct-kit control: the S2 road restriction is explicit opt-in, not
+a restyle of other consumers. Final procedural6318/0 and runtime parse558/0 pass.
+
+
 The new household composition keeps the original cot fit, groups the hearth,
 table and storage on a separate work wall, and adds the supplied flat rush mat.
 The six furniture blocker cells remain six; their cooking/work positions change,
