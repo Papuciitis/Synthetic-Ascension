@@ -59,6 +59,8 @@ func _signature(fixture: Dictionary) -> Dictionary:
 	return {"cells":cells,"volumes":volumes,"placed":fixture.placed}
 
 func _run() -> void:
+	var previous_segment: int = Global.attempt_segment
+	Global.attempt_segment = 2
 	var kit_script := preload("res://scenes/world/buildings/CityBlockKit.gd")
 	for role: StringName in [&"secondary_reward_building", &"secondary_route", &"service_lane", &"district_fill", &"dangerous_alley", &"main_route"]:
 		_check(kit_script.enabled_for(role, 2), "S2 neighboring production parcels carry the accepted city families: " + String(role))
@@ -127,13 +129,23 @@ func _run() -> void:
 				_check((surface.material as ShaderMaterial).get_shader_parameter("ground_origin") == Vector2(4096,18432),"ground textures retain world alignment in a translated streamed chunk")
 	shifted.cm.queue_free()
 	shifted_repeat.cm.queue_free()
+	Global.attempt_segment = previous_segment
 	print("CityBlockProceduralTest: %d passed, %d failed; 20 layouts, %d parcels, %d unique layouts, %d sizes, %d entrance directions, %d styled kit instances across %d sizes" % [_passed,_failed,buildings,layouts.size(),sizes.size(),directions.size(),kit_instances,kit_sizes.size()])
 	get_tree().quit(1 if _failed > 0 else 0)
 
 func _check_ground(fixture: Dictionary, repeated: Dictionary) -> void:
 	var surfaces: Array[Polygon2D] = []
 	var shadows: Array[Polygon2D] = []
+	var receivers: Dictionary = {}
 	for kit: Node in fixture.chunk.get_children():
+		if kit.is_in_group(&"city_block_building"):
+			var roof := kit.get("_roof") as RoofOverlay
+			var rect: Rect2i = kit.get_meta(&"footprint_cells")
+			_check(roof != null and roof.footprint_outline_px.size() >= 3,"each actual placed kit supplies its occupied roof outline")
+			_check(not receivers.has(rect),"each placed parcel has one actual occupied receiver")
+			if roof != null and roof.footprint_outline_px.size() >= 3:
+				receivers[rect] = roof
+				_check_receiver_detector(roof)
 		for child: Node in kit.get_children():
 			if child.has_meta(&"city_ground_contact"):
 				var rect: Rect2i = kit.get_meta(&"footprint_cells")
@@ -143,6 +155,7 @@ func _check_ground(fixture: Dictionary, repeated: Dictionary) -> void:
 			if child is Polygon2D and child.has_meta(&"city_sun_shadow"): shadows.append(child)
 	_check(not surfaces.is_empty(), "generated blocks have exterior surfaces")
 	if surfaces.is_empty(): return
+	_check(receivers.size() == fixture.placed.size(),"shadow receiver set retains every actual placed parcel")
 	var material := surfaces[0].material as ShaderMaterial
 	var road_h: Variant = material.get_shader_parameter("road_h")
 	var road_v: Variant = material.get_shader_parameter("road_v")
@@ -168,11 +181,39 @@ func _check_ground(fixture: Dictionary, repeated: Dictionary) -> void:
 			for uv: Vector2 in shadow.uv:
 				_check(region.grow(0.1).has_point(uv),"clipped foliage shadow UVs stay inside their actual source image region")
 		for rect: Rect2i in fixture.placed:
-			var cut := Rect2(Vector2(rect.position)*64,Vector2(rect.size)*64)
-			var box := PackedVector2Array([cut.position,Vector2(cut.end.x,cut.position.y),cut.end,Vector2(cut.position.x,cut.end.y)])
-			_check(Geometry2D.intersect_polygons(shadow.polygon,box).is_empty(),"building sun shadows exclude their own and neighboring interiors")
+			var receiver := receivers.get(rect) as RoofOverlay
+			_check(receiver != null and not _shadow_overlaps_receiver(shadow,receiver),"building sun shadows exclude every actual occupied receiver: seed=%d parcel=%s" % [fixture.cm.world_seed,str(rect)])
 	var repeated_material: ShaderMaterial
 	for kit: Node in repeated.chunk.get_children():
 		for child: Node in kit.get_children():
 			if child is Polygon2D and child.has_meta(&"city_paving"): repeated_material = child.material
 	_check(repeated_material != null and material.get_shader_parameter("ground_origin") == repeated_material.get_shader_parameter("ground_origin"), "surface variation regenerates at the same world coordinates")
+
+
+func _shadow_overlaps_receiver(shadow: Polygon2D, receiver: RoofOverlay) -> bool:
+	# Independent live occupancy, rather than the caster's subtraction helper
+	# or the parcel bounding rectangle: an L notch is actual exterior ground.
+	var occupied := PackedVector2Array()
+	for point: Vector2 in receiver.footprint_outline_px:
+		occupied.append(shadow.to_local(receiver.to_global(point)))
+	return not Geometry2D.intersect_polygons(shadow.polygon,occupied).is_empty()
+
+
+func _check_receiver_detector(receiver: RoofOverlay) -> void:
+	var outline := receiver.footprint_outline_px
+	var triangles := Geometry2D.triangulate_polygon(outline)
+	_check(triangles.size() >= 3,"actual receiver contains a triangulated positive interior probe")
+	if triangles.size() < 3: return
+	var triangle := PackedVector2Array([outline[triangles[0]],outline[triangles[1]],outline[triangles[2]]])
+	var center := (triangle[0]+triangle[1]+triangle[2])/3.0
+	var probe := Polygon2D.new()
+	probe.position = Vector2(73,-31)
+	probe.rotation = 0.17
+	probe.scale = Vector2(0.8,1.2)
+	add_child(probe)
+	var points := PackedVector2Array()
+	for point: Vector2 in triangle:
+		points.append(probe.to_local(receiver.to_global(center+(point-center)*0.25)))
+	probe.polygon = points
+	_check(_shadow_overlaps_receiver(probe,receiver),"shadow occupancy detector rejects deliberate real-interior overlap across transforms")
+	probe.free()
