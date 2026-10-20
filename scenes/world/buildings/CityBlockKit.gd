@@ -6,6 +6,7 @@ const ART := preload("res://core/systems/world/WorldArt.gd")
 const ROOT := "res://assets/world/city_block/"
 const GUARD_ROOT := "res://assets/world/districts/checkpoint_lanes/"
 const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
+const FOOTPRINT_GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
 var bounds := Rect2()
 var civic := false
 var _door_x := 0.0
@@ -145,7 +146,10 @@ func _add_ground_shadow() -> void:
 	var points := PackedVector2Array([bounds.position,Vector2(bounds.end.x,bounds.position.y),bounds.end,Vector2(bounds.position.x,bounds.end.y)])
 	var cast := points.duplicate()
 	for point: Vector2 in points: cast.append(point+offset)
-	for piece: PackedVector2Array in Geometry2D.clip_polygons(Geometry2D.convex_hull(cast),points):
+	var pieces: Array[PackedVector2Array] = Geometry2D.clip_polygons(Geometry2D.convex_hull(cast),points)
+	if Global.attempt_segment == 2:
+		pieces = FOOTPRINT_GEOMETRY.shadow(FOOTPRINT_GEOMETRY.outline_for(self),offset)
+	for piece: PackedVector2Array in pieces:
 		var shade := Polygon2D.new()
 		shade.name = "CitySunShadow"
 		shade.set_meta(&"city_sun_shadow",true)
@@ -307,17 +311,22 @@ static func compose_street(chunk: Node2D, footprints: Array[Rect2i], lane_h: Rec
 func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 	# Parcel composition knows all neighbours only after the frontage pass.
 	# Subtract their real footprints so ground cannot paint a neighbour's room.
+	var exact_cuts: Array[PackedVector2Array] = []
+	if Global.attempt_segment == 2: exact_cuts = FOOTPRINT_GEOMETRY.occupied_parts(get_parent(),footprints,cell_px)
 	for child: Node in get_children():
 		if not child is Polygon2D or not (child.has_meta(&"city_paving") or child.has_meta(&"city_sun_shadow")): continue
 		var paving := child as Polygon2D
 		if paving.has_meta(&"city_sun_shadow"):
 			var shade_pieces: Array[PackedVector2Array] = [paving.polygon]
-			for footprint: Rect2i in footprints:
-				var cut := Rect2(Vector2(footprint.position)*cell_px,Vector2(footprint.size)*cell_px)
-				var box := PackedVector2Array([cut.position,Vector2(cut.end.x,cut.position.y),cut.end,Vector2(cut.position.x,cut.end.y)])
-				var remaining: Array[PackedVector2Array] = []
-				for piece: PackedVector2Array in shade_pieces: remaining.append_array(Geometry2D.clip_polygons(piece,box))
-				shade_pieces = remaining
+			if Global.attempt_segment == 2:
+				shade_pieces = FOOTPRINT_GEOMETRY.difference(FOOTPRINT_GEOMETRY.convex_parts(paving.polygon),exact_cuts)
+			else:
+				for footprint: Rect2i in footprints:
+					var cut := Rect2(Vector2(footprint.position)*cell_px,Vector2(footprint.size)*cell_px)
+					var box := PackedVector2Array([cut.position,Vector2(cut.end.x,cut.position.y),cut.end,Vector2(cut.position.x,cut.end.y)])
+					var remaining: Array[PackedVector2Array] = []
+					for piece: PackedVector2Array in shade_pieces: remaining.append_array(Geometry2D.clip_polygons(piece,box))
+					shade_pieces = remaining
 			for piece: PackedVector2Array in shade_pieces:
 				var shade := Polygon2D.new()
 				shade.name = "CitySunShadow"
@@ -326,6 +335,7 @@ func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 				shade.color = paving.color
 				shade.z_index = paving.z_index
 				shade.texture = paving.texture
+				if Global.attempt_segment == 2: shade.modulate = paving.modulate
 				if paving.texture != null:
 					var inverse: Transform2D = paving.get_meta(&"shadow_uv_transform")
 					var uv_offset: Vector2 = paving.get_meta(&"shadow_uv_offset")
