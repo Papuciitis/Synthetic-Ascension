@@ -5,10 +5,14 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Pickup acknowledgment
 
-- State: **L0 complete; L1 evidence ready locally; publication blocked by
-  missing GitHub authentication on this PC**.
+- State: **L0 complete; published L1 packet received and reviewed by Windows;
+  sampled garden fit kept; L2 ground care is the next production packet**.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
+- Latest received review commit: `24d838f77df1b85ca3ec8636ec6a4900a6b19f7d`.
+  After `git fetch origin`, `git merge --ff-only origin/enemy-world-work`
+  advanced this branch from `1fa7a552` without conflicts. This incoming change
+  contains direction/review documentation and sampled images, no runtime code.
 - Production branch: `codex/linux-world-production`, created from that tip;
   `git merge --ff-only origin/enemy-world-work` reported already up to date.
   Existing untracked local assets/import sidecars remain untouched.
@@ -24,8 +28,9 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Current bounded packet
 
-Start with L0, then L1's actual generated S2 home garden and street review.
-L2 ground/S7 and L3 ordinary-home interiors follow the linked direction. Do not
+L0 and the L1 evidence packet are complete; Windows has kept the sampled garden
+fit while leaving complete-street acceptance open. Next is L2 ground/S7 on the
+same homes, then L3 ordinary-home interiors under the linked direction. Do not
 silently expand to more district families or claim historical images validate
 new code. Windows retains art direction and source generation.
 
@@ -42,11 +47,44 @@ Execution checklist for this packet (the existing HANDOFF is the scope/spec):
   occupied moving combat and reduced-motion review; package useful stills,
   bounded moving evidence and result JSON with fixture limitations.
 - [x] Independently review the scoped changes and evidence.
-- [ ] Publish the checked Linux packet and request the Windows lead's
-  keep/rework decision (normal push attempted; local authentication missing).
+- [x] Publish the checked Linux packet and receive the Windows lead's
+  keep/rework decision (publication confirmed by remote refs and lead review).
 
-No native visual acceptance, ground integration or domestic furnishing work is
-claimed by this acknowledgment. L2/L3 remain queued behind the L1 review gate.
+The lead keeps the measured native garden fit in these fixtures. Whole-street
+approval, ordinary human play, ground integration and domestic furnishing remain
+open. L2 is now selected; L3 follows, and V1 remains a separate required visual
+gate before occupied-street acceptance.
+
+## 20 October — Windows review received
+
+Fetched and merged `24d838f77df1b85ca3ec8636ec6a4900a6b19f7d`. Remote
+`codex/linux-world-production` confirms the prior packet was published at
+`1fa7a55202bf2276ccbde99450256fe8ef20c375`, and that exact commit is now an
+ancestor of the integration branch. The earlier authentication failure below is
+historical; publication is no longer a blocker. The human may relay Git pushes
+when local authentication is unavailable.
+
+Read the [lead review](../art/reviews/2026-10-20-linux-s2-lead-review/README.md)
+and updated ART_STATUS. Acknowledged decisions:
+
+- Keep the tested herb-bed/tree source, scale and contact, irregular home
+  footprints and fitted neighboring workshop.
+- L2 next: local irregular cared ground around the same two homes, an actual
+  untended/wild comparison, and natural S7 seed 4/canal_services. Reuse the
+  supplied lawn and subdued moss/soil sources. Preserve terrain IDs, routes,
+  RNG, wilderness and the eight-slot splat limit; rebuild and verify the baked
+  array when changing its sources.
+- Return paired native ground views with actors, an occupied comparison and
+  scoped terrain/cache/reload evidence. Preserve the prior before captures.
+- L3 then addresses purposeful furnishings, domestic masonry, the stretched
+  tan exterior band and large dark doorway without obstructing the opening.
+- V1 roof/entity compositing remains required before occupied-street approval.
+  Garden fit acceptance does not close it or authorize district expansion.
+
+This pickup only updates the branch and acknowledgment. L2 runtime changes and
+new engine evidence have not yet been produced. Incoming files are docs/images,
+so no engine or gameplay test rerun was needed for this merge. Existing local
+untracked files remain untouched; ART_STATUS remains Windows-owned.
 
 ## 20 October — fresh Linux checks
 
@@ -159,7 +197,7 @@ artifacts, records a concrete keep/rework verdict in ART_STATUS, and selects the
 next correction or L2 ground/S7 work, followed by L3. No new asset request is
 needed from this first fit. New district families/S4A remain out of scope.
 
-### Publication attempt and exact relay
+### Historical publication attempt and relay instructions
 
 Implementation commit: `5f851103`. Evidence packet commit:
 `1e90f92a3b73a564d1984b6441203dd4e449ad8f`. This later status-only commit records
@@ -170,7 +208,9 @@ the publication failure; the complete packet is already retained in local Git.
 `gh auth status` reports no logged-in GitHub host. Existing SSH-agent identities
 were tried with batch authentication; GitHub returned
 `Permission denied (publickey)`. No credential, key or machine setting was
-changed, and nothing was pushed. ART_STATUS remains Windows-owned.
+changed, and that worker's push did not succeed. Subsequent publication of the
+packet is now confirmed by the remote branch and Windows review above.
+ART_STATUS remains Windows-owned.
 
 On this Linux PC, authenticate interactively, configure the Git credential
 helper, then publish the existing branch normally:
