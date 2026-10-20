@@ -10,22 +10,27 @@ func _run() -> void:
 	var fixture: Dictionary = _fixture(2,&"row_house")
 	var kit: Node2D = fixture.kit
 	var roof: RoofOverlay = fixture.roof
-	var points: Array[Vector2] = []
-	for node: Node in kit.find_children("*","Polygon2D",true,false):
-		var pier := node as Polygon2D
-		var bounds: Rect2 = _bounds(pier.polygon)
-		if pier.texture != null and is_equal_approx(bounds.size.x,12.0) and is_equal_approx(bounds.size.y,64.0):
-			points.append(pier.to_global(bounds.get_center()))
+	# Literal points in both actual head courses, independent of how their
+	# polygons are split. These remain covered after removing fake panel seams.
+	var points: Array[Vector2] = [kit.to_global(Vector2(360,912)),kit.to_global(Vector2(760,912))]
 	var header := kit.find_child("DomesticDoorHeader",true,false) as Polygon2D
 	var lintel := kit.find_child("Lintel",true,false) as Polygon2D
 	_check(header != null and lintel != null,"Actual domestic portal supplies its supported header and lintel")
 	if header != null and lintel != null:
 		points.append(lintel.to_global(_bounds(lintel.polygon).get_center()))
-	_check(points.size() == 3,"Retained bed home probes both upper piers and the supported entry junction")
+	_check(points.size() == 3,"Retained bed home probes both continuous head courses and the supported entry junction")
 	# These inherited jamb/field junctions are separate from the three new
 	# detail points above. Actual bed-kit coordinates come from its real door.
 	for local_point: Vector2 in [Vector2(504,930),Vector2(647,930),Vector2(504,900),Vector2(647,900)]:
 		points.append(kit.to_global(local_point))
+	# The folded timber replaces its stone jamb area and the adjacent window
+	# bays stop at that jamb, including below the old upper-field junction.
+	for local_point: Vector2 in [Vector2(506,1000),Vector2(646,1000)]:
+		points.append(kit.to_global(local_point))
+		for node: Node in kit.find_children("*","Sprite2D",true,false):
+			var sprite := node as Sprite2D
+			if not sprite.is_in_group(&"foreground_occluders"): continue
+			_check(not sprite.get_rect().has_point(sprite.to_local(kit.to_global(local_point))),"Window draw rectangles leave the actual open timber jamb area disjoint")
 	roof._set_alpha(0.5)
 	for point: Vector2 in points:
 		var count := 0

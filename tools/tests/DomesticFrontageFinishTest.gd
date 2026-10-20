@@ -70,7 +70,7 @@ func _run() -> void:
 		upper_count += 1
 		var run: Rect2 = face.get_meta(&"domestic_upper_run")
 		upper_runs[run] = true
-		_check(is_equal_approx(bounds.size.y,64.0) and run.size.x >= 240.0,"Disjoint plaster pieces retain the actual broad upper-field run height and ownership")
+		_check(is_equal_approx(bounds.size.y,32.0) and run.size.x >= 240.0,"Continuous head courses retain a restrained height and actual window-wing ownership")
 		_check(face.uv.size() == 4,"Domestic upper fields publish source sampling coordinates")
 		if face.uv.size() == 4:
 			var density_x := (face.uv[1]-face.uv[0]).length()/(face.polygon[1]-face.polygon[0]).length()
@@ -80,7 +80,7 @@ func _run() -> void:
 		var material := face.material as ShaderMaterial
 		_check(material != null and material.shader != null and material.shader.resource_path == PLASTER_SHADER,"Domestic upper fields repeat only the original clean plaster region")
 		_check(face.is_in_group(&"foreground_solid_occluders"),"Finished upper mass retains actual opaque-plane coverage")
-	_check(upper_runs.size() == 2 and upper_count == 4,"The retained bed home exercises both broad upper-field runs split around their two solid piers")
+	_check(upper_runs.size() == 2 and upper_count == 2,"The retained bed home has one quiet head course per window wing without repeated panel seams")
 	var portal := kit.find_child("IrregularUprightPortal",true,false) as Node2D
 	_check(portal != null,"The real irregular doorway retains its cardinal upright adapter")
 	if portal != null:

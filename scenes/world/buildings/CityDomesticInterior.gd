@@ -10,6 +10,10 @@ const PROPS := {
 	&"crate": {"source_path":"res://assets/world/dressing/generated/crate.tres", "anchor_px":Vector2(210,456), "scale":64.0/420.0, "ground":Rect2(8,300,404,156), "visible":Rect2(8,8,404,448), "cells":Vector2i.ONE},
 }
 const DIRECTIONS: Array[Vector2i] = [Vector2i.UP,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.LEFT]
+const RUSH_MAT := "res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.png"
+const MAT_ANCHOR := Vector2(519,765.5)
+const MAT_VISIBLE := Rect2(53,50,932,1431)
+const MAT_SCALE := 96.0/932.0
 
 
 static func _eligible(context: Dictionary) -> bool:
@@ -109,6 +113,13 @@ static func _score(kind: StringName, record: Dictionary, walls: Dictionary, cent
 		for previous: Dictionary in selected:
 			if previous.kind == &"table":
 				score -= (record.contact_px as Vector2).distance_squared_to(previous.contact_px)*0.2
+	for previous: Dictionary in selected:
+		# Separate sleeping from heat, then bring preparation and storage to
+		# that cooking wall. Keep the same legal fits and connectivity checks.
+		if kind == &"hearth" and previous.kind == &"cot":
+			score += (record.contact_px as Vector2).distance_squared_to(previous.contact_px)*0.04
+		if kind == &"table" and previous.kind == &"hearth":
+			score -= (record.contact_px as Vector2).distance_squared_to(previous.contact_px)*0.2
 	var hash_value := (first.x*73856093) ^ (first.y*19349663) ^ visual_seed
 	return score+float(posmod(hash_value,997))*0.001
 
@@ -214,6 +225,7 @@ static func compose(kit: Node2D, manager: ChunkManager, data: ChunkBuildData, co
 	group.z_index = ChunkBlockVisualCatalog.PROP_Z-kit.z_index
 	group.set_meta(&"domestic_layout",layout)
 	kit.add_child(group)
+	_add_sleeping_mat(group,context,layout)
 	var chunk := kit.get_parent() as Node2D
 	for record: Dictionary in layout:
 		var texture := load(String(record.source_path)) as Texture2D
@@ -241,3 +253,45 @@ static func compose(kit: Node2D, manager: ChunkManager, data: ChunkBuildData, co
 		shadow.z_index = -1
 		group.add_child(shadow)
 	return group
+
+
+static func _add_sleeping_mat(group: Node2D, context: Dictionary, layout: Array[Dictionary]) -> void:
+	var cot: Dictionary = {}
+	var other_cells: Dictionary = {}
+	for record: Dictionary in layout:
+		if record.kind == &"cot":
+			cot = record
+		else:
+			for cell: Vector2i in record.reserved_cells:
+				other_cells[cell] = true
+	if cot.is_empty(): return
+	var floor_cells: Dictionary = context.get("floor_cells",{})
+	var protected: Dictionary = context.get("protected_cells",{})
+	var ground: Rect2 = cot.ground_rect_px
+	# The real north/south wall contacts differ. Try the two useful bedside
+	# positions and small vertical offsets; omit décor if neither fits genuine
+	# sleeping floor. The mat may underlap its cot, never another activity.
+	for offset_y: float in [-12.0,12.0,0.0,-24.0,24.0]:
+		for offset_x: float in [28.0,-28.0]:
+			var contact := ground.get_center()+Vector2(offset_x,offset_y)
+			var visible := Rect2(contact+(MAT_VISIBLE.position-MAT_ANCHOR)*MAT_SCALE,MAT_VISIBLE.size*MAT_SCALE)
+			var first := Vector2i((visible.position/CELL).floor())
+			var last := Vector2i(((visible.end-Vector2.ONE*0.001)/CELL).floor())
+			var fits := true
+			for y in range(first.y,last.y+1):
+				for x in range(first.x,last.x+1):
+					var cell := Vector2i(x,y)
+					if not floor_cells.has(cell) or protected.has(cell) or other_cells.has(cell):
+						fits = false
+			if not fits: continue
+			var texture := load(RUSH_MAT) as Texture2D
+			if texture == null: return
+			var mat := Sprite2D.new()
+			mat.name = "DomesticRushMat"
+			mat.texture = texture
+			mat.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+			mat.scale = Vector2.ONE*MAT_SCALE
+			mat.position = contact+(texture.get_size()*0.5-MAT_ANCHOR)*MAT_SCALE
+			mat.z_index = -2
+			group.add_child(mat)
+			return

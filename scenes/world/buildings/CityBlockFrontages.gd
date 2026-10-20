@@ -56,11 +56,22 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 				runs = remaining
 			for run: Vector2 in runs:
 				var height := float(kit.get("_facade_height"))
-				_wall_bays(group,kit.get("_facade"),run,b.y-16,minf(height,112.0),bool(kit.get("civic")))
-				if height > 112.0:
+				var bay_height := minf(height,144.0 if domestic else 112.0)
+				if domestic:
+					var window_run: Vector2 = run
+					for door: Dictionary in doors:
+						if door.dir != Vector2i.DOWN: continue
+						var gap := _door_box(door,cell_px)
+						if not is_equal_approx(gap.end.y,b.y): continue
+						if is_equal_approx(window_run.y,gap.position.x): window_run.y -= 15.0
+						if is_equal_approx(window_run.x,gap.end.x): window_run.x += 15.0
+					_domestic_window_run(group,kit.get("_facade"),window_run,b.y-16,bay_height,plaster_material)
+				else:
+					_wall_bays(group,kit.get("_facade"),run,b.y-16,bay_height,bool(kit.get("civic")))
+				if height > bay_height:
 					var upper_finish := finish if finish != null else portal_masonry
 					if domestic:
-						_domestic_upper_field(group,upper_finish,run,b.y-16-height,height-112,b.y,plaster_material,doors,cell_px)
+						_domestic_upper_field(group,upper_finish,run,b.y-16-height,height-bay_height,b.y,plaster_material,doors,cell_px)
 					else:
 						var upper := _panel(group,Rect2(run.x,b.y-16-height,run.y-run.x,height-112),Color.WHITE)
 						if upper_finish != null: _plaster(upper,upper_finish,Color("b9b9a8"),plaster_material)
@@ -151,6 +162,9 @@ static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float,
 		_masonry(left_jamb,facade,Rect2(size*Vector2(0.391,0.29),size*Vector2(0.034,0.63)))
 		_masonry(right_jamb,facade,Rect2(size*Vector2(0.575,0.29),size*Vector2(0.034,0.63)))
 		_masonry(lintel,facade,Rect2(size*Vector2(0.391,0.205),size*Vector2(0.218,0.085)))
+	if domestic:
+		recess.vertex_colors = PackedColorArray([Color("29332e"),Color("29332e"),Color("5e6958"),Color("536151")])
+		_domestic_entry_depth(portal,gap,opening_top,bottom,facade,left_jamb,right_jamb)
 	_panel(portal,Rect2(left,opening_top if domestic else top+22,gap.size.x,7),Color("263b39"))
 	# A short, flush floor transition is distinct from the upright recess;
 	# there is no door leaf, raised step, collision or change to entry width.
@@ -158,6 +172,44 @@ static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float,
 	threshold.name = "FlushThreshold"
 	threshold.vertex_colors = PackedColorArray([Color("657367"),Color("657367"),Color("949b89"),Color("949b89")])
 	_panel(portal,Rect2(left,bottom+4,gap.size.x,2),Color(0.19,0.27,0.25,0.35))
+
+static func _domestic_entry_depth(parent: Node2D, gap: Rect2, opening_top: float, bottom: float, facade: Texture2D, left_jamb: Polygon2D, right_jamb: Polygon2D) -> void:
+	# A shallow lit floor return breaks the tall black rectangle. It remains
+	# floor presentation across the whole carver span, with no new collider.
+	var floor := _panel(parent,Rect2(gap.position.x,bottom-44,gap.size.x,34),Color.WHITE)
+	floor.name = "DomesticEntryFloor"
+	var paving := load("res://assets/world/city_block/paving.png") as Texture2D
+	if paving != null:
+		_masonry(floor,paving,Rect2(Vector2(gap.position.x,bottom-44)*2.0,Vector2(gap.size.x,34)*2.0))
+		floor.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+		floor.color = Color("aab29d")
+	if facade == null: return
+	var wing_top := opening_top+8.0
+	var wing_height := bottom-12.0-wing_top
+	if wing_height <= 0: return
+	var ground := Vector2(gap.get_center().x,gap.end.y)
+	for side: int in range(2):
+		var jamb := left_jamb if side == 0 else right_jamb
+		var wing := Rect2(gap.position.x-12.0 if side == 0 else gap.end.x,wing_top,12,wing_height)
+		var original := Rect2(jamb.polygon[0],jamb.polygon[2]-jamb.polygon[0])
+		var source := Rect2(jamb.uv[0],jamb.uv[2]-jamb.uv[0])
+		var pieces := _subtract_rect(original,wing)
+		for index: int in pieces.size():
+			var rect: Rect2 = pieces[index]
+			var piece := jamb if index == 0 else _panel(parent,rect,Color.WHITE)
+			piece.polygon = PackedVector2Array([rect.position,Vector2(rect.end.x,rect.position.y),rect.end,Vector2(rect.position.x,rect.end.y)])
+			piece.texture = facade
+			var uv := PackedVector2Array()
+			for point: Vector2 in piece.polygon:
+				uv.append(source.position+(point-original.position)/original.size*source.size)
+			piece.uv = uv
+			_register_solid(piece,ground)
+		var timber := _panel(parent,wing,Color.WHITE)
+		timber.name = "DomesticOpenTimberLeft" if side == 0 else "DomesticOpenTimberRight"
+		# Only the original door's narrow timber lining, with no painted shutter
+		# or black opening pixels. Folded outward within the existing jamb area.
+		_masonry(timber,facade,Rect2(920,217,11,420))
+		_register_solid(timber,ground)
 
 static func _masonry(shape: Polygon2D, texture: Texture2D, source: Rect2) -> void:
 	shape.texture = texture
@@ -177,15 +229,9 @@ static func _plaster(shape: Polygon2D, texture: Texture2D, tint: Color, material
 		shape.material = material
 
 static func _domestic_upper_field(parent: Node2D, texture: Texture2D, run: Vector2, top: float, height: float, ground_y: float, material: ShaderMaterial, doors: Array, cell_px: int) -> void:
-	# Extend only the existing lower bay joints, rather than adding a new
-	# decorative grid or changing the actual envelope/opening. Piers replace
-	# their field area so fractional roof fades composite the mass once.
-	var joints: Array[float] = []
-	if texture != null and run.y-run.x >= 240.0:
-		var nominal := texture.get_width()*0.40/texture.get_height()*112.0
-		var count := maxi(1,int(round((run.y-run.x)/nominal)))
-		for index in range(1,count):
-			joints.append(lerpf(run.x,run.y,float(index)/float(count)))
+	# One short continuous head course belongs to the taller window bays.
+	# No repeated little upper panels or fake vertical joints. Existing jambs
+	# still replace their field area so fractional roof fades composite once.
 	var jambs: Array[Rect2] = []
 	for door: Dictionary in doors:
 		if door.dir != Vector2i.DOWN: continue
@@ -194,26 +240,34 @@ static func _domestic_upper_field(parent: Node2D, texture: Texture2D, run: Vecto
 		# Match the existing portal's actual15px jamb and8px top setback.
 		jambs.append(Rect2(gap.position.x-15,top+8,15,height))
 		jambs.append(Rect2(gap.end.x,top+8,15,height))
-	var cursor: float = run.x
-	for end: float in joints+[run.y+6.0]:
-		var pieces: Array[Rect2] = [Rect2(cursor,top,end-6.0-cursor,height)]
-		for jamb: Rect2 in jambs:
-			var next: Array[Rect2] = []
-			for piece: Rect2 in pieces:
-				next.append_array(_subtract_rect(piece,jamb))
-			pieces = next
+	var pieces: Array[Rect2] = [Rect2(run.x,top,run.y-run.x,height)]
+	for jamb: Rect2 in jambs:
+		var next: Array[Rect2] = []
 		for piece: Rect2 in pieces:
-			var field := _panel(parent,piece,Color("b9b9a8"))
-			if field == null: continue
-			if texture != null: _plaster(field,texture,Color("b9b9a8"),material)
-			field.set_meta(&"domestic_upper_run" if is_equal_approx(piece.size.y,height) else &"domestic_upper_jamb_cap",Rect2(run.x,top,run.y-run.x,height))
-			_register_solid(field,Vector2((run.x+run.y)*0.5,ground_y))
-		cursor = end+6.0
-	for x: float in joints:
-		var pier := _panel(parent,Rect2(x-6,top,12,height),Color.WHITE)
-		pier.name = "DomesticUpperPier"
-		_masonry(pier,texture,Rect2(texture.get_size()*Vector2(0.391,0.29),texture.get_size()*Vector2(0.034,0.63)))
-		_register_solid(pier,Vector2(x,ground_y))
+			next.append_array(_subtract_rect(piece,jamb))
+		pieces = next
+	for piece: Rect2 in pieces:
+		var field := _panel(parent,piece,Color("b9b9a8"))
+		if field == null: continue
+		if texture != null: _plaster(field,texture,Color("b9b9a8"),material)
+		field.set_meta(&"domestic_upper_run" if is_equal_approx(piece.size.y,height) else &"domestic_upper_jamb_cap",Rect2(run.x,top,run.y-run.x,height))
+		_register_solid(field,Vector2((run.x+run.y)*0.5,ground_y))
+
+static func _domestic_window_run(parent: Node2D, texture: Texture2D, run: Vector2, bottom: float, height: float, material: ShaderMaterial) -> void:
+	if texture == null: return
+	var nominal := texture.get_width()*0.40/texture.get_height()*height
+	var width := run.y-run.x
+	# A narrow wing gets one proportionate window with quiet side plaster,
+	# rather than stretching it to fill the wing or repeating squeezed shutters.
+	if int(round(width/nominal)) == 1 and width > nominal*1.25:
+		var margin := (width-nominal)*0.5
+		for x: float in [run.x,run.y-margin]:
+			var field := _panel(parent,Rect2(x,bottom-height,margin,height),Color.WHITE)
+			_plaster(field,texture,Color("b9b9a8"),material)
+			_register_solid(field,Vector2(x+margin*0.5,bottom+16))
+		_wall_bays(parent,texture,Vector2(run.x+margin,run.y-margin),bottom,height,false)
+	else:
+		_wall_bays(parent,texture,run,bottom,height,false)
 
 static func _subtract_rect(field: Rect2, cut: Rect2) -> Array[Rect2]:
 	var intersection := field.intersection(cut)

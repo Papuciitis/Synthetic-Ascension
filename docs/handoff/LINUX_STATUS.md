@@ -48,6 +48,35 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## 20 October — local implementation continuation
 
+### Review 6554c100 continuation in progress
+
+The new household composition keeps the original cot fit, groups the hearth,
+table and storage on a separate work wall, and adds the supplied flat rush mat.
+The six furniture blocker cells remain six; their cooking/work positions change,
+so the actual reward/claim and route checks are retained. Domestic south fronts
+now have taller window bays under a short continuous head course, with a shallow
+stone entry return and original timber lining. The physical doorway stays128px.
+The user's follow-up explicitly preserves pale slate-house versus warm clay-house
+masonry, and requests better pale relief, the upper front, paving shape and
+flower-bed fit.
+
+Focused checks: composition51/0, entry24/0, interior336/0, frontage45/0,
+fractional fade26/0, actual reward/factory43/0. The first actual bed-home960
+walkthrough passes7 stills,6 added cells,4 physical contacts, entry/exit,
+zero failures/saves/diagnostics. Its40 recorded frames cover22.094939 seconds;
+the whole monitored process took61.57 seconds. Exact household/tool/import
+sources match that launch. Second-home/normal-size native checks and the compact
+evidence packet are still in progress. This is a checked implementation stage,
+not full street acceptance.
+
+Paving geometry now follows the doorway rather than the whole frontage.
+The native first view exposed remaining road-overlay contrast, so that join
+and the garden soil edge are being corrected before final presentation checks.
+Pale S2 material relief and remaining moving cue/collection work are separate
+active stages. WorldCover performance optimization has not started: the first
+uncaptured occupied probe stalled in the tool's input deadzone, so its stationary
+timings are not movement/streaming evidence. The tool input is corrected.
+
 The user authorized continuing while asleep and committing checked stages.
 `4c4a6cb2` adds sparse cot, cold hearth, table and crate groups with six explicit
 streamed low-cover cells where the deterministic household fit permits.

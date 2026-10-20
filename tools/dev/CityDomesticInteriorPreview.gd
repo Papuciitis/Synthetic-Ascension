@@ -2,7 +2,7 @@ extends "res://tools/dev/CityBlockPlayablePreview.gd"
 ## Real generated household: whole cutaway, physical prop contacts, occupied
 ## circulation and roof restoration. All movement after initial staging is input.
 ## -- --world-seed=16102026 --target-chunk=0,3 --target-building-id=944996572
-## --review=small|normal --out=<fresh directory> [--no-occupied]
+## --review=small|normal --out=<fresh directory> [--no-occupied|--walkthrough]
 
 var _domestic_kit: Node2D
 var _domestic_group: Node2D
@@ -13,6 +13,7 @@ var _domestic_contacts: Array[Dictionary] = []
 var _domestic_enemies: Array[WeakRef] = []
 var _domestic_occupied := true
 var _fight_wall_seconds := 0.0
+var _domestic_walkthrough := false
 
 
 func _enter_tree() -> void:
@@ -23,6 +24,9 @@ func _enter_tree() -> void:
 	_still_only = true
 	for arg: String in OS.get_cmdline_user_args():
 		if arg == "--no-occupied": _domestic_occupied = false
+		if arg == "--walkthrough":
+			_domestic_walkthrough = true
+			_domestic_occupied = false
 	if _out.begins_with("res://docs/art/reference/2026-10-18-city-block/"):
 		_out = "user://dev_previews/city_domestic_interiors/%d/%s" % [Time.get_ticks_usec(),_review]
 
@@ -55,6 +59,11 @@ func _capture_ground_review() -> void:
 	_frame_home()
 	await _wait_for_temporary_tips()
 	await _plate("exterior-before-entry")
+	if _domestic_walkthrough:
+		_phase = "domestic-entry"
+		_began_usec = Time.get_ticks_usec()
+		_next_usec = _began_usec
+		_recording = true
 	await _walk_to(door+outward*96.0)
 	await _walk_to(door-outward*float(_chunks.cell_size_px))
 	await _frames(30)
@@ -63,15 +72,20 @@ func _capture_ground_review() -> void:
 	_frame_home()
 	await _plate("interior-whole")
 	for record: Dictionary in _domestic_layout:
+		_phase = "domestic-contact-"+String(record.kind)
 		await _visit_prop(record)
 	if _domestic_occupied and _failures == 0:
 		await _occupied_circulation()
+	_phase = "domestic-exit"
 	await _walk_to(door+outward*160.0)
 	await _frames(30)
 	if _roof._inside_count != 0 or _domestic_roof_poly.modulate.a < 0.99:
 		_fail("Physical return route did not restore the actual household roof")
 	_frame_home()
 	await _plate("exterior-restored")
+	if _domestic_walkthrough:
+		_recording = false
+		_fight_wall_seconds = float(Time.get_ticks_usec()-_began_usec)/1_000_000.0
 	if before != var_to_str(_domestic_group.get_meta(&"domestic_layout",[])):
 		_fail("Traversal changed the household layout")
 	var additions := _addition_evidence()
@@ -81,7 +95,10 @@ func _capture_ground_review() -> void:
 	var report := _district_evidence()
 	report["movement_fixture_revision"] = 2
 	report["goal_tolerance_px"] = 8.0
-	report["prior_evidence_qualification"] = "The first seven-plate bed architecture run at handoff-linux-next-20261020/domestic-bed-first-plates used the inherited same-cell route behavior: post-contact goals in the current cell could return23-41px off center. Its actual positions and contacts remain recorded. Revision2 physically centers resolved goals within8px or reports blocked movement."
+	report["prior_evidence_qualification"] = "The first seven-plate bed architecture run at handoff-linux-next-20261020/domestic-bed-first-plates used inherited same-cell routing and could return about23px off the goal center. About41px is the separate valid collision support distance. Original positions/contacts and historical metadata remain unchanged. Revision2 physically centers resolved goals within8px or reports blocked movement."
+	report["recording_scope"] = "physical entry, four prop contacts and exit" if _domestic_walkthrough else "occupied interior comparison" if _domestic_occupied else "architecture stills only"
+	report["flat_decor"] = _mat_evidence()
+	report["entry_finish"] = _entry_evidence()
 	report.merge({"capture_scene":"res://tools/dev/CityDomesticInteriorPreview.tscn","scene":"res://scenes/game.tscn","args":OS.get_cmdline_user_args(),"attempt_seed":_city_world_seed,"target_chunk":str(_target_chunk),"target_building_id":_target_building_id,"layout":_layout_evidence(),"layout_sha256":before.sha256_text(),"furniture_additions":additions,"contacts":_domestic_contacts,"plates":_domestic_plates,"route":_route_notes,"occupied_requested":_domestic_occupied,"occupied_seconds":_combat_time,"wall_seconds":_fight_wall_seconds,"captured_frames":_pixels.size(),"weapon_fires":_weapon_fires,"hits":_player_hits,"deaths":_deaths,"max_projectiles":_max_projectiles,"frames":_capture_info,"source_hashes":_source_hashes(),"save_writes":writes,"failures":_failures,"limits":"Controlled actual generated Game household review. Real player inputs/collision, low furniture, roof entry/exit signals and actual streamed baseline reload. Initial outside placement only; no route teleport or physics/roof-counter overrides. God mode, disabled ambient spawner/encounter beats, fixed real-camera zoom and streaming frozen after reload. Optional two real controlled ordinary/elite enemies for a short occupied route. Not continuous human play, balance/performance approval or complete-street acceptance."},true)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out.path_join("frames")))
 	for index in _pixels.size():
@@ -272,6 +289,44 @@ func _source_hashes() -> Dictionary:
 	var result: Dictionary = {}
 	for path: String in ["res://tools/dev/CityDomesticInteriorPreview.gd","res://tools/dev/CityDomesticInteriorPreview.tscn","res://tools/dev/CityBlockPlayablePreview.gd","res://scenes/world/buildings/CityDomesticInterior.gd","res://scenes/world/buildings/CityBlockFrontages.gd","res://scenes/world/buildings/CityBlockKit.gd","res://scenes/world/buildings/domestic_stone.gdshader","res://scenes/world/buildings/domestic_plaster.gdshader","res://core/systems/world/proc/SiteParcelsImpl.gd","res://core/systems/world/chunks/ChunkBlockRenderer.gd","res://assets/world/domestic_interiors/v1/timber_cot.png","res://assets/world/domestic_interiors/v1/timber_cot.png.import","res://assets/world/domestic_interiors/v1/cooking_hearth.png","res://assets/world/domestic_interiors/v1/cooking_hearth.png.import"]:
 		result[path] = FileAccess.get_sha256(path)
+	for path: String in ["res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.png","res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.png.import"]:
+		result[path] = FileAccess.get_sha256(path)
+	return result
+
+
+func _mat_evidence() -> Dictionary:
+	var mat := _domestic_group.get_node_or_null("DomesticRushMat") as Sprite2D
+	if mat == null or mat.texture == null:
+		_fail("Composed sleeping corner has no live supplied rush mat")
+		return {}
+	var source_bounds := Rect2(53,50,932,1431)
+	var source_anchor := Vector2(519,765.5)
+	var contact: Vector2 = _domestic_kit.to_local(mat.to_global(source_anchor-mat.texture.get_size()*0.5))
+	var bounds := Rect2(contact+(source_bounds.position-source_anchor)*mat.scale,source_bounds.size*mat.scale)
+	var cells: Array[Dictionary] = []
+	var first := Vector2i((bounds.position/64.0).floor())
+	var last := Vector2i(((bounds.end-Vector2.ONE*0.001)/64.0).floor())
+	for y in range(first.y,last.y+1):
+		for x in range(first.x,last.x+1):
+			var cell := Vector2i(x,y)
+			cells.append({"local_cell":str(cell),"kind":_chunks.get_chunk_build_data(_target_chunk).kind_at(cell),"walkable":_chunks.is_cell_walkable(_target_chunk*32+cell)})
+	return {"source_path":mat.texture.resource_path,"source_sha256":FileAccess.get_sha256(mat.texture.resource_path),"source_anchor_px":str(source_anchor),"uniform_scale":mat.scale.x,"visible_rect_kit_px":str(bounds),"contact_kit_px":str(contact),"relative_z":mat.z_index,"foreground_registered":mat.is_in_group(&"foreground_occluders") or mat.is_in_group(&"foreground_solid_occluders"),"cells":cells,"limits":"Flat floor décor only; the cot's existing low-cover cells may underlap it. No extra blocker or cover cells."}
+
+
+func _entry_evidence() -> Dictionary:
+	var result: Dictionary = {"head_courses":[]}
+	for node: Node in _domestic_kit.find_children("*","Polygon2D",true,false):
+		var face := node as Polygon2D
+		if face.has_meta(&"domestic_upper_run"):
+			(result.head_courses as Array).append({"run":str(face.get_meta(&"domestic_upper_run")),"polygon":str(face.polygon)})
+	var portal := _domestic_kit.find_child("IrregularUprightPortal",true,false) as Node2D
+	if portal != null:
+		result["opening_face"] = str(portal.get_meta(&"opening_face",Rect2()))
+		result["details"] = []
+		for name: String in ["DomesticDoorHeader","DomesticOpenTimberLeft","DomesticOpenTimberRight","DomesticEntryFloor","FlushThreshold"]:
+			var face := portal.get_node_or_null(name) as Polygon2D
+			if face != null:
+				(result.details as Array).append({"name":name,"polygon":str(face.polygon),"texture":face.texture.resource_path if face.texture != null else "","solid_registered":face.is_in_group(&"foreground_solid_occluders")})
 	return result
 
 
