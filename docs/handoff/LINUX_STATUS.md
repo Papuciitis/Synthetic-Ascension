@@ -20,7 +20,8 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 - State: **Visibility, useful lawn core, selected wet earth, connected paving,
   actual-footprint casts, fitted irregular roofs, furnished domestic homes
   and theme atmosphere through `fd80106a` are published and reviewed as WIP.
-  Their retained final integration checks pass; the next correction is active.**
+  Their retained final integration checks pass; the bounded continuation below
+  is now checked locally.**
   L1 garden fit is retained; full ground/street acceptance remains open.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
@@ -94,11 +95,28 @@ route is retained separately. This capture includes framebuffer readback and is
 visual evidence, not a performance measurement.
 
 WorldCover reuses exact unchanged snapshots while still collecting coverage every
-frame. Native24/0, headless23/0 and existing shared-cover25/0 pass; independent
-review found no blocker. The valid uncaptured historical baseline completed50
-route cells and3 chunk activations with ordinary enemies; refresh p95 was6.378ms.
-The earlier stationary pilot is invalid movement evidence. The final same-source
-forced-upload/reuse comparison remains pending; no performance gain is claimed yet.
+frame. Native 24/0, headless 23/0 and existing shared-cover 25/0 pass; independent
+review found no blocker. The valid uncaptured historical baseline completed 50
+route cells and three chunk activations with ordinary enemies; refresh p95 was
+6.378ms. The earlier stationary pilot is invalid movement evidence.
+
+The final native [forced-upload/reuse comparison](../art/reference/2026-10-20-linux-cover-performance/README.md)
+completes 50/50 route cells and three chunk activations in both runs, with identical
+2,389 launch source hashes, route and graphics settings. Reuse avoids packing and
+uploading 1,932 of 2,006 snapshots (96.31%): 74 builds, 222 data uploads and 848,432
+requested bytes versus 1,928 builds, 5,784 uploads and 22,772,960 bytes in the forced
+control. Material binds fall from 33,126 to 1,338. Source reads and alpha uploads
+stay zero in both measured routes.
+
+Mean snapshot work falls from 0.43249 to 0.01735ms and binding from 0.15887 to
+0.04049ms; collection remains dominant (5.58394 versus 5.78658ms). Cover-refresh
+p95 is 9.175 versus 8.686ms; frame-wall p95 is 20.662 versus 20.360ms, but p99 rises
+24.320 to 24.873ms. Natural enemy populations differ (median/p95: 16/21 versus
+12/16), with projectile median/p95: 3/4 versus 4/5. This supports reduced CPU
+packing/upload/binding work, not a broad frame-rate win, GPU attribution or
+performance-budget acceptance. The same-source control reproduces the old upload
+policy on the final revision; it does not compare against the whole game's
+original pre-feature cost.
 
 ### Earlier retained implementation history
 

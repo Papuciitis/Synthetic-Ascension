@@ -1,0 +1,57 @@
+{
+  "method": "Recorded launch SHA256 maps and read-only current file bytes; not Git blob/commit verification.",
+  "inputs": {
+    "core/systems/world/visibility/WorldCover.gd": {
+      "current_sha256": "b83af2dc810bae325728062188ffb304b4558a5c2d517ca726c9e02556bf96ee",
+      "final_arms": {
+        "control-small": "b83af2dc810bae325728062188ffb304b4558a5c2d517ca726c9e02556bf96ee",
+        "reuse-small": "b83af2dc810bae325728062188ffb304b4558a5c2d517ca726c9e02556bf96ee"
+      }
+    },
+    "tools/tests/WorldCoverSnapshotReuseTest.gd": {
+      "current_sha256": "6aeaa8d17c31a8ad0c28a5c9f353e0b13e78136f8c59fb9dfbc689ec64d859fd",
+      "final_arms": {
+        "control-small": "6aeaa8d17c31a8ad0c28a5c9f353e0b13e78136f8c59fb9dfbc689ec64d859fd",
+        "reuse-small": "6aeaa8d17c31a8ad0c28a5c9f353e0b13e78136f8c59fb9dfbc689ec64d859fd"
+      }
+    },
+    "tools/tests/WorldCoverSnapshotReuseTest.tscn": {
+      "current_sha256": "dc918f0a5ff38c578b15a82d7bdb068cebf7f94f8708a8d68c92f2111992e089",
+      "final_arms": {
+        "control-small": "dc918f0a5ff38c578b15a82d7bdb068cebf7f94f8708a8d68c92f2111992e089",
+        "reuse-small": "dc918f0a5ff38c578b15a82d7bdb068cebf7f94f8708a8d68c92f2111992e089"
+      }
+    },
+    "tools/dev/WorldCoverStreamingProfile.gd": {
+      "current_sha256": "e4fa8f7ed7f518529d6c7457523b606ba418ba7c4e5d669e66d74bfa3418f724",
+      "final_arms": {
+        "control-small": "e4fa8f7ed7f518529d6c7457523b606ba418ba7c4e5d669e66d74bfa3418f724",
+        "reuse-small": "e4fa8f7ed7f518529d6c7457523b606ba418ba7c4e5d669e66d74bfa3418f724"
+      }
+    },
+    "tools/dev/WorldCoverStreamingProfile.tscn": {
+      "current_sha256": "9666b765ee546ac9165a827fa5fd8c52939fa3de4493b259ba5fa93cb7cf77a9",
+      "final_arms": {
+        "control-small": "9666b765ee546ac9165a827fa5fd8c52939fa3de4493b259ba5fa93cb7cf77a9",
+        "reuse-small": "9666b765ee546ac9165a827fa5fd8c52939fa3de4493b259ba5fa93cb7cf77a9"
+      }
+    },
+    "tools/dev/analyze_world_cover_profile.py": {
+      "current_sha256": "e4e3ab83c56aeccdb1a5dd6766c6a46a493d20b3e8207dce83d08c99a72f56e0",
+      "final_arms": {
+        "control-small": "e4e3ab83c56aeccdb1a5dd6766c6a46a493d20b3e8207dce83d08c99a72f56e0",
+        "reuse-small": "e4e3ab83c56aeccdb1a5dd6766c6a46a493d20b3e8207dce83d08c99a72f56e0"
+      }
+    }
+  },
+  "uid_sidecars": {
+    "tools/tests/WorldCoverSnapshotReuseTest.gd.uid": {
+      "current_sha256": "7f3b7ca8d6c5d3d00711853b14d7cd50a2f829d536b060a4703fefc3b592ff46",
+      "launch_binding": "Not included in monitor's source extension set; no launch identity claim."
+    },
+    "tools/dev/WorldCoverStreamingProfile.gd.uid": {
+      "current_sha256": "abff800e0da7b385cdedaa0d00e242d75bb1552a4cffbad497b7e53fb979da05",
+      "launch_binding": "Not included in monitor's source extension set; no launch identity claim."
+    }
+  }
+}

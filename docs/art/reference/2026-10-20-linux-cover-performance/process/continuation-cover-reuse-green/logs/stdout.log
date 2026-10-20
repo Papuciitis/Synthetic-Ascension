@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: first actual masonry snapshot uploads exactly its three data textures
+PASS: first snapshot retains actual masonry coverage
+PASS: unchanged forced collection reuses the exact packed snapshot
+PASS: unchanged coverage performs zero additional data uploads
+PASS: unchanged snapshot does not rebind persistent consumers
+PASS: a same-frame inherited fade reaches current coverage without throttling
+PASS: changed live alpha uploads its current snapshot immediately
+PASS: native current data texture contains the changed fractional strength
+PASS: a transformed face invalidates reuse and removes its old pixels
+PASS: camera movement within unchanged grid and record bounds reuses the same world snapshot
+PASS: camera movement changing grid origin rebuilds its world index
+PASS: camera grid-origin change reaches the already bound material
+PASS: a new consumer receives the current snapshot immediately
+PASS: new-consumer binding is counted independently of a snapshot rebuild
+PASS: reuse prunes a dead consumer without retaining its material
+PASS: streamed foreground appearance updates current geometry and alpha binding
+PASS: unchanged sprite semantic coverage reuses despite its newly allocated descriptor WeakRef
+PASS: a replacement original texture invalidates semantic identity and its bound alpha array
+PASS: live sprite movement invalidates cached packed coordinates
+PASS: cutaway/hidden owners clear existing consumer coverage immediately
+PASS: unchanged empty coverage also avoids redundant uploads
+PASS: same-source forced-upload control reproduces three actual data uploads per refresh
+PASS: leaving forced-upload control resumes exact snapshot reuse immediately
+PASS: unloaded hidden owners cannot revive stale coverage
+WorldCoverSnapshotReuseTest: 24 passed, 0 failed

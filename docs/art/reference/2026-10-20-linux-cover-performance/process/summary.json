@@ -1,0 +1,107 @@
+[
+  {
+    "label": "cover-stream-baseline-small",
+    "classification": "failed_first_waypoint_pilot",
+    "note": "Distance-scaled input stopped below the actual .2 movement deadzone; 0/50 route cells and zero activations. Not a movement baseline.",
+    "assertions": null,
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: EliteCrowdFightPreview: Live profile failed to complete its physically walked route",
+      "ERROR: EliteCrowdFightPreview: Route did not exercise real chunk crossing and live activation"
+    ]
+  },
+  {
+    "label": "cover-stream-baseline-small2",
+    "classification": "clean_original_movement_baseline",
+    "note": "Full-strength production input completes the actual occupied streaming route before reuse changes; later visual/cue sources differ from final pair.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "continuation-cover-reuse-red",
+    "classification": "invalid_parse_attempt",
+    "note": "weakref() inferred Variant under warning-as-error policy; interrupted after parse diagnostics. No feature RED demonstrated.",
+    "assertions": null,
+    "actual_exit": -15,
+    "stop_reason": "interrupted",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: The variable type is being inferred from a Variant value, so it will be typed as Variant. (Warning treated as error.)",
+      "ERROR: Failed to load script \"res://tools/tests/WorldCoverSnapshotReuseTest.gd\" with error \"Parse error\"."
+    ]
+  },
+  {
+    "label": "continuation-cover-reuse-red2",
+    "classification": "clean_feature_red",
+    "note": "Expected missing snapshot/upload/reuse/material-bind counters; no unrelated diagnostics.",
+    "assertions": {
+      "test": "WorldCoverSnapshotReuseTest",
+      "passed": 0,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: FAIL: shared cover exposes exact snapshot/upload/reuse/material-bind counters before its refresh work can be bounded"
+    ]
+  },
+  {
+    "label": "continuation-cover-reuse-green",
+    "classification": "clean_native_check",
+    "note": "Exact reuse and live invalidation, including actual native fractional uploaded data.",
+    "assertions": {
+      "test": "WorldCoverSnapshotReuseTest",
+      "passed": 24,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "continuation-cover-reuse-headless",
+    "classification": "clean_headless_check",
+    "note": "Same semantic controls without native image readback assertion.",
+    "assertions": {
+      "test": "WorldCoverSnapshotReuseTest",
+      "passed": 23,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "continuation-cover-regression",
+    "classification": "clean_existing_regression",
+    "note": "Existing shared WorldCover contract, independently retained.",
+    "assertions": {
+      "test": "WorldCoverTest",
+      "passed": 25,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "cover-stream-final-control-small",
+    "classification": "clean_final_policy_profile",
+    "note": "Explicit root-selected final no-readback actual occupied streaming sample; opposite policy on source-matched candidate.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  },
+  {
+    "label": "cover-stream-final-reuse-small",
+    "classification": "clean_final_policy_profile",
+    "note": "Explicit root-selected final no-readback actual occupied streaming sample; opposite policy on source-matched candidate.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": []
+  }
+]

@@ -1,0 +1,557 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/home/user/Nauris/Synthetic-Ascension",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-cover-reuse-red2/logs/engine.log",
+    "--flush-output",
+    "--rendering-driver",
+    "opengl3",
+    "--audio-driver",
+    "Dummy",
+    "res://tools/tests/WorldCoverSnapshotReuseTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /home/user/Nauris/Synthetic-Ascension --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-cover-reuse-red2/logs/engine.log --flush-output --rendering-driver opengl3 --audio-driver Dummy res://tools/tests/WorldCoverSnapshotReuseTest.tscn",
+  "project_root": "/home/user/Nauris/Synthetic-Ascension",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-cover-reuse-red2",
+  "actual_exit": 1,
+  "stop_reason": "nonzero_exit",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 19811.9765625,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 54.0234375,
+      "cpu_seconds": 0.07,
+      "available_mb": 19737.46875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 0.183,
+      "rss_mb": 59.53125,
+      "cpu_seconds": 0.22,
+      "available_mb": 19726.76171875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 0.357,
+      "rss_mb": 76.8125,
+      "cpu_seconds": 0.24,
+      "available_mb": 19702.6171875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 0.528,
+      "rss_mb": 138.609375,
+      "cpu_seconds": 0.4,
+      "available_mb": 19594.046875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 0.702,
+      "rss_mb": 164.34765625,
+      "cpu_seconds": 0.6,
+      "available_mb": 19527.4921875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 0.88,
+      "rss_mb": 165.6328125,
+      "cpu_seconds": 0.75,
+      "available_mb": 19526.83984375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 1.035,
+      "rss_mb": 172.8125,
+      "cpu_seconds": 0.91,
+      "available_mb": 19525.1328125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 1.186,
+      "rss_mb": 176.1875,
+      "cpu_seconds": 1.07,
+      "available_mb": 19521.43359375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 1.344,
+      "rss_mb": 184.79296875,
+      "cpu_seconds": 1.23,
+      "available_mb": 19514.09375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 1.496,
+      "rss_mb": 184.79296875,
+      "cpu_seconds": 1.38,
+      "available_mb": 19513.8828125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 1.642,
+      "rss_mb": 184.79296875,
+      "cpu_seconds": 1.55,
+      "available_mb": 19513.6484375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 1.802,
+      "rss_mb": 185.91796875,
+      "cpu_seconds": 1.81,
+      "available_mb": 19512.1875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 2.06,
+      "rss_mb": 196.8203125,
+      "cpu_seconds": 1.95,
+      "available_mb": 19497.078125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 2.208,
+      "rss_mb": 227.71484375,
+      "cpu_seconds": 2.09,
+      "available_mb": 19503.48046875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 2.35,
+      "rss_mb": 259.6171875,
+      "cpu_seconds": 2.24,
+      "available_mb": 19465.8984375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 2.489,
+      "rss_mb": 290.30078125,
+      "cpu_seconds": 2.38,
+      "available_mb": 19434.5234375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 2.631,
+      "rss_mb": 303.8515625,
+      "cpu_seconds": 2.53,
+      "available_mb": 19399.1796875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 2.777,
+      "rss_mb": 313.51171875,
+      "cpu_seconds": 2.67,
+      "available_mb": 19301.37109375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 2.919,
+      "rss_mb": 314.01171875,
+      "cpu_seconds": 2.81,
+      "available_mb": 19204.53125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 3.063,
+      "rss_mb": 314.51171875,
+      "cpu_seconds": 2.97,
+      "available_mb": 19069.49609375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 3.209,
+      "rss_mb": 314.76171875,
+      "cpu_seconds": 3.13,
+      "available_mb": 19059.98046875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 3.371,
+      "rss_mb": 314.76171875,
+      "cpu_seconds": 3.27,
+      "available_mb": 19059.98046875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 3.514,
+      "rss_mb": 314.88671875,
+      "cpu_seconds": 3.43,
+      "available_mb": 19062.35546875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 3.659,
+      "rss_mb": 327.26171875,
+      "cpu_seconds": 3.57,
+      "available_mb": 19050.6640625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 3.804,
+      "rss_mb": 350.01171875,
+      "cpu_seconds": 3.72,
+      "available_mb": 19027.56640625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 3.946,
+      "rss_mb": 354.76171875,
+      "cpu_seconds": 3.86,
+      "available_mb": 19025.515625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 4.091,
+      "rss_mb": 370.05859375,
+      "cpu_seconds": 4.02,
+      "available_mb": 18986.2578125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 4.235,
+      "rss_mb": 370.05859375,
+      "cpu_seconds": 4.16,
+      "available_mb": 18986.2578125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 4.379,
+      "rss_mb": 370.2421875,
+      "cpu_seconds": 4.31,
+      "available_mb": 18964.640625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 4.528,
+      "rss_mb": 370.2421875,
+      "cpu_seconds": 4.45,
+      "available_mb": 18964.6484375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 4.672,
+      "rss_mb": 370.2421875,
+      "cpu_seconds": 4.62,
+      "available_mb": 18934.13671875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 4.829,
+      "rss_mb": 370.2421875,
+      "cpu_seconds": 4.76,
+      "available_mb": 18934.14453125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 4.974,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 4.91,
+      "available_mb": 18935.81640625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 5.121,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 5.07,
+      "available_mb": 18963.36328125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 5.273,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 5.22,
+      "available_mb": 18963.36328125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 5.42,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 5.37,
+      "available_mb": 18963.375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 5.563,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 5.52,
+      "available_mb": 18964.6015625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 5.713,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 5.67,
+      "available_mb": 18964.6015625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 5.857,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 5.82,
+      "available_mb": 18964.6015625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 6.007,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 5.97,
+      "available_mb": 18977.10546875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 6.152,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 6.12,
+      "available_mb": 18977.10546875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 6.301,
+      "rss_mb": 370.3671875,
+      "cpu_seconds": 6.26,
+      "available_mb": 18909.80859375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 6.442,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 6.42,
+      "available_mb": 18865.9375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 6.594,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 6.57,
+      "available_mb": 18870.0,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 6.743,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 6.73,
+      "available_mb": 18868.2890625,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 6.891,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 6.88,
+      "available_mb": 18870.07421875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 7.039,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 7.03,
+      "available_mb": 18881.6484375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 7.188,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 7.18,
+      "available_mb": 18879.9375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 7.333,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 7.32,
+      "available_mb": 18871.953125,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 7.476,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 7.47,
+      "available_mb": 18868.24609375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 7.62,
+      "rss_mb": 370.87109375,
+      "cpu_seconds": 7.62,
+      "available_mb": 18845.59375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 7.766,
+      "rss_mb": 377.0625,
+      "cpu_seconds": 7.78,
+      "available_mb": 18794.6171875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 7.926,
+      "rss_mb": 378.0625,
+      "cpu_seconds": 7.93,
+      "available_mb": 18805.421875,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 8.076,
+      "rss_mb": 378.4375,
+      "cpu_seconds": 8.09,
+      "available_mb": 18805.08984375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 8.227,
+      "rss_mb": 362.65234375,
+      "cpu_seconds": 8.21,
+      "available_mb": 18939.24609375,
+      "pids": [
+        136346
+      ]
+    },
+    {
+      "elapsed_seconds": 8.388,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 19180.8984375,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 8.549,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 19380.27734375,
+      "pids": []
+    }
+  ],
+  "diagnostics": [
+    "ERROR: FAIL: shared cover exposes exact snapshot/upload/reuse/material-bind counters before its refresh work can be bounded"
+  ],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T16:13:27.704450+00:00",
+  "limits": {
+    "timeout_seconds": 300.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+  "pid": 136346,
+  "elapsed_seconds": 9.766,
+  "ended_utc": "2026-10-20T16:13:37.470715+00:00",
+  "runner_exit": 1,
+  "original_run_results_sha256": "3e855c75f225c9ca11e79cd999cb3c5c0b06c666f457d546a833c841b13c4f2b",
+  "source_record": "process/sources/06383ca8d701fd0190f805a15f4570015b28748d6124b239e16a1f5decc3fd7d.json",
+  "packet_classification": "clean_feature_red",
+  "packet_note": "Expected missing snapshot/upload/reuse/material-bind counters; no unrelated diagnostics."
+}

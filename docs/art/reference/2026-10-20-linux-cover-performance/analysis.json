@@ -1,0 +1,1654 @@
+{
+  "original_baseline": {
+    "file": "profiles/cover-stream-baseline-small2/profile-info.json",
+    "sha256": "3d82a21e799c0736e9a824ab9cd87fd9c0f8076a93ff39b720f70ff3b3215a34",
+    "seed": 16102026,
+    "segment": 2,
+    "theme": "service_courtyards",
+    "route": {
+      "cells": "[(10, 115), (11, 115), (12, 115), (13, 115), (14, 115), (15, 115), (16, 115), (17, 115), (18, 115), (19, 115), (20, 115), (21, 115), (22, 115), (23, 115), (24, 115), (25, 115), (26, 115), (27, 115), (28, 115), (29, 115), (30, 115), (31, 115), (32, 115), (33, 115), (34, 115), (33, 115), (32, 115), (31, 115), (30, 115), (29, 115), (28, 115), (27, 115), (26, 115), (25, 115), (24, 115), (23, 115), (22, 115), (21, 115), (20, 115), (19, 115), (18, 115), (17, 115), (16, 115), (15, 115), (14, 115), (13, 115), (12, 115), (11, 115), (10, 115), (9, 115)]",
+      "cells_sha256": "42aa099c266e7401be15076c300925ebbd24253dbcc1b8070b47e1f01c5bf414",
+      "chunks_visited": "[(0, 3), (1, 3)]",
+      "completed": true,
+      "completed_cells": 50,
+      "distance_walked_px": 3211.97276997007,
+      "planned_cells": 50,
+      "start": "(608.0, 7392.0)",
+      "waypoints": [
+        {
+          "path_end_index": 24,
+          "requested": "(2208.0, 7392.0)",
+          "resolved": "(2208.0, 7392.0)"
+        },
+        {
+          "path_end_index": 49,
+          "requested": "(608.0, 7392.0)",
+          "resolved": "(608.0, 7392.0)"
+        }
+      ]
+    },
+    "render": {
+      "adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+      "backend": "gl_compatibility",
+      "fps_cap": 0,
+      "logical_viewport": "(1920.0, 1080.0)",
+      "native_window": "(960, 540)",
+      "vsync_mode": 0
+    },
+    "wall_seconds": 30.24686,
+    "simulation_seconds": 30.0708333333329,
+    "warmup_simulation_seconds": 6.0,
+    "distributions": {
+      "frame_wall_ms": {
+        "count": 2217,
+        "min": 5.36,
+        "p50": 12.987,
+        "p95": 19.759,
+        "p99": 26.386,
+        "max": 85.339,
+        "mean": 13.638445196211096
+      },
+      "cover_refresh_ms": {
+        "count": 2217,
+        "min": 2.053,
+        "p50": 4.065,
+        "p95": 6.378,
+        "p99": 7.228,
+        "max": 16.643,
+        "mean": 4.233024808299504
+      },
+      "engine_process_ms": {
+        "count": 2217,
+        "min": 16.513,
+        "p50": 20.868,
+        "p95": 59.704,
+        "p99": 87.985,
+        "max": 87.985,
+        "mean": 24.80453540820929
+      },
+      "engine_physics_ms": {
+        "count": 2217,
+        "min": 1.892,
+        "p50": 3.38,
+        "p95": 6.565,
+        "p99": 10.386,
+        "max": 10.386,
+        "mean": 3.743457374830853
+      },
+      "instrumentation_usec": {
+        "count": 2217,
+        "min": 31.0,
+        "p50": 51.0,
+        "p95": 119.0,
+        "p99": 230.0,
+        "max": 387.0,
+        "mean": 60.29860171402797
+      },
+      "enemies": {
+        "count": 2217,
+        "min": 0.0,
+        "p50": 11.0,
+        "p95": 15.0,
+        "p99": 16.0,
+        "max": 17.0,
+        "mean": 10.536310329273794
+      },
+      "projectiles": {
+        "count": 2217,
+        "min": 0.0,
+        "p50": 3.0,
+        "p95": 4.0,
+        "p99": 4.0,
+        "max": 4.0,
+        "mean": 2.9711321605773566
+      },
+      "draw_calls": {
+        "count": 2217,
+        "min": 280.0,
+        "p50": 377.0,
+        "p95": 499.0,
+        "p99": 520.0,
+        "max": 527.0,
+        "mean": 379.5769057284619
+      },
+      "primitives": {
+        "count": 2217,
+        "min": 15576.0,
+        "p50": 20091.0,
+        "p95": 26860.0,
+        "p99": 27659.0,
+        "max": 27705.0,
+        "mean": 20953.356788452864
+      },
+      "cover_primitives": {
+        "count": 2217,
+        "min": 0.0,
+        "p50": 57.0,
+        "p95": 73.0,
+        "p99": 74.0,
+        "max": 74.0,
+        "mean": 46.31213351375733
+      },
+      "cover_candidates": {
+        "count": 2217,
+        "min": 0.0,
+        "p50": 25.0,
+        "p95": 25.0,
+        "p99": 25.0,
+        "max": 25.0,
+        "mean": 20.06720793865584
+      }
+    },
+    "work_accounting": {
+      "generation_delta": 2217,
+      "source_reads_delta": 0,
+      "alpha_array_rebuild_observations": 0,
+      "force_uploads": false,
+      "source_derived_data_uploads": 6651,
+      "upload_count_method": "Unmodified baseline source-derived three uploads per generation; not instrumented GPU activity."
+    },
+    "stream_activations": 3,
+    "stream_max_queue": 2,
+    "route_quarters": {
+      "0": {
+        "frame_wall_ms": {
+          "count": 535,
+          "min": 5.36,
+          "p50": 13.443,
+          "p95": 18.822,
+          "p99": 26.707,
+          "max": 85.339,
+          "mean": 14.082373831775701
+        },
+        "cover_refresh_ms": {
+          "count": 535,
+          "min": 2.659,
+          "p50": 4.401,
+          "p95": 6.698,
+          "p99": 7.328,
+          "max": 7.673,
+          "mean": 4.649132710280374
+        },
+        "enemies": {
+          "count": 535,
+          "min": 0.0,
+          "p50": 5.0,
+          "p95": 10.0,
+          "p99": 11.0,
+          "max": 11.0,
+          "mean": 5.166355140186916
+        },
+        "projectiles": {
+          "count": 535,
+          "min": 1.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 3.1158878504672898
+        }
+      },
+      "1": {
+        "frame_wall_ms": {
+          "count": 603,
+          "min": 7.792,
+          "p50": 11.296,
+          "p95": 16.031,
+          "p99": 18.588,
+          "max": 25.813,
+          "mean": 11.6424543946932
+        },
+        "cover_refresh_ms": {
+          "count": 603,
+          "min": 2.053,
+          "p50": 3.522,
+          "p95": 5.227,
+          "p99": 5.999,
+          "max": 6.651,
+          "mean": 3.621971807628524
+        },
+        "enemies": {
+          "count": 603,
+          "min": 8.0,
+          "p50": 10.0,
+          "p95": 12.0,
+          "p99": 14.0,
+          "max": 14.0,
+          "mean": 10.043117744610282
+        },
+        "projectiles": {
+          "count": 603,
+          "min": 2.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 3.3134328358208953
+        }
+      },
+      "2": {
+        "frame_wall_ms": {
+          "count": 632,
+          "min": 7.611,
+          "p50": 13.238,
+          "p95": 21.55,
+          "p99": 32.788,
+          "max": 62.68,
+          "mean": 14.225400316455696
+        },
+        "cover_refresh_ms": {
+          "count": 632,
+          "min": 2.166,
+          "p50": 4.032,
+          "p95": 6.099,
+          "p99": 7.496,
+          "max": 16.643,
+          "mean": 4.137867088607595
+        },
+        "enemies": {
+          "count": 632,
+          "min": 11.0,
+          "p50": 14.0,
+          "p95": 15.0,
+          "p99": 17.0,
+          "max": 17.0,
+          "mean": 13.515822784810126
+        },
+        "projectiles": {
+          "count": 632,
+          "min": 0.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 2.4556962025316458
+        }
+      },
+      "3": {
+        "frame_wall_ms": {
+          "count": 447,
+          "min": 9.058,
+          "p50": 14.464,
+          "p95": 21.467,
+          "p99": 25.3,
+          "max": 27.797,
+          "mean": 14.969821029082775
+        },
+        "cover_refresh_ms": {
+          "count": 447,
+          "min": 2.719,
+          "p50": 4.496,
+          "p95": 6.715,
+          "p99": 7.319,
+          "max": 8.736,
+          "mean": 4.693845637583892
+        },
+        "enemies": {
+          "count": 447,
+          "min": 12.0,
+          "p50": 13.0,
+          "p95": 15.0,
+          "p99": 16.0,
+          "max": 16.0,
+          "mean": 13.416107382550335
+        },
+        "projectiles": {
+          "count": 447,
+          "min": 1.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 3.0648769574944073
+        }
+      }
+    },
+    "density_strata": {
+      "empty": {
+        "frame_wall_ms": {
+          "count": 20,
+          "min": 10.934,
+          "p50": 13.071,
+          "p95": 14.464,
+          "p99": 15.216,
+          "max": 15.216,
+          "mean": 13.15165
+        },
+        "cover_refresh_ms": {
+          "count": 20,
+          "min": 3.203,
+          "p50": 4.552,
+          "p95": 6.69,
+          "p99": 7.123,
+          "max": 7.123,
+          "mean": 4.7170000000000005
+        },
+        "projectiles": {
+          "count": 20,
+          "min": 1.0,
+          "p50": 1.0,
+          "p95": 2.0,
+          "p99": 2.0,
+          "max": 2.0,
+          "mean": 1.45
+        }
+      },
+      "1-7": {
+        "frame_wall_ms": {
+          "count": 382,
+          "min": 5.36,
+          "p50": 13.576,
+          "p95": 18.946,
+          "p99": 28.087,
+          "max": 85.339,
+          "mean": 14.36456282722513
+        },
+        "cover_refresh_ms": {
+          "count": 382,
+          "min": 2.659,
+          "p50": 4.537,
+          "p95": 6.729,
+          "p99": 7.349,
+          "max": 7.673,
+          "mean": 4.766437172774869
+        },
+        "projectiles": {
+          "count": 382,
+          "min": 1.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 3.183246073298429
+        }
+      },
+      "8-15": {
+        "frame_wall_ms": {
+          "count": 1785,
+          "min": 7.611,
+          "p50": 12.798,
+          "p95": 19.759,
+          "p99": 25.813,
+          "max": 43.438,
+          "mean": 13.429613445378152
+        },
+        "cover_refresh_ms": {
+          "count": 1785,
+          "min": 2.053,
+          "p50": 3.958,
+          "p95": 6.189,
+          "p99": 7.193,
+          "max": 9.634,
+          "mean": 4.105161904761904
+        },
+        "projectiles": {
+          "count": 1785,
+          "min": 0.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 2.9406162464985997
+        }
+      },
+      "16+": {
+        "frame_wall_ms": {
+          "count": 30,
+          "min": 11.107,
+          "p50": 13.48,
+          "p95": 45.509,
+          "p99": 62.68,
+          "max": 62.68,
+          "mean": 17.142566666666667
+        },
+        "cover_refresh_ms": {
+          "count": 30,
+          "min": 3.242,
+          "p50": 4.086,
+          "p95": 6.468,
+          "p99": 16.643,
+          "max": 16.643,
+          "mean": 4.7261
+        },
+        "projectiles": {
+          "count": 30,
+          "min": 2.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 3.1
+        }
+      }
+    },
+    "combat": {
+      "ambient_spawner_active": true,
+      "deaths": 84,
+      "encounter_beats": true,
+      "hits": 84,
+      "max_projectiles": 4,
+      "spawner": {
+        "alive": 12,
+        "authored_wave_running": false,
+        "cap": 180,
+        "cull_refill_left": 0.0,
+        "elapsed": 36.7207682777779,
+        "force_queue": 0,
+        "interval": 0.934968359085134,
+        "pending_scenes": 0,
+        "pending_spawns": 0,
+        "rite_pressure_active": false,
+        "spawn_debt": 0,
+        "spawn_pause_left": 0.0,
+        "spawning_enabled": true
+      },
+      "weapon_fires": 174
+    },
+    "source_record": {
+      "file": "process/sources/1ba7f0b9b7e70becb2a65e0371fb67ca96787d44aa06fe4b25cd6d0d1417eece.json",
+      "original_run_results_sha256": "97749fecdf880fbf3fb395f54b8d608229bd2f9d9c9b5812fee22770804adbd9"
+    }
+  },
+  "final_policy_pair": {
+    "control": {
+      "file": "profiles/cover-stream-final-control-small/profile-info.json",
+      "sha256": "c7054d3b1f7a8ee2d5cb896c9fbfe5e7d9ede5af33db47954345014335f3b789",
+      "seed": 16102026,
+      "segment": 2,
+      "theme": "service_courtyards",
+      "route": {
+        "cells": "[(10, 115), (11, 115), (12, 115), (13, 115), (14, 115), (15, 115), (16, 115), (17, 115), (18, 115), (19, 115), (20, 115), (21, 115), (22, 115), (23, 115), (24, 115), (25, 115), (26, 115), (27, 115), (28, 115), (29, 115), (30, 115), (31, 115), (32, 115), (33, 115), (34, 115), (33, 115), (32, 115), (31, 115), (30, 115), (29, 115), (28, 115), (27, 115), (26, 115), (25, 115), (24, 115), (23, 115), (22, 115), (21, 115), (20, 115), (19, 115), (18, 115), (17, 115), (16, 115), (15, 115), (14, 115), (13, 115), (12, 115), (11, 115), (10, 115), (9, 115)]",
+        "cells_sha256": "42aa099c266e7401be15076c300925ebbd24253dbcc1b8070b47e1f01c5bf414",
+        "chunks_visited": "[(0, 3), (1, 3)]",
+        "completed": true,
+        "completed_cells": 50,
+        "distance_walked_px": 3223.27523000911,
+        "planned_cells": 50,
+        "start": "(608.0, 7392.0)",
+        "waypoints": [
+          {
+            "path_end_index": 24,
+            "requested": "(2208.0, 7392.0)",
+            "resolved": "(2208.0, 7392.0)"
+          },
+          {
+            "path_end_index": 49,
+            "requested": "(608.0, 7392.0)",
+            "resolved": "(608.0, 7392.0)"
+          }
+        ]
+      },
+      "render": {
+        "adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+        "backend": "gl_compatibility",
+        "fps_cap": 0,
+        "logical_viewport": "(1920.0, 1080.0)",
+        "native_window": "(960, 540)",
+        "vsync_mode": 0
+      },
+      "wall_seconds": 28.828018,
+      "simulation_seconds": 28.7999999999996,
+      "warmup_simulation_seconds": 6.0,
+      "distributions": {
+        "frame_wall_ms": {
+          "count": 1928,
+          "min": 7.8,
+          "p50": 14.761,
+          "p95": 20.662,
+          "p99": 24.32,
+          "max": 61.031,
+          "mean": 14.947308091286306
+        },
+        "cover_refresh_ms": {
+          "count": 1928,
+          "min": 3.408,
+          "p50": 6.123,
+          "p95": 9.175,
+          "p99": 10.711,
+          "max": 29.539,
+          "mean": 6.3551872406639
+        },
+        "engine_process_ms": {
+          "count": 1928,
+          "min": 17.273,
+          "p50": 20.603,
+          "p95": 53.726,
+          "p99": 75.696,
+          "max": 75.696,
+          "mean": 23.887103734439837
+        },
+        "engine_physics_ms": {
+          "count": 1928,
+          "min": 1.87,
+          "p50": 3.296,
+          "p95": 4.831,
+          "p99": 5.863,
+          "max": 5.863,
+          "mean": 3.4488609958506227
+        },
+        "instrumentation_usec": {
+          "count": 1928,
+          "min": 31.0,
+          "p50": 47.0,
+          "p95": 110.0,
+          "p99": 194.0,
+          "max": 409.0,
+          "mean": 57.447095435684645
+        },
+        "enemies": {
+          "count": 1928,
+          "min": 0.0,
+          "p50": 16.0,
+          "p95": 21.0,
+          "p99": 23.0,
+          "max": 23.0,
+          "mean": 14.220954356846473
+        },
+        "projectiles": {
+          "count": 1928,
+          "min": 0.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0,
+          "max": 4.0,
+          "mean": 2.969917012448133
+        },
+        "draw_calls": {
+          "count": 1928,
+          "min": 276.0,
+          "p50": 377.0,
+          "p95": 503.0,
+          "p99": 523.0,
+          "max": 527.0,
+          "mean": 377.4963692946058
+        },
+        "primitives": {
+          "count": 1928,
+          "min": 14514.0,
+          "p50": 16611.0,
+          "p95": 25520.0,
+          "p99": 26232.0,
+          "max": 27315.0,
+          "mean": 18354.201244813277
+        },
+        "cover_primitives": {
+          "count": 1928,
+          "min": 0.0,
+          "p50": 74.0,
+          "p95": 92.0,
+          "p99": 93.0,
+          "max": 93.0,
+          "mean": 59.08402489626556
+        },
+        "cover_candidates": {
+          "count": 1928,
+          "min": 0.0,
+          "p50": 27.0,
+          "p95": 27.0,
+          "p99": 27.0,
+          "max": 27.0,
+          "mean": 21.40612033195021
+        },
+        "cover_collection_ms": {
+          "count": 1928,
+          "min": 3.119,
+          "p50": 5.34,
+          "p95": 8.088,
+          "p99": 9.36,
+          "max": 28.151,
+          "mean": 5.583941908713693
+        },
+        "cover_comparison_ms": {
+          "count": 1928,
+          "min": 0.003,
+          "p50": 0.168,
+          "p95": 0.316,
+          "p99": 0.424,
+          "max": 0.699,
+          "mean": 0.1609336099585062
+        },
+        "cover_snapshot_ms": {
+          "count": 1928,
+          "min": 0.129,
+          "p50": 0.41,
+          "p95": 0.793,
+          "p99": 0.992,
+          "max": 4.094,
+          "mean": 0.43249014522821577
+        },
+        "cover_binding_ms": {
+          "count": 1928,
+          "min": 0.096,
+          "p50": 0.139,
+          "p95": 0.257,
+          "p99": 0.338,
+          "max": 2.214,
+          "mean": 0.15886929460580915
+        }
+      },
+      "work_accounting": {
+        "generation_delta": 1928,
+        "source_reads_delta": 0,
+        "alpha_array_rebuild_observations": 0,
+        "force_uploads": true,
+        "snapshot_builds_delta": 1928,
+        "snapshot_reuses_delta": 0,
+        "data_uploads_delta": 5784,
+        "data_upload_bytes_delta": 22772960,
+        "material_binds_delta": 33126,
+        "alpha_uploads_delta": 0,
+        "upload_count_method": "Instrumented CPU calls/requested payload bytes; not measured GPU transfer/stall time.",
+        "alpha_upload_bytes_delta": 0
+      },
+      "stream_activations": 3,
+      "stream_max_queue": 2,
+      "route_quarters": {
+        "0": {
+          "frame_wall_ms": {
+            "count": 450,
+            "min": 8.93,
+            "p50": 15.529,
+            "p95": 21.157,
+            "p99": 27.502,
+            "max": 61.031,
+            "mean": 15.967186666666667
+          },
+          "cover_refresh_ms": {
+            "count": 450,
+            "min": 4.499,
+            "p50": 6.836,
+            "p95": 9.883,
+            "p99": 12.045,
+            "max": 29.539,
+            "mean": 7.167931111111111
+          },
+          "enemies": {
+            "count": 450,
+            "min": 0.0,
+            "p50": 5.0,
+            "p95": 12.0,
+            "p99": 12.0,
+            "max": 12.0,
+            "mean": 6.131111111111111
+          },
+          "projectiles": {
+            "count": 450,
+            "min": 1.0,
+            "p50": 3.0,
+            "p95": 4.0,
+            "p99": 4.0,
+            "max": 4.0,
+            "mean": 3.1844444444444444
+          }
+        },
+        "1": {
+          "frame_wall_ms": {
+            "count": 496,
+            "min": 8.217,
+            "p50": 13.41,
+            "p95": 17.408,
+            "p99": 20.32,
+            "max": 27.474,
+            "mean": 13.499183467741936
+          },
+          "cover_refresh_ms": {
+            "count": 496,
+            "min": 3.408,
+            "p50": 5.572,
+            "p95": 8.184,
+            "p99": 9.318,
+            "max": 9.885,
+            "mean": 5.7419092741935485
+          },
+          "enemies": {
+            "count": 496,
+            "min": 9.0,
+            "p50": 12.0,
+            "p95": 18.0,
+            "p99": 19.0,
+            "max": 19.0,
+            "mean": 12.725806451612904
+          },
+          "projectiles": {
+            "count": 496,
+            "min": 2.0,
+            "p50": 3.0,
+            "p95": 4.0,
+            "p99": 4.0,
+            "max": 4.0,
+            "mean": 3.2056451612903225
+          }
+        },
+        "2": {
+          "frame_wall_ms": {
+            "count": 573,
+            "min": 7.8,
+            "p50": 14.175,
+            "p95": 20.621,
+            "p99": 23.997,
+            "max": 32.371,
+            "mean": 14.394956369982546
+          },
+          "cover_refresh_ms": {
+            "count": 573,
+            "min": 3.452,
+            "p50": 5.666,
+            "p95": 8.835,
+            "p99": 10.861,
+            "max": 12.067,
+            "mean": 5.873720767888307
+          },
+          "enemies": {
+            "count": 573,
+            "min": 15.0,
+            "p50": 18.0,
+            "p95": 20.0,
+            "p99": 21.0,
+            "max": 22.0,
+            "mean": 18.146596858638745
+          },
+          "projectiles": {
+            "count": 573,
+            "min": 0.0,
+            "p50": 2.0,
+            "p95": 4.0,
+            "p99": 4.0,
+            "max": 4.0,
+            "mean": 2.4415357766143106
+          }
+        },
+        "3": {
+          "frame_wall_ms": {
+            "count": 409,
+            "min": 10.256,
+            "p50": 16.118,
+            "p95": 21.585,
+            "p99": 25.48,
+            "max": 28.757,
+            "mean": 16.355185819070904
+          },
+          "cover_refresh_ms": {
+            "count": 409,
+            "min": 4.491,
+            "p50": 6.667,
+            "p95": 9.456,
+            "p99": 10.227,
+            "max": 11.159,
+            "mean": 6.879224938875306
+          },
+          "enemies": {
+            "count": 409,
+            "min": 16.0,
+            "p50": 20.0,
+            "p95": 23.0,
+            "p99": 23.0,
+            "max": 23.0,
+            "mean": 19.43520782396088
+          },
+          "projectiles": {
+            "count": 409,
+            "min": 2.0,
+            "p50": 3.0,
+            "p95": 4.0,
+            "p99": 4.0,
+            "max": 4.0,
+            "mean": 3.1882640586797066
+          }
+        }
+      },
+      "density_strata": {
+        "empty": {
+          "frame_wall_ms": {
+            "count": 31,
+            "min": 10.94,
+            "p50": 14.589,
+            "p95": 16.999,
+            "p99": 18.85,
+            "max": 18.85,
+            "mean": 14.558709677419355
+          },
+          "cover_refresh_ms": {
+            "count": 31,
+            "min": 5.122,
+            "p50": 6.77,
+            "p95": 8.522,
+            "p99": 8.91,
+            "max": 8.91,
+            "mean": 6.810483870967742
+          },
+          "projectiles": {
+            "count": 31,
+            "min": 1.0,
+            "p50": 2.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0,
+            "mean": 2.4516129032258065
+          }
+        },
+        "1-7": {
+          "frame_wall_ms": {
+            "count": 230,
+            "min": 8.93,
+            "p50": 15.495,
+            "p95": 21.46,
+            "p99": 31.229,
+            "max": 61.031,
+            "mean": 16.301821739130435
+          },
+          "cover_refresh_ms": {
+            "count": 230,
+            "min": 4.499,
+            "p50": 7.086,
+            "p95": 10.157,
+            "p99": 13.553,
+            "max": 29.539,
+            "mean": 7.461043478260869
+          },
+          "projectiles": {
+            "count": 230,
+            "min": 1.0,
+            "p50": 3.0,
+            "p95": 4.0,
+            "p99": 4.0,
+            "max": 4.0,
+            "mean": 3.0739130434782607
+          }
+        },
+        "8-15": {
+          "frame_wall_ms": {
+            "count": 593,
+            "min": 9.299,
+            "p50": 14.2,
+            "p95": 19.48,
+            "p99": 21.956,
+            "max": 27.474,
+            "mean": 14.40218381112985
+          },
+          "cover_refresh_ms": {
+            "count": 593,
+            "min": 3.695,
+            "p50": 6.01,
+            "p95": 8.668,
+            "p99": 10.711,
+            "max": 11.535,
+            "mean": 6.2372158516020235
+          },
+          "projectiles": {
+            "count": 593,
+            "min": 0.0,
+            "p50": 3.0,
+            "p95": 4.0,
+            "p99": 4.0,
+            "max": 4.0,
+            "mean": 3.1450252951096123
+          }
+        },
+        "16+": {
+          "frame_wall_ms": {
+            "count": 1074,
+            "min": 7.8,
+            "p50": 14.921,
+            "p95": 20.955,
+            "p99": 24.32,
+            "max": 32.371,
+            "mean": 14.969437616387337
+          },
+          "cover_refresh_ms": {
+            "count": 1074,
+            "min": 3.408,
+            "p50": 5.998,
+            "p95": 8.978,
+            "p99": 10.23,
+            "max": 12.067,
+            "mean": 6.1703603351955305
+          },
+          "projectiles": {
+            "count": 1074,
+            "min": 1.0,
+            "p50": 3.0,
+            "p95": 4.0,
+            "p99": 4.0,
+            "max": 4.0,
+            "mean": 2.8659217877094973
+          }
+        }
+      },
+      "combat": {
+        "ambient_spawner_active": true,
+        "deaths": 80,
+        "encounter_beats": true,
+        "hits": 80,
+        "max_projectiles": 4,
+        "spawner": {
+          "alive": 21,
+          "authored_wave_running": false,
+          "cap": 180,
+          "cull_refill_left": 0.0,
+          "elapsed": 35.5505798888888,
+          "force_queue": 0,
+          "interval": 0.935757837548987,
+          "pending_scenes": 0,
+          "pending_spawns": 0,
+          "rite_pressure_active": false,
+          "spawn_debt": 0,
+          "spawn_pause_left": 0.0,
+          "spawning_enabled": true
+        },
+        "weapon_fires": 168
+      },
+      "source_record": {
+        "file": "process/sources/f1b699ddc978f7e36e15b9353e1d35480f6fd415ac3d36e7f8a78257c8c75c67.json",
+        "original_run_results_sha256": "044a658a3434687d8634f6e5b5d77f6e8f0bb6ca505ffcbcc405fe84d19145e3"
+      }
+    },
+    "reuse": {
+      "file": "profiles/cover-stream-final-reuse-small/profile-info.json",
+      "sha256": "88a2ca2baa0a3bcb8bbc158d0064014e2847a25ccad0ae9c78195ac91ba7fdf3",
+      "seed": 16102026,
+      "segment": 2,
+      "theme": "service_courtyards",
+      "route": {
+        "cells": "[(10, 115), (11, 115), (12, 115), (13, 115), (14, 115), (15, 115), (16, 115), (17, 115), (18, 115), (19, 115), (20, 115), (21, 115), (22, 115), (23, 115), (24, 115), (25, 115), (26, 115), (27, 115), (28, 115), (29, 115), (30, 115), (31, 115), (32, 115), (33, 115), (34, 115), (33, 115), (32, 115), (31, 115), (30, 115), (29, 115), (28, 115), (27, 115), (26, 115), (25, 115), (24, 115), (23, 115), (22, 115), (21, 115), (20, 115), (19, 115), (18, 115), (17, 115), (16, 115), (15, 115), (14, 115), (13, 115), (12, 115), (11, 115), (10, 115), (9, 115)]",
+        "cells_sha256": "42aa099c266e7401be15076c300925ebbd24253dbcc1b8070b47e1f01c5bf414",
+        "chunks_visited": "[(0, 3), (1, 3)]",
+        "completed": true,
+        "completed_cells": 50,
+        "distance_walked_px": 3199.56976077706,
+        "planned_cells": 50,
+        "start": "(608.0, 7392.0)",
+        "waypoints": [
+          {
+            "path_end_index": 24,
+            "requested": "(2208.0, 7392.0)",
+            "resolved": "(2208.0, 7392.0)"
+          },
+          {
+            "path_end_index": 49,
+            "requested": "(608.0, 7392.0)",
+            "resolved": "(608.0, 7392.0)"
+          }
+        ]
+      },
+      "render": {
+        "adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+        "backend": "gl_compatibility",
+        "fps_cap": 0,
+        "logical_viewport": "(1920.0, 1080.0)",
+        "native_window": "(960, 540)",
+        "vsync_mode": 0
+      },
+      "wall_seconds": 29.770672,
+      "simulation_seconds": 29.6833333333329,
+      "warmup_simulation_seconds": 6.0,
+      "distributions": {
+        "frame_wall_ms": {
+          "count": 2006,
+          "min": 8.104,
+          "p50": 14.575,
+          "p95": 20.36,
+          "p99": 24.873,
+          "max": 42.776,
+          "mean": 14.838142073778663
+        },
+        "cover_refresh_ms": {
+          "count": 2006,
+          "min": 3.289,
+          "p50": 5.785,
+          "p95": 8.686,
+          "p99": 10.074,
+          "max": 15.736,
+          "mean": 6.035076769690927
+        },
+        "engine_process_ms": {
+          "count": 2006,
+          "min": 16.922,
+          "p50": 22.376,
+          "p95": 30.856,
+          "p99": 82.246,
+          "max": 82.246,
+          "mean": 24.188697407776672
+        },
+        "engine_physics_ms": {
+          "count": 2006,
+          "min": 1.815,
+          "p50": 3.283,
+          "p95": 4.638,
+          "p99": 12.774,
+          "max": 12.774,
+          "mean": 3.475872382851446
+        },
+        "instrumentation_usec": {
+          "count": 2006,
+          "min": 33.0,
+          "p50": 50.0,
+          "p95": 108.0,
+          "p99": 215.0,
+          "max": 473.0,
+          "mean": 59.46211365902293
+        },
+        "enemies": {
+          "count": 2006,
+          "min": 1.0,
+          "p50": 12.0,
+          "p95": 16.0,
+          "p99": 18.0,
+          "max": 18.0,
+          "mean": 11.390329012961116
+        },
+        "projectiles": {
+          "count": 2006,
+          "min": 1.0,
+          "p50": 4.0,
+          "p95": 5.0,
+          "p99": 5.0,
+          "max": 5.0,
+          "mean": 3.681455633100698
+        },
+        "draw_calls": {
+          "count": 2006,
+          "min": 299.0,
+          "p50": 394.0,
+          "p95": 518.0,
+          "p99": 524.0,
+          "max": 526.0,
+          "mean": 397.6455633100698
+        },
+        "primitives": {
+          "count": 2006,
+          "min": 14942.0,
+          "p50": 20575.0,
+          "p95": 26136.0,
+          "p99": 26198.0,
+          "max": 26220.0,
+          "mean": 20186.875373878363
+        },
+        "cover_primitives": {
+          "count": 2006,
+          "min": 0.0,
+          "p50": 74.0,
+          "p95": 92.0,
+          "p99": 93.0,
+          "max": 93.0,
+          "mean": 59.731804586241275
+        },
+        "cover_candidates": {
+          "count": 2006,
+          "min": 0.0,
+          "p50": 27.0,
+          "p95": 27.0,
+          "p99": 27.0,
+          "max": 27.0,
+          "mean": 21.638085742771686
+        },
+        "cover_collection_ms": {
+          "count": 2006,
+          "min": 3.245,
+          "p50": 5.525,
+          "p95": 8.334,
+          "p99": 9.55,
+          "max": 15.474,
+          "mean": 5.786576769690927
+        },
+        "cover_comparison_ms": {
+          "count": 2006,
+          "min": 0.003,
+          "p50": 0.194,
+          "p95": 0.382,
+          "p99": 0.51,
+          "max": 0.863,
+          "mean": 0.18853040877367896
+        },
+        "cover_snapshot_ms": {
+          "count": 2006,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.534,
+          "max": 1.1,
+          "mean": 0.017350448654037887
+        },
+        "cover_binding_ms": {
+          "count": 2006,
+          "min": 0.022,
+          "p50": 0.032,
+          "p95": 0.07,
+          "p99": 0.221,
+          "max": 0.924,
+          "mean": 0.040490528414755735
+        }
+      },
+      "work_accounting": {
+        "generation_delta": 2006,
+        "source_reads_delta": 0,
+        "alpha_array_rebuild_observations": 0,
+        "force_uploads": false,
+        "snapshot_builds_delta": 74,
+        "snapshot_reuses_delta": 1932,
+        "data_uploads_delta": 222,
+        "data_upload_bytes_delta": 848432,
+        "material_binds_delta": 1338,
+        "alpha_uploads_delta": 0,
+        "upload_count_method": "Instrumented CPU calls/requested payload bytes; not measured GPU transfer/stall time.",
+        "alpha_upload_bytes_delta": 0
+      },
+      "stream_activations": 3,
+      "stream_max_queue": 2,
+      "route_quarters": {
+        "0": {
+          "frame_wall_ms": {
+            "count": 478,
+            "min": 9.181,
+            "p50": 15.026,
+            "p95": 20.482,
+            "p99": 23.176,
+            "max": 30.125,
+            "mean": 15.213780334728034
+          },
+          "cover_refresh_ms": {
+            "count": 478,
+            "min": 3.831,
+            "p50": 5.899,
+            "p95": 8.994,
+            "p99": 9.889,
+            "max": 11.646,
+            "mean": 6.302479079497908
+          },
+          "enemies": {
+            "count": 478,
+            "min": 1.0,
+            "p50": 7.0,
+            "p95": 14.0,
+            "p99": 14.0,
+            "max": 14.0,
+            "mean": 7.320083682008368
+          },
+          "projectiles": {
+            "count": 478,
+            "min": 1.0,
+            "p50": 4.0,
+            "p95": 5.0,
+            "p99": 5.0,
+            "max": 5.0,
+            "mean": 3.602510460251046
+          }
+        },
+        "1": {
+          "frame_wall_ms": {
+            "count": 494,
+            "min": 8.251,
+            "p50": 13.338,
+            "p95": 18.153,
+            "p99": 22.951,
+            "max": 26.171,
+            "mean": 13.59087044534413
+          },
+          "cover_refresh_ms": {
+            "count": 494,
+            "min": 3.372,
+            "p50": 5.387,
+            "p95": 7.984,
+            "p99": 9.257,
+            "max": 11.199,
+            "mean": 5.555623481781376
+          },
+          "enemies": {
+            "count": 494,
+            "min": 9.0,
+            "p50": 12.0,
+            "p95": 13.0,
+            "p99": 13.0,
+            "max": 13.0,
+            "mean": 11.587044534412955
+          },
+          "projectiles": {
+            "count": 494,
+            "min": 3.0,
+            "p50": 4.0,
+            "p95": 5.0,
+            "p99": 5.0,
+            "max": 5.0,
+            "mean": 4.020242914979757
+          }
+        },
+        "2": {
+          "frame_wall_ms": {
+            "count": 630,
+            "min": 8.104,
+            "p50": 14.153,
+            "p95": 19.867,
+            "p99": 23.263,
+            "max": 35.64,
+            "mean": 14.396725396825397
+          },
+          "cover_refresh_ms": {
+            "count": 630,
+            "min": 3.289,
+            "p50": 5.573,
+            "p95": 8.228,
+            "p99": 9.326,
+            "max": 15.736,
+            "mean": 5.788852380952381
+          },
+          "enemies": {
+            "count": 630,
+            "min": 11.0,
+            "p50": 14.0,
+            "p95": 18.0,
+            "p99": 18.0,
+            "max": 18.0,
+            "mean": 14.192063492063491
+          },
+          "projectiles": {
+            "count": 630,
+            "min": 1.0,
+            "p50": 3.0,
+            "p95": 5.0,
+            "p99": 5.0,
+            "max": 5.0,
+            "mean": 3.265079365079365
+          }
+        },
+        "3": {
+          "frame_wall_ms": {
+            "count": 404,
+            "min": 9.831,
+            "p50": 16.05,
+            "p95": 22.533,
+            "p99": 28.184,
+            "max": 42.776,
+            "mean": 16.607175742574256
+          },
+          "cover_refresh_ms": {
+            "count": 404,
+            "min": 4.226,
+            "p50": 6.453,
+            "p95": 9.611,
+            "p99": 10.944,
+            "max": 11.477,
+            "mean": 6.688920792079208
+          },
+          "enemies": {
+            "count": 404,
+            "min": 9.0,
+            "p50": 12.0,
+            "p95": 14.0,
+            "p99": 14.0,
+            "max": 14.0,
+            "mean": 11.596534653465346
+          },
+          "projectiles": {
+            "count": 404,
+            "min": 3.0,
+            "p50": 4.0,
+            "p95": 5.0,
+            "p99": 5.0,
+            "max": 5.0,
+            "mean": 4.00990099009901
+          }
+        }
+      },
+      "density_strata": {
+        "empty": {
+          "frame_wall_ms": {
+            "count": 0
+          },
+          "cover_refresh_ms": {
+            "count": 0
+          },
+          "projectiles": {
+            "count": 0
+          }
+        },
+        "1-7": {
+          "frame_wall_ms": {
+            "count": 297,
+            "min": 9.181,
+            "p50": 15.269,
+            "p95": 21.035,
+            "p99": 24.551,
+            "max": 30.125,
+            "mean": 15.534626262626261
+          },
+          "cover_refresh_ms": {
+            "count": 297,
+            "min": 4.116,
+            "p50": 6.086,
+            "p95": 9.151,
+            "p99": 10.445,
+            "max": 11.646,
+            "mean": 6.471757575757576
+          },
+          "projectiles": {
+            "count": 297,
+            "min": 1.0,
+            "p50": 3.0,
+            "p95": 5.0,
+            "p99": 5.0,
+            "max": 5.0,
+            "mean": 3.249158249158249
+          }
+        },
+        "8-15": {
+          "frame_wall_ms": {
+            "count": 1565,
+            "min": 8.104,
+            "p50": 14.537,
+            "p95": 20.263,
+            "p99": 25.287,
+            "max": 42.776,
+            "mean": 14.78837252396166
+          },
+          "cover_refresh_ms": {
+            "count": 1565,
+            "min": 3.289,
+            "p50": 5.791,
+            "p95": 8.615,
+            "p99": 10.117,
+            "max": 15.736,
+            "mean": 6.0081648562300325
+          },
+          "projectiles": {
+            "count": 1565,
+            "min": 1.0,
+            "p50": 4.0,
+            "p95": 5.0,
+            "p99": 5.0,
+            "max": 5.0,
+            "mean": 3.7763578274760383
+          }
+        },
+        "16+": {
+          "frame_wall_ms": {
+            "count": 144,
+            "min": 8.73,
+            "p50": 13.534,
+            "p95": 18.934,
+            "p99": 23.201,
+            "max": 30.013,
+            "mean": 13.942541666666667
+          },
+          "cover_refresh_ms": {
+            "count": 144,
+            "min": 3.476,
+            "p50": 5.11,
+            "p95": 7.706,
+            "p99": 8.562,
+            "max": 9.326,
+            "mean": 5.426902777777778
+          },
+          "projectiles": {
+            "count": 144,
+            "min": 2.0,
+            "p50": 4.0,
+            "p95": 5.0,
+            "p99": 5.0,
+            "max": 5.0,
+            "mean": 3.5416666666666665
+          }
+        }
+      },
+      "combat": {
+        "ambient_spawner_active": true,
+        "deaths": 88,
+        "encounter_beats": true,
+        "hits": 89,
+        "max_projectiles": 5,
+        "spawner": {
+          "alive": 13,
+          "authored_wave_running": false,
+          "cap": 180,
+          "cull_refill_left": 0.0,
+          "elapsed": 36.4921332272728,
+          "force_queue": 0,
+          "interval": 0.934789402829576,
+          "pending_scenes": 0,
+          "pending_spawns": 0,
+          "rite_pressure_active": false,
+          "spawn_debt": 0,
+          "spawn_pause_left": 0.0,
+          "spawning_enabled": true
+        },
+        "weapon_fires": 201
+      },
+      "source_record": {
+        "file": "process/sources/f1b699ddc978f7e36e15b9353e1d35480f6fd415ac3d36e7f8a78257c8c75c67.json",
+        "original_run_results_sha256": "7289593b4ea7b932ed27fc601bf903c0ec3d5bb001b6842f3ca86aed3a1a5d8e"
+      }
+    },
+    "comparison": {
+      "identity_route_settings_streaming_match": true,
+      "changed_source_paths": [],
+      "source_pair_verified": true,
+      "deltas": {
+        "frame_wall_ms": {
+          "p50": {
+            "baseline": 14.761,
+            "candidate": 14.575,
+            "delta": -0.18599999999999994,
+            "relative_change": -0.012600772305399355
+          },
+          "p95": {
+            "baseline": 20.662,
+            "candidate": 20.36,
+            "delta": -0.3019999999999996,
+            "relative_change": -0.014616203658890714
+          },
+          "p99": {
+            "baseline": 24.32,
+            "candidate": 24.873,
+            "delta": 0.5530000000000008,
+            "relative_change": 0.02273848684210522
+          },
+          "max": {
+            "baseline": 61.031,
+            "candidate": 42.776,
+            "delta": -18.254999999999995,
+            "relative_change": -0.29911028821418617
+          },
+          "mean": {
+            "baseline": 14.947308091286306,
+            "candidate": 14.838142073778663,
+            "delta": -0.10916601750764343,
+            "relative_change": -0.007303389803765548
+          }
+        },
+        "cover_refresh_ms": {
+          "p50": {
+            "baseline": 6.123,
+            "candidate": 5.785,
+            "delta": -0.3380000000000001,
+            "relative_change": -0.05520169851380041
+          },
+          "p95": {
+            "baseline": 9.175,
+            "candidate": 8.686,
+            "delta": -0.48900000000000077,
+            "relative_change": -0.05329700272479576
+          },
+          "p99": {
+            "baseline": 10.711,
+            "candidate": 10.074,
+            "delta": -0.6370000000000005,
+            "relative_change": -0.05947157128185976
+          },
+          "max": {
+            "baseline": 29.539,
+            "candidate": 15.736,
+            "delta": -13.803,
+            "relative_change": -0.4672805443650767
+          },
+          "mean": {
+            "baseline": 6.3551872406639,
+            "candidate": 6.035076769690927,
+            "delta": -0.3201104709729732,
+            "relative_change": -0.05036995116756504
+          }
+        },
+        "engine_process_ms": {
+          "p50": {
+            "baseline": 20.603,
+            "candidate": 22.376,
+            "delta": 1.7729999999999997,
+            "relative_change": 0.08605542882104555
+          },
+          "p95": {
+            "baseline": 53.726,
+            "candidate": 30.856,
+            "delta": -22.869999999999997,
+            "relative_change": -0.4256784424673342
+          },
+          "p99": {
+            "baseline": 75.696,
+            "candidate": 82.246,
+            "delta": 6.549999999999997,
+            "relative_change": 0.08653033185373071
+          },
+          "max": {
+            "baseline": 75.696,
+            "candidate": 82.246,
+            "delta": 6.549999999999997,
+            "relative_change": 0.08653033185373071
+          },
+          "mean": {
+            "baseline": 23.887103734439837,
+            "candidate": 24.188697407776672,
+            "delta": 0.3015936733368356,
+            "relative_change": 0.012625794934779222
+          }
+        },
+        "engine_physics_ms": {
+          "p50": {
+            "baseline": 3.296,
+            "candidate": 3.283,
+            "delta": -0.0129999999999999,
+            "relative_change": -0.003944174757281482
+          },
+          "p95": {
+            "baseline": 4.831,
+            "candidate": 4.638,
+            "delta": -0.1930000000000005,
+            "relative_change": -0.03995032084454575
+          },
+          "p99": {
+            "baseline": 5.863,
+            "candidate": 12.774,
+            "delta": 6.910999999999999,
+            "relative_change": 1.1787480811871052
+          },
+          "max": {
+            "baseline": 5.863,
+            "candidate": 12.774,
+            "delta": 6.910999999999999,
+            "relative_change": 1.1787480811871052
+          },
+          "mean": {
+            "baseline": 3.4488609958506227,
+            "candidate": 3.475872382851446,
+            "delta": 0.027011387000823284,
+            "relative_change": 0.007831973232125256
+          }
+        },
+        "enemies": {
+          "p50": {
+            "baseline": 16.0,
+            "candidate": 12.0,
+            "delta": -4.0,
+            "relative_change": -0.25
+          },
+          "p95": {
+            "baseline": 21.0,
+            "candidate": 16.0,
+            "delta": -5.0,
+            "relative_change": -0.23809523809523814
+          },
+          "p99": {
+            "baseline": 23.0,
+            "candidate": 18.0,
+            "delta": -5.0,
+            "relative_change": -0.21739130434782605
+          },
+          "max": {
+            "baseline": 23.0,
+            "candidate": 18.0,
+            "delta": -5.0,
+            "relative_change": -0.21739130434782605
+          },
+          "mean": {
+            "baseline": 14.220954356846473,
+            "candidate": 11.390329012961116,
+            "delta": -2.830625343885357,
+            "relative_change": -0.19904608881067065
+          }
+        },
+        "projectiles": {
+          "p50": {
+            "baseline": 3.0,
+            "candidate": 4.0,
+            "delta": 1.0,
+            "relative_change": 0.33333333333333326
+          },
+          "p95": {
+            "baseline": 4.0,
+            "candidate": 5.0,
+            "delta": 1.0,
+            "relative_change": 0.25
+          },
+          "p99": {
+            "baseline": 4.0,
+            "candidate": 5.0,
+            "delta": 1.0,
+            "relative_change": 0.25
+          },
+          "max": {
+            "baseline": 4.0,
+            "candidate": 5.0,
+            "delta": 1.0,
+            "relative_change": 0.25
+          },
+          "mean": {
+            "baseline": 2.969917012448133,
+            "candidate": 3.681455633100698,
+            "delta": 0.7115386206525649,
+            "relative_change": 0.23958198753373128
+          }
+        },
+        "instrumentation_usec": {
+          "p50": {
+            "baseline": 47.0,
+            "candidate": 50.0,
+            "delta": 3.0,
+            "relative_change": 0.06382978723404253
+          },
+          "p95": {
+            "baseline": 110.0,
+            "candidate": 108.0,
+            "delta": -2.0,
+            "relative_change": -0.018181818181818188
+          },
+          "p99": {
+            "baseline": 194.0,
+            "candidate": 215.0,
+            "delta": 21.0,
+            "relative_change": 0.10824742268041243
+          },
+          "max": {
+            "baseline": 409.0,
+            "candidate": 473.0,
+            "delta": 64.0,
+            "relative_change": 0.15647921760391204
+          },
+          "mean": {
+            "baseline": 57.447095435684645,
+            "candidate": 59.46211365902293,
+            "delta": 2.015018223338288,
+            "relative_change": 0.035076067955327916
+          }
+        }
+      },
+      "population_qualifier": "Same initial seed/route does not force equal natural combat/population. Inspect enemy/projectile distributions, route quarters and density strata; no unconditional speedup acceptance is inferred.",
+      "scope": "Candidate comparison of recorded CPU-facing intervals/work, not pre-feature regression, GPU attribution, ordinary human comfort or frame-budget acceptance."
+    },
+    "limits": "Same code/route/settings and real activation count, with naturally varying combat. Single native early-S2 pair; CPU-facing intervals/call counts, no GPU timing or footway fragment-cost attribution. Lifetime startup peak is excluded from measured route percentiles."
+  }
+}
