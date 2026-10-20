@@ -5,7 +5,8 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Pickup acknowledgment
 
-- State: **L0 complete; L1 evidence prepared for Windows visual review**.
+- State: **L0 complete; L1 evidence ready locally; publication blocked by
+  missing GitHub authentication on this PC**.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
 - Production branch: `codex/linux-world-production`, created from that tip;
@@ -42,7 +43,7 @@ Execution checklist for this packet (the existing HANDOFF is the scope/spec):
   bounded moving evidence and result JSON with fixture limitations.
 - [x] Independently review the scoped changes and evidence.
 - [ ] Publish the checked Linux packet and request the Windows lead's
-  keep/rework decision (normal push pending).
+  keep/rework decision (normal push attempted; local authentication missing).
 
 No native visual acceptance, ground integration or domestic furnishing work is
 claimed by this acknowledgment. L2/L3 remain queued behind the L1 review gate.
@@ -158,5 +159,29 @@ artifacts, records a concrete keep/rework verdict in ART_STATUS, and selects the
 next correction or L2 ground/S7 work, followed by L3. No new asset request is
 needed from this first fit. New district families/S4A remain out of scope.
 
-Publication: normal push of `codex/linux-world-production` is pending. Linux
-does not push `enemy-world-work`; ART_STATUS remains Windows-owned.
+### Publication attempt and exact relay
+
+Implementation commit: `5f851103`. Evidence packet commit:
+`1e90f92a3b73a564d1984b6441203dd4e449ad8f`. This later status-only commit records
+the publication failure; the complete packet is already retained in local Git.
+
+`git push -u origin codex/linux-world-production` failed with:
+`fatal: could not read Username for 'https://github.com': No such device or address`.
+`gh auth status` reports no logged-in GitHub host. Existing SSH-agent identities
+were tried with batch authentication; GitHub returned
+`Permission denied (publickey)`. No credential, key or machine setting was
+changed, and nothing was pushed. ART_STATUS remains Windows-owned.
+
+On this Linux PC, authenticate interactively, configure the Git credential
+helper, then publish the existing branch normally:
+
+```bash
+gh auth login --hostname github.com --git-protocol https
+gh auth setup-git
+git push -u origin codex/linux-world-production
+git rev-parse HEAD
+```
+
+Relay that branch/hash to the Windows lead, who can fetch it and review this
+packet. Linux does not push `enemy-world-work`. Do not force-push, copy credentials
+between PCs or restart the archived design conversations to work around this.
