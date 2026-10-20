@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PREP_STAGE phase=ground_0 call_ms=32.479
+PREP_STAGE phase=ground_1 call_ms=25.832
+PREP_FRAME phase=ground_1 gap_ms=161.050
+PREP_STAGE phase=ground_2 call_ms=26.951
+PREP_STAGE phase=ground_3 call_ms=22.752
+PREP_STAGE phase=ground_4 call_ms=24.798
+PREP_STAGE phase=ground_5 call_ms=28.869
+PREP_STAGE phase=ground_6 call_ms=24.666
+PREP_STAGE phase=ground_7 call_ms=26.808
+PREP_STAGE phase=ground_8 call_ms=27.067
+PREP_STAGE phase=ground_9 call_ms=27.570
+PREP_STAGE phase=ground_10 call_ms=27.562
+PREP_STAGE phase=ground_11 call_ms=30.001
+PREP_STAGE phase=ground_12 call_ms=47.301
+PREP_STAGE phase=ground_13 call_ms=46.142
+PREP_STAGE phase=baked_array call_ms=228.257
+PREP_FRAME phase=baked_array gap_ms=229.844
+PREP_STAGE phase=noise call_ms=14.178
+PASS: cold preparation renders multiple loading-cue frames rather than one frozen card
+PASS: cold preparation avoids the previous one-second main-thread block (largest 229.8 ms)
+WARMUP frames=18 largest_gap_ms=229.844
+PASS: prepared ground layers are pixel-identical to the original synchronous route
+TransitionResourceWarmupTest: 3 passed, 0 failed

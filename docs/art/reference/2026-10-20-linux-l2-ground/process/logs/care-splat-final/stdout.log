@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: an unpainted cell has no ground
+PASS: a chunk base covers its whole block
+PASS: a chunk base stops at its block
+PASS: an opaque stamp owns its cells
+PASS: a stamp leaves its neighbours on the base
+PASS: one draw quad per chunk touched (1)
+PASS: a stamp crossing into the next chunk adds its quad (2)
+PASS: the higher-z plaza wins over the road recorded after it
+PASS: the road still owns cells the plaza does not cover
+PASS: an authored stamp paints before any base exists
+PASS: authored stamps are laid back over chunk bases that stream in later
+PASS: the base fills around the authored stamp
+PASS: a light stamp (mud chip) stains the paving instead of replacing it
+PASS: a chunk sharing the wrapped block repaints it with its own base
+PASS: the far chunk's base clears the old stamp (the map is a window, not a world)
+PASS: eight materials each get a slot
+PASS: a ninth, grass-like material borrows the grass slot (0)
+PASS: a ninth paving material borrows a paving slot (1)
+PASS: domestic care has a presentation-only mask API
+PASS: care signatures contain exactly one byte per owning chunk cell
+PASS: the kept tree home receives visible care on available vegetation
+PASS: care leaves all material coverage bytes unchanged
+PASS: lawn presentation allocates no ninth semantic coverage slot
+PASS: care writes only light-map blue and preserves brightness, stains and alpha exactly
+PASS: care preserves vegetated, indoor and paved terrain ownership
+PASS: indoor floor and door-apron stamps reject care
+PASS: replacing a chunk base clears its old household care
+PASS: wrapped map reuse cannot inherit an old home's care
+PASS: a deterministic streamed rebuild restores the exact care field
+PASS: world clear removes household care completely
+PASS: the chunk manager draws its ground through the splat
+PASS: the streamed chunk painted its ground
+PASS: no per-chunk ground or floor-stamp sprites are created ({ "chunks": 5, "ground_sprites": 0, "floor_sprites": 0, "block_instances": 0, "procedural_tile_cells": 0 })
+WorldGroundSplatTest: 33 passed, 0 failed

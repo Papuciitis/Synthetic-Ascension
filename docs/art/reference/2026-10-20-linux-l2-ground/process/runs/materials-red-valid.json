@@ -1,0 +1,415 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/home/user/Nauris/Synthetic-Ascension",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-l2-20261020/materials-red-valid/logs/engine.log",
+    "--flush-output",
+    "--headless",
+    "res://tools/tests/WorldTerrainTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /home/user/Nauris/Synthetic-Ascension --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-l2-20261020/materials-red-valid/logs/engine.log --flush-output --headless res://tools/tests/WorldTerrainTest.tscn",
+  "project_root": "/home/user/Nauris/Synthetic-Ascension",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-l2-20261020/materials-red-valid",
+  "actual_exit": 1,
+  "stop_reason": "nonzero_exit",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 21600.2265625,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 51.46875,
+      "cpu_seconds": 0.03,
+      "available_mb": 21573.94140625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 0.143,
+      "rss_mb": 82.4609375,
+      "cpu_seconds": 0.18,
+      "available_mb": 21554.8359375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 0.287,
+      "rss_mb": 120.828125,
+      "cpu_seconds": 0.33,
+      "available_mb": 21451.07421875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 0.442,
+      "rss_mb": 145.6328125,
+      "cpu_seconds": 0.48,
+      "available_mb": 21385.7578125,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 0.59,
+      "rss_mb": 170.1328125,
+      "cpu_seconds": 0.62,
+      "available_mb": 21344.76171875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 0.735,
+      "rss_mb": 180.1328125,
+      "cpu_seconds": 0.76,
+      "available_mb": 21324.98828125,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 0.88,
+      "rss_mb": 181.30859375,
+      "cpu_seconds": 0.91,
+      "available_mb": 21321.32421875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 1.026,
+      "rss_mb": 181.453125,
+      "cpu_seconds": 1.05,
+      "available_mb": 21318.57421875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 1.168,
+      "rss_mb": 216.328125,
+      "cpu_seconds": 1.19,
+      "available_mb": 21276.94921875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 1.306,
+      "rss_mb": 231.203125,
+      "cpu_seconds": 1.33,
+      "available_mb": 21266.12890625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 1.451,
+      "rss_mb": 250.453125,
+      "cpu_seconds": 1.47,
+      "available_mb": 21250.43359375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 1.587,
+      "rss_mb": 268.203125,
+      "cpu_seconds": 1.61,
+      "available_mb": 21231.34375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 1.726,
+      "rss_mb": 275.0234375,
+      "cpu_seconds": 1.75,
+      "available_mb": 21230.5,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 1.869,
+      "rss_mb": 313.8984375,
+      "cpu_seconds": 1.89,
+      "available_mb": 21187.44140625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.007,
+      "rss_mb": 353.7734375,
+      "cpu_seconds": 2.03,
+      "available_mb": 21147.67578125,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.143,
+      "rss_mb": 385.8984375,
+      "cpu_seconds": 2.16,
+      "available_mb": 21115.96875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.284,
+      "rss_mb": 396.58203125,
+      "cpu_seconds": 2.3,
+      "available_mb": 21108.00390625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.424,
+      "rss_mb": 405.83203125,
+      "cpu_seconds": 2.45,
+      "available_mb": 21100.109375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.566,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 2.59,
+      "available_mb": 21100.11328125,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.708,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 2.73,
+      "available_mb": 21100.11328125,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.854,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 2.87,
+      "available_mb": 21103.91796875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 2.994,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 3.02,
+      "available_mb": 21096.04296875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 3.135,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 3.15,
+      "available_mb": 21096.04296875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 3.276,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 3.3,
+      "available_mb": 21096.30859375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 3.415,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 3.44,
+      "available_mb": 21096.07421875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 3.559,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 3.57,
+      "available_mb": 21096.07421875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 3.697,
+      "rss_mb": 408.20703125,
+      "cpu_seconds": 3.72,
+      "available_mb": 21096.32421875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 3.842,
+      "rss_mb": 434.20703125,
+      "cpu_seconds": 3.86,
+      "available_mb": 21084.69140625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 3.985,
+      "rss_mb": 434.58203125,
+      "cpu_seconds": 4.01,
+      "available_mb": 21084.69140625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 4.128,
+      "rss_mb": 434.58203125,
+      "cpu_seconds": 4.15,
+      "available_mb": 21084.99609375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 4.272,
+      "rss_mb": 434.58203125,
+      "cpu_seconds": 4.3,
+      "available_mb": 21085.00390625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 4.415,
+      "rss_mb": 434.58203125,
+      "cpu_seconds": 4.44,
+      "available_mb": 21084.7734375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 4.558,
+      "rss_mb": 434.58203125,
+      "cpu_seconds": 4.58,
+      "available_mb": 21084.7734375,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 4.695,
+      "rss_mb": 434.58203125,
+      "cpu_seconds": 4.73,
+      "available_mb": 21084.796875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 4.853,
+      "rss_mb": 435.58203125,
+      "cpu_seconds": 4.87,
+      "available_mb": 21087.78125,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 4.993,
+      "rss_mb": 439.58203125,
+      "cpu_seconds": 5.02,
+      "available_mb": 21080.08203125,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 5.135,
+      "rss_mb": 448.421875,
+      "cpu_seconds": 5.16,
+      "available_mb": 21072.09765625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 5.275,
+      "rss_mb": 468.046875,
+      "cpu_seconds": 5.29,
+      "available_mb": 21056.1796875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 5.411,
+      "rss_mb": 487.421875,
+      "cpu_seconds": 5.43,
+      "available_mb": 21032.51171875,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 5.551,
+      "rss_mb": 380.8828125,
+      "cpu_seconds": 5.56,
+      "available_mb": 21086.890625,
+      "pids": [
+        51796
+      ]
+    },
+    {
+      "elapsed_seconds": 5.7,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 21330.76953125,
+      "pids": []
+    }
+  ],
+  "diagnostics": [
+    "ERROR: FAIL: fourteen ground textures include the presentation-only cared lawn (13)",
+    "ERROR: FAIL: the care renderer can address its dedicated lawn layer",
+    "ERROR: FAIL: semantic moss draws the selected low damp moss/soil source",
+    "ERROR: FAIL: local household care draws its selected short-lawn source",
+    "ERROR: FAIL: the presentation lawn retains its reviewed 320-world-pixel repeat"
+  ],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T11:11:25.047515+00:00",
+  "limits": {
+    "timeout_seconds": 60.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "3646a781790c131e64147a74957f4bda796645fe",
+  "pid": 51796,
+  "elapsed_seconds": 6.571,
+  "ended_utc": "2026-10-20T11:11:31.618213+00:00",
+  "runner_exit": 1,
+  "original_run_results_sha256": "96648a21f2483e27b054895031bf16df9c737c9ddb5c1ea47d1ba751affe1669",
+  "source_provenance": "../sources/1a608c9c77f5768b.json",
+  "packet_note": "Full command, exits, diagnostics and resource time series retained. Input hashes/untracked inputs moved losslessly to shared source record. Original machine-wide untracked Git status omitted; original result remains in local run folder."
+}

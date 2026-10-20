@@ -1,0 +1,25 @@
+ERROR: FAIL: fourteen ground textures include the presentation-only cared lawn (13)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldTerrainTest.gd:26)
+       [1] _run (res://tools/tests/WorldTerrainTest.gd:35)
+ERROR: FAIL: the care renderer can address its dedicated lawn layer
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldTerrainTest.gd:26)
+       [1] _run (res://tools/tests/WorldTerrainTest.gd:38)
+ERROR: FAIL: semantic moss draws the selected low damp moss/soil source
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldTerrainTest.gd:26)
+       [1] _run (res://tools/tests/WorldTerrainTest.gd:41)
+ERROR: FAIL: local household care draws its selected short-lawn source
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldTerrainTest.gd:26)
+       [1] _run (res://tools/tests/WorldTerrainTest.gd:42)
+ERROR: FAIL: the presentation lawn retains its reviewed 320-world-pixel repeat
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldTerrainTest.gd:26)
+       [1] _run (res://tools/tests/WorldTerrainTest.gd:44)

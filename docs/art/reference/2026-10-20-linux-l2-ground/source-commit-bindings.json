@@ -1,0 +1,1401 @@
+{
+  "implementation_commit": "0d6f761acd2adff963efff5619d0a34f1bff4f9b",
+  "scope": "All changed engine inputs covered by the monitor (.gd/.gdshader/.tscn/.res/.import). Source original PNGs are unchanged and separately covered by run inputs/bound cache manifest. Documentation and UID sidecars are outside this comparison.",
+  "commit_sha256": {
+    "assets/world/ground/baked/ground_materials.res": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5",
+    "assets/world/ground/city_care/v1/cared_lawn.png.import": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+    "assets/world/ground/city_care/v1/damp_moss_soil.png.import": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+    "core/systems/world/ChunkManager.gd": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de",
+    "core/systems/world/WorldArt.gd": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae",
+    "core/systems/world/ground/CityGroundCare.gd": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b",
+    "core/systems/world/ground/GroundSplatRenderer.gd": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31",
+    "core/systems/world/ground/ground_splat.gdshader": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343",
+    "scenes/world/buildings/CityBlockKit.gd": "9c6f56f3bff35fe50409e7d4c20970524731720e1b7ec5d389458333ce41a9d8",
+    "tools/dev/BakeGroundMaterials.gd": "75c9b1914ec222cc5bf44a4c0e8e3326d67616caf8df97229a86d64073a9f337",
+    "tools/dev/CityBlockPlayablePreview.gd": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf",
+    "tools/tests/CityGroundCareNaturalTest.gd": "d6fa9a6381a27d1733fa29134ae50aea7d19fdd9845f0e11084baab70f4f75fd",
+    "tools/tests/CityGroundCareNaturalTest.tscn": "7e9537f7552d9506e8eca57a7b647cd077960f563f8566f613ae6ce8b7be5870",
+    "tools/tests/CityGroundCareTest.gd": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4",
+    "tools/tests/CityGroundCareTest.tscn": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+    "tools/tests/GroundMaterialCacheTest.gd": "d04b411c599d3e6376f1fb4517c60872c0368a826d78dd5e8e324aa8f0c9e986",
+    "tools/tests/TransitionResourceWarmupTest.gd": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1",
+    "tools/tests/WorldGroundSplatTest.gd": "d3878b54688686933518224b3a4f617f585a315fbddb544feeae484aa53f8a2d",
+    "tools/tests/WorldTerrainTest.gd": "676930d8ad7d30c3af8c8dc2e0bcac485948e5b2af95a131be6bc1908a749964"
+  },
+  "runs": [
+    {
+      "run": "bake",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "assets/world/ground/baked/ground_materials.res",
+          "recorded": "f37c0609787d4858e5fc176678daf66f233ec34250390b12d838392f33b2a4a7",
+          "commit_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5"
+        },
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "2a808852785c8357da944f7e785b442a18ea5742fec847de84d546168cd93238",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "ee892fc63a7f659857e6ff505061fc86eca2bb97df9eb648a0aa225db768ac02",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "d70ce970965ec6f4707250e7df8f1aa0ea10b6618f72f24a3ef3028b8a990370",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "557c10510e781f6637b8e3c7dbf7547d1c85e3d8bcc4a2fa0f9499091551962f",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": [
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn"
+      ]
+    },
+    {
+      "run": "bed-normal",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "bed-small-v1",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "2a808852785c8357da944f7e785b442a18ea5742fec847de84d546168cd93238",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "ee892fc63a7f659857e6ff505061fc86eca2bb97df9eb648a0aa225db768ac02",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "bed-small",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "camera-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "care-footway-green",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "care-footway-red",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "care-red",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "assets/world/ground/baked/ground_materials.res",
+          "recorded": "f37c0609787d4858e5fc176678daf66f233ec34250390b12d838392f33b2a4a7",
+          "commit_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5"
+        },
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "d06ec7b09fedd1ea414a05afbd3653392c2912ef5e9fbdf70e38c7fea635071e",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "19d7f371b0e885194970745e666a21f32129f80398c83ef09a9753fc4c8a11d8",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "7b6bcabac118be9a74c3737672a1f23b9fb088d8345f7ccd48f66c405e36d8aa",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "core/systems/world/ground/ground_splat.gdshader",
+          "recorded": "4eb6372195f2f05e79718d18eda740fd9239f1be2a9591caaf40669dec3ae4f7",
+          "commit_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded": "12c24a9682c98f77dba3bd8fe669fcf09647ecb92884b580d0ba7f086b8e82d6",
+          "commit_sha256": "9c6f56f3bff35fe50409e7d4c20970524731720e1b7ec5d389458333ce41a9d8"
+        },
+        {
+          "path": "tools/dev/BakeGroundMaterials.gd",
+          "recorded": "27aab1d4ef5a285764d61c140051287aee5573a70a2b2f435e02ca01df22dc64",
+          "commit_sha256": "75c9b1914ec222cc5bf44a4c0e8e3326d67616caf8df97229a86d64073a9f337"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "557c10510e781f6637b8e3c7dbf7547d1c85e3d8bcc4a2fa0f9499091551962f",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/GroundMaterialCacheTest.gd",
+          "recorded": "83e194336f444fe448924eedb7f7c9a539e34875a5b52977778364403e78b3db",
+          "commit_sha256": "d04b411c599d3e6376f1fb4517c60872c0368a826d78dd5e8e324aa8f0c9e986"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": [
+        "core/systems/world/ground/CityGroundCare.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn"
+      ]
+    },
+    {
+      "run": "care-splat-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "care-splat-red",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "assets/world/ground/baked/ground_materials.res",
+          "recorded": "f37c0609787d4858e5fc176678daf66f233ec34250390b12d838392f33b2a4a7",
+          "commit_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5"
+        },
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "d06ec7b09fedd1ea414a05afbd3653392c2912ef5e9fbdf70e38c7fea635071e",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "19d7f371b0e885194970745e666a21f32129f80398c83ef09a9753fc4c8a11d8",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "7b6bcabac118be9a74c3737672a1f23b9fb088d8345f7ccd48f66c405e36d8aa",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "core/systems/world/ground/ground_splat.gdshader",
+          "recorded": "4eb6372195f2f05e79718d18eda740fd9239f1be2a9591caaf40669dec3ae4f7",
+          "commit_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded": "12c24a9682c98f77dba3bd8fe669fcf09647ecb92884b580d0ba7f086b8e82d6",
+          "commit_sha256": "9c6f56f3bff35fe50409e7d4c20970524731720e1b7ec5d389458333ce41a9d8"
+        },
+        {
+          "path": "tools/dev/BakeGroundMaterials.gd",
+          "recorded": "27aab1d4ef5a285764d61c140051287aee5573a70a2b2f435e02ca01df22dc64",
+          "commit_sha256": "75c9b1914ec222cc5bf44a4c0e8e3326d67616caf8df97229a86d64073a9f337"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "557c10510e781f6637b8e3c7dbf7547d1c85e3d8bcc4a2fa0f9499091551962f",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/GroundMaterialCacheTest.gd",
+          "recorded": "83e194336f444fe448924eedb7f7c9a539e34875a5b52977778364403e78b3db",
+          "commit_sha256": "d04b411c599d3e6376f1fb4517c60872c0368a826d78dd5e8e324aa8f0c9e986"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": [
+        "core/systems/world/ground/CityGroundCare.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn"
+      ]
+    },
+    {
+      "run": "city-material-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "import",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "assets/world/ground/baked/ground_materials.res",
+          "recorded": "f37c0609787d4858e5fc176678daf66f233ec34250390b12d838392f33b2a4a7",
+          "commit_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5"
+        },
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "2a808852785c8357da944f7e785b442a18ea5742fec847de84d546168cd93238",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "ee892fc63a7f659857e6ff505061fc86eca2bb97df9eb648a0aa225db768ac02",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "d70ce970965ec6f4707250e7df8f1aa0ea10b6618f72f24a3ef3028b8a990370",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "557c10510e781f6637b8e3c7dbf7547d1c85e3d8bcc4a2fa0f9499091551962f",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": [
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn"
+      ]
+    },
+    {
+      "run": "materials-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "materials-red-valid",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "assets/world/ground/baked/ground_materials.res",
+          "recorded": "f37c0609787d4858e5fc176678daf66f233ec34250390b12d838392f33b2a4a7",
+          "commit_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5"
+        },
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "d06ec7b09fedd1ea414a05afbd3653392c2912ef5e9fbdf70e38c7fea635071e",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "19d7f371b0e885194970745e666a21f32129f80398c83ef09a9753fc4c8a11d8",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "7b6bcabac118be9a74c3737672a1f23b9fb088d8345f7ccd48f66c405e36d8aa",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "core/systems/world/ground/ground_splat.gdshader",
+          "recorded": "4eb6372195f2f05e79718d18eda740fd9239f1be2a9591caaf40669dec3ae4f7",
+          "commit_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded": "12c24a9682c98f77dba3bd8fe669fcf09647ecb92884b580d0ba7f086b8e82d6",
+          "commit_sha256": "9c6f56f3bff35fe50409e7d4c20970524731720e1b7ec5d389458333ce41a9d8"
+        },
+        {
+          "path": "tools/dev/BakeGroundMaterials.gd",
+          "recorded": "27aab1d4ef5a285764d61c140051287aee5573a70a2b2f435e02ca01df22dc64",
+          "commit_sha256": "75c9b1914ec222cc5bf44a4c0e8e3326d67616caf8df97229a86d64073a9f337"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "557c10510e781f6637b8e3c7dbf7547d1c85e3d8bcc4a2fa0f9499091551962f",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/GroundMaterialCacheTest.gd",
+          "recorded": "83e194336f444fe448924eedb7f7c9a539e34875a5b52977778364403e78b3db",
+          "commit_sha256": "d04b411c599d3e6376f1fb4517c60872c0368a826d78dd5e8e324aa8f0c9e986"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": [
+        "core/systems/world/ground/CityGroundCare.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn"
+      ]
+    },
+    {
+      "run": "native-cache-clean",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "2a808852785c8357da944f7e785b442a18ea5742fec847de84d546168cd93238",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "ee892fc63a7f659857e6ff505061fc86eca2bb97df9eb648a0aa225db768ac02",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "native-cache-pixels",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "2a808852785c8357da944f7e785b442a18ea5742fec847de84d546168cd93238",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "ee892fc63a7f659857e6ff505061fc86eca2bb97df9eb648a0aa225db768ac02",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "d70ce970965ec6f4707250e7df8f1aa0ea10b6618f72f24a3ef3028b8a990370",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "557c10510e781f6637b8e3c7dbf7547d1c85e3d8bcc4a2fa0f9499091551962f",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": [
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn"
+      ]
+    },
+    {
+      "run": "native-cache-split",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "native-cache-trace",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "2a808852785c8357da944f7e785b442a18ea5742fec847de84d546168cd93238",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "ee892fc63a7f659857e6ff505061fc86eca2bb97df9eb648a0aa225db768ac02",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "native-cache-verbose",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "2a808852785c8357da944f7e785b442a18ea5742fec847de84d546168cd93238",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "ee892fc63a7f659857e6ff505061fc86eca2bb97df9eb648a0aa225db768ac02",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "962bd8402528c0cc48f775dedbd96e89c3ad730328a261835a805d4490211afa",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareNaturalTest.gd",
+          "recorded": "c9e1a859ae887ee86b377ea6b7f6d00415d527917fb7e66f18bc7e835d68a1c6",
+          "commit_sha256": "d6fa9a6381a27d1733fa29134ae50aea7d19fdd9845f0e11084baab70f4f75fd"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "natural-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "parse-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "procedural-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "provenance-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "provenance-red",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "assets/world/ground/baked/ground_materials.res",
+          "recorded": "f37c0609787d4858e5fc176678daf66f233ec34250390b12d838392f33b2a4a7",
+          "commit_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5"
+        },
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "recorded": "d06ec7b09fedd1ea414a05afbd3653392c2912ef5e9fbdf70e38c7fea635071e",
+          "commit_sha256": "7316679dc2a239e0a992f56fc79ee38a015589c174e88f11544cc0559a2a73de"
+        },
+        {
+          "path": "core/systems/world/WorldArt.gd",
+          "recorded": "19d7f371b0e885194970745e666a21f32129f80398c83ef09a9753fc4c8a11d8",
+          "commit_sha256": "bd6b356f83b70136a726b02529eea05f7828cfc19b5272938379c166bf06d9ae"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "7b6bcabac118be9a74c3737672a1f23b9fb088d8345f7ccd48f66c405e36d8aa",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "core/systems/world/ground/ground_splat.gdshader",
+          "recorded": "4eb6372195f2f05e79718d18eda740fd9239f1be2a9591caaf40669dec3ae4f7",
+          "commit_sha256": "2964130383409ccbe56622cfa28300208e44928a7076be885ead764d5f0af343"
+        },
+        {
+          "path": "scenes/world/buildings/CityBlockKit.gd",
+          "recorded": "12c24a9682c98f77dba3bd8fe669fcf09647ecb92884b580d0ba7f086b8e82d6",
+          "commit_sha256": "9c6f56f3bff35fe50409e7d4c20970524731720e1b7ec5d389458333ce41a9d8"
+        },
+        {
+          "path": "tools/dev/BakeGroundMaterials.gd",
+          "recorded": "27aab1d4ef5a285764d61c140051287aee5573a70a2b2f435e02ca01df22dc64",
+          "commit_sha256": "75c9b1914ec222cc5bf44a4c0e8e3326d67616caf8df97229a86d64073a9f337"
+        },
+        {
+          "path": "tools/dev/CityBlockPlayablePreview.gd",
+          "recorded": "557c10510e781f6637b8e3c7dbf7547d1c85e3d8bcc4a2fa0f9499091551962f",
+          "commit_sha256": "c6c281afd2f3cf6a817dc0f11b2cef0dbc1103e6ca37c9d4fcd80e66855705bf"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        },
+        {
+          "path": "tools/tests/GroundMaterialCacheTest.gd",
+          "recorded": "83e194336f444fe448924eedb7f7c9a539e34875a5b52977778364403e78b3db",
+          "commit_sha256": "d04b411c599d3e6376f1fb4517c60872c0368a826d78dd5e8e324aa8f0c9e986"
+        },
+        {
+          "path": "tools/tests/TransitionResourceWarmupTest.gd",
+          "recorded": "b433322c2b96bcdd7ae323e57997dcfebeabd87f65efad4f161c79f2d6aa5ce6",
+          "commit_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1"
+        }
+      ],
+      "absent_from_runner_scope": [
+        "core/systems/world/ground/CityGroundCare.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn"
+      ]
+    },
+    {
+      "run": "roof-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "s7-normal",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "s7-reduced",
+      "recorded_git_head": "0d6f761acd2adff963efff5619d0a34f1bff4f9b",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "s7-small",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [
+        {
+          "path": "core/systems/world/ground/CityGroundCare.gd",
+          "recorded": "eebb5252c1b80c9f7dee6fa9c1e38d8da22263c3ae94284a371629fff9da9d8d",
+          "commit_sha256": "0a896e50224b69a45a3244ed54747a1f38ca294a7b07bb4ad9e318192440d02b"
+        },
+        {
+          "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+          "recorded": "a9f6e4bfadffe3a2b66355cd3cd2758649f5da08176229a01efeb89d76d75582",
+          "commit_sha256": "c3e160d42a0863111040a9c464a479d2bb32891b0107f8f4eb981abca58d4d31"
+        },
+        {
+          "path": "tools/tests/CityGroundCareTest.gd",
+          "recorded": "33def475aaf7c0276471e739a8cdc425e6e31ecb9726cdae3028f254e3c9f9a9",
+          "commit_sha256": "5593a2118226fd1c9a6de3f8af0c7a111eb0cef902a8a272268f9f7fd44647a4"
+        }
+      ],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "service-natural-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "street-final",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "tree-normal",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "tree-small",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "untended-small",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    },
+    {
+      "run": "wild-small",
+      "recorded_git_head": "3646a781790c131e64147a74957f4bda796645fe",
+      "compared_scoped_inputs": 19,
+      "matched_paths": [
+        "assets/world/ground/baked/ground_materials.res",
+        "assets/world/ground/city_care/v1/cared_lawn.png.import",
+        "assets/world/ground/city_care/v1/damp_moss_soil.png.import",
+        "core/systems/world/ChunkManager.gd",
+        "core/systems/world/WorldArt.gd",
+        "core/systems/world/ground/CityGroundCare.gd",
+        "core/systems/world/ground/GroundSplatRenderer.gd",
+        "core/systems/world/ground/ground_splat.gdshader",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/dev/BakeGroundMaterials.gd",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CityGroundCareNaturalTest.gd",
+        "tools/tests/CityGroundCareNaturalTest.tscn",
+        "tools/tests/CityGroundCareTest.gd",
+        "tools/tests/CityGroundCareTest.tscn",
+        "tools/tests/GroundMaterialCacheTest.gd",
+        "tools/tests/TransitionResourceWarmupTest.gd",
+        "tools/tests/WorldGroundSplatTest.gd",
+        "tools/tests/WorldTerrainTest.gd"
+      ],
+      "different_paths": [],
+      "absent_from_runner_scope": []
+    }
+  ]
+}

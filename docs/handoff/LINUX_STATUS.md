@@ -5,8 +5,8 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Pickup acknowledgment
 
-- State: **L0 complete; published L1 packet received and reviewed by Windows;
-  sampled garden fit kept; L2 ground care is the next production packet**.
+- State: **L2 implementation and native packet ready for lead review; L1 garden
+  fit retained; full ground/street acceptance remains open**.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
 - Latest received review commit: `24d838f77df1b85ca3ec8636ec6a4900a6b19f7d`.
@@ -29,8 +29,9 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 ## Current bounded packet
 
 L0 and the L1 evidence packet are complete; Windows has kept the sampled garden
-fit while leaving complete-street acceptance open. Next is L2 ground/S7 on the
-same homes, then L3 ordinary-home interiors under the linked direction. Do not
+fit while leaving complete-street acceptance open. L2 ground/S7 implementation
+and its paired native packet are ready on the same homes; L3 ordinary-home
+interiors follows the linked direction. Do not
 silently expand to more district families or claim historical images validate
 new code. Windows retains art direction and source generation.
 
@@ -52,8 +53,77 @@ Execution checklist for this packet (the existing HANDOFF is the scope/spec):
 
 The lead keeps the measured native garden fit in these fixtures. Whole-street
 approval, ordinary human play, ground integration and domestic furnishing remain
-open. L2 is now selected; L3 follows, and V1 remains a separate required visual
+open. L2 is ready for lead keep/rework; L3 follows, and V1 remains a required visual
 gate before occupied-street acceptance.
+
+## 20 October — L2 implementation and native packet ready
+
+Implementation `0d6f761acd2adff963efff5619d0a34f1bff4f9b` follows working base
+`3646a781` and received art direction `24d838f7` on this Linux branch.
+The [L2 packet](../art/reference/2026-10-20-linux-l2-ground/README.md) contains
+paired small/normal native plates, wild and actual untended controls, natural S7,
+three short occupied clips, process records and exact source-commit bindings.
+The [plan](../superpowers/plans/2026-10-20-l2-ground-care.md) records the scope.
+
+Implemented one bounded irregular light_map.B care pocket for actual S2 noncivic
+row_house use, fitted to its footprint, doors, measured planting and final
+available vegetation. Stable variant3 remains untended. Paving, terrain IDs,
+eight coverage slots, physical generation/routes/rewards and RNG are preserved.
+Lawn uses presentation layer13 at320 world px. Semantic moss12 now uses the
+accepted damp moss/soil; original rough grass/meadow/scrub stay intact. The kept
+bed/tree sources, scale, anchors and placement are unchanged.
+
+Fresh native bake produced14 original-algorithm layers. Source-checkout cache
+loading validates ordered PNG/import/cache provenance, while exported loading
+remains resource-only. Transition preparation yields between hashing and array
+load/upload, retaining synchronous direct startup. The250ms assertion was not
+relaxed. Final native warmup passes3/0,19 cue frames, largest201.2ms, and exact
+cached/fresh layer+mipmap equality. An earlier254.2ms failure and MP3 fixture
+shutdown leak are disclosed in the packet, with clean correction checks.
+
+Final checks all exit0 with no monitor diagnostics: CityGroundCare123/0,
+WorldGroundSplat33/0, WorldTerrain23/0, GroundMaterialCache38/0,
+CityBlockPreviewCamera3/0, CityGenerationMaterial0failures,
+CityServiceNatural12chunks/0failures, CityBlockProcedural5,430/0,
+CityStreetFrontage19checks/0failures, PlayerRoofOcclusion11/0 and last code
+check ScriptParseAudit550/0. CityGroundCareNatural covers8 actual chunks with
+zero failures and preserved physical/coverage/RNG state, repeated/rebuilt exact
+care, named home IDs and natural S7 seed4 canal_services. Valid RED precedes the
+implementation and the production-footway correction; an early malformed test
+adapter is not passing evidence.
+
+Native review found and corrected the bed pocket being clipped to3 weak cells
+by its actual footway. It now has15 cared cells/5 substantial cells; the tree
+retains19/5. Root and an independent visual reviewer retain the corrected local,
+soft, quieter olive patches for lead review; distinction at960 remains modest.
+The wild probe is an actual25-cell uncared walkable neighborhood. The untended
+comparison is runtime ID1647847571, genuine noncivic row_house variant3; care
+elsewhere in its shared chunk belongs to other eligible homes.
+
+S7 now has subdued low moss/soil beside natural mud/paving with no blue leaf
+carpet. Normal and reduced-motion short fights retain clear bright cues in
+inspected samples. Three34-frame clips preserve measured wall timing, encode
+without resizing and decode cleanly. These are scripted god-mode fixtures with
+controlled enemies, staged placement, normal props/HUD and streaming frozen
+after explicit actual unload/reload; no profile/save writes or local security.
+They do not establish human comfort, ordinary horde play or build balance.
+
+Open findings: existing S7 wet mud has visible vertical banding; there is no
+native dry-earth control here, so complete wet/dry material acceptance stays
+open. V1 actors/tells crossing façade/roof edges remains a named blocking visual
+issue, visibly present in bed combat. L3 household furnishings, masonry/UVs and
+entry finish remain queued. No new district families, balance changes or source
+generation were added. The user clarified the available Godot capabilities are
+the installed GDScript, game-feel, level-design and roguelike skills; relevant
+code, readability, route and evidence guidance was applied.
+
+Independent runtime, ground-correction, cache-transition and capture-adapter
+reviews found no important correctness defect. Final packet audit reconciled34
+process records,19 scoped bindings,9 captures and3 videos/102 raw frames.
+Lead keep/rework is still needed
+on the bounded L2 result; tests do not close art findings. ART_STATUS is unchanged.
+Publication of this new packet is pending the normal own-branch push; use
+`git push -u origin codex/linux-world-production` if a human relay is needed.
 
 ## 20 October — Windows review received
 

@@ -1,0 +1,12 @@
+ERROR: FAIL: city kits expose actual domestic care context
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareTest.gd:22)
+       [1] _test_policy (res://tools/tests/CityGroundCareTest.gd:60)
+       [2] _run (res://tools/tests/CityGroundCareTest.gd:145)
+ERROR: FAIL: the renderer supports bounded care painting and deterministic probes
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareTest.gd:22)
+       [1] _test_pockets (res://tools/tests/CityGroundCareTest.gd:96)
+       [2] _run (res://tools/tests/CityGroundCareTest.gd:146)

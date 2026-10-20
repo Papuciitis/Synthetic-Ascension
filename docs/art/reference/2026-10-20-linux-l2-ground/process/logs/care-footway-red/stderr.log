@@ -1,0 +1,12 @@
+ERROR: FAIL: production footways leave at least eight cared vegetation cells near the kept garden id=944996572 actual=3
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareTest.gd:22)
+       [1] _test_production_footway_pockets (res://tools/tests/CityGroundCareTest.gd:196)
+       [2] _run (res://tools/tests/CityGroundCareTest.gd:207)
+ERROR: FAIL: the actual garden has at least three substantial lawn cells beyond paving id=944996572 actual=0
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareTest.gd:22)
+       [1] _test_production_footway_pockets (res://tools/tests/CityGroundCareTest.gd:197)
+       [2] _run (res://tools/tests/CityGroundCareTest.gd:207)

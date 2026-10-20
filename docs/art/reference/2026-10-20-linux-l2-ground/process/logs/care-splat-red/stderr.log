@@ -1,0 +1,6 @@
+ERROR: FAIL: domestic care has a presentation-only mask API
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldGroundSplatTest.gd:24)
+       [1] _test_domestic_care_data_contract (res://tools/tests/WorldGroundSplatTest.gd:127)
+       [2] _run (res://tools/tests/WorldGroundSplatTest.gd:37)
