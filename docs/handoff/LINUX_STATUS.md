@@ -70,12 +70,24 @@ evidence packet are still in progress. This is a checked implementation stage,
 not full street acceptance.
 
 Paving geometry now follows the doorway rather than the whole frontage.
-The native first view exposed remaining road-overlay contrast, so that join
-and the garden soil edge are being corrected before final presentation checks.
-Pale S2 material relief and remaining moving cue/collection work are separate
-active stages. WorldCover performance optimization has not started: the first
-uncaptured occupied probe stalled in the tool's input deadzone, so its stationary
-timings are not movement/streaming evidence. The tool input is corrected.
+A later native view exposed a second cause: the base street shader still painted
+paving over the merged rectangular parcel hull underneath the approach. Its
+actual-road ownership correction now passes the native13/0 pixel checks,
+including empty old corners, a feathered shoulder and an opaque road. Garden
+soil is textured and feathered; the original flower art uses mipmaps at its
+large reduction and retains its measured contact. Care125/0 passes. Final scene
+capture is pending a further façade revision requested by the user: the first
+window/entry stage still reads as pasted panels around a garage-like recess.
+
+Remaining cue adapters pass native67/0 and39/0, with the raised elite-callout
+contact3/0. An actual occupied movement/collection run is underway. WorldCover
+now reuses exact unchanged snapshots while still collecting live coverage every
+frame. Native24/0, headless23/0 and existing shared-cover25/0 pass; independent
+code review found no blocking issue. The valid uncaptured baseline completed50
+route cells and3 chunk activations with ordinary enemies; refresh p95 was6.378ms.
+The earlier stationary pilot is retained as invalid movement evidence. A final
+same-source forced-upload/reuse comparison remains pending, so no performance
+improvement is claimed yet.
 
 The user authorized continuing while asleep and committing checked stages.
 `4c4a6cb2` adds sparse cot, cold hearth, table and crate groups with six explicit

@@ -7,6 +7,8 @@ const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSprit
 const CELL_PX := 256.0
 const BUFFER_WIDTH := 256
 const VIEW_MARGIN := 256.0
+## Dev profiling control: same live collection with legacy upload/rebind work.
+const FORCE_UPLOAD_META := &"world_cover_force_uploads"
 static var _instances: Dictionary = {}
 var _frame := -1
 var _generation := 0
@@ -30,6 +32,22 @@ var _refresh_usec := 0
 var _peak_refresh_usec := 0
 var _peak_primitives := 0
 var _peak_candidates := 0
+var _snapshot_semantics: Array = []
+var _snapshot_origin := Vector2.INF
+var _snapshot_grid_size := Vector2i.ZERO
+var _snapshot_alpha: Texture2DArray
+var _snapshot_valid := false
+var _snapshot_builds := 0
+var _snapshot_reuses := 0
+var _data_uploads := 0
+var _data_upload_bytes := 0
+var _alpha_uploads := 0
+var _alpha_upload_bytes := 0
+var _material_binds := 0
+var _collection_usec := 0
+var _comparison_usec := 0
+var _snapshot_usec := 0
+var _binding_usec := 0
 
 static func get_for(view: Node) -> Node:
 	var viewport := view.get_viewport()
@@ -117,17 +135,50 @@ func refresh(view: Node, force: bool = false) -> void:
 		if _source_cache.has((descriptor.texture as Texture2D).get_instance_id()):
 			descriptor["layer"] = _alpha_keys.find((descriptor.texture as Texture2D).get_instance_id())
 			_records.append(descriptor)
-	_upload_snapshot()
+	_collection_usec = Time.get_ticks_usec()-began
+	var comparison_started := Time.get_ticks_usec()
+	var semantics := _semantic_records()
+	var snapshot_changed: bool = bool(get_meta(FORCE_UPLOAD_META,false)) or not _snapshot_valid or _origin != _snapshot_origin or _grid_size != _snapshot_grid_size or semantics != _snapshot_semantics
+	_comparison_usec = Time.get_ticks_usec()-comparison_started
+	_snapshot_usec = 0
+	if snapshot_changed:
+		var snapshot_started := Time.get_ticks_usec()
+		_upload_snapshot()
+		_snapshot_usec = Time.get_ticks_usec()-snapshot_started
+		_snapshot_semantics = semantics
+		_snapshot_origin = _origin
+		_snapshot_grid_size = _grid_size
+		_snapshot_valid = true
+		_snapshot_builds += 1
+	else:
+		_snapshot_reuses += 1
+	var bindings_changed := snapshot_changed or _snapshot_alpha != _alpha
+	var binding_started := Time.get_ticks_usec()
 	for key: Variant in _materials.keys():
 		var material := (_materials[key] as WeakRef).get_ref() as ShaderMaterial
 		if material == null:
 			_materials.erase(key)
-		else:
+		elif bindings_changed:
 			_bind(material)
+	_snapshot_alpha = _alpha
+	_binding_usec = Time.get_ticks_usec()-binding_started
 	_refresh_usec = Time.get_ticks_usec()-began
 	_peak_refresh_usec = maxi(_peak_refresh_usec,_refresh_usec)
 	_peak_primitives = maxi(_peak_primitives,_records.size())
 	_peak_candidates = maxi(_peak_candidates,_max_candidates)
+
+func _semantic_records() -> Array:
+	# Exact render/index inputs, including resource identity, not a hash that
+	# could collide. describe() creates a fresh owner WeakRef each frame; that
+	# reference is not geometry and must not defeat reuse. Integer texture IDs
+	# also avoid keeping removed original textures alive through this cache.
+	var result: Array = []
+	for record: Dictionary in _records:
+		if int(record.kind) == 0:
+			result.append([0,record.strength,record.front_y,record.points,record.bounds])
+		else:
+			result.append([1,record.strength,record.front_y,record.layer,(record.texture as Texture2D).get_instance_id(),record.world_to_uv,record.source_rect,record.bounds])
+	return result
 
 func _collect_solid_faces(view: Node, area: Rect2, world: World2D, canvas: RID) -> void:
 	# Only explicitly registered, genuinely opaque masonry is triangulated.
@@ -171,6 +222,7 @@ func bind_material(material: ShaderMaterial) -> void:
 	_bind(material)
 
 func _bind(material: ShaderMaterial) -> void:
+	_material_binds += 1
 	material.set_shader_parameter("world_cover_enabled",not _records.is_empty())
 	if _grid == null:
 		return
@@ -241,6 +293,8 @@ func _prepare_alpha(textures: Array[Texture2D]) -> void:
 	_alpha = array
 	_alpha_keys = keys
 	_alpha_size = size
+	_alpha_uploads += 1
+	_alpha_upload_bytes += size.x*size.y*layers.size()*4
 
 func _upload_snapshot() -> void:
 	var data := PackedFloat32Array()
@@ -298,6 +352,10 @@ func _upload_snapshot() -> void:
 	_data = _upload(_data,Image.create_from_data(BUFFER_WIDTH,data.size()/(BUFFER_WIDTH*4),false,Image.FORMAT_RGBAF,data.to_byte_array()))
 
 func _upload(existing: ImageTexture, image: Image) -> ImageTexture:
+	# Requested CPU payload/calls, not a GPU transfer/stall timer. All three
+	# snapshot images use RGBAF (four32-bit channels).
+	_data_uploads += 1
+	_data_upload_bytes += image.get_width()*image.get_height()*16
 	if existing == null:
 		return ImageTexture.create_from_image(image)
 	if Vector2i(existing.get_size()) == image.get_size():
@@ -413,13 +471,19 @@ func strength_at(point: Vector2, feet_y: float) -> float:
 	return result
 
 func snapshot_stats() -> Dictionary:
-	return {"generation":_generation,"primitive_count":_records.size(),"grid_cells":_grid_size.x*_grid_size.y,"index_count":_index_count,"max_candidates":_max_candidates,"foreground_sources":_alpha_keys.size(),"source_reads":_source_reads,"materials":_materials.size(),"cell_px":CELL_PX,"refresh_usec":_refresh_usec,"peak_refresh_usec":_peak_refresh_usec,"peak_primitives":_peak_primitives,"peak_candidates":_peak_candidates}
+	return {"generation":_generation,"primitive_count":_records.size(),"grid_cells":_grid_size.x*_grid_size.y,"index_count":_index_count,"max_candidates":_max_candidates,"foreground_sources":_alpha_keys.size(),"source_reads":_source_reads,"materials":_materials.size(),"cell_px":CELL_PX,"refresh_usec":_refresh_usec,"peak_refresh_usec":_peak_refresh_usec,"peak_primitives":_peak_primitives,"peak_candidates":_peak_candidates,
+		"snapshot_builds":_snapshot_builds,"snapshot_reuses":_snapshot_reuses,"data_uploads":_data_uploads,"data_upload_bytes":_data_upload_bytes,
+		"alpha_uploads":_alpha_uploads,"alpha_upload_bytes":_alpha_upload_bytes,"material_binds":_material_binds,
+		"collection_usec":_collection_usec,"comparison_usec":_comparison_usec,"snapshot_usec":_snapshot_usec,"binding_usec":_binding_usec,
+		"force_uploads":bool(get_meta(FORCE_UPLOAD_META,false))}
 
 func _exit_tree() -> void:
 	_materials.clear()
 	_source_cache.clear()
 	_roof_cache.clear()
 	_solid_cache.clear()
+	_snapshot_semantics.clear()
+	_snapshot_alpha = null
 	_alpha = null
 	_grid = null
 	_indices = null
