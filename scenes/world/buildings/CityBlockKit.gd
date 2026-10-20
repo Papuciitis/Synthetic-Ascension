@@ -147,7 +147,7 @@ func _add_ground_shadow() -> void:
 	var cast := points.duplicate()
 	for point: Vector2 in points: cast.append(point+offset)
 	var pieces: Array[PackedVector2Array] = Geometry2D.clip_polygons(Geometry2D.convex_hull(cast),points)
-	if Global.attempt_segment == 2:
+	if not _is_guard():
 		pieces = FOOTPRINT_GEOMETRY.shadow(FOOTPRINT_GEOMETRY.outline_for(self),offset)
 	for piece: PackedVector2Array in pieces:
 		var shade := Polygon2D.new()
@@ -312,13 +312,13 @@ func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 	# Parcel composition knows all neighbours only after the frontage pass.
 	# Subtract their real footprints so ground cannot paint a neighbour's room.
 	var exact_cuts: Array[PackedVector2Array] = []
-	if Global.attempt_segment == 2: exact_cuts = FOOTPRINT_GEOMETRY.occupied_parts(get_parent(),footprints,cell_px)
+	if not _is_guard(): exact_cuts = FOOTPRINT_GEOMETRY.occupied_parts(get_parent(),footprints,cell_px)
 	for child: Node in get_children():
 		if not child is Polygon2D or not (child.has_meta(&"city_paving") or child.has_meta(&"city_sun_shadow")): continue
 		var paving := child as Polygon2D
 		if paving.has_meta(&"city_sun_shadow"):
 			var shade_pieces: Array[PackedVector2Array] = [paving.polygon]
-			if Global.attempt_segment == 2:
+			if not _is_guard():
 				shade_pieces = FOOTPRINT_GEOMETRY.difference(FOOTPRINT_GEOMETRY.convex_parts(paving.polygon),exact_cuts)
 			else:
 				for footprint: Rect2i in footprints:
@@ -335,7 +335,7 @@ func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 				shade.color = paving.color
 				shade.z_index = paving.z_index
 				shade.texture = paving.texture
-				if Global.attempt_segment == 2: shade.modulate = paving.modulate
+				if not _is_guard(): shade.modulate = paving.modulate
 				if paving.texture != null:
 					var inverse: Transform2D = paving.get_meta(&"shadow_uv_transform")
 					var uv_offset: Vector2 = paving.get_meta(&"shadow_uv_offset")

@@ -456,6 +456,8 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 		var roof_material := _poly.material as ShaderMaterial
 		roof_material.set_shader_parameter("gable",1.0)
 		_poly.set_meta(&"city_roof_form", &"irregular_hall")
+		if Global.attempt_segment == 2:
+			preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose_irregular(_poly,civic)
 		preload("res://scenes/world/buildings/CityBlockRoofForms.gd")._chimney(_poly,_poly,civic)
 
 

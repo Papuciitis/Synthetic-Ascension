@@ -2,6 +2,121 @@ extends RefCounted
 ## Small compound roof compositions, owned by the existing fading RoofPoly.
 ## They change projected building forms, never parcel/door/collision data.
 
+const FOOTPRINT_GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
+
+## Fitted S2 L/recessed roofs: independent gable planes and a shallow rim,
+## with exactly the original visible union and one inherited fade per pixel.
+static func compose_irregular(host: Polygon2D, civic: bool) -> bool:
+	if host.polygon.size() < 4 or not host.material is ShaderMaterial: return false
+	for index in host.polygon.size():
+		var a := host.polygon[index]
+		var b := host.polygon[(index+1)%host.polygon.size()]
+		if not is_equal_approx(a.x,b.x) and not is_equal_approx(a.y,b.y): return false
+	var horizontal := FOOTPRINT_GEOMETRY.convex_parts(host.polygon)
+	var swapped := PackedVector2Array()
+	for point: Vector2 in host.polygon: swapped.append(Vector2(point.y,point.x))
+	var vertical: Array[PackedVector2Array] = []
+	for part: PackedVector2Array in FOOTPRINT_GEOMETRY.convex_parts(swapped):
+		var restored := PackedVector2Array()
+		for point: Vector2 in part: restored.append(Vector2(point.y,point.x))
+		vertical.append(restored)
+	var along_x := _largest_area(horizontal) >= _largest_area(vertical)
+	var parts: Array[PackedVector2Array] = []
+	if along_x: parts.assign(horizontal)
+	else: parts.assign(vertical)
+	if parts.size() < 2: return false
+	var primary := 0
+	for index in range(1,parts.size()):
+		if FOOTPRINT_GEOMETRY.bounds_of(parts[index]).get_area() > FOOTPRINT_GEOMETRY.bounds_of(parts[primary]).get_area(): primary = index
+	var group := Node2D.new()
+	group.name = "CityIrregularRoofComposition"
+	host.add_child(group)
+	var rim := _irregular_rim(host.polygon)
+	var rim_cuts: Array[PackedVector2Array] = []
+	for entry: Dictionary in rim: rim_cuts.append(entry.points)
+	for index in parts.size():
+		var part := parts[index]
+		var bounds := FOOTPRINT_GEOMETRY.bounds_of(part)
+		var material := (host.material as ShaderMaterial).duplicate() as ShaderMaterial
+		material.set_shader_parameter("bounds",Vector4(bounds.position.x,bounds.position.y,bounds.end.x,bounds.end.y))
+		# The primary spine follows the decomposition's long direction. A
+		# meaningful attached arm turns its ridge; tiny residual strips retain
+		# the spine's axis instead of growing an extra ornamental gable.
+		var arm := index != primary and minf(bounds.size.x,bounds.size.y) >= 48.0
+		var plane_along_x := not along_x if arm else along_x
+		material.set_shader_parameter("ridge_along_x",1.0 if plane_along_x else 0.0)
+		material.set_shader_parameter("gable",1.0)
+		material.set_shader_parameter("ridge_light",0.19)
+		var candidates: Array[PackedVector2Array] = [part]
+		for piece: PackedVector2Array in FOOTPRINT_GEOMETRY.difference(candidates,rim_cuts):
+			_partition_plane(group,host,piece,material,host.color,&"main" if index == primary else &"attached",not plane_along_x)
+	var rim_materials: Dictionary = {}
+	for entry: Dictionary in rim:
+		var normal: Vector2 = entry.normal
+		if not rim_materials.has(normal):
+			var material := (host.material as ShaderMaterial).duplicate() as ShaderMaterial
+			var tone := Color("777e79") if civic else Color("62685f")
+			if normal.x > 0.5: tone = Color("9aa69b") if civic else Color("929a87")
+			elif normal.x < -0.5: tone = Color("505d5e") if civic else Color("48554c")
+			material.set_shader_parameter("gable",0.0)
+			material.set_shader_parameter("material_contrast",0.0)
+			material.set_shader_parameter("material_mid",Vector3(tone.r,tone.g,tone.b))
+			material.set_shader_parameter("eave_px",0.01)
+			rim_materials[normal] = material
+		_partition_plane(group,host,entry.points,rim_materials[normal],Color.WHITE,&"fascia")
+	# Polygon2D.color is vertex tint for this mesh, not inherited modulation.
+	# The unchanged host polygon/modulate remains the authoritative cover union;
+	# children alone render it, avoiding .75 opacity during a .5 roof cutaway.
+	var transparent_base := host.color
+	transparent_base.a = 0.0
+	host.color = transparent_base
+	return true
+
+static func _largest_area(parts: Array[PackedVector2Array]) -> float:
+	var result := 0.0
+	for part: PackedVector2Array in parts: result = maxf(result,FOOTPRINT_GEOMETRY.bounds_of(part).get_area())
+	return result
+
+static func _irregular_rim(outline: PackedVector2Array) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var occupied: Array[PackedVector2Array] = []
+	var source := FOOTPRINT_GEOMETRY.convex_parts(outline)
+	for index in outline.size():
+		var a := outline[index]
+		var b := outline[(index+1)%outline.size()]
+		var normal := Vector2((b-a).y,-(b-a).x).normalized()
+		if Geometry2D.is_point_in_polygon((a+b)*0.5+normal,outline): normal = -normal
+		if normal.y < -0.5: continue
+		var depth := 8.0 if normal.y > 0.5 else 6.0
+		var band := PackedVector2Array([a,b,b-normal*depth,a-normal*depth])
+		for part: PackedVector2Array in source:
+			var intersections: Array[PackedVector2Array] = Geometry2D.intersect_polygons(band,part)
+			for piece: PackedVector2Array in FOOTPRINT_GEOMETRY.difference(intersections,occupied):
+				result.append({"points":piece,"normal":normal})
+				occupied.append(piece)
+	return result
+
+static func _partition_plane(group: Node2D, source: Polygon2D, points: PackedVector2Array, material: ShaderMaterial, tint: Color, role: StringName, turn_texture: bool = false) -> void:
+	var plane := Polygon2D.new()
+	plane.name = "RoofPartition_"+String(role)
+	# These partition the unchanged host, rather than adding raised coverage.
+	# Keep them separate from city_roof_form's additive visibility contract.
+	plane.set_meta(&"city_roof_partition",role)
+	plane.polygon = points
+	# Clay barrels/slate courses retain their source density and turn with a
+	# north-south ridge. The east-west arm keeps the original local mapping.
+	if turn_texture:
+		var uv := PackedVector2Array()
+		for point: Vector2 in points: uv.append(Vector2(-point.y,point.x))
+		plane.uv = uv
+	plane.texture = source.texture
+	plane.texture_repeat = source.texture_repeat
+	plane.texture_scale = source.texture_scale
+	plane.texture_offset = source.texture_offset
+	plane.color = tint
+	plane.material = material
+	group.add_child(plane)
+
 static func compose(host: Polygon2D, civic: bool, box: Rect2) -> void:
 	var group := Node2D.new()
 	group.name = "CityRoofComposition"
