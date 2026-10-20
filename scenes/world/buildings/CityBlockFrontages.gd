@@ -6,6 +6,7 @@ const SOLID_GROUP := &"foreground_solid_occluders"
 const GROUND_META := &"foreground_ground_contact"
 const DOMESTIC_PLASTER := preload("res://scenes/world/buildings/domestic_plaster.gdshader")
 const DOMESTIC_BASE := preload("res://assets/world/walls/kit/wall34_10.png")
+const PLASTER_SOURCE := Rect2(1360,260,140,240)
 const TIMBER_SOURCE := Rect2(920,217,11,420)
 const WINDOW_SOURCES: Array[Rect2] = [Rect2(294,172,420,460),Rect2(1480,120,520,510)]
 
@@ -22,8 +23,11 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 	if domestic and finish != null:
 		plaster_material = ShaderMaterial.new()
 		plaster_material.shader = DOMESTIC_PLASTER
-		var size := finish.get_size()
-		plaster_material.set_shader_parameter("source_rect",Vector4(size.x*0.335,size.y*0.30,size.x*0.038,size.y*0.36))
+		# Plain plaster between the original right door jamb and awning. The
+		# former narrow left strip included a recognizable chipped frame edge.
+		plaster_material.set_shader_parameter("source_rect",Vector4(PLASTER_SOURCE.position.x,PLASTER_SOURCE.position.y,PLASTER_SOURCE.size.x,PLASTER_SOURCE.size.y))
+		plaster_material.set_shader_parameter("organic_plaster",true)
+		plaster_material.set_shader_parameter("plaster_origin_texels",kit.to_global(Vector2.ZERO)*2.0)
 		plinth_material = ShaderMaterial.new()
 		plinth_material.shader = DOMESTIC_PLASTER
 		plinth_material.set_shader_parameter("source_rect",Vector4(0,205,256,90))
@@ -245,7 +249,7 @@ static func _masonry(shape: Polygon2D, texture: Texture2D, source: Rect2) -> voi
 static func _plaster(shape: Polygon2D, texture: Texture2D, tint: Color, material: ShaderMaterial = null) -> void:
 	# Plain field beside the existing shutter bay; no additional windows or
 	# stretched ornament. Shared quiet material retains a broad limewash plane.
-	_masonry(shape,texture,Rect2(texture.get_size()*Vector2(0.335,0.30),texture.get_size()*Vector2(0.038,0.36)))
+	_masonry(shape,texture,PLASTER_SOURCE if material != null else Rect2(texture.get_size()*Vector2(0.335,0.30),texture.get_size()*Vector2(0.038,0.36)))
 	shape.color = tint
 	if material != null:
 		var uv := PackedVector2Array()

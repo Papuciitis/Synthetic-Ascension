@@ -48,65 +48,55 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## 20 October — local implementation continuation
 
-### Review 6554c100 continuation in progress
+### Review 6554c100 continuation
 
-Checked commits now include household composition50a8e64c, exact shared-cover
-reuse73fa746b, road/garden/pale material correction5e1646c4, remaining cue adapters
-7875d198 and the [moving cue packet](../art/reference/2026-10-20-linux-moving-cues/README.md)
-in2921f59a. The live route reaches all seven goals, collects the real ordinary
-ring, crosses the west chunk boundary and preserves active spawning/scheduling.
-Its120 frames cover33.296112 measured seconds; the full video decodes cleanly.
-The failed first crowded route remains recorded separately.
+Checked stages include household composition `50a8e64c`, exact shared-cover
+reuse `73fa746b`, road/garden/pale material correction `5e1646c4`, remaining cue
+adapters `7875d198`, the [moving cue packet](../art/reference/2026-10-20-linux-moving-cues/README.md)
+in `2921f59a`, and continuous domestic frontages/S2 ground ownership `7e0850f7`.
 
-The user's latest façade rejection prompted a second composition change: two
-distinct uniformly fitted original window details in continuous warm plaster,
-a quiet rough-masonry plinth and timber eave, plus a shorter visual entry and
-an open timber leaf outside the unchanged128px physical gap. The original PNG
-is unchanged. Native early960 review shows the former whole-house tile borders
-and green upper band removed; full two-home walkthroughs are next. Cohesion32/0,
-fade24/0, entry68/0 and frontage87/0 pass. Road/native ownership14/0 includes an
-S3/default direct-kit control: the S2 road restriction is explicit opt-in, not
-a restyle of other consumers. Final procedural6318/0 and runtime parse558/0 pass.
+The latest façade correction uses two distinct, uniformly fitted original window
+details in continuous warm plaster, a rough masonry plinth and timber eave, plus
+an open timber leaf beside the unchanged128px physical doorway. No source PNG,
+collision, reward, furniture or RNG ownership changes. Full-house tile borders
+and the green upper band are removed. Inspection of the larger fruit home then
+rejected repeated scalloped weathering and a second crop's checkerboard; the
+plaster-only shader now blends deterministic source patches without crop wrapping.
+The original plinth sampling remains unchanged. The first shader helper and a
+subsequent headless sampler diagnostic are retained as failed iterations; texture
+reads now stay in fragment. Final cohesion32/0 and fade24/0 are clean.
 
+Household composition keeps the original cot, groups hearth/table/storage on a
+work wall and fits the supplied flat rush mat. Six blocker cells remain six;
+composition51/0, interior336/0 and actual reward/factory43/0 pass. Earlier native
+walkthroughs for both homes at960×540 and1280×720 completed real entry, four prop
+contacts, exit/roof restore and zero saves. Their plaster appearance is superseded;
+fresh final walkthroughs and the compact household packet are next.
 
-The new household composition keeps the original cot fit, groups the hearth,
-table and storage on a separate work wall, and adds the supplied flat rush mat.
-The six furniture blocker cells remain six; their cooking/work positions change,
-so the actual reward/claim and route checks are retained. Domestic south fronts
-now have taller window bays under a short continuous head course, with a shallow
-stone entry return and original timber lining. The physical doorway stays128px.
-The user's follow-up explicitly preserves pale slate-house versus warm clay-house
-masonry, and requests better pale relief, the upper front, paving shape and
-flower-bed fit.
+Doorway approaches now have shaped shoulders, and the base ground shader limits
+paving to actual roads rather than a rectangular merged parcel hull. S2-only
+ownership passes native14/0 including a default/S3 direct-kit control. Garden soil
+uses a feathered dirt texture; the original flowers retain their measured contact
+with mipmapped reduction. Pale slate-house masonry gains restrained relief while
+warm clay-house material stays distinct. Care125/0, procedural6318/0, final runtime
+parse558/0, entry68/0 and frontage87/0 pass. Whole-street visual acceptance and
+natural care continuation across chunk boundaries remain open.
 
-Focused checks: composition51/0, entry24/0, interior336/0, frontage45/0,
-fractional fade26/0, actual reward/factory43/0. The first actual bed-home960
-walkthrough passes7 stills,6 added cells,4 physical contacts, entry/exit,
-zero failures/saves/diagnostics. Its40 recorded frames cover22.094939 seconds;
-the whole monitored process took61.57 seconds. Exact household/tool/import
-sources match that launch. Second-home/normal-size native checks and the compact
-evidence packet are still in progress. This is a checked implementation stage,
-not full street acceptance.
+Moving cue adapters pass native67/0 and39/0 plus elite-callout contact3/0. The
+actual occupied route reaches all seven goals, collects an ordinary ring and
+crosses the west chunk boundary with live spawning/scheduling. Its120 frames cover
+33.296112 measured seconds; the video decodes cleanly. The failed first crowded
+route is retained separately. This capture includes framebuffer readback and is
+visual evidence, not a performance measurement.
 
-Paving geometry now follows the doorway rather than the whole frontage.
-A later native view exposed a second cause: the base street shader still painted
-paving over the merged rectangular parcel hull underneath the approach. Its
-actual-road ownership correction now passes the native13/0 pixel checks,
-including empty old corners, a feathered shoulder and an opaque road. Garden
-soil is textured and feathered; the original flower art uses mipmaps at its
-large reduction and retains its measured contact. Care125/0 passes. Final scene
-capture is pending a further façade revision requested by the user: the first
-window/entry stage still reads as pasted panels around a garage-like recess.
-
-Remaining cue adapters pass native67/0 and39/0, with the raised elite-callout
-contact3/0. An actual occupied movement/collection run is underway. WorldCover
-now reuses exact unchanged snapshots while still collecting live coverage every
+WorldCover reuses exact unchanged snapshots while still collecting coverage every
 frame. Native24/0, headless23/0 and existing shared-cover25/0 pass; independent
-code review found no blocking issue. The valid uncaptured baseline completed50
+review found no blocker. The valid uncaptured historical baseline completed50
 route cells and3 chunk activations with ordinary enemies; refresh p95 was6.378ms.
-The earlier stationary pilot is retained as invalid movement evidence. A final
-same-source forced-upload/reuse comparison remains pending, so no performance
-improvement is claimed yet.
+The earlier stationary pilot is invalid movement evidence. The final same-source
+forced-upload/reuse comparison remains pending; no performance gain is claimed yet.
+
+### Earlier retained implementation history
 
 The user authorized continuing while asleep and committing checked stages.
 `4c4a6cb2` adds sparse cot, cold hearth, table and crate groups with six explicit
