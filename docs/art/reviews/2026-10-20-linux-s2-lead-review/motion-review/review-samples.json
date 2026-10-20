@@ -1,0 +1,83 @@
+[
+  {
+    "run": "bed-walk-normal",
+    "video_sha256": "960e74bafbdf42addb8828051b1a92097d08d3d68e186b06a0b8557f32a8b250",
+    "samples": 12,
+    "wall_duration_seconds": 43.627042,
+    "phases": {
+      "traversal": 58,
+      "fight": 77
+    },
+    "scope": "Video frame sampling for art inspection; no game rerun or continuous-play assertion.",
+    "sheet": "bed-walk-normal-samples.jpg",
+    "sample_wall_seconds": [
+      0.0,
+      3.961549,
+      7.923099,
+      11.884648,
+      15.846197,
+      19.807746,
+      23.769296,
+      27.730845,
+      31.692394,
+      35.653943,
+      39.615493,
+      43.577042
+    ],
+    "sheet_sha256": "83379216ab5af3841f040ad0ff9ef4a1316b65d16d8584e8a83d168bac5f6e23"
+  },
+  {
+    "run": "tree-walk-small",
+    "video_sha256": "22b157a4fcecb98ebcf351efc024d62e9146aced0eef4ca4ce4888cfaa964756",
+    "samples": 12,
+    "wall_duration_seconds": 54.0981,
+    "phases": {
+      "traversal": 80,
+      "fight": 80
+    },
+    "scope": "Video frame sampling for art inspection; no game rerun or continuous-play assertion.",
+    "sheet": "tree-walk-small-samples.jpg",
+    "sample_wall_seconds": [
+      0.0,
+      4.913464,
+      9.826927,
+      14.740391,
+      19.653855,
+      24.567318,
+      29.480782,
+      34.394245,
+      39.307709,
+      44.221173,
+      49.134636,
+      54.0481
+    ],
+    "sheet_sha256": "4be478e0ba284e3bfa63561b0c8531e0663601f77b9351b0ce9967239bd5c900"
+  },
+  {
+    "run": "bed-walk-reduced",
+    "video_sha256": "a12ca6fe95b7ad9f9e957510e5fe18f9d740ead6faf81ebebac9c1d446696df8",
+    "samples": 12,
+    "wall_duration_seconds": 42.815608,
+    "phases": {
+      "traversal": 57,
+      "fight": 77
+    },
+    "scope": "Video frame sampling for art inspection; no game rerun or continuous-play assertion.",
+    "sheet": "bed-walk-reduced-samples.jpg",
+    "sample_wall_seconds": [
+      0.0,
+      3.887783,
+      7.775565,
+      11.663348,
+      15.55113,
+      19.438913,
+      23.326695,
+      27.214478,
+      31.10226,
+      34.990043,
+      38.877825,
+      42.765608
+    ],
+    "sheet_sha256": "371a204eb4ee5450c718e65cee162553ee8e3f709910065c474311363690753f"
+  }
+]

@@ -1,5 +1,15 @@
 # Domestic gardens v1
 
+**Lead native fit review, 20 October 2026:** KEEP the bed and selected tree v2
+at the measured contacts in the two genuine Linux home fixtures. The current
+production tree width is **135 world px**, not the earlier 164px interface
+starting suggestion below; keep uniform scale `135/1167` and root `(660,1060)`.
+The bed remains at up to 115 world px width, uniform aspect and anchor `(955,485)`.
+No source regeneration is needed. This accepts the sampled fit, not universal
+occlusion or the complete home/street appearance. Ground care and domestic
+interiors remain open. See the [lead review](../../../../docs/art/reviews/2026-10-20-linux-s2-lead-review/README.md).
+The original generation/source observations below are retained as history.
+
 20 October 2026. Two logical garden assets, with one requested tree revision: three preserved PNG source files. Two initial built-in image_gen generations plus ONE targeted built-in projection edit. No further variations were generated. All selected/source-history PNG bytes match the tool outputs unchanged.
 
 The lead provisionally kept both the low flower/herb bed and compact crown/short-trunk tree v2 as sources suitable to try at native scale. V2 is the selected tree candidate; the first tree remains intact as history. No native fit, gameplay, occlusion or final aesthetic approval is claimed. No further tree generation is authorized before in-game review.

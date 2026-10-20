@@ -4,6 +4,14 @@ Updated 20 October 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
 
+**Later update, 20 October:** Linux packet `1fa7a552` is published and reviewed.
+L0 is established; the two native garden fits are kept at their tested scale.
+The complete street still needs work. Current direction is **L2 next**, then L3,
+with roof/entity visibility retained as a required visual gate. Read the updated
+[ART_STATUS](docs/handoff/ART_STATUS.md) and [lead review](docs/art/reviews/2026-10-20-linux-s2-lead-review/README.md)
+before the original checkpoint/evidence snapshot below. The old publication
+authentication failure in Linux's status is historical; manual Git relay is available.
+
 ## Start here
 
 Repository: `https://github.com/Papuciitis/Synthetic-Ascension.git`.

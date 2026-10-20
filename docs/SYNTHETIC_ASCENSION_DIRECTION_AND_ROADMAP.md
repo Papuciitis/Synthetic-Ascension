@@ -2860,3 +2860,23 @@ hearth candidates are supplied; ground and domestic interior integration remain
 queued. The four old chats stay archived and local production yields heavy
 engine work. Normal scoped checkpoint pushes are authorized; no force-push or
 blanket staging is part of this workflow.
+
+## 2026-10-20 — Linux native home fit reviewed; ground care is next
+
+The lead fetched Linux packet `1fa7a552` (implementation `5f851103`, evidence
+`1e90f92a`), verified the published artifacts, and personally reviewed both real
+home exteriors at normal/small sizes, genuine cutaways, occupied stills and
+sampled sequences from all three videos. Keep the measured herb-bed/tree fit,
+irregular footprint and fitted neighbor provisionally. Accept the monitored
+capture/test improvements as qualified WIP; no whole-street approval is given.
+
+Next Linux packet is L2 on the same homes plus natural S7: locally tended ground
+versus real wilderness/neglect, using the already supplied lawn/moss sources and
+validated cache. L3 then supplies purposeful domestic furnishing and stronger
+masonry, with the blank tan exterior band and oversized dark entry also needing
+refinement. Fully coloured actors/projectiles crossing opaque roofs remain a
+named V1 visual blocker before occupied-street acceptance. More district families
+or speculative asset packs are not requested. See the [lead review and return
+criteria](art/reviews/2026-10-20-linux-s2-lead-review/README.md) and updated
+[ART_STATUS](handoff/ART_STATUS.md). Linux publication succeeded; its recorded
+authentication failure is historical, and the human can relay Git manually.
