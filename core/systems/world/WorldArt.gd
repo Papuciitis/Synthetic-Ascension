@@ -27,7 +27,7 @@ const _GROUND_TEX_PATHS := [
 	"res://assets/world/ground/ground_cobble_01.png",
 	"res://assets/world/ground/ground_stone_tiles_01.png",
 	"res://assets/world/ground/ground_dirt_path_01.png",
-	"res://assets/world/ground/ground_mud_wet_01.png",
+	"res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
 	"res://assets/world/ground/ground_city_base_01.png",
 	"res://assets/world/ground/ground_civic_brick_01.png",
 	"res://assets/world/ground/ground_mossy_brick_01.png",

@@ -1,0 +1,212 @@
+{
+	"ambient_spawner": false,
+	"args": [
+		"--visible",
+		"--ground-review",
+		"--review=small",
+		"--world-seed=4",
+		"--segment=7",
+		"--ground-context=-2016,96",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-l2-correction-20261020/s7-old-wet"
+	],
+	"attempt_seed": 4,
+	"building_id": 0,
+	"camera": {
+		"position": "(-2016.0, 96.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(960, 540)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityBlockPlayablePreview.tscn",
+	"captured_frames": 0,
+	"controlled_enemies": false,
+	"coord": "(-1, 0)",
+	"deaths": 0,
+	"district_family": "canal_services",
+	"failures": 0,
+	"fixed_camera": true,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"frames": [],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 0,
+			"local_bounds": "[P: (0, 0), S: (0, 0)]",
+			"max_byte": 0,
+			"nonzero": 0,
+			"sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+			"sum_bytes": 0
+		},
+		"chunk_material_counts": {
+			"12": 372,
+			"2": 92,
+			"3": 1,
+			"4": 106,
+			"7": 453
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "318bfb23d557e8f43efb402a52306f87c2b2bad2aac29a4873abc1fa8f9c2fc0",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				-32,
+				1
+			],
+			"material": 12,
+			"walkable": true,
+			"world_px": [
+				-2016.0,
+				96.0
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "f8b7f1084dbbd171eaaf0e95cf53b8cd30c4d9906d4de23e00d53ac2629998bc",
+					"layer_sha256": "00176083b44a2b2b44e64da4307bf5cbc7bca1987155d9ae9313e1c22d23fbc9",
+					"path": "res://assets/world/ground/ground_mud_wet_01.png",
+					"sha256": "bf8aa7800993cdd33c826681a1ca3217ea8dc0764e89b9012b27a4768655d0dc"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "false",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				12.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				5.0,
+				1.0
+			],
+			"slot_layer": [
+				12.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				5.0,
+				1.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0
+			],
+			"world_tint": "(0.9, 0.97, 1.0, 1.0)"
+		},
+		"semantic_terrain": "moss"
+	},
+	"ground_context_world_px": [
+		-2016.0,
+		96.0
+	],
+	"ground_correction": {},
+	"ground_review": true,
+	"hits": 0,
+	"image_size": "(960, 540)",
+	"initial_fight_population": 0,
+	"limits": "Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance.",
+	"local_security": 0,
+	"max_projectiles": 0,
+	"normal_hud": true,
+	"occupied_comparison": false,
+	"optional_details_hidden": false,
+	"plan_seed": 745886440,
+	"player_god_mode": true,
+	"reduced_motion": false,
+	"requested_simulation_seconds": 0.0,
+	"review": "small",
+	"role": "main_street",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+			"coord": "(-1, 0)",
+			"equal": true,
+			"event": "ground_context_streamed_reload"
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scripted_input": true,
+	"seed": 4,
+	"segment": 7,
+	"simulation_fight_seconds": 0.0,
+	"theme": "canal_services",
+	"wall_seconds": 0.0,
+	"weapon_fires": 0,
+	"world_cover": {
+		"cell_px": 256.0,
+		"foreground_sources": 2,
+		"generation": 684,
+		"grid_cells": 70,
+		"index_count": 114,
+		"materials": 5,
+		"max_candidates": 13,
+		"peak_candidates": 14,
+		"peak_primitives": 69,
+		"peak_refresh_usec": 50820,
+		"primitive_count": 51,
+		"refresh_usec": 3511,
+		"source_reads": 2
+	}
+}

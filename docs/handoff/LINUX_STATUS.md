@@ -34,6 +34,18 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Current bounded packet
 
+The supplied wet-earth candidate is selected locally for semantic5 after native
+same-camera comparison. Only source/layer5 changes; the other13 prepared layers
+match. Cache38/0, terrain23/0 and native exact layer+mip warmup3/0 pass, with
+largest loading gap197.122ms against the unchanged250ms gate. Normal/reduced
+occupied captures each report34frames,24fires,26hits,0failures/0saves and decode
+cleanly. The real dry1/no-stain3×3 control and the failed5×5 search are retained.
+See [wet-earth packet](../art/reference/2026-10-20-linux-wet-earth/README.md).
+This is a production selection pending lead art review, not complete L2/street
+acceptance. Paving/actual-footprint shadows are separately committed as9eab80dc
+and merged locally; the new irregular roof-plane, interior and atmosphere work
+continues in its checked stages.
+
 Local checked continuation,20October: the household care inner plateau is now
 0.50 instead of0.20, preserving the bed’s15-cell support while filling its legal
 3×3 core. Care125/0, natural preservation8chunks/0failures, splat33/0 and two

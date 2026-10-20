@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: the exact ground array is shipped instead of requiring first-entry GPU readback
+PASS: the derived ground array carries reproducible source provenance
+PASS: source startup shares safe source-freshness validation with the cache test
+PASS: cached layers match every ordered source and preprocessing revision; art edits require rebaking
+PASS: null provenance is rejected safely
+PASS: non-dictionary provenance is rejected safely
+PASS: provenance requires algorithm_revision
+PASS: provenance algorithm_revision rejects malformed field types
+PASS: provenance requires layer_size
+PASS: provenance layer_size rejects malformed field types
+PASS: provenance requires format
+PASS: provenance format rejects malformed field types
+PASS: provenance requires cache_sha256
+PASS: provenance cache_sha256 rejects malformed field types
+PASS: provenance requires sources
+PASS: provenance sources rejects malformed field types
+PASS: malformed source-list types are rejected safely
+PASS: extra sources are rejected before indexing registered layers
+PASS: a missing ordered source requires rebaking
+PASS: malformed source entries are rejected safely
+PASS: source order must match the shader's layer order
+PASS: every source requires path
+PASS: source path rejects non-string values
+PASS: changed source path requires rebaking
+PASS: source path cannot pass with an empty digest/path
+PASS: every source requires sha256
+PASS: source sha256 rejects non-string values
+PASS: changed source sha256 requires rebaking
+PASS: source sha256 cannot pass with an empty digest/path
+PASS: every source requires import_sha256
+PASS: source import_sha256 rejects non-string values
+PASS: changed source import_sha256 requires rebaking
+PASS: source import_sha256 cannot pass with an empty digest/path
+PASS: changed derived resource bytes require rebaking
+PASS: a different preprocessing revision requires rebaking
+PASS: a different baked layer size is rejected
+PASS: the recorded array pixel/mipmap format is checked
+PASS: world startup actually uses the verified derived array
+GroundMaterialCacheTest: 38 passed, 0 failed

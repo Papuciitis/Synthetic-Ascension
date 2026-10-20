@@ -1,0 +1,13 @@
+# Wet earth native selection — bounded L2 correction
+
+20October2026. Received single source from lead reviewfaf0e7f4; source originals remain unchanged.
+
+Compare actual S7seed4 CanalServices, world(-2016,96), same960×540 camera and old atmosphere: [old ribboned wet5](s7-old-wet/ground-before.png), [selected supplied wet earth](s7-candidate-small/ground-before.png). The replacement removes broad repeated parallel channels and reads as dark worked/damp soil. Its fine grit remains an art-review point. The subdued moss12 is retained. This is a local production selection, not the Windows lead’s visual acceptance.
+
+[Real dry1 control with player](s7-dry-three/ground-before.png) uses the nearest actual generated3×3 final-material1 patch, stainG<=2/255, under the same theme/light/camera settings. Its world point differs and is recorded in capture-info. A5×5 survey found no candidate and is retained as a failed search, not a passing control. No terrain was painted to manufacture either sample.
+
+[Normal occupied comparison](wet-fight-normal/fight.mp4) at1280×720 and [Reduced Motion / flashes off](wet-fight-reduced/fight.mp4) at960×540 retain actual attacks, actors and orange tells. Each captures34 frames over measured wall time,24fires/26hits/0failures/0saves. Native readback affects timing: these are scripted god-mode/controlled-spawn/fixed-camera previews, not ordinary play or a performance/balance acceptance result. MP4s are silent H.264/yuv420p with no resizing, repainting or interpolation; encoding source-frame hashes/timings and clean full-decode checks accompany them. Raw frame PNGs remain local; useful stills and video are retained here.
+
+Only semantic layer5’s source path changes. The14-layer array, preprocessing revision1, repeats, semantic IDs and shader algorithm remain unchanged. Exact manifest comparison shows the other13 ordered source/import/prepared-mip hashes unchanged. Native bake rebuilt both derived outputs together and used current original imports. Cache38/0, terrain23/0, native warmup3/0 with19loading frames and largest197.122ms, below the unchanged250ms assertion. Native cached versus fresh original-algorithm layer data, including mipmaps, are byte-identical. This fresh run does not relabel the older254.2ms failed run.
+
+Paving/footprint-shadow changes were integrated between the old/new captures but their runtime additions are S2-only; this S7 comparison keeps their existing paths. Atmosphere/roof/interior work is separately active. Full street/ground acceptance and any additional chunk-edge continuation remain open. Process records retain exact scoped sources/imports, commands, logs, diagnostics and resource samples.

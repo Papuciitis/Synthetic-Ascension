@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: fourteen ground textures include the presentation-only cared lawn (14)
+PASS: the care renderer can address its dedicated lawn layer
+PASS: semantic moss draws the selected low damp moss/soil source
+PASS: local household care draws its selected short-lawn source
+PASS: cared lawn is not a semantic overgrowth material or coverage slot
+PASS: the presentation lawn retains its reviewed 320-world-pixel repeat
+PASS: wild material 0 retains its original source
+PASS: wild material 10 retains its original source
+PASS: wild material 11 retains its original source
+PASS: every ground texture loads
+PASS: the seven terrains map to seven distinct textures
+PASS: semantic terrain grass keeps material 0
+PASS: semantic terrain dirt keeps material 1
+PASS: semantic terrain mud keeps material 5
+PASS: semantic terrain urban keeps material 6
+PASS: semantic terrain meadow keeps material 10
+PASS: semantic terrain scrub keeps material 11
+PASS: semantic terrain moss keeps material 12
+PASS: an unknown terrain falls back to grass
+PASS: meadow and moss repeat at the grass scale, urban does not
+PASS: every theme from segment 2 to 10 paints known terrains
+PASS: the later segments use meadow, scrub and moss ([&"grass", &"dirt", &"meadow", &"scrub", &"moss", &"mud"])
+PASS: an overgrown theme scatters more vegetation than the default and a staging ground less (28 / 20 / 4)
+WorldTerrainTest: 23 passed, 0 failed
