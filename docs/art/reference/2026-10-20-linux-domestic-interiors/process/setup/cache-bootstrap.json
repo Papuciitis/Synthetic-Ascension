@@ -1,0 +1,25 @@
+{
+  "reason": "Fresh editor attempted project theme/autoloads before importing required fonts/UI textures; first scene import timed out at75percent. Derived same-machine Linux4.7.2 cache and resource-relative global-class index seeded from main checkout, then each worktree receives its own monitored validation/import. This is a warm-cache worktree setup, not a clean-clone proof.",
+  "source": "/home/user/Nauris/Synthetic-Ascension/.godot/imported",
+  "worktrees": [
+    {
+      "task": "scene",
+      "branch": "codex/linux-scene-depth",
+      "path": "/tmp/synthetic-ascension-linux-scene-20261020",
+      "base": "31a1f6ce00eedaf07bc73368c355625788f9be98"
+    },
+    {
+      "task": "domestic",
+      "branch": "codex/linux-domestic-interiors",
+      "path": "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "base": "31a1f6ce00eedaf07bc73368c355625788f9be98"
+    },
+    {
+      "task": "atmosphere",
+      "branch": "codex/linux-theme-atmosphere",
+      "path": "/tmp/synthetic-ascension-linux-atmosphere-20261020",
+      "base": "31a1f6ce00eedaf07bc73368c355625788f9be98"
+    }
+  ],
+  "followup": "Warm editor import completed but reported existing autoload type-inference diagnostics. Normal actual-Game-context headless CityBlockKitTest then passed1300/0, no diagnostics, same runtime bytes as main. Feature baseline and RED use normal monitored runtime context; editor import is not counted as clean proof."
+}

@@ -1,0 +1,425 @@
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/timber_cot.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_footprint (res://core/systems/world/proc/SiteParcelsImpl.gd:801)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:385)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+       [12] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/cooking_hearth.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_footprint (res://core/systems/world/proc/SiteParcelsImpl.gd:801)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:385)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+       [12] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: FAIL: Actual household owner renders four purposeful original props
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:277)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/timber_cot.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_footprint (res://core/systems/world/proc/SiteParcelsImpl.gd:801)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:385)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/cooking_hearth.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_footprint (res://core/systems/world/proc/SiteParcelsImpl.gd:801)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:385)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Actual household owner renders four purposeful original props
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:277)
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/timber_cot.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_rect (res://core/systems/world/proc/SiteParcelsImpl.gd:591)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:387)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+       [12] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [13] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/cooking_hearth.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_rect (res://core/systems/world/proc/SiteParcelsImpl.gd:591)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:387)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+       [12] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [13] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: FAIL: Actual household owner renders four purposeful original props
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:277)
+       [2] _run (res://tools/tests/CityDomesticInteriorTest.gd:50)
+       [3] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:287)
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/timber_cot.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_rect (res://core/systems/world/proc/SiteParcelsImpl.gd:591)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:387)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/cooking_hearth.png (expected type: unknown)
+   at: _load (core/io/resource_loader.cpp:332)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityDomesticInterior.gd:187)
+       [1] _add_domestic_interior (res://core/systems/world/proc/SiteParcelsImpl.gd:813)
+       [2] _spawn_building_rect (res://core/systems/world/proc/SiteParcelsImpl.gd:591)
+       [3] _fill_frontage_band (res://core/systems/world/proc/SiteParcelsImpl.gd:387)
+       [4] decorate_district_parcels (res://core/systems/world/proc/SiteParcelsImpl.gd:66)
+       [5] decorate_district_parcels (res://core/systems/world/proc/SiteManager.gd:41)
+       [6] _generate_district (res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd:348)
+       [7] _generate_district (res://core/systems/world/proc/ChunkGenImpl.gd:342)
+       [8] _generate_chunk (res://core/systems/world/proc/ChunkGenImpl.gd:303)
+       [9] _generate_chunk (res://core/systems/world/ChunkManager.gd:1001)
+       [10] _create_chunk (res://core/systems/world/ChunkManager.gd:556)
+       [11] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:231)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:251)
+ERROR: FAIL: Furniture collision and streamed pathing agree
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:253)
+ERROR: FAIL: Furniture low-cover geometry participates in projectile queries
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:255)
+ERROR: FAIL: Actual household owner renders four purposeful original props
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _test_actual_home (res://tools/tests/CityDomesticInteriorTest.gd:277)

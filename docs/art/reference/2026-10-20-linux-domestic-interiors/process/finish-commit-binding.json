@@ -1,0 +1,46 @@
+{
+  "commit": "276e5e152e2a4d718149e044c16dcc21d938c514",
+  "files": {
+    "scenes/world/buildings/CityBlockFrontages.gd": {
+      "recorded_launch_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+      "packaging_file_sha256": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871"
+    },
+    "scenes/world/buildings/domestic_plaster.gdshader": {
+      "recorded_launch_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+      "packaging_file_sha256": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae"
+    },
+    "tools/dev/CityDomesticInteriorPreview.gd": {
+      "recorded_launch_sha256": "3d262834d145879bc6c40fc415383f2ab61ce6901e0cc85baf8370e8c28b24dc",
+      "packaging_file_sha256": "3d262834d145879bc6c40fc415383f2ab61ce6901e0cc85baf8370e8c28b24dc"
+    },
+    "tools/dev/CityDomesticInteriorPreview.tscn": {
+      "recorded_launch_sha256": "96a5de450e78f7b5ac86be5f8fc320d802dcd014ae24f6367728a6719bf25598",
+      "packaging_file_sha256": "96a5de450e78f7b5ac86be5f8fc320d802dcd014ae24f6367728a6719bf25598"
+    },
+    "tools/tests/DomesticFrontageFinishTest.gd": {
+      "recorded_launch_sha256": "318633ae8e93fd644eac25f3115e5042bcc10b37eebfbdbe6134a7895f828b50",
+      "packaging_file_sha256": "318633ae8e93fd644eac25f3115e5042bcc10b37eebfbdbe6134a7895f828b50"
+    },
+    "tools/tests/DomesticFrontageFinishTest.tscn": {
+      "recorded_launch_sha256": "5a598925f2e33bc3a951b84ff260a0f1a0e7160b76d7d84af46d920fe5148d9e",
+      "packaging_file_sha256": "5a598925f2e33bc3a951b84ff260a0f1a0e7160b76d7d84af46d920fe5148d9e"
+    },
+    "tools/tests/DomesticFrontageFadeTest.gd": {
+      "recorded_launch_sha256": "9de981d7aa0d916b4607db00b4b58f998e4fe3aedadc3b1c181b4b3b0d4db39d",
+      "packaging_file_sha256": "9de981d7aa0d916b4607db00b4b58f998e4fe3aedadc3b1c181b4b3b0d4db39d"
+    },
+    "tools/tests/DomesticFrontageFadeTest.tscn": {
+      "recorded_launch_sha256": "506c229e8b00484e467dd4b776e205a9d7b01b8ac8297804318703636a401001",
+      "packaging_file_sha256": "506c229e8b00484e467dd4b776e205a9d7b01b8ac8297804318703636a401001"
+    }
+  },
+  "capture_launches": {
+    "domestic-final-bed-small": "346518eee60c8003c2cbe005af31076d6bf6d5b3",
+    "domestic-final-bed-normal": "346518eee60c8003c2cbe005af31076d6bf6d5b3",
+    "domestic-final-fruit-small": "346518eee60c8003c2cbe005af31076d6bf6d5b3",
+    "domestic-final-fruit-normal": "346518eee60c8003c2cbe005af31076d6bf6d5b3"
+  },
+  "root_attestation": "Root staged the eight exact finish/tool/test paths, checked each SHA256 against all four final native launch records, committed276e5e152e2a4d718149e044c16dcc21d938c514, and fast-forwarded main before packaging.",
+  "packager_check": "The current eight source files match all four recorded launch SHA256 values. The packager invokes no Git; the commit association is root's explicit verification above.",
+  "scope": "These eight finish/tool/test files only. Other integrated scene/ground sources retain their launch records and separate packets; no later whole-tree or complete asset reproducibility claim is made."
+}

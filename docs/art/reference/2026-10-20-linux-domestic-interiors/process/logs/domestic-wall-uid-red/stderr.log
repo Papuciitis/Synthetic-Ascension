@@ -1,0 +1,5 @@
+ERROR: FAIL: Domestic masonry needs explicit building-use ownership before batch rendering
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/DomesticWallMaterialTest.gd:25)

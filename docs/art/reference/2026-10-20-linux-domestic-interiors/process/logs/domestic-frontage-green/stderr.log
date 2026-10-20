@@ -1,0 +1,52 @@
+SCRIPT ERROR: Parse Error: Cannot infer the type of "domestic" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://scenes/world/buildings/CityBlockFrontages.gd:16)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scenes/world/buildings/CityBlockKit.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scenes/world/buildings/DungeonBuilding.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/systems/world/proc/SiteOverlayImpl.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/systems/world/proc/SiteManager.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/systems/world/ChunkManager.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://effects/manifestations/ManifestationShardProjectile.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://effects/manifestations/logic/VectorHalo.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://data/manifestations/ManifestationCatalog.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://data/items/ItemInstance.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://data/items/ItemData.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/systems/major_choice/DoctrineRewardService.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://autoload/global.gd:0)
+ERROR: Failed to load script "res://autoload/global.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Invalid call. Nonexistent function 'compose' in base 'GDScript'.
+          at: configure (res://scenes/world/buildings/CityBlockKit.gd:106)
+          GDScript backtrace (most recent call first):
+              [0] configure (res://scenes/world/buildings/CityBlockKit.gd:106)
+              [1] _fixture (res://tools/tests/DomesticFrontageFinishTest.gd:43)
+              [2] _run (res://tools/tests/DomesticFrontageFinishTest.gd:59)
+ERROR: FAIL: The actual retained bed home exercises both broad upper-field runs
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticFrontageFinishTest.gd:23)
+       [1] _run (res://tools/tests/DomesticFrontageFinishTest.gd:79)
+ERROR: FAIL: The real irregular doorway retains its cardinal upright adapter
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticFrontageFinishTest.gd:23)
+       [1] _run (res://tools/tests/DomesticFrontageFinishTest.gd:81)
+ERROR: Node not found: "CardinalWallReturns" (relative to "/root/DomesticFrontageFinishTest/@Node2D@39/@Node2D@43").
+   at: get_node (scene/main/node.cpp:1975)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tools/tests/DomesticFrontageFinishTest.gd:93)
+SCRIPT ERROR: Invalid access to property or key 'modulate' on a base object of type 'null instance'.
+          at: _run (res://tools/tests/DomesticFrontageFinishTest.gd:94)
+          GDScript backtrace (most recent call first):
+              [0] _run (res://tools/tests/DomesticFrontageFinishTest.gd:94)

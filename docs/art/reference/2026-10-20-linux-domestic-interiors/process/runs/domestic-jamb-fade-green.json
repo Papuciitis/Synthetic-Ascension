@@ -1,0 +1,438 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/tmp/synthetic-ascension-linux-domestic-20261020",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-jamb-fade-green/logs/engine.log",
+    "--flush-output",
+    "--headless",
+    "--verbose",
+    "res://tools/tests/DomesticFrontageFadeTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /tmp/synthetic-ascension-linux-domestic-20261020 --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-jamb-fade-green/logs/engine.log --flush-output --headless --verbose res://tools/tests/DomesticFrontageFadeTest.tscn",
+  "project_root": "/tmp/synthetic-ascension-linux-domestic-20261020",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-jamb-fade-green",
+  "actual_exit": 0,
+  "stop_reason": "completed",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20391.66015625,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 52.953125,
+      "cpu_seconds": 0.03,
+      "available_mb": 20360.16796875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 0.141,
+      "rss_mb": 90.6015625,
+      "cpu_seconds": 0.16,
+      "available_mb": 20341.2734375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 0.28,
+      "rss_mb": 121.55859375,
+      "cpu_seconds": 0.32,
+      "available_mb": 20327.34375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 0.425,
+      "rss_mb": 149.61328125,
+      "cpu_seconds": 0.46,
+      "available_mb": 20303.67578125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 0.573,
+      "rss_mb": 176.98828125,
+      "cpu_seconds": 0.61,
+      "available_mb": 20272.60546875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 0.721,
+      "rss_mb": 182.73828125,
+      "cpu_seconds": 0.75,
+      "available_mb": 20280.02734375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 0.868,
+      "rss_mb": 182.93359375,
+      "cpu_seconds": 0.9,
+      "available_mb": 20297.90625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 1.017,
+      "rss_mb": 202.93359375,
+      "cpu_seconds": 1.05,
+      "available_mb": 20271.078125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 1.161,
+      "rss_mb": 228.55859375,
+      "cpu_seconds": 1.19,
+      "available_mb": 20247.41015625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 1.302,
+      "rss_mb": 284.18359375,
+      "cpu_seconds": 1.35,
+      "available_mb": 20203.2109375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 1.457,
+      "rss_mb": 322.80859375,
+      "cpu_seconds": 1.5,
+      "available_mb": 20164.10546875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 1.612,
+      "rss_mb": 344.80859375,
+      "cpu_seconds": 1.66,
+      "available_mb": 20143.9375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 1.767,
+      "rss_mb": 352.18359375,
+      "cpu_seconds": 1.81,
+      "available_mb": 20135.71875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 1.916,
+      "rss_mb": 365.68359375,
+      "cpu_seconds": 1.96,
+      "available_mb": 20148.0234375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 2.07,
+      "rss_mb": 371.43359375,
+      "cpu_seconds": 2.1,
+      "available_mb": 20129.56640625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 2.216,
+      "rss_mb": 390.32421875,
+      "cpu_seconds": 2.25,
+      "available_mb": 20113.02734375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 2.365,
+      "rss_mb": 390.32421875,
+      "cpu_seconds": 2.4,
+      "available_mb": 20112.90234375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 2.51,
+      "rss_mb": 397.57421875,
+      "cpu_seconds": 2.54,
+      "available_mb": 20105.734375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 2.656,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 2.69,
+      "available_mb": 20090.05078125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 2.804,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 2.86,
+      "available_mb": 20096.13671875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 2.97,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 3.0,
+      "available_mb": 20096.74609375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 3.113,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 3.15,
+      "available_mb": 20096.79296875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 3.259,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 3.3,
+      "available_mb": 20098.01171875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 3.413,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 3.45,
+      "available_mb": 20098.01171875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 3.564,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 3.6,
+      "available_mb": 20098.01171875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 3.714,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 3.75,
+      "available_mb": 20097.7734375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 3.863,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 3.91,
+      "available_mb": 20162.1484375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 4.02,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 4.05,
+      "available_mb": 20161.38671875,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 4.171,
+      "rss_mb": 409.19921875,
+      "cpu_seconds": 4.2,
+      "available_mb": 20161.14453125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 4.318,
+      "rss_mb": 424.57421875,
+      "cpu_seconds": 4.35,
+      "available_mb": 20157.9765625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 4.465,
+      "rss_mb": 435.19921875,
+      "cpu_seconds": 4.49,
+      "available_mb": 20150.03125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 4.611,
+      "rss_mb": 435.44921875,
+      "cpu_seconds": 4.66,
+      "available_mb": 20147.8203125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 4.78,
+      "rss_mb": 435.44921875,
+      "cpu_seconds": 4.82,
+      "available_mb": 20132.5625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 4.941,
+      "rss_mb": 435.44921875,
+      "cpu_seconds": 4.97,
+      "available_mb": 20137.953125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 5.088,
+      "rss_mb": 435.44921875,
+      "cpu_seconds": 5.11,
+      "available_mb": 20137.953125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 5.236,
+      "rss_mb": 435.44921875,
+      "cpu_seconds": 5.27,
+      "available_mb": 20137.70703125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 5.391,
+      "rss_mb": 438.32421875,
+      "cpu_seconds": 5.43,
+      "available_mb": 20137.70703125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 5.547,
+      "rss_mb": 442.32421875,
+      "cpu_seconds": 5.58,
+      "available_mb": 20135.75,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 5.7,
+      "rss_mb": 442.32421875,
+      "cpu_seconds": 5.73,
+      "available_mb": 20140.3125,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 5.853,
+      "rss_mb": 444.32421875,
+      "cpu_seconds": 5.89,
+      "available_mb": 20153.5390625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 6.009,
+      "rss_mb": 462.19921875,
+      "cpu_seconds": 6.04,
+      "available_mb": 20133.91015625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 6.157,
+      "rss_mb": 484.875,
+      "cpu_seconds": 6.18,
+      "available_mb": 20110.3515625,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 6.301,
+      "rss_mb": 0.0,
+      "cpu_seconds": 6.29,
+      "available_mb": 20226.87109375,
+      "pids": [
+        104689
+      ]
+    },
+    {
+      "elapsed_seconds": 6.464,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20479.0078125,
+      "pids": []
+    }
+  ],
+  "diagnostics": [],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T14:22:27.986264+00:00",
+  "limits": {
+    "timeout_seconds": 90.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "4c4a6cb28450fc8a37289970bc36cc42bae7e287",
+  "pid": 104689,
+  "elapsed_seconds": 7.451,
+  "ended_utc": "2026-10-20T14:22:35.437364+00:00",
+  "runner_exit": 0,
+  "packet_classification": "clean_check",
+  "original_run_results_sha256": "ead60df580dd60808a5539c259550569a918fdcdfb7cebf99241ab82a2e8cb8c",
+  "source_provenance": "../sources/e5451368f787bd544753bcd4b9af27dd004105985b8a2326f04d702468a32444.json",
+  "packet_note": "Exact domestic jamb subtraction with preserved8px upper caps; original3 detail points,2 jamb points and2 cap controls. Exact command/exits/diagnostics/resources/logs retained; input hashes/untracked paths moved losslessly. Only machine-wide Git status omitted. Original local paths are historical provenance, not bundled-file claims."
+}

@@ -1,0 +1,20 @@
+{
+  "subject": "Historical first-run goal-center wording repeated in revision2 prior_evidence_qualification",
+  "correction": "Revision1 zero-path return goal errors are22.933–22.998px, about23px. About41px is the separate correct player-to-support collision distance; it is not the goal-center error.",
+  "revision1_zero_path_goal_errors_px": [
+    22.933200021802453,
+    22.997628094219095,
+    22.93320002180251,
+    22.977171407507974
+  ],
+  "derived_from_capture_info_sha256": "cbfe12620cbed716e7bb843f64ed7ddf2cd6810838c3e654d287cd4533044fb7",
+  "affected_raw_capture_metadata": {
+    "revision1-bed-small": "cbfe12620cbed716e7bb843f64ed7ddf2cd6810838c3e654d287cd4533044fb7",
+    "bed-small": "e3648ce6cbea23d601b8a73067b0e338937c2dee47a3c58f19ea58ca7be465a3",
+    "bed-normal": "da58147afdd99ff0d53074815b652501a3959bfdbdd346f86c616ed7a4eebd44",
+    "fruit-small": "4328d7891bf89d187ebfeff7fd152d37ba1733971a7e4d5083f4d8aa29e01897",
+    "fruit-normal": "6a68eeb4b1e5220a9dbef0f45005db0a5dca5432b34f236c78ec8770788cf5b1"
+  },
+  "raw_capture_files_rewritten": false,
+  "meaning": "Original PNGs, capture-info, source hashes and encoding/decode sidecars remain byte-identical. This separate correction prevents a prose range from being mistaken for the actual recorded physical measurements. Final revision2 physical centering checks use their own successful under8px events."
+}

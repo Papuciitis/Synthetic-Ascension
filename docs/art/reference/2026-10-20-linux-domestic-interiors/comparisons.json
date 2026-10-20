@@ -1,0 +1,33 @@
+[
+  {
+    "first": "revision1-bed-small",
+    "second": "bed-small",
+    "layout_equal": true,
+    "same_camera_record": true,
+    "changed_scoped_inputs": [
+      "scenes/world/buildings/CityBlockFrontages.gd",
+      "scenes/world/buildings/CityBlockKit.gd",
+      "scenes/world/buildings/RoofOverlay.gd",
+      "scenes/world/buildings/CityBlockRoofForms.gd",
+      "tools/dev/CityDomesticInteriorPreview.gd",
+      "tools/tests/DomesticFrontageFadeTest.gd"
+    ],
+    "limits": "Revision1 predates final jamb/scene roof integration and physical goal-centering revision2. Different native sizes are separate samples. These records are not an isolated material, lighting or performance ablation."
+  },
+  {
+    "first": "bed-small",
+    "second": "bed-normal",
+    "layout_equal": true,
+    "same_camera_record": false,
+    "changed_scoped_inputs": [],
+    "limits": "Revision1 predates final jamb/scene roof integration and physical goal-centering revision2. Different native sizes are separate samples. These records are not an isolated material, lighting or performance ablation."
+  },
+  {
+    "first": "fruit-small",
+    "second": "fruit-normal",
+    "layout_equal": true,
+    "same_camera_record": false,
+    "changed_scoped_inputs": [],
+    "limits": "Revision1 predates final jamb/scene roof integration and physical goal-centering revision2. Different native sizes are separate samples. These records are not an isolated material, lighting or performance ablation."
+  }
+]

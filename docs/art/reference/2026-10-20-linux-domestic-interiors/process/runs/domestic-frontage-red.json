@@ -1,0 +1,452 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/tmp/synthetic-ascension-linux-domestic-20261020",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-frontage-red/logs/engine.log",
+    "--flush-output",
+    "--headless",
+    "res://tools/tests/DomesticFrontageFinishTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /tmp/synthetic-ascension-linux-domestic-20261020 --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-frontage-red/logs/engine.log --flush-output --headless res://tools/tests/DomesticFrontageFinishTest.tscn",
+  "project_root": "/tmp/synthetic-ascension-linux-domestic-20261020",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-frontage-red",
+  "actual_exit": 1,
+  "stop_reason": "nonzero_exit",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20004.828125,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 51.62109375,
+      "cpu_seconds": 0.04,
+      "available_mb": 19969.046875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 0.15,
+      "rss_mb": 81.60546875,
+      "cpu_seconds": 0.2,
+      "available_mb": 19953.69921875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 0.314,
+      "rss_mb": 110.12890625,
+      "cpu_seconds": 0.37,
+      "available_mb": 19873.22265625,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 0.485,
+      "rss_mb": 127.453125,
+      "cpu_seconds": 0.53,
+      "available_mb": 19847.8125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 0.646,
+      "rss_mb": 144.2421875,
+      "cpu_seconds": 0.7,
+      "available_mb": 19826.234375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 0.817,
+      "rss_mb": 166.1171875,
+      "cpu_seconds": 0.9,
+      "available_mb": 19801.2734375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 1.014,
+      "rss_mb": 178.7421875,
+      "cpu_seconds": 1.06,
+      "available_mb": 19775.6796875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 1.172,
+      "rss_mb": 181.04296875,
+      "cpu_seconds": 1.21,
+      "available_mb": 19767.5703125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 1.327,
+      "rss_mb": 181.171875,
+      "cpu_seconds": 1.41,
+      "available_mb": 19755.64453125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 1.52,
+      "rss_mb": 191.046875,
+      "cpu_seconds": 1.55,
+      "available_mb": 19745.6015625,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 1.673,
+      "rss_mb": 221.671875,
+      "cpu_seconds": 1.71,
+      "available_mb": 19695.1171875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 1.827,
+      "rss_mb": 266.796875,
+      "cpu_seconds": 1.86,
+      "available_mb": 19640.16796875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 1.983,
+      "rss_mb": 302.921875,
+      "cpu_seconds": 2.01,
+      "available_mb": 19606.67578125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 2.13,
+      "rss_mb": 342.796875,
+      "cpu_seconds": 2.16,
+      "available_mb": 19567.32421875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 2.271,
+      "rss_mb": 346.421875,
+      "cpu_seconds": 2.3,
+      "available_mb": 19559.63671875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 2.415,
+      "rss_mb": 364.046875,
+      "cpu_seconds": 2.45,
+      "available_mb": 19543.6796875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 2.564,
+      "rss_mb": 369.671875,
+      "cpu_seconds": 2.59,
+      "available_mb": 19543.6796875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 2.714,
+      "rss_mb": 388.59765625,
+      "cpu_seconds": 2.75,
+      "available_mb": 19524.2890625,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 2.858,
+      "rss_mb": 388.59765625,
+      "cpu_seconds": 2.89,
+      "available_mb": 19536.9609375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 3.005,
+      "rss_mb": 395.90625,
+      "cpu_seconds": 3.04,
+      "available_mb": 19526.14453125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 3.151,
+      "rss_mb": 403.90625,
+      "cpu_seconds": 3.18,
+      "available_mb": 19519.15234375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 3.301,
+      "rss_mb": 407.65625,
+      "cpu_seconds": 3.34,
+      "available_mb": 19519.28125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 3.447,
+      "rss_mb": 407.65625,
+      "cpu_seconds": 3.48,
+      "available_mb": 19519.28125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 3.594,
+      "rss_mb": 407.65625,
+      "cpu_seconds": 3.63,
+      "available_mb": 19519.21484375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 3.739,
+      "rss_mb": 407.80859375,
+      "cpu_seconds": 3.77,
+      "available_mb": 19519.21484375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 3.887,
+      "rss_mb": 407.80859375,
+      "cpu_seconds": 3.92,
+      "available_mb": 19519.21484375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 4.035,
+      "rss_mb": 407.80859375,
+      "cpu_seconds": 4.08,
+      "available_mb": 19528.875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 4.186,
+      "rss_mb": 407.80859375,
+      "cpu_seconds": 4.21,
+      "available_mb": 19529.125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 4.328,
+      "rss_mb": 407.80859375,
+      "cpu_seconds": 4.36,
+      "available_mb": 19529.125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 4.477,
+      "rss_mb": 407.80859375,
+      "cpu_seconds": 4.5,
+      "available_mb": 19532.0859375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 4.62,
+      "rss_mb": 407.80859375,
+      "cpu_seconds": 4.65,
+      "available_mb": 19531.8515625,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 4.77,
+      "rss_mb": 433.80859375,
+      "cpu_seconds": 4.79,
+      "available_mb": 19516.453125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 4.914,
+      "rss_mb": 434.05859375,
+      "cpu_seconds": 4.94,
+      "available_mb": 19516.453125,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 5.06,
+      "rss_mb": 434.05859375,
+      "cpu_seconds": 5.09,
+      "available_mb": 19537.3984375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 5.205,
+      "rss_mb": 434.05859375,
+      "cpu_seconds": 5.23,
+      "available_mb": 19537.8984375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 5.347,
+      "rss_mb": 434.05859375,
+      "cpu_seconds": 5.38,
+      "available_mb": 19537.8984375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 5.496,
+      "rss_mb": 434.05859375,
+      "cpu_seconds": 5.52,
+      "available_mb": 19538.390625,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 5.642,
+      "rss_mb": 434.05859375,
+      "cpu_seconds": 5.67,
+      "available_mb": 19538.1484375,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 5.794,
+      "rss_mb": 437.05859375,
+      "cpu_seconds": 5.83,
+      "available_mb": 19534.73046875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 5.947,
+      "rss_mb": 441.05859375,
+      "cpu_seconds": 5.98,
+      "available_mb": 19540.84765625,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 6.101,
+      "rss_mb": 442.05859375,
+      "cpu_seconds": 6.13,
+      "available_mb": 19540.73046875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 6.249,
+      "rss_mb": 456.046875,
+      "cpu_seconds": 6.27,
+      "available_mb": 19525.34765625,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 6.391,
+      "rss_mb": 480.421875,
+      "cpu_seconds": 6.42,
+      "available_mb": 19501.6796875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 6.538,
+      "rss_mb": 374.01953125,
+      "cpu_seconds": 6.56,
+      "available_mb": 19486.1171875,
+      "pids": [
+        91133
+      ]
+    },
+    {
+      "elapsed_seconds": 6.706,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 19776.3203125,
+      "pids": []
+    }
+  ],
+  "diagnostics": [
+    "ERROR: FAIL: Real304/240px upper fields preserve isotropic source detail instead of stretched tan grain",
+    "ERROR: FAIL: Plain plaster keeps a stable two-texel-per-world-pixel native material scale",
+    "ERROR: FAIL: Domestic upper fields repeat only the original clean plaster region",
+    "ERROR: FAIL: Supported header reduces the blank void while preserving its original ground baseline",
+    "ERROR: FAIL: New supported entry header participates in per-pixel foreground coverage"
+  ],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T13:40:26.852135+00:00",
+  "limits": {
+    "timeout_seconds": 90.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+  "pid": 91133,
+  "elapsed_seconds": 7.647,
+  "ended_utc": "2026-10-20T13:40:34.499468+00:00",
+  "runner_exit": 1,
+  "packet_classification": "clean_feature_red",
+  "original_run_results_sha256": "e9801b8c455f86d2ffc5271f3b7c4e182c72fa7040af0aec809d74f969782063",
+  "source_provenance": "../sources/b4211c0b23b2e2301a5fdafa0733a9c1752862218651a0718dbf59b46ebf9293.json",
+  "packet_note": "Real broad-field UV density/isotropy and supported doorway header failures. Exact command/exits/diagnostics/resources/logs retained; input hashes/untracked paths moved losslessly. Only machine-wide Git status omitted. Original local paths are historical provenance, not bundled-file claims."
+}

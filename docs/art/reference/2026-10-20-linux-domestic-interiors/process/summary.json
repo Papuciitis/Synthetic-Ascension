@@ -1,0 +1,728 @@
+[
+  {
+    "label": "domestic-baseline-runtime",
+    "classification": "failed_setup",
+    "note": "Missing imported autoload/UID setup; timed out. No baseline or feature assertion result.",
+    "assertions": null,
+    "actual_exit": -15,
+    "stop_reason": "timeout",
+    "elapsed_seconds": 93.262,
+    "diagnostics": [
+      "ERROR: Resource file not found: res:// (expected type: unknown)",
+      "ERROR: Failed to instantiate an autoload, can't load from path: .",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"source\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"index\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://core/systems/enemy_world/EnemyCombatService.gd\" with error \"Compilation failed\".",
+      "WARNING: res://scenes/world/pickups/ItemPickup.tscn:3 - ext_resource, invalid UID: uid://bbmjioj4x78p0 - using text path instead: res://scenes/world/pickups/ItemPickup.gd",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"reporting\" variable because the value doesn't have a set type.",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+      "WARNING: res://scenes/world/pickups/ItemPickup.tscn:4 - ext_resource, invalid UID: uid://37w0pesvotlw - using text path instead: res://scenes/world/pickups/PickupVfx.gd",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"roll\" variable because the value doesn't have a set type.",
+      "ERROR: Failed to load script \"res://scenes/world/volumes/IndoorVolume.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"domestic_garden\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"count\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"context\" variable because the value doesn't have a set type.",
+      "ERROR: Failed to load script \"res://autoload/EnemySimulationScheduler.gd\" with error \"Compilation failed\".",
+      "WARNING: res://scenes/world/cover/CoverFull.tscn:3 - ext_resource, invalid UID: uid://c6nti1m1u3so0 - using text path instead: res://scenes/world/cover/CoverWall.gd",
+      "WARNING: res://scenes/world/combat/RangedBullet.tscn:3 - ext_resource, invalid UID: uid://dv56n1bljmbs3 - using text path instead: res://scenes/world/combat/RangedBullet.gd",
+      "WARNING: res://scenes/world/combat/RangedBullet.tscn:4 - ext_resource, invalid UID: uid://coenp350wgqel - using text path instead: res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn",
+      "WARNING: res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn:3 - ext_resource, invalid UID: uid://c2lbk180mo874 - using text path instead: res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.gd",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"ledger\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"need\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"verdict\" variable because the value doesn't have a set type.",
+      "ERROR: Failed to load script \"res://autoload/DevSetCollisionTools.gd\" with error \"Parse error\".",
+      "ERROR: Failed to instantiate an autoload, script 'res://autoload/DevSetCollisionTools.gd' does not inherit from 'Node'.",
+      "SCRIPT ERROR: Invalid access to property or key 'attempt_segment' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid access to property or key 'balance_attempt_boundary' on a base object of type 'Nil'.",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'is_known' in base 'GDScript'.",
+      "SCRIPT ERROR: Invalid call. Nonexistent function '_texture' in base 'GDScript'.",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'has_pending_peep' in base 'Nil'."
+    ],
+    "peak_rss_mb": 373.390625,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-baseline-runtime/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/CityBlockKitTest.tscn"
+    ],
+    "source_provenance": "sources/4f70871c69cbf175e5eefbad0792310e7eac0079b15bd647c9edbc9f9dbf9238.json"
+  },
+  {
+    "label": "domestic-uid-baseline",
+    "classification": "clean_check",
+    "note": "Prepared same-machine Linux cache/class/UID-map runtime baseline; not a fresh-clone import proof.",
+    "assertions": {
+      "test": "CityBlockKitTest",
+      "passed": 1300,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 9.202,
+    "diagnostics": [],
+    "peak_rss_mb": 518.484375,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-uid-baseline/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/CityBlockKitTest.tscn"
+    ],
+    "source_provenance": "sources/4f70871c69cbf175e5eefbad0792310e7eac0079b15bd647c9edbc9f9dbf9238.json"
+  },
+  {
+    "label": "domestic-plan-uid-red",
+    "classification": "clean_feature_red",
+    "note": "Expected missing domestic adapter assertion before furnishing source changes.",
+    "assertions": {
+      "test": "CityDomesticInteriorTest",
+      "passed": 0,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "elapsed_seconds": 7.821,
+    "diagnostics": [
+      "ERROR: FAIL: Actual ordinary homes need the measured domestic interior adapter"
+    ],
+    "peak_rss_mb": 442.37890625,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-plan-uid-red/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/CityDomesticInteriorTest.tscn"
+    ],
+    "source_provenance": "sources/4f70871c69cbf175e5eefbad0792310e7eac0079b15bd647c9edbc9f9dbf9238.json"
+  },
+  {
+    "label": "domestic-wall-uid-red",
+    "classification": "clean_feature_red",
+    "note": "Expected absent wall-ownership adapter assertion before material changes.",
+    "assertions": {
+      "test": "DomesticWallMaterialTest",
+      "passed": 0,
+      "failed": 1
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "elapsed_seconds": 7.586,
+    "diagnostics": [
+      "ERROR: FAIL: Domestic masonry needs explicit building-use ownership before batch rendering"
+    ],
+    "peak_rss_mb": 442.1171875,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-wall-uid-red/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticWallMaterialTest.tscn"
+    ],
+    "source_provenance": "sources/4f70871c69cbf175e5eefbad0792310e7eac0079b15bd647c9edbc9f9dbf9238.json"
+  },
+  {
+    "label": "domestic-interior-green",
+    "classification": "failed_import_attempt",
+    "note": "Original cot/hearth PNGs existed, but Linux .png.import sidecars were absent in the fresh worktree. Missing-loader cascade; not GREEN.",
+    "assertions": {
+      "test": "CityDomesticInteriorTest",
+      "passed": 229,
+      "failed": 52
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "elapsed_seconds": 8.499,
+    "diagnostics": [
+      "ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/timber_cot.png (expected type: unknown)",
+      "ERROR: No loader found for resource: res://assets/world/domestic_interiors/v1/cooking_hearth.png (expected type: unknown)",
+      "ERROR: FAIL: Visible solid furniture records the existing low-cover physical contract",
+      "ERROR: FAIL: Furniture collision and streamed pathing agree",
+      "ERROR: FAIL: Furniture low-cover geometry participates in projectile queries",
+      "ERROR: FAIL: Actual household owner renders four purposeful original props"
+    ],
+    "peak_rss_mb": 556.6015625,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-interior-green/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/CityDomesticInteriorTest.tscn"
+    ],
+    "source_provenance": "sources/238a35aac4c27bf39c24836da46f8adb9b74411b2868112d91f3d77b547b44ea.json"
+  },
+  {
+    "label": "domestic-interior-green-imported",
+    "classification": "clean_check",
+    "note": "Same-source Linux cot/hearth import sidecars supplied; measured real-home layout, physics and lifetime checks pass.",
+    "assertions": {
+      "test": "CityDomesticInteriorTest",
+      "passed": 313,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 8.467,
+    "diagnostics": [],
+    "peak_rss_mb": 573.73828125,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-interior-green-imported/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/CityDomesticInteriorTest.tscn"
+    ],
+    "source_provenance": "sources/0fb8bad85420fbb44249421f0eeb75fa6296eaf3d68a02547f58091ddbf0b45b.json"
+  },
+  {
+    "label": "domestic-wall-green",
+    "classification": "clean_check",
+    "note": "Initial explicit domestic envelope/partition/window/fill material ownership.",
+    "assertions": {
+      "test": "DomesticWallMaterialTest",
+      "passed": 67,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 7.294,
+    "diagnostics": [],
+    "peak_rss_mb": 444.02734375,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-wall-green/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticWallMaterialTest.tscn"
+    ],
+    "source_provenance": "sources/0fb8bad85420fbb44249421f0eeb75fa6296eaf3d68a02547f58091ddbf0b45b.json"
+  },
+  {
+    "label": "domestic-frontage-red",
+    "classification": "clean_feature_red",
+    "note": "Real broad-field UV density/isotropy and supported doorway header failures.",
+    "assertions": {
+      "test": "DomesticFrontageFinishTest",
+      "passed": 30,
+      "failed": 8
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "elapsed_seconds": 7.647,
+    "diagnostics": [
+      "ERROR: FAIL: Real304/240px upper fields preserve isotropic source detail instead of stretched tan grain",
+      "ERROR: FAIL: Plain plaster keeps a stable two-texel-per-world-pixel native material scale",
+      "ERROR: FAIL: Domestic upper fields repeat only the original clean plaster region",
+      "ERROR: FAIL: Supported header reduces the blank void while preserving its original ground baseline",
+      "ERROR: FAIL: New supported entry header participates in per-pixel foreground coverage"
+    ],
+    "peak_rss_mb": 480.421875,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-frontage-red/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticFrontageFinishTest.tscn"
+    ],
+    "source_provenance": "sources/b4211c0b23b2e2301a5fdafa0733a9c1752862218651a0718dbf59b46ebf9293.json"
+  },
+  {
+    "label": "domestic-frontage-green",
+    "classification": "failed_parse_attempt",
+    "note": "Unannotated metadata bool could not infer a type; interrupted after61.828s. Not valid feature RED or GREEN.",
+    "assertions": null,
+    "actual_exit": -15,
+    "stop_reason": "interrupted",
+    "elapsed_seconds": 61.828,
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"domestic\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://autoload/global.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'compose' in base 'GDScript'.",
+      "ERROR: FAIL: The actual retained bed home exercises both broad upper-field runs",
+      "ERROR: FAIL: The real irregular doorway retains its cardinal upright adapter",
+      "ERROR: Node not found: \"CardinalWallReturns\" (relative to \"/root/DomesticFrontageFinishTest/@Node2D@39/@Node2D@43\").",
+      "SCRIPT ERROR: Invalid access to property or key 'modulate' on a base object of type 'null instance'."
+    ],
+    "peak_rss_mb": 484.3515625,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-frontage-green/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "--verbose",
+      "res://tools/tests/DomesticFrontageFinishTest.tscn"
+    ],
+    "source_provenance": "sources/b933dd7721771c8c1d4d9c33f022bd90d18ffa2a30f97369641d0b062b709921.json"
+  },
+  {
+    "label": "domestic-reward-policy-red",
+    "classification": "clean_feature_red",
+    "note": "Multi-item/security eligibility and missing actual connected-volume policy handoff.",
+    "assertions": {
+      "test": "CityDomesticInteriorTest",
+      "passed": 321,
+      "failed": 15
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "elapsed_seconds": 8.954,
+    "diagnostics": [
+      "ERROR: FAIL: Furniture preserves multi-item/security seeded reward policy { \"small_count_max\": 2 }",
+      "ERROR: FAIL: Furniture preserves multi-item/security seeded reward policy { \"local_encounter_enabled\": true }",
+      "ERROR: FAIL: Furniture preserves multi-item/security seeded reward policy { \"force_large_loot\": true }",
+      "ERROR: FAIL: Both kept real homes hand off their single-item ambient volume policy",
+      "ERROR: FAIL: Actual connected multi-item volume policy reaches furniture eligibility",
+      "ERROR: FAIL: Actual connected encounter policy reaches furniture eligibility"
+    ],
+    "peak_rss_mb": 574.203125,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-reward-policy-red/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/CityDomesticInteriorTest.tscn"
+    ],
+    "source_provenance": "sources/c4e2f0ea12e3bad1722325d046e2405ba00e321595b7b022104d4594bf104c97.json"
+  },
+  {
+    "label": "domestic-policy-green",
+    "classification": "clean_check",
+    "note": "Known single-item ambient furnishing only; unknown/multi-item/encounter/large owners omitted independently of wall presentation.",
+    "assertions": {
+      "test": "CityDomesticInteriorTest",
+      "passed": 336,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 8.515,
+    "diagnostics": [],
+    "peak_rss_mb": 573.828125,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-policy-green/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/CityDomesticInteriorTest.tscn"
+    ],
+    "source_provenance": "sources/7028a2a3e54af3782b1d750ef2beb6c49128468f864795ea2e14e3f1ff3d3e4f.json"
+  },
+  {
+    "label": "domestic-frontage-fade-red",
+    "classification": "clean_feature_red",
+    "note": "Both new piers and the new header/lintel junction doubled fractional opaque coverage.",
+    "assertions": {
+      "test": "DomesticFrontageFadeTest",
+      "passed": 2,
+      "failed": 6
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "elapsed_seconds": 8.186,
+    "diagnostics": [
+      "ERROR: FAIL: Domestic solid details replace their background field at (360.0, 928.0)",
+      "ERROR: FAIL: Fractional opaque render coverage matches the shared maximum-strength query at (360.0, 928.0)",
+      "ERROR: FAIL: Domestic solid details replace their background field at (760.0, 928.0)",
+      "ERROR: FAIL: Fractional opaque render coverage matches the shared maximum-strength query at (760.0, 928.0)",
+      "ERROR: FAIL: Domestic solid details replace their background field at (576.0, 937.0)",
+      "ERROR: FAIL: Fractional opaque render coverage matches the shared maximum-strength query at (576.0, 937.0)"
+    ],
+    "peak_rss_mb": 475.8984375,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-frontage-fade-red/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticFrontageFadeTest.tscn"
+    ],
+    "source_provenance": "sources/7028a2a3e54af3782b1d750ef2beb6c49128468f864795ea2e14e3f1ff3d3e4f.json"
+  },
+  {
+    "label": "domestic-final-DomesticFrontageFinishTest",
+    "classification": "clean_check",
+    "note": "Disjoint new details, isotropic regional plaster sampling, unchanged cardinal openings and cutaway controls; before inherited jamb correction.",
+    "assertions": {
+      "test": "DomesticFrontageFinishTest",
+      "passed": 55,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 9.123,
+    "diagnostics": [],
+    "peak_rss_mb": 480.47265625,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-DomesticFrontageFinishTest/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticFrontageFinishTest.tscn"
+    ],
+    "source_provenance": "sources/cad9978c52dc098c0288142416b55dcc3ef767dc0d7f63494a8135757ba84d73.json"
+  },
+  {
+    "label": "domestic-final-DomesticFrontageFadeTest",
+    "classification": "clean_check",
+    "note": "Three new detail points fade once; this earlier check did not cover inherited jamb/field junctions.",
+    "assertions": {
+      "test": "DomesticFrontageFadeTest",
+      "passed": 8,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 7.726,
+    "diagnostics": [],
+    "peak_rss_mb": 473.94921875,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-DomesticFrontageFadeTest/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticFrontageFadeTest.tscn"
+    ],
+    "source_provenance": "sources/cad9978c52dc098c0288142416b55dcc3ef767dc0d7f63494a8135757ba84d73.json"
+  },
+  {
+    "label": "domestic-final-DomesticWallMaterialTest",
+    "classification": "clean_check",
+    "note": "Mixed wall/window/partition/corner material ownership; multi-item wall presentation remains eligible.",
+    "assertions": {
+      "test": "DomesticWallMaterialTest",
+      "passed": 68,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 7.07,
+    "diagnostics": [],
+    "peak_rss_mb": 442.921875,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-DomesticWallMaterialTest/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticWallMaterialTest.tscn"
+    ],
+    "source_provenance": "sources/cad9978c52dc098c0288142416b55dcc3ef767dc0d7f63494a8135757ba84d73.json"
+  },
+  {
+    "label": "domestic-final-DomesticRewardStabilityTest",
+    "classification": "clean_check",
+    "note": "Actual chance/claims plus full single-item factory identity/mods/run RNG comparison for both kept homes.",
+    "assertions": {
+      "test": "DomesticRewardStabilityTest",
+      "passed": 43,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 8.577,
+    "diagnostics": [],
+    "peak_rss_mb": 575.44921875,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-DomesticRewardStabilityTest/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticRewardStabilityTest.tscn"
+    ],
+    "source_provenance": "sources/cad9978c52dc098c0288142416b55dcc3ef767dc0d7f63494a8135757ba84d73.json"
+  },
+  {
+    "label": "domestic-jamb-fade-red",
+    "classification": "clean_feature_red",
+    "note": "Literal inherited bed jamb/field points(504,930),(647,930) each double coverage at half fade.",
+    "assertions": {
+      "test": "DomesticFrontageFadeTest",
+      "passed": 8,
+      "failed": 4
+    },
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "elapsed_seconds": 7.219,
+    "diagnostics": [
+      "ERROR: FAIL: Domestic solid details replace their background field at (504.0, 930.0)",
+      "ERROR: FAIL: Fractional opaque render coverage matches the shared maximum-strength query at (504.0, 930.0)",
+      "ERROR: FAIL: Domestic solid details replace their background field at (647.0, 930.0)",
+      "ERROR: FAIL: Fractional opaque render coverage matches the shared maximum-strength query at (647.0, 930.0)"
+    ],
+    "peak_rss_mb": 472.109375,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-jamb-fade-red/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "res://tools/tests/DomesticFrontageFadeTest.tscn"
+    ],
+    "source_provenance": "sources/ef50d56f1124520cd49ebee129b172ae45343bdc746c6cca5044336b4683490c.json"
+  },
+  {
+    "label": "domestic-jamb-fade-green",
+    "classification": "clean_check",
+    "note": "Exact domestic jamb subtraction with preserved8px upper caps; original3 detail points,2 jamb points and2 cap controls.",
+    "assertions": {
+      "test": "DomesticFrontageFadeTest",
+      "passed": 16,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 7.451,
+    "diagnostics": [],
+    "peak_rss_mb": 484.875,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-jamb-fade-green/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "--verbose",
+      "res://tools/tests/DomesticFrontageFadeTest.tscn"
+    ],
+    "source_provenance": "sources/e5451368f787bd544753bcd4b9af27dd004105985b8a2326f04d702468a32444.json"
+  },
+  {
+    "label": "domestic-frontage-final",
+    "classification": "clean_check",
+    "note": "Final frontage rerun after inherited jamb correction; isotropic sampling, retained opening/cardinal ownership and cutaway controls.",
+    "assertions": {
+      "test": "DomesticFrontageFinishTest",
+      "passed": 55,
+      "failed": 0
+    },
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 7.934,
+    "diagnostics": [],
+    "peak_rss_mb": 495.60546875,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-frontage-final/logs/engine.log",
+      "--flush-output",
+      "--headless",
+      "--verbose",
+      "res://tools/tests/DomesticFrontageFinishTest.tscn"
+    ],
+    "source_provenance": "sources/e5451368f787bd544753bcd4b9af27dd004105985b8a2326f04d702468a32444.json"
+  },
+  {
+    "label": "domestic-bed-first",
+    "classification": "native_revision1",
+    "note": "First seven-plate architecture run. Physical contacts/roof restore pass, but inherited same-cell route return remained about23px off the goal center; about41px is the separate valid support-contact distance.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 49.798,
+    "diagnostics": [],
+    "peak_rss_mb": 510.95703125,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-bed-first/logs/engine.log",
+      "--flush-output",
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/dev/CityDomesticInteriorPreview.tscn",
+      "--",
+      "--visible",
+      "--no-occupied",
+      "--world-seed=16102026",
+      "--target-chunk=0,3",
+      "--target-building-id=944996572",
+      "--review=small",
+      "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-bed-first-plates"
+    ],
+    "source_provenance": "sources/cad9978c52dc098c0288142416b55dcc3ef767dc0d7f63494a8135757ba84d73.json"
+  },
+  {
+    "label": "domestic-final-bed-small",
+    "classification": "native_revision2",
+    "note": "Inspected actual generated home; physically centered revision2 goals, real occupied input/AI/projectiles, roof restore and zero saves. Controlled evidence, not human play or acceptance of all layouts.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 62.989,
+    "diagnostics": [],
+    "peak_rss_mb": 539.828125,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-bed-small/logs/engine.log",
+      "--flush-output",
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/dev/CityDomesticInteriorPreview.tscn",
+      "--",
+      "--visible",
+      "--world-seed=16102026",
+      "--target-chunk=0,3",
+      "--target-building-id=944996572",
+      "--review=small",
+      "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-bed-small-plates"
+    ],
+    "source_provenance": "sources/e1cb26f3db6df0de046dc104c5cac010a97eb7dddcd2e874eb04763e9196fb4b.json"
+  },
+  {
+    "label": "domestic-final-bed-normal",
+    "classification": "native_revision2",
+    "note": "Inspected actual generated home; physically centered revision2 goals, real occupied input/AI/projectiles, roof restore and zero saves. Controlled evidence, not human play or acceptance of all layouts.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 70.175,
+    "diagnostics": [],
+    "peak_rss_mb": 566.4609375,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-bed-normal/logs/engine.log",
+      "--flush-output",
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/dev/CityDomesticInteriorPreview.tscn",
+      "--",
+      "--visible",
+      "--world-seed=16102026",
+      "--target-chunk=0,3",
+      "--target-building-id=944996572",
+      "--review=normal",
+      "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-bed-normal-plates"
+    ],
+    "source_provenance": "sources/e1cb26f3db6df0de046dc104c5cac010a97eb7dddcd2e874eb04763e9196fb4b.json"
+  },
+  {
+    "label": "domestic-final-fruit-small",
+    "classification": "native_revision2",
+    "note": "Inspected actual generated home; physically centered revision2 goals, real occupied input/AI/projectiles, roof restore and zero saves. Controlled evidence, not human play or acceptance of all layouts.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 63.703,
+    "diagnostics": [],
+    "peak_rss_mb": 573.3828125,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-fruit-small/logs/engine.log",
+      "--flush-output",
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/dev/CityDomesticInteriorPreview.tscn",
+      "--",
+      "--visible",
+      "--world-seed=17",
+      "--target-chunk=-3,5",
+      "--target-building-id=2128236757",
+      "--review=small",
+      "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-fruit-small-plates"
+    ],
+    "source_provenance": "sources/e1cb26f3db6df0de046dc104c5cac010a97eb7dddcd2e874eb04763e9196fb4b.json"
+  },
+  {
+    "label": "domestic-final-fruit-normal",
+    "classification": "native_revision2",
+    "note": "Inspected actual generated home; physically centered revision2 goals, real occupied input/AI/projectiles, roof restore and zero saves. Controlled evidence, not human play or acceptance of all layouts.",
+    "assertions": null,
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "elapsed_seconds": 68.841,
+    "diagnostics": [],
+    "peak_rss_mb": 596.984375,
+    "command": [
+      "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+      "--path",
+      "/tmp/synthetic-ascension-linux-domestic-20261020",
+      "--log-file",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-fruit-normal/logs/engine.log",
+      "--flush-output",
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/dev/CityDomesticInteriorPreview.tscn",
+      "--",
+      "--visible",
+      "--world-seed=17",
+      "--target-chunk=-3,5",
+      "--target-building-id=2128236757",
+      "--review=normal",
+      "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-fruit-normal-plates"
+    ],
+    "source_provenance": "sources/e1cb26f3db6df0de046dc104c5cac010a97eb7dddcd2e874eb04763e9196fb4b.json"
+  }
+]

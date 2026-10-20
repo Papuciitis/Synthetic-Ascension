@@ -1,0 +1,1053 @@
+{
+	"args": [
+		"--visible",
+		"--world-seed=16102026",
+		"--target-chunk=0,3",
+		"--target-building-id=944996572",
+		"--review=small",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/domestic-final-bed-small-plates"
+	],
+	"attempt_seed": 16102026,
+	"building_id": 944996572,
+	"building_usage": "row_house",
+	"camera": {
+		"position": "(544.0, 7000.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(960, 540)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityDomesticInteriorPreview.tscn",
+	"captured_frames": 21,
+	"closed_arch_bays": 0,
+	"contacts": [
+		{
+			"actual_art_contact": "(287.9051, 7156.263)",
+			"actual_player_contact": "(329.0668, 7136.001)",
+			"approach_actual": "(359.1645, 7136.001)",
+			"ground_rect_local": "[P: (258.0, 906.4082), S: (60.0, 107.1835)]",
+			"kind": "cot",
+			"measured_art_contact": "(287.9051, 7156.263)",
+			"projectile_hit_t": 0.166666666666667,
+			"requested_approach": "(352.0, 7136.0)",
+			"reserved_cells": "[(4, 14), (4, 15)]",
+			"support_center": "(288.0, 7136.0)",
+			"support_distance": 41.0668334960938
+		},
+		{
+			"actual_art_contact": "(319.8771, 7029.542)",
+			"actual_player_contact": "(351.5275, 7049.064)",
+			"approach_actual": "(351.1813, 7078.901)",
+			"ground_rect_local": "[P: (260.0, 841.3106), S: (120.0, 45.37884)]",
+			"kind": "hearth",
+			"measured_art_contact": "(319.8771, 7029.542)",
+			"projectile_hit_t": 0.166666666666667,
+			"requested_approach": "(352.0, 7072.0)",
+			"reserved_cells": "[(4, 13), (5, 13)]",
+			"support_center": "(352.0, 7008.0)",
+			"support_distance": 41.0666847229004
+		},
+		{
+			"actual_art_contact": "(799.9585, 6829.199)",
+			"actual_player_contact": "(758.9333, 6816.001)",
+			"approach_actual": "(728.7684, 6816.001)",
+			"ground_rect_local": "[P: (768.0, 658.5525), S: (64.0, 26.89494)]",
+			"kind": "table",
+			"measured_art_contact": "(799.9585, 6829.198)",
+			"projectile_hit_t": 0.166666666666667,
+			"requested_approach": "(736.0, 6816.0)",
+			"reserved_cells": "[(12, 10)]",
+			"support_center": "(800.0, 6816.0)",
+			"support_distance": 41.0667114257812
+		},
+		{
+			"actual_art_contact": "(800.0, 6891.886)",
+			"actual_player_contact": "(758.9094, 6877.981)",
+			"approach_actual": "(736.8185, 6873.101)",
+			"ground_rect_local": "[P: (769.2191, 724.1143), S: (61.56191, 23.77143)]",
+			"kind": "crate",
+			"measured_art_contact": "(800.0, 6891.886)",
+			"projectile_hit_t": 0.166666666666667,
+			"requested_approach": "(736.0, 6880.0)",
+			"reserved_cells": "[(12, 11)]",
+			"support_center": "(800.0, 6880.0)",
+			"support_distance": 41.1401519775391
+		}
+	],
+	"coord": "(0, 3)",
+	"deaths": 1,
+	"district_family": "service_courtyards",
+	"doors": "[{ \"pos\": (8, 16), \"dir\": (0, 1), \"width\": 2 }]",
+	"failures": 0,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"footprint": "[(192.0, 768.0), (384.0, 768.0), (384.0, 576.0), (896.0, 576.0), (896.0, 1088.0), (192.0, 1088.0)]",
+	"frames": [
+		{
+			"enemies": 2,
+			"phase": "domestic-occupied-fight",
+			"player": "(550.8997, 7005.996)",
+			"projectiles": 1,
+			"simulation_time": 0.0333333333333333,
+			"wall_time": 0.023528
+		},
+		{
+			"enemies": 2,
+			"phase": "domestic-occupied-fight",
+			"player": "(548.6096, 6985.419)",
+			"projectiles": 1,
+			"simulation_time": 0.2,
+			"wall_time": 0.16396
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(547.2356, 6973.074)",
+			"projectiles": 1,
+			"simulation_time": 0.3,
+			"wall_time": 0.431162
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(546.7762, 6950.23)",
+			"projectiles": 1,
+			"simulation_time": 0.5,
+			"wall_time": 0.584397
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(565.3124, 6948.345)",
+			"projectiles": 0,
+			"simulation_time": 0.65,
+			"wall_time": 0.736735
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(583.8485, 6946.459)",
+			"projectiles": 0,
+			"simulation_time": 0.800000000000001,
+			"wall_time": 0.884086
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(600.5746, 6946.837)",
+			"projectiles": 0,
+			"simulation_time": 0.950000000000001,
+			"wall_time": 1.034941
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(602.8202, 6965.333)",
+			"projectiles": 0,
+			"simulation_time": 1.1,
+			"wall_time": 1.183425
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(601.6296, 6977.408)",
+			"projectiles": 0,
+			"simulation_time": 1.25,
+			"wall_time": 1.333324
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(600.7238, 6985.7)",
+			"projectiles": 0,
+			"simulation_time": 1.4,
+			"wall_time": 1.483902
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(602.646, 6994.176)",
+			"projectiles": 0,
+			"simulation_time": 1.55,
+			"wall_time": 1.633125
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(605.0225, 7002.429)",
+			"projectiles": 0,
+			"simulation_time": 1.68333333333333,
+			"wall_time": 1.816268
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(598.5306, 7010.846)",
+			"projectiles": 0,
+			"simulation_time": 1.85,
+			"wall_time": 1.975583
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(592.0387, 7016.338)",
+			"projectiles": 0,
+			"simulation_time": 1.98333333333333,
+			"wall_time": 2.13842
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(582.4908, 7020.983)",
+			"projectiles": 0,
+			"simulation_time": 2.15,
+			"wall_time": 2.292246
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(573.2566, 7023.507)",
+			"projectiles": 0,
+			"simulation_time": 2.3,
+			"wall_time": 2.444662
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(563.7219, 7024.285)",
+			"projectiles": 0,
+			"simulation_time": 2.45,
+			"wall_time": 2.595395
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(554.4187, 7023.002)",
+			"projectiles": 0,
+			"simulation_time": 2.6,
+			"wall_time": 2.73951
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(553.1886, 7022.846)",
+			"projectiles": 0,
+			"simulation_time": 2.71666666666666,
+			"wall_time": 2.9043
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(561.5701, 7024.247)",
+			"projectiles": 0,
+			"simulation_time": 2.86666666666666,
+			"wall_time": 3.049733
+		},
+		{
+			"enemies": 1,
+			"phase": "domestic-occupied-fight",
+			"player": "(570.9818, 7025.8)",
+			"projectiles": 0,
+			"simulation_time": 3.01666666666666,
+			"wall_time": 3.211781
+		}
+	],
+	"furniture_additions": [
+		{
+			"global_cell": "(4, 110)",
+			"kind": 4,
+			"local_cell": "(4, 14)",
+			"prop": "cot",
+			"variant": 59,
+			"walkable": false
+		},
+		{
+			"global_cell": "(4, 111)",
+			"kind": 4,
+			"local_cell": "(4, 15)",
+			"prop": "cot",
+			"variant": 48,
+			"walkable": false
+		},
+		{
+			"global_cell": "(4, 109)",
+			"kind": 4,
+			"local_cell": "(4, 13)",
+			"prop": "hearth",
+			"variant": 62,
+			"walkable": false
+		},
+		{
+			"global_cell": "(5, 109)",
+			"kind": 4,
+			"local_cell": "(5, 13)",
+			"prop": "hearth",
+			"variant": 54,
+			"walkable": false
+		},
+		{
+			"global_cell": "(12, 106)",
+			"kind": 4,
+			"local_cell": "(12, 10)",
+			"prop": "table",
+			"variant": 50,
+			"walkable": false
+		},
+		{
+			"global_cell": "(12, 107)",
+			"kind": 4,
+			"local_cell": "(12, 11)",
+			"prop": "crate",
+			"variant": 33,
+			"walkable": false
+		}
+	],
+	"garden": [
+		{
+			"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+			"name": "TendedDomesticBed",
+			"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+			"position": "(0.0, 0.0)",
+			"rotation": 0.0,
+			"scale": "(1.0, 1.0)",
+			"variant": 0,
+			"z_index": -90
+		},
+		{
+			"contact": "(266.0, 1102.0)",
+			"name": "DomesticHerbBed",
+			"position": "(265.9673, 1097.233)",
+			"rotation": 0.0,
+			"scale": "(0.065304, 0.065304)",
+			"texture": "",
+			"z_index": 1
+		}
+	],
+	"goal_tolerance_px": 8.0,
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 10,
+			"local_bounds": "[P: (0, 13), S: (2, 4)]",
+			"max_byte": 255,
+			"nonzero": 15,
+			"sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+			"sum_bytes": 2728
+		},
+		"chunk_material_counts": {
+			"0": 716,
+			"2": 125,
+			"3": 6,
+			"4": 177
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				9,
+				115
+			],
+			"material": 4,
+			"walkable": true,
+			"world_px": [
+				607.999877929688,
+				7384.32275390625
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+					"layer_sha256": "d150b1bc0fcab5ff989af99d6243e4d45df56e18ef6d2ca06f0dcc2e8e956098",
+					"path": "res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+					"sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "true",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_layer": [
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0,
+				320.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "grass"
+	},
+	"has_watch": false,
+	"hits": 3,
+	"irregular": true,
+	"layout": [
+		{
+			"ground_rect_kit_px": [
+				258.0,
+				906.408203125,
+				60.0,
+				107.183540344238
+			],
+			"kind": "cot",
+			"kit_contact_px": [
+				287.905059814453,
+				1012.26263427734
+			],
+			"reserved_cells": [
+				[
+					4,
+					14
+				],
+				[
+					4,
+					15
+				]
+			],
+			"source_ground_datum_px": [
+				530.0,
+				1345.0
+			],
+			"source_path": "res://assets/world/domestic_interiors/v1/timber_cot.png",
+			"source_sha256": "22549e75329ee9164f9f41fbefcdea2e6b028309a7c358362b4c11a2fc69c143",
+			"uniform_scale": 0.0949367088607595,
+			"visible_rect_kit_px": [
+				258.0,
+				895.300598144531,
+				60.0,
+				118.291137695312
+			]
+		},
+		{
+			"ground_rect_kit_px": [
+				260.0,
+				841.310607910156,
+				120.000007629395,
+				45.3788414001465
+			],
+			"kind": "hearth",
+			"kit_contact_px": [
+				319.877136230469,
+				885.542663574219
+			],
+			"reserved_cells": [
+				[
+					4,
+					13
+				],
+				[
+					5,
+					13
+				]
+			],
+			"source_ground_datum_px": [
+				800.0,
+				805.0
+			],
+			"source_path": "res://assets/world/domestic_interiors/v1/cooking_hearth.png",
+			"source_sha256": "fd6a6434311135e5c7b09ca6b2c3c3ca47333c33b78fed69f826527c9bc7e26b",
+			"uniform_scale": 0.0819112627986348,
+			"visible_rect_kit_px": [
+				260.0,
+				833.938537597656,
+				120.000007629395,
+				52.7508544921875
+			]
+		},
+		{
+			"ground_rect_kit_px": [
+				768.0,
+				658.552490234375,
+				64.0,
+				26.8949413299561
+			],
+			"kind": "table",
+			"kit_contact_px": [
+				799.95849609375,
+				685.198425292969
+			],
+			"reserved_cells": [
+				[
+					12,
+					10
+				]
+			],
+			"source_ground_datum_px": [
+				512.0,
+				795.0
+			],
+			"source_path": "res://assets/world/props/prop_table_small_01.png",
+			"source_sha256": "61b668a60495ae87f6a68c03ed10682c5188431ba221bbe306436b82688f5c0e",
+			"uniform_scale": 0.0830090791180285,
+			"visible_rect_kit_px": [
+				768.0,
+				639.70947265625,
+				64.0,
+				45.7380027770996
+			]
+		},
+		{
+			"ground_rect_kit_px": [
+				769.219055175781,
+				724.114318847656,
+				61.5619087219238,
+				23.7714290618896
+			],
+			"kind": "crate",
+			"kit_contact_px": [
+				800.0,
+				747.8857421875
+			],
+			"reserved_cells": [
+				[
+					12,
+					11
+				]
+			],
+			"source_ground_datum_px": [
+				210.0,
+				456.0
+			],
+			"source_path": "res://assets/world/dressing/generated/crate.tres",
+			"source_sha256": "f0a0620b9c4fbadf88af40bde7a2f1c384a5d8641e733806e11787b4c0bb1b82",
+			"uniform_scale": 0.152380952380952,
+			"visible_rect_kit_px": [
+				769.219055175781,
+				679.619079589844,
+				61.5619087219238,
+				68.2666702270508
+			]
+		}
+	],
+	"layout_sha256": "aae77a81df74a38247d2eeee61b9f4f24d4136cd1d32d6d60f9e3d6972f85b10",
+	"limits": "Controlled actual generated Game household review. Real player inputs/collision, low furniture, roof entry/exit signals and actual streamed baseline reload. Initial outside placement only; no route teleport or physics/roof-counter overrides. God mode, disabled ambient spawner/encounter beats, fixed real-camera zoom and streaming frozen after reload. Optional two real controlled ordinary/elite enemies for a short occupied route. Not continuous human play, balance/performance approval or complete-street acceptance.",
+	"max_projectiles": 2,
+	"movement_fixture_revision": 2,
+	"occupied_requested": true,
+	"occupied_seconds": 3.01666666666666,
+	"plan_seed": 436524753,
+	"plates": [
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "exterior-before-entry.png",
+			"inside_count": 0,
+			"player_root": "(608.0, 7392.0)",
+			"projectiles": 0,
+			"roof_alpha": 1.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "interior-whole.png",
+			"inside_count": 1,
+			"player_root": "(608.0, 7142.854)",
+			"projectiles": 0,
+			"roof_alpha": 0.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "interior-cot-contact.png",
+			"inside_count": 1,
+			"player_root": "(329.0668, 7136.001)",
+			"projectiles": 0,
+			"roof_alpha": 0.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "interior-hearth-contact.png",
+			"inside_count": 1,
+			"player_root": "(351.5275, 7049.064)",
+			"projectiles": 0,
+			"roof_alpha": 0.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "interior-table-contact.png",
+			"inside_count": 1,
+			"player_root": "(758.9333, 6816.001)",
+			"projectiles": 0,
+			"roof_alpha": 0.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "interior-crate-contact.png",
+			"inside_count": 1,
+			"player_root": "(758.9094, 6877.981)",
+			"projectiles": 0,
+			"roof_alpha": 0.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 2,
+			"file": "interior-occupied-start.png",
+			"inside_count": 1,
+			"player_root": "(551.1231, 7007.993)",
+			"projectiles": 0,
+			"roof_alpha": 0.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 1,
+			"file": "interior-occupied-ending.png",
+			"inside_count": 1,
+			"player_root": "(575.1736, 7026.45)",
+			"projectiles": 0,
+			"roof_alpha": 0.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "exterior-restored.png",
+			"inside_count": 0,
+			"player_root": "(607.9999, 7384.323)",
+			"projectiles": 0,
+			"roof_alpha": 1.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		}
+	],
+	"prior_evidence_qualification": "The first seven-plate bed architecture run at handoff-linux-next-20261020/domestic-bed-first-plates used the inherited same-cell route behavior: post-contact goals in the current cell could return23-41px off center. Its actual positions and contacts remain recorded. Revision2 physically centers resolved goals within8px or reports blocked movement.",
+	"profile": "common_base",
+	"role": "service_lane",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+			"equal": true,
+			"event": "streamed_reload",
+			"garden_equal": true,
+			"gardens": [
+				[
+					{
+						"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+						"name": "TendedDomesticBed",
+						"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+						"position": "(0.0, 0.0)",
+						"rotation": 0.0,
+						"scale": "(1.0, 1.0)",
+						"variant": 0,
+						"z_index": -90
+					},
+					{
+						"contact": "(266.0, 1102.0)",
+						"name": "DomesticHerbBed",
+						"position": "(265.9673, 1097.233)",
+						"rotation": 0.0,
+						"scale": "(0.065304, 0.065304)",
+						"texture": "",
+						"z_index": 1
+					}
+				],
+				[
+					{
+						"contact": "(136.0, 1963.0)",
+						"name": "CityTemperateTree",
+						"position": "(130.8644, 1841.756)",
+						"rotation": 0.0,
+						"scale": "(0.223285, 0.223285)",
+						"texture": "",
+						"z_index": 1
+					}
+				]
+			],
+			"restored_visual_instances": 1582,
+			"unloaded_visual_instances": 0
+		},
+		{
+			"arrived": "(608.0, 7334.505)",
+			"desired": "(576.0, 7296.0)",
+			"event": "walk",
+			"path_cells": 1,
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(608.0, 7328.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(608.0, 7334.505)",
+			"before": "(608.0, 7334.505)",
+			"desired": "(576.0, 7296.0)",
+			"distance": 6.5048828125,
+			"event": "physical_goal_centering",
+			"resolved": "(608.0, 7328.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(608.0, 7142.854)",
+			"desired": "(576.0, 7136.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 32.0,
+			"resolved": "(608.0, 7136.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(608.0, 7142.854)",
+			"before": "(608.0, 7142.854)",
+			"desired": "(576.0, 7136.0)",
+			"distance": 6.8544921875,
+			"event": "physical_goal_centering",
+			"resolved": "(608.0, 7136.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(359.1645, 7136.001)",
+			"desired": "(352.0, 7136.0)",
+			"event": "walk",
+			"path_cells": 4,
+			"resolution_distance": 0.0,
+			"resolved": "(352.0, 7136.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(359.1645, 7136.001)",
+			"before": "(359.1645, 7136.001)",
+			"desired": "(352.0, 7136.0)",
+			"distance": 7.16452026367188,
+			"event": "physical_goal_centering",
+			"resolved": "(352.0, 7136.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(329.0668, 7136.001)",
+			"desired": "(352.0, 7136.0)",
+			"event": "walk",
+			"path_cells": 0,
+			"resolution_distance": 0.0,
+			"resolved": "(352.0, 7136.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(344.4081, 7136.001)",
+			"before": "(329.0668, 7136.001)",
+			"desired": "(352.0, 7136.0)",
+			"distance": 7.59194946289062,
+			"event": "physical_goal_centering",
+			"resolved": "(352.0, 7136.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(351.1813, 7078.901)",
+			"desired": "(352.0, 7072.0)",
+			"event": "walk",
+			"path_cells": 1,
+			"resolution_distance": 0.0,
+			"resolved": "(352.0, 7072.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(351.1813, 7078.901)",
+			"before": "(351.1813, 7078.901)",
+			"desired": "(352.0, 7072.0)",
+			"distance": 6.94975757598877,
+			"event": "physical_goal_centering",
+			"resolved": "(352.0, 7072.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(351.5275, 7049.064)",
+			"desired": "(352.0, 7072.0)",
+			"event": "walk",
+			"path_cells": 0,
+			"resolution_distance": 0.0,
+			"resolved": "(352.0, 7072.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(351.8435, 7064.404)",
+			"before": "(351.5275, 7049.064)",
+			"desired": "(352.0, 7072.0)",
+			"distance": 7.59731435775757,
+			"event": "physical_goal_centering",
+			"resolved": "(352.0, 7072.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(728.7684, 6816.001)",
+			"desired": "(736.0, 6816.0)",
+			"event": "walk",
+			"path_cells": 10,
+			"resolution_distance": 0.0,
+			"resolved": "(736.0, 6816.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(728.7684, 6816.001)",
+			"before": "(728.7684, 6816.001)",
+			"desired": "(736.0, 6816.0)",
+			"distance": 7.23162841796875,
+			"event": "physical_goal_centering",
+			"resolved": "(736.0, 6816.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(758.9333, 6816.001)",
+			"desired": "(736.0, 6816.0)",
+			"event": "walk",
+			"path_cells": 0,
+			"resolution_distance": 0.0,
+			"resolved": "(736.0, 6816.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(743.5919, 6816.001)",
+			"before": "(758.9333, 6816.001)",
+			"desired": "(736.0, 6816.0)",
+			"distance": 7.59185791015625,
+			"event": "physical_goal_centering",
+			"resolved": "(736.0, 6816.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(736.8185, 6873.101)",
+			"desired": "(736.0, 6880.0)",
+			"event": "walk",
+			"path_cells": 1,
+			"resolution_distance": 0.0,
+			"resolved": "(736.0, 6880.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(736.8185, 6873.101)",
+			"before": "(736.8185, 6873.101)",
+			"desired": "(736.0, 6880.0)",
+			"distance": 6.94779253005981,
+			"event": "physical_goal_centering",
+			"resolved": "(736.0, 6880.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(758.9094, 6877.981)",
+			"desired": "(736.0, 6880.0)",
+			"event": "walk",
+			"path_cells": 0,
+			"resolution_distance": 0.0,
+			"resolved": "(736.0, 6880.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(743.6277, 6879.328)",
+			"before": "(758.9094, 6877.981)",
+			"desired": "(736.0, 6880.0)",
+			"distance": 7.65727996826172,
+			"event": "physical_goal_centering",
+			"resolved": "(736.0, 6880.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(551.1231, 7007.993)",
+			"desired": "(544.0, 7008.0)",
+			"event": "walk",
+			"path_cells": 5,
+			"resolution_distance": 0.0,
+			"resolved": "(544.0, 7008.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(551.1231, 7007.993)",
+			"before": "(551.1231, 7007.993)",
+			"desired": "(544.0, 7008.0)",
+			"distance": 7.12311172485352,
+			"event": "physical_goal_centering",
+			"resolved": "(544.0, 7008.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(544.7167, 6950.44)",
+			"desired": "(544.0, 6944.0)",
+			"event": "walk",
+			"path_cells": 1,
+			"resolution_distance": 0.0,
+			"resolved": "(544.0, 6944.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(544.7167, 6950.44)",
+			"before": "(544.7167, 6950.44)",
+			"desired": "(544.0, 6944.0)",
+			"distance": 6.47969675064087,
+			"event": "physical_goal_centering",
+			"resolved": "(544.0, 6944.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(605.5773, 7001.429)",
+			"desired": "(608.0, 7008.0)",
+			"event": "walk",
+			"path_cells": 2,
+			"resolution_distance": 0.0,
+			"resolved": "(608.0, 7008.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(605.5773, 7001.429)",
+			"before": "(605.5773, 7001.429)",
+			"desired": "(608.0, 7008.0)",
+			"distance": 7.00367450714111,
+			"event": "physical_goal_centering",
+			"resolved": "(608.0, 7008.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		},
+		{
+			"arrived": "(607.9999, 7384.323)",
+			"desired": "(576.0, 7360.0)",
+			"event": "walk",
+			"path_cells": 6,
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(608.0, 7392.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(607.9999, 7384.323)",
+			"before": "(607.9999, 7384.323)",
+			"desired": "(576.0, 7360.0)",
+			"distance": 7.67724609375,
+			"event": "physical_goal_centering",
+			"resolved": "(608.0, 7392.0)",
+			"success": true,
+			"tolerance_px": 8.0
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"source_hashes": {
+		"res://assets/world/domestic_interiors/v1/cooking_hearth.png": "fd6a6434311135e5c7b09ca6b2c3c3ca47333c33b78fed69f826527c9bc7e26b",
+		"res://assets/world/domestic_interiors/v1/cooking_hearth.png.import": "659285b402fc19a24f9fcb7d96b7cc37d64b798cee628f459ddc752ca24191cb",
+		"res://assets/world/domestic_interiors/v1/timber_cot.png": "22549e75329ee9164f9f41fbefcdea2e6b028309a7c358362b4c11a2fc69c143",
+		"res://assets/world/domestic_interiors/v1/timber_cot.png.import": "ec3b96153a41feaa949a29d5179b6f691cdb07c2a56e613ebcf61995a700c627",
+		"res://core/systems/world/chunks/ChunkBlockRenderer.gd": "854932a8ebada2fc23ab57ba65868f120187d222075211b80cbfd123f871c99c",
+		"res://core/systems/world/proc/SiteParcelsImpl.gd": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+		"res://scenes/world/buildings/CityBlockFrontages.gd": "00c9864f4f55564b401581098ec97a8167de0c25fdb783230ef7b622ebd1d871",
+		"res://scenes/world/buildings/CityBlockKit.gd": "81645c0becbdc8fb088229636fdd4642c41a3bbed3992af1a9f3b211342f155e",
+		"res://scenes/world/buildings/CityDomesticInterior.gd": "49dac9559890a2f7e543ce56dddf93f2748ab2e7f41705d58e32f03d97f05d5f",
+		"res://scenes/world/buildings/domestic_plaster.gdshader": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+		"res://scenes/world/buildings/domestic_stone.gdshader": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+		"res://tools/dev/CityBlockPlayablePreview.gd": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+		"res://tools/dev/CityDomesticInteriorPreview.gd": "3d262834d145879bc6c40fc415383f2ab61ce6901e0cc85baf8370e8c28b24dc",
+		"res://tools/dev/CityDomesticInteriorPreview.tscn": "96a5de450e78f7b5ac86be5f8fc320d802dcd014ae24f6367728a6719bf25598"
+	},
+	"target_building_id": 944996572,
+	"target_chunk": "(0, 3)",
+	"wall_seconds": 3.21207,
+	"watch_fallback": "base",
+	"weapon_fires": 3,
+	"world_cover": {
+		"cell_px": 256.0,
+		"foreground_sources": 3,
+		"generation": 2130,
+		"grid_cells": 70,
+		"index_count": 193,
+		"materials": 4,
+		"max_candidates": 23,
+		"peak_candidates": 23,
+		"peak_primitives": 63,
+		"peak_refresh_usec": 62231,
+		"primitive_count": 62,
+		"refresh_usec": 5282,
+		"source_reads": 3
+	}
+}
