@@ -91,6 +91,11 @@ const VARIANT_CITY_STONE := 2
 ## Occupied parcel envelopes use complete wall pieces. Ruin rhythm's broken
 ## sections and raised piers are not openings or duplicate building courses.
 const VARIANT_BUILDING_ENVELOPE := 4
+## Presentation ownership on actual domestic WALL/WINDOW cells only.
+const VARIANT_DOMESTIC_STONE := 8
+## HALF_COVER already uses bits0..4 for its normal texture/rotation. These
+## fitted cells retain its physics but one separately anchored prop owns art.
+const VARIANT_FURNITURE_ART := 32
 
 
 ## World offset of a quadrant fill's centre from its cell centre.

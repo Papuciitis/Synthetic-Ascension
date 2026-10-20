@@ -5,6 +5,7 @@ const RECT_FAC := preload("res://core/systems/world/proc/RectFacilityCarver.gd")
 const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
 const ROOF_OVERLAY_SCENE: PackedScene = preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const CITY_KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
+const DOMESTIC := preload("res://scenes/world/buildings/CityDomesticInterior.gd")
 const DISTRICT_PROFILES := preload("res://scenes/world/buildings/DistrictVisualProfiles.gd")
 const _DIR_N: int = 1
 const _DIR_E: int = 2
@@ -587,6 +588,7 @@ func _spawn_building_rect(
 						var civic := bool(cfg.get("city_service_annex",false)) or building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
 						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id, template))
 						if bool(cfg.get("city_service_annex",false)): kit.set_meta(&"city_service_annex",true)
+						_add_domestic_interior(chunk_manager,kit,wall_cells,building_id)
 
 	placed.append(build_rect)
 	return true
@@ -796,9 +798,19 @@ func _spawn_building_footprint(
 					var kit := CITY_KIT.new()
 					chunk.add_child(kit)
 					kit.configure(build_rect, cell_px, visual_doors, roof, template == &"workshop" and building_id % 3 == 0, outline, bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id, template))
+					_add_domestic_interior(chunk_manager,kit,wall_cells,building_id)
 
 	placed.append(build_rect)
 	return true
+
+
+func _add_domestic_interior(chunk_manager: Node, kit: Node2D, wall_cells: Dictionary, building_id: int) -> void:
+	var data := chunk_manager.get("_active_build_data") as ChunkBuildData
+	if data == null:
+		return
+	var context := DOMESTIC.context_for(kit,data,wall_cells,building_id)
+	DOMESTIC.mark_walls(data,wall_cells,context)
+	DOMESTIC.compose(kit,chunk_manager as ChunkManager,data,context)
 
 
 func _district_profile(cfg: Dictionary, building_id: int, usage: StringName = &"") -> Dictionary:
