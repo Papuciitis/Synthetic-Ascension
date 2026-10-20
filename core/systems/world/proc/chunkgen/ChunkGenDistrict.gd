@@ -301,6 +301,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				# Composed paving belongs only to the accepted S2 prototype block.
 				# Later districts retain their terrain and semantic route materials.
 				"city_shared_ground": role != &"secondary_reward_building" or Global.attempt_segment != 2,
+				"complete_service_frontage": Global.attempt_segment == 2 and role == &"service_lane",
 				"force_parcel": forced_reward_building,
 				"frontage_target": (0.92 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.84),
 				"frontage_passage_chance": (0.14 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.24),

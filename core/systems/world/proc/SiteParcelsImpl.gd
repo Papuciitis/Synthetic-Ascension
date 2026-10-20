@@ -80,14 +80,53 @@ func decorate_district_parcels(
 					if filled_any: break
 				if filled_any: break
 			if filled_any: break
+	if bool(working_cfg.get("complete_service_frontage",false)) and filled_any and placed.size() < 3:
+		_complete_service_frontage(chunk_manager,chunk,coord,bands,keepout_rects,placed,working_cfg,chunk_rect)
 	if bool(working_cfg.get("city_block_style", false)):
 		if not bool(working_cfg.get("city_shared_ground", false)):
 			CITY_KIT.compose_street(chunk, placed, lane_rect_h, lane_rect_v, int(chunk_manager.cell_size_px), cpc)
 		else:
+			if Global.attempt_segment == 2:
+				preload("res://scenes/world/buildings/CityStreetFrontage.gd").compose(chunk,placed,int(chunk_manager.cell_size_px),cpc,lane_rect_h,lane_rect_v)
 			for kit: Node in chunk.get_children():
 				if kit.is_in_group(&"city_block_building"): kit.trim_paving(placed, int(chunk_manager.cell_size_px))
 
 	return placed
+
+
+func _complete_service_frontage(cm: Node, chunk: Node2D, coord: Vector2i, bands: Array[Dictionary], keepouts: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, extent: Rect2i) -> void:
+	# One small service annex in a sparse lane. Fit against the same protected
+	# road/access cells and parcel list, after all original lots/RNG decisions.
+	var annex_cfg := cfg.duplicate(true)
+	annex_cfg["secondary_objective_id"] = 0
+	annex_cfg["local_encounter_enabled"] = false
+	annex_cfg["parcel_loot_chance"] = 0.0
+	annex_cfg["exploration_loot_enabled"] = false
+	annex_cfg["city_service_annex"] = true
+	var annex_rng := RandomNumberGenerator.new()
+	annex_rng.seed = _mix_seed(int(cm.world_seed),coord.x,coord.y,4891)
+	for size: Vector2i in [Vector2i(8,8),Vector2i(7,8)]:
+		for band: Dictionary in bands:
+			var usable: Rect2i = (band.rect as Rect2i).intersection(extent.grow(-1))
+			var direction: Vector2i = band.door_dir
+			var shape := size if direction.y != 0 else Vector2i(size.y,size.x)
+			if usable.size.x < shape.x or usable.size.y < shape.y: continue
+			var count: int = usable.size.x-shape.x+1 if direction.y != 0 else usable.size.y-shape.y+1
+			for offset in count:
+				var at := usable.position
+				if direction.y != 0:
+					at.x += offset
+					if direction.y > 0: at.y = usable.end.y-shape.y
+				else:
+					at.y += offset
+					if direction.x > 0: at.x = usable.end.x-shape.x
+				var rect := Rect2i(at,shape)
+				# Keep an honest narrow passage beside existing architecture.
+				var separated := true
+				for neighbor: Rect2i in placed:
+					if neighbor.grow(1).intersects(rect): separated = false
+				if not separated or not _rect_can_place(rect,extent,keepouts,placed): continue
+				if _spawn_building_rect(cm,chunk,coord,rect,direction,&"workshop",keepouts,placed,annex_cfg,annex_rng,extent): return
 
 
 # Generates a complete courtyard block in a district-fill chunk. These chunks form
@@ -519,6 +558,7 @@ func _spawn_building_rect(
 				var global_tl: Vector2i = coord * cpc + interior.position
 				var building_id: int = int(_mix_seed(int(chunk_manager.world_seed), global_tl.x, global_tl.y, 77) & 0x7fffffff) + 1
 				var loot_cfg: Dictionary = {
+					"exploration_loot_enabled": bool(cfg.get("exploration_loot_enabled",true)),
 					"small_loot_chance": building_loot_chance,
 					"small_count_min": int(cfg.get("parcel_loot_count_min", 1)),
 					"small_count_max": int(cfg.get("parcel_loot_count_max", 1)),
@@ -544,8 +584,9 @@ func _spawn_building_rect(
 					if bool(cfg.get("city_block_style", false)):
 						var kit := CITY_KIT.new()
 						chunk.add_child(kit)
-						var civic := building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
-						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id))
+						var civic := bool(cfg.get("city_service_annex",false)) or building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
+						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id, template))
+						if bool(cfg.get("city_service_annex",false)): kit.set_meta(&"city_service_annex",true)
 
 	placed.append(build_rect)
 	return true
@@ -754,17 +795,18 @@ func _spawn_building_footprint(
 				if bool(cfg.get("city_block_style", false)):
 					var kit := CITY_KIT.new()
 					chunk.add_child(kit)
-					kit.configure(build_rect, cell_px, visual_doors, roof, template == &"workshop" and building_id % 3 == 0, outline, bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id))
+					kit.configure(build_rect, cell_px, visual_doors, roof, template == &"workshop" and building_id % 3 == 0, outline, bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id, template))
 
 	placed.append(build_rect)
 	return true
 
 
-func _district_profile(cfg: Dictionary, building_id: int) -> Dictionary:
+func _district_profile(cfg: Dictionary, building_id: int, usage: StringName = &"") -> Dictionary:
 	var family := StringName(cfg.get("district_family", &""))
 	var profile := DISTRICT_PROFILES.resolve(&"" if bool(cfg.get("district_common_base_preview", false)) else family)
 	profile["family_id"] = family
 	profile["visual_seed"] = building_id
+	profile["building_usage"] = usage
 	return profile
 
 

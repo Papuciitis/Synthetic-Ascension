@@ -39,6 +39,7 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	bounds = Rect2(Vector2(rect.position) * cell_px, Vector2(rect.size) * cell_px)
 	civic = is_civic
 	_district_profile = visual_profile.duplicate()
+	set_meta(&"building_usage",StringName(visual_profile.get("building_usage",&"")))
 	if not civic:
 		for profile_key: String in ["profile_id", "roof_form_set_id", "facade_form_set_id"]:
 			_district_profile[profile_key] = &"common_base"
@@ -49,6 +50,10 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	_doors = doors
 	_irregular = not irregular_outline.is_empty()
 	if _irregular: _facade_height = 112.0
+	# S2 whole-street benchmark: more wall/entry mass inside the same footprint.
+	# Other families retain their reviewed proportions.
+	if Global.attempt_segment == 2:
+		_facade_height = (240.0 if civic else 208.0) if not _irregular else 176.0
 	if _irregular: set_meta(&"city_irregular_outline", irregular_outline)
 	add_to_group(&"city_block_building")
 	set_meta(&"city_role", &"civic" if civic else &"residential")
@@ -77,12 +82,12 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 			var plant := Sprite2D.new()
 			plant.set_meta(&"district_optional_detail",true)
 			plant.texture = _texture("pressure_plant.png")
-			plant.scale = Vector2.ONE * (64.0 / plant.texture.get_width())
+			plant.scale = Vector2.ONE * ((96.0 if Global.attempt_segment == 2 else 64.0) / plant.texture.get_width())
 			var roof_poly := roof.get_node("RoofPoly") as Polygon2D
 			var plant_x := bounds.end.x-28
 			for door: Dictionary in doors:
 				if door.dir == Vector2i.RIGHT: plant_x = bounds.position.x+28
-			plant.position = Vector2(plant_x, _front - 78) - roof_poly.position
+			plant.position = Vector2(plant_x-10 if Global.attempt_segment == 2 else plant_x, _front - 84 if Global.attempt_segment == 2 else _front - 78) - roof_poly.position
 			roof_poly.add_child(plant)
 	if not shared_ground: _add_frontage_ground()
 	_add_ground_shadow()
@@ -90,6 +95,8 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	if not _irregular: _add_entry_ground()
 	if not _irregular:
 		_add_records_board(cell_px, doors)
+		_add_planting()
+	elif Global.attempt_segment == 2 and StringName(_district_profile.get("building_usage",&"")) == &"row_house" and Geometry2D.is_point_in_polygon(Vector2(bounds.position.x+24,_front-8),irregular_outline):
 		_add_planting()
 	if _is_guard() and roof != null:
 		preload("res://scenes/world/buildings/CheckpointOfficeForms.gd").compose_frontage(self,roof.get_meta(&"district_form_plan",{}),{"arch_open":_texture(GUARD_ROOT+"guard_arch_open.png"),"arch_closed":_texture(GUARD_ROOT+"guard_arch_closed.png"),"infill":_texture(GUARD_ROOT+"guard_quiet_infill_v2.png")})
@@ -342,12 +349,27 @@ func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 func _add_planting() -> void:
 	# Small stable domestic groups join the public tree, without consuming
 	# the parcel RNG or planting every doorway with the same finished object.
-	if not civic and (int(bounds.position.x/64)+int(bounds.position.y/64)) % 3 != 0: return
+	var domestic_garden := not civic and Global.attempt_segment == 2 and StringName(_district_profile.get("building_usage",&"")) == &"row_house"
+	var garden_variant := absi(int(_district_profile.get("visual_seed",int(bounds.position.x/64)+int(bounds.position.y/64)))) % 4
+	if domestic_garden and garden_variant == 3: return
+	if not civic and not domestic_garden and (int(bounds.position.x/64)+int(bounds.position.y/64)) % 3 != 0: return
 	var texture := ART.dressing_texture(&"olive_shrub")
 	if texture == null: return
 	var tree: Texture2D = _texture("temperate_tree.png") if _has_texture("temperate_tree.png") else null
+	if domestic_garden and garden_variant != 1: tree = null
+	var tree_anchor := Vector2(650,1170)
+	var tree_scale := 280.0/tree.get_width() if tree != null else 1.0
+	if domestic_garden and garden_variant == 1:
+		tree = _texture("res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png")
+		tree_anchor = Vector2(660,1060)
+		tree_scale = 135.0/1167.0
 	var planter: Texture2D = _texture("planted_corner.png") if _has_texture("planted_corner.png") else null
 	var planter_width := minf(160.0,_door_x-_door_width*0.5-bounds.position.x-24.0) if _south_front else 160.0
+	if domestic_garden:
+		planter_width = minf(planter_width,128.0)
+		if _south_front and planter_width >= 80.0: _add_domestic_garden_bed(planter_width,garden_variant)
+		planter = null
+		if garden_variant != 1: return
 	if planter != null and planter_width >= 80.0:
 		var piece := Sprite2D.new()
 		piece.name = "PaintedCornerPlanter"
@@ -362,18 +384,19 @@ func _add_planting() -> void:
 	var anchor := Vector2(bounds.position.x + 4, _front - 30)
 	var offsets := [Vector2(0,-38), Vector2(-22,18), Vector2(28,8)]
 	for index in offsets.size():
+		if domestic_garden and index > (0 if tree != null or _painted_planter else 1): continue
 		if _painted_planter and index > 0: continue
 		var source: Texture2D = tree if index == 0 and tree != null else texture
 		var plant := Sprite2D.new()
 		plant.texture = source
 		plant.position = anchor + offsets[index]
-		plant.scale = Vector2.ONE * ((280.0 if index == 0 and tree != null else [180.0,100.0,68.0][index]) / source.get_width())
+		plant.scale = Vector2.ONE * (tree_scale if index == 0 and tree != null else ([60.0,44.0,36.0][index] if domestic_garden else [180.0,100.0,68.0][index])/source.get_width())
 		var feet := plant.position+Vector2(0,source.get_height()*plant.scale.y*0.5)
 		if index == 0 and tree != null:
 			# Measured root contact in the original 1254-square transparent asset.
 			# Keep its real foot on the existing blocked corner, not its canvas centre.
 			feet = Vector2(bounds.position.x+8,_front-5)
-			plant.position = feet+(source.get_size()*0.5-Vector2(650,1170))*plant.scale
+			plant.position = feet+(source.get_size()*0.5-tree_anchor)*plant.scale
 			plant.name = "CityTemperateTree"
 			plant.set_meta(&"city_ground_contact",feet)
 		plant.modulate = Color(1.04,1.08,0.99)
@@ -402,6 +425,32 @@ func _add_planting() -> void:
 		shade.color = Color(0.06,0.10,0.13,0.25)
 		shade.z_index = -90
 		add_child(shade)
+
+func _add_domestic_garden_bed(width: float, variant: int) -> void:
+	# A trampled, flush herb/flower pocket at the inhabited edge. The root and
+	# stone planter remain on the existing wall band; this soil owns no blocker.
+	var left := bounds.position.x+10
+	var front := _front+8
+	var depth := 48.0 if variant == 0 else 72.0
+	var bed := PackedVector2Array([Vector2(left,front),Vector2(left+width-14,front+3),Vector2(left+width,front+depth*0.52),Vector2(left+width-24,front+depth),Vector2(left+16,front+depth-9),Vector2(left-7,front+depth*0.42)])
+	var soil := _flat(self,bed,Color("535842"))
+	soil.name = "TendedDomesticBed"
+	soil.z_index = -90
+	soil.set_meta(&"city_domestic_garden",variant)
+	if variant != 1:
+		var bed_sprite := Sprite2D.new()
+		bed_sprite.name = "DomesticHerbBed"
+		bed_sprite.texture = _texture("res://assets/world/domestic_gardens/v1/flower_herb_bed.png")
+		bed_sprite.scale = Vector2.ONE*(minf(width,115.0)/1761.0)
+		var contact := Vector2(left+width*0.5,front+22)
+		bed_sprite.position = contact+(bed_sprite.texture.get_size()*0.5-Vector2(955,485))*bed_sprite.scale
+		bed_sprite.z_index = 1
+		bed_sprite.set_meta(&"city_garden_contact",contact)
+		add_child(bed_sprite)
+	for index in range(3 if variant == 2 else 2):
+		var at := Vector2(left+22+index*width*0.24,front+depth*0.46+(index%2)*9)
+		var herbs := _flat(self,PackedVector2Array([at-Vector2(9,5),at+Vector2(6,-8),at+Vector2(13,3),at+Vector2(-3,8)]),Color("737d53") if variant == 2 else Color("829365"))
+		herbs.z_index = -89
 
 func _add_frontage_details() -> void:
 	if not _south_front: return

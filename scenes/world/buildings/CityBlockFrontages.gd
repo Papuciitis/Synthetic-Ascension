@@ -7,6 +7,7 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 	group.set_meta(&"city_facade_detail", true)
 	kit.add_child(group)
 	var box: Rect2 = kit.get("bounds")
+	var finish: Texture2D = kit.get("_facade") if Global.attempt_segment == 2 and not bool(kit.get("civic")) else null
 	if outline.is_empty():
 		# A continuous shaded return beneath the eave, split around side doors.
 		for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT]:
@@ -22,7 +23,8 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 				runs = next
 			for run: Vector2 in runs:
 				if run.y <= run.x: continue
-				_panel(group,Rect2(x-7,run.x,14,run.y-run.x),Color("57635f") if dir.x < 0 else Color("92998a"))
+				var face := _panel(group,Rect2(x-7,run.x,14,run.y-run.x),Color("57635f") if dir.x < 0 else Color("92998a"))
+				if finish != null: _plaster(face,finish,Color("858d80") if dir.x < 0 else Color("b7b8a5"))
 	else:
 		# Intentional irregular fallback: masonry/eave courses follow every
 		# actual south edge, including the recessed bay and rear L wing.
@@ -41,7 +43,12 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 					if run.y > gap.end.x: remaining.append(Vector2(maxf(run.x,gap.end.x),run.y))
 				runs = remaining
 			for run: Vector2 in runs:
-				_wall_bays(group,kit.get("_facade"),run,b.y-16,112,bool(kit.get("civic")))
+				var height := float(kit.get("_facade_height"))
+				_wall_bays(group,kit.get("_facade"),run,b.y-16,minf(height,112.0),bool(kit.get("civic")))
+				if height > 112.0:
+					var upper := _panel(group,Rect2(run.x,b.y-16-height,run.y-run.x,height-112),Color.WHITE)
+					var upper_finish := finish if finish != null else portal_masonry
+					if upper_finish != null: _plaster(upper,upper_finish,Color("b9b9a8"))
 	for door: Dictionary in doors:
 		if door.dir == Vector2i.DOWN and outline.is_empty(): continue
 		var gap := _door_box(door,cell_px)
@@ -62,6 +69,12 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 			_panel(entry,Rect2(x-9,gap.position.y+4,18,12),Color("9ca28f"))
 			_panel(entry,Rect2(x-9,gap.end.y-16,18,12),Color("768174"))
 			_panel(entry,Rect2(gap.position.x+8,gap.position.y+16,6,gap.size.y-32),Color(0.15,0.22,0.23,0.5))
+			if finish != null:
+				for y: float in [gap.position.y-18,gap.end.y-8]:
+					var pier := _panel(entry,Rect2(x-15,y,30,26),Color.WHITE)
+					_masonry(pier,finish,Rect2(finish.get_size()*Vector2(0.391,0.29),finish.get_size()*Vector2(0.034,0.18)))
+				var landing := _panel(entry,Rect2(gap.position.x+5,gap.position.y+8,gap.size.x-10,gap.size.y-16),Color("8f9989"))
+				landing.z_index = -1
 		else:
 			var y := gap.position.y+12 if dir.y < 0 else gap.end.y-16
 			_panel(entry,Rect2(gap.position.x+4,y,12,20),Color("818c7d"))
@@ -123,6 +136,12 @@ static func _masonry(shape: Polygon2D, texture: Texture2D, source: Rect2) -> voi
 	shape.texture = texture
 	shape.uv = PackedVector2Array([source.position,Vector2(source.end.x,source.position.y),source.end,Vector2(source.position.x,source.end.y)])
 	shape.color = Color.WHITE
+
+static func _plaster(shape: Polygon2D, texture: Texture2D, tint: Color) -> void:
+	# Plain field beside the existing shutter bay; no additional windows or
+	# stretched ornament. Shared quiet material retains a broad limewash plane.
+	_masonry(shape,texture,Rect2(texture.get_size()*Vector2(0.335,0.30),texture.get_size()*Vector2(0.038,0.36)))
+	shape.color = tint
 
 static func _panel(parent: Node2D, rect: Rect2, color: Color) -> Polygon2D:
 	if not rect.has_area(): return null

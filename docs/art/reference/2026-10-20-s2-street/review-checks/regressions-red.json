@@ -1,0 +1,25 @@
+{
+  "scene": "res://tools/tests/CityServiceFrontageTest.tscn",
+  "pid": 3604,
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-20-street\\review-regressions-red-b338c8a4",
+  "exit": 1,
+  "timeout": false,
+  "resources": {
+    "stop_reason": "",
+    "peak_private_mb": 449.0,
+    "minimum_available_mb": 412.0,
+    "minimum_commit_headroom_mb": 1356.0,
+    "elapsed_seconds": 14.8
+  },
+  "diagnostics": [
+    "ERROR: Raised irregular wall leaves upper face uncovered: civic=true point=(512.0, 480.0)",
+    "ERROR: Raised irregular wall leaves upper face uncovered: civic=true point=(256.0, 352.0)",
+    "ERROR: Annex must disable exploration loot even when positive Luck raises a zero base chance",
+    "ERROR: Annex must disable exploration loot even when positive Luck raises a zero base chance",
+    "ERROR: Annex must disable exploration loot even when positive Luck raises a zero base chance",
+    "ERROR: Annex must disable exploration loot even when positive Luck raises a zero base chance"
+  ],
+  "summary": [
+    "CityServiceFrontageTest: fixtures=8 failures=6"
+  ]
+}

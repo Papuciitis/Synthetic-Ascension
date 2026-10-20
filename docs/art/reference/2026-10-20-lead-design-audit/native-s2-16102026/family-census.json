@@ -1,0 +1,2265 @@
+{
+	"samples": {
+		"east": true,
+		"irregular": true,
+		"north": true,
+		"south": true,
+		"west": true
+	},
+	"visits": [
+		{
+			"loaded_buildings": [
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (20, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (20, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (7, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (256.0, 1344.0), S: (512.0, 640.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (11, 26), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 26), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (768.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (19, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (7, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (25, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 640.0), S: (576.0, 640.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (10, 15), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (384.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (13, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (8, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (18, 25), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (7, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 256.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 832.0), S: (768.0, 512.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 17), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 192.0), S: (512.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 6), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 704.0), S: (512.0, 704.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 16), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 16), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 192.0), S: (448.0, 512.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				}
+			],
+			"panel": "secondary_reward_building-1"
+		},
+		{
+			"loaded_buildings": [
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (20, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (20, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (7, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (256.0, 1344.0), S: (512.0, 640.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (11, 26), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 26), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (768.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (19, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (7, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (25, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 640.0), S: (576.0, 640.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (10, 15), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (384.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (13, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (8, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (18, 25), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (7, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 256.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 832.0), S: (768.0, 512.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 17), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 192.0), S: (512.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 6), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 704.0), S: (512.0, 704.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 16), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 16), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 192.0), S: (448.0, 512.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 128.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (16, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 64.0), S: (640.0, 512.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (26, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1344.0), S: (768.0, 448.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (7, 21), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 1344.0), S: (704.0, 576.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (20, 21), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (576.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (5, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (704.0, 64.0), S: (704.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (16, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 64.0), S: (512.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (27, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (704.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (896.0, 1472.0), S: (448.0, 512.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (17, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 1472.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 64.0), S: (512.0, 512.0)]",
+					"chunk": "(-4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (25, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1088.0), S: (576.0, 448.0)]",
+					"chunk": "(-2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (7, 17), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (7, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (23, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (6, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (24, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (4, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (12, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1088.0, 64.0), S: (640.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (22, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (576.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (5, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (704.0, 1472.0), S: (448.0, 512.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (14, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1472.0), S: (640.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (26, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 512.0), S: (576.0, 704.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (23, 13), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (704.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (6, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 256.0), S: (512.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (17, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 192.0), S: (576.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (26, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 1280.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 23), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 832.0), S: (448.0, 576.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 17), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 1472.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 27), \"dir\": (-1, 0), \"width\": 2 }, { \"pos\": (30, 27), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (768.0, 640.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (7, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (1280.0, 64.0), S: (704.0, 640.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (25, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 832.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (7, 16), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1408.0), S: (448.0, 576.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (7, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 704.0), S: (512.0, 576.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (22, 15), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 1344.0), S: (576.0, 512.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (22, 25), \"dir\": (-1, 0), \"width\": 2 }, { \"pos\": (30, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1408.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (640.0, 1408.0), S: (512.0, 576.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (14, 22), \"dir\": (0, -1), \"width\": 2 }, { \"pos\": (14, 30), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1408.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 64.0), S: (448.0, 640.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 6), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 64.0), S: (640.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1536.0), S: (512.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (5, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (768.0, 1536.0), S: (768.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 1472.0), S: (768.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (19, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (576.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (9, 5), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (1, 5), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				}
+			],
+			"panel": "required-building-close"
+		},
+		{
+			"loaded_buildings": [
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (20, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (20, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (7, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (256.0, 1344.0), S: (512.0, 640.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (11, 26), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 26), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (768.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (19, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (7, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (25, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 640.0), S: (576.0, 640.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (10, 15), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (384.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (13, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (8, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (18, 25), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (7, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 256.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 832.0), S: (768.0, 512.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 17), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 192.0), S: (512.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 6), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 704.0), S: (512.0, 704.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 16), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 16), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 192.0), S: (448.0, 512.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 128.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (16, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 64.0), S: (640.0, 512.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (26, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1344.0), S: (768.0, 448.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (7, 21), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 1344.0), S: (704.0, 576.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (20, 21), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (576.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (5, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (704.0, 64.0), S: (704.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (16, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 64.0), S: (512.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (27, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (704.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (896.0, 1472.0), S: (448.0, 512.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (17, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 1472.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 64.0), S: (512.0, 512.0)]",
+					"chunk": "(-4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (25, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1088.0), S: (576.0, 448.0)]",
+					"chunk": "(-2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (7, 17), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (7, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (23, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (6, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (24, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (4, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (12, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1088.0, 64.0), S: (640.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (22, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (576.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (5, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (704.0, 1472.0), S: (448.0, 512.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (14, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1472.0), S: (640.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (26, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 512.0), S: (576.0, 704.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (23, 13), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (704.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (6, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 256.0), S: (512.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (17, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 192.0), S: (576.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (26, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 1280.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 23), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 832.0), S: (448.0, 576.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 17), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 1472.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 27), \"dir\": (-1, 0), \"width\": 2 }, { \"pos\": (30, 27), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (768.0, 640.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (7, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (1280.0, 64.0), S: (704.0, 640.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (25, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 832.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (7, 16), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1408.0), S: (448.0, 576.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (7, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 704.0), S: (512.0, 576.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (22, 15), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 1344.0), S: (576.0, 512.0)]",
+					"chunk": "(-4096.0, 14336.0)",
+					"doors": "[{ \"pos\": (22, 25), \"dir\": (-1, 0), \"width\": 2 }, { \"pos\": (30, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1408.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (640.0, 1408.0), S: (512.0, 576.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (14, 22), \"dir\": (0, -1), \"width\": 2 }, { \"pos\": (14, 30), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1408.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 64.0), S: (448.0, 640.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 6), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 64.0), S: (640.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1536.0), S: (512.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (5, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (768.0, 1536.0), S: (768.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 1472.0), S: (768.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (19, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (576.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (9, 5), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (1, 5), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				}
+			],
+			"panel": "kit-east-boundary"
+		},
+		{
+			"loaded_buildings": [
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (20, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (20, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (7, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (256.0, 1344.0), S: (512.0, 640.0)]",
+					"chunk": "(0.0, 16384.0)",
+					"doors": "[{ \"pos\": (11, 26), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 26), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 64.0), S: (768.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (19, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (7, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (25, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 640.0), S: (576.0, 640.0)]",
+					"chunk": "(2048.0, 16384.0)",
+					"doors": "[{ \"pos\": (10, 15), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (384.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (13, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (8, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (18, 25), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (7, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 256.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 832.0), S: (768.0, 512.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 17), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 192.0), S: (512.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 6), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 704.0), S: (512.0, 704.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 16), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 16), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 192.0), S: (448.0, 512.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 512.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (6, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 128.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (16, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 64.0), S: (640.0, 512.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (26, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1344.0), S: (768.0, 448.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (7, 21), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 1344.0), S: (704.0, 576.0)]",
+					"chunk": "(-4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (20, 21), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (576.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (5, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (704.0, 64.0), S: (704.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (16, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 64.0), S: (512.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (27, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (704.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (896.0, 1472.0), S: (448.0, 512.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (17, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 1472.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 64.0), S: (512.0, 512.0)]",
+					"chunk": "(-4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (25, 8), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1088.0), S: (576.0, 448.0)]",
+					"chunk": "(-2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (7, 17), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (7, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (23, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (6, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (24, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (4, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (12, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1088.0, 64.0), S: (640.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (22, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (576.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (5, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (704.0, 1472.0), S: (448.0, 512.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (14, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1472.0), S: (640.0, 448.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (26, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 512.0), S: (576.0, 704.0)]",
+					"chunk": "(4096.0, 16384.0)",
+					"doors": "[{ \"pos\": (23, 13), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (704.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (6, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 256.0), S: (512.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (17, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 192.0), S: (576.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (26, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 1280.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 23), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 832.0), S: (448.0, 576.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 17), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 1472.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 27), \"dir\": (-1, 0), \"width\": 2 }, { \"pos\": (30, 27), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1408.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (640.0, 1408.0), S: (512.0, 576.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (14, 22), \"dir\": (0, -1), \"width\": 2 }, { \"pos\": (14, 30), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1408.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 64.0), S: (448.0, 640.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 6), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 64.0), S: (640.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1536.0), S: (512.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (5, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (768.0, 1536.0), S: (768.0, 448.0)]",
+					"chunk": "(6144.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 1472.0), S: (768.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (19, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (576.0, 512.0)]",
+					"chunk": "(6144.0, 22528.0)",
+					"doors": "[{ \"pos\": (9, 5), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (1, 5), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (704.0, 576.0)]",
+					"chunk": "(0.0, 24576.0)",
+					"doors": "[{ \"pos\": (6, 9), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 64.0), S: (640.0, 576.0)]",
+					"chunk": "(0.0, 24576.0)",
+					"doors": "[{ \"pos\": (26, 9), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (640.0, 448.0)]",
+					"chunk": "(0.0, 24576.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (768.0, 1472.0), S: (640.0, 448.0)]",
+					"chunk": "(0.0, 24576.0)",
+					"doors": "[{ \"pos\": (17, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1536.0, 1472.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, 24576.0)",
+					"doors": "[{ \"pos\": (27, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 704.0), S: (576.0, 768.0)]",
+					"chunk": "(0.0, 24576.0)",
+					"doors": "[{ \"pos\": (11, 17), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1536.0, 640.0), S: (448.0, 640.0)]",
+					"chunk": "(0.0, 24576.0)",
+					"doors": "[{ \"pos\": (24, 15), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 128.0), S: (512.0, 512.0)]",
+					"chunk": "(2048.0, 24576.0)",
+					"doors": "[{ \"pos\": (5, 9), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 192.0), S: (704.0, 448.0)]",
+					"chunk": "(2048.0, 24576.0)",
+					"doors": "[{ \"pos\": (25, 9), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 704.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 24576.0)",
+					"doors": "[{ \"pos\": (7, 14), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1344.0), S: (448.0, 640.0)]",
+					"chunk": "(2048.0, 24576.0)",
+					"doors": "[{ \"pos\": (7, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 640.0), S: (512.0, 640.0)]",
+					"chunk": "(2048.0, 24576.0)",
+					"doors": "[{ \"pos\": (23, 15), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 1344.0), S: (448.0, 576.0)]",
+					"chunk": "(2048.0, 24576.0)",
+					"doors": "[{ \"pos\": (23, 25), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				}
+			],
+			"panel": "secondary_route-1"
+		},
+		{
+			"loaded_buildings": [
+				{
+					"bounds": "[P: (192.0, 640.0), S: (768.0, 448.0)]",
+					"chunk": "(-2048.0, 6144.0)",
+					"doors": "[{ \"pos\": (9, 16), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(-4096.0, 4096.0)",
+					"doors": "[{ \"pos\": (23, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (23, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (448.0, 1216.0), S: (448.0, 640.0)]",
+					"chunk": "(-4096.0, 4096.0)",
+					"doors": "[{ \"pos\": (13, 24), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 256.0), S: (512.0, 512.0)]",
+					"chunk": "(-2048.0, 4096.0)",
+					"doors": "[{ \"pos\": (7, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (448.0, 1408.0), S: (448.0, 448.0)]",
+					"chunk": "(-2048.0, 4096.0)",
+					"doors": "[{ \"pos\": (13, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 320.0), S: (576.0, 512.0)]",
+					"chunk": "(0.0, 4096.0)",
+					"doors": "[{ \"pos\": (5, 12), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (704.0, 384.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, 4096.0)",
+					"doors": "[{ \"pos\": (14, 12), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 256.0), S: (576.0, 576.0)]",
+					"chunk": "(0.0, 4096.0)",
+					"doors": "[{ \"pos\": (23, 12), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (128.0, 1216.0), S: (512.0, 448.0)]",
+					"chunk": "(0.0, 4096.0)",
+					"doors": "[{ \"pos\": (9, 22), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 576.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 6144.0)",
+					"doors": "[{ \"pos\": (8, 16), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": true
+				},
+				{
+					"bounds": "[P: (192.0, 384.0), S: (512.0, 512.0)]",
+					"chunk": "(-4096.0, 8192.0)",
+					"doors": "[{ \"pos\": (7, 13), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (448.0, 448.0)]",
+					"chunk": "(-2048.0, 8192.0)",
+					"doors": "[{ \"pos\": (4, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 64.0), S: (448.0, 640.0)]",
+					"chunk": "(-2048.0, 8192.0)",
+					"doors": "[{ \"pos\": (25, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1536.0), S: (512.0, 448.0)]",
+					"chunk": "(-2048.0, 8192.0)",
+					"doors": "[{ \"pos\": (5, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (640.0, 1536.0), S: (512.0, 448.0)]",
+					"chunk": "(-2048.0, 8192.0)",
+					"doors": "[{ \"pos\": (14, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 1536.0), S: (448.0, 448.0)]",
+					"chunk": "(-2048.0, 8192.0)",
+					"doors": "[{ \"pos\": (23, 24), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 704.0), S: (512.0, 768.0)]",
+					"chunk": "(-2048.0, 8192.0)",
+					"doors": "[{ \"pos\": (10, 17), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (640.0, 192.0), S: (448.0, 640.0)]",
+					"chunk": "(0.0, 8192.0)",
+					"doors": "[{ \"pos\": (16, 8), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 896.0), S: (512.0, 640.0)]",
+					"chunk": "(0.0, 8192.0)",
+					"doors": "[{ \"pos\": (16, 19), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				}
+			],
+			"panel": "service_lane-1"
+		},
+		{
+			"loaded_buildings": [
+				{
+					"bounds": "[P: (256.0, 192.0), S: (512.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 6), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 704.0), S: (512.0, 704.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (11, 16), \"dir\": (1, 0), \"width\": 2 }, { \"pos\": (4, 16), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 192.0), S: (448.0, 512.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 20480.0)",
+					"doors": "[{ \"pos\": (18, 24), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "civic",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (20, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (20, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (7, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1344.0, 1216.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 18432.0)",
+					"doors": "[{ \"pos\": (25, 19), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 256.0), S: (704.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 11), \"dir\": (0, 1), \"width\": 2 }, { \"pos\": (8, 4), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1152.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 18), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1152.0, 1344.0), S: (512.0, 512.0)]",
+					"chunk": "(2048.0, 18432.0)",
+					"doors": "[{ \"pos\": (18, 25), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (704.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (6, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 256.0), S: (512.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (17, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1408.0, 192.0), S: (576.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (26, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (128.0, 1280.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (8, 23), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 832.0), S: (448.0, 576.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 17), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 1472.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 18432.0)",
+					"doors": "[{ \"pos\": (23, 27), \"dir\": (-1, 0), \"width\": 2 }, { \"pos\": (30, 27), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 256.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1280.0, 256.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (24, 10), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 832.0), S: (768.0, 512.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 17), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(0.0, 20480.0)",
+					"doors": "[{ \"pos\": (12, 26), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1408.0), S: (448.0, 448.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (4, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (640.0, 1408.0), S: (512.0, 576.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (14, 22), \"dir\": (0, -1), \"width\": 2 }, { \"pos\": (14, 30), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1408.0), S: (512.0, 512.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 22), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1472.0, 64.0), S: (448.0, 640.0)]",
+					"chunk": "(4096.0, 20480.0)",
+					"doors": "[{ \"pos\": (23, 6), \"dir\": (-1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (7, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (512.0, 512.0)]",
+					"chunk": "(0.0, 22528.0)",
+					"doors": "[{ \"pos\": (23, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (192.0, 1024.0), S: (448.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (6, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1024.0), S: (640.0, 448.0)]",
+					"chunk": "(2048.0, 22528.0)",
+					"doors": "[{ \"pos\": (24, 16), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				}
+			],
+			"panel": "dangerous_alley-1"
+		},
+		{
+			"loaded_buildings": [
+				{
+					"bounds": "[P: (64.0, 64.0), S: (768.0, 448.0)]",
+					"chunk": "(-2048.0, -2048.0)",
+					"doors": "[{ \"pos\": (7, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (960.0, 64.0), S: (704.0, 448.0)]",
+					"chunk": "(-2048.0, -2048.0)",
+					"doors": "[{ \"pos\": (20, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (640.0, 512.0)]",
+					"chunk": "(-2048.0, -2048.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 1472.0), S: (576.0, 448.0)]",
+					"chunk": "(-2048.0, -2048.0)",
+					"doors": "[{ \"pos\": (23, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 192.0), S: (448.0, 576.0)]",
+					"chunk": "(-4096.0, -2048.0)",
+					"doors": "[{ \"pos\": (4, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 256.0), S: (576.0, 512.0)]",
+					"chunk": "(-4096.0, -2048.0)",
+					"doors": "[{ \"pos\": (13, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 64.0), S: (448.0, 704.0)]",
+					"chunk": "(-4096.0, -2048.0)",
+					"doors": "[{ \"pos\": (22, 11), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (256.0, 896.0), S: (448.0, 576.0)]",
+					"chunk": "(-4096.0, -2048.0)",
+					"doors": "[{ \"pos\": (10, 18), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1536.0), S: (640.0, 448.0)]",
+					"chunk": "(-4096.0, -2048.0)",
+					"doors": "[{ \"pos\": (10, 27), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 192.0), S: (448.0, 448.0)]",
+					"chunk": "(0.0, -2048.0)",
+					"doors": "[{ \"pos\": (4, 9), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (576.0, 192.0), S: (576.0, 448.0)]",
+					"chunk": "(0.0, -2048.0)",
+					"doors": "[{ \"pos\": (13, 9), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1216.0, 64.0), S: (768.0, 576.0)]",
+					"chunk": "(0.0, -2048.0)",
+					"doors": "[{ \"pos\": (25, 9), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1280.0), S: (704.0, 704.0)]",
+					"chunk": "(0.0, -2048.0)",
+					"doors": "[{ \"pos\": (11, 25), \"dir\": (1, 0), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 64.0), S: (768.0, 448.0)]",
+					"chunk": "(-4096.0, 0.0)",
+					"doors": "[{ \"pos\": (7, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (896.0, 64.0), S: (576.0, 448.0)]",
+					"chunk": "(-4096.0, 0.0)",
+					"doors": "[{ \"pos\": (18, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (1536.0, 64.0), S: (448.0, 448.0)]",
+					"chunk": "(-4096.0, 0.0)",
+					"doors": "[{ \"pos\": (27, 7), \"dir\": (0, 1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (64.0, 1472.0), S: (704.0, 512.0)]",
+					"chunk": "(-4096.0, 0.0)",
+					"doors": "[{ \"pos\": (6, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				},
+				{
+					"bounds": "[P: (832.0, 1472.0), S: (768.0, 448.0)]",
+					"chunk": "(-4096.0, 0.0)",
+					"doors": "[{ \"pos\": (19, 23), \"dir\": (0, -1), \"width\": 2 }]",
+					"family": "residential",
+					"irregular": false
+				}
+			],
+			"panel": "district_fill-1"
+		}
+	]
+}

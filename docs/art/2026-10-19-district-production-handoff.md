@@ -1,5 +1,7 @@
 # District production handoff
 
+**20 October ownership and priority update:** the human appointed the new audit chat as lead designer and authorized retiring the four previous chats. All four are now archived. The active production owner is **Bring a playable street close to the concept**, `01a1583c-19e5-7110-b2d1-57ab06a3d3a6`, in this same checkout. The lead is **Audit art direction and game visuals**, `01a1582c-ed66-7af2-a2d7-bde219ce5e3b`. The [current audit and street acceptance contract](../audits/2026-10-20-concept-fidelity-and-chat-audit.md) govern active work. S3's three refinement actions are closed in the final v2 packet. The first new milestone is a complete actual generated S2 street and its neighbors, before the next family; street-material and staged visibility requests remain outstanding. Historical pending-S3 and owner wording below is retained as the dated 19 October snapshot, not a direction to rerun completed work.
+
 19 October 2026. Coordination snapshot checked against production revision `6d1a0cd7`, the live family selector, and completed base/S3 records. This document updates ownership and delivery expectations; it does not implement another family or approve every detail in a concept.
 
 ## Actual coverage

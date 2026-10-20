@@ -6,6 +6,7 @@ param(
 )
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'city_process_guard.ps1')
+. (Join-Path $PSScriptRoot 'city_resource_guard.ps1')
 $warningRoot=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 $otherRuns=@(Get-CimInstance Win32_Process | Where-Object {Test-CityCaptureGameProcess -Name $_.Name -CommandLine $_.CommandLine})
 if ($otherRuns.Count -gt 0) {throw 'Another Godot run is active; leaving it untouched.'}
@@ -62,6 +63,7 @@ if (-not $DirectCheckOnly) {
     foreach ($target in $targets) {Copy-Item -LiteralPath (Join-Path $warningRoot $target) -Destination (Join-Path $snapshot $target)}
     Copy-Item -LiteralPath (Join-Path $warningRoot 'tools/dev/ReportedWarningAudit.gd') -Destination (Join-Path $snapshot 'tools/dev/ReportedWarningAudit.gd')
     $oldAudit=$env:REPORTED_WARNING_AUDIT_OUT
+    Assert-CityCaptureMemory
     try {
         $env:APPDATA=$snapshot
         $env:LOCALAPPDATA=$snapshot
@@ -69,36 +71,37 @@ if (-not $DirectCheckOnly) {
         $quotedSnapshot='"'+$snapshot+'"'
         $process=Start-Process -FilePath $Engine -ArgumentList @('--headless','--path',$quotedSnapshot,'--script','res://tools/dev/ReportedWarningAudit.gd') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $warningOutput 'stdout.log') -RedirectStandardError (Join-Path $warningOutput 'stderr.log')
     } finally {$env:APPDATA=$oldApp; $env:LOCALAPPDATA=$oldLocal; $env:REPORTED_WARNING_AUDIT_OUT=$oldAudit}
-    $timeout=-not $process.WaitForExit(180000)
-    if ($timeout) {Stop-Process -Id $process.Id -Force; $process.WaitForExit()}
+    $resources=Wait-CityCaptureProcess -Process $process -TimeoutSeconds 180
+    $timeout=$resources.stop_reason -eq 'timeout'
     $diagnostics=@(Get-Content -LiteralPath (Join-Path $warningOutput 'stderr.log') | Where-Object {$_ -match 'SCRIPT ERROR|ERROR:|WARNING:'})
     $auditPath=Join-Path $warningOutput 'audit.json'
     $audit=if (Test-Path -LiteralPath $auditPath) {Get-Content -Raw -LiteralPath $auditPath | ConvertFrom-Json} else {$null}
     $unchanged=$projectHash -eq (Get-FileHash -LiteralPath $projectPath -Algorithm SHA256).Hash
-    $result=[ordered]@{snapshot=$snapshot;autoload_context=$true;exit=$process.ExitCode;timeout=$timeout;diagnostics=$diagnostics;failed_scripts=if ($null -ne $audit) {$audit.failed_scripts} else {-1};project_settings_file_unchanged=$unchanged}
+    $result=[ordered]@{snapshot=$snapshot;autoload_context=$true;exit=$process.ExitCode;timeout=$timeout;resources=$resources;diagnostics=$diagnostics;failed_scripts=if ($null -ne $audit) {$audit.failed_scripts} else {-1};project_settings_file_unchanged=$unchanged}
     $result | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $warningOutput 'results.json') -Encoding utf8
     $result | ConvertTo-Json -Depth 6
-    if ($process.ExitCode -ne 0 -or $timeout -or $diagnostics.Count -gt 0 -or -not $unchanged -or $null -eq $audit -or -not $audit.startup_severities_strict) {exit 1}
+    if ($process.ExitCode -ne 0 -or $resources.stop_reason -or $diagnostics.Count -gt 0 -or -not $unchanged -or $null -eq $audit -or -not $audit.startup_severities_strict) {exit 1}
     exit 0
 }
 foreach ($target in $targets) {
     $stem=[IO.Path]::GetFileNameWithoutExtension($target)
     $stdout=Join-Path $warningOutput ($stem+'-stdout.log')
     $stderr=Join-Path $warningOutput ($stem+'-stderr.log')
+    Assert-CityCaptureMemory
     try {
         $env:APPDATA=$snapshot
         $env:LOCALAPPDATA=$snapshot
         $process=Start-Process -FilePath $Engine -ArgumentList @('--headless','--path',('"'+$snapshot+'"'),'--check-only','--script',('res://'+$target)) -WindowStyle Hidden -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
     } finally {$env:APPDATA=$oldApp; $env:LOCALAPPDATA=$oldLocal}
-    $timeout=-not $process.WaitForExit(120000)
-    if ($timeout) {Stop-Process -Id $process.Id -Force; $process.WaitForExit()}
+    $resources=Wait-CityCaptureProcess -Process $process -TimeoutSeconds 120
+    $timeout=$resources.stop_reason -eq 'timeout'
     $lines=@(Get-Content -LiteralPath $stderr)
     $diagnostics=@($lines | Where-Object {$_ -match 'SCRIPT ERROR|ERROR:|WARNING:|Warning treated as error'})
-    $rows += [ordered]@{path=$target;source_sha256=(Get-FileHash -LiteralPath (Join-Path $snapshot $target) -Algorithm SHA256).Hash;exit=$process.ExitCode;timeout=$timeout;diagnostics=$diagnostics}
+    $rows += [ordered]@{path=$target;source_sha256=(Get-FileHash -LiteralPath (Join-Path $snapshot $target) -Algorithm SHA256).Hash;exit=$process.ExitCode;timeout=$timeout;resources=$resources;diagnostics=$diagnostics}
     Write-Output ($stem+': exit='+$process.ExitCode+' diagnostics='+$diagnostics.Count)
 }
 $unchanged=$projectHash -eq (Get-FileHash -LiteralPath $projectPath -Algorithm SHA256).Hash
-$result=[ordered]@{snapshot=$snapshot;warning_categories=$categories;targets=$rows;failed_scripts=@($rows | Where-Object {$_.exit -ne 0 -or $_.timeout -or $_.diagnostics.Count -gt 0}).Count;project_settings_file_unchanged=$unchanged;limit='Check-only compiler diagnostics may report only the first warning per file; dependencies can also appear. This audits the reported categories in the 14 target scripts, not the complete human editor warning panel.'}
+$result=[ordered]@{snapshot=$snapshot;warning_categories=$categories;targets=$rows;failed_scripts=@($rows | Where-Object {$_.exit -ne 0 -or $_.resources.stop_reason -or $_.diagnostics.Count -gt 0}).Count;project_settings_file_unchanged=$unchanged;limit='Check-only compiler diagnostics may report only the first warning per file; dependencies can also appear. This audits the reported categories in the 14 target scripts, not the complete human editor warning panel.'}
 $result | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath (Join-Path $warningOutput 'results.json') -Encoding utf8
 Write-Output ('ReportedWarningAudit: targets='+$rows.Count+' failed_scripts='+$result.failed_scripts+' project_unchanged='+$unchanged)
 if ($result.failed_scripts -gt 0 -or -not $unchanged) {exit 1}

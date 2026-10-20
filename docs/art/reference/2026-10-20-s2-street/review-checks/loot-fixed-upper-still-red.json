@@ -1,0 +1,21 @@
+{
+  "scene": "res://tools/tests/CityServiceFrontageTest.tscn",
+  "pid": 19960,
+  "runtime": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-10-20-street\\review-loot-fixed-adab201b",
+  "exit": 1,
+  "timeout": false,
+  "resources": {
+    "stop_reason": "",
+    "peak_private_mb": 460.0,
+    "minimum_available_mb": 436.0,
+    "minimum_commit_headroom_mb": 1335.0,
+    "elapsed_seconds": 10.03
+  },
+  "diagnostics": [
+    "ERROR: Raised irregular wall leaves upper face uncovered: civic=true point=(512.0, 480.0)",
+    "ERROR: Raised irregular wall leaves upper face uncovered: civic=true point=(256.0, 352.0)"
+  ],
+  "summary": [
+    "CityServiceFrontageTest: fixtures=8 failures=2"
+  ]
+}

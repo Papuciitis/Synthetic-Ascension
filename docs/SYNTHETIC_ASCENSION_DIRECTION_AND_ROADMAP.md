@@ -2784,3 +2784,79 @@ follow-ups; none is silently implemented by this S3 refinement. Existing
 branch/sole production ownership is retained and no push is performed. See the
 [v2 audit](audits/2026-10-19-s3-visual-refinement-v2.md) and
 [evidence](art/reference/2026-10-19-s3-guard-loggia-v2/README.md).
+
+## 2026-10-20 — Concept fidelity audit and single lead
+
+The human requested an audit of four art/production chats, then appointed this
+audit chat as lead designer toward the accepted concept. The audit retains the
+shared civic/domestic foundation and completed S3 refinement, but finds that
+the generated city still lacks the concept's connected inhabited frontage,
+roof/wall mass hierarchy, coherent street materials and practical infrastructure.
+All four old chats were completed/idle and are now archived; their assets and
+evidence remain. One fresh production chat owns implementation in this checkout.
+
+Fresh seed16102026 actual S2 environment captures produced24 normal/small plates
+with exit0, zero diagnostics/failures/save writes. These frozen camera plates
+show current generation, not an ordinary human run. Independently verified final
+S3 source/asset comparisons still match530/530; old S2 release hashes no longer
+all match. No product code or gameplay rules changed during this audit.
+
+The lead-selected next benchmark is one complete playable generated S2 street
+and its immediate neighbors, judged at the real camera before another bespoke
+family. Appropriate later street-material coverage, staged tree/enemy/pickup
+visibility and S4A remain outstanding. This changes production priority without
+reopening S3's three closed local findings. See the [audit and acceptance
+contract](audits/2026-10-20-concept-fidelity-and-chat-audit.md) and [fresh baseline](art/reference/2026-10-20-lead-design-audit/README.md).
+
+## 2026-10-20 — Uneven medieval streets and lived-in homes
+
+The human clarified that uneven medieval development remains desired; coherent
+street relationships must not become uniform square blocks. Suitable near-home
+green space should look tended through modest lawn, flowers/herbs or a small
+fruit tree, while outside greenery retains procedural wilderness. One separate
+asset-only chat is creating the two missing garden sprites. Production retains
+the sole code/integration/engine lane and its monitored recovery procedure.
+
+The human also rejected empty ordinary-house interiors and their placeholder-
+looking pale masonry, preferring the older harsher brick/stone character. The
+original rough stone sources remain; the common city shader compresses their
+values into a pale range. A real domestic cutaway confirms the empty interior.
+The next domestic packet follows the exterior checkpoint: purposeful household
+groups and stronger masonry, preserving physical wall/door/roof repairs. Old
+slate security-building captures are material references, not dwelling proof.
+See the [current art direction and acceptance requirements](art/2026-10-20-medieval-gardens-and-domestic-interiors.md).
+
+## 2026-10-20 — Ground care states and rejected S7 blue carpet
+
+The human requested distinct tended/open-wild/neglected grass backgrounds and
+appropriate dirt variation, and asked the lead to challenge off-target results.
+Source inspection confirms S7's blue greenery comes primarily from its blue/
+teal/purple broadleaf moss PNG, modestly reinforced by theme tint. The lead
+rejects that broad carpet for this temperate city. Cool dampness should come
+from quiet green moss, soil, stone and contextual growth.
+
+The next asset-only ground packet is two opaque material sources: short lawn
+and restrained damp moss/soil. Existing rough grass, localized dense growth,
+dirt and wet mud remain reuse candidates subject to native review. Integration
+must preserve terrain IDs/organic masks, distinguish cared residential patches
+from wilderness and validate the derived texture cache. No ground fix is yet
+claimed. The latest isolated street scene improves wall mass and neighboring
+context but omits Game/player/HUD/combat; it does not close playable acceptance.
+See the [source findings, production boundaries and visual gates](art/2026-10-20-ground-material-direction.md).
+
+## 2026-10-20 — Linux production / Windows art handoff
+
+The human assigned the higher-memory Linux PC heavy implementation/checking,
+with Windows retaining lead art direction, source asset creation and visual
+review. [HANDOFF](../HANDOFF.md) records fresh-clone setup, branch exchange,
+current source/results, asset anchors and ordered L0–L3 tasks. The two owned
+records in `docs/handoff/` carry acknowledgments, evidence and requests through
+Git; cross-PC live chat access is not assumed. Integration stays on
+`enemy-world-work`; Linux publishes `codex/linux-world-production` for review.
+
+The S2 checkpoint passes focused post-review source checks but still lacks
+current native home/garden and full gameplay acceptance. Lawn/moss, cot and
+hearth candidates are supplied; ground and domestic interior integration remain
+queued. The four old chats stay archived and local production yields heavy
+engine work. Normal scoped checkpoint pushes are authorized; no force-push or
+blanket staging is part of this workflow.

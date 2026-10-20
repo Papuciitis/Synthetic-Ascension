@@ -1,0 +1,27 @@
+{
+	"camera": "(-1024.0, 7168.0)",
+	"coord": "(-1, 3)",
+	"parcels": [
+		{
+			"annex": false,
+			"bounds": "[P: (192.0, 640.0), S: (768.0, 448.0)]",
+			"civic": false,
+			"doors": "[{ \"pos\": (9, 16), \"dir\": (0, 1), \"width\": 2 }]",
+			"usage": "passage"
+		},
+		{
+			"annex": true,
+			"bounds": "[P: (1408.0, 640.0), S: (512.0, 512.0)]",
+			"civic": true,
+			"doors": "[{ \"pos\": (26, 17), \"dir\": (0, 1), \"width\": 2 }]",
+			"usage": "workshop"
+		}
+	],
+	"plan_seed": 436524753,
+	"presentation": "Frozen native production ChunkManager, exact plan/theme; natural ground/props; no Game scene, HUD, player body, objectives, entry or combat proof",
+	"save_writes": 0,
+	"seed": 16102026,
+	"streaming_radius": 0,
+	"world_viewport": "1920x1080",
+	"zoom": "(1.0, 1.0)"
+}
