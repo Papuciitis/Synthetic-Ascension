@@ -139,6 +139,7 @@ func _run() -> void:
 		_chunks.set_process(true)
 		return
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out.path_join("frames")))
+	await _wait_for_temporary_tips()
 	if _entry_only:
 		if _volume.local_encounter_enabled:
 			_fail("Entry-only review is for ambient parcels; guarded rewards require the full security run")
@@ -168,7 +169,6 @@ func _run() -> void:
 	if _still_only:
 		var building_bounds := Rect2(_roof.footprint_outline_px[0],Vector2.ZERO)
 		for point: Vector2 in _roof.footprint_outline_px: building_bounds = building_bounds.expand(point)
-		await _wait_for_temporary_tips()
 		_camera.global_position = _roof.to_global(building_bounds.get_center())-Vector2(0,40)
 		_camera.reset_smoothing()
 		_camera.force_update_scroll()
@@ -266,15 +266,35 @@ func _district_evidence() -> Dictionary:
 	if _roof == null or _volume == null: return {}
 	var coord := _chunks._world_to_chunk(_volume.global_position)
 	var result := {"plan_seed":_chunks.world_seed,"building_id":_volume.building_id,"coord":str(coord),"role":String(_chunks.get_chunk_role(coord)),"doors":str(_roof._doors),"footprint":str(_roof.footprint_outline_px),"district_family":String(_chunks.district_family)}
+	result["camera"] = {"position":str(_camera.global_position),"rotation":_camera.rotation,"zoom":str(_camera.zoom),"viewport":str(get_viewport().get_visible_rect().size),"window":str(get_window().size)}
+	result["fixture"] = {"scripted_input":not _playable,"player_god_mode":not _playable,"ambient_spawner":false,"streaming_frozen_after_reload":not _playable,"optional_details_hidden":_hide_district_details,"video_adapter":RenderingServer.get_video_adapter_name(),"renderer":RenderingServer.get_current_rendering_method()}
 	for kit: Node in _chunks.find_children("*","",true,false):
 		if not kit.is_in_group(&"city_block_building") or kit.get("_roof") != _roof: continue
 		result["profile"] = String(kit.get_meta(&"district_visual_profile",&"missing"))
 		result["irregular"] = bool(kit.get("_irregular"))
+		result["building_usage"] = String(kit.get_meta(&"building_usage",&""))
+		result["garden"] = _garden_evidence(kit)
 		break
 	var form_plan: Dictionary = _roof.get_meta(&"district_form_plan",{})
 	result["has_watch"] = bool(form_plan.get("has_watch",false))
 	result["watch_fallback"] = String(form_plan.get("fallback_reason",&"base"))
 	result["closed_arch_bays"] = (form_plan.get("arch_bays",[]) as Array).size()
+	return result
+
+func _garden_evidence(kit: Node) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for child: Node in kit.get_children():
+		if child.name not in [&"DomesticHerbBed", &"TendedDomesticBed", &"CityTemperateTree"]: continue
+		var item := child as Node2D
+		var record := {"name":String(child.name),"position":str(item.position),"scale":str(item.scale),"rotation":item.rotation,"z_index":item.z_index}
+		if child is Sprite2D:
+			record["texture"] = child.texture.resource_path if child.texture != null else ""
+			record["contact"] = str(child.get_meta(&"city_garden_contact",child.get_meta(&"city_ground_contact",Vector2.ZERO)))
+		if child is Polygon2D:
+			record["polygon"] = str(child.polygon)
+			record["color"] = str(child.color)
+			record["variant"] = int(child.get_meta(&"city_domestic_garden",-1))
+		result.append(record)
 	return result
 
 func _hide_optional_district_details() -> void:
@@ -306,20 +326,22 @@ func _reload_check(secondary_id: int) -> void:
 			_volume = candidate
 			break
 	if _volume == null: _fail("Actual chunk reload lost the searchable interior")
-	_route_notes.append({"event": "streamed_reload", "equal": before == after, "unloaded_visual_instances": int(empty_stats.instances), "restored_visual_instances": _chunks.get_block_batch_stats().instances})
+	_route_notes.append({"event": "streamed_reload", "equal": before == after, "garden_equal":before.gardens == after.gardens,"gardens":after.gardens, "unloaded_visual_instances": int(empty_stats.instances), "restored_visual_instances": _chunks.get_block_batch_stats().instances})
 
 func _signature(coord: Vector2i) -> Dictionary:
 	var data := _chunks.get_chunk_build_data(coord)
 	var ids: Array[int] = []
 	var roles: Array[StringName] = []
 	var family_forms: Array = []
+	var gardens: Array = []
 	for child: Node in (_chunks._chunks[coord] as Node).get_children():
 		if child is IndoorVolume: ids.append(child.building_id)
 		if child.is_in_group(&"city_block_building"):
 			roles.append(child.get_meta(&"city_role"))
 			var roof := child.get("_roof") as RoofOverlay
 			family_forms.append([child.get_meta(&"district_visual_profile",&""),str(roof.get_meta(&"district_form_plan",{}))])
-	return {"kinds": data.blocker_kind_code.duplicate(), "masks": data.blocker_mask.duplicate(), "variants": data.blocker_variant.duplicate(), "floors": data.floor_rect_and_style.duplicate(),"floor_alpha":data.floor_alpha.duplicate(), "ids": ids, "roles": roles,"family_forms":family_forms}
+			gardens.append(_garden_evidence(child))
+	return {"kinds": data.blocker_kind_code.duplicate(), "masks": data.blocker_mask.duplicate(), "variants": data.blocker_variant.duplicate(), "floors": data.floor_rect_and_style.duplicate(),"floor_alpha":data.floor_alpha.duplicate(), "ids": ids, "roles": roles,"family_forms":family_forms,"gardens":gardens}
 
 func _settle() -> void:
 	for frame in range(480):
@@ -417,7 +439,7 @@ func _physics_process(delta: float) -> void:
 	_max_projectiles = maxi(_max_projectiles, ProjectileManager.active_count())
 
 func _process(delta: float) -> void:
-	if _player != null and not _playable:
+	if _player != null and not _playable and not _still_only:
 		_camera.global_position = _player.global_position + Vector2(140, -160)
 		_camera.rotation = 0.0
 	if not _recording: return

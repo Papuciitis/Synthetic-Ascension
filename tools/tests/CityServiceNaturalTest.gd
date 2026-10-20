@@ -1,5 +1,58 @@
 extends "res://tools/tests/ProcChunkReachabilityTest.gd"
 
+const FRUIT_TREE_PATH := "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png"
+
+func _runtime_building(chunk: Node2D, kit: Node, context: String) -> Dictionary:
+	# The roof's real entry signals identify its volumes, including both wings
+	# of an irregular home. A visual RNG seed is not an identity contract.
+	var roof := kit.get("_roof") as RoofOverlay
+	var ids: Array[int] = []
+	var volume_count := 0
+	var entry_count := 0
+	var entry_world := Vector2.ZERO
+	var entry_direction := Vector2.ZERO
+	var owners_valid := roof != null
+	for child: Node in chunk.get_children():
+		if not child is IndoorVolume: continue
+		var volume := child as IndoorVolume
+		var roof_owners: Array[RoofOverlay] = []
+		for connection: Dictionary in volume.body_entered.get_connections():
+			var owner := (connection.callable as Callable).get_object() as RoofOverlay
+			if owner != null and not roof_owners.has(owner): roof_owners.append(owner)
+		if not roof_owners.has(roof): continue
+		volume_count += 1
+		if roof_owners.size() != 1: owners_valid = false
+		if not ids.has(volume.building_id): ids.append(volume.building_id)
+		if float(volume.get("_presentation_width")) > 0.0:
+			entry_count += 1
+			entry_world = volume.to_global(volume.get("_presentation_entry"))
+			entry_direction = volume.get("_presentation_outward")
+	var resolved := owners_valid and ids.size() == 1 and ids[0] > 0 and entry_count == 1
+	if not resolved: failures.append("Natural parcel runtime ownership unresolved %s ids=%s volumes=%d entries=%d" % [context,ids,volume_count,entry_count])
+	return {"building_id":ids[0] if resolved else 0,"runtime_id_resolved":resolved,"indoor_volumes":volume_count,"entry_volumes":entry_count,"entry_world":str(entry_world),"entry_direction":str(entry_direction)}
+
+func _check_handoff_samples(samples: Array) -> void:
+	for expected: Dictionary in [
+		{"seed":16102026,"coord":Vector2i(0,3),"entry_direction":Vector2.DOWN,"garden_variant":0,"herb_bed":true,"fruit_tree":false,"irregular":true},
+		{"seed":17,"coord":Vector2i(-3,5),"entry_direction":Vector2.UP,"garden_variant":1,"herb_bed":false,"fruit_tree":true},
+	]:
+		var homes: Array[Dictionary] = []
+		for sample: Dictionary in samples:
+			if sample.seed != expected.seed or sample.coord != str(expected.coord): continue
+			for parcel: Dictionary in sample.parcels:
+				if parcel.usage == "row_house" and not parcel.annex: homes.append(parcel)
+		var context := "seed=%d coord=%s" % [expected.seed,expected.coord]
+		if homes.size() != 1:
+			failures.append("Handoff sample must resolve exactly one generated home %s count=%d" % [context,homes.size()])
+			continue
+		var home := homes[0]
+		if home.civic or not home.runtime_id_resolved or int(home.building_id) <= 0:
+			failures.append("Handoff home lacks unique domestic runtime identity " + context)
+		if home.entry_direction != str(expected.entry_direction): failures.append("Handoff home entry direction changed " + context)
+		if expected.has("irregular") and home.irregular != expected.irregular: failures.append("Handoff home footprint changed " + context)
+		if home.garden_variant != expected.garden_variant or home.herb_bed != expected.herb_bed or home.fruit_tree != expected.fruit_tree:
+			failures.append("Handoff home garden fit changed " + context)
+
 func actual_fixture(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i) -> Dictionary:
 	var cm := ChunkManager.new()
 	theme.apply_to_chunk_manager(cm)
@@ -71,7 +124,13 @@ func _run() -> void:
 					child.call("_on_roof_alpha",0.0)
 					if not is_equal_approx(garden.modulate.a,1.0): failures.append("Outdoor garden fades with an interior roof")
 					child.call("_on_roof_alpha",1.0)
-				parcels.append({"bounds":str(child.get("bounds")),"usage":String(child.get_meta(&"building_usage",&"")),"civic":child.get("civic"),"annex":annex,"visual_seed":child.get("_district_profile").get("visual_seed"),"doors":str(child.get("_doors"))})
+				var garden_node := child.get_node_or_null("TendedDomesticBed")
+				var tree := child.get_node_or_null("CityTemperateTree") as Sprite2D
+				var fruit_tree := tree != null and tree.texture != null and tree.texture.resource_path == FRUIT_TREE_PATH
+				var garden_variant := int(garden_node.get_meta(&"city_domestic_garden",-1)) if garden_node != null else (1 if fruit_tree else -1)
+				var parcel := {"bounds":str(child.get("bounds")),"usage":String(child.get_meta(&"building_usage",&"")),"civic":child.get("civic"),"annex":annex,"visual_seed":child.get("_district_profile").get("visual_seed"),"doors":str(child.get("_doors")),"irregular":bool(child.get("_irregular")),"garden_variant":garden_variant,"herb_bed":child.get_node_or_null("DomesticHerbBed") != null,"fruit_tree":fruit_tree}
+				parcel.merge(_runtime_building(chunk,child,"seed=%d coord=%s bounds=%s" % [seed_value,coord,child.get("bounds")]))
+				parcels.append(parcel)
 			if annexes > 1: failures.append("Natural sparse lane received more than one annex")
 			samples.append({"seed":seed_value,"plan_seed":plan.seed,"coord":str(coord),"parcels":parcels,"annexes":annexes})
 			cm.free()
@@ -79,6 +138,7 @@ func _run() -> void:
 	for sample: Dictionary in samples:
 		if not (sample.parcels as Array).is_empty(): populated += 1
 	if populated == 0: failures.append("Natural survey generated no buildings at all")
+	_check_handoff_samples(samples)
 	var output := "user://natural-streets.json"
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--out="): output = arg.trim_prefix("--out=")
