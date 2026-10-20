@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: entities need a shared live world-cover query, not the player's actor-filtered mask
+PASS: consumers in one viewport share one coverage provider
+PASS: uncovered pixels remain clear
+PASS: the same covered pixel remains clear for an actor in front
+PASS: an actual cutaway stops shadowing covered entities
+PASS: courtyard rear span remains behind its actor
+PASS: hidden cover never leaves stale world coverage
+PASS: streaming removal clears shared coverage
+PASS: multiple consumers share one snapshot in a render frame
+PASS: unloading every cover removes all shared primitives
+WorldCoverTest: 10 passed, 5 failed

@@ -1,0 +1,1829 @@
+{
+	"args": [
+		"--visible",
+		"--review=normal",
+		"--world-seed=17",
+		"--segment=2",
+		"--target-building-id=2128236757",
+		"--target-chunk=-3,5",
+		"--tree-kind=fruit",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-fruit-normal-final",
+		"--player-tree-only"
+	],
+	"attempt_seed": 17,
+	"building_id": 2128236757,
+	"building_usage": "row_house",
+	"camera": {
+		"position": "(-5947.817, 11685.91)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(1280, 720)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityEntityCoverPreview.tscn",
+	"closed_arch_bays": 0,
+	"coord": "(-3, 5)",
+	"district_family": "service_courtyards",
+	"doors": "[{ \"pos\": (9, 15), \"dir\": (0, -1), \"width\": 2 }]",
+	"failures": 0,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"footprint": "[(192.0, 960.0), (960.0, 960.0), (960.0, 1472.0), (192.0, 1472.0)]",
+	"garden": [
+		{
+			"contact": "(200.0, 1451.0)",
+			"name": "CityTemperateTree",
+			"position": "(196.1825, 1400.91)",
+			"rotation": 0.0,
+			"scale": "(0.115681, 0.115681)",
+			"texture": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+			"z_index": 1
+		}
+	],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 18,
+			"local_bounds": "[P: (0, 20), S: (3, 5)]",
+			"max_byte": 255,
+			"nonzero": 19,
+			"sha256": "258f62ce7c988e4b760caa06e5ecb2747b438d4260241d1bf0e6f4c3ff2fa8f8",
+			"sum_bytes": 2015
+		},
+		"chunk_material_counts": {
+			"0": 604,
+			"2": 183,
+			"3": 3,
+			"4": 234
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "318bfb23d557e8f43efb402a52306f87c2b2bad2aac29a4873abc1fa8f9c2fc0",
+		"probe": {
+			"care": 0.160784319043159,
+			"cell": [
+				-93,
+				183
+			],
+			"material": 0,
+			"walkable": true,
+			"world_px": [
+				-5926.87890625,
+				11743.2080078125
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "f8b7f1084dbbd171eaaf0e95cf53b8cd30c4d9906d4de23e00d53ac2629998bc",
+					"layer_sha256": "00176083b44a2b2b44e64da4307bf5cbc7bca1987155d9ae9313e1c22d23fbc9",
+					"path": "res://assets/world/ground/ground_mud_wet_01.png",
+					"sha256": "bf8aa7800993cdd33c826681a1ca3217ea8dc0764e89b9012b27a4768655d0dc"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "true",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				1.0,
+				8.0,
+				9.0
+			],
+			"slot_layer": [
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				1.0,
+				8.0,
+				9.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "grass"
+	},
+	"has_watch": false,
+	"irregular": false,
+	"limits": "Controlled native actual-Game player-only route around an original generated city/fruit tree. Player walks to real reachable walkable cell centers using production inputs and collision. Actual Body/Head animation, shared material and cover refresh remain live; no shader replacement, canopy movement, counter manipulation or route teleport. Initial home staging, ambient spawn/encounter suppression, god mode and fixed camera are inherited capture controls. Pixel/coverage samples are diagnostic and not continuous human-motion acceptance.",
+	"plan_seed": 1794636640,
+	"plates": [
+		{
+			"actual_cell_walkable": true,
+			"actual_player_root": "(-5926.841, 11743.24)",
+			"actual_visual_feet": "(-5926.841, 11785.24)",
+			"body_head_share_material": true,
+			"camera": "(-5947.817, 11685.91)",
+			"camera_zoom": "(1.0, 1.0)",
+			"file": "player-tree-front.png",
+			"intended_tree_covered": false,
+			"max_shared_strength": 0.0,
+			"max_tree_strength": 0.0,
+			"opaque_fragment_samples": [
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(-5936.341, 11743.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11743.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11743.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11743.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11743.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.839215695858002,
+					"tree_strength": 0.0,
+					"world": "(-5915.341, 11743.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5936.341, 11750.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11750.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11750.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11750.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11750.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(-5936.341, 11757.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11757.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11757.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11757.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11757.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.909803926944733,
+					"tree_strength": 0.0,
+					"world": "(-5915.341, 11757.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.815686285495758,
+					"tree_strength": 0.0,
+					"world": "(-5936.341, 11764.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11764.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11764.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11764.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11764.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.91372549533844,
+					"tree_strength": 0.0,
+					"world": "(-5915.341, 11764.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.91372549533844,
+					"tree_strength": 0.0,
+					"world": "(-5936.341, 11771.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11771.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11771.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11771.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11771.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.925490200519562,
+					"tree_strength": 0.0,
+					"world": "(-5915.341, 11771.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5936.341, 11778.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11778.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.733333349227905,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11778.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11778.74)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5915.341, 11778.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.615686297416687,
+					"tree_strength": 0.0,
+					"world": "(-5937.341, 11715.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11715.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11715.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11715.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11715.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5937.341, 11720.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11720.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11720.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11720.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11720.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.980392158031464,
+					"tree_strength": 0.0,
+					"world": "(-5914.341, 11720.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.341, 11725.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11725.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11725.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11725.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11725.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5914.341, 11725.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.341, 11730.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11730.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11730.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11730.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11730.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.670588254928589,
+					"tree_strength": 0.0,
+					"world": "(-5914.341, 11730.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.341, 11735.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11735.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11735.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11735.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11735.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.341, 11740.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.341, 11740.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.341, 11740.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.341, 11740.74)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5919.341, 11740.74)"
+				}
+			],
+			"parts": [
+				{
+					"animation": "body_idle_right",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_body_idle_right_0",
+					"global_transform": "[X: (0.999995, 0.0), Y: (0.0, 0.999995), O: (-5926.841, 11785.24)]",
+					"material_feet_y": 11785.244140625,
+					"material_id": -9223371412641672984,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/Body",
+					"offset": "(-14.0, -49.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				},
+				{
+					"animation": "head_idle_right",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_head_idle_right_0",
+					"global_transform": "[X: (0.999995, 0.0), Y: (0.0, 0.999995), O: (-5926.841, 11746.24)]",
+					"material_feet_y": 11785.244140625,
+					"material_id": -9223371412641672984,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/HeadAnchor/Head",
+					"offset": "(-15.0, -36.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				}
+			],
+			"requested_player_root": "(-5920.0, 11744.0)",
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"snapshot": {
+				"cell_px": 256.0,
+				"foreground_sources": 3,
+				"generation": 1051,
+				"grid_cells": 70,
+				"index_count": 74,
+				"materials": 2,
+				"max_candidates": 13,
+				"peak_candidates": 14,
+				"peak_primitives": 39,
+				"peak_refresh_usec": 72794,
+				"primitive_count": 18,
+				"refresh_usec": 10370,
+				"source_reads": 3
+			},
+			"target": "fruit-tree",
+			"tree_measured_ground_world": "(-5944.0, 11691.0)",
+			"tree_surface": "/root/Game/ChunkManager/Chunk_-3_5/@Node2D@4961/CityTemperateTree",
+			"tree_texture": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+			"window": "(1280, 720)"
+		},
+		{
+			"actual_cell_walkable": true,
+			"actual_player_root": "(-5983.917, 11623.51)",
+			"actual_visual_feet": "(-5983.917, 11665.51)",
+			"body_head_share_material": true,
+			"camera": "(-5947.817, 11685.91)",
+			"camera_zoom": "(1.0, 1.0)",
+			"file": "player-tree-behind.png",
+			"intended_tree_covered": true,
+			"max_shared_strength": 0.992156863212585,
+			"max_tree_strength": 0.992156863212585,
+			"opaque_fragment_samples": [
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5992.417, 11622.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5987.417, 11622.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11622.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5976.417, 11622.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.176470592617989,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.176470592617989,
+					"world": "(-5998.417, 11629.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5992.417, 11629.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5987.417, 11629.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11629.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5976.417, 11629.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5970.417, 11629.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5998.417, 11636.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5992.417, 11636.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5987.417, 11636.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11636.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5976.417, 11636.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5970.417, 11636.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(-5998.417, 11644.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5992.417, 11644.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5987.417, 11644.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11644.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5976.417, 11644.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5970.417, 11644.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5992.417, 11651.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5987.417, 11651.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11651.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.992156863212585,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.992156863212585,
+					"world": "(-5976.417, 11651.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.984313726425171,
+					"world": "(-5992.417, 11658.01)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5976.417, 11658.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(-5993.417, 11596.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.968627452850342,
+					"tree_strength": 0.0,
+					"world": "(-5989.417, 11596.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5985.417, 11596.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(-5981.417, 11596.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.996078431606293,
+					"tree_strength": 0.0,
+					"world": "(-5977.417, 11596.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5993.417, 11601.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5989.417, 11601.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.980392158031464,
+					"world": "(-5985.417, 11601.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.980392158031464,
+					"world": "(-5981.417, 11601.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5977.417, 11601.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.00392156885936856,
+					"source_alpha": 1.0,
+					"tree_strength": 0.00392156885936856,
+					"world": "(-5973.417, 11601.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.972549021244049,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.972549021244049,
+					"world": "(-5993.417, 11605.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0156862754374743,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0156862754374743,
+					"world": "(-5989.417, 11605.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(-5985.417, 11605.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(-5981.417, 11605.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5977.417, 11605.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 1.0,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5973.417, 11605.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5993.417, 11610.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5989.417, 11610.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5985.417, 11610.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11610.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5977.417, 11610.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.952941179275513,
+					"tree_strength": 0.984313726425171,
+					"world": "(-5973.417, 11610.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.976470589637756,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.976470589637756,
+					"world": "(-5993.417, 11614.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5989.417, 11614.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(-5985.417, 11614.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11614.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5977.417, 11614.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5973.417, 11614.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.172549024224281,
+					"source_alpha": 1.0,
+					"tree_strength": 0.172549024224281,
+					"world": "(-5993.417, 11619.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5989.417, 11619.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5985.417, 11619.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5981.417, 11619.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5977.417, 11619.01)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.737254917621613,
+					"tree_strength": 0.988235294818878,
+					"world": "(-5973.417, 11619.01)"
+				}
+			],
+			"parts": [
+				{
+					"animation": "body_idle_up",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_body_idle_up_0",
+					"global_transform": "[X: (0.999994, 0.0), Y: (0.0, 0.999994), O: (-5983.917, 11665.51)]",
+					"material_feet_y": 11665.5146484375,
+					"material_id": -9223371412641672984,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/Body",
+					"offset": "(-20.0, -51.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				},
+				{
+					"animation": "head_idle_up",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_head_idle_up_0",
+					"global_transform": "[X: (0.999994, 0.0), Y: (0.0, 0.999994), O: (-5983.917, 11623.51)]",
+					"material_feet_y": 11665.5146484375,
+					"material_id": -9223371412641672984,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/HeadAnchor/Head",
+					"offset": "(-14.0, -32.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				}
+			],
+			"requested_player_root": "(-5984.0, 11616.0)",
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"snapshot": {
+				"cell_px": 256.0,
+				"foreground_sources": 3,
+				"generation": 1145,
+				"grid_cells": 70,
+				"index_count": 74,
+				"materials": 2,
+				"max_candidates": 13,
+				"peak_candidates": 14,
+				"peak_primitives": 39,
+				"peak_refresh_usec": 72794,
+				"primitive_count": 18,
+				"refresh_usec": 11501,
+				"source_reads": 3
+			},
+			"target": "fruit-tree",
+			"tree_measured_ground_world": "(-5944.0, 11691.0)",
+			"tree_surface": "/root/Game/ChunkManager/Chunk_-3_5/@Node2D@4961/CityTemperateTree",
+			"tree_texture": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+			"window": "(1280, 720)"
+		},
+		{
+			"actual_cell_walkable": true,
+			"actual_player_root": "(-5926.879, 11743.21)",
+			"actual_visual_feet": "(-5926.879, 11785.21)",
+			"body_head_share_material": true,
+			"camera": "(-5947.817, 11685.91)",
+			"camera_zoom": "(1.0, 1.0)",
+			"file": "player-tree-front-restored.png",
+			"intended_tree_covered": false,
+			"max_shared_strength": 0.0,
+			"max_tree_strength": 0.0,
+			"opaque_fragment_samples": [
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(-5936.379, 11743.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11743.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11743.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11743.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11743.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.839215695858002,
+					"tree_strength": 0.0,
+					"world": "(-5915.379, 11743.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5936.379, 11750.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11750.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11750.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11750.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11750.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(-5936.379, 11757.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11757.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11757.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11757.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11757.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.909803926944733,
+					"tree_strength": 0.0,
+					"world": "(-5915.379, 11757.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.815686285495758,
+					"tree_strength": 0.0,
+					"world": "(-5936.379, 11764.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11764.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11764.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11764.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11764.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.91372549533844,
+					"tree_strength": 0.0,
+					"world": "(-5915.379, 11764.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.91372549533844,
+					"tree_strength": 0.0,
+					"world": "(-5936.379, 11771.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11771.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11771.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11771.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11771.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.925490200519562,
+					"tree_strength": 0.0,
+					"world": "(-5915.379, 11771.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5936.379, 11778.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11778.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.733333349227905,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11778.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11778.71)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5915.379, 11778.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.615686297416687,
+					"tree_strength": 0.0,
+					"world": "(-5937.379, 11715.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11715.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11715.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11715.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11715.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5937.379, 11720.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11720.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11720.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11720.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11720.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.980392158031464,
+					"tree_strength": 0.0,
+					"world": "(-5914.379, 11720.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.379, 11725.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11725.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11725.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11725.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11725.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5914.379, 11725.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.379, 11730.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11730.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11730.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11730.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11730.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.670588254928589,
+					"tree_strength": 0.0,
+					"world": "(-5914.379, 11730.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.379, 11735.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11735.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11735.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11735.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11735.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5937.379, 11740.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5932.379, 11740.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5928.379, 11740.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(-5923.379, 11740.71)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(-5919.379, 11740.71)"
+				}
+			],
+			"parts": [
+				{
+					"animation": "body_idle_right",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_body_idle_right_0",
+					"global_transform": "[X: (0.999994, 0.0), Y: (0.0, 0.999994), O: (-5926.879, 11785.21)]",
+					"material_feet_y": 11785.2080078125,
+					"material_id": -9223371412641672984,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/Body",
+					"offset": "(-14.0, -49.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				},
+				{
+					"animation": "head_idle_right",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_head_idle_right_0",
+					"global_transform": "[X: (0.999994, 0.0), Y: (0.0, 0.999994), O: (-5926.879, 11746.21)]",
+					"material_feet_y": 11785.2080078125,
+					"material_id": -9223371412641672984,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/HeadAnchor/Head",
+					"offset": "(-15.0, -36.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				}
+			],
+			"requested_player_root": "(-5920.0, 11744.0)",
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"snapshot": {
+				"cell_px": 256.0,
+				"foreground_sources": 3,
+				"generation": 1245,
+				"grid_cells": 70,
+				"index_count": 74,
+				"materials": 2,
+				"max_candidates": 13,
+				"peak_candidates": 14,
+				"peak_primitives": 39,
+				"peak_refresh_usec": 72794,
+				"primitive_count": 18,
+				"refresh_usec": 11035,
+				"source_reads": 3
+			},
+			"target": "fruit-tree",
+			"tree_measured_ground_world": "(-5944.0, 11691.0)",
+			"tree_surface": "/root/Game/ChunkManager/Chunk_-3_5/@Node2D@4961/CityTemperateTree",
+			"tree_texture": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+			"window": "(1280, 720)"
+		}
+	],
+	"player_tree_only": true,
+	"profile": "common_base",
+	"requested_building_id": 2128236757,
+	"requested_chunk": "(-3, 5)",
+	"role": "service_lane",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "258f62ce7c988e4b760caa06e5ecb2747b438d4260241d1bf0e6f4c3ff2fa8f8",
+			"equal": true,
+			"event": "streamed_reload",
+			"garden_equal": true,
+			"gardens": [
+				[
+					{
+						"contact": "(200.0, 1451.0)",
+						"name": "CityTemperateTree",
+						"position": "(196.1825, 1400.91)",
+						"rotation": 0.0,
+						"scale": "(0.115681, 0.115681)",
+						"texture": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+						"z_index": 1
+					}
+				],
+				[
+					{
+						"contact": "(136.0, 555.0)",
+						"name": "CityTemperateTree",
+						"position": "(130.8644, 433.756)",
+						"rotation": 0.0,
+						"scale": "(0.223285, 0.223285)",
+						"texture": "res://assets/world/city_block/temperate_tree.png",
+						"z_index": 1
+					}
+				]
+			],
+			"restored_visual_instances": 3282,
+			"unloaded_visual_instances": 0
+		},
+		{
+			"arrived": "(-5926.841, 11743.24)",
+			"desired": "(-5920.0, 11744.0)",
+			"event": "walk",
+			"path_cells": 18,
+			"resolution_distance": 0.0,
+			"resolved": "(-5920.0, 11744.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(-5983.917, 11623.51)",
+			"desired": "(-5984.0, 11616.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 0.0,
+			"resolved": "(-5984.0, 11616.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(-5926.879, 11743.21)",
+			"desired": "(-5920.0, 11744.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 0.0,
+			"resolved": "(-5920.0, 11744.0)",
+			"strict_perimeter": false
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 2,
+	"tree_kind": "fruit",
+	"watch_fallback": "base",
+	"world_cover": {
+		"cell_px": 256.0,
+		"foreground_sources": 3,
+		"generation": 1245,
+		"grid_cells": 70,
+		"index_count": 74,
+		"materials": 2,
+		"max_candidates": 13,
+		"peak_candidates": 14,
+		"peak_primitives": 39,
+		"peak_refresh_usec": 72794,
+		"primitive_count": 18,
+		"refresh_usec": 11035,
+		"source_reads": 3
+	}
+}

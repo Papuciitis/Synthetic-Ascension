@@ -1,0 +1,99 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: normal native capture saves rgba-behind
+PASS: normal true transparent leaf columns retain the authored body color
+PASS: normal an internal leaf hole stays fully colored inside the foreground bounds
+PASS: normal opaque foreground produces the quiet dark body silhouette
+PASS: normal partial leaf alpha produces intermediate coverage rather than a rectangle
+PASS: normal the head shares the same sampled partial coverage
+PASS: normal stable frames reuse the shared foreground source image
+PASS: normal native capture saves rgba-front
+PASS: normal an actual actor moved south of the root remains fully colored under the same canopy
+PASS: normal live foreground modulation composes continuously with source alpha
+PASS: normal fully faded foreground restores normal body presentation
+PASS: normal clearing cover restores the preexisting authored tint and alpha
+PASS: normal coverage leaves body modulation under its original owner
+PASS: normal native capture saves atlas-flipped
+PASS: normal flipped atlas leaf holes use the cropped region rather than opaque neighboring cells
+PASS: normal flipped atlas opaque pixels cover the opposite side of the body
+PASS: normal flipped atlas pixels retain continuous partial alpha
+PASS: normal pixels outside the atlas draw region remain normal at its edge
+PASS: normal pixels just inside the atlas draw region receive foreground coverage
+PASS: normal real tree source supplies a visible internal gap and opaque leaf probe
+PASS: normal actual tree internal low-alpha gaps retain the authored body color
+PASS: normal actual ordinary or fruit-tree leaf pixels render the quiet silhouette
+PASS: normal native capture saves ordinary-behind
+PASS: normal moving in front of the actual measured tree root restores normal presentation
+PASS: normal native capture saves ordinary-front
+PASS: normal real tree source supplies a visible internal gap and opaque leaf probe
+PASS: normal actual tree internal low-alpha gaps retain the authored body color
+PASS: normal actual ordinary or fruit-tree leaf pixels render the quiet silhouette
+PASS: normal native capture saves fruit-behind
+PASS: normal moving in front of the actual measured tree root restores normal presentation
+PASS: normal native capture saves fruit-front
+PASS: normal native capture saves roof-opaque
+PASS: normal existing opaque roofs keep the player's established silhouette
+PASS: normal a self-transparent roof leaves the player normal despite opaque polygon modulation
+PASS: normal a transparent roof ancestor leaves the player normal despite opaque polygon modulation
+PASS: normal partial roof ancestor alpha produces intermediate player coverage
+PASS: normal native capture saves roof-ancestor-partial
+PASS: normal native capture saves roof-cutaway
+PASS: normal the actual roof cutaway restores the normal player material presentation
+PASS: normal streamed roof removal clears both shared and legacy player state
+PASS: normal the native shared cell retains more than32 foreground candidates
+PASS: normal the only opaque foreground candidate beyond the old32 limit still covers the player
+PASS: normal native capture saves capacity-35
+PASS: normal streaming out the covering candidate clears its silhouette while transparent neighbors remain
+PASS: normal reloading the same cover resource restores foreground coverage
+PASS: normal cover reload reuses the original cached texture image
+PASS: normal body and head retain their one shared production material across every cover state
+PASS: small native capture saves rgba-behind
+PASS: small true transparent leaf columns retain the authored body color
+PASS: small an internal leaf hole stays fully colored inside the foreground bounds
+PASS: small opaque foreground produces the quiet dark body silhouette
+PASS: small partial leaf alpha produces intermediate coverage rather than a rectangle
+PASS: small the head shares the same sampled partial coverage
+PASS: small stable frames reuse the shared foreground source image
+PASS: small native capture saves rgba-front
+PASS: small an actual actor moved south of the root remains fully colored under the same canopy
+PASS: small live foreground modulation composes continuously with source alpha
+PASS: small fully faded foreground restores normal body presentation
+PASS: small clearing cover restores the preexisting authored tint and alpha
+PASS: small coverage leaves body modulation under its original owner
+PASS: small native capture saves atlas-flipped
+PASS: small flipped atlas leaf holes use the cropped region rather than opaque neighboring cells
+PASS: small flipped atlas opaque pixels cover the opposite side of the body
+PASS: small flipped atlas pixels retain continuous partial alpha
+PASS: small pixels outside the atlas draw region remain normal at its edge
+PASS: small pixels just inside the atlas draw region receive foreground coverage
+PASS: small real tree source supplies a visible internal gap and opaque leaf probe
+PASS: small actual tree internal low-alpha gaps retain the authored body color
+PASS: small actual ordinary or fruit-tree leaf pixels render the quiet silhouette
+PASS: small native capture saves ordinary-behind
+PASS: small moving in front of the actual measured tree root restores normal presentation
+PASS: small native capture saves ordinary-front
+PASS: small real tree source supplies a visible internal gap and opaque leaf probe
+PASS: small actual tree internal low-alpha gaps retain the authored body color
+PASS: small actual ordinary or fruit-tree leaf pixels render the quiet silhouette
+PASS: small native capture saves fruit-behind
+PASS: small moving in front of the actual measured tree root restores normal presentation
+PASS: small native capture saves fruit-front
+PASS: small native capture saves roof-opaque
+PASS: small existing opaque roofs keep the player's established silhouette
+PASS: small a self-transparent roof leaves the player normal despite opaque polygon modulation
+PASS: small a transparent roof ancestor leaves the player normal despite opaque polygon modulation
+PASS: small partial roof ancestor alpha produces intermediate player coverage
+PASS: small native capture saves roof-ancestor-partial
+PASS: small native capture saves roof-cutaway
+PASS: small the actual roof cutaway restores the normal player material presentation
+PASS: small streamed roof removal clears both shared and legacy player state
+PASS: small the native shared cell retains more than32 foreground candidates
+PASS: small the only opaque foreground candidate beyond the old32 limit still covers the player
+PASS: small native capture saves capacity-35
+PASS: small streaming out the covering candidate clears its silhouette while transparent neighbors remain
+PASS: small reloading the same cover resource restores foreground coverage
+PASS: small cover reload reuses the original cached texture image
+PASS: small body and head retain their one shared production material across every cover state
+PASS: small the isolated native probe writes no profile saves
+PlayerForegroundCoverRenderTest: 95 passed, 0 failed; output=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-native-green

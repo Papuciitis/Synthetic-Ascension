@@ -1,0 +1,272 @@
+[
+  {
+    "name": "shared-red",
+    "classification": "failed_attempt",
+    "note": "Invalid RED attempt: test parser error and timeout; not valid missing-feature evidence.",
+    "actual_exit": -15,
+    "stop_reason": "timeout",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: The variable type is being inferred from a Variant value, so it will be typed as Variant. (Warning treated as error.)",
+      "ERROR: Failed to load script \"res://tools/tests/WorldCoverTest.gd\" with error \"Parse error\"."
+    ],
+    "elapsed_seconds": 61.27,
+    "peak_rss_mb": 446.85546875,
+    "minimum_available_mb": 20183.28515625,
+    "summary_lines": [],
+    "run_record": "process/runs/shared-red.json",
+    "source_provenance": "process/sources/c43cbc40439ee0ae1e9e41d6d0b38baee46906aef45b2454521abe3f2cd52dc0.json",
+    "original_run_results_sha256": "12af561ca7ff0da1445bb519001a5b85c0767a9f12bba22e7eb1439670aa7feb"
+  },
+  {
+    "name": "shared-green",
+    "classification": "failed_attempt",
+    "note": "Parser/type failure and timeout; not GREEN evidence.",
+    "actual_exit": -15,
+    "stop_reason": "timeout",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Invalid operands \"Vector2\" and \"Vector2i\" for \"==\" operator.",
+      "ERROR: Failed to load script \"res://core/systems/world/visibility/WorldCover.gd\" with error \"Parse error\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'get_for (via call)' in base 'GDScript'."
+    ],
+    "elapsed_seconds": 61.197,
+    "peak_rss_mb": 446.92578125,
+    "minimum_available_mb": 20238.25,
+    "summary_lines": [],
+    "run_record": "process/runs/shared-green.json",
+    "source_provenance": "process/sources/cdb6869e80c14ebc15015d1e087c91bb25e4e0afe3e7c8d084137d39e5ba74b1.json",
+    "original_run_results_sha256": "5a325b1f4fd90784a0792e97e452ba0f4b6fb4d2a8cca7b81c83d7daaf1d13c7"
+  },
+  {
+    "name": "shared-green-2",
+    "classification": "failed_attempt",
+    "note": "Invalid get_parent_item runtime call and coverage failures; not GREEN evidence.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'get_parent_item' in base 'Polygon2D'.",
+      "ERROR: shared coverage reaches a roof-covered fragment for a behind actor",
+      "ERROR: cover retains continuous live roof opacity",
+      "ERROR: the same actor is covered by its southern courtyard wing",
+      "ERROR: shared batches retain more than the old actor-local32 triangles",
+      "ERROR: a covering roof beyond the old capacity is not silently discarded"
+    ],
+    "elapsed_seconds": 7.666,
+    "peak_rss_mb": 445.125,
+    "minimum_available_mb": 20287.00390625,
+    "summary_lines": [
+      "WorldCoverTest: 10 passed, 5 failed"
+    ],
+    "run_record": "process/runs/shared-green-2.json",
+    "source_provenance": "process/sources/e206d994a01e271a397f6c3fc327faa568e7173aa7d777b3364fb8814f8a3ec0.json",
+    "original_run_results_sha256": "97049d15df71561a784b1ed507419f5f57b81d6a5cfd7403794b1bf4e7437fad"
+  },
+  {
+    "name": "facade-green",
+    "classification": "failed_attempt",
+    "note": "Frontage parser/dependency errors despite actual process exit0 and zero-count test footer; not GREEN evidence.",
+    "actual_exit": 0,
+    "stop_reason": "runtime_diagnostics",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Could not preload resource script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Parse Error: Could not resolve script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://autoload/global.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.",
+      "SCRIPT ERROR: Invalid access to property or key 'kit' on a base object of type 'Dictionary'."
+    ],
+    "elapsed_seconds": 7.481,
+    "peak_rss_mb": 444.23828125,
+    "minimum_available_mb": 20321.140625,
+    "summary_lines": [
+      "BuildingFaceCoverTest passes=0 failures=0"
+    ],
+    "run_record": "process/runs/facade-green.json",
+    "source_provenance": "process/sources/8e6bddee13f9c6229e20786024b7cf458cfe20310dbb425edd3f14e1effec6c9.json",
+    "original_run_results_sha256": "dce3b6d080ec4227e7f0e82aa6d37a87378fbe1bf00b3f534e93d822e5a6eab8"
+  },
+  {
+    "name": "solid-green",
+    "classification": "failed_attempt",
+    "note": "Frontage parser/dependency diagnostics despite a passing test footer and process exit0; not GREEN evidence.",
+    "actual_exit": 0,
+    "stop_reason": "runtime_diagnostics",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Could not preload resource script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Parse Error: Could not resolve script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://autoload/global.gd\" with error \"Compilation failed\"."
+    ],
+    "elapsed_seconds": 7.744,
+    "peak_rss_mb": 443.51171875,
+    "minimum_available_mb": 20392.2421875,
+    "summary_lines": [
+      "WorldCoverTest: 20 passed, 0 failed"
+    ],
+    "run_record": "process/runs/solid-green.json",
+    "source_provenance": "process/sources/8e6bddee13f9c6229e20786024b7cf458cfe20310dbb425edd3f14e1effec6c9.json",
+    "original_run_results_sha256": "2f6fb76ddf08edecb10e9317d067e710295bf820be9c17d0b0a282a282926963"
+  },
+  {
+    "name": "entity-preview-parse",
+    "classification": "failed_attempt",
+    "note": "Invalid standalone script-loading invocation without expected autoload context; not a successful parse audit.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+      "ERROR: Failed to load script \"res://ui/screens/opening/OpeningPresentation.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: SfxManager",
+      "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningSequenceWorld.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: RunEvents",
+      "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningActor.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningSequenceController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/screens/settings/SettingsScreen.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+      "ERROR: Failed to load script \"res://ui/screens/PauseMenu.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/game.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/screens/GameOverUI.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/actors/player/player.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: BattleText",
+      "SCRIPT ERROR: Compile Error: Identifier not found: EnemyWorld",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://scenes/world/combat/MeleeSlash.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: EnemyCombat",
+      "ERROR: Failed to load script \"res://scenes/world/combat/RangedBullet.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/augments/AugmentRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/sets/conduit/VFX_PulseRing.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://effects/gravemarch/scenes/GravemarchCursedBallast.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://data/sets/SetRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/items/ItemEffectRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/manifestations/ManifestationRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/ascension/AscensionRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/actors/player/PlayerVisualController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/augments/AugmentSelect.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/augments/AugmentCard.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/spawner/spawner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/actors/enemy/enemy.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/PickupVfx.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder",
+      "ERROR: Failed to load script \"res://core/combat/projectile/EnemyProjectile.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/screens/hud.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/components/InventorySlotView.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/components/InventoryBar.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/AugmentsPanel.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/ItemTooltip.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/components/BagUI.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: ThreatDirector",
+      "ERROR: Failed to load script \"res://ui/bag/BagSlot.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/RunSheetHUD.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/AugmentTooltipController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudTooltipController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/AugmentTooltip.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudGateOverlayController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudTutorialTipController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudThreatController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudBossController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudObjectiveController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudGateChecklistController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/SetBreakpointNotifier.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudManifestationController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudHealthController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudDangerOverlay.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/FlowFieldNav.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/volumes/IndoorVolume.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/ExplorationLootSpawner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/Level1Builder.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/Wardstone.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/wardstones/VFX_WardstoneIdleAura.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/gates/VFX_GateUnlockBurst.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/ExitRite.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/vision/VisionRig.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/PerformanceOverlay.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/HealthPickup.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://tools/dev/CityEntityCoverPreview.gd\" with error \"Compilation failed\"."
+    ],
+    "elapsed_seconds": 8.112,
+    "peak_rss_mb": 377.28515625,
+    "minimum_available_mb": 19481.72265625,
+    "summary_lines": [],
+    "run_record": "process/runs/entity-preview-parse.json",
+    "source_provenance": "process/sources/6c11874fa982f810610207c3e2710605ac38e760233dc200ca91cf1c939a82a3.json",
+    "original_run_results_sha256": "2b508257087591a4c491332872d94131e140ecee17db6cd970cb5471ab0b30d1"
+  },
+  {
+    "name": "bed-cover-small",
+    "classification": "failed_attempt",
+    "note": "Preview parser failure and interrupted process; no valid native capture.",
+    "actual_exit": -15,
+    "stop_reason": "interrupted",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"prefer_isolated\" variable because the value doesn't have a set type.",
+      "ERROR: Failed to load script \"res://tools/dev/CityEntityCoverPreview.gd\" with error \"Parse error\"."
+    ],
+    "elapsed_seconds": 27.66,
+    "peak_rss_mb": 390.2265625,
+    "minimum_available_mb": 19269.52734375,
+    "summary_lines": [],
+    "run_record": "process/runs/bed-cover-small.json",
+    "source_provenance": "process/sources/1341b66723941197eb6116fd68092069849bb64a25112b253498de10164b7458.json",
+    "original_run_results_sha256": "3df0f3de2aa027b135d78e75925ca352c49971e78da73651cc43f3918d87ce96"
+  },
+  {
+    "name": "fruit-cover-small",
+    "classification": "failed_attempt",
+    "note": "Earlier staging attempt lost entities before cutaway plates; not accepted native evidence.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: EliteCrowdFightPreview: Staged entity disappeared before roof-player-inside-cutaway",
+      "ERROR: EliteCrowdFightPreview: Staged entity disappeared before roof-player-outside-restored"
+    ],
+    "elapsed_seconds": 51.711,
+    "peak_rss_mb": 573.66796875,
+    "minimum_available_mb": 19036.734375,
+    "summary_lines": [
+      "CityEntityCoverPreview: plates=11 failures=4 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/fruit-cover-small"
+    ],
+    "run_record": "process/runs/fruit-cover-small.json",
+    "source_provenance": "process/sources/a0a5430afd40773fa2d120f6b9e439c133f2757b2d0c883df05bf7313daf694f.json",
+    "original_run_results_sha256": "ffd2035269a1849434c5d9e1464db542b4d86734fd9fbf6467585be4f785ca83"
+  },
+  {
+    "name": "guardrender",
+    "classification": "failed_attempt",
+    "note": "Existing guard test read diagnostic arrays before their new lazy refresh: 334/21. Superseded by explicit diagnostic/shared coverage test adaptation and guardrender-shared.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget",
+      "ERROR: Both roof stream orders match uncapped union coverage over the whole actor"
+    ],
+    "elapsed_seconds": 9.458,
+    "peak_rss_mb": 399.39453125,
+    "minimum_available_mb": 19667.2109375,
+    "summary_lines": [
+      "CheckpointOfficeRenderTest: 334 passed, 21 failed"
+    ],
+    "run_record": "process/runs/guardrender.json",
+    "source_provenance": "process/sources/4e85c6223664e993cc14f039792b34a32217c5279939536ba5fa1a4b4f1bf525.json",
+    "original_run_results_sha256": "a3478c723a0b314dd1345117750e75e0f369a18f2d2e8d51420b221af4ff8a4c"
+  },
+  {
+    "name": "street",
+    "classification": "failed_attempt",
+    "note": "Invocation requested a nonexistent .tscn for a script-only runner. Retained as an invocation failure, not a product regression.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: Cannot open file 'res://tools/tests/CityStreetFrontageTest.tscn'.",
+      "ERROR: Failed loading resource: res://tools/tests/CityStreetFrontageTest.tscn.",
+      "ERROR: Failed loading scene: res://tools/tests/CityStreetFrontageTest.tscn."
+    ],
+    "elapsed_seconds": 5.832,
+    "peak_rss_mb": 434.921875,
+    "minimum_available_mb": 20230.52734375,
+    "summary_lines": [],
+    "run_record": "process/runs/street.json",
+    "source_provenance": "process/sources/637f1521d6a4720ef4d3a10f9eac50c503890da6c7a699260d4807f996f0e21e.json",
+    "original_run_results_sha256": "5749c418a4877f3601dd03141b56bf025d76fe9d92178a86dcb339002c0168fc"
+  }
+]

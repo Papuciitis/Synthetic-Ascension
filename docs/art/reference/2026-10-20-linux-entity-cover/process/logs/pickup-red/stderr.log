@@ -1,0 +1,5 @@
+ERROR: FAIL: eligible pickup icons have a cover adapter
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PickupCoverTest.gd:36)
+       [1] _run (res://tools/tests/PickupCoverTest.gd:72)

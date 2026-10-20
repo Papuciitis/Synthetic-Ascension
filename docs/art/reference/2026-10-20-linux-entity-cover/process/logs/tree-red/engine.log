@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: live foreground sprites need a coverage descriptor provider
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ForegroundSpriteCoverageTest.gd:19)
+       [1] _run (res://tools/tests/ForegroundSpriteCoverageTest.gd:43)
+ForegroundSpriteCoverageTest: 0 passed, 1 failed

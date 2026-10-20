@@ -1,0 +1,24 @@
+test_error_with_successful_exit_fails_the_run (test_run_city_linux.LinuxRunnerTest.test_error_with_successful_exit_fails_the_run) ... ok
+test_existing_evidence_is_never_overwritten (test_run_city_linux.LinuxRunnerTest.test_existing_evidence_is_never_overwritten) ... ok
+test_existing_godot_named_fake_is_refused_and_left_untouched (test_run_city_linux.LinuxRunnerTest.test_existing_godot_named_fake_is_refused_and_left_untouched) ... ok
+test_lock_is_shared_even_when_tmpdir_environment_differs (test_run_city_linux.LinuxRunnerTest.test_lock_is_shared_even_when_tmpdir_environment_differs) ... ok
+test_low_memory_refuses_before_executable_starts (test_run_city_linux.LinuxRunnerTest.test_low_memory_refuses_before_executable_starts) ... ok
+test_nonzero_exit_is_preserved (test_run_city_linux.LinuxRunnerTest.test_nonzero_exit_is_preserved) ... ok
+test_repeated_sigterm_cannot_interrupt_owned_group_cleanup (test_run_city_linux.LinuxRunnerTest.test_repeated_sigterm_cannot_interrupt_owned_group_cleanup) ... ok
+test_rss_limit_stops_a_memory_hungry_fake (test_run_city_linux.LinuxRunnerTest.test_rss_limit_stops_a_memory_hungry_fake) ... ok
+test_shared_lock_rejects_overlapping_run_with_different_run_root (test_run_city_linux.LinuxRunnerTest.test_shared_lock_rejects_overlapping_run_with_different_run_root) ... ok
+test_sigterm_ignoring_fake_is_killed_after_timeout (test_run_city_linux.LinuxRunnerTest.test_sigterm_ignoring_fake_is_killed_after_timeout) ... ok
+test_sigterm_to_monitor_cleans_owned_engine (test_run_city_linux.LinuxRunnerTest.test_sigterm_to_monitor_cleans_owned_engine) ... ok
+test_success_records_command_isolated_environment_and_logs (test_run_city_linux.LinuxRunnerTest.test_success_records_command_isolated_environment_and_logs) ... ok
+test_successful_parent_does_not_leave_running_child (test_run_city_linux.LinuxRunnerTest.test_successful_parent_does_not_leave_running_child) ... ok
+test_timeout_cleans_owned_descendant_and_leaves_unrelated_process (test_run_city_linux.LinuxRunnerTest.test_timeout_cleans_owned_descendant_and_leaves_unrelated_process) ... ok
+test_warning_in_engine_log_fails_even_when_stdout_is_clean (test_run_city_linux.LinuxRunnerTest.test_warning_in_engine_log_fails_even_when_stdout_is_clean) ... ok
+test_cgroup_v1_memory_controller_limits_are_respected (test_run_city_linux.MemoryAndProvenanceTest.test_cgroup_v1_memory_controller_limits_are_respected) ... ok
+test_cgroup_v2_parent_limit_restricts_host_available_memory (test_run_city_linux.MemoryAndProvenanceTest.test_cgroup_v2_parent_limit_restricts_host_available_memory) ... ok
+test_host_memory_is_used_when_hierarchy_has_no_memory_controller (test_run_city_linux.MemoryAndProvenanceTest.test_host_memory_is_used_when_hierarchy_has_no_memory_controller) ... ok
+test_provenance_hashes_untracked_runtime_and_world_image_pixels (test_run_city_linux.MemoryAndProvenanceTest.test_provenance_hashes_untracked_runtime_and_world_image_pixels) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 8.213s
+
+OK

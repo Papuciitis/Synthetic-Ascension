@@ -1,0 +1,1204 @@
+[
+  {
+    "name": "shared-red-valid",
+    "classification": "valid_feature_red",
+    "note": "Missing shared WorldCover provider assertion.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: entities need a shared live world-cover query, not the player's actor-filtered mask"
+    ],
+    "elapsed_seconds": 7.559,
+    "peak_rss_mb": 444.69921875,
+    "minimum_available_mb": 20254.3125,
+    "summary_lines": [
+      "WorldCoverTest: 0 passed, 1 failed"
+    ],
+    "run_record": "process/runs/shared-red-valid.json",
+    "source_provenance": "process/sources/b005f4692c2c22b80948c3db7c2b3c630e936c04a4ad1985bf47b4abfef101d8.json",
+    "original_run_results_sha256": "149b76cece1ac3e769ac0ac9dbaa9eeb1aa791c444355f83fc2e969cc37f959b"
+  },
+  {
+    "name": "tree-red",
+    "classification": "valid_feature_red",
+    "note": "Missing foreground descriptor provider assertion.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: live foreground sprites need a coverage descriptor provider"
+    ],
+    "elapsed_seconds": 7.866,
+    "peak_rss_mb": 444.81640625,
+    "minimum_available_mb": 20192.234375,
+    "summary_lines": [
+      "ForegroundSpriteCoverageTest: 0 passed, 1 failed"
+    ],
+    "run_record": "process/runs/tree-red.json",
+    "source_provenance": "process/sources/b005f4692c2c22b80948c3db7c2b3c630e936c04a4ad1985bf47b4abfef101d8.json",
+    "original_run_results_sha256": "41fc6bbaaae744b8ddcdc07b65c77e5b18fd4d64b10cd8b85f23e6cfa29c708a"
+  },
+  {
+    "name": "pickup-red",
+    "classification": "valid_feature_red",
+    "note": "Missing eligible-pickup cover adapter assertion.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: FAIL: eligible pickup icons have a cover adapter"
+    ],
+    "elapsed_seconds": 7.756,
+    "peak_rss_mb": 444.890625,
+    "minimum_available_mb": 20115.06640625,
+    "summary_lines": [
+      "PickupCoverTest passes=0 failures=1"
+    ],
+    "run_record": "process/runs/pickup-red.json",
+    "source_provenance": "process/sources/b005f4692c2c22b80948c3db7c2b3c630e936c04a4ad1985bf47b4abfef101d8.json",
+    "original_run_results_sha256": "fcf676a63295568b45db29ceafefe489522c713ddef230bd866bbcc9acd7656b"
+  },
+  {
+    "name": "enemy-red",
+    "classification": "valid_feature_red",
+    "note": "Missing shared provider assertion in native enemy consumer test.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: enemy cover requires the shared WorldCover service"
+    ],
+    "elapsed_seconds": 9.968,
+    "peak_rss_mb": 377.38671875,
+    "minimum_available_mb": 19944.765625,
+    "summary_lines": [
+      "EnemyCoverRenderTest passes=0 failures=1"
+    ],
+    "run_record": "process/runs/enemy-red.json",
+    "source_provenance": "process/sources/09b184de0e1dfd671dff83cfd0d31502cc6a94d484461da9994698f2533c3a55.json",
+    "original_run_results_sha256": "76f70ea1a64900c22c660f654d31e9efd470dbe97f98a97ac3533a3e933eedfa"
+  },
+  {
+    "name": "player-native-red",
+    "classification": "feature_red_with_other_diagnostic",
+    "note": "Four expected player opacity failures plus a separate native canvas-map diagnostic; all diagnostics retained.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: Condition \"!viewport->canvas_map.has(p_canvas)\" is true.",
+      "ERROR: normal a self-transparent roof leaves the player normal despite opaque polygon modulation",
+      "ERROR: normal a transparent roof ancestor leaves the player normal despite opaque polygon modulation",
+      "ERROR: small a self-transparent roof leaves the player normal despite opaque polygon modulation",
+      "ERROR: small a transparent roof ancestor leaves the player normal despite opaque polygon modulation"
+    ],
+    "elapsed_seconds": 12.205,
+    "peak_rss_mb": 429.48046875,
+    "minimum_available_mb": 19604.58984375,
+    "summary_lines": [
+      "PlayerForegroundCoverRenderTest: 91 passed, 4 failed; output=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-native-red"
+    ],
+    "run_record": "process/runs/player-native-red.json",
+    "source_provenance": "process/sources/e6bbe8fb067db9cbd938047e92bca22d49a1f991b5cb2ea8734ad820c477bfd3.json",
+    "original_run_results_sha256": "23fa263017584af3da423afa7e83ebc5f9f6fb2d5f2dee5b6a22c1b783efeb13"
+  },
+  {
+    "name": "facade-red",
+    "classification": "valid_feature_red",
+    "note": "Actual bay/slice and solid-face registrations missing: 6 passes, 9 expected failures.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: actual FootprintWallBay registers its original opacity and ground depth",
+      "ERROR: opaque upright LeftJamb has a bounded solid descriptor",
+      "ERROR: opaque upright RightJamb has a bounded solid descriptor",
+      "ERROR: opaque upright Lintel has a bounded solid descriptor",
+      "ERROR: opaque upper plaster receives real face coverage",
+      "ERROR: ordinary open frontage exposes its actual painted source slices as registered sprites",
+      "ERROR: ordinary closed frontage exposes its actual painted source slices as registered sprites",
+      "ERROR: civic open frontage exposes its actual painted source slices as registered sprites",
+      "ERROR: civic closed frontage exposes its actual painted source slices as registered sprites"
+    ],
+    "elapsed_seconds": 8.217,
+    "peak_rss_mb": 492.94921875,
+    "minimum_available_mb": 20404.7734375,
+    "summary_lines": [
+      "BuildingFaceCoverTest passes=6 failures=9"
+    ],
+    "run_record": "process/runs/facade-red.json",
+    "source_provenance": "process/sources/7647bbb8722a0c55215cbdea2139188659f613aa4338c5e537260e901868fc3f.json",
+    "original_run_results_sha256": "418bcab051bba315f0ed1057353c24b368f27e4abc284f34ecb38468b0d0407e"
+  },
+  {
+    "name": "solid-red",
+    "classification": "valid_feature_red",
+    "note": "Real masonry polygon opacity/inherited fade assertion failed.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: real masonry uses polygon opacity and inherited fade"
+    ],
+    "elapsed_seconds": 7.677,
+    "peak_rss_mb": 444.3515625,
+    "minimum_available_mb": 20373.19140625,
+    "summary_lines": [
+      "WorldCoverTest: 19 passed, 1 failed"
+    ],
+    "run_record": "process/runs/solid-red.json",
+    "source_provenance": "process/sources/b36f706b3e981711a286b133f035ceba3205a4ff282d4cd0bdc778c0e1a50a40.json",
+    "original_run_results_sha256": "d779cde488c846fc4ddcdc31324a6f540118489d40c44aa03c087e0678eb8aa8"
+  },
+  {
+    "name": "world-isolation-red",
+    "classification": "valid_feature_red",
+    "note": "Independent World2D roof, sprite and masonry contamination assertions failed.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: another viewport's independent world does not contribute roof coverage",
+      "ERROR: another world does not contribute sprite coverage",
+      "ERROR: another world does not contribute masonry coverage"
+    ],
+    "elapsed_seconds": 7.938,
+    "peak_rss_mb": 444.171875,
+    "minimum_available_mb": 20259.16015625,
+    "summary_lines": [
+      "WorldCoverTest: 20 passed, 3 failed"
+    ],
+    "run_record": "process/runs/world-isolation-red.json",
+    "source_provenance": "process/sources/3714319d5fe0b72393f494c59fe07a19d9559874af20aece0947118b4fe71c86.json",
+    "original_run_results_sha256": "f31962889e89a6b0858c2ce42b2957023d892c75f83d31a3988b09741446781a"
+  },
+  {
+    "name": "canvas-isolation-red",
+    "classification": "valid_feature_red",
+    "note": "Independent-world and separate-CanvasLayer contamination assertions failed.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: another viewport's independent world does not contribute roof coverage",
+      "ERROR: another world does not contribute sprite coverage",
+      "ERROR: another world does not contribute masonry coverage",
+      "ERROR: a separate CanvasLayer in the same world cannot cast cover onto the camera canvas"
+    ],
+    "elapsed_seconds": 8.321,
+    "peak_rss_mb": 442.78125,
+    "minimum_available_mb": 20099.98828125,
+    "summary_lines": [
+      "WorldCoverTest: 20 passed, 4 failed"
+    ],
+    "run_record": "process/runs/canvas-isolation-red.json",
+    "source_provenance": "process/sources/b7e1b1bfbf6c6608cada31e83bc7880f3e2ac9c2e8c4bce7b71a686e8a383f1c.json",
+    "original_run_results_sha256": "3d3f49ca146c93b04d9f7869dfd11ea9e2fec5df6cb4f07af28a502bc04bf012"
+  },
+  {
+    "name": "shared-green-3",
+    "classification": "clean_intermediate",
+    "note": "Initial shared roof coverage: 15/0; earlier runtime snapshot.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.002,
+    "peak_rss_mb": 445.29296875,
+    "minimum_available_mb": 20312.32421875,
+    "summary_lines": [
+      "WorldCoverTest: 15 passed, 0 failed"
+    ],
+    "run_record": "process/runs/shared-green-3.json",
+    "source_provenance": "process/sources/7c8a2c05edaa04797a32bde53d762acfef3d55bc29b1b8736382f0e642cee80d.json",
+    "original_run_results_sha256": "832a21f9c25abc794e26805141772273f8bbde564a6c010670e4e90794c3d313"
+  },
+  {
+    "name": "tree-green-2",
+    "classification": "clean_focused",
+    "note": "Foreground descriptor fixtures: 47/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.223,
+    "peak_rss_mb": 492.359375,
+    "minimum_available_mb": 20306.82421875,
+    "summary_lines": [
+      "ForegroundSpriteCoverageTest: 47 passed, 0 failed"
+    ],
+    "run_record": "process/runs/tree-green-2.json",
+    "source_provenance": "process/sources/eccdee34e69ca0494f60890e6f5e69081bb0cfd999b60bed4793175fbf07fe04.json",
+    "original_run_results_sha256": "62e600035f71f656c9064e45fed7d10b4405bb8961ed68b871846eb1e21824db"
+  },
+  {
+    "name": "roof-green",
+    "classification": "clean_intermediate",
+    "note": "Legacy player roof diagnostic: 11/0; earlier runtime snapshot.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.136,
+    "peak_rss_mb": 446.54296875,
+    "minimum_available_mb": 20397.0,
+    "summary_lines": [
+      "PlayerRoofOcclusionTest: 11 passed, 0 failed"
+    ],
+    "run_record": "process/runs/roof-green.json",
+    "source_provenance": "process/sources/eccdee34e69ca0494f60890e6f5e69081bb0cfd999b60bed4793175fbf07fe04.json",
+    "original_run_results_sha256": "9178800105acfc46b92b061af1dfa4133ea6db8a8a6bffa099a5c8db1f0b8081"
+  },
+  {
+    "name": "enemy-coordinates",
+    "classification": "clean_probe",
+    "note": "Native production batch coordinate/feet/atlas probe: 23/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 10.357,
+    "peak_rss_mb": 378.91796875,
+    "minimum_available_mb": 19681.35546875,
+    "summary_lines": [
+      "EnemyCoverCoordinatesTest passes=23 failures=0"
+    ],
+    "run_record": "process/runs/enemy-coordinates.json",
+    "source_provenance": "process/sources/b005f4692c2c22b80948c3db7c2b3c630e936c04a4ad1985bf47b4abfef101d8.json",
+    "original_run_results_sha256": "8a7f7802b07413405c4960c88c1c391cef54262337039f922d52d5d8b3f65ac5"
+  },
+  {
+    "name": "enemy-native-green",
+    "classification": "clean_focused",
+    "note": "Native ordinary/elite batch consumers: 38/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 10.773,
+    "peak_rss_mb": 382.671875,
+    "minimum_available_mb": 19798.78515625,
+    "summary_lines": [
+      "EnemyCoverRenderTest passes=38 failures=0"
+    ],
+    "run_record": "process/runs/enemy-native-green.json",
+    "source_provenance": "process/sources/eccdee34e69ca0494f60890e6f5e69081bb0cfd999b60bed4793175fbf07fe04.json",
+    "original_run_results_sha256": "c6a3f12f98402aa5f219901298181f2b04d8846bf52a578b0fda8e1eb6b4e3ef"
+  },
+  {
+    "name": "pickup-headless-green",
+    "classification": "clean_intermediate",
+    "note": "Headless pickup owner/eligibility checks: 15/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.869,
+    "peak_rss_mb": 441.60546875,
+    "minimum_available_mb": 20290.94921875,
+    "summary_lines": [
+      "PickupCoverTest passes=15 failures=0"
+    ],
+    "run_record": "process/runs/pickup-headless-green.json",
+    "source_provenance": "process/sources/db4284e39ec84d8c681d7984b112e9453500ac3d7c31f59dfda44f023f61e740.json",
+    "original_run_results_sha256": "735287734f8ae27b4a383aca446b0c6ae4016217e68d3b777e9858c41c3e7423"
+  },
+  {
+    "name": "pickup-native-green",
+    "classification": "clean_intermediate",
+    "note": "Native pickup consumer checks: 33/0; earlier snapshot.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 11.422,
+    "peak_rss_mb": 378.7265625,
+    "minimum_available_mb": 19731.390625,
+    "summary_lines": [
+      "PickupCoverTest passes=33 failures=0"
+    ],
+    "run_record": "process/runs/pickup-native-green.json",
+    "source_provenance": "process/sources/99bb8fa7b7072a148c4a62299bfc3d947737e154ec0fca37c252bf041071b93a.json",
+    "original_run_results_sha256": "38e77ca2fd99008c8c798bbd11a92732eafc202337d8214bf50301789660f39c"
+  },
+  {
+    "name": "pickup-final",
+    "classification": "clean_focused",
+    "note": "Native pickup consumer checks: 33/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 9.655,
+    "peak_rss_mb": 379.44921875,
+    "minimum_available_mb": 19861.69921875,
+    "summary_lines": [
+      "PickupCoverTest passes=33 failures=0"
+    ],
+    "run_record": "process/runs/pickup-final.json",
+    "source_provenance": "process/sources/8f20a76acda0b774ce5aea6cb678245ff163c6f2fa0a0df03f1facc35e4f960e.json",
+    "original_run_results_sha256": "683411635a7098bef8a1af967e2c29b5f0462408f8a49aa9d86d4f212715706a"
+  },
+  {
+    "name": "player-native-green",
+    "classification": "clean_intermediate",
+    "note": "Native player coverage: 95/0; earlier snapshot, no selected PNG copies.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 10.875,
+    "peak_rss_mb": 429.93359375,
+    "minimum_available_mb": 19547.31640625,
+    "summary_lines": [
+      "PlayerForegroundCoverRenderTest: 95 passed, 0 failed; output=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-native-green"
+    ],
+    "run_record": "process/runs/player-native-green.json",
+    "source_provenance": "process/sources/68d1d1601ed9b7c4ebfb045e927e8a4ed060518154b7d39bd8e484cdc71e051b.json",
+    "original_run_results_sha256": "8abce8de7bdbbc649bdd44b0b937e18df1aa2fb9d361745887c3340f350c16f9"
+  },
+  {
+    "name": "player-final",
+    "classification": "clean_qualified_fixture",
+    "note": "Isolated synthetic/real-art player fixture, 22 PNGs and result.json. Captured after the live Sprite2D AABB prefilter, before the World2D/canvas isolation filter. This is earlier-snapshot evidence, not an assertion that these images were regenerated from the eventual committed runtime.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 11.259,
+    "peak_rss_mb": 428.55078125,
+    "minimum_available_mb": 19780.43359375,
+    "summary_lines": [
+      "PlayerForegroundCoverRenderTest: 95 passed, 0 failed; output=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-final"
+    ],
+    "run_record": "process/runs/player-final.json",
+    "source_provenance": "process/sources/f90d3c753c33d5a200c32421deb3e9b6f0546be0fc80c603be6ff5561b725a19.json",
+    "original_run_results_sha256": "807237b5321b7fc434285e408fca7738e912832425b02493f675ad10f1286d76"
+  },
+  {
+    "name": "facade-green-2",
+    "classification": "clean_focused",
+    "note": "Actual ordinary/civic façade coverage fixtures: 46/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.133,
+    "peak_rss_mb": 507.96875,
+    "minimum_available_mb": 20324.66015625,
+    "summary_lines": [
+      "BuildingFaceCoverTest passes=46 failures=0"
+    ],
+    "run_record": "process/runs/facade-green-2.json",
+    "source_provenance": "process/sources/2738e46c58e48876a70c75cbc4e7c07408f5e5eece5acf2558fb3c683a9b8f7a.json",
+    "original_run_results_sha256": "9febbc19c9485435f6c38ec9a7f90c559cdc59abe52146cddfabd0dc5c997382"
+  },
+  {
+    "name": "shared-final",
+    "classification": "clean_intermediate",
+    "note": "Shared roof/solid coverage: 20/0; predates world/canvas isolation checks.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.765,
+    "peak_rss_mb": 440.734375,
+    "minimum_available_mb": 20009.48828125,
+    "summary_lines": [
+      "WorldCoverTest: 20 passed, 0 failed"
+    ],
+    "run_record": "process/runs/shared-final.json",
+    "source_provenance": "process/sources/6f62786df9c8b5b398329c021ff1e4cc64faa771e09367709a9b39b3e6da63a4.json",
+    "original_run_results_sha256": "6637ae1cb4f8721cbdea14563b15fb69aad7f2e00ee764abc1ad2d9ac34e6cf7"
+  },
+  {
+    "name": "isolation-green",
+    "classification": "clean_focused",
+    "note": "Shared coverage including independent world/canvas and shared-world positive control: 25/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.123,
+    "peak_rss_mb": 443.66015625,
+    "minimum_available_mb": 20321.265625,
+    "summary_lines": [
+      "WorldCoverTest: 25 passed, 0 failed"
+    ],
+    "run_record": "process/runs/isolation-green.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "6cb559325a5b49394f710d40fd7376588ea79c9eea8c04699792e8a0fec262f9"
+  },
+  {
+    "name": "roof-shared-final",
+    "classification": "clean_regression",
+    "note": "Legacy roof diagnostic regression: 11/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.48,
+    "peak_rss_mb": 437.83203125,
+    "minimum_available_mb": 19694.1328125,
+    "summary_lines": [
+      "PlayerRoofOcclusionTest: 11 passed, 0 failed"
+    ],
+    "run_record": "process/runs/roof-shared-final.json",
+    "source_provenance": "process/sources/68d1d1601ed9b7c4ebfb045e927e8a4ed060518154b7d39bd8e484cdc71e051b.json",
+    "original_run_results_sha256": "da3247bbcbaa28b8fe8b8a5789026d1d6a17913ecdb1f5096406fc15fdfa9ced"
+  },
+  {
+    "name": "guardrender-shared",
+    "classification": "clean_regression",
+    "note": "Guard fixture and uncapped independent union comparisons: 411/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 10.049,
+    "peak_rss_mb": 401.11328125,
+    "minimum_available_mb": 19760.23046875,
+    "summary_lines": [
+      "CheckpointOfficeRenderTest: 411 passed, 0 failed"
+    ],
+    "run_record": "process/runs/guardrender-shared.json",
+    "source_provenance": "process/sources/8f20a76acda0b774ce5aea6cb678245ff163c6f2fa0a0df03f1facc35e4f960e.json",
+    "original_run_results_sha256": "51fede5b44c32fe8deb9ba0fc3b2545e2fa36ae075ec8be312c7a337ff8241c3"
+  },
+  {
+    "name": "enemyproxy",
+    "classification": "clean_regression",
+    "note": "Enemy proxy renderer regression: 48/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.558,
+    "peak_rss_mb": 445.4296875,
+    "minimum_available_mb": 19803.37890625,
+    "summary_lines": [
+      "EnemyProxyRendererTest passes=48 failures=0"
+    ],
+    "run_record": "process/runs/enemyproxy.json",
+    "source_provenance": "process/sources/4e85c6223664e993cc14f039792b34a32217c5279939536ba5fa1a4b4f1bf525.json",
+    "original_run_results_sha256": "fb7e2a5910f4bc8e2266db7f9a392b024d14ec51fa9d20c6efb72e51940298f5"
+  },
+  {
+    "name": "enemybatch",
+    "classification": "clean_regression",
+    "note": "Enemy batch lifecycle regression: 9/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.72,
+    "peak_rss_mb": 442.71875,
+    "minimum_available_mb": 19883.859375,
+    "summary_lines": [
+      "EnemyVisualBatchingTest passes=9 failures=0"
+    ],
+    "run_record": "process/runs/enemybatch.json",
+    "source_provenance": "process/sources/4e85c6223664e993cc14f039792b34a32217c5279939536ba5fa1a4b4f1bf525.json",
+    "original_run_results_sha256": "4c5065e2fb4b279355fecc981d4d07fa1a82040725d47b19d7edf8ec3b2fbbde"
+  },
+  {
+    "name": "enemylease",
+    "classification": "clean_regression",
+    "note": "Enemy representation lease regression: 43/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.939,
+    "peak_rss_mb": 445.01953125,
+    "minimum_available_mb": 19793.5625,
+    "summary_lines": [
+      "EnemyRepresentationLeaseTest passes=43 failures=0"
+    ],
+    "run_record": "process/runs/enemylease.json",
+    "source_provenance": "process/sources/4e85c6223664e993cc14f039792b34a32217c5279939536ba5fa1a4b4f1bf525.json",
+    "original_run_results_sha256": "81590751c3c05c98720043eef54958be63984b44876e8de0e946ad6cea3f5774"
+  },
+  {
+    "name": "elitesheen",
+    "classification": "clean_regression",
+    "note": "Elite surface ownership/accessibility regression: 21/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 13.127,
+    "peak_rss_mb": 379.46484375,
+    "minimum_available_mb": 19686.36328125,
+    "summary_lines": [
+      "EliteSheenTest passes=21 failures=0"
+    ],
+    "run_record": "process/runs/elitesheen.json",
+    "source_provenance": "process/sources/4f76a59138552d87823a5ff20a82e1d932cbde561f09444a33ac401f7d55cc62.json",
+    "original_run_results_sha256": "a83cbeb36753550a84e8e34ae8699d63c5359801aedfdf8201a3974ac95a6b69"
+  },
+  {
+    "name": "actorshadow",
+    "classification": "clean_regression",
+    "note": "Native actor shadow/atlas regression.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 9.747,
+    "peak_rss_mb": 377.5,
+    "minimum_available_mb": 19588.78125,
+    "summary_lines": [
+      "ActorDepthShadowRenderTest failures=0 image=actor_depth_shadow_render.png"
+    ],
+    "run_record": "process/runs/actorshadow.json",
+    "source_provenance": "process/sources/4f76a59138552d87823a5ff20a82e1d932cbde561f09444a33ac401f7d55cc62.json",
+    "original_run_results_sha256": "6a77539b4bc0c6897daaf93737582d75b198f0f82c19e64f2a7580a913549891"
+  },
+  {
+    "name": "citykit",
+    "classification": "clean_regression",
+    "note": "City kit generation/presentation regression: 1300/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.128,
+    "peak_rss_mb": 524.6796875,
+    "minimum_available_mb": 20216.1484375,
+    "summary_lines": [
+      "CityBlockKitTest: 1300 passed, 0 failed"
+    ],
+    "run_record": "process/runs/citykit.json",
+    "source_provenance": "process/sources/637f1521d6a4720ef4d3a10f9eac50c503890da6c7a699260d4807f996f0e21e.json",
+    "original_run_results_sha256": "4844e1aacf9421e507fc3d4a615edc3f1463fd808e7af8a3ee0d95803de35265"
+  },
+  {
+    "name": "cityproc",
+    "classification": "clean_regression",
+    "note": "Procedural city regression: 5430/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 9.216,
+    "peak_rss_mb": 524.79296875,
+    "minimum_available_mb": 20111.828125,
+    "summary_lines": [
+      "CityBlockProceduralTest: 5430 passed, 0 failed; 20 layouts, 76 parcels, 20 unique layouts, 22 sizes, 4 entrance directions, 76 styled kit instances across 22 sizes"
+    ],
+    "run_record": "process/runs/cityproc.json",
+    "source_provenance": "process/sources/637f1521d6a4720ef4d3a10f9eac50c503890da6c7a699260d4807f996f0e21e.json",
+    "original_run_results_sha256": "c528baf77ef30c5b5cc0aa2c196d2c93b65e6289ae0b70e8a111f20a21873f61"
+  },
+  {
+    "name": "dungeonroof",
+    "classification": "clean_regression",
+    "note": "Dungeon roof contract regression: 99/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.778,
+    "peak_rss_mb": 497.87890625,
+    "minimum_available_mb": 20146.69921875,
+    "summary_lines": [
+      "DungeonRoofContractTest: 99 passed, 0 failed"
+    ],
+    "run_record": "process/runs/dungeonroof.json",
+    "source_provenance": "process/sources/637f1521d6a4720ef4d3a10f9eac50c503890da6c7a699260d4807f996f0e21e.json",
+    "original_run_results_sha256": "20c48dd64b1012c394646ae9f4e3abc6cd0cd15c2bb8b55864f6bc39332a06a7"
+  },
+  {
+    "name": "dungeonproduction",
+    "classification": "clean_regression",
+    "note": "Dungeon production regression: 762/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.119,
+    "peak_rss_mb": 488.04296875,
+    "minimum_available_mb": 20115.65234375,
+    "summary_lines": [
+      "DungeonProductionTest: 762 passed, 0 failed"
+    ],
+    "run_record": "process/runs/dungeonproduction.json",
+    "source_provenance": "process/sources/637f1521d6a4720ef4d3a10f9eac50c503890da6c7a699260d4807f996f0e21e.json",
+    "original_run_results_sha256": "20e0614ac2eb89817b33509b3811da29add26c6fa6106c282234abe4baaf9889"
+  },
+  {
+    "name": "healthlock",
+    "classification": "clean_regression",
+    "note": "Health pickup lock regression: 8/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.396,
+    "peak_rss_mb": 467.4609375,
+    "minimum_available_mb": 19890.9296875,
+    "summary_lines": [
+      "HealthPickupLockTest: 8 passed, 0 failed"
+    ],
+    "run_record": "process/runs/healthlock.json",
+    "source_provenance": "process/sources/8f20a76acda0b774ce5aea6cb678245ff163c6f2fa0a0df03f1facc35e4f960e.json",
+    "original_run_results_sha256": "ad8d5ab9a83e3ebdab1c430d972032ebe9bad0d07b06dc619a9a8aeae1006585"
+  },
+  {
+    "name": "groundlootcap",
+    "classification": "clean_regression",
+    "note": "Ground loot capacity regression: 6/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.925,
+    "peak_rss_mb": 444.96875,
+    "minimum_available_mb": 19751.8046875,
+    "summary_lines": [
+      "GroundLootCapTest: 6 passed, 0 failed"
+    ],
+    "run_record": "process/runs/groundlootcap.json",
+    "source_provenance": "process/sources/8f20a76acda0b774ce5aea6cb678245ff163c6f2fa0a0df03f1facc35e4f960e.json",
+    "original_run_results_sha256": "f8eadd1efb65a591a489d89ba54725c25ae854e2aaa904f84155b2e920a1aa43"
+  },
+  {
+    "name": "choicepickup",
+    "classification": "clean_regression",
+    "note": "Choice pickup regression: 5/0.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.343,
+    "peak_rss_mb": 441.8984375,
+    "minimum_available_mb": 19945.91796875,
+    "summary_lines": [
+      "ChoicePickupTest: 5 passed, 0 failed"
+    ],
+    "run_record": "process/runs/choicepickup.json",
+    "source_provenance": "process/sources/8f20a76acda0b774ce5aea6cb678245ff163c6f2fa0a0df03f1facc35e4f960e.json",
+    "original_run_results_sha256": "22c28c5ae6c1f0495b31837f749e31420d000dbe4d3b66b84f740a49c15aa323"
+  },
+  {
+    "name": "taggedcache",
+    "classification": "clean_regression",
+    "note": "Tagged reward cache streaming/save regression.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 8.547,
+    "peak_rss_mb": 538.59375,
+    "minimum_available_mb": 19762.4140625,
+    "summary_lines": [],
+    "run_record": "process/runs/taggedcache.json",
+    "source_provenance": "process/sources/8f20a76acda0b774ce5aea6cb678245ff163c6f2fa0a0df03f1facc35e4f960e.json",
+    "original_run_results_sha256": "8203a1cbc20e975f8bb42456d90555947a0c52cbb7c4f74647b99a2de283cf79"
+  },
+  {
+    "name": "street-script",
+    "classification": "clean_regression",
+    "note": "Street frontage script runner: 19 checks, no failures.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 7.455,
+    "peak_rss_mb": 443.95703125,
+    "minimum_available_mb": 20170.875,
+    "summary_lines": [
+      "CityStreetFrontageTest: checks=19 failures=0"
+    ],
+    "run_record": "process/runs/street-script.json",
+    "source_provenance": "process/sources/637f1521d6a4720ef4d3a10f9eac50c503890da6c7a699260d4807f996f0e21e.json",
+    "original_run_results_sha256": "d5ccd6699da6c57fb38c655a58ba4e28ced2a6c8a1f37d38860b142c3546a76b"
+  },
+  {
+    "name": "import-final",
+    "classification": "clean_import",
+    "note": "Recorded import/checkpoint step; not a gameplay assertion suite.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 18.662,
+    "peak_rss_mb": 1463.4609375,
+    "minimum_available_mb": 19263.3203125,
+    "summary_lines": [],
+    "run_record": "process/runs/import-final.json",
+    "source_provenance": "process/sources/4f76a59138552d87823a5ff20a82e1d932cbde561f09444a33ac401f7d55cc62.json",
+    "original_run_results_sha256": "55305172c47523c33e59f1288723e3a8961221be8439fbf5d67f34d36fae84b9"
+  },
+  {
+    "name": "parse-final",
+    "classification": "clean_earlier_parse",
+    "note": "553/0 script audit before the World2D/canvas filter; not the final runtime audit.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 15.137,
+    "peak_rss_mb": 586.80859375,
+    "minimum_available_mb": 19611.5,
+    "summary_lines": [
+      "ScriptParseAuditTest: 553 passed, 0 failed (checked 553 scripts across 8 roots)"
+    ],
+    "run_record": "process/runs/parse-final.json",
+    "source_provenance": "process/sources/a0a5430afd40773fa2d120f6b9e439c133f2757b2d0c883df05bf7313daf694f.json",
+    "original_run_results_sha256": "623d3060b62bae569315883548556a9740e43ba84b4fb45d17def60525197258"
+  },
+  {
+    "name": "parse-commitable",
+    "classification": "clean_final_parse",
+    "note": "Required final runtime script audit after the capture batch and isolation fixes.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 15.621,
+    "peak_rss_mb": 586.79296875,
+    "minimum_available_mb": 19067.57421875,
+    "summary_lines": [
+      "ScriptParseAuditTest: 553 passed, 0 failed (checked 553 scripts across 8 roots)"
+    ],
+    "run_record": "process/runs/parse-commitable.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "38137e09cf52831f6632bd4106b214d235ca086fd79ae9662fa7504a9713a471"
+  },
+  {
+    "name": "bed-cover-small-2",
+    "classification": "clean_intermediate_capture",
+    "note": "Earlier corrected city plate trial; process record retained, PNGs not selected.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 40.127,
+    "peak_rss_mb": 532.8984375,
+    "minimum_available_mb": 19085.41015625,
+    "summary_lines": [
+      "CityEntityCoverPreview: plates=11 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/bed-cover-small-2"
+    ],
+    "run_record": "process/runs/bed-cover-small-2.json",
+    "source_provenance": "process/sources/6c11874fa982f810610207c3e2710605ac38e760233dc200ca91cf1c939a82a3.json",
+    "original_run_results_sha256": "6dbd9267b65b58e7dffb05c8289692d207d99e7f1a5ca88faf4a414257957e7c"
+  },
+  {
+    "name": "player-ordinary-small",
+    "classification": "clean_intermediate_capture",
+    "note": "Earlier actual-city player route; process record retained, PNGs not selected.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 43.969,
+    "peak_rss_mb": 488.3125,
+    "minimum_available_mb": 19022.78515625,
+    "summary_lines": [
+      "CityEntityCoverPreview player-tree-only: plates=3 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-ordinary-small"
+    ],
+    "run_record": "process/runs/player-ordinary-small.json",
+    "source_provenance": "process/sources/a0a5430afd40773fa2d120f6b9e439c133f2757b2d0c883df05bf7313daf694f.json",
+    "original_run_results_sha256": "078e582e4807210f85600117f084b8f906fb2f579ff4b5da50a44107a6419fd7"
+  },
+  {
+    "name": "bed-occupied-trial",
+    "classification": "clean_rejected_trial",
+    "note": "Earlier moving fight exposed fully coloured enemy art over a window below the roof. One screenshot retained as rejected evidence; not acceptance.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 46.249,
+    "peak_rss_mb": 524.86328125,
+    "minimum_available_mb": 19222.0546875,
+    "summary_lines": [
+      "CityGroundReview: segment=2 seed=16102026 context=false frames=33 fires=5 hits=9 failures=0"
+    ],
+    "run_record": "process/runs/bed-occupied-trial.json",
+    "source_provenance": "process/sources/99bb8fa7b7072a148c4a62299bfc3d947737e154ec0fca37c252bf041071b93a.json",
+    "original_run_results_sha256": "b5accbaaf378b0ca3e31cd9fd3d6bc60f960ea5b92fba8f6fb60cdc952b817a1"
+  },
+  {
+    "name": "bed-facade-trial",
+    "classification": "clean_qualified_trial",
+    "note": "Moving fight after façade registration; actor positions differ from the earlier trial. One screenshot retained; cannot prove an exact before/after comparison or replace fixed-position controls.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 43.91,
+    "peak_rss_mb": 538.62890625,
+    "minimum_available_mb": 19473.7578125,
+    "summary_lines": [
+      "CityGroundReview: segment=2 seed=16102026 context=false frames=34 fires=24 hits=26 failures=0"
+    ],
+    "run_record": "process/runs/bed-facade-trial.json",
+    "source_provenance": "process/sources/6f62786df9c8b5b398329c021ff1e4cc64faa771e09367709a9b39b3e6da63a4.json",
+    "original_run_results_sha256": "1af08c7156e8a8175fa96b9bd599105dc1399221182a1e0141935f503c294773"
+  },
+  {
+    "name": "shared-red",
+    "classification": "failed_attempt",
+    "note": "Invalid RED attempt: test parser error and timeout; not valid missing-feature evidence.",
+    "actual_exit": -15,
+    "stop_reason": "timeout",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: The variable type is being inferred from a Variant value, so it will be typed as Variant. (Warning treated as error.)",
+      "ERROR: Failed to load script \"res://tools/tests/WorldCoverTest.gd\" with error \"Parse error\"."
+    ],
+    "elapsed_seconds": 61.27,
+    "peak_rss_mb": 446.85546875,
+    "minimum_available_mb": 20183.28515625,
+    "summary_lines": [],
+    "run_record": "process/runs/shared-red.json",
+    "source_provenance": "process/sources/c43cbc40439ee0ae1e9e41d6d0b38baee46906aef45b2454521abe3f2cd52dc0.json",
+    "original_run_results_sha256": "12af561ca7ff0da1445bb519001a5b85c0767a9f12bba22e7eb1439670aa7feb"
+  },
+  {
+    "name": "shared-green",
+    "classification": "failed_attempt",
+    "note": "Parser/type failure and timeout; not GREEN evidence.",
+    "actual_exit": -15,
+    "stop_reason": "timeout",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Invalid operands \"Vector2\" and \"Vector2i\" for \"==\" operator.",
+      "ERROR: Failed to load script \"res://core/systems/world/visibility/WorldCover.gd\" with error \"Parse error\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'get_for (via call)' in base 'GDScript'."
+    ],
+    "elapsed_seconds": 61.197,
+    "peak_rss_mb": 446.92578125,
+    "minimum_available_mb": 20238.25,
+    "summary_lines": [],
+    "run_record": "process/runs/shared-green.json",
+    "source_provenance": "process/sources/cdb6869e80c14ebc15015d1e087c91bb25e4e0afe3e7c8d084137d39e5ba74b1.json",
+    "original_run_results_sha256": "5a325b1f4fd90784a0792e97e452ba0f4b6fb4d2a8cca7b81c83d7daaf1d13c7"
+  },
+  {
+    "name": "shared-green-2",
+    "classification": "failed_attempt",
+    "note": "Invalid get_parent_item runtime call and coverage failures; not GREEN evidence.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'get_parent_item' in base 'Polygon2D'.",
+      "ERROR: shared coverage reaches a roof-covered fragment for a behind actor",
+      "ERROR: cover retains continuous live roof opacity",
+      "ERROR: the same actor is covered by its southern courtyard wing",
+      "ERROR: shared batches retain more than the old actor-local32 triangles",
+      "ERROR: a covering roof beyond the old capacity is not silently discarded"
+    ],
+    "elapsed_seconds": 7.666,
+    "peak_rss_mb": 445.125,
+    "minimum_available_mb": 20287.00390625,
+    "summary_lines": [
+      "WorldCoverTest: 10 passed, 5 failed"
+    ],
+    "run_record": "process/runs/shared-green-2.json",
+    "source_provenance": "process/sources/e206d994a01e271a397f6c3fc327faa568e7173aa7d777b3364fb8814f8a3ec0.json",
+    "original_run_results_sha256": "97049d15df71561a784b1ed507419f5f57b81d6a5cfd7403794b1bf4e7437fad"
+  },
+  {
+    "name": "facade-green",
+    "classification": "failed_attempt",
+    "note": "Frontage parser/dependency errors despite actual process exit0 and zero-count test footer; not GREEN evidence.",
+    "actual_exit": 0,
+    "stop_reason": "runtime_diagnostics",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Could not preload resource script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Parse Error: Could not resolve script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://autoload/global.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.",
+      "SCRIPT ERROR: Invalid access to property or key 'kit' on a base object of type 'Dictionary'."
+    ],
+    "elapsed_seconds": 7.481,
+    "peak_rss_mb": 444.23828125,
+    "minimum_available_mb": 20321.140625,
+    "summary_lines": [
+      "BuildingFaceCoverTest passes=0 failures=0"
+    ],
+    "run_record": "process/runs/facade-green.json",
+    "source_provenance": "process/sources/8e6bddee13f9c6229e20786024b7cf458cfe20310dbb425edd3f14e1effec6c9.json",
+    "original_run_results_sha256": "dce3b6d080ec4227e7f0e82aa6d37a87378fbe1bf00b3f534e93d822e5a6eab8"
+  },
+  {
+    "name": "solid-green",
+    "classification": "failed_attempt",
+    "note": "Frontage parser/dependency diagnostics despite a passing test footer and process exit0; not GREEN evidence.",
+    "actual_exit": 0,
+    "stop_reason": "runtime_diagnostics",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Could not preload resource script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Parse Error: Could not resolve script \"res://scenes/world/buildings/CityBlockFrontages.gd\".",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://autoload/global.gd\" with error \"Compilation failed\"."
+    ],
+    "elapsed_seconds": 7.744,
+    "peak_rss_mb": 443.51171875,
+    "minimum_available_mb": 20392.2421875,
+    "summary_lines": [
+      "WorldCoverTest: 20 passed, 0 failed"
+    ],
+    "run_record": "process/runs/solid-green.json",
+    "source_provenance": "process/sources/8e6bddee13f9c6229e20786024b7cf458cfe20310dbb425edd3f14e1effec6c9.json",
+    "original_run_results_sha256": "2f6fb76ddf08edecb10e9317d067e710295bf820be9c17d0b0a282a282926963"
+  },
+  {
+    "name": "entity-preview-parse",
+    "classification": "failed_attempt",
+    "note": "Invalid standalone script-loading invocation without expected autoload context; not a successful parse audit.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+      "ERROR: Failed to load script \"res://ui/screens/opening/OpeningPresentation.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: SfxManager",
+      "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningSequenceWorld.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: RunEvents",
+      "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningActor.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningSequenceController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/screens/settings/SettingsScreen.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+      "ERROR: Failed to load script \"res://ui/screens/PauseMenu.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/game.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/screens/GameOverUI.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/actors/player/player.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: BattleText",
+      "SCRIPT ERROR: Compile Error: Identifier not found: EnemyWorld",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "ERROR: Failed to load script \"res://scenes/world/combat/MeleeSlash.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: EnemyCombat",
+      "ERROR: Failed to load script \"res://scenes/world/combat/RangedBullet.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/augments/AugmentRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/sets/conduit/VFX_PulseRing.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://effects/gravemarch/scenes/GravemarchCursedBallast.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://data/sets/SetRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/items/ItemEffectRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/manifestations/ManifestationRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/ascension/AscensionRunner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/actors/player/PlayerVisualController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/augments/AugmentSelect.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/augments/AugmentCard.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/spawner/spawner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/actors/enemy/enemy.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/PickupVfx.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder",
+      "ERROR: Failed to load script \"res://core/combat/projectile/EnemyProjectile.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/screens/hud.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/components/InventorySlotView.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/components/InventoryBar.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/AugmentsPanel.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/ItemTooltip.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/components/BagUI.gd\" with error \"Compilation failed\".",
+      "SCRIPT ERROR: Compile Error: Identifier not found: ThreatDirector",
+      "ERROR: Failed to load script \"res://ui/bag/BagSlot.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/RunSheetHUD.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/AugmentTooltipController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudTooltipController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/AugmentTooltip.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudGateOverlayController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudTutorialTipController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudThreatController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudBossController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudObjectiveController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudGateChecklistController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/SetBreakpointNotifier.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudManifestationController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudHealthController.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/controllers/HudDangerOverlay.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/FlowFieldNav.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/volumes/IndoorVolume.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/ExplorationLootSpawner.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/Level1Builder.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/Wardstone.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/wardstones/VFX_WardstoneIdleAura.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://assets/vfx/world/gates/VFX_GateUnlockBurst.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/world/ExitRite.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://core/systems/vision/VisionRig.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://ui/widgets/PerformanceOverlay.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://scenes/world/pickups/HealthPickup.gd\" with error \"Compilation failed\".",
+      "ERROR: Failed to load script \"res://tools/dev/CityEntityCoverPreview.gd\" with error \"Compilation failed\"."
+    ],
+    "elapsed_seconds": 8.112,
+    "peak_rss_mb": 377.28515625,
+    "minimum_available_mb": 19481.72265625,
+    "summary_lines": [],
+    "run_record": "process/runs/entity-preview-parse.json",
+    "source_provenance": "process/sources/6c11874fa982f810610207c3e2710605ac38e760233dc200ca91cf1c939a82a3.json",
+    "original_run_results_sha256": "2b508257087591a4c491332872d94131e140ecee17db6cd970cb5471ab0b30d1"
+  },
+  {
+    "name": "bed-cover-small",
+    "classification": "failed_attempt",
+    "note": "Preview parser failure and interrupted process; no valid native capture.",
+    "actual_exit": -15,
+    "stop_reason": "interrupted",
+    "diagnostics": [
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"prefer_isolated\" variable because the value doesn't have a set type.",
+      "ERROR: Failed to load script \"res://tools/dev/CityEntityCoverPreview.gd\" with error \"Parse error\"."
+    ],
+    "elapsed_seconds": 27.66,
+    "peak_rss_mb": 390.2265625,
+    "minimum_available_mb": 19269.52734375,
+    "summary_lines": [],
+    "run_record": "process/runs/bed-cover-small.json",
+    "source_provenance": "process/sources/1341b66723941197eb6116fd68092069849bb64a25112b253498de10164b7458.json",
+    "original_run_results_sha256": "3df0f3de2aa027b135d78e75925ca352c49971e78da73651cc43f3918d87ce96"
+  },
+  {
+    "name": "fruit-cover-small",
+    "classification": "failed_attempt",
+    "note": "Earlier staging attempt lost entities before cutaway plates; not accepted native evidence.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: EliteCrowdFightPreview: Staged entity disappeared before roof-player-inside-cutaway",
+      "ERROR: EliteCrowdFightPreview: Staged entity disappeared before roof-player-outside-restored"
+    ],
+    "elapsed_seconds": 51.711,
+    "peak_rss_mb": 573.66796875,
+    "minimum_available_mb": 19036.734375,
+    "summary_lines": [
+      "CityEntityCoverPreview: plates=11 failures=4 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/fruit-cover-small"
+    ],
+    "run_record": "process/runs/fruit-cover-small.json",
+    "source_provenance": "process/sources/a0a5430afd40773fa2d120f6b9e439c133f2757b2d0c883df05bf7313daf694f.json",
+    "original_run_results_sha256": "ffd2035269a1849434c5d9e1464db542b4d86734fd9fbf6467585be4f785ca83"
+  },
+  {
+    "name": "guardrender",
+    "classification": "failed_attempt",
+    "note": "Existing guard test read diagnostic arrays before their new lazy refresh: 334/21. Superseded by explicit diagnostic/shared coverage test adaptation and guardrender-shared.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: Neighbour fixture genuinely pressures the 32-triangle shared budget",
+      "ERROR: Both roof stream orders match uncapped union coverage over the whole actor"
+    ],
+    "elapsed_seconds": 9.458,
+    "peak_rss_mb": 399.39453125,
+    "minimum_available_mb": 19667.2109375,
+    "summary_lines": [
+      "CheckpointOfficeRenderTest: 334 passed, 21 failed"
+    ],
+    "run_record": "process/runs/guardrender.json",
+    "source_provenance": "process/sources/4e85c6223664e993cc14f039792b34a32217c5279939536ba5fa1a4b4f1bf525.json",
+    "original_run_results_sha256": "a3478c723a0b314dd1345117750e75e0f369a18f2d2e8d51420b221af4ff8a4c"
+  },
+  {
+    "name": "street",
+    "classification": "failed_attempt",
+    "note": "Invocation requested a nonexistent .tscn for a script-only runner. Retained as an invocation failure, not a product regression.",
+    "actual_exit": 1,
+    "stop_reason": "nonzero_exit",
+    "diagnostics": [
+      "ERROR: Cannot open file 'res://tools/tests/CityStreetFrontageTest.tscn'.",
+      "ERROR: Failed loading resource: res://tools/tests/CityStreetFrontageTest.tscn.",
+      "ERROR: Failed loading scene: res://tools/tests/CityStreetFrontageTest.tscn."
+    ],
+    "elapsed_seconds": 5.832,
+    "peak_rss_mb": 434.921875,
+    "minimum_available_mb": 20230.52734375,
+    "summary_lines": [],
+    "run_record": "process/runs/street.json",
+    "source_provenance": "process/sources/637f1521d6a4720ef4d3a10f9eac50c503890da6c7a699260d4807f996f0e21e.json",
+    "original_run_results_sha256": "5749c418a4877f3601dd03141b56bf025d76fe9d92178a86dcb339002c0168fc"
+  },
+  {
+    "name": "bed-cover-small-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 49.041,
+    "peak_rss_mb": 533.609375,
+    "minimum_available_mb": 19022.9140625,
+    "summary_lines": [
+      "CityEntityCoverPreview: plates=11 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/bed-cover-small-final"
+    ],
+    "run_record": "process/runs/bed-cover-small-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "df839ae9d35091c3ec6f3c206a804d51ac7537b4b384856d29849ebd0aabda3f"
+  },
+  {
+    "name": "bed-cover-normal-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 51.391,
+    "peak_rss_mb": 522.8984375,
+    "minimum_available_mb": 18971.41796875,
+    "summary_lines": [
+      "CityEntityCoverPreview: plates=11 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/bed-cover-normal-final"
+    ],
+    "run_record": "process/runs/bed-cover-normal-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "db8ab72a9f1722c17b6f12c10b80b902e4778bc19c60d9942db531f9010afc57"
+  },
+  {
+    "name": "fruit-cover-small-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 58.44,
+    "peak_rss_mb": 551.671875,
+    "minimum_available_mb": 19179.87890625,
+    "summary_lines": [
+      "CityEntityCoverPreview: plates=11 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/fruit-cover-small-final"
+    ],
+    "run_record": "process/runs/fruit-cover-small-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "8615d88b6e208001a0d60687ed0ed5e2bc48469161cb5451c931501ac9c30192"
+  },
+  {
+    "name": "fruit-cover-normal-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 61.907,
+    "peak_rss_mb": 553.2421875,
+    "minimum_available_mb": 18758.03515625,
+    "summary_lines": [
+      "CityEntityCoverPreview: plates=11 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/fruit-cover-normal-final"
+    ],
+    "run_record": "process/runs/fruit-cover-normal-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "7dd6d5c4bd5c9fe284975e53d575dba6a6cf0352478b713dddfcf895c0e3c595"
+  },
+  {
+    "name": "player-ordinary-small-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 44.004,
+    "peak_rss_mb": 509.9765625,
+    "minimum_available_mb": 19067.265625,
+    "summary_lines": [
+      "CityEntityCoverPreview player-tree-only: plates=3 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-ordinary-small-final"
+    ],
+    "run_record": "process/runs/player-ordinary-small-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "ba7888d2b715bbe51b8cc94a77fef6eae0dde63e7c3ce5c2c8e5baa7efaed5c7"
+  },
+  {
+    "name": "player-fruit-normal-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 44.262,
+    "peak_rss_mb": 516.8359375,
+    "minimum_available_mb": 18389.83203125,
+    "summary_lines": [
+      "CityEntityCoverPreview player-tree-only: plates=3 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-fruit-normal-final"
+    ],
+    "run_record": "process/runs/player-fruit-normal-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "168372b9fccce3323c009d92e7f3ec275d7d2b523ca475994a3cff1926e0c9b5"
+  },
+  {
+    "name": "player-ordinary-reduced-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 46.432,
+    "peak_rss_mb": 488.2421875,
+    "minimum_available_mb": 19129.9140625,
+    "summary_lines": [
+      "CityEntityCoverPreview player-tree-only: plates=3 failures=0 save_writes=0 -> /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-ordinary-reduced-final"
+    ],
+    "run_record": "process/runs/player-ordinary-reduced-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "5409261459b7143cccdc18555ed0df50b93afcf9dceeffafcd1371f0d287db25"
+  },
+  {
+    "name": "bed-cover-fight-final",
+    "classification": "clean_selected_native",
+    "note": "Selected controlled actual-city capture. Exact input snapshot is recorded per run; folder suffix does not imply all captures used one source revision.",
+    "actual_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "elapsed_seconds": 45.274,
+    "peak_rss_mb": 538.8671875,
+    "minimum_available_mb": 18769.52734375,
+    "summary_lines": [
+      "CityGroundReview: segment=2 seed=16102026 context=false frames=34 fires=25 hits=28 failures=0"
+    ],
+    "run_record": "process/runs/bed-cover-fight-final.json",
+    "source_provenance": "process/sources/33b370db8ca7bc68c103d5edafda6adf172e842535a21df7af844b31bea0f961.json",
+    "original_run_results_sha256": "270a9cc4e0e404fba097a63e2bfafc9974afe3ac04a22f49395c421ed94ed29d"
+  }
+]

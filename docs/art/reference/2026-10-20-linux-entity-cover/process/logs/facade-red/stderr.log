@@ -1,0 +1,58 @@
+ERROR: actual FootprintWallBay registers its original opacity and ground depth
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_irregular_faces (res://tools/tests/BuildingFaceCoverTest.gd:78)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:35)
+ERROR: opaque upright LeftJamb has a bounded solid descriptor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_irregular_faces (res://tools/tests/BuildingFaceCoverTest.gd:94)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:35)
+ERROR: opaque upright RightJamb has a bounded solid descriptor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_irregular_faces (res://tools/tests/BuildingFaceCoverTest.gd:94)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:35)
+ERROR: opaque upright Lintel has a bounded solid descriptor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_irregular_faces (res://tools/tests/BuildingFaceCoverTest.gd:94)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:35)
+ERROR: opaque upper plaster receives real face coverage
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_irregular_faces (res://tools/tests/BuildingFaceCoverTest.gd:105)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:35)
+ERROR: ordinary open frontage exposes its actual painted source slices as registered sprites
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_rectangular_faces (res://tools/tests/BuildingFaceCoverTest.gd:119)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:38)
+       [3] _test_irregular_faces (res://tools/tests/BuildingFaceCoverTest.gd:107)
+ERROR: ordinary closed frontage exposes its actual painted source slices as registered sprites
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_rectangular_faces (res://tools/tests/BuildingFaceCoverTest.gd:119)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:38)
+       [3] _test_rectangular_faces (res://tools/tests/BuildingFaceCoverTest.gd:137)
+ERROR: civic open frontage exposes its actual painted source slices as registered sprites
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_rectangular_faces (res://tools/tests/BuildingFaceCoverTest.gd:119)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:38)
+       [3] _test_rectangular_faces (res://tools/tests/BuildingFaceCoverTest.gd:137)
+ERROR: civic closed frontage exposes its actual painted source slices as registered sprites
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BuildingFaceCoverTest.gd:28)
+       [1] _test_rectangular_faces (res://tools/tests/BuildingFaceCoverTest.gd:119)
+       [2] _run (res://tools/tests/BuildingFaceCoverTest.gd:38)
+       [3] _test_rectangular_faces (res://tools/tests/BuildingFaceCoverTest.gd:137)

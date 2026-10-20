@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: real lease dependencies load
+PASS: ordinary EnemyActor materializes through the existing pool
+PASS: materialized fixture has a stable logical handle
+PASS: ordinary spawn creates exactly one logical record
+PASS: logical population counters increment once
+PASS: manager dematerializes an eligible ordinary actor
+PASS: dematerialization preserves the logical record
+PASS: dematerialization switches only representation state
+PASS: data-only record has no bound actor
+PASS: lease commit preserves position
+PASS: lease commit preserves velocity
+PASS: lease commit preserves authoritative health
+PASS: lease commit preserves stun state
+PASS: lease commit preserves knockback state
+PASS: dematerialization does not alter logical population counters
+PASS: dematerialized actor leaves materialized spatial indexes
+PASS: pooled representation is fully quiescent
+PASS: a quiesced actor leaves the enemies group
+PASS: promotion reuses the same pooled representation when available
+PASS: promotion binds the existing logical handle
+PASS: promotion does not create a second logical record
+PASS: hydration restores the latest data-only position
+PASS: hydration restores authoritative velocity
+PASS: and rejoins the enemies group, so weapons can hit it again
+PASS: hydration restores authoritative health
+PASS: hydration restores authoritative stun
+PASS: hydration restores authoritative knockback
+PASS: hydration restores cold actor scale state
+PASS: lease round trip preserves unrelated cold state
+PASS: rematerialized actor is indexed exactly once
+PASS: promotion leaves logical counters unchanged
+PASS: representation can dematerialize repeatedly
+PASS: forced pooled-node deletion falls back to a fresh representation
+PASS: fresh replacement binds the same generation handle
+PASS: forced representation loss does not duplicate logical records
+PASS: fresh replacement attaches to indexes exactly once
+PASS: replacement can return to data-only state
+PASS: detached logical record has an explicit exact-once release path
+PASS: detached release invalidates the logical handle
+PASS: detached release is idempotent
+PASS: cleanup restores the initial logical population
+PASS: cleanup restores initial population counters
+PASS: stale generation handles cannot acquire a representation
+EnemyRepresentationLeaseTest passes=43 failures=0

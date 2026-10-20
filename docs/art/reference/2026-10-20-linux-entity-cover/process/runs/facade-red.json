@@ -1,0 +1,474 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/home/user/Nauris/Synthetic-Ascension",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/facade-red/logs/engine.log",
+    "--flush-output",
+    "--headless",
+    "res://tools/tests/BuildingFaceCoverTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /home/user/Nauris/Synthetic-Ascension --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/facade-red/logs/engine.log --flush-output --headless res://tools/tests/BuildingFaceCoverTest.tscn",
+  "project_root": "/home/user/Nauris/Synthetic-Ascension",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/facade-red",
+  "actual_exit": 1,
+  "stop_reason": "nonzero_exit",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20828.58984375,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 51.7109375,
+      "cpu_seconds": 0.03,
+      "available_mb": 20796.54296875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 0.145,
+      "rss_mb": 82.33984375,
+      "cpu_seconds": 0.21,
+      "available_mb": 20784.37109375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 0.328,
+      "rss_mb": 110.84765625,
+      "cpu_seconds": 0.4,
+      "available_mb": 20757.234375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 0.521,
+      "rss_mb": 127.796875,
+      "cpu_seconds": 0.58,
+      "available_mb": 20742.421875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 0.773,
+      "rss_mb": 147.046875,
+      "cpu_seconds": 0.74,
+      "available_mb": 20719.34765625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 0.929,
+      "rss_mb": 174.796875,
+      "cpu_seconds": 0.93,
+      "available_mb": 20657.74609375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 1.112,
+      "rss_mb": 181.421875,
+      "cpu_seconds": 1.07,
+      "available_mb": 20657.76171875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 1.266,
+      "rss_mb": 181.7265625,
+      "cpu_seconds": 1.23,
+      "available_mb": 20657.76171875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 1.413,
+      "rss_mb": 182.8515625,
+      "cpu_seconds": 1.37,
+      "available_mb": 20649.8203125,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 1.564,
+      "rss_mb": 216.8515625,
+      "cpu_seconds": 1.53,
+      "available_mb": 20618.4296875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 1.713,
+      "rss_mb": 251.6015625,
+      "cpu_seconds": 1.67,
+      "available_mb": 20586.64453125,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 1.859,
+      "rss_mb": 300.7265625,
+      "cpu_seconds": 1.81,
+      "available_mb": 20531.55078125,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 2.004,
+      "rss_mb": 343.1015625,
+      "cpu_seconds": 1.96,
+      "available_mb": 20490.4296875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 2.15,
+      "rss_mb": 343.3515625,
+      "cpu_seconds": 2.11,
+      "available_mb": 20493.44140625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 2.3,
+      "rss_mb": 359.4765625,
+      "cpu_seconds": 2.26,
+      "available_mb": 20475.58984375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 2.448,
+      "rss_mb": 364.7265625,
+      "cpu_seconds": 2.41,
+      "available_mb": 20476.06640625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 2.597,
+      "rss_mb": 388.09765625,
+      "cpu_seconds": 2.55,
+      "available_mb": 20453.08984375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 2.743,
+      "rss_mb": 388.22265625,
+      "cpu_seconds": 2.7,
+      "available_mb": 20453.078125,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 2.89,
+      "rss_mb": 389.90625,
+      "cpu_seconds": 2.84,
+      "available_mb": 20453.078125,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 3.033,
+      "rss_mb": 397.03125,
+      "cpu_seconds": 2.99,
+      "available_mb": 20445.0546875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 3.178,
+      "rss_mb": 407.28125,
+      "cpu_seconds": 3.12,
+      "available_mb": 20437.1796875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 3.323,
+      "rss_mb": 407.28125,
+      "cpu_seconds": 3.28,
+      "available_mb": 20436.93359375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 3.471,
+      "rss_mb": 407.28125,
+      "cpu_seconds": 3.42,
+      "available_mb": 20439.22265625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 3.62,
+      "rss_mb": 407.28125,
+      "cpu_seconds": 3.58,
+      "available_mb": 20438.9765625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 3.774,
+      "rss_mb": 407.40625,
+      "cpu_seconds": 3.73,
+      "available_mb": 20438.9765625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 3.927,
+      "rss_mb": 407.40625,
+      "cpu_seconds": 3.87,
+      "available_mb": 20439.22265625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 4.07,
+      "rss_mb": 407.40625,
+      "cpu_seconds": 4.03,
+      "available_mb": 20440.171875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 4.226,
+      "rss_mb": 407.40625,
+      "cpu_seconds": 4.22,
+      "available_mb": 20439.015625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 4.416,
+      "rss_mb": 407.40625,
+      "cpu_seconds": 4.38,
+      "available_mb": 20441.25,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 4.579,
+      "rss_mb": 407.40625,
+      "cpu_seconds": 4.55,
+      "available_mb": 20440.34375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 4.746,
+      "rss_mb": 407.40625,
+      "cpu_seconds": 4.71,
+      "available_mb": 20440.984375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 4.909,
+      "rss_mb": 408.28125,
+      "cpu_seconds": 4.86,
+      "available_mb": 20440.69921875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 5.053,
+      "rss_mb": 433.40625,
+      "cpu_seconds": 5.0,
+      "available_mb": 20417.4765625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 5.2,
+      "rss_mb": 433.65625,
+      "cpu_seconds": 5.15,
+      "available_mb": 20417.484375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 5.352,
+      "rss_mb": 433.65625,
+      "cpu_seconds": 5.3,
+      "available_mb": 20417.484375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 5.504,
+      "rss_mb": 433.65625,
+      "cpu_seconds": 5.46,
+      "available_mb": 20453.71875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 5.657,
+      "rss_mb": 433.65625,
+      "cpu_seconds": 5.61,
+      "available_mb": 20452.6015625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 5.809,
+      "rss_mb": 433.65625,
+      "cpu_seconds": 5.75,
+      "available_mb": 20449.67578125,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 5.957,
+      "rss_mb": 433.65625,
+      "cpu_seconds": 5.9,
+      "available_mb": 20464.6015625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 6.1,
+      "rss_mb": 433.65625,
+      "cpu_seconds": 6.06,
+      "available_mb": 20466.921875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 6.272,
+      "rss_mb": 434.15625,
+      "cpu_seconds": 6.21,
+      "available_mb": 20451.328125,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 6.429,
+      "rss_mb": 437.40625,
+      "cpu_seconds": 6.37,
+      "available_mb": 20454.16796875,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 6.581,
+      "rss_mb": 443.61328125,
+      "cpu_seconds": 6.52,
+      "available_mb": 20454.06640625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 6.73,
+      "rss_mb": 469.07421875,
+      "cpu_seconds": 6.66,
+      "available_mb": 20428.4765625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 6.876,
+      "rss_mb": 492.94921875,
+      "cpu_seconds": 6.8,
+      "available_mb": 20404.7734375,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 7.014,
+      "rss_mb": 374.01171875,
+      "cpu_seconds": 6.94,
+      "available_mb": 20491.3515625,
+      "pids": [
+        68846
+      ]
+    },
+    {
+      "elapsed_seconds": 7.161,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20735.8359375,
+      "pids": []
+    }
+  ],
+  "diagnostics": [
+    "ERROR: actual FootprintWallBay registers its original opacity and ground depth",
+    "ERROR: opaque upright LeftJamb has a bounded solid descriptor",
+    "ERROR: opaque upright RightJamb has a bounded solid descriptor",
+    "ERROR: opaque upright Lintel has a bounded solid descriptor",
+    "ERROR: opaque upper plaster receives real face coverage",
+    "ERROR: ordinary open frontage exposes its actual painted source slices as registered sprites",
+    "ERROR: ordinary closed frontage exposes its actual painted source slices as registered sprites",
+    "ERROR: civic open frontage exposes its actual painted source slices as registered sprites",
+    "ERROR: civic closed frontage exposes its actual painted source slices as registered sprites"
+  ],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T12:29:13.260782+00:00",
+  "limits": {
+    "timeout_seconds": 60.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "faf0e7f4b24a07fc4d288d229341b0d28135e9bb",
+  "pid": 68846,
+  "elapsed_seconds": 8.217,
+  "ended_utc": "2026-10-20T12:29:21.477869+00:00",
+  "runner_exit": 1,
+  "original_run_results_sha256": "418bcab051bba315f0ed1057353c24b368f27e4abc284f34ecb38468b0d0407e",
+  "source_provenance": "../sources/7647bbb8722a0c55215cbdea2139188659f613aa4338c5e537260e901868fc3f.json",
+  "packet_classification": "valid_feature_red",
+  "packet_note": "Actual bay/slice and solid-face registrations missing: 6 passes, 9 expected failures. Full commands, exits, diagnostics and resource time series retained. Input hashes/untracked inputs moved losslessly to the content-deduplicated source record. Original machine-wide Git status omitted; its original JSON digest is retained. Local command/run paths describe the original machine, not additional bundled artifacts."
+}

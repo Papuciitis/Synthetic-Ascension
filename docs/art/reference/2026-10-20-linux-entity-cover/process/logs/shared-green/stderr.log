@@ -1,0 +1,12 @@
+SCRIPT ERROR: Parse Error: Invalid operands "Vector2" and "Vector2i" for "==" operator.
+          at: GDScript::reload (res://core/systems/world/visibility/WorldCover.gd:243)
+          GDScript backtrace (most recent call first):
+              [0] _run (res://tools/tests/WorldCoverTest.gd:22)
+ERROR: Failed to load script "res://core/systems/world/visibility/WorldCover.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tools/tests/WorldCoverTest.gd:22)
+SCRIPT ERROR: Invalid call. Nonexistent function 'get_for (via call)' in base 'GDScript'.
+          at: _run (res://tools/tests/WorldCoverTest.gd:23)
+          GDScript backtrace (most recent call first):
+              [0] _run (res://tools/tests/WorldCoverTest.gd:23)

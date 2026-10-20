@@ -1,0 +1,44 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: entities need a shared live world-cover query, not the player's actor-filtered mask
+PASS: consumers in one viewport share one coverage provider
+PASS: shared coverage reaches a roof-covered fragment for a behind actor
+PASS: uncovered pixels remain clear
+PASS: the same covered pixel remains clear for an actor in front
+PASS: cover retains continuous live roof opacity
+PASS: an actual cutaway stops shadowing covered entities
+PASS: courtyard rear span remains behind its actor
+PASS: the same actor is covered by its southern courtyard wing
+PASS: hidden cover never leaves stale world coverage
+PASS: streaming removal clears shared coverage
+PASS: shared batches retain more than the old actor-local32 triangles
+PASS: a covering roof beyond the old capacity is not silently discarded
+PASS: multiple consumers share one snapshot in a render frame
+PASS: unloading every cover removes all shared primitives
+PASS: real masonry uses polygon opacity and inherited fade
+PASS: masonry uses its registered parent-local ground depth
+PASS: concave masonry does not fill an absent wall section
+PASS: hidden masonry removes its live coverage
+PASS: transparent real masonry stays clear independently of virtual roof helper masks
+ERROR: another viewport's independent world does not contribute roof coverage
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverTest.gd:14)
+       [1] _test_world_isolation (res://tools/tests/WorldCoverTest.gd:135)
+       [2] _run (res://tools/tests/WorldCoverTest.gd:75)
+       [3] _test_solid_faces (res://tools/tests/WorldCoverTest.gd:105)
+ERROR: another world does not contribute sprite coverage
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverTest.gd:14)
+       [1] _test_world_isolation (res://tools/tests/WorldCoverTest.gd:136)
+       [2] _run (res://tools/tests/WorldCoverTest.gd:75)
+       [3] _test_solid_faces (res://tools/tests/WorldCoverTest.gd:105)
+ERROR: another world does not contribute masonry coverage
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverTest.gd:14)
+       [1] _test_world_isolation (res://tools/tests/WorldCoverTest.gd:137)
+       [2] _run (res://tools/tests/WorldCoverTest.gd:75)
+       [3] _test_solid_faces (res://tools/tests/WorldCoverTest.gd:105)
+WorldCoverTest: 20 passed, 3 failed

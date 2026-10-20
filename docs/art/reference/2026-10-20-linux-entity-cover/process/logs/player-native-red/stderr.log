@@ -1,0 +1,34 @@
+ERROR: Condition "!viewport->canvas_map.has(p_canvas)" is true.
+   at: viewport_set_canvas_transform (servers/rendering/renderer_viewport.cpp:1342)
+   GDScript backtrace (most recent call first):
+       [0] _setup (res://tools/tests/PlayerForegroundCoverRenderTest.gd:83)
+       [1] _run (res://tools/tests/PlayerForegroundCoverRenderTest.gd:55)
+ERROR: normal a self-transparent roof leaves the player normal despite opaque polygon modulation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlayerForegroundCoverRenderTest.gd:38)
+       [1] _roof_fixture (res://tools/tests/PlayerForegroundCoverRenderTest.gd:297)
+       [2] _frame (res://tools/tests/PlayerForegroundCoverRenderTest.gd:154)
+ERROR: normal a transparent roof ancestor leaves the player normal despite opaque polygon modulation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlayerForegroundCoverRenderTest.gd:38)
+       [1] _roof_fixture (res://tools/tests/PlayerForegroundCoverRenderTest.gd:301)
+       [2] _frame (res://tools/tests/PlayerForegroundCoverRenderTest.gd:154)
+ERROR: Condition "!viewport->canvas_map.has(p_canvas)" is true.
+   at: viewport_set_canvas_transform (servers/rendering/renderer_viewport.cpp:1342)
+   GDScript backtrace (most recent call first):
+       [0] _setup (res://tools/tests/PlayerForegroundCoverRenderTest.gd:83)
+       [1] _run (res://tools/tests/PlayerForegroundCoverRenderTest.gd:55)
+ERROR: small a self-transparent roof leaves the player normal despite opaque polygon modulation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlayerForegroundCoverRenderTest.gd:38)
+       [1] _roof_fixture (res://tools/tests/PlayerForegroundCoverRenderTest.gd:297)
+       [2] _frame (res://tools/tests/PlayerForegroundCoverRenderTest.gd:154)
+ERROR: small a transparent roof ancestor leaves the player normal despite opaque polygon modulation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlayerForegroundCoverRenderTest.gd:38)
+       [1] _roof_fixture (res://tools/tests/PlayerForegroundCoverRenderTest.gd:301)
+       [2] _frame (res://tools/tests/PlayerForegroundCoverRenderTest.gd:154)

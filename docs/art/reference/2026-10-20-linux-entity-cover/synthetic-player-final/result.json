@@ -1,0 +1,572 @@
+{
+	"adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+	"captures": [
+		{
+			"name": "normal-rgba-behind.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 4,
+				"grid_cells": 30,
+				"index_count": 4,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 5849,
+				"primitive_count": 1,
+				"refresh_usec": 191,
+				"source_reads": 1
+			}
+		},
+		{
+			"name": "normal-rgba-front.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 16,
+				"grid_cells": 30,
+				"index_count": 4,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 5849,
+				"primitive_count": 1,
+				"refresh_usec": 166,
+				"source_reads": 1
+			}
+		},
+		{
+			"name": "normal-atlas-flipped.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 34,
+				"grid_cells": 30,
+				"index_count": 4,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 5849,
+				"primitive_count": 1,
+				"refresh_usec": 198,
+				"source_reads": 2
+			}
+		},
+		{
+			"name": "normal-ordinary-behind.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 40,
+				"grid_cells": 30,
+				"index_count": 6,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 1,
+				"refresh_usec": 167,
+				"source_reads": 3
+			}
+		},
+		{
+			"name": "normal-ordinary-front.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 43,
+				"grid_cells": 30,
+				"index_count": 6,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 1,
+				"refresh_usec": 88,
+				"source_reads": 3
+			}
+		},
+		{
+			"name": "normal-fruit-behind.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 46,
+				"grid_cells": 30,
+				"index_count": 1,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 1,
+				"refresh_usec": 145,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "normal-fruit-front.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 49,
+				"grid_cells": 30,
+				"index_count": 1,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 1,
+				"refresh_usec": 163,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "normal-roof-opaque.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 0,
+				"generation": 52,
+				"grid_cells": 30,
+				"index_count": 8,
+				"materials": 1,
+				"max_candidates": 2,
+				"peak_candidates": 2,
+				"peak_primitives": 2,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 2,
+				"refresh_usec": 110,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "normal-roof-ancestor-partial.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 0,
+				"generation": 61,
+				"grid_cells": 30,
+				"index_count": 8,
+				"materials": 1,
+				"max_candidates": 2,
+				"peak_candidates": 2,
+				"peak_primitives": 2,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 2,
+				"refresh_usec": 83,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "normal-roof-cutaway.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 0,
+				"generation": 64,
+				"grid_cells": 30,
+				"index_count": 0,
+				"materials": 1,
+				"max_candidates": 0,
+				"peak_candidates": 2,
+				"peak_primitives": 2,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 0,
+				"refresh_usec": 50,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "normal-capacity-35.png",
+			"size": [
+				960,
+				540
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 71,
+				"grid_cells": 30,
+				"index_count": 138,
+				"materials": 1,
+				"max_candidates": 35,
+				"peak_candidates": 35,
+				"peak_primitives": 35,
+				"peak_refresh_usec": 27390,
+				"primitive_count": 35,
+				"refresh_usec": 1770,
+				"source_reads": 5
+			}
+		},
+		{
+			"name": "small-rgba-behind.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 5,
+				"grid_cells": 30,
+				"index_count": 4,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 1212,
+				"primitive_count": 1,
+				"refresh_usec": 594,
+				"source_reads": 1
+			}
+		},
+		{
+			"name": "small-rgba-front.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 17,
+				"grid_cells": 30,
+				"index_count": 4,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 1212,
+				"primitive_count": 1,
+				"refresh_usec": 113,
+				"source_reads": 1
+			}
+		},
+		{
+			"name": "small-atlas-flipped.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 35,
+				"grid_cells": 30,
+				"index_count": 4,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 1760,
+				"primitive_count": 1,
+				"refresh_usec": 444,
+				"source_reads": 2
+			}
+		},
+		{
+			"name": "small-ordinary-behind.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 41,
+				"grid_cells": 30,
+				"index_count": 6,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 19985,
+				"primitive_count": 1,
+				"refresh_usec": 126,
+				"source_reads": 3
+			}
+		},
+		{
+			"name": "small-ordinary-front.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 44,
+				"grid_cells": 30,
+				"index_count": 6,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 19985,
+				"primitive_count": 1,
+				"refresh_usec": 107,
+				"source_reads": 3
+			}
+		},
+		{
+			"name": "small-fruit-behind.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 47,
+				"grid_cells": 30,
+				"index_count": 1,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 22425,
+				"primitive_count": 1,
+				"refresh_usec": 112,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "small-fruit-front.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 50,
+				"grid_cells": 30,
+				"index_count": 1,
+				"materials": 1,
+				"max_candidates": 1,
+				"peak_candidates": 1,
+				"peak_primitives": 1,
+				"peak_refresh_usec": 22425,
+				"primitive_count": 1,
+				"refresh_usec": 97,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "small-roof-opaque.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 0,
+				"generation": 53,
+				"grid_cells": 30,
+				"index_count": 8,
+				"materials": 1,
+				"max_candidates": 2,
+				"peak_candidates": 2,
+				"peak_primitives": 2,
+				"peak_refresh_usec": 22425,
+				"primitive_count": 2,
+				"refresh_usec": 147,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "small-roof-ancestor-partial.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 0,
+				"generation": 62,
+				"grid_cells": 30,
+				"index_count": 8,
+				"materials": 1,
+				"max_candidates": 2,
+				"peak_candidates": 2,
+				"peak_primitives": 2,
+				"peak_refresh_usec": 22425,
+				"primitive_count": 2,
+				"refresh_usec": 110,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "small-roof-cutaway.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 0,
+				"generation": 65,
+				"grid_cells": 30,
+				"index_count": 0,
+				"materials": 1,
+				"max_candidates": 0,
+				"peak_candidates": 2,
+				"peak_primitives": 2,
+				"peak_refresh_usec": 22425,
+				"primitive_count": 0,
+				"refresh_usec": 54,
+				"source_reads": 4
+			}
+		},
+		{
+			"name": "small-capacity-35.png",
+			"size": [
+				640,
+				360
+			],
+			"stats": {
+				"cell_px": 256.0,
+				"foreground_sources": 1,
+				"generation": 72,
+				"grid_cells": 30,
+				"index_count": 138,
+				"materials": 1,
+				"max_candidates": 35,
+				"peak_candidates": 35,
+				"peak_primitives": 35,
+				"peak_refresh_usec": 22425,
+				"primitive_count": 35,
+				"refresh_usec": 838,
+				"source_reads": 5
+			}
+		}
+	],
+	"failed": 0,
+	"limits": "Native material-path fixtures with original ordinary/fruit tree art; synthetic actor blocks use the production PlayerRoofOcclusion body/head material. No human traversal, combat or whole-street acceptance is claimed.",
+	"passed": 95,
+	"real_art_samples": [
+		{
+			"hole_color": "(0.949, 0.1765, 0.0784, 1.0)",
+			"hole_pixel": [
+				667,
+				289
+			],
+			"opaque_color": "(0.1608, 0.1882, 0.1569, 1.0)",
+			"opaque_pixel": [
+				661,
+				326
+			],
+			"root": [
+				650.0,
+				1170.0
+			],
+			"scale": 0.223285486443381,
+			"size": "normal",
+			"tree": "res://assets/world/city_block/temperate_tree.png"
+		},
+		{
+			"hole_color": "(0.9451, 0.1765, 0.0784, 1.0)",
+			"hole_pixel": [
+				660,
+				411
+			],
+			"opaque_color": "(0.2078, 0.2314, 0.1922, 1.0)",
+			"opaque_pixel": [
+				666,
+				401
+			],
+			"root": [
+				660.0,
+				1060.0
+			],
+			"scale": 0.115681233933162,
+			"size": "normal",
+			"tree": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png"
+		},
+		{
+			"hole_color": "(0.949, 0.1765, 0.0784, 1.0)",
+			"hole_pixel": [
+				445,
+				192
+			],
+			"opaque_color": "(0.1608, 0.1804, 0.1529, 1.0)",
+			"opaque_pixel": [
+				440,
+				217
+			],
+			"root": [
+				650.0,
+				1170.0
+			],
+			"scale": 0.223285486443381,
+			"size": "small",
+			"tree": "res://assets/world/city_block/temperate_tree.png"
+		},
+		{
+			"hole_color": "(0.9451, 0.1765, 0.0784, 1.0)",
+			"hole_pixel": [
+				440,
+				274
+			],
+			"opaque_color": "(0.2078, 0.2275, 0.1922, 1.0)",
+			"opaque_pixel": [
+				444,
+				267
+			],
+			"root": [
+				660.0,
+				1060.0
+			],
+			"scale": 0.115681233933162,
+			"size": "small",
+			"tree": "res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png"
+		}
+	],
+	"renderer": "gl_compatibility",
+	"save_writes": 0
+}

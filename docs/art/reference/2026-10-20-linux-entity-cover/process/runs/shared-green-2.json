@@ -1,0 +1,435 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/home/user/Nauris/Synthetic-Ascension",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/shared-green-2/logs/engine.log",
+    "--flush-output",
+    "--headless",
+    "res://tools/tests/WorldCoverTest.tscn"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /home/user/Nauris/Synthetic-Ascension --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/shared-green-2/logs/engine.log --flush-output --headless res://tools/tests/WorldCoverTest.tscn",
+  "project_root": "/home/user/Nauris/Synthetic-Ascension",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/shared-green-2",
+  "actual_exit": 1,
+  "stop_reason": "nonzero_exit",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20710.8828125,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 49.68359375,
+      "cpu_seconds": 0.06,
+      "available_mb": 20638.71484375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 0.169,
+      "rss_mb": 82.15234375,
+      "cpu_seconds": 0.21,
+      "available_mb": 20603.4609375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 0.317,
+      "rss_mb": 117.45703125,
+      "cpu_seconds": 0.35,
+      "available_mb": 20575.27734375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 0.466,
+      "rss_mb": 145.7734375,
+      "cpu_seconds": 0.5,
+      "available_mb": 20564.47265625,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 0.614,
+      "rss_mb": 170.0234375,
+      "cpu_seconds": 0.65,
+      "available_mb": 20538.62109375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 0.763,
+      "rss_mb": 181.07421875,
+      "cpu_seconds": 0.8,
+      "available_mb": 20527.37109375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 0.913,
+      "rss_mb": 181.70703125,
+      "cpu_seconds": 0.96,
+      "available_mb": 20526.85546875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 1.073,
+      "rss_mb": 184.70703125,
+      "cpu_seconds": 1.11,
+      "available_mb": 20519.0078125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 1.216,
+      "rss_mb": 218.08203125,
+      "cpu_seconds": 1.25,
+      "available_mb": 20493.59375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 1.368,
+      "rss_mb": 231.83203125,
+      "cpu_seconds": 1.42,
+      "available_mb": 20479.24609375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 1.535,
+      "rss_mb": 251.20703125,
+      "cpu_seconds": 1.58,
+      "available_mb": 20455.921875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 1.695,
+      "rss_mb": 256.95703125,
+      "cpu_seconds": 1.74,
+      "available_mb": 20447.76953125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 1.851,
+      "rss_mb": 275.06640625,
+      "cpu_seconds": 1.89,
+      "available_mb": 20432.07421875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 2.004,
+      "rss_mb": 275.06640625,
+      "cpu_seconds": 2.05,
+      "available_mb": 20432.07421875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 2.164,
+      "rss_mb": 322.94140625,
+      "cpu_seconds": 2.21,
+      "available_mb": 20384.98828125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 2.318,
+      "rss_mb": 358.56640625,
+      "cpu_seconds": 2.35,
+      "available_mb": 20345.75,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 2.466,
+      "rss_mb": 386.69140625,
+      "cpu_seconds": 2.51,
+      "available_mb": 20322.046875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 2.621,
+      "rss_mb": 397.125,
+      "cpu_seconds": 2.66,
+      "available_mb": 20306.3515625,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 2.775,
+      "rss_mb": 399.75,
+      "cpu_seconds": 2.81,
+      "available_mb": 20316.38671875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 2.925,
+      "rss_mb": 408.75,
+      "cpu_seconds": 2.96,
+      "available_mb": 20309.03125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 3.076,
+      "rss_mb": 408.75,
+      "cpu_seconds": 3.11,
+      "available_mb": 20292.74609375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 3.223,
+      "rss_mb": 408.875,
+      "cpu_seconds": 3.25,
+      "available_mb": 20292.59375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 3.367,
+      "rss_mb": 408.875,
+      "cpu_seconds": 3.4,
+      "available_mb": 20292.390625,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 3.517,
+      "rss_mb": 409.0,
+      "cpu_seconds": 3.56,
+      "available_mb": 20292.36328125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 3.679,
+      "rss_mb": 409.0,
+      "cpu_seconds": 3.71,
+      "available_mb": 20305.90234375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 3.829,
+      "rss_mb": 409.0,
+      "cpu_seconds": 3.87,
+      "available_mb": 20309.828125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 3.981,
+      "rss_mb": 409.0,
+      "cpu_seconds": 4.02,
+      "available_mb": 20309.828125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 4.135,
+      "rss_mb": 409.0,
+      "cpu_seconds": 4.17,
+      "available_mb": 20309.828125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 4.287,
+      "rss_mb": 409.0,
+      "cpu_seconds": 4.33,
+      "available_mb": 20309.828125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 4.441,
+      "rss_mb": 409.0,
+      "cpu_seconds": 4.48,
+      "available_mb": 20309.828125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 4.591,
+      "rss_mb": 430.75,
+      "cpu_seconds": 4.63,
+      "available_mb": 20287.00390625,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 4.743,
+      "rss_mb": 435.25,
+      "cpu_seconds": 4.81,
+      "available_mb": 20331.36328125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 4.929,
+      "rss_mb": 435.25,
+      "cpu_seconds": 4.98,
+      "available_mb": 20331.36328125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 5.093,
+      "rss_mb": 435.25,
+      "cpu_seconds": 5.14,
+      "available_mb": 20331.61328125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 5.246,
+      "rss_mb": 435.25,
+      "cpu_seconds": 5.28,
+      "available_mb": 20331.37109375,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 5.395,
+      "rss_mb": 435.25,
+      "cpu_seconds": 5.44,
+      "available_mb": 20331.4140625,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 5.553,
+      "rss_mb": 435.25,
+      "cpu_seconds": 5.6,
+      "available_mb": 20331.4140625,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 5.716,
+      "rss_mb": 435.25,
+      "cpu_seconds": 5.77,
+      "available_mb": 20334.80078125,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 5.878,
+      "rss_mb": 436.125,
+      "cpu_seconds": 5.92,
+      "available_mb": 20331.94921875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 6.034,
+      "rss_mb": 438.125,
+      "cpu_seconds": 6.08,
+      "available_mb": 20331.94921875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 6.189,
+      "rss_mb": 445.125,
+      "cpu_seconds": 6.22,
+      "available_mb": 20324.1015625,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 6.334,
+      "rss_mb": 400.4765625,
+      "cpu_seconds": 6.38,
+      "available_mb": 20339.796875,
+      "pids": [
+        65447
+      ]
+    },
+    {
+      "elapsed_seconds": 6.495,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20615.21875,
+      "pids": []
+    }
+  ],
+  "diagnostics": [
+    "SCRIPT ERROR: Invalid call. Nonexistent function 'get_parent_item' in base 'Polygon2D'.",
+    "ERROR: shared coverage reaches a roof-covered fragment for a behind actor",
+    "ERROR: cover retains continuous live roof opacity",
+    "ERROR: the same actor is covered by its southern courtyard wing",
+    "ERROR: shared batches retain more than the old actor-local32 triangles",
+    "ERROR: a covering roof beyond the old capacity is not silently discarded"
+  ],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T12:09:12.928175+00:00",
+  "limits": {
+    "timeout_seconds": 60.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "ce5671e6b738cd3b854bee6bfc7efbadd4252c9f",
+  "pid": 65447,
+  "elapsed_seconds": 7.666,
+  "ended_utc": "2026-10-20T12:09:20.594609+00:00",
+  "runner_exit": 1,
+  "original_run_results_sha256": "97049d15df71561a784b1ed507419f5f57b81d6a5cfd7403794b1bf4e7437fad",
+  "source_provenance": "../sources/e206d994a01e271a397f6c3fc327faa568e7173aa7d777b3364fb8814f8a3ec0.json",
+  "packet_classification": "failed_attempt",
+  "packet_note": "Invalid get_parent_item runtime call and coverage failures; not GREEN evidence. Full commands, exits, diagnostics and resource time series retained. Input hashes/untracked inputs moved losslessly to the content-deduplicated source record. Original machine-wide Git status omitted; its original JSON digest is retained. Local command/run paths describe the original machine, not additional bundled artifacts."
+}

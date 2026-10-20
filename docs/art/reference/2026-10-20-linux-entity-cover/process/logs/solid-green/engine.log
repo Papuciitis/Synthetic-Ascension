@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Could not preload resource script "res://scenes/world/buildings/CityBlockFrontages.gd".
+   at: GDScript::reload (res://scenes/world/buildings/CityBlockKit.gd:106)
+SCRIPT ERROR: Parse Error: Could not resolve script "res://scenes/world/buildings/CityBlockFrontages.gd".
+   at: GDScript::reload (res://scenes/world/buildings/CityBlockKit.gd:106)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://scenes/world/buildings/DungeonBuilding.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://core/systems/world/proc/SiteOverlayImpl.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://core/systems/world/proc/SiteManager.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://core/systems/world/ChunkManager.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://effects/manifestations/ManifestationShardProjectile.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://effects/manifestations/logic/VectorHalo.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://data/manifestations/ManifestationCatalog.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://data/items/ItemInstance.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://data/items/ItemData.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://core/systems/major_choice/DoctrineRewardService.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://autoload/global.gd:0)
+ERROR: Failed to load script "res://autoload/global.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+PASS: entities need a shared live world-cover query, not the player's actor-filtered mask
+PASS: consumers in one viewport share one coverage provider
+PASS: shared coverage reaches a roof-covered fragment for a behind actor
+PASS: uncovered pixels remain clear
+PASS: the same covered pixel remains clear for an actor in front
+PASS: cover retains continuous live roof opacity
+PASS: an actual cutaway stops shadowing covered entities
+PASS: courtyard rear span remains behind its actor
+PASS: the same actor is covered by its southern courtyard wing
+PASS: hidden cover never leaves stale world coverage
+PASS: streaming removal clears shared coverage
+PASS: shared batches retain more than the old actor-local32 triangles
+PASS: a covering roof beyond the old capacity is not silently discarded
+PASS: multiple consumers share one snapshot in a render frame
+PASS: unloading every cover removes all shared primitives
+PASS: real masonry uses polygon opacity and inherited fade
+PASS: masonry uses its registered parent-local ground depth
+PASS: concave masonry does not fill an absent wall section
+PASS: hidden masonry removes its live coverage
+PASS: transparent real masonry stays clear independently of virtual roof helper masks
+WorldCoverTest: 20 passed, 0 failed

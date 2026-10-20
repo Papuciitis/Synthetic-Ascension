@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: a live enemy registers with the scene renderer
+PASS: a batched enemy hides its own sprite
+PASS: returning to the pool unregisters the actor (registry tracks live enemies, not pool inventory)
+PASS: re-obtaining from the pool registers again
+PASS: re-obtained batched enemy keeps its sprite hidden
+PASS: an enemy reused with batching disabled shows its own sprite again
+PASS: batching disabled leaves the renderer registry empty
+PASS: a pool-warmed enemy does not register with the renderer
+PASS: the warmed enemy registers on its first obtain
+EnemyVisualBatchingTest passes=9 failures=0

@@ -1,0 +1,501 @@
+{
+  "command": [
+    "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+    "--path",
+    "/home/user/Nauris/Synthetic-Ascension",
+    "--log-file",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/entity-preview-parse/logs/engine.log",
+    "--flush-output",
+    "--headless",
+    "--check-only",
+    "--script",
+    "res://tools/dev/CityEntityCoverPreview.gd"
+  ],
+  "command_shell": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /home/user/Nauris/Synthetic-Ascension --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/entity-preview-parse/logs/engine.log --flush-output --headless --check-only --script res://tools/dev/CityEntityCoverPreview.gd",
+  "project_root": "/home/user/Nauris/Synthetic-Ascension",
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/entity-preview-parse",
+  "actual_exit": 1,
+  "stop_reason": "nonzero_exit",
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 20512.13671875,
+      "pids": []
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "rss_mb": 41.58984375,
+      "cpu_seconds": 0.04,
+      "available_mb": 20476.72265625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 0.165,
+      "rss_mb": 82.18359375,
+      "cpu_seconds": 0.22,
+      "available_mb": 20429.21484375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 0.349,
+      "rss_mb": 109.98046875,
+      "cpu_seconds": 0.41,
+      "available_mb": 20394.00390625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 0.531,
+      "rss_mb": 128.53125,
+      "cpu_seconds": 0.6,
+      "available_mb": 20361.8671875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 0.724,
+      "rss_mb": 138.70703125,
+      "cpu_seconds": 0.81,
+      "available_mb": 20332.78515625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 0.942,
+      "rss_mb": 146.95703125,
+      "cpu_seconds": 1.0,
+      "available_mb": 20321.21484375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 1.134,
+      "rss_mb": 155.20703125,
+      "cpu_seconds": 1.14,
+      "available_mb": 20306.35546875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 1.284,
+      "rss_mb": 155.3828125,
+      "cpu_seconds": 1.31,
+      "available_mb": 20265.2421875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 1.46,
+      "rss_mb": 155.3828125,
+      "cpu_seconds": 1.49,
+      "available_mb": 20256.2734375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 1.633,
+      "rss_mb": 155.3828125,
+      "cpu_seconds": 1.67,
+      "available_mb": 20251.90625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 1.813,
+      "rss_mb": 155.3828125,
+      "cpu_seconds": 1.84,
+      "available_mb": 20231.2734375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 1.975,
+      "rss_mb": 155.3828125,
+      "cpu_seconds": 2.01,
+      "available_mb": 20217.953125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 2.145,
+      "rss_mb": 155.3828125,
+      "cpu_seconds": 2.17,
+      "available_mb": 20217.1328125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 2.315,
+      "rss_mb": 155.640625,
+      "cpu_seconds": 2.34,
+      "available_mb": 20212.484375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 2.488,
+      "rss_mb": 155.765625,
+      "cpu_seconds": 2.51,
+      "available_mb": 20219.3671875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 2.652,
+      "rss_mb": 155.765625,
+      "cpu_seconds": 2.69,
+      "available_mb": 20218.1171875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 2.832,
+      "rss_mb": 157.765625,
+      "cpu_seconds": 2.84,
+      "available_mb": 20209.7890625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 2.985,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 3.0,
+      "available_mb": 20182.45703125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 3.139,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 3.15,
+      "available_mb": 20152.4765625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 3.286,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 3.31,
+      "available_mb": 20093.859375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 3.45,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 3.46,
+      "available_mb": 20046.6328125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 3.606,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 3.61,
+      "available_mb": 19998.48828125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 3.76,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 3.78,
+      "available_mb": 19943.5546875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 3.92,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 3.93,
+      "available_mb": 19921.1953125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 4.078,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 4.09,
+      "available_mb": 19897.171875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 4.243,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 4.26,
+      "available_mb": 19873.46875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 4.407,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 4.42,
+      "available_mb": 19849.92578125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 4.572,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 4.59,
+      "available_mb": 19833.8359375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 4.74,
+      "rss_mb": 157.890625,
+      "cpu_seconds": 4.76,
+      "available_mb": 19746.4375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 4.913,
+      "rss_mb": 178.390625,
+      "cpu_seconds": 4.92,
+      "available_mb": 19696.8671875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 5.07,
+      "rss_mb": 221.015625,
+      "cpu_seconds": 5.08,
+      "available_mb": 19641.44140625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 5.233,
+      "rss_mb": 258.640625,
+      "cpu_seconds": 5.24,
+      "available_mb": 19601.796875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 5.385,
+      "rss_mb": 291.765625,
+      "cpu_seconds": 5.39,
+      "available_mb": 19570.24609375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 5.531,
+      "rss_mb": 323.765625,
+      "cpu_seconds": 5.54,
+      "available_mb": 19538.6953125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 5.689,
+      "rss_mb": 327.390625,
+      "cpu_seconds": 5.69,
+      "available_mb": 19530.65625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 5.837,
+      "rss_mb": 351.015625,
+      "cpu_seconds": 5.83,
+      "available_mb": 19507.11328125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 5.983,
+      "rss_mb": 354.015625,
+      "cpu_seconds": 5.99,
+      "available_mb": 19506.7578125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 6.14,
+      "rss_mb": 356.8203125,
+      "cpu_seconds": 6.14,
+      "available_mb": 19506.7578125,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 6.294,
+      "rss_mb": 364.9453125,
+      "cpu_seconds": 6.3,
+      "available_mb": 19498.88671875,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 6.449,
+      "rss_mb": 364.9453125,
+      "cpu_seconds": 6.46,
+      "available_mb": 19505.09765625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 6.607,
+      "rss_mb": 366.6953125,
+      "cpu_seconds": 6.62,
+      "available_mb": 19503.49609375,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 6.769,
+      "rss_mb": 377.28515625,
+      "cpu_seconds": 6.78,
+      "available_mb": 19481.72265625,
+      "pids": [
+        74425
+      ]
+    },
+    {
+      "elapsed_seconds": 6.939,
+      "rss_mb": 0,
+      "cpu_seconds": 0,
+      "available_mb": 19696.40234375,
+      "pids": []
+    }
+  ],
+  "diagnostics": [
+    "SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager",
+    "ERROR: Failed to load script \"res://ui/screens/opening/OpeningPresentation.gd\" with error \"Compilation failed\".",
+    "SCRIPT ERROR: Compile Error: Identifier not found: SfxManager",
+    "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningSequenceWorld.gd\" with error \"Compilation failed\".",
+    "SCRIPT ERROR: Compile Error: Identifier not found: RunEvents",
+    "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningActor.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/world/opening/OpeningSequenceController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/screens/settings/SettingsScreen.gd\" with error \"Compilation failed\".",
+    "SCRIPT ERROR: Compile Error: Identifier not found: Global",
+    "ERROR: Failed to load script \"res://ui/screens/PauseMenu.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://scenes/game.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/screens/GameOverUI.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/actors/player/player.gd\" with error \"Compilation failed\".",
+    "SCRIPT ERROR: Compile Error: Identifier not found: BattleText",
+    "SCRIPT ERROR: Compile Error: Identifier not found: EnemyWorld",
+    "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+    "ERROR: Failed to load script \"res://scenes/world/combat/MeleeSlash.gd\" with error \"Compilation failed\".",
+    "SCRIPT ERROR: Compile Error: Identifier not found: EnemyCombat",
+    "ERROR: Failed to load script \"res://scenes/world/combat/RangedBullet.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/augments/AugmentRunner.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://assets/vfx/world/sets/conduit/VFX_PulseRing.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://effects/gravemarch/scenes/GravemarchCursedBallast.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://data/sets/SetRunner.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/items/ItemEffectRunner.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/manifestations/ManifestationRunner.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/ascension/AscensionRunner.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/actors/player/PlayerVisualController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/augments/AugmentSelect.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/augments/AugmentCard.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/spawner/spawner.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/actors/enemy/enemy.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://scenes/world/pickups/ItemPickup.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://scenes/world/pickups/PickupVfx.gd\" with error \"Compilation failed\".",
+    "SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder",
+    "ERROR: Failed to load script \"res://core/combat/projectile/EnemyProjectile.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/screens/hud.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/components/InventorySlotView.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/components/InventoryBar.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/widgets/AugmentsPanel.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/widgets/ItemTooltip.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/components/BagUI.gd\" with error \"Compilation failed\".",
+    "SCRIPT ERROR: Compile Error: Identifier not found: ThreatDirector",
+    "ERROR: Failed to load script \"res://ui/bag/BagSlot.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/widgets/RunSheetHUD.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/AugmentTooltipController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudTooltipController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/widgets/AugmentTooltip.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudGateOverlayController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudTutorialTipController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudThreatController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudBossController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudObjectiveController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudGateChecklistController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/SetBreakpointNotifier.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudManifestationController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudHealthController.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/controllers/HudDangerOverlay.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/world/FlowFieldNav.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://scenes/world/volumes/IndoorVolume.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://scenes/world/pickups/ExplorationLootSpawner.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/world/Level1Builder.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/world/Wardstone.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://assets/vfx/world/wardstones/VFX_WardstoneIdleAura.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://assets/vfx/world/gates/VFX_GateUnlockBurst.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/world/ExitRite.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://core/systems/vision/VisionRig.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://ui/widgets/PerformanceOverlay.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://scenes/world/pickups/HealthPickup.gd\" with error \"Compilation failed\".",
+    "ERROR: Failed to load script \"res://tools/dev/CityEntityCoverPreview.gd\" with error \"Compilation failed\"."
+  ],
+  "other_godot_pids": [],
+  "started_utc": "2026-10-20T12:39:43.739185+00:00",
+  "limits": {
+    "timeout_seconds": 60.0,
+    "max_rss_mb": 6144,
+    "min_available_mb": 4096
+  },
+  "git_head": "faf0e7f4b24a07fc4d288d229341b0d28135e9bb",
+  "pid": 74425,
+  "elapsed_seconds": 8.112,
+  "ended_utc": "2026-10-20T12:39:51.851460+00:00",
+  "runner_exit": 1,
+  "original_run_results_sha256": "2b508257087591a4c491332872d94131e140ecee17db6cd970cb5471ab0b30d1",
+  "source_provenance": "../sources/6c11874fa982f810610207c3e2710605ac38e760233dc200ca91cf1c939a82a3.json",
+  "packet_classification": "failed_attempt",
+  "packet_note": "Invalid standalone script-loading invocation without expected autoload context; not a successful parse audit. Full commands, exits, diagnostics and resource time series retained. Input hashes/untracked inputs moved losslessly to the content-deduplicated source record. Original machine-wide Git status omitted; its original JSON digest is retained. Local command/run paths describe the original machine, not additional bundled artifacts."
+}

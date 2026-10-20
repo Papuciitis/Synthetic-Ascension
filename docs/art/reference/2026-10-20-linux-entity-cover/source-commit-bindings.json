@@ -1,0 +1,1194 @@
+{
+  "implementation_commit": "31a1f6ce00eedaf07bc73368c355625788f9be98",
+  "received_base": "faf0e7f4b24a07fc4d288d229341b0d28135e9bb",
+  "scoped_input_sha256": {
+    "core/actors/player/PlayerRoofOcclusion.gd": "d70218db69ed3efa9a82c774464c4bc483262d8175aa0a7302d0ee2b5f5addbf",
+    "core/actors/player/player_roof_occlusion.gdshader": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+    "core/systems/enemy_world/EnemyProxyRegion.gdshader": "2773c9c117f0feb900510e19b9abf0203a8533579c769f48512997b6e7495a8f",
+    "core/systems/enemy_world/EnemyProxyRenderer.gd": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21",
+    "core/systems/world/visibility/ForegroundSpriteCoverage.gd": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+    "core/systems/world/visibility/PickupCover.gd": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+    "core/systems/world/visibility/WorldCover.gd": "6aa7c5974167d51be428a12e528fdb702b805feaaf22404fa79af486270ecbf8",
+    "core/systems/world/visibility/pickup_cover.gdshader": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+    "core/systems/world/visibility/world_cover.gdshaderinc": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+    "scenes/world/buildings/CityBlockFrontages.gd": "f77e66a1175d669dc1a30e46787ac08b757ab0a0742342425eb52bef2bd6289d",
+    "scenes/world/buildings/CityBlockKit.gd": "8304110c3ea970a523d5722b85daba36516a205b5e9432f4b93743e16ae35444",
+    "scenes/world/pickups/HealthPickup.gd": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+    "scenes/world/pickups/ItemPickup.gd": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+    "tools/capture/run_city_linux.py": "87a94903059be3d863085f497c271745c3d3cc68a98eb9ed75b8f60b48479530",
+    "tools/capture/test_run_city_linux.py": "40a56ae4ad4b39995c09a1bebf5f7061d7c89c75b10043c5e1809dbed37c136d",
+    "tools/dev/CityBlockPlayablePreview.gd": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+    "tools/dev/CityEntityCoverPreview.gd": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+    "tools/dev/CityEntityCoverPreview.tscn": "2d8afe5cc0247a3820d31038c43b08bda212ee21ddb06d376947db67a35b89db",
+    "tools/tests/BuildingFaceCoverTest.gd": "935742d6e7ba0fde023e124818f0242d8f6f304501b2cbe1bf78939b09794c92",
+    "tools/tests/BuildingFaceCoverTest.tscn": "543c66237023753ec72fe5898eb2006aeff1311c48b938a868b3b4475ba60c2d",
+    "tools/tests/CheckpointOfficeRenderTest.gd": "e4ffff49e8e55c3811effe4107c49a911918450e68d8222edbb4a05f0e3da379",
+    "tools/tests/EnemyCoverCoordinatesTest.gd": "8173d79002e24453c23017c0bc271bf91dcdc062727ee8d5a7cc956ec3a8370a",
+    "tools/tests/EnemyCoverCoordinatesTest.tscn": "3f9ff6761cbe2ebe34de76834494f24df6828ef8d6c5ea367d8cd853d3dc98bc",
+    "tools/tests/EnemyCoverRenderTest.gd": "df37cfd1a0ec4628e25a42c64dad56c14933110e9f5ef20e6bc425cd4b0297b9",
+    "tools/tests/EnemyCoverRenderTest.tscn": "23643897e9c8696c6839745652ab7dc0e5125917a9c3dde233d75df77b88e10c",
+    "tools/tests/ForegroundSpriteCoverageTest.gd": "1c50e1949213a17e2349eefb88e953ca23a60dd761eac6084947e4b38803b9c1",
+    "tools/tests/ForegroundSpriteCoverageTest.tscn": "c88566bc178964bd9261fdb08690baa06ab3a7b5cd2e8d5365d3541d1c0102cf",
+    "tools/tests/PickupCoverTest.gd": "c6cabab7b4b7b2ab6cba7de011478564f991d2237c17f5de2cd0a78e49271d74",
+    "tools/tests/PickupCoverTest.tscn": "50327e049b30daf41c4fbf361b77542e281e522d31aa4a328ae0e353f9185146",
+    "tools/tests/PlayerForegroundCoverRenderTest.gd": "3b4d54628cbadfdc7871e2d34c7c1c504bf435a9ec3fa9783b543d1ed57214e2",
+    "tools/tests/PlayerForegroundCoverRenderTest.tscn": "56efc580fd5f0520cefe83683f0905185069357e1d634fdf468384b559d49dc9",
+    "tools/tests/WorldCoverTest.gd": "127352f6aeda3d102694428d3c25a53cdea662719d01335e9082e06a6a9d6ea6",
+    "tools/tests/WorldCoverTest.tscn": "3095e356570e1b3930d5c7a4d8682d5547df9aae47cafbd7a87420ba2f0b91cb"
+  },
+  "runs": [
+    {
+      "run": "taggedcache",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "enemy-native-green",
+      "classification": "clean_focused",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "shared-green-2",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "healthlock",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "player-native-green",
+      "classification": "clean_intermediate",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "shared-red",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/EnemyCoverRenderTest.gd",
+        "tools/tests/EnemyCoverRenderTest.tscn",
+        "tools/tests/ForegroundSpriteCoverageTest.gd",
+        "tools/tests/ForegroundSpriteCoverageTest.tscn",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/PickupCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRenderer.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "tree-red",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/EnemyCoverRenderTest.gd",
+        "tools/tests/EnemyCoverRenderTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRenderer.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "import-final",
+      "classification": "clean_import",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "tree-green-2",
+      "classification": "clean_focused",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "player-ordinary-small",
+      "classification": "clean_intermediate_capture",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "street-script",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "facade-red",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "entity-preview-parse",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "canvas-isolation-red",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "bed-facade-trial",
+      "classification": "clean_qualified_trial",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "actorshadow",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "enemy-red",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRenderer.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/EnemyCoverRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "player-ordinary-reduced-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "elitesheen",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "fruit-cover-small-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "roof-shared-final",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "player-ordinary-small-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "street",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "player-fruit-normal-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "guardrender-shared",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "facade-green-2",
+      "classification": "clean_focused",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "player-native-red",
+      "classification": "feature_red_with_other_diagnostic",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "citykit",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "bed-cover-normal-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "dungeonproduction",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "isolation-green",
+      "classification": "clean_focused",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "shared-red-valid",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/EnemyCoverRenderTest.gd",
+        "tools/tests/EnemyCoverRenderTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRenderer.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "shared-green",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRenderer.gd",
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "bed-cover-small-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "bed-cover-fight-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "pickup-final",
+      "classification": "clean_focused",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "parse-commitable",
+      "classification": "clean_final_parse",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "enemyproxy",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "enemy-coordinates",
+      "classification": "clean_probe",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/EnemyCoverRenderTest.gd",
+        "tools/tests/EnemyCoverRenderTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRenderer.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "cityproc",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "world-isolation-red",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "dungeonroof",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "groundlootcap",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "roof-green",
+      "classification": "clean_intermediate",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "solid-green",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "enemybatch",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "enemylease",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "bed-occupied-trial",
+      "classification": "clean_rejected_trial",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "bed-cover-small",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "pickup-headless-green",
+      "classification": "clean_intermediate",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "guardrender",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "choicepickup",
+      "classification": "clean_regression",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "parse-final",
+      "classification": "clean_earlier_parse",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "player-final",
+      "classification": "clean_qualified_fixture",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "pickup-red",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/EnemyCoverRenderTest.gd",
+        "tools/tests/EnemyCoverRenderTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRegion.gdshader",
+        "core/systems/enemy_world/EnemyProxyRenderer.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "pickup-native-green",
+      "classification": "clean_intermediate",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "fruit-cover-normal-final",
+      "classification": "clean_selected_native",
+      "scope_matches_implementation_commit": true,
+      "missing_inputs": [],
+      "different_inputs": []
+    },
+    {
+      "run": "fruit-cover-small",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "bed-cover-small-2",
+      "classification": "clean_intermediate_capture",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "facade-green",
+      "classification": "failed_attempt",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "shared-green-3",
+      "classification": "clean_intermediate",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/PickupCover.gd",
+        "core/systems/world/visibility/pickup_cover.gdshader",
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/BuildingFaceCoverTest.tscn",
+        "tools/tests/PlayerForegroundCoverRenderTest.gd",
+        "tools/tests/PlayerForegroundCoverRenderTest.tscn"
+      ],
+      "different_inputs": [
+        "core/actors/player/PlayerRoofOcclusion.gd",
+        "core/actors/player/player_roof_occlusion.gdshader",
+        "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "scenes/world/pickups/HealthPickup.gd",
+        "scenes/world/pickups/ItemPickup.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/dev/CityBlockPlayablePreview.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/PickupCoverTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "solid-red",
+      "classification": "valid_feature_red",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "scenes/world/buildings/CityBlockFrontages.gd",
+        "scenes/world/buildings/CityBlockKit.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/BuildingFaceCoverTest.gd",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    },
+    {
+      "run": "shared-final",
+      "classification": "clean_intermediate",
+      "scope_matches_implementation_commit": false,
+      "missing_inputs": [
+        "core/systems/world/visibility/world_cover.gdshaderinc",
+        "tools/dev/CityEntityCoverPreview.gd",
+        "tools/dev/CityEntityCoverPreview.tscn"
+      ],
+      "different_inputs": [
+        "core/systems/world/visibility/WorldCover.gd",
+        "tools/capture/run_city_linux.py",
+        "tools/capture/test_run_city_linux.py",
+        "tools/tests/CheckpointOfficeRenderTest.gd",
+        "tools/tests/WorldCoverTest.gd"
+      ]
+    }
+  ],
+  "note": "Final selected actual-Game runs and final parse match every listed committed scoped code/test/tool input including shared shader include. Earlier checks/isolated player stress plates have individually preserved snapshots and explicitly listed differences; they are not relabelled final-source."
+}

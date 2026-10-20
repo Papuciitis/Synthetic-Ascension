@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CACHE_SPAWNER_INVENTORY [{ "loot_id": 1108303649, "objective_id": 1736497563, "world": "(3040.0, 19360.0)", "chunk_registered_at_ready": false, "walkable_at_ready": false }]
+PASS: reproduction matches the exact omitted objective identity
+PASS: production cache creates its one or two genuine tagged pickups after chunk registration (2)
+PASS: real cache reward lands on a loaded walkable cell
+PASS: real cache reward lands on a loaded walkable cell
+PASS: uncollected genuine rewards survive streaming without a duplicate payout
+PASS: cache reproduction writes no saves
+TaggedCacheStreamingTest: 0 failed

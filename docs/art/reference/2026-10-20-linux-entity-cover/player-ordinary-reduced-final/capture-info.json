@@ -1,0 +1,1835 @@
+{
+	"args": [
+		"--visible",
+		"--review=reduced",
+		"--world-seed=16102026",
+		"--segment=2",
+		"--target-building-id=944996572",
+		"--target-chunk=0,3",
+		"--tree-kind=ordinary",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-visibility-20261020/captures/player-ordinary-reduced-final",
+		"--player-tree-only"
+	],
+	"attempt_seed": 16102026,
+	"building_id": 944996572,
+	"building_usage": "row_house",
+	"camera": {
+		"position": "(130.8644, 8030.756)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(960, 540)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityEntityCoverPreview.tscn",
+	"closed_arch_bays": 0,
+	"coord": "(0, 3)",
+	"district_family": "service_courtyards",
+	"doors": "[{ \"pos\": (8, 16), \"dir\": (0, 1), \"width\": 2 }]",
+	"failures": 0,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"footprint": "[(192.0, 768.0), (384.0, 768.0), (384.0, 576.0), (896.0, 576.0), (896.0, 1088.0), (192.0, 1088.0)]",
+	"garden": [
+		{
+			"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+			"name": "TendedDomesticBed",
+			"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+			"position": "(0.0, 0.0)",
+			"rotation": 0.0,
+			"scale": "(1.0, 1.0)",
+			"variant": 0,
+			"z_index": -90
+		},
+		{
+			"contact": "(266.0, 1102.0)",
+			"name": "DomesticHerbBed",
+			"position": "(265.9673, 1097.233)",
+			"rotation": 0.0,
+			"scale": "(0.065304, 0.065304)",
+			"texture": "res://assets/world/domestic_gardens/v1/flower_herb_bed.png",
+			"z_index": 1
+		}
+	],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "df4229fdbb923cfaa31056f5f2ef6fa3326d727f511ee9646bdf0475c05340d5",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 14,
+			"local_bounds": "[P: (0, 13), S: (2, 4)]",
+			"max_byte": 255,
+			"nonzero": 15,
+			"sha256": "3e4a9ae08d458a5b94d63411faf0544f7eac2765c55e0c4005ce33439a053aea",
+			"sum_bytes": 1899
+		},
+		"chunk_material_counts": {
+			"0": 716,
+			"2": 125,
+			"3": 6,
+			"4": 177
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "318bfb23d557e8f43efb402a52306f87c2b2bad2aac29a4873abc1fa8f9c2fc0",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				2,
+				127
+			],
+			"material": 0,
+			"walkable": true,
+			"world_px": [
+				153.129241943359,
+				8159.21533203125
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "f8b7f1084dbbd171eaaf0e95cf53b8cd30c4d9906d4de23e00d53ac2629998bc",
+					"layer_sha256": "00176083b44a2b2b44e64da4307bf5cbc7bca1987155d9ae9313e1c22d23fbc9",
+					"path": "res://assets/world/ground/ground_mud_wet_01.png",
+					"sha256": "bf8aa7800993cdd33c826681a1ca3217ea8dc0764e89b9012b27a4768655d0dc"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "true",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_layer": [
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0,
+				320.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "grass"
+	},
+	"has_watch": false,
+	"irregular": true,
+	"limits": "Controlled native actual-Game player-only route around an original generated city/fruit tree. Player walks to real reachable walkable cell centers using production inputs and collision. Actual Body/Head animation, shared material and cover refresh remain live; no shader replacement, canopy movement, counter manipulation or route teleport. Initial home staging, ambient spawn/encounter suppression, god mode and fixed camera are inherited capture controls. Pixel/coverage samples are diagnostic and not continuous human-motion acceptance.",
+	"plan_seed": 436524753,
+	"plates": [
+		{
+			"actual_cell_walkable": true,
+			"actual_player_root": "(166.3893, 8159.999)",
+			"actual_visual_feet": "(166.3893, 8201.999)",
+			"body_head_share_material": true,
+			"camera": "(130.8644, 8030.756)",
+			"camera_zoom": "(1.0, 1.0)",
+			"file": "player-tree-front.png",
+			"intended_tree_covered": false,
+			"max_shared_strength": 0.0,
+			"max_tree_strength": 0.0,
+			"opaque_fragment_samples": [
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(155.8894, 8160.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(159.8893, 8160.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(163.8893, 8160.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8160.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8160.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.980392158031464,
+					"tree_strength": 0.0,
+					"world": "(175.8893, 8160.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(159.8893, 8167.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(163.8893, 8167.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8167.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8167.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(175.8893, 8167.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(155.8894, 8174.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(159.8893, 8174.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(163.8893, 8174.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8174.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8174.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(175.8893, 8174.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(155.8894, 8181.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(159.8893, 8181.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.996078431606293,
+					"tree_strength": 0.0,
+					"world": "(163.8893, 8181.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8181.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8181.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(155.8894, 8188.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(159.8893, 8188.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(163.8893, 8188.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8188.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8188.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.890196084976196,
+					"tree_strength": 0.0,
+					"world": "(175.8893, 8188.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(155.8894, 8195.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(159.8893, 8195.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8195.499)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(175.8893, 8195.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(158.8894, 8132.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(162.8893, 8132.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8132.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8132.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.615686297416687,
+					"tree_strength": 0.0,
+					"world": "(176.8893, 8132.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.980392158031464,
+					"tree_strength": 0.0,
+					"world": "(153.8894, 8137.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(158.8894, 8137.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(162.8893, 8137.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8137.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8137.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(176.8893, 8137.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(153.8894, 8142.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(158.8894, 8142.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(162.8893, 8142.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8142.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8142.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(176.8893, 8142.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.670588254928589,
+					"tree_strength": 0.0,
+					"world": "(153.8894, 8147.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(158.8894, 8147.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(162.8893, 8147.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8147.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8147.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(176.8893, 8147.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(158.8894, 8152.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(162.8893, 8152.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8152.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8152.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(176.8893, 8152.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(158.8894, 8157.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(162.8893, 8157.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(167.8893, 8157.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(171.8893, 8157.499)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(176.8893, 8157.499)"
+				}
+			],
+			"parts": [
+				{
+					"animation": "body_idle_left",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_body_idle_left_0",
+					"global_transform": "[X: (0.999997, 0.0), Y: (0.0, 0.999997), O: (166.3893, 8201.999)]",
+					"material_feet_y": 8201.9990234375,
+					"material_id": -9223371412960440107,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/Body",
+					"offset": "(-15.0, -48.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				},
+				{
+					"animation": "head_idle_left",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_head_idle_left_0",
+					"global_transform": "[X: (0.999997, 0.0), Y: (0.0, 0.999997), O: (166.3893, 8162.999)]",
+					"material_feet_y": 8201.9990234375,
+					"material_id": -9223371412960440107,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/HeadAnchor/Head",
+					"offset": "(-17.0, -36.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				}
+			],
+			"requested_player_root": "(160.0, 8160.0)",
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"snapshot": {
+				"cell_px": 256.0,
+				"foreground_sources": 3,
+				"generation": 1359,
+				"grid_cells": 77,
+				"index_count": 90,
+				"materials": 2,
+				"max_candidates": 17,
+				"peak_candidates": 17,
+				"peak_primitives": 34,
+				"peak_refresh_usec": 80044,
+				"primitive_count": 24,
+				"refresh_usec": 5408,
+				"source_reads": 3
+			},
+			"target": "ordinary-tree",
+			"tree_measured_ground_world": "(136.0, 8107.0)",
+			"tree_surface": "/root/Game/ChunkManager/Chunk_0_3/@Node2D@2400/CityTemperateTree",
+			"tree_texture": "res://assets/world/city_block/temperate_tree.png",
+			"window": "(960, 540)"
+		},
+		{
+			"actual_cell_walkable": true,
+			"actual_player_root": "(96.08214, 8039.611)",
+			"actual_visual_feet": "(96.08214, 8081.611)",
+			"body_head_share_material": true,
+			"camera": "(130.8644, 8030.756)",
+			"camera_zoom": "(1.0, 1.0)",
+			"file": "player-tree-behind.png",
+			"intended_tree_covered": true,
+			"max_shared_strength": 0.988235294818878,
+			"max_tree_strength": 0.988235294818878,
+			"opaque_fragment_samples": [
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(87.58218, 8038.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.968627452850342,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.968627452850342,
+					"world": "(92.58215, 8038.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.00784313771873713,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.00784313771873713,
+					"world": "(98.58213, 8038.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(103.5821, 8038.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.980392158031464,
+					"world": "(81.5822, 8045.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0313725508749485,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0313725508749485,
+					"world": "(87.58218, 8045.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.980392158031464,
+					"world": "(92.58215, 8045.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(98.58213, 8045.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(103.5821, 8045.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.984313726425171,
+					"world": "(109.5821, 8045.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(81.5822, 8052.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(87.58218, 8052.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(92.58215, 8052.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.976470589637756,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.976470589637756,
+					"world": "(98.58213, 8052.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.984313726425171,
+					"world": "(103.5821, 8052.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(109.5821, 8052.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(81.5822, 8060.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(87.58218, 8060.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.984313726425171,
+					"world": "(92.58215, 8060.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.960784316062927,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.960784316062927,
+					"world": "(98.58213, 8060.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.00392156885936856,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.00392156885936856,
+					"world": "(103.5821, 8060.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.980392158031464,
+					"world": "(109.5821, 8060.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.980392158031464,
+					"world": "(87.58218, 8067.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.980392158031464,
+					"world": "(92.58215, 8067.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.960784316062927,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.960784316062927,
+					"world": "(98.58213, 8067.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(103.5821, 8067.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.00784313771873713,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.00784313771873713,
+					"world": "(87.58218, 8074.111)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(103.5821, 8074.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 1.0,
+					"tree_strength": 0.984313726425171,
+					"world": "(86.58218, 8012.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.968627452850342,
+					"tree_strength": 0.984313726425171,
+					"world": "(90.58216, 8012.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(94.58215, 8012.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.980392158031464,
+					"world": "(98.58213, 8012.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.996078431606293,
+					"tree_strength": 0.988235294818878,
+					"world": "(102.5821, 8012.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.988235294818878,
+					"world": "(86.58218, 8017.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(90.58216, 8017.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.952941179275513,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.952941179275513,
+					"world": "(94.58215, 8017.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.968627452850342,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.968627452850342,
+					"world": "(98.58213, 8017.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(102.5821, 8017.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 1.0,
+					"tree_strength": 0.984313726425171,
+					"world": "(106.5821, 8017.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(86.58218, 8021.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(90.58216, 8021.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.976470589637756,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.976470589637756,
+					"world": "(94.58215, 8021.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.00784313771873713,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.00784313771873713,
+					"world": "(98.58213, 8021.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(102.5821, 8021.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 1.0,
+					"tree_strength": 0.984313726425171,
+					"world": "(106.5821, 8021.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.976470589637756,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.976470589637756,
+					"world": "(86.58218, 8026.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.95686274766922,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.95686274766922,
+					"world": "(90.58216, 8026.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.988235294818878,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.988235294818878,
+					"world": "(94.58215, 8026.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.980392158031464,
+					"world": "(98.58213, 8026.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(102.5821, 8026.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.976470589637756,
+					"source_alpha": 0.952941179275513,
+					"tree_strength": 0.976470589637756,
+					"world": "(106.5821, 8026.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.945098042488098,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.945098042488098,
+					"world": "(86.58218, 8030.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.00392156885936856,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.00392156885936856,
+					"world": "(90.58216, 8030.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.980392158031464,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.980392158031464,
+					"world": "(94.58215, 8030.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(98.58213, 8030.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(102.5821, 8030.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(106.5821, 8030.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.682352960109711,
+					"source_alpha": 1.0,
+					"tree_strength": 0.682352960109711,
+					"world": "(86.58218, 8035.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.443137258291245,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.443137258291245,
+					"world": "(90.58216, 8035.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.917647063732147,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.917647063732147,
+					"world": "(94.58215, 8035.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.95686274766922,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.95686274766922,
+					"world": "(98.58213, 8035.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.984313726425171,
+					"world": "(102.5821, 8035.111)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.984313726425171,
+					"source_alpha": 0.737254917621613,
+					"tree_strength": 0.984313726425171,
+					"world": "(106.5821, 8035.111)"
+				}
+			],
+			"parts": [
+				{
+					"animation": "body_idle_up",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_body_idle_up_0",
+					"global_transform": "[X: (0.999996, 0.0), Y: (0.0, 0.999996), O: (96.08214, 8081.611)]",
+					"material_feet_y": 8081.61083984375,
+					"material_id": -9223371412960440107,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/Body",
+					"offset": "(-20.0, -51.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				},
+				{
+					"animation": "head_idle_up",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_head_idle_up_0",
+					"global_transform": "[X: (0.999996, 0.0), Y: (0.0, 0.999996), O: (96.08214, 8039.611)]",
+					"material_feet_y": 8081.61083984375,
+					"material_id": -9223371412960440107,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/HeadAnchor/Head",
+					"offset": "(-14.0, -32.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				}
+			],
+			"requested_player_root": "(96.0, 8032.0)",
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"snapshot": {
+				"cell_px": 256.0,
+				"foreground_sources": 3,
+				"generation": 1470,
+				"grid_cells": 77,
+				"index_count": 90,
+				"materials": 2,
+				"max_candidates": 17,
+				"peak_candidates": 17,
+				"peak_primitives": 34,
+				"peak_refresh_usec": 80044,
+				"primitive_count": 24,
+				"refresh_usec": 7015,
+				"source_reads": 3
+			},
+			"target": "ordinary-tree",
+			"tree_measured_ground_world": "(136.0, 8107.0)",
+			"tree_surface": "/root/Game/ChunkManager/Chunk_0_3/@Node2D@2400/CityTemperateTree",
+			"tree_texture": "res://assets/world/city_block/temperate_tree.png",
+			"window": "(960, 540)"
+		},
+		{
+			"actual_cell_walkable": true,
+			"actual_player_root": "(153.1292, 8159.215)",
+			"actual_visual_feet": "(153.1292, 8201.215)",
+			"body_head_share_material": true,
+			"camera": "(130.8644, 8030.756)",
+			"camera_zoom": "(1.0, 1.0)",
+			"file": "player-tree-front-restored.png",
+			"intended_tree_covered": false,
+			"max_shared_strength": 0.0,
+			"max_tree_strength": 0.0,
+			"opaque_fragment_samples": [
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(143.6293, 8159.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8159.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8159.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8159.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8159.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.839215695858002,
+					"tree_strength": 0.0,
+					"world": "(164.6292, 8159.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(143.6293, 8166.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8166.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8166.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8166.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8166.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 1.0,
+					"tree_strength": 0.0,
+					"world": "(143.6293, 8173.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8173.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8173.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8173.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8173.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.909803926944733,
+					"tree_strength": 0.0,
+					"world": "(164.6292, 8173.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.815686285495758,
+					"tree_strength": 0.0,
+					"world": "(143.6293, 8180.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8180.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8180.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8180.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8180.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.91372549533844,
+					"tree_strength": 0.0,
+					"world": "(164.6292, 8180.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.91372549533844,
+					"tree_strength": 0.0,
+					"world": "(143.6293, 8187.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8187.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8187.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8187.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8187.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.925490200519562,
+					"tree_strength": 0.0,
+					"world": "(164.6292, 8187.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(143.6293, 8194.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8194.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.733333349227905,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8194.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8194.715)"
+				},
+				{
+					"part": "Body",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(164.6292, 8194.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.615686297416687,
+					"tree_strength": 0.0,
+					"world": "(142.6293, 8131.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.984313726425171,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8131.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8131.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8131.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8131.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(142.6293, 8136.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8136.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8136.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8136.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8136.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.980392158031464,
+					"tree_strength": 0.0,
+					"world": "(165.6292, 8136.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(142.6293, 8141.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8141.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8141.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8141.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8141.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(165.6292, 8141.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(142.6293, 8146.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8146.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8146.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8146.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8146.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.670588254928589,
+					"tree_strength": 0.0,
+					"world": "(165.6292, 8146.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(142.6293, 8151.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8151.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8151.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8151.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.988235294818878,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8151.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(142.6293, 8156.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(147.6293, 8156.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(151.6292, 8156.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.992156863212585,
+					"tree_strength": 0.0,
+					"world": "(156.6292, 8156.715)"
+				},
+				{
+					"part": "HeadAnchor/Head",
+					"shared_strength": 0.0,
+					"source_alpha": 0.976470589637756,
+					"tree_strength": 0.0,
+					"world": "(160.6292, 8156.715)"
+				}
+			],
+			"parts": [
+				{
+					"animation": "body_idle_right",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_body_idle_right_0",
+					"global_transform": "[X: (0.999995, -0.0), Y: (0.0, 0.999995), O: (153.1292, 8201.215)]",
+					"material_feet_y": 8201.21484375,
+					"material_id": -9223371412960440107,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/Body",
+					"offset": "(-14.0, -49.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				},
+				{
+					"animation": "head_idle_right",
+					"frame": 0,
+					"frame_texture": "res://assets/textures/characters/baked/human_frames.tres::AtlasTexture_head_idle_right_0",
+					"global_transform": "[X: (0.999995, -0.0), Y: (0.0, 0.999995), O: (153.1292, 8162.215)]",
+					"material_feet_y": 8201.21484375,
+					"material_id": -9223371412960440107,
+					"modulate": "(1.0, 1.0, 1.0, 1.0)",
+					"node": "/root/Game/Player/Visual/HeadAnchor/Head",
+					"offset": "(-15.0, -36.0)",
+					"shader": "res://core/actors/player/player_roof_occlusion.gdshader"
+				}
+			],
+			"requested_player_root": "(160.0, 8160.0)",
+			"roof_alpha": 1.0,
+			"roof_inside_count": 0,
+			"snapshot": {
+				"cell_px": 256.0,
+				"foreground_sources": 3,
+				"generation": 1575,
+				"grid_cells": 77,
+				"index_count": 90,
+				"materials": 2,
+				"max_candidates": 17,
+				"peak_candidates": 17,
+				"peak_primitives": 34,
+				"peak_refresh_usec": 80044,
+				"primitive_count": 24,
+				"refresh_usec": 6537,
+				"source_reads": 3
+			},
+			"target": "ordinary-tree",
+			"tree_measured_ground_world": "(136.0, 8107.0)",
+			"tree_surface": "/root/Game/ChunkManager/Chunk_0_3/@Node2D@2400/CityTemperateTree",
+			"tree_texture": "res://assets/world/city_block/temperate_tree.png",
+			"window": "(960, 540)"
+		}
+	],
+	"player_tree_only": true,
+	"profile": "common_base",
+	"requested_building_id": 944996572,
+	"requested_chunk": "(0, 3)",
+	"role": "service_lane",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "3e4a9ae08d458a5b94d63411faf0544f7eac2765c55e0c4005ce33439a053aea",
+			"equal": true,
+			"event": "streamed_reload",
+			"garden_equal": true,
+			"gardens": [
+				[
+					{
+						"color": "(0.3255, 0.3451, 0.2588, 1.0)",
+						"name": "TendedDomesticBed",
+						"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16)]",
+						"position": "(0.0, 0.0)",
+						"rotation": 0.0,
+						"scale": "(1.0, 1.0)",
+						"variant": 0,
+						"z_index": -90
+					},
+					{
+						"contact": "(266.0, 1102.0)",
+						"name": "DomesticHerbBed",
+						"position": "(265.9673, 1097.233)",
+						"rotation": 0.0,
+						"scale": "(0.065304, 0.065304)",
+						"texture": "res://assets/world/domestic_gardens/v1/flower_herb_bed.png",
+						"z_index": 1
+					}
+				],
+				[
+					{
+						"contact": "(136.0, 1963.0)",
+						"name": "CityTemperateTree",
+						"position": "(130.8644, 1841.756)",
+						"rotation": 0.0,
+						"scale": "(0.223285, 0.223285)",
+						"texture": "res://assets/world/city_block/temperate_tree.png",
+						"z_index": 1
+					}
+				]
+			],
+			"restored_visual_instances": 1582,
+			"unloaded_visual_instances": 0
+		},
+		{
+			"arrived": "(166.3893, 8159.999)",
+			"desired": "(160.0, 8160.0)",
+			"event": "walk",
+			"path_cells": 21,
+			"resolution_distance": 0.0,
+			"resolved": "(160.0, 8160.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(96.08214, 8039.611)",
+			"desired": "(96.0, 8032.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 0.0,
+			"resolved": "(96.0, 8032.0)",
+			"strict_perimeter": false
+		},
+		{
+			"arrived": "(153.1292, 8159.215)",
+			"desired": "(160.0, 8160.0)",
+			"event": "walk",
+			"path_cells": 3,
+			"resolution_distance": 0.0,
+			"resolved": "(160.0, 8160.0)",
+			"strict_perimeter": false
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 2,
+	"tree_kind": "ordinary",
+	"watch_fallback": "base",
+	"world_cover": {
+		"cell_px": 256.0,
+		"foreground_sources": 3,
+		"generation": 1575,
+		"grid_cells": 77,
+		"index_count": 90,
+		"materials": 2,
+		"max_candidates": 17,
+		"peak_candidates": 17,
+		"peak_primitives": 34,
+		"peak_refresh_usec": 80044,
+		"primitive_count": 24,
+		"refresh_usec": 6537,
+		"source_reads": 3
+	}
+}

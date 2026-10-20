@@ -1,0 +1,294 @@
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://ui/screens/opening/OpeningPresentation.gd:86)
+ERROR: Failed to load script "res://ui/screens/opening/OpeningPresentation.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SfxManager
+          at: GDScript::reload (res://core/systems/world/opening/OpeningSequenceWorld.gd:36)
+ERROR: Failed to load script "res://core/systems/world/opening/OpeningSequenceWorld.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://core/systems/world/opening/OpeningActor.gd:112)
+ERROR: Failed to load script "res://core/systems/world/opening/OpeningActor.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://core/systems/world/opening/OpeningSequenceController.gd:51)
+ERROR: Failed to load script "res://core/systems/world/opening/OpeningSequenceController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://ui/screens/settings/SettingsScreen.gd:48)
+ERROR: Failed to load script "res://ui/screens/settings/SettingsScreen.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/screens/PauseMenu.gd:120)
+ERROR: Failed to load script "res://ui/screens/PauseMenu.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://scenes/game.gd:46)
+ERROR: Failed to load script "res://scenes/game.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SfxManager
+          at: GDScript::reload (res://ui/screens/GameOverUI.gd:30)
+ERROR: Failed to load script "res://ui/screens/GameOverUI.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/actors/player/player.gd:197)
+ERROR: Failed to load script "res://core/actors/player/player.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: BattleText
+          at: GDScript::reload (res://core/systems/enemy_world/EnemyCombatService.gd:113)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://core/systems/vfx/VfxKit.gd:106)
+SCRIPT ERROR: Compile Error: Identifier not found: EnemyWorld
+          at: GDScript::reload (res://core/combat/CombatStatusFeedback.gd:24)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/actors/enemy/modules/BurnDot.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scenes/world/combat/MeleeSlash.gd:0)
+ERROR: Failed to load script "res://scenes/world/combat/MeleeSlash.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: EnemyCombat
+          at: GDScript::reload (res://scenes/world/combat/RangedBullet.gd:81)
+ERROR: Failed to load script "res://scenes/world/combat/RangedBullet.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/systems/augments/AugmentRunner.gd:11)
+ERROR: Failed to load script "res://core/systems/augments/AugmentRunner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://assets/vfx/world/sets/conduit/VFX_PulseRing.gd:83)
+ERROR: Failed to load script "res://assets/vfx/world/sets/conduit/VFX_PulseRing.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://effects/gravemarch/scenes/GravemarchCursedBallast.gd:33)
+ERROR: Failed to load script "res://effects/gravemarch/scenes/GravemarchCursedBallast.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://data/sets/SetRunner.gd:27)
+ERROR: Failed to load script "res://data/sets/SetRunner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/systems/items/ItemEffectRunner.gd:30)
+ERROR: Failed to load script "res://core/systems/items/ItemEffectRunner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/systems/manifestations/ManifestationRunner.gd:75)
+ERROR: Failed to load script "res://core/systems/manifestations/ManifestationRunner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/systems/ascension/AscensionRunner.gd:272)
+ERROR: Failed to load script "res://core/systems/ascension/AscensionRunner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/actors/player/PlayerVisualController.gd:78)
+ERROR: Failed to load script "res://core/actors/player/PlayerVisualController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/augments/AugmentSelect.gd:122)
+ERROR: Failed to load script "res://ui/augments/AugmentSelect.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/augments/AugmentCard.gd:147)
+ERROR: Failed to load script "res://ui/augments/AugmentCard.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://core/systems/spawner/spawner.gd:298)
+ERROR: Failed to load script "res://core/systems/spawner/spawner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/actors/enemy/enemy.gd:237)
+ERROR: Failed to load script "res://core/actors/enemy/enemy.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://scenes/world/pickups/ItemPickup.gd:189)
+ERROR: Failed to load script "res://scenes/world/pickups/ItemPickup.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://scenes/world/pickups/PickupVfx.gd:101)
+ERROR: Failed to load script "res://scenes/world/pickups/PickupVfx.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder
+          at: GDScript::reload (res://core/systems/world/ChunkManager.gd:404)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/combat/projectile/EnemyProjectile.gd:0)
+ERROR: Failed to load script "res://core/combat/projectile/EnemyProjectile.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/screens/hud.gd:199)
+ERROR: Failed to load script "res://ui/screens/hud.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/components/InventorySlotView.gd:382)
+ERROR: Failed to load script "res://ui/components/InventorySlotView.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://data/items/ItemInstance.gd:72)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://core/systems/telemetry/BalanceItemContext.gd:20)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://data/items/Inventory.gd:0)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://data/items/BagInventory.gd:175)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/systems/inventory/InventoryRouter.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://ui/components/InventoryBar.gd:0)
+ERROR: Failed to load script "res://ui/components/InventoryBar.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/widgets/AugmentsPanel.gd:77)
+ERROR: Failed to load script "res://ui/widgets/AugmentsPanel.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/widgets/ItemTooltip.gd:315)
+ERROR: Failed to load script "res://ui/widgets/ItemTooltip.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/components/BagUI.gd:136)
+ERROR: Failed to load script "res://ui/components/BagUI.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/widgets/SetEmblem.gd:16)
+SCRIPT ERROR: Compile Error: Identifier not found: BattleText
+          at: GDScript::reload (res://core/systems/manifestations/ManifestationEffect.gd:241)
+SCRIPT ERROR: Compile Error: Identifier not found: BattleText
+          at: GDScript::reload (res://core/systems/manifestations/ManifestationState.gd:592)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://effects/manifestations/logic/PilgrimsMomentum.gd:0)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://effects/manifestations/logic/AnchorRite.gd:211)
+SCRIPT ERROR: Compile Error: Identifier not found: EnemyCombat
+          at: GDScript::reload (res://effects/manifestations/logic/PredestinationSigil.gd:69)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://effects/manifestations/logic/ScarTissue.gd:56)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://effects/manifestations/logic/TitheFurnace.gd:118)
+SCRIPT ERROR: Compile Error: Identifier not found: EnemyCombat
+          at: GDScript::reload (res://effects/manifestations/ManifestationShardProjectile.gd:72)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://effects/manifestations/logic/VectorHalo.gd:0)
+SCRIPT ERROR: Compile Error: Identifier not found: ThreatDirector
+          at: GDScript::reload (res://effects/manifestations/logic/OvertimeGospel.gd:100)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://data/manifestations/ManifestationCatalog.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://data/manifestations/ManifestationNouns.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://ui/components/ManifestBadge.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://ui/bag/BagSlot.gd:0)
+ERROR: Failed to load script "res://ui/bag/BagSlot.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/widgets/RunSheetHUD.gd:87)
+ERROR: Failed to load script "res://ui/widgets/RunSheetHUD.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/controllers/AugmentTooltipController.gd:81)
+ERROR: Failed to load script "res://ui/controllers/AugmentTooltipController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/controllers/HudTooltipController.gd:241)
+ERROR: Failed to load script "res://ui/controllers/HudTooltipController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/widgets/AugmentTooltip.gd:92)
+ERROR: Failed to load script "res://ui/widgets/AugmentTooltip.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/controllers/HudGateOverlayController.gd:97)
+ERROR: Failed to load script "res://ui/controllers/HudGateOverlayController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/controllers/HudTutorialTipController.gd:46)
+ERROR: Failed to load script "res://ui/controllers/HudTutorialTipController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/controllers/HudThreatController.gd:237)
+ERROR: Failed to load script "res://ui/controllers/HudThreatController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/controllers/HudBossController.gd:18)
+ERROR: Failed to load script "res://ui/controllers/HudBossController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/controllers/HudObjectiveController.gd:46)
+ERROR: Failed to load script "res://ui/controllers/HudObjectiveController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/controllers/HudGateChecklistController.gd:55)
+ERROR: Failed to load script "res://ui/controllers/HudGateChecklistController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/controllers/SetBreakpointNotifier.gd:29)
+ERROR: Failed to load script "res://ui/controllers/SetBreakpointNotifier.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/controllers/HudManifestationController.gd:401)
+ERROR: Failed to load script "res://ui/controllers/HudManifestationController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://ui/controllers/HudHealthController.gd:41)
+ERROR: Failed to load script "res://ui/controllers/HudHealthController.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SfxManager
+          at: GDScript::reload (res://ui/controllers/HudDangerOverlay.gd:201)
+ERROR: Failed to load script "res://ui/controllers/HudDangerOverlay.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: PerformanceFlightRecorder
+          at: GDScript::reload (res://core/systems/world/FlowFieldNav.gd:269)
+ERROR: Failed to load script "res://core/systems/world/FlowFieldNav.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://scenes/world/volumes/IndoorVolume.gd:138)
+ERROR: Failed to load script "res://scenes/world/volumes/IndoorVolume.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://scenes/world/pickups/ExplorationLootSpawner.gd:46)
+ERROR: Failed to load script "res://scenes/world/pickups/ExplorationLootSpawner.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://core/systems/world/Level1Builder.gd:157)
+ERROR: Failed to load script "res://core/systems/world/Level1Builder.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.gd:38)
+ERROR: Failed to load script "res://assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://core/systems/world/Wardstone.gd:177)
+ERROR: Failed to load script "res://core/systems/world/Wardstone.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://assets/vfx/world/wardstones/VFX_WardstoneIdleAura.gd:84)
+ERROR: Failed to load script "res://assets/vfx/world/wardstones/VFX_WardstoneIdleAura.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: SettingsManager
+          at: GDScript::reload (res://assets/vfx/world/gates/VFX_GateUnlockBurst.gd:31)
+ERROR: Failed to load script "res://assets/vfx/world/gates/VFX_GateUnlockBurst.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://core/systems/world/ExitRite.gd:182)
+ERROR: Failed to load script "res://core/systems/world/ExitRite.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: RunEvents
+          at: GDScript::reload (res://core/systems/vision/VisionRig.gd:159)
+ERROR: Failed to load script "res://core/systems/vision/VisionRig.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://ui/widgets/PerformanceOverlay.gd:165)
+ERROR: Failed to load script "res://ui/widgets/PerformanceOverlay.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://scenes/world/buildings/RoofOverlay.gd:200)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/systems/world/visibility/WorldCover.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://core/systems/world/visibility/PickupCover.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scenes/world/pickups/HealthPickup.gd:0)
+ERROR: Failed to load script "res://scenes/world/pickups/HealthPickup.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Compile Error: Identifier not found: Global
+          at: GDScript::reload (res://tools/dev/CityEntityCoverPreview.gd:40)
+ERROR: Failed to load script "res://tools/dev/CityEntityCoverPreview.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

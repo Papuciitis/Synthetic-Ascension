@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux/video-tool/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-xerror",
+    "-threads",
+    "1",
+    "-i",
+    ".superpowers/handoff-linux-visibility-20261020/videos/bed-cover-fight-final.mp4",
+    "-map",
+    "0:v:0",
+    "-fps_mode",
+    "passthrough",
+    "-enc_time_base",
+    "1:1000000",
+    "-f",
+    "null",
+    "-"
+  ],
+  "actual_exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "video_sha256": "73680f54ee9a60cf200e64964ed9dc20cac711c51fbdb3915004f9dc375614b6"
+}

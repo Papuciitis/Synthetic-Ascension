@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: eligible pickup icons have a cover adapter
+PASS: pickup cover accepts the live icon and refreshes its ground depth
+PASS: both ordinary and exploration equipment wire the real icon adapter
+PASS: cover preserves native atlas resource and crop
+PASS: covered presentation preserves the locked POS tint and alpha
+PASS: NEG equipment retains its authored polarity tint
+PASS: coverage never unlocks equipment or removes its exploration marker
+PASS: unlock restores the preexisting POS presentation
+PASS: cover cannot reveal an explicitly hidden icon
+PASS: refresh reuses the persistent icon material
+PASS: an existing material owner is preserved
+PASS: healing icon and its duplicate glow both receive cover presentation
+PASS: health glow keeps its original tint and alpha
+PickupCoverTest native pixel cases skipped: real renderer required
+PASS: pickup removal releases icons without keeping their owners alive
+PASS: cover presentation performs no save writes
+PickupCoverTest passes=15 failures=0

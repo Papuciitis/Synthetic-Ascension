@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: actual irregular house supplies its existing painted window bays
+PASS: fixture has a lower south-facing wall bay below the roof
+FAIL: actual FootprintWallBay registers its original opacity and ground depth
+PASS: actual irregular doorway retains its portal
+FAIL: opaque upright LeftJamb has a bounded solid descriptor
+FAIL: opaque upright RightJamb has a bounded solid descriptor
+FAIL: opaque upright Lintel has a bounded solid descriptor
+PASS: walkable Recess remains outside solid upright coverage
+PASS: walkable FlushThreshold remains outside solid upright coverage
+PASS: actual doorway gap stays clear below its lintel
+FAIL: opaque upper plaster receives real face coverage
+FAIL: ordinary open frontage exposes its actual painted source slices as registered sprites
+FAIL: ordinary closed frontage exposes its actual painted source slices as registered sprites
+FAIL: civic open frontage exposes its actual painted source slices as registered sprites
+FAIL: civic closed frontage exposes its actual painted source slices as registered sprites
+BuildingFaceCoverTest passes=6 failures=9

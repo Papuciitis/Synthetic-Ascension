@@ -1,0 +1,8 @@
+{
+  "command": "python3 -m unittest discover -s tools/capture -p test_run_city_linux.py -v",
+  "actual_exit": 0,
+  "tests": 19,
+  "failures": 0,
+  "log_sha256": "f0ad29f0d42422bbcec33442e37066bd076a51eb89c4a26ee2f589683500c452",
+  "red_observed": "Prior monitor omitted .gdshaderinc; extended provenance test failed before adding it, then passed. This adds input recording only; process/resource/approval policies are unchanged."
+}

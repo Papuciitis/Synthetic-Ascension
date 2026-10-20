@@ -1,0 +1,1594 @@
+{
+  "captures": [
+    {
+      "name": "bed-cover-small-final",
+      "destination": "bed-cover-small-final",
+      "files": [
+        "roof-covered.png",
+        "roof-front-controls.png",
+        "facade-covered.png",
+        "facade-front-controls.png",
+        "ordinary-tree-enemies-covered.png",
+        "ordinary-tree-enemies-front-controls.png",
+        "ordinary-tree-pickups-covered.png",
+        "ordinary-tree-pickups-front-controls.png",
+        "roof-before-entry.png",
+        "roof-player-inside-cutaway.png",
+        "roof-player-outside-restored.png"
+      ],
+      "metadata": "bed-cover-small-final/capture-info.json",
+      "original_metadata_sha256": "c491844d80130a8389b8a5148c134f1b59f3e466484de3f5486ff697f5e188bf",
+      "note": "Controlled ordinary/elite bodies and eligible pickups in the actual generated Game; fixed covered/front controls, façade and roof cutaway/restore. Source snapshot is specific to this run."
+    },
+    {
+      "name": "bed-cover-normal-final",
+      "destination": "bed-cover-normal-final",
+      "files": [
+        "roof-covered.png",
+        "roof-front-controls.png",
+        "facade-covered.png",
+        "facade-front-controls.png",
+        "ordinary-tree-enemies-covered.png",
+        "ordinary-tree-enemies-front-controls.png",
+        "ordinary-tree-pickups-covered.png",
+        "ordinary-tree-pickups-front-controls.png",
+        "roof-before-entry.png",
+        "roof-player-inside-cutaway.png",
+        "roof-player-outside-restored.png"
+      ],
+      "metadata": "bed-cover-normal-final/capture-info.json",
+      "original_metadata_sha256": "7cf6fc84aa1a2849cd88f2490668b2859b79444c18ae8123f0bbb2134003b69a",
+      "note": "Controlled ordinary/elite bodies and eligible pickups in the actual generated Game; fixed covered/front controls, façade and roof cutaway/restore. Source snapshot is specific to this run."
+    },
+    {
+      "name": "fruit-cover-small-final",
+      "destination": "fruit-cover-small-final",
+      "files": [
+        "roof-covered.png",
+        "roof-front-controls.png",
+        "facade-covered.png",
+        "facade-front-controls.png",
+        "fruit-tree-enemies-covered.png",
+        "fruit-tree-enemies-front-controls.png",
+        "fruit-tree-pickups-covered.png",
+        "fruit-tree-pickups-front-controls.png",
+        "roof-before-entry.png",
+        "roof-player-inside-cutaway.png",
+        "roof-player-outside-restored.png"
+      ],
+      "metadata": "fruit-cover-small-final/capture-info.json",
+      "original_metadata_sha256": "85cdac38b86f4b8d12ec583630867941b4b2ae5b39bd6f7e9232ff6253e62511",
+      "note": "Controlled ordinary/elite bodies and eligible pickups in the actual generated Game; fixed covered/front controls, façade and roof cutaway/restore. Source snapshot is specific to this run."
+    },
+    {
+      "name": "fruit-cover-normal-final",
+      "destination": "fruit-cover-normal-final",
+      "files": [
+        "roof-covered.png",
+        "roof-front-controls.png",
+        "facade-covered.png",
+        "facade-front-controls.png",
+        "fruit-tree-enemies-covered.png",
+        "fruit-tree-enemies-front-controls.png",
+        "fruit-tree-pickups-covered.png",
+        "fruit-tree-pickups-front-controls.png",
+        "roof-before-entry.png",
+        "roof-player-inside-cutaway.png",
+        "roof-player-outside-restored.png"
+      ],
+      "metadata": "fruit-cover-normal-final/capture-info.json",
+      "original_metadata_sha256": "351816ebdb61afa9e306a2cb830e94bdc42f2e68b581c011289b0fc4b2846839",
+      "note": "Controlled ordinary/elite bodies and eligible pickups in the actual generated Game; fixed covered/front controls, façade and roof cutaway/restore. Source snapshot is specific to this run."
+    },
+    {
+      "name": "player-ordinary-small-final",
+      "destination": "player-ordinary-small-final",
+      "files": [
+        "player-tree-front.png",
+        "player-tree-behind.png",
+        "player-tree-front-restored.png"
+      ],
+      "metadata": "player-ordinary-small-final/capture-info.json",
+      "original_metadata_sha256": "cb05ac451e5a1df7649ec16ce59ea11444d2771b7591296925ccd14a286d44cc",
+      "note": "Actual-city player route through front/behind/restored tree states, including movement/stream reload metadata. Scripted evidence, not continuous human play."
+    },
+    {
+      "name": "player-fruit-normal-final",
+      "destination": "player-fruit-normal-final",
+      "files": [
+        "player-tree-front.png",
+        "player-tree-behind.png",
+        "player-tree-front-restored.png"
+      ],
+      "metadata": "player-fruit-normal-final/capture-info.json",
+      "original_metadata_sha256": "8a220120630172e88839f5be75603b5e92af24bd86f3e3636370c2fa09bad704",
+      "note": "Actual-city player route through front/behind/restored tree states, including movement/stream reload metadata. Scripted evidence, not continuous human play."
+    },
+    {
+      "name": "player-ordinary-reduced-final",
+      "destination": "player-ordinary-reduced-final",
+      "files": [
+        "player-tree-front.png",
+        "player-tree-behind.png",
+        "player-tree-front-restored.png"
+      ],
+      "metadata": "player-ordinary-reduced-final/capture-info.json",
+      "original_metadata_sha256": "a640a0dc7cf486bf92fef128efca4a56bb8d9f7f916a2b3a400436b551cc53b2",
+      "note": "Actual-city player route through front/behind/restored tree states, including movement/stream reload metadata. Scripted evidence, not continuous human play."
+    },
+    {
+      "name": "player-final",
+      "destination": "synthetic-player-final",
+      "files": [
+        "normal-rgba-behind.png",
+        "normal-rgba-front.png",
+        "normal-atlas-flipped.png",
+        "normal-ordinary-behind.png",
+        "normal-ordinary-front.png",
+        "normal-fruit-behind.png",
+        "normal-fruit-front.png",
+        "normal-roof-opaque.png",
+        "normal-roof-ancestor-partial.png",
+        "normal-roof-cutaway.png",
+        "normal-capacity-35.png",
+        "small-rgba-behind.png",
+        "small-rgba-front.png",
+        "small-atlas-flipped.png",
+        "small-ordinary-behind.png",
+        "small-ordinary-front.png",
+        "small-fruit-behind.png",
+        "small-fruit-front.png",
+        "small-roof-opaque.png",
+        "small-roof-ancestor-partial.png",
+        "small-roof-cutaway.png",
+        "small-capacity-35.png"
+      ],
+      "metadata": "synthetic-player-final/result.json",
+      "original_metadata_sha256": "080efc84544c9eae924848a76a5f6cf26328700f90334c30b8f8a2ead3ea1b14",
+      "note": "Isolated synthetic/real-art player fixture, 22 PNGs and result.json. Captured after the live Sprite2D AABB prefilter, before the World2D/canvas isolation filter. This is earlier-snapshot evidence, not an assertion that these images were regenerated from the eventual committed runtime."
+    },
+    {
+      "name": "bed-cover-fight-final",
+      "destination": "bed-cover-fight-final",
+      "files": [
+        "ground-before.png",
+        "fight.png",
+        "fight-ending.png"
+      ],
+      "metadata": "bed-cover-fight-final/capture-info.json",
+      "original_metadata_sha256": "3e2d122560fa376b4287f045d03d1511f249486f0c785c059c77172ab4f85a5e",
+      "note": "Controlled production Game fight with real AI/attacks/projectiles/HUD. Ambient spawns and streaming treatment follow recorded metadata; not continuous human play, balance acceptance or a comparative performance benchmark."
+    }
+  ],
+  "videos": [
+    {
+      "name": "bed-cover-fight-final",
+      "files": [
+        "bed-cover-fight-final/occupied.mp4",
+        "bed-cover-fight-final/occupied.encoding.json",
+        "bed-cover-fight-final/occupied.decode.json"
+      ]
+    }
+  ],
+  "copied_artifacts": [
+    {
+      "file": "process/logs/shared-red-valid/stdout.log",
+      "sha256": "ffbdfd77fddf4139937c94d6bd4bf06f00c9852cfa9470e5c1b2ef5bce0f98ec",
+      "original_source": "shared-red-valid/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/shared-red-valid/stderr.log",
+      "sha256": "36ede223f296f0c261c05a6587966587c50f9f35d48abe6dc2b00d8108a078bf",
+      "original_source": "shared-red-valid/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/shared-red-valid/engine.log",
+      "sha256": "efa3c5f5ab05b8b7df8cae16055da66a296492c6e50b5628d01d06103f29e2af",
+      "original_source": "shared-red-valid/logs/engine.log"
+    },
+    {
+      "file": "process/logs/tree-red/stdout.log",
+      "sha256": "3ced0b2497bc10050f9a152c139b6e6a2bc2eb6b264b9542f5f3b3d1d92a5154",
+      "original_source": "tree-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/tree-red/stderr.log",
+      "sha256": "cc04f9d50fd80aac2877542ae7919ee74ce2dec7947909c8739b1fc0b3da4260",
+      "original_source": "tree-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/tree-red/engine.log",
+      "sha256": "c82ce5fec2862cceec5a62ec3c3791fdb52272854fa6c378a899c6fd29c73d09",
+      "original_source": "tree-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/pickup-red/stdout.log",
+      "sha256": "1e5033d166dc368d84faa2c440cdac843163966e9f9273ae84e4e11d12139a01",
+      "original_source": "pickup-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/pickup-red/stderr.log",
+      "sha256": "9e101484a9f57b8cd54965934e9793abd8875e2fac6cf7427764d1344881abd9",
+      "original_source": "pickup-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/pickup-red/engine.log",
+      "sha256": "f16aa2101b7f81980e0ec2699967777b69230d3e9f894d530058d88cac55d6b2",
+      "original_source": "pickup-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/enemy-red/stdout.log",
+      "sha256": "c5fa6652783c3489720584229b8dce3cc6340dec350ccc025510e9d1ef5bd600",
+      "original_source": "enemy-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/enemy-red/stderr.log",
+      "sha256": "304b6dcb2af2bfaa361878f2f4097287fee747311f0512f9f1f8b9994d2f0618",
+      "original_source": "enemy-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/enemy-red/engine.log",
+      "sha256": "acdaee16a8af9a7a4537cbae5080a416e24e0910a7085b5f17e4198cc027c690",
+      "original_source": "enemy-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/player-native-red/stdout.log",
+      "sha256": "73f05fc5b529ad3c73c5d2e4993b92c5988895d76a47f72d7c24ff3f74b42b51",
+      "original_source": "player-native-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/player-native-red/stderr.log",
+      "sha256": "bfaea4d99800597d5331e9edf2af7070f9ec1e6a3995864d0f33d1ddc6df1073",
+      "original_source": "player-native-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/player-native-red/engine.log",
+      "sha256": "240e94d521391371119563293440df3b53360479125bd101cb452601efd6b2d8",
+      "original_source": "player-native-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/facade-red/stdout.log",
+      "sha256": "ad9b46c5307ac7c938cc30fca2694dac2cc13c6219aac46ce7a59b03c26e091d",
+      "original_source": "facade-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/facade-red/stderr.log",
+      "sha256": "9db4c5618f55679ee45cc7ce0b5b137002ceb5f6162f63149fa604517f969c46",
+      "original_source": "facade-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/facade-red/engine.log",
+      "sha256": "b43255fd6e672da0ff6ca44b3f063d5808e91fcb728414f977032987019a8058",
+      "original_source": "facade-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/solid-red/stdout.log",
+      "sha256": "4f7c3bd20ea13ef6f07898bf6a3bf1fc6317ac859a8c07fe556698f47ff9dd04",
+      "original_source": "solid-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/solid-red/stderr.log",
+      "sha256": "6136b3dab72e54bbb1dbbd622391ce93b7aa304ca57ae748a5ca3d549294c6b6",
+      "original_source": "solid-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/solid-red/engine.log",
+      "sha256": "93c8e5801e4408bf2bb910b1b469e09336503826c6d7f9199944fb035731ec0e",
+      "original_source": "solid-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/world-isolation-red/stdout.log",
+      "sha256": "aa6dd4b6094241a0d6647fa9ac172d9ae1be49febc48ae81879753dc82a6c0d1",
+      "original_source": "world-isolation-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/world-isolation-red/stderr.log",
+      "sha256": "541a2865407aa0bd8d3e6e89d938857ab9f59c36e6fa7ecf9115e0939c3a67ef",
+      "original_source": "world-isolation-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/world-isolation-red/engine.log",
+      "sha256": "c68df58bc2c239d4d2a01d9e71bc9f4b1f8d9c046d02913accf4b326d89aef15",
+      "original_source": "world-isolation-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/canvas-isolation-red/stdout.log",
+      "sha256": "0f29f9d7be56f9885aedd07dc850e238fdd78fd820a72763f13a41a4590449e2",
+      "original_source": "canvas-isolation-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/canvas-isolation-red/stderr.log",
+      "sha256": "64cd410eeab556e4a1e590f7f72f2c6f8e30e24a5fac9e96b14e978acc61e4a1",
+      "original_source": "canvas-isolation-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/canvas-isolation-red/engine.log",
+      "sha256": "6705455f6519088cf191c94490a36b6596e13766d8b5bdffe3ae218795695370",
+      "original_source": "canvas-isolation-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/shared-green-3/stdout.log",
+      "sha256": "5488e021fe657085cca0aee62f7b1f901342bf9dfb2d75b9c18d2db3783bfbf1",
+      "original_source": "shared-green-3/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/shared-green-3/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "shared-green-3/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/shared-green-3/engine.log",
+      "sha256": "5488e021fe657085cca0aee62f7b1f901342bf9dfb2d75b9c18d2db3783bfbf1",
+      "original_source": "shared-green-3/logs/engine.log"
+    },
+    {
+      "file": "process/logs/tree-green-2/stdout.log",
+      "sha256": "e270bad226fe8d0d71987253fc301be3b14c6063d13f9963586bffcf05928a2e",
+      "original_source": "tree-green-2/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/tree-green-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "tree-green-2/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/tree-green-2/engine.log",
+      "sha256": "e270bad226fe8d0d71987253fc301be3b14c6063d13f9963586bffcf05928a2e",
+      "original_source": "tree-green-2/logs/engine.log"
+    },
+    {
+      "file": "process/logs/roof-green/stdout.log",
+      "sha256": "d3739517922daeea243d793d0989602f54c4de5353da1d6820e75ff8fa02216d",
+      "original_source": "roof-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/roof-green/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "roof-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/roof-green/engine.log",
+      "sha256": "d3739517922daeea243d793d0989602f54c4de5353da1d6820e75ff8fa02216d",
+      "original_source": "roof-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/enemy-coordinates/stdout.log",
+      "sha256": "400006a9f310a42b1ce0015effc01ec12bd3e556921d92a736dc9e52b1ed2aa8",
+      "original_source": "enemy-coordinates/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/enemy-coordinates/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "enemy-coordinates/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/enemy-coordinates/engine.log",
+      "sha256": "400006a9f310a42b1ce0015effc01ec12bd3e556921d92a736dc9e52b1ed2aa8",
+      "original_source": "enemy-coordinates/logs/engine.log"
+    },
+    {
+      "file": "process/logs/enemy-native-green/stdout.log",
+      "sha256": "b5adb794d2d982377d14ff35db9f1640881837f997d6ae97e453c7764878f00c",
+      "original_source": "enemy-native-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/enemy-native-green/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "enemy-native-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/enemy-native-green/engine.log",
+      "sha256": "b5adb794d2d982377d14ff35db9f1640881837f997d6ae97e453c7764878f00c",
+      "original_source": "enemy-native-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/pickup-headless-green/stdout.log",
+      "sha256": "4c103af8447f2d27d2d9fc332fa9c4aaa0f898be683d810f4f76fdd099e85aa5",
+      "original_source": "pickup-headless-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/pickup-headless-green/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "pickup-headless-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/pickup-headless-green/engine.log",
+      "sha256": "4c103af8447f2d27d2d9fc332fa9c4aaa0f898be683d810f4f76fdd099e85aa5",
+      "original_source": "pickup-headless-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/pickup-native-green/stdout.log",
+      "sha256": "37ee606c3667536fa2ca381d62a528d534f6615a6d881fe34b4739df926c2c87",
+      "original_source": "pickup-native-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/pickup-native-green/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "pickup-native-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/pickup-native-green/engine.log",
+      "sha256": "37ee606c3667536fa2ca381d62a528d534f6615a6d881fe34b4739df926c2c87",
+      "original_source": "pickup-native-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/pickup-final/stdout.log",
+      "sha256": "37ee606c3667536fa2ca381d62a528d534f6615a6d881fe34b4739df926c2c87",
+      "original_source": "pickup-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/pickup-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "pickup-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/pickup-final/engine.log",
+      "sha256": "37ee606c3667536fa2ca381d62a528d534f6615a6d881fe34b4739df926c2c87",
+      "original_source": "pickup-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/player-native-green/stdout.log",
+      "sha256": "e47ca9d1b98d84d8017bab8a5de49e325fbde1cbeeb3e33e2f998102f0779dee",
+      "original_source": "player-native-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/player-native-green/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "player-native-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/player-native-green/engine.log",
+      "sha256": "e47ca9d1b98d84d8017bab8a5de49e325fbde1cbeeb3e33e2f998102f0779dee",
+      "original_source": "player-native-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/player-final/stdout.log",
+      "sha256": "7289550e305ac4ed2730124c50bb86f7a98883b538016ddd0b34b74e9da849b6",
+      "original_source": "player-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/player-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "player-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/player-final/engine.log",
+      "sha256": "7289550e305ac4ed2730124c50bb86f7a98883b538016ddd0b34b74e9da849b6",
+      "original_source": "player-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/facade-green-2/stdout.log",
+      "sha256": "5db034293f274a623b6289ba2bfae8dabfcc364ce8ca1f1a5b452d4b7e2b84e6",
+      "original_source": "facade-green-2/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/facade-green-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "facade-green-2/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/facade-green-2/engine.log",
+      "sha256": "5db034293f274a623b6289ba2bfae8dabfcc364ce8ca1f1a5b452d4b7e2b84e6",
+      "original_source": "facade-green-2/logs/engine.log"
+    },
+    {
+      "file": "process/logs/shared-final/stdout.log",
+      "sha256": "5838e15622af58d5acead94395f4251878c54d4314e71af8616f7525c462b23f",
+      "original_source": "shared-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/shared-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "shared-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/shared-final/engine.log",
+      "sha256": "5838e15622af58d5acead94395f4251878c54d4314e71af8616f7525c462b23f",
+      "original_source": "shared-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/isolation-green/stdout.log",
+      "sha256": "c1b843db10c8a878844cd26e3eb5f28f2cc22ca91493bd5d345b3ae02bf1d19b",
+      "original_source": "isolation-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/isolation-green/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "isolation-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/isolation-green/engine.log",
+      "sha256": "c1b843db10c8a878844cd26e3eb5f28f2cc22ca91493bd5d345b3ae02bf1d19b",
+      "original_source": "isolation-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/roof-shared-final/stdout.log",
+      "sha256": "d3739517922daeea243d793d0989602f54c4de5353da1d6820e75ff8fa02216d",
+      "original_source": "roof-shared-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/roof-shared-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "roof-shared-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/roof-shared-final/engine.log",
+      "sha256": "d3739517922daeea243d793d0989602f54c4de5353da1d6820e75ff8fa02216d",
+      "original_source": "roof-shared-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/guardrender-shared/stdout.log",
+      "sha256": "061e0d3e608f207d0e3cc4aab5dd1eefa7cd4fcbc55a73289d0b8b16914caa75",
+      "original_source": "guardrender-shared/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/guardrender-shared/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "guardrender-shared/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/guardrender-shared/engine.log",
+      "sha256": "061e0d3e608f207d0e3cc4aab5dd1eefa7cd4fcbc55a73289d0b8b16914caa75",
+      "original_source": "guardrender-shared/logs/engine.log"
+    },
+    {
+      "file": "process/logs/enemyproxy/stdout.log",
+      "sha256": "62523fdc705c9e6e69eb35bd54733cc433c3aa6d7e2766ceeb21073296bdf8d7",
+      "original_source": "enemyproxy/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/enemyproxy/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "enemyproxy/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/enemyproxy/engine.log",
+      "sha256": "62523fdc705c9e6e69eb35bd54733cc433c3aa6d7e2766ceeb21073296bdf8d7",
+      "original_source": "enemyproxy/logs/engine.log"
+    },
+    {
+      "file": "process/logs/enemybatch/stdout.log",
+      "sha256": "a431fa720ffe913e299cd3ac89f77a3c7b8e52507373b840d41dee6f0fcad43e",
+      "original_source": "enemybatch/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/enemybatch/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "enemybatch/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/enemybatch/engine.log",
+      "sha256": "a431fa720ffe913e299cd3ac89f77a3c7b8e52507373b840d41dee6f0fcad43e",
+      "original_source": "enemybatch/logs/engine.log"
+    },
+    {
+      "file": "process/logs/enemylease/stdout.log",
+      "sha256": "249487ad1016d46016e03bb2b2674c89cf9b5554bb263d563c6364ef9228e92d",
+      "original_source": "enemylease/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/enemylease/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "enemylease/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/enemylease/engine.log",
+      "sha256": "249487ad1016d46016e03bb2b2674c89cf9b5554bb263d563c6364ef9228e92d",
+      "original_source": "enemylease/logs/engine.log"
+    },
+    {
+      "file": "process/logs/elitesheen/stdout.log",
+      "sha256": "88e4e7007b93cec55bfc1e8b4b6b6d24d5b3b5253a8f7d2816c8f1c5ca8f8a6e",
+      "original_source": "elitesheen/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/elitesheen/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "elitesheen/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/elitesheen/engine.log",
+      "sha256": "88e4e7007b93cec55bfc1e8b4b6b6d24d5b3b5253a8f7d2816c8f1c5ca8f8a6e",
+      "original_source": "elitesheen/logs/engine.log"
+    },
+    {
+      "file": "process/logs/actorshadow/stdout.log",
+      "sha256": "5ed51247701b9030948de51b65f132f6a037d382e1f3a33680db77ce84153394",
+      "original_source": "actorshadow/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/actorshadow/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "actorshadow/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/actorshadow/engine.log",
+      "sha256": "5ed51247701b9030948de51b65f132f6a037d382e1f3a33680db77ce84153394",
+      "original_source": "actorshadow/logs/engine.log"
+    },
+    {
+      "file": "process/logs/citykit/stdout.log",
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec",
+      "original_source": "citykit/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/citykit/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "citykit/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/citykit/engine.log",
+      "sha256": "d9a6f12beb790119493a8d0d8936fadb336dbdca04acf0a9a91d20cd769426ec",
+      "original_source": "citykit/logs/engine.log"
+    },
+    {
+      "file": "process/logs/cityproc/stdout.log",
+      "sha256": "012da26c0e24a8044d4f25518e3d09bac4b7a15156c82684bcc80987f0607ab0",
+      "original_source": "cityproc/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/cityproc/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "cityproc/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/cityproc/engine.log",
+      "sha256": "012da26c0e24a8044d4f25518e3d09bac4b7a15156c82684bcc80987f0607ab0",
+      "original_source": "cityproc/logs/engine.log"
+    },
+    {
+      "file": "process/logs/dungeonroof/stdout.log",
+      "sha256": "e97a5ee995c6638c430d598c04f728a851a59df91feef008007f15118d7724c2",
+      "original_source": "dungeonroof/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/dungeonroof/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "dungeonroof/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/dungeonroof/engine.log",
+      "sha256": "e97a5ee995c6638c430d598c04f728a851a59df91feef008007f15118d7724c2",
+      "original_source": "dungeonroof/logs/engine.log"
+    },
+    {
+      "file": "process/logs/dungeonproduction/stdout.log",
+      "sha256": "8d29d6c6520cf4ff80af127f1aa737561d37f1be0a2e097071bf67ff5e1b5165",
+      "original_source": "dungeonproduction/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/dungeonproduction/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "dungeonproduction/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/dungeonproduction/engine.log",
+      "sha256": "8d29d6c6520cf4ff80af127f1aa737561d37f1be0a2e097071bf67ff5e1b5165",
+      "original_source": "dungeonproduction/logs/engine.log"
+    },
+    {
+      "file": "process/logs/healthlock/stdout.log",
+      "sha256": "f919179d9bfe6b1e2649b347fdda8b3b71a91cd022fd30c79abbd4064f9750df",
+      "original_source": "healthlock/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/healthlock/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "healthlock/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/healthlock/engine.log",
+      "sha256": "f919179d9bfe6b1e2649b347fdda8b3b71a91cd022fd30c79abbd4064f9750df",
+      "original_source": "healthlock/logs/engine.log"
+    },
+    {
+      "file": "process/logs/groundlootcap/stdout.log",
+      "sha256": "c5d907b89324812b868d1419aa95ab43b619eea4bfa3f0cc9cd1fbb2836bff4f",
+      "original_source": "groundlootcap/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/groundlootcap/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "groundlootcap/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/groundlootcap/engine.log",
+      "sha256": "c5d907b89324812b868d1419aa95ab43b619eea4bfa3f0cc9cd1fbb2836bff4f",
+      "original_source": "groundlootcap/logs/engine.log"
+    },
+    {
+      "file": "process/logs/choicepickup/stdout.log",
+      "sha256": "81901f08826c88da67e6863b66326b8ee4e676731aa6cdc5f1deb917e20906ba",
+      "original_source": "choicepickup/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/choicepickup/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "choicepickup/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/choicepickup/engine.log",
+      "sha256": "81901f08826c88da67e6863b66326b8ee4e676731aa6cdc5f1deb917e20906ba",
+      "original_source": "choicepickup/logs/engine.log"
+    },
+    {
+      "file": "process/logs/taggedcache/stdout.log",
+      "sha256": "f6546ba8182e5bd629501447dce82db3ca279e29397b1ea37934ad1c9ab6b47f",
+      "original_source": "taggedcache/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/taggedcache/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "taggedcache/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/taggedcache/engine.log",
+      "sha256": "f6546ba8182e5bd629501447dce82db3ca279e29397b1ea37934ad1c9ab6b47f",
+      "original_source": "taggedcache/logs/engine.log"
+    },
+    {
+      "file": "process/logs/street-script/stdout.log",
+      "sha256": "72c82d27ba2fe82419a7f6e69162bbd109cd75f8c2a13a28bfbb4af1fdbb55a0",
+      "original_source": "street-script/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/street-script/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "street-script/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/street-script/engine.log",
+      "sha256": "72c82d27ba2fe82419a7f6e69162bbd109cd75f8c2a13a28bfbb4af1fdbb55a0",
+      "original_source": "street-script/logs/engine.log"
+    },
+    {
+      "file": "process/logs/import-final/stdout.log",
+      "sha256": "a139420a70bca7469c81a9e9ca9dbecf47a27ff78a4c8bc295f6dcb8a3cf3d34",
+      "original_source": "import-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/import-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "import-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/import-final/engine.log",
+      "sha256": "bfeba32ffafeddfbc269c9d32490b7931849e387a64551bfdc38edd4571ef766",
+      "original_source": "import-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/parse-final/stdout.log",
+      "sha256": "50a5f624b188f82be26ee737a7cdb49aeaf8fb33e3f489cd558af200b9fc38b9",
+      "original_source": "parse-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/parse-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "parse-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/parse-final/engine.log",
+      "sha256": "50a5f624b188f82be26ee737a7cdb49aeaf8fb33e3f489cd558af200b9fc38b9",
+      "original_source": "parse-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/parse-commitable/stdout.log",
+      "sha256": "50a5f624b188f82be26ee737a7cdb49aeaf8fb33e3f489cd558af200b9fc38b9",
+      "original_source": "parse-commitable/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/parse-commitable/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "parse-commitable/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/parse-commitable/engine.log",
+      "sha256": "50a5f624b188f82be26ee737a7cdb49aeaf8fb33e3f489cd558af200b9fc38b9",
+      "original_source": "parse-commitable/logs/engine.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small-2/stdout.log",
+      "sha256": "552161f60607bfa24a65dbc5fc92e8c9c61466d66179e4d328a9faf221b56aec",
+      "original_source": "bed-cover-small-2/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small-2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "bed-cover-small-2/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small-2/engine.log",
+      "sha256": "552161f60607bfa24a65dbc5fc92e8c9c61466d66179e4d328a9faf221b56aec",
+      "original_source": "bed-cover-small-2/logs/engine.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-small/stdout.log",
+      "sha256": "07eaf4e2249459d0eca165b51a7f0c67539998f687b5e21b7e7204ca0e04bb3c",
+      "original_source": "player-ordinary-small/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-small/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "player-ordinary-small/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-small/engine.log",
+      "sha256": "07eaf4e2249459d0eca165b51a7f0c67539998f687b5e21b7e7204ca0e04bb3c",
+      "original_source": "player-ordinary-small/logs/engine.log"
+    },
+    {
+      "file": "process/logs/bed-occupied-trial/stdout.log",
+      "sha256": "f47fbefbad259691b9d5af74df11bdeec01f73d01bd533a641f34fa019735ce4",
+      "original_source": "bed-occupied-trial/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/bed-occupied-trial/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "bed-occupied-trial/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/bed-occupied-trial/engine.log",
+      "sha256": "f47fbefbad259691b9d5af74df11bdeec01f73d01bd533a641f34fa019735ce4",
+      "original_source": "bed-occupied-trial/logs/engine.log"
+    },
+    {
+      "file": "process/logs/bed-facade-trial/stdout.log",
+      "sha256": "4963c062287b890ed3f83f7ac6e17bb51ab3a564b6b40b353b830db5f7180986",
+      "original_source": "bed-facade-trial/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/bed-facade-trial/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "bed-facade-trial/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/bed-facade-trial/engine.log",
+      "sha256": "4963c062287b890ed3f83f7ac6e17bb51ab3a564b6b40b353b830db5f7180986",
+      "original_source": "bed-facade-trial/logs/engine.log"
+    },
+    {
+      "file": "process/logs/shared-red/stdout.log",
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "original_source": "shared-red/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/shared-red/stderr.log",
+      "sha256": "c82a8c02365fdbcaa7243256a868a328662db4f74c575410d23e1e6acc53033d",
+      "original_source": "shared-red/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/shared-red/engine.log",
+      "sha256": "417c9c42c1ffba0be3753263a494f08433db275f5257bd9d034313a1e695e68e",
+      "original_source": "shared-red/logs/engine.log"
+    },
+    {
+      "file": "process/logs/shared-green/stdout.log",
+      "sha256": "b89eaeb03bf1011f464737674db1c02f3f689ca9754d438dad9f5cee42f953cf",
+      "original_source": "shared-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/shared-green/stderr.log",
+      "sha256": "047a9675bf136c6fb058f35b1b44432d1ef5dc5b795e6ec27429bde0db83be6d",
+      "original_source": "shared-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/shared-green/engine.log",
+      "sha256": "e124697931d96b573ebe90b8c21d9ba4f6231a560e58f72eadaec7bdf7218d76",
+      "original_source": "shared-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/shared-green-2/stdout.log",
+      "sha256": "a9336643102aa2fe96d1a28767df6b9695cc9151b644bfdd3e27914a2d2b581c",
+      "original_source": "shared-green-2/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/shared-green-2/stderr.log",
+      "sha256": "8e40581ff6ed68847e92266ef7151f2dc7e747a4a758ef9f164063f6cd8b3163",
+      "original_source": "shared-green-2/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/shared-green-2/engine.log",
+      "sha256": "8e9f63a8adbbbfeaac64fb0ad60a027d89d49d33e4ee628feff0b35713d62801",
+      "original_source": "shared-green-2/logs/engine.log"
+    },
+    {
+      "file": "process/logs/facade-green/stdout.log",
+      "sha256": "3aaa2b4efcfbda270aa401439f303380e894c78a9ba65570d062f21117fa2819",
+      "original_source": "facade-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/facade-green/stderr.log",
+      "sha256": "ad7fea6dd4350e5251e529dc9a729a60aa11695d46b2f4239564e2932666d107",
+      "original_source": "facade-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/facade-green/engine.log",
+      "sha256": "6362023e196ee56b34befd06af4d22998f998c0115f0a8b0402729b7cf60a0da",
+      "original_source": "facade-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/solid-green/stdout.log",
+      "sha256": "5838e15622af58d5acead94395f4251878c54d4314e71af8616f7525c462b23f",
+      "original_source": "solid-green/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/solid-green/stderr.log",
+      "sha256": "da803db1f290b8a1f366a68024cdebbe305703e6f367c7b5cbf4c842367f3982",
+      "original_source": "solid-green/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/solid-green/engine.log",
+      "sha256": "bc3731be34bbec805f2bfd1cf4cee8833ed2b8a8a76965d714e428bd7da15cb3",
+      "original_source": "solid-green/logs/engine.log"
+    },
+    {
+      "file": "process/logs/entity-preview-parse/stdout.log",
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "original_source": "entity-preview-parse/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/entity-preview-parse/stderr.log",
+      "sha256": "b6abbc44b729277ac188f69ea0eb9710c6064acbfda07f0666fc081b17e93d2c",
+      "original_source": "entity-preview-parse/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/entity-preview-parse/engine.log",
+      "sha256": "7b516d30a888af0d2f07f581ce12b90459b4c5e0d5e8a99ec1e46313e8a0569c",
+      "original_source": "entity-preview-parse/logs/engine.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small/stdout.log",
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "original_source": "bed-cover-small/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small/stderr.log",
+      "sha256": "e60f4835121ebbfde7015de1c0ab61eb93a5578f584408d012bbc0a8f3a4f100",
+      "original_source": "bed-cover-small/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small/engine.log",
+      "sha256": "6948e675631bc50518072b251d4c35aae3a9bd537d3538812145e6c99ea5a031",
+      "original_source": "bed-cover-small/logs/engine.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-small/stdout.log",
+      "sha256": "d0354470ba89c25ae9a0d3027be71670912e327a2444799e5e2aed947d1f70a6",
+      "original_source": "fruit-cover-small/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-small/stderr.log",
+      "sha256": "674633b3dd6f6a614be0c9f2360a61b022e14ccc08f9fa5fcef25f0c3d4a3fd2",
+      "original_source": "fruit-cover-small/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-small/engine.log",
+      "sha256": "6c600967ef3a171581d5c83fd16744eb6b23744ffd497b3b3cf735d0fe35ccce",
+      "original_source": "fruit-cover-small/logs/engine.log"
+    },
+    {
+      "file": "process/logs/guardrender/stdout.log",
+      "sha256": "9f00167bf49a8fcb6ad2e7feefcc2cbe14a5ba26b0f916c260ed8f4ecd9437f3",
+      "original_source": "guardrender/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/guardrender/stderr.log",
+      "sha256": "9f0be76ab1dc1e25ffe56c809a7b23a4adca7c55662b3c50916b9d316412495e",
+      "original_source": "guardrender/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/guardrender/engine.log",
+      "sha256": "6355ce7c6a292e9c2ba2ad0010b637a2a6f53960f58db5655ac7080d9ba168c0",
+      "original_source": "guardrender/logs/engine.log"
+    },
+    {
+      "file": "process/logs/street/stdout.log",
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "original_source": "street/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/street/stderr.log",
+      "sha256": "d1da3eb9abeeb32748a7528b7547de4e7f3bdb24428d591290bd3731241af2d1",
+      "original_source": "street/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/street/engine.log",
+      "sha256": "fdd30b830848a2a9b38612f9ab2d1981f67d1de53715d3242abb620d110bd7f1",
+      "original_source": "street/logs/engine.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small-final/stdout.log",
+      "sha256": "cb9a58f0018a2513c94636c17ca09f7427d0202d82c360943f7e1b0fea45b4a2",
+      "original_source": "bed-cover-small-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "bed-cover-small-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/bed-cover-small-final/engine.log",
+      "sha256": "cb9a58f0018a2513c94636c17ca09f7427d0202d82c360943f7e1b0fea45b4a2",
+      "original_source": "bed-cover-small-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/bed-cover-normal-final/stdout.log",
+      "sha256": "1ba71f2c578edf8194aac9552a0abd0911dd8ee0787850628bfce2c75bae991a",
+      "original_source": "bed-cover-normal-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/bed-cover-normal-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "bed-cover-normal-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/bed-cover-normal-final/engine.log",
+      "sha256": "1ba71f2c578edf8194aac9552a0abd0911dd8ee0787850628bfce2c75bae991a",
+      "original_source": "bed-cover-normal-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-small-final/stdout.log",
+      "sha256": "6d51ab50f091244a7ed82622d9f59a4a61619b5f56c692e613a377ab7adc57af",
+      "original_source": "fruit-cover-small-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-small-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "fruit-cover-small-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-small-final/engine.log",
+      "sha256": "6d51ab50f091244a7ed82622d9f59a4a61619b5f56c692e613a377ab7adc57af",
+      "original_source": "fruit-cover-small-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-normal-final/stdout.log",
+      "sha256": "7d21d03395dd4f4ae7eba0347bb0a6cc5d5dce69132fe5461649f0834314252b",
+      "original_source": "fruit-cover-normal-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-normal-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "fruit-cover-normal-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/fruit-cover-normal-final/engine.log",
+      "sha256": "7d21d03395dd4f4ae7eba0347bb0a6cc5d5dce69132fe5461649f0834314252b",
+      "original_source": "fruit-cover-normal-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-small-final/stdout.log",
+      "sha256": "b1dff7985e7b11fb8e031ebe2a2f8489a195a66c77d89fb57537e8ba371372b1",
+      "original_source": "player-ordinary-small-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-small-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "player-ordinary-small-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-small-final/engine.log",
+      "sha256": "b1dff7985e7b11fb8e031ebe2a2f8489a195a66c77d89fb57537e8ba371372b1",
+      "original_source": "player-ordinary-small-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/player-fruit-normal-final/stdout.log",
+      "sha256": "a4a2f9b3bcd5f51660dfc1d834d6c21c3f178a920694f1940ecd3909777f0267",
+      "original_source": "player-fruit-normal-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/player-fruit-normal-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "player-fruit-normal-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/player-fruit-normal-final/engine.log",
+      "sha256": "a4a2f9b3bcd5f51660dfc1d834d6c21c3f178a920694f1940ecd3909777f0267",
+      "original_source": "player-fruit-normal-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-reduced-final/stdout.log",
+      "sha256": "b69f5ab7d8ebe4483503b828499b6308b0971287ec699367f0fe78be455e5d4d",
+      "original_source": "player-ordinary-reduced-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-reduced-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "player-ordinary-reduced-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/player-ordinary-reduced-final/engine.log",
+      "sha256": "b69f5ab7d8ebe4483503b828499b6308b0971287ec699367f0fe78be455e5d4d",
+      "original_source": "player-ordinary-reduced-final/logs/engine.log"
+    },
+    {
+      "file": "process/logs/bed-cover-fight-final/stdout.log",
+      "sha256": "f7b47c51436905318149e118149a18c69a2ebfd1379202aa8cd471400576e1c8",
+      "original_source": "bed-cover-fight-final/logs/stdout.log"
+    },
+    {
+      "file": "process/logs/bed-cover-fight-final/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_source": "bed-cover-fight-final/logs/stderr.log"
+    },
+    {
+      "file": "process/logs/bed-cover-fight-final/engine.log",
+      "sha256": "f7b47c51436905318149e118149a18c69a2ebfd1379202aa8cd471400576e1c8",
+      "original_source": "bed-cover-fight-final/logs/engine.log"
+    },
+    {
+      "file": "bed-cover-small-final/roof-covered.png",
+      "sha256": "7c0dab4feb3495c546098785e2e83cbb574b4c2c8de42cc0aa9e8fe24bbc5da2",
+      "original_source": "captures/bed-cover-small-final/roof-covered.png"
+    },
+    {
+      "file": "bed-cover-small-final/roof-front-controls.png",
+      "sha256": "0a6a92ca2f66cbfa73ac6f3b88b8e7baf8dfe62822a9d4b904f530f2d397c594",
+      "original_source": "captures/bed-cover-small-final/roof-front-controls.png"
+    },
+    {
+      "file": "bed-cover-small-final/facade-covered.png",
+      "sha256": "a9bed367141c9edc7f97ce3bc20ec892f9727e473b6c1a7a6f17a962e1be6614",
+      "original_source": "captures/bed-cover-small-final/facade-covered.png"
+    },
+    {
+      "file": "bed-cover-small-final/facade-front-controls.png",
+      "sha256": "1e5c623c61f534311ca14d7c16b0c36804441a0a45bb3e2422583447db1aeff2",
+      "original_source": "captures/bed-cover-small-final/facade-front-controls.png"
+    },
+    {
+      "file": "bed-cover-small-final/ordinary-tree-enemies-covered.png",
+      "sha256": "9e66a830984ca5199a92fbf20c1e1b5c7d187cff0a8001ba1fd23d1922a26ad2",
+      "original_source": "captures/bed-cover-small-final/ordinary-tree-enemies-covered.png"
+    },
+    {
+      "file": "bed-cover-small-final/ordinary-tree-enemies-front-controls.png",
+      "sha256": "869bbf7d8673910c2061d753f76dd4cbda4cdeff3b757342e8c07f4a41d8bc75",
+      "original_source": "captures/bed-cover-small-final/ordinary-tree-enemies-front-controls.png"
+    },
+    {
+      "file": "bed-cover-small-final/ordinary-tree-pickups-covered.png",
+      "sha256": "89d4fc658139abe052bca2d6cd110021c2aa85a2112b91946496c00e8490ab85",
+      "original_source": "captures/bed-cover-small-final/ordinary-tree-pickups-covered.png"
+    },
+    {
+      "file": "bed-cover-small-final/ordinary-tree-pickups-front-controls.png",
+      "sha256": "6a9e10f0a87c8fe5461a0abcdcdbee108185fcac44a419b05805bcc653be54f2",
+      "original_source": "captures/bed-cover-small-final/ordinary-tree-pickups-front-controls.png"
+    },
+    {
+      "file": "bed-cover-small-final/roof-before-entry.png",
+      "sha256": "f21fa6029ac0bf983b8e884ef0b42c97c4fe919826532d1af97f4571825b215a",
+      "original_source": "captures/bed-cover-small-final/roof-before-entry.png"
+    },
+    {
+      "file": "bed-cover-small-final/roof-player-inside-cutaway.png",
+      "sha256": "fca2549cfa4f7596d63ee4b08a40ac62ce115d13eeeebb80b521e7e01fb184fc",
+      "original_source": "captures/bed-cover-small-final/roof-player-inside-cutaway.png"
+    },
+    {
+      "file": "bed-cover-small-final/roof-player-outside-restored.png",
+      "sha256": "33d8672cfb55983785706499e7085a48fe47715847d98b6ddb98c496697407d3",
+      "original_source": "captures/bed-cover-small-final/roof-player-outside-restored.png"
+    },
+    {
+      "file": "bed-cover-small-final/capture-info.json",
+      "sha256": "c491844d80130a8389b8a5148c134f1b59f3e466484de3f5486ff697f5e188bf",
+      "original_source": "captures/bed-cover-small-final/capture-info.json"
+    },
+    {
+      "file": "bed-cover-normal-final/roof-covered.png",
+      "sha256": "2ada45dd088d23c836556c04657aff7d54d3876576692a55fc8ffdfd5775f804",
+      "original_source": "captures/bed-cover-normal-final/roof-covered.png"
+    },
+    {
+      "file": "bed-cover-normal-final/roof-front-controls.png",
+      "sha256": "cdcfda091c090713f087371edf6490c229364edf9281c2aa01f03a9d0230cc0e",
+      "original_source": "captures/bed-cover-normal-final/roof-front-controls.png"
+    },
+    {
+      "file": "bed-cover-normal-final/facade-covered.png",
+      "sha256": "c060392c684d22311fa22aa0e7c062c86e8dd2830633531d570a5df253286cfa",
+      "original_source": "captures/bed-cover-normal-final/facade-covered.png"
+    },
+    {
+      "file": "bed-cover-normal-final/facade-front-controls.png",
+      "sha256": "f982903ab0f2b8251f3978de76ec0f3255c56937be9180e996e1159a8eb19df2",
+      "original_source": "captures/bed-cover-normal-final/facade-front-controls.png"
+    },
+    {
+      "file": "bed-cover-normal-final/ordinary-tree-enemies-covered.png",
+      "sha256": "81ec97a7f766129077ca923d06184458ac67991535de08054a8b552c080e6299",
+      "original_source": "captures/bed-cover-normal-final/ordinary-tree-enemies-covered.png"
+    },
+    {
+      "file": "bed-cover-normal-final/ordinary-tree-enemies-front-controls.png",
+      "sha256": "8f10e8c1cc381191ebb69ee403fedc1c9ec116d3fb384ddc74759f6a4c346a81",
+      "original_source": "captures/bed-cover-normal-final/ordinary-tree-enemies-front-controls.png"
+    },
+    {
+      "file": "bed-cover-normal-final/ordinary-tree-pickups-covered.png",
+      "sha256": "1bc0d786a93d3b7aed4799b4df029de2a2044c4dfb7a17e8f472be99a7f390b9",
+      "original_source": "captures/bed-cover-normal-final/ordinary-tree-pickups-covered.png"
+    },
+    {
+      "file": "bed-cover-normal-final/ordinary-tree-pickups-front-controls.png",
+      "sha256": "d30fa9607dce1eda322d9680a6e605cf1cc6872fc1b0b8601d32cd553cbec4fe",
+      "original_source": "captures/bed-cover-normal-final/ordinary-tree-pickups-front-controls.png"
+    },
+    {
+      "file": "bed-cover-normal-final/roof-before-entry.png",
+      "sha256": "087a302784bb3a3802bad7e657c19624da3e3565a0953beb5bf08e88e85f3b66",
+      "original_source": "captures/bed-cover-normal-final/roof-before-entry.png"
+    },
+    {
+      "file": "bed-cover-normal-final/roof-player-inside-cutaway.png",
+      "sha256": "21cccfbb3f82b33be393285312af4cf8feab20743a7165d5ee29f7d7b1320a47",
+      "original_source": "captures/bed-cover-normal-final/roof-player-inside-cutaway.png"
+    },
+    {
+      "file": "bed-cover-normal-final/roof-player-outside-restored.png",
+      "sha256": "f4d2dade8b7e9d334ecbe2c9012c3610c8b08ef6938848c840b4a2e32787cdb4",
+      "original_source": "captures/bed-cover-normal-final/roof-player-outside-restored.png"
+    },
+    {
+      "file": "bed-cover-normal-final/capture-info.json",
+      "sha256": "7cf6fc84aa1a2849cd88f2490668b2859b79444c18ae8123f0bbb2134003b69a",
+      "original_source": "captures/bed-cover-normal-final/capture-info.json"
+    },
+    {
+      "file": "fruit-cover-small-final/roof-covered.png",
+      "sha256": "4d68f32528e1bf26b442a528d016b778cba3ac20b101af16198d6730318c7efd",
+      "original_source": "captures/fruit-cover-small-final/roof-covered.png"
+    },
+    {
+      "file": "fruit-cover-small-final/roof-front-controls.png",
+      "sha256": "681800ef8fb2d797d8e32c40171ec6dfed303f7e4606c45bd70bcbff31373f16",
+      "original_source": "captures/fruit-cover-small-final/roof-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-small-final/facade-covered.png",
+      "sha256": "42c54ab8f824126f53ca2b7fa4b50db1367c4c4b914e7730a7b330fb8542ea0a",
+      "original_source": "captures/fruit-cover-small-final/facade-covered.png"
+    },
+    {
+      "file": "fruit-cover-small-final/facade-front-controls.png",
+      "sha256": "7a2eccb7f9485dc5880b4c70d54b86d13b43f41798a74da2ef66b059fbda16a4",
+      "original_source": "captures/fruit-cover-small-final/facade-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-small-final/fruit-tree-enemies-covered.png",
+      "sha256": "7522c9da1313bf84212dd5ead5328d885ae5d463edaf6ee055f3aef4390c11ac",
+      "original_source": "captures/fruit-cover-small-final/fruit-tree-enemies-covered.png"
+    },
+    {
+      "file": "fruit-cover-small-final/fruit-tree-enemies-front-controls.png",
+      "sha256": "d773381dd0ac9fa8e229b9d54784036739ecf1db8ca6be60064197d3bcfe3522",
+      "original_source": "captures/fruit-cover-small-final/fruit-tree-enemies-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-small-final/fruit-tree-pickups-covered.png",
+      "sha256": "7fa78024546b5290898ca90e1e121f26bf79b85ac07bd7b2948d03266502802f",
+      "original_source": "captures/fruit-cover-small-final/fruit-tree-pickups-covered.png"
+    },
+    {
+      "file": "fruit-cover-small-final/fruit-tree-pickups-front-controls.png",
+      "sha256": "7c02cfcb7e278b881688c9c4918e0d04c420dc5a3b9e46ff1bdee409723692af",
+      "original_source": "captures/fruit-cover-small-final/fruit-tree-pickups-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-small-final/roof-before-entry.png",
+      "sha256": "d1aba9bff1e14251cb0a6a3a9d5aa36c50b4cf7b2591a69c7cde625ce1731cb9",
+      "original_source": "captures/fruit-cover-small-final/roof-before-entry.png"
+    },
+    {
+      "file": "fruit-cover-small-final/roof-player-inside-cutaway.png",
+      "sha256": "6ebedae7ef06eb9ebc5c76d6d5682d6e974c1d6d5ae91e82a6706e5bbc406e56",
+      "original_source": "captures/fruit-cover-small-final/roof-player-inside-cutaway.png"
+    },
+    {
+      "file": "fruit-cover-small-final/roof-player-outside-restored.png",
+      "sha256": "d273e20e08970240f447369ebac291c1b59dade0458c4feb0cf0b916cab78bb4",
+      "original_source": "captures/fruit-cover-small-final/roof-player-outside-restored.png"
+    },
+    {
+      "file": "fruit-cover-small-final/capture-info.json",
+      "sha256": "85cdac38b86f4b8d12ec583630867941b4b2ae5b39bd6f7e9232ff6253e62511",
+      "original_source": "captures/fruit-cover-small-final/capture-info.json"
+    },
+    {
+      "file": "fruit-cover-normal-final/roof-covered.png",
+      "sha256": "51553471529721ffc7206781e1536e952feeb88779257fc3e38e4bc4e3e4c7eb",
+      "original_source": "captures/fruit-cover-normal-final/roof-covered.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/roof-front-controls.png",
+      "sha256": "70c8c7cc34d34110df578edbf2a38c13d8cff06241f2ed83874576bf35969c75",
+      "original_source": "captures/fruit-cover-normal-final/roof-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/facade-covered.png",
+      "sha256": "e6848d0e5e4c2a03f9f12ebc23730aa7bb84ee7d1865791aae1cdabd897a187d",
+      "original_source": "captures/fruit-cover-normal-final/facade-covered.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/facade-front-controls.png",
+      "sha256": "91beab84d42255eba30804cb8b9f0f5fe7c8b5a630e894c23ca7884c9efb205a",
+      "original_source": "captures/fruit-cover-normal-final/facade-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/fruit-tree-enemies-covered.png",
+      "sha256": "348a999eb92c76b2ee640269d7f6bca04d08374efaea9be40757c0305f612734",
+      "original_source": "captures/fruit-cover-normal-final/fruit-tree-enemies-covered.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/fruit-tree-enemies-front-controls.png",
+      "sha256": "e3095f2dae2d94d01950a85589f29fdce5a4211e8a0fa3c6163bf16517387b27",
+      "original_source": "captures/fruit-cover-normal-final/fruit-tree-enemies-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/fruit-tree-pickups-covered.png",
+      "sha256": "b54105e37556b4c941c3c0b64a8d67b5115b31a2e792842008b4a30039ac3327",
+      "original_source": "captures/fruit-cover-normal-final/fruit-tree-pickups-covered.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/fruit-tree-pickups-front-controls.png",
+      "sha256": "0910b9fec31185d74acbffef5fdb344984cb15e4e3bd062525b4c5fe78a1d948",
+      "original_source": "captures/fruit-cover-normal-final/fruit-tree-pickups-front-controls.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/roof-before-entry.png",
+      "sha256": "acfc1ff6719c42f96980dd67d1d6d39241ff06c719330cd231f6ee5255177800",
+      "original_source": "captures/fruit-cover-normal-final/roof-before-entry.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/roof-player-inside-cutaway.png",
+      "sha256": "6b8e44f6df37dba4cce9879203acd9f153fd01e8ca4ccb8464064be56fc815b2",
+      "original_source": "captures/fruit-cover-normal-final/roof-player-inside-cutaway.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/roof-player-outside-restored.png",
+      "sha256": "2774086b93ecf8ba29bca2f84ba92aa6b9dec76e12532d58cc82040cc8d1668c",
+      "original_source": "captures/fruit-cover-normal-final/roof-player-outside-restored.png"
+    },
+    {
+      "file": "fruit-cover-normal-final/capture-info.json",
+      "sha256": "351816ebdb61afa9e306a2cb830e94bdc42f2e68b581c011289b0fc4b2846839",
+      "original_source": "captures/fruit-cover-normal-final/capture-info.json"
+    },
+    {
+      "file": "player-ordinary-small-final/player-tree-front.png",
+      "sha256": "cdcc33a9c758eddb4fb12a9e5fc37eee8bf1960dc5262f15473636c9825091d4",
+      "original_source": "captures/player-ordinary-small-final/player-tree-front.png"
+    },
+    {
+      "file": "player-ordinary-small-final/player-tree-behind.png",
+      "sha256": "9e740a885e03b93ce9650a6046b74279521a3d88e4565fba4b2ce58f72b3098b",
+      "original_source": "captures/player-ordinary-small-final/player-tree-behind.png"
+    },
+    {
+      "file": "player-ordinary-small-final/player-tree-front-restored.png",
+      "sha256": "3fc930a9d58492a100cc77fe5b4215ae17217f575e9498a8535e0575e02c651a",
+      "original_source": "captures/player-ordinary-small-final/player-tree-front-restored.png"
+    },
+    {
+      "file": "player-ordinary-small-final/capture-info.json",
+      "sha256": "cb05ac451e5a1df7649ec16ce59ea11444d2771b7591296925ccd14a286d44cc",
+      "original_source": "captures/player-ordinary-small-final/capture-info.json"
+    },
+    {
+      "file": "player-fruit-normal-final/player-tree-front.png",
+      "sha256": "2aff9ec16c9402eb53f00b31cc0d35dae7be51e191066f3f67657430c232ba43",
+      "original_source": "captures/player-fruit-normal-final/player-tree-front.png"
+    },
+    {
+      "file": "player-fruit-normal-final/player-tree-behind.png",
+      "sha256": "bec6df72f70021ef816fe445b6023894b826fa7e66a400a2edfd1bf64ac653a9",
+      "original_source": "captures/player-fruit-normal-final/player-tree-behind.png"
+    },
+    {
+      "file": "player-fruit-normal-final/player-tree-front-restored.png",
+      "sha256": "5ac0da8f0c1b40827c271c835c9a9e90e1230c46d72242cf4be62b445c38c4ec",
+      "original_source": "captures/player-fruit-normal-final/player-tree-front-restored.png"
+    },
+    {
+      "file": "player-fruit-normal-final/capture-info.json",
+      "sha256": "8a220120630172e88839f5be75603b5e92af24bd86f3e3636370c2fa09bad704",
+      "original_source": "captures/player-fruit-normal-final/capture-info.json"
+    },
+    {
+      "file": "player-ordinary-reduced-final/player-tree-front.png",
+      "sha256": "e8c86540b83fa43ba3cde2063ab3ec9099878b4bd4a96fc7669241b3d348be6b",
+      "original_source": "captures/player-ordinary-reduced-final/player-tree-front.png"
+    },
+    {
+      "file": "player-ordinary-reduced-final/player-tree-behind.png",
+      "sha256": "bc04586ca21afff03ff39624bf85b68ade39f3c1c1bc0712c3d6c176726fe4bb",
+      "original_source": "captures/player-ordinary-reduced-final/player-tree-behind.png"
+    },
+    {
+      "file": "player-ordinary-reduced-final/player-tree-front-restored.png",
+      "sha256": "fe741e54244f41c52bcbd07a48a5487aea1deec1d4ad16c1d5ed8d08cc643c02",
+      "original_source": "captures/player-ordinary-reduced-final/player-tree-front-restored.png"
+    },
+    {
+      "file": "player-ordinary-reduced-final/capture-info.json",
+      "sha256": "a640a0dc7cf486bf92fef128efca4a56bb8d9f7f916a2b3a400436b551cc53b2",
+      "original_source": "captures/player-ordinary-reduced-final/capture-info.json"
+    },
+    {
+      "file": "synthetic-player-final/normal-rgba-behind.png",
+      "sha256": "c6bb2db7ae9009ace3fdc997059ca4b662b8fa7dea39da8e2b735d28361075df",
+      "original_source": "captures/player-final/normal-rgba-behind.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-rgba-front.png",
+      "sha256": "b19ff7ce51b02d5fc4a8b9dc47412d3d2ecf0df9225a2f87991c274442b889ac",
+      "original_source": "captures/player-final/normal-rgba-front.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-atlas-flipped.png",
+      "sha256": "bd1170ddf388102110d193431e1b361e678bd94fa2f1744728781bd00de548f8",
+      "original_source": "captures/player-final/normal-atlas-flipped.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-ordinary-behind.png",
+      "sha256": "958ff71abd96c864d72a5fd37664fe5af5502f1e2d6cd4d77f6ce71e379a1ae0",
+      "original_source": "captures/player-final/normal-ordinary-behind.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-ordinary-front.png",
+      "sha256": "2e021396d0738ab4804bd1f12bfbc00f0f5ae55dafa44ebb18b38e4221953dde",
+      "original_source": "captures/player-final/normal-ordinary-front.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-fruit-behind.png",
+      "sha256": "46f810839f3eb7423e26240b233d5517e501bfd19ccbd4a441bb76477c69ab80",
+      "original_source": "captures/player-final/normal-fruit-behind.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-fruit-front.png",
+      "sha256": "2f08222aa937e22998d8e2e5409379815ae4999768d1e245658f3e77f965c0c1",
+      "original_source": "captures/player-final/normal-fruit-front.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-roof-opaque.png",
+      "sha256": "4ca3051f1876c8bf431b18a4d25621569cdaa9470c29aad6a89a720d1c445ce3",
+      "original_source": "captures/player-final/normal-roof-opaque.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-roof-ancestor-partial.png",
+      "sha256": "dc397bbc6bb234df7d4b5dba375a12cf6bcddc54ded91ae4f522cda755a68554",
+      "original_source": "captures/player-final/normal-roof-ancestor-partial.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-roof-cutaway.png",
+      "sha256": "7ab1a044c488807f37ffa60d3ba2e1611ccb88430bb604238dd305abddebf182",
+      "original_source": "captures/player-final/normal-roof-cutaway.png"
+    },
+    {
+      "file": "synthetic-player-final/normal-capacity-35.png",
+      "sha256": "0429483d318e32b85879eab499b0bec50b548600ee797407972bc74534f43b10",
+      "original_source": "captures/player-final/normal-capacity-35.png"
+    },
+    {
+      "file": "synthetic-player-final/small-rgba-behind.png",
+      "sha256": "87af07234a28014a846bcc3548833b269b146f0862dd7403949e20045c551509",
+      "original_source": "captures/player-final/small-rgba-behind.png"
+    },
+    {
+      "file": "synthetic-player-final/small-rgba-front.png",
+      "sha256": "149d3b04f275ac52ae0eafedfc3f8350b1031ae743473880d4e26223abad5cef",
+      "original_source": "captures/player-final/small-rgba-front.png"
+    },
+    {
+      "file": "synthetic-player-final/small-atlas-flipped.png",
+      "sha256": "ad13913dd8bbe588d2f2edb12354334effa9dd7f3212050e84b1724598021a1e",
+      "original_source": "captures/player-final/small-atlas-flipped.png"
+    },
+    {
+      "file": "synthetic-player-final/small-ordinary-behind.png",
+      "sha256": "b07177709a3a5ab3095f7592a3eef8e66cb13b305e67d6275570a2c2ac8f5405",
+      "original_source": "captures/player-final/small-ordinary-behind.png"
+    },
+    {
+      "file": "synthetic-player-final/small-ordinary-front.png",
+      "sha256": "132a5fbbdedf0257f7b89cdb55c3d9cf1da808c3f24625363169481c4cc23def",
+      "original_source": "captures/player-final/small-ordinary-front.png"
+    },
+    {
+      "file": "synthetic-player-final/small-fruit-behind.png",
+      "sha256": "39abd47a770483b6016d4f9babd975e93f87865dcf4a10c264bec55284094590",
+      "original_source": "captures/player-final/small-fruit-behind.png"
+    },
+    {
+      "file": "synthetic-player-final/small-fruit-front.png",
+      "sha256": "bc3f9369fd4414c6147f511733ba97db1689c1e67eba802bc52f20e62b5f5b95",
+      "original_source": "captures/player-final/small-fruit-front.png"
+    },
+    {
+      "file": "synthetic-player-final/small-roof-opaque.png",
+      "sha256": "2a333ad62f77857b2506be56e6824c6bb42a29845688ec1199c53a03eea74c72",
+      "original_source": "captures/player-final/small-roof-opaque.png"
+    },
+    {
+      "file": "synthetic-player-final/small-roof-ancestor-partial.png",
+      "sha256": "66490d3d74e5b5a74bdf8217c454ea94913e236a8856fc952c6ce7a224e23e2d",
+      "original_source": "captures/player-final/small-roof-ancestor-partial.png"
+    },
+    {
+      "file": "synthetic-player-final/small-roof-cutaway.png",
+      "sha256": "9035f29f70758dcaad58b0a6cdca610f8e1857d0b50ee726094bb84640e83610",
+      "original_source": "captures/player-final/small-roof-cutaway.png"
+    },
+    {
+      "file": "synthetic-player-final/small-capacity-35.png",
+      "sha256": "428a9d6a6b8a57d59b9ae9d0adae9a350df154e31a2c3daf1580867713ad04fe",
+      "original_source": "captures/player-final/small-capacity-35.png"
+    },
+    {
+      "file": "synthetic-player-final/result.json",
+      "sha256": "080efc84544c9eae924848a76a5f6cf26328700f90334c30b8f8a2ead3ea1b14",
+      "original_source": "captures/player-final/result.json"
+    },
+    {
+      "file": "bed-cover-fight-final/ground-before.png",
+      "sha256": "105a965d604f6a2f16f612acdf2485cc00aabeff655ef05f085b110beb9b4e7e",
+      "original_source": "captures/bed-cover-fight-final/ground-before.png"
+    },
+    {
+      "file": "bed-cover-fight-final/fight.png",
+      "sha256": "77fcc229bce24ec7ea0ca8925b26b2313997029696e813759486015ee2f07c8e",
+      "original_source": "captures/bed-cover-fight-final/fight.png"
+    },
+    {
+      "file": "bed-cover-fight-final/fight-ending.png",
+      "sha256": "1135e5f09b5746aea55e44c00c535cdfda7fd827e6e1c254ead4e0741b94b4ac",
+      "original_source": "captures/bed-cover-fight-final/fight-ending.png"
+    },
+    {
+      "file": "bed-cover-fight-final/capture-info.json",
+      "sha256": "3e2d122560fa376b4287f045d03d1511f249486f0c785c059c77172ab4f85a5e",
+      "original_source": "captures/bed-cover-fight-final/capture-info.json"
+    },
+    {
+      "file": "rejected-trials/bed-occupied-trial.png",
+      "sha256": "bd4f90d9678592f7110663a333861d39e1ae7c3ba630baef326ba80a23f8804f",
+      "original_source": "captures/bed-occupied-trial/fight.png"
+    },
+    {
+      "file": "rejected-trials/bed-facade-trial.png",
+      "sha256": "da9afdc2a50d426c611aabd12fb930ce68a681efa66e93fc19ab0cc8e6983e72",
+      "original_source": "captures/bed-facade-trial/fight.png"
+    },
+    {
+      "file": "bed-cover-fight-final/occupied.mp4",
+      "sha256": "73680f54ee9a60cf200e64964ed9dc20cac711c51fbdb3915004f9dc375614b6",
+      "original_source": "videos/bed-cover-fight-final.mp4"
+    },
+    {
+      "file": "bed-cover-fight-final/occupied.encoding.json",
+      "sha256": "748f6a471bfbbc9b350be7735748244ce182dc6916e232a29effe7e2596ef612",
+      "original_source": "videos/bed-cover-fight-final.encoding.json"
+    },
+    {
+      "file": "bed-cover-fight-final/occupied.decode.json",
+      "sha256": "6d4581f28fc3b66ed2260e107ed93c9ef4daa68b2906bbe1f8958a73196510ec",
+      "original_source": "videos/bed-cover-fight-final.decode.json"
+    },
+    {
+      "file": "process/monitor-tests.json",
+      "sha256": "df0763591d1d74dea398e0c2fb4a144a36f55408ccc6680ef8d84359e9bf7f3e",
+      "original_source": "monitor-tests.json"
+    },
+    {
+      "file": "process/monitor-tests.log",
+      "sha256": "f0ad29f0d42422bbcec33442e37066bd076a51eb89c4a26ee2f589683500c452",
+      "original_source": "monitor-tests.log"
+    }
+  ],
+  "selected_city_pngs": 44,
+  "actual_player_route_pngs": 9,
+  "qualified_synthetic_player_pngs": 22,
+  "source_binding_note": "Per-run captured source snapshots are preserved. A later runtime-code commit binding may be added separately; this script neither queries Git nor asserts all historical tests/captures share one source revision."
+}

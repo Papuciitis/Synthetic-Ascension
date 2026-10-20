@@ -5,14 +5,20 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
 ## Pickup acknowledgment
 
-- State: **L2 implementation and native packet ready for lead review; L1 garden
-  fit retained; full ground/street acceptance remains open**.
+- State: **Visibility implementation checked and committed locally; L2 ground,
+  paving/irregular shadows, domestic interiors and theme atmosphere are active
+  next work**. L1 garden fit is retained; full ground/street acceptance remains open.
 - Received integration commit: `b5de9d53d081fa5fecde4188f811bf38d3f97cff`.
   `git fetch --all` confirmed local HEAD and `origin/enemy-world-work` agree.
 - Latest received review commit: `24d838f77df1b85ca3ec8636ec6a4900a6b19f7d`.
   After `git fetch origin`, `git merge --ff-only origin/enemy-world-work`
   advanced this branch from `1fa7a552` without conflicts. This incoming change
   contains direction/review documentation and sampled images, no runtime code.
+- Latest L2 review received: `faf0e7f4b24a07fc4d288d229341b0d28135e9bb`.
+  After `git fetch origin`, `git merge --ff-only origin/enemy-world-work`
+  advanced this branch without conflicts and retained the visibility WIP.
+  Remote production ref confirms the human published `ce5671e6`; the previous
+  HTTPS failure is historical, not an outstanding L2 publication blocker.
 - Production branch: `codex/linux-world-production`, created from that tip;
   `git merge --ff-only origin/enemy-world-work` reported already up to date.
   Existing untracked local assets/import sidecars remain untouched.
@@ -29,9 +35,13 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 ## Current bounded packet
 
 L0 and the L1 evidence packet are complete; Windows has kept the sampled garden
-fit while leaving complete-street acceptance open. L2 ground/S7 implementation
-and its paired native packet are ready on the same homes; L3 ordinary-home
-interiors follows the linked direction. Do not
+fit while leaving complete-street acceptance open. Windows received L2 as
+qualified WIP: keep moss and the care foundation; correct lawn readability,
+inspect the bed chunk seam and verify/correct wet earth with a real dry control.
+The user reprioritized enemy/item visibility behind buildings and trees, then
+authorized continuing the queued implementations. Finish and check that
+visibility packet, then the bounded L2 correction and L3 ordinary-home purpose
+and masonry, with separate commits. Do not
 silently expand to more district families or claim historical images validate
 new code. Windows retains art direction and source generation.
 
@@ -52,9 +62,66 @@ Execution checklist for this packet (the existing HANDOFF is the scope/spec):
   keep/rework decision (publication confirmed by remote refs and lead review).
 
 The lead keeps the measured native garden fit in these fixtures. Whole-street
-approval, ordinary human play, ground integration and domestic furnishing remain
-open. L2 is ready for lead keep/rework; L3 follows, and V1 remains a required visual
-gate before occupied-street acceptance.
+approval, ordinary human play, L2 visual acceptance and domestic furnishing
+remain open. The attached user screenshot reproduces an enemy fully coloured
+over an opaque lower wall face; roof-only coverage does not satisfy it.
+V1's checked body/icon improvement is retained below; broader tell/projectile
+depth and complete occupied-street acceptance remain open.
+
+## 20 October — body/icon visibility checkpoint and continued local work
+
+Implementation `31a1f6ce00eedaf07bc73368c355625788f9be98` fixes the user's
+fully coloured enemy over an opaque lower house face. A shared per-viewport,
+world-canvas spatial snapshot now feeds player body/head, default ordinary/elite
+proxy and materialized batches, equipment and health icons. Actual city/fruit
+tree alpha, painted façade pixels and bounded upright masonry join live roof
+coverage. Depth, source gaps and roof cutaways preserve normal exposed art;
+the rendered path has no old32-triangle cap. Existing hurt/elite/lock/glow and
+eligibility owners remain intact. No simulation, collision, RNG or save changes.
+
+The [native packet](../art/reference/2026-10-20-linux-entity-cover/README.md)
+contains44 final actual-Game plates on the two real homes,9 real-player canopy
+route plates, an explicitly earlier22-plate isolated fixture, and one short
+occupied clip with measured timing/clean decode. All four full runs have11
+plates/0 failures/0 saves; the same five consumers restore roof strength1→0→1
+through actual player entry/exit. Three player routes pass, including reduced
+motion. Fixed samples explicitly protect staged actors from retirement and
+disable staged pickup collection; they do not prove ordinary play or collection.
+
+Clean focused checks include shared25/0, façade46/0, descriptors47/0, native
+batch coordinates23/0, enemy consumers38/0, pickup consumers33/0, isolated
+player95/0, shared guard411/0 and final gameplay parse553/0. Relevant city,
+dungeon, enemy, elite, cast-shadow, pickup/loot and streamed reward regressions
+pass. The occupied sample has34 frames/25 fires/28 hits/0 failures. Independent
+source/native review supports the bounded result. Per-run input snapshots,
+failed attempts and33 scoped committed input bindings are preserved; all nine
+final actual-Game/parse records match the implementation commit exactly.
+
+This does not establish whole-street art acceptance. Façade imagery proves
+partial per-pixel coverage, not whole-body concealment everywhere. Existing
+armour collars, lock/exploration markers, attack tells/projectiles and authored
+boss/debug exceptions are not universally covered. Solid textured masonry
+approximates tiny exported alpha fringes; registered sprites use actual alpha.
+Sampled shared refresh is about4–11ms with first-use peaks71–110ms in these
+fixtures, not a general performance or warmup guarantee.
+
+The user explicitly asked to continue locally while asleep, without waiting for
+a push, and to commit checked work as it progresses. They pointed again to the
+[concept-fidelity audit](../audits/2026-10-20-concept-fidelity-and-chat-audit.md),
+which was read in full. New concrete priorities: remove the rough square paving
+apron, repair cast shadows for L-shaped/nonrectangular houses, address whole-scene
+flatness and give established segment themes distinct physical lighting/weather/
+atmosphere. These join the authorized bounded L2 correction and L3 domestic
+purpose/masonry; they do not authorize speculative asset packs or reopening
+completed S3 architecture. The audit's whole generated street, usable circulation,
+daylight hierarchy and inhabited infrastructure remain the visual objective.
+
+Three isolated local worktrees from31a1f6ce separate scene depth/transitions,
+domestic interiors and theme atmosphere from the main ground correction. Root
+retains all Git mutations and the single monitored engine lane. Tests/native
+review precede integration; commits remain separate. Windows retains asset
+direction and final keep/rework. Publication is a relay step, not a reason to
+leave authorized implementation idle.
 
 ## 20 October — L2 implementation and native packet ready
 
