@@ -1,0 +1,359 @@
+{
+	"args": [
+		"--review=small",
+		"--world-seed=16102026",
+		"--target-chunk=0,3",
+		"--target-building-id=944996572",
+		"--facade-only",
+		"--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-next-20261020/continuation-facade-early-plates"
+	],
+	"attempt_seed": 16102026,
+	"building_id": 944996572,
+	"building_usage": "row_house",
+	"camera": {
+		"position": "(544.0, 7000.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(960, 540)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityDomesticInteriorPreview.tscn",
+	"closed_arch_bays": 0,
+	"coord": "(0, 3)",
+	"district_family": "service_courtyards",
+	"doors": "[{ \"pos\": (8, 16), \"dir\": (0, 1), \"width\": 2 }]",
+	"entry_finish": {
+		"details": [
+			{
+				"name": "DomesticDoorHeader",
+				"polygon": "[(512.0, 904.0), (640.0, 904.0), (640.0, 954.0), (512.0, 954.0)]",
+				"solid_registered": true,
+				"texture": "res://assets/world/city_block/house_front.png"
+			},
+			{
+				"name": "DomesticOpenTimberLeft",
+				"polygon": "[(500.0, 976.0), (512.0, 976.0), (512.0, 1060.0), (500.0, 1060.0)]",
+				"solid_registered": true,
+				"texture": "res://assets/world/city_block/house_front.png"
+			},
+			{
+				"name": "DomesticOpenTimberRight",
+				"polygon": "[(640.0, 976.0), (652.0, 976.0), (652.0, 1060.0), (640.0, 1060.0)]",
+				"solid_registered": true,
+				"texture": "res://assets/world/city_block/house_front.png"
+			},
+			{
+				"name": "DomesticOpenDoorLeaf",
+				"polygon": "[(457.0, 976.0), (497.0, 976.0), (497.0, 1060.0), (457.0, 1060.0)]",
+				"solid_registered": true,
+				"texture": "res://assets/world/city_block/house_front.png"
+			},
+			{
+				"name": "DomesticEntryFloor",
+				"polygon": "[(512.0, 1028.0), (640.0, 1028.0), (640.0, 1062.0), (512.0, 1062.0)]",
+				"solid_registered": false,
+				"texture": "res://assets/world/city_block/paving.png"
+			},
+			{
+				"name": "FlushThreshold",
+				"polygon": "[(512.0, 1062.0), (640.0, 1062.0), (640.0, 1076.0), (512.0, 1076.0)]",
+				"solid_registered": false,
+				"texture": ""
+			}
+		],
+		"masonry_plinths": [
+			{
+				"polygon": "[(208.0, 1056.0), (457.0, 1056.0), (457.0, 1072.0), (208.0, 1072.0)]",
+				"run": "[P: (208.0, 896.0), S: (304.0, 176.0)]",
+				"source": "res://assets/world/walls/kit/wall34_10.png"
+			},
+			{
+				"polygon": "[(457.0, 1060.0), (497.0, 1060.0), (497.0, 1072.0), (457.0, 1072.0)]",
+				"run": "[P: (208.0, 896.0), S: (304.0, 176.0)]",
+				"source": "res://assets/world/walls/kit/wall34_10.png"
+			},
+			{
+				"polygon": "[(655.0, 1056.0), (880.0, 1056.0), (880.0, 1072.0), (655.0, 1072.0)]",
+				"run": "[P: (640.0, 896.0), S: (240.0, 176.0)]",
+				"source": "res://assets/world/walls/kit/wall34_10.png"
+			}
+		],
+		"opening_face": "[P: (512.0, 968.0), S: (128.0, 104.0)]",
+		"wall_fields": [
+			{
+				"polygon": "[(208.0, 904.0), (284.1, 904.0), (284.1, 1056.0), (208.0, 1056.0)]",
+				"run": "[P: (208.0, 896.0), S: (304.0, 176.0)]"
+			},
+			{
+				"polygon": "[(380.9, 904.0), (457.0, 904.0), (457.0, 1056.0), (380.9, 1056.0)]",
+				"run": "[P: (208.0, 896.0), S: (304.0, 176.0)]"
+			},
+			{
+				"polygon": "[(284.1, 904.0), (380.9, 904.0), (380.9, 937.981), (284.1, 937.981)]",
+				"run": "[P: (208.0, 896.0), S: (304.0, 176.0)]"
+			},
+			{
+				"polygon": "[(284.1, 1044.0), (380.9, 1044.0), (380.9, 1056.0), (284.1, 1056.0)]",
+				"run": "[P: (208.0, 896.0), S: (304.0, 176.0)]"
+			},
+			{
+				"polygon": "[(457.0, 904.0), (497.0, 904.0), (497.0, 976.0), (457.0, 976.0)]",
+				"run": "[P: (208.0, 896.0), S: (304.0, 176.0)]"
+			},
+			{
+				"polygon": "[(655.0, 904.0), (719.1, 904.0), (719.1, 1056.0), (655.0, 1056.0)]",
+				"run": "[P: (640.0, 896.0), S: (240.0, 176.0)]"
+			},
+			{
+				"polygon": "[(815.9, 904.0), (880.0, 904.0), (880.0, 1056.0), (815.9, 1056.0)]",
+				"run": "[P: (640.0, 896.0), S: (240.0, 176.0)]"
+			},
+			{
+				"polygon": "[(719.1, 904.0), (815.9, 904.0), (815.9, 949.0615), (719.1, 949.0615)]",
+				"run": "[P: (640.0, 896.0), S: (240.0, 176.0)]"
+			},
+			{
+				"polygon": "[(719.1, 1044.0), (815.9, 1044.0), (815.9, 1056.0), (719.1, 1056.0)]",
+				"run": "[P: (640.0, 896.0), S: (240.0, 176.0)]"
+			}
+		],
+		"windows": [
+			{
+				"draw": "[P: (284.1, 937.981), S: (96.8, 106.019)]",
+				"scale": "(0.230476, 0.230476)",
+				"source": "res://assets/world/city_block/house_front.png",
+				"source_rect": "[P: (294.0, 172.0), S: (420.0, 460.0)]"
+			},
+			{
+				"draw": "[P: (719.1, 949.0615), S: (96.8, 94.93846)]",
+				"scale": "(0.186154, 0.186154)",
+				"source": "res://assets/world/city_block/house_front.png",
+				"source_rect": "[P: (1480.0, 120.0), S: (520.0, 510.0)]"
+			}
+		]
+	},
+	"failures": 0,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"footprint": "[(192.0, 768.0), (384.0, 768.0), (384.0, 576.0), (896.0, 576.0), (896.0, 1088.0), (192.0, 1088.0)]",
+	"garden": [
+		{
+			"color": "(0.82, 0.77, 0.65, 1.0)",
+			"name": "TendedDomesticBed",
+			"polygon": "[(202.0, 1080.0), (316.0, 1083.0), (330.0, 1104.96), (306.0, 1128.0), (218.0, 1119.0), (195.0, 1100.16), (216.2, 1085.405), (302.84, 1087.685), (313.48, 1104.374), (295.24, 1121.885), (228.36, 1115.045), (210.88, 1100.726), (261.1667, 1102.52)]",
+			"position": "(0.0, 0.0)",
+			"rotation": 0.0,
+			"scale": "(1.0, 1.0)",
+			"variant": 0,
+			"z_index": -90
+		},
+		{
+			"contact": "(266.0, 1102.0)",
+			"name": "DomesticHerbBed",
+			"position": "(265.9673, 1097.233)",
+			"rotation": 0.0,
+			"scale": "(0.065304, 0.065304)",
+			"texture": "res://assets/world/domestic_gardens/v1/flower_herb_bed.png",
+			"z_index": 1
+		}
+	],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 10,
+			"local_bounds": "[P: (0, 13), S: (2, 4)]",
+			"max_byte": 255,
+			"nonzero": 15,
+			"sha256": "e7d0e58af41196e44278f0a4004d7ae3cd88856fd4d54087bbf5106d945846ba",
+			"sum_bytes": 2728
+		},
+		"chunk_material_counts": {
+			"0": 716,
+			"2": 125,
+			"3": 6,
+			"4": 177
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				9,
+				115
+			],
+			"material": 4,
+			"walkable": true,
+			"world_px": [
+				608.0,
+				7392.0
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+					"layer_sha256": "d150b1bc0fcab5ff989af99d6243e4d45df56e18ef6d2ca06f0dcc2e8e956098",
+					"path": "res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+					"sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"city_streetscape": "true",
+			"overgrowth_a": "(1.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"slot_index": [
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_layer": [
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				0.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0,
+				320.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "grass"
+	},
+	"has_watch": false,
+	"irregular": true,
+	"limits": "Controlled actual generated Game household exterior after production streaming/reload setup. Inherited god mode, muted ambient spawner/encounter beats, fixed real-camera zoom and frozen streaming after reload apply. No entry, route, cutaway, contacts, occupied play or performance claim is made by this one-plate mode.",
+	"plan_seed": 436524753,
+	"plates": [
+		{
+			"camera": "(544.0, 7000.0)",
+			"enemies": 0,
+			"file": "exterior-before-entry.png",
+			"inside_count": 0,
+			"player_root": "(608.0, 7392.0)",
+			"projectiles": 0,
+			"roof_alpha": 1.0,
+			"window": "(960, 540)",
+			"zoom": "(1.0, 1.0)"
+		}
+	],
+	"profile": "common_base",
+	"recording_scope": "exterior composition still only",
+	"role": "service_lane",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"source_hashes": {
+		"res://assets/world/city_block/house_front.png": "075d87a3f85e26df88d4641af0e61b2a226723c8735c16fb03a1d62c723e5780",
+		"res://assets/world/city_block/house_front.png.import": "a64d4b3438475093216db5b34bbcaed00b783505377da6def60578ccb817f1e2",
+		"res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.png": "303ba9215cdf470face851a973418f019dab3aa740b844848c93b9b0a052b2dc",
+		"res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.png.import": "a395bc17d9c7f612759be5307329cf3aef0b65cb162d582e62db6376b0a9391e",
+		"res://assets/world/domestic_interiors/v1/cooking_hearth.png": "fd6a6434311135e5c7b09ca6b2c3c3ca47333c33b78fed69f826527c9bc7e26b",
+		"res://assets/world/domestic_interiors/v1/cooking_hearth.png.import": "659285b402fc19a24f9fcb7d96b7cc37d64b798cee628f459ddc752ca24191cb",
+		"res://assets/world/domestic_interiors/v1/timber_cot.png": "22549e75329ee9164f9f41fbefcdea2e6b028309a7c358362b4c11a2fc69c143",
+		"res://assets/world/domestic_interiors/v1/timber_cot.png.import": "ec3b96153a41feaa949a29d5179b6f691cdb07c2a56e613ebcf61995a700c627",
+		"res://assets/world/walls/kit/wall34_10.png": "c5ec8ca652f5664a2385f851c35cd420daa66705de95c5f50d1c82c70234fce4",
+		"res://assets/world/walls/kit/wall34_10.png.import": "7d739f765dfbf78d9f979d25c253e77487e658519bf4f57f6484140cd61cfba0",
+		"res://core/systems/world/chunks/ChunkBlockRenderer.gd": "b813832b1b3b99c01642d0c56c934154078036d923f25637bcf307f6fe5c1147",
+		"res://core/systems/world/proc/SiteParcelsImpl.gd": "7cf58c13bbcab9a52ce71bed07b98f1821897e2b774488b7196227591a5e6fdb",
+		"res://scenes/world/buildings/CityBlockFrontages.gd": "acc101d1ccdc4b98b723cd5d16dde2adca9812c5a67c2e3772a2259aca03b3cd",
+		"res://scenes/world/buildings/CityBlockKit.gd": "899f02bd02e24ceb7e04e7193ea0b5cb4d7d016b29e0554416459ee0611e7deb",
+		"res://scenes/world/buildings/CityDomesticInterior.gd": "12106448bb72a4fbaf66a63ed5ffb350f525d24df4f67bdef5876b58a97aa26f",
+		"res://scenes/world/buildings/domestic_plaster.gdshader": "b15ebfb24c1ada8a403754d710610548837ab0feb3f49f12d04fd0ed6070d9ae",
+		"res://scenes/world/buildings/domestic_stone.gdshader": "a2ae1350db702364a19f40a6026a7fbb711fe8c43987576f447f25cd53f66b56",
+		"res://tools/dev/CityBlockPlayablePreview.gd": "a8075bae57cd073e381f676c094e38a16f066d1490fc9625071780dcf4acf2c7",
+		"res://tools/dev/CityDomesticInteriorPreview.gd": "bac5d411ca4ba2d14e35f0bf0537ed9b28168bf73ea70ef28bdc1cef1140d437",
+		"res://tools/dev/CityDomesticInteriorPreview.tscn": "96a5de450e78f7b5ac86be5f8fc320d802dcd014ae24f6367728a6719bf25598"
+	},
+	"target_building_id": 944996572,
+	"target_chunk": "(0, 3)",
+	"watch_fallback": "base",
+	"world_cover": {
+		"alpha_upload_bytes": 54473764,
+		"alpha_uploads": 3,
+		"binding_usec": 20,
+		"cell_px": 256.0,
+		"collection_usec": 12837,
+		"comparison_usec": 372,
+		"data_upload_bytes": 83648,
+		"data_uploads": 24,
+		"force_uploads": false,
+		"foreground_sources": 3,
+		"generation": 439,
+		"grid_cells": 70,
+		"index_count": 243,
+		"material_binds": 57,
+		"materials": 7,
+		"max_candidates": 27,
+		"peak_candidates": 27,
+		"peak_primitives": 89,
+		"peak_refresh_usec": 77814,
+		"primitive_count": 88,
+		"refresh_usec": 13231,
+		"snapshot_builds": 8,
+		"snapshot_reuses": 431,
+		"snapshot_usec": 0,
+		"source_reads": 3
+	}
+}

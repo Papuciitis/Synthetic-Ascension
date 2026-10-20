@@ -1,0 +1,105 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Parent node is busy setting up children, `add_child()` failed. Consider using `add_child.call_deferred(child)` instead.
+   at: add_child (scene/main/node.cpp:1721)
+   GDScript backtrace (most recent call first):
+       [0] get_for (res://core/systems/world/visibility/WorldCover.gd:43)
+       [1] bind_material (res://core/systems/world/visibility/WorldCueCover.gd:21)
+       [2] _build_renderer (res://core/combat/projectile/ProjectileSimulationManager.gd:870)
+       [3] _ready (res://core/combat/projectile/ProjectileSimulationManager.gd:177)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:45)
+ERROR: FAIL: S2 pale material cache is separate from the untouched S3/default cache
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:49)
+ERROR: FAIL: S3 reload/unload cannot reset a surviving S2 owner's material
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:58)
+ERROR: FAIL: S3 reload/unload cannot reset a surviving S2 owner's material
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:58)
+ERROR: FAIL: S3 reload/unload cannot reset a surviving S2 owner's material
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:58)
+ERROR: FAIL: S3 reload/unload cannot reset a surviving S2 owner's material
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:58)
+ERROR: FAIL: S3 reload/unload cannot reset a surviving S2 owner's material
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:58)
+ERROR: FAIL: S3 reload/unload cannot reset a surviving S2 owner's material
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticWallMaterialTest.gd:21)
+       [1] _run (res://tools/tests/S2PaleMasonryTest.gd:58)
+S2PaleMasonryTest: 51 passed, 19 failed

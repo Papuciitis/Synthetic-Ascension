@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL: The real home uses two distinct original window details rather than three copied boxed house panels
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticFrontageFinishTest.gd:23)
+       [1] _run (res://tools/tests/DomesticFacadeCohesionTest.gd:24)
+ERROR: FAIL: Both actual wings have continuous warm wall and a quiet original masonry base
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticFrontageFinishTest.gd:23)
+       [1] _run (res://tools/tests/DomesticFacadeCohesionTest.gd:35)
+ERROR: FAIL: Domestic entrance has a visibly folded-back timber leaf beside its open recess
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticFrontageFinishTest.gd:23)
+       [1] _run (res://tools/tests/DomesticFacadeCohesionTest.gd:37)
+ERROR: FAIL: Visual domestic door height is human scale while its physical width remains unchanged
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/DomesticFrontageFinishTest.gd:23)
+       [1] _run (res://tools/tests/DomesticFacadeCohesionTest.gd:46)
+DomesticFacadeCohesionTest: 1 passed, 4 failed

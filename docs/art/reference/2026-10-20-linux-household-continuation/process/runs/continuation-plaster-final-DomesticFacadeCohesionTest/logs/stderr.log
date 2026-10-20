@@ -1,0 +1,7 @@
+ERROR: Condition "!actions.custom_samplers.has(function->arguments[j].tex_builtin)" is true. Continuing.
+   at: _dump_node_code (servers/rendering/shader_compiler.cpp:1329)
+   GDScript backtrace (most recent call first):
+       [0] compose (res://scenes/world/buildings/CityBlockFrontages.gd:25)
+       [1] configure (res://scenes/world/buildings/CityBlockKit.gd:107)
+       [2] _fixture (res://tools/tests/DomesticFrontageFinishTest.gd:43)
+       [3] _run (res://tools/tests/DomesticFacadeCohesionTest.gd:10)

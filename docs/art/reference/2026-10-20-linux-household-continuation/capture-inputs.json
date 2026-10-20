@@ -1,0 +1,210 @@
+{
+  "status": "Final six clean native processes and four encoded/decoded clips validated; packet bound to b6b91d58d6a69ce348f017f08e8806abbe825b96",
+  "household_commit": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+  "reviewed_runtime_commit": "b6b91d58d6a69ce348f017f08e8806abbe825b96",
+  "stage_commits": {
+    "household_composition": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+    "paving_garden_pale": "5e1646c4e6e526f337d8de8963d3b12207e7f93d",
+    "coherent_facade_and_s2_ground_scope": "7e0850f76055333b9d8547b6869327cd01c3033a",
+    "clean_plaster_sampling": "b6b91d58d6a69ce348f017f08e8806abbe825b96"
+  },
+  "homes": {
+    "bed-small": {
+      "label": "continuation-finish-bed-small",
+      "video": ".superpowers/handoff-linux-next-20261020/videos/continuation-finish-bed-small.mp4"
+    },
+    "bed-normal": {
+      "label": "continuation-finish-bed-normal",
+      "video": ".superpowers/handoff-linux-next-20261020/videos/continuation-finish-bed-normal.mp4"
+    },
+    "fruit-small": {
+      "label": "continuation-finish-fruit-small",
+      "video": ".superpowers/handoff-linux-next-20261020/videos/continuation-finish-fruit-small.mp4"
+    },
+    "fruit-normal": {
+      "label": "continuation-finish-fruit-normal",
+      "video": ".superpowers/handoff-linux-next-20261020/videos/continuation-finish-fruit-normal.mp4"
+    }
+  },
+  "pale": {
+    "small": {
+      "label": "continuation-pale-finish-small"
+    },
+    "normal": {
+      "label": "continuation-pale-finish-normal"
+    }
+  },
+  "additional_runs": {
+    "continuation-final-parse": [
+      558,
+      0,
+      "clean_check",
+      "Full script parse audit after coherent facade and explicit S2 ground ownership; original launch HEAD/status/source hashes retained."
+    ],
+    "continuation-house-bed-small": [
+      null,
+      null,
+      "native_superseded_texture_iteration",
+      "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence."
+    ],
+    "continuation-house-bed-normal": [
+      null,
+      null,
+      "native_superseded_texture_iteration",
+      "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence."
+    ],
+    "continuation-house-fruit-small": [
+      null,
+      null,
+      "native_superseded_texture_iteration",
+      "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence."
+    ],
+    "continuation-house-fruit-normal": [
+      null,
+      null,
+      "native_superseded_texture_iteration",
+      "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence."
+    ],
+    "continuation-pale-final-small": [
+      null,
+      null,
+      "native_superseded_context_iteration",
+      "Matched pale material and physical cutaway control passed; nearby household plaster source is superseded, so this is retained as earlier context."
+    ],
+    "continuation-pale-final-normal": [
+      null,
+      null,
+      "native_superseded_context_iteration",
+      "Matched pale material and physical cutaway control passed; nearby household plaster source is superseded, so this is retained as earlier context."
+    ],
+    "continuation-plaster-fruit-normal": [
+      null,
+      null,
+      "native_rejected_crop_iteration",
+      "One-plate fruit1280 process clean, but image inspection rejected a visible beige/gray checkerboard from internally repeating a wider plaster crop. Not an assertion RED or final visual success."
+    ],
+    "continuation-plaster-blend-fruit-normal": [
+      null,
+      null,
+      "shader_compile_failure",
+      "Native process exited0 but monitor correctly failed it with runtime_diagnostics: TEXTURE was unavailable in helper scope and shader compilation failed. No visual success or clean RED claim. Sampler and pixel size are passed explicitly in the later correction."
+    ],
+    "continuation-plaster-blend-fruit-normal2": [
+      null,
+      null,
+      "native_iteration",
+      "Clean native one-plate fruit1280 accepted removal of scalloped/checkerboard stamps; helper sampler handling was subsequently corrected for the headless backend, with equivalent field math."
+    ],
+    "continuation-plaster-final-DomesticFacadeCohesionTest": [
+      32,
+      0,
+      "sampler_compiler_diagnostic",
+      "All32 assertions passed but the monitor correctly rejected a headless custom-sampler shader compiler diagnostic. A later UV-only helper keeps all texture reads in fragment; this run is not a clean GREEN."
+    ],
+    "continuation-plaster-final2-DomesticFacadeCohesionTest": [
+      32,
+      0,
+      "clean_check",
+      "UV-only source helper compiles cleanly in headless renderer; coherent facade, disjoint fields/details and genuine north-entry controls."
+    ],
+    "continuation-plaster-final2-DomesticFrontageFadeTest": [
+      24,
+      0,
+      "clean_check",
+      "Final UV-only helper preserves disjoint solid geometry and fractional cutaway contract."
+    ],
+    "continuation-plaster-final-bed-small": [
+      null,
+      null,
+      "native_iteration",
+      "Clean final-helper native bed960 one-plate visual gate; original window details and continuous quiet warm plaster independently inspected. No movement claim."
+    ]
+  },
+  "additional_iteration_captures": [
+    {
+      "label": "continuation-house-bed-small",
+      "destination": "iteration-plaster-bed-small",
+      "selected": [],
+      "size": [
+        960,
+        540
+      ]
+    },
+    {
+      "label": "continuation-house-bed-normal",
+      "destination": "iteration-plaster-bed-normal",
+      "selected": [],
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "label": "continuation-house-fruit-small",
+      "destination": "iteration-plaster-fruit-small",
+      "selected": [],
+      "size": [
+        960,
+        540
+      ]
+    },
+    {
+      "label": "continuation-house-fruit-normal",
+      "destination": "iteration-plaster-fruit-normal",
+      "selected": [
+        "exterior-before-entry.png"
+      ],
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "label": "continuation-pale-final-small",
+      "destination": "iteration-plaster-pale-small",
+      "selected": [],
+      "size": [
+        960,
+        540
+      ]
+    },
+    {
+      "label": "continuation-pale-final-normal",
+      "destination": "iteration-plaster-pale-normal",
+      "selected": [],
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "label": "continuation-plaster-fruit-normal",
+      "destination": "iteration-plaster-crop-fruit-normal",
+      "selected": [
+        "exterior-before-entry.png"
+      ],
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "label": "continuation-plaster-blend-fruit-normal2",
+      "destination": "iteration-plaster-blend-fruit-normal",
+      "selected": [],
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "label": "continuation-plaster-final-bed-small",
+      "destination": "iteration-plaster-verified-bed-small",
+      "selected": [],
+      "size": [
+        960,
+        540
+      ]
+    }
+  ]
+}

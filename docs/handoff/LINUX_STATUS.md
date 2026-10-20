@@ -53,7 +53,8 @@ Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 Checked stages include household composition `50a8e64c`, exact shared-cover
 reuse `73fa746b`, road/garden/pale material correction `5e1646c4`, remaining cue
 adapters `7875d198`, the [moving cue packet](../art/reference/2026-10-20-linux-moving-cues/README.md)
-in `2921f59a`, and continuous domestic frontages/S2 ground ownership `7e0850f7`.
+in `2921f59a`, continuous domestic frontages/S2 ground ownership `7e0850f7`, and final plaster
+sampling `b6b91d58`.
 
 The latest façade correction uses two distinct, uniformly fitted original window
 details in continuous warm plaster, a rough masonry plinth and timber eave, plus
@@ -68,10 +69,13 @@ reads now stay in fragment. Final cohesion32/0 and fade24/0 are clean.
 
 Household composition keeps the original cot, groups hearth/table/storage on a
 work wall and fits the supplied flat rush mat. Six blocker cells remain six;
-composition51/0, interior336/0 and actual reward/factory43/0 pass. Earlier native
-walkthroughs for both homes at960×540 and1280×720 completed real entry, four prop
-contacts, exit/roof restore and zero saves. Their plaster appearance is superseded;
-fresh final walkthroughs and the compact household packet are next.
+composition51/0, interior336/0 and actual reward/factory43/0 pass. Final native
+walkthroughs for both homes at960×540 and1280×720 each completed seven stills, real
+entry, four prop contacts, exit/roof restore and zero failures/saves/diagnostics.
+All four measured clips decode cleanly. Both matched pale-masonry runs pass five
+stills each, including actual physical entry/cutaway and restore. The
+[household continuation packet](../art/reference/2026-10-20-linux-household-continuation/README.md)
+retains final evidence and separately identifies the rejected texture iterations.
 
 Doorway approaches now have shaped shoulders, and the base ground shader limits
 paving to actual roads rather than a rectangular merged parcel hull. S2-only

@@ -1,0 +1,1743 @@
+{
+  "runs": [
+    {
+      "label": "continuation-import",
+      "classification": "editor_abort",
+      "note": "Imports completed, then editor layout reopening aborted with double free; process exit -6. Not a clean import/runtime result.",
+      "footer": null,
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": -6,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 27.617,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 1277.78515625,
+      "run_results_sha256": "d8df3f9257baca376c792e92ea0b3cd8547b9c889e7188bb313213d343e9a510"
+    },
+    {
+      "label": "continuation-runtime-smoke",
+      "classification": "clean_check",
+      "note": "Direct runtime kit check after the editor abort.",
+      "footer": {
+        "test": "CityBlockKitTest",
+        "passed": 1300,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.988,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 525.453125,
+      "run_results_sha256": "0587dce157db74ceb16afaab34e5c7585fc03176251f0cb41f76c93df05e0c17"
+    },
+    {
+      "label": "continuation-mipmap-import",
+      "classification": "clean_import",
+      "note": "Bounded flower-bed/mat mipmap reimport completed cleanly.",
+      "footer": null,
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 22.821,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 1470.55859375,
+      "run_results_sha256": "4a6f3f4416bb789062cbdbccd089f642d6916779a438607317f32bcf77e4b764"
+    },
+    {
+      "label": "continuation-composition-red",
+      "classification": "clean_assertion_red",
+      "note": "Original room separates work from hearth, puts heat beside cot, and has no mat.",
+      "footer": {
+        "test": "DomesticCompositionTest",
+        "passed": 10,
+        "failed": 5
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 9.09,
+      "diagnostics": [
+        "ERROR: FAIL: Cooking heat is separate from the sleeping corner",
+        "ERROR: FAIL: A nearby table belongs to the hearth's working area",
+        "ERROR: FAIL: Actual cot corner includes the supplied flat rush mat"
+      ],
+      "peak_sampled_rss_mb": 582.1015625,
+      "run_results_sha256": "f0216c2cc04c9b6ef23ebe5b3b923706b20b667b37b2f6d3dd801a29528d8ea8"
+    },
+    {
+      "label": "continuation-entry-red",
+      "classification": "clean_assertion_red",
+      "note": "Broad repeated upper panels and absent entry floor/timber depth.",
+      "footer": {
+        "test": "DomesticEntryFinishTest",
+        "passed": 6,
+        "failed": 9
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 8.804,
+      "diagnostics": [
+        "ERROR: FAIL: Domestic windows reach a restrained head course instead of sitting below a broad blank panel strip",
+        "ERROR: FAIL: Each real window wing has one continuous upper material field",
+        "ERROR: FAIL: Domestic upper wall avoids disconnected repeated narrow panel seams",
+        "ERROR: FAIL: Domestic entry breaks the unbroken dark recess with an actual shallow floor return",
+        "ERROR: FAIL: Existing timber gives the open domestic left jamb a visible return",
+        "ERROR: FAIL: Existing timber gives the open domestic right jamb a visible return"
+      ],
+      "peak_sampled_rss_mb": 489.0703125,
+      "run_results_sha256": "2b7b873afb3594fbb5e73dd0cc1e8d21239d746b21ee75c0320e68abe58ef167"
+    },
+    {
+      "label": "continuation-DomesticCompositionTest",
+      "classification": "clean_check",
+      "note": "Actual two-home sleeping/work grouping and flat-floor mat ownership.",
+      "footer": {
+        "test": "DomesticCompositionTest",
+        "passed": 51,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.975,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 590.0078125,
+      "run_results_sha256": "f36a376cb5eb3c5c5eab38e3184e6b21cfd5e80595bd5afb9ab0f8a2b4d86d63"
+    },
+    {
+      "label": "continuation-DomesticEntryFinishTest",
+      "classification": "clean_check",
+      "note": "Continuous head courses and shallow full-span domestic entry; no physics additions.",
+      "footer": {
+        "test": "DomesticEntryFinishTest",
+        "passed": 24,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.301,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 480.26953125,
+      "run_results_sha256": "15773e60bc1c3b92f2b8fcea0614b576c848553019c975215a4260de004b0460"
+    },
+    {
+      "label": "continuation-CityDomesticInteriorTest",
+      "classification": "clean_check",
+      "note": "Actual eligibility, source anchors, six physical cells, connectivity, RNG and streaming lifetime.",
+      "footer": {
+        "test": "CityDomesticInteriorTest",
+        "passed": 336,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.298,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 585.38671875,
+      "run_results_sha256": "a6bf77cb1a7c3e0f07934a7b194cc27f8662d942e265e766d9c4f168249d7202"
+    },
+    {
+      "label": "continuation-DomesticFrontageFinishTest",
+      "classification": "clean_check",
+      "note": "Actual upper material sampling, supported opening and excluded ownership.",
+      "footer": {
+        "test": "DomesticFrontageFinishTest",
+        "passed": 45,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.589,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 494.06640625,
+      "run_results_sha256": "f26e8f2f6b7a983519f3002041af22be3feac4ae2273329a73ee216f49ceb630"
+    },
+    {
+      "label": "continuation-DomesticFrontageFadeTest",
+      "classification": "clean_check",
+      "note": "Disjoint head courses/jamb caps/timber and fractional cutaway controls.",
+      "footer": {
+        "test": "DomesticFrontageFadeTest",
+        "passed": 26,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 7.954,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 483.25390625,
+      "run_results_sha256": "2df99aa08f279a312f07114c87ba80035f250789e27ffb7e1d0f37b77f09a828"
+    },
+    {
+      "label": "continuation-DomesticRewardStabilityTest",
+      "classification": "clean_check",
+      "note": "Original integrated actual-chance and guaranteed full-factory comparisons; exact rolls retained.",
+      "footer": {
+        "test": "DomesticRewardStabilityTest",
+        "passed": 43,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.326,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 592.05078125,
+      "run_results_sha256": "b6ea4f8e37aaa93e99812027ecebcfe7a9a6748d6d051e5c12153adec5e5efd9"
+    },
+    {
+      "label": "continuation-CityGroundCareTest",
+      "classification": "rejected_contact_shift",
+      "note": "Garden moved6px and violated the measured bed/tree contact. Only that world shift was reverted; source PNG untouched.",
+      "footer": {
+        "test": "CityGroundCareTest",
+        "passed": 124,
+        "failed": 1
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 9.098,
+      "diagnostics": [
+        "ERROR: FAIL: care retains the measured bed/tree contact"
+      ],
+      "peak_sampled_rss_mb": 599.8984375,
+      "run_results_sha256": "a76a19078b211e1880bd26b4c0a6028f71916d6c342df77b00842940507cc90c"
+    },
+    {
+      "label": "continuation-final-CityGroundCareTest",
+      "classification": "clean_check",
+      "note": "Measured contact restored; bounded material/mipmap changes retained.",
+      "footer": {
+        "test": "CityGroundCareTest",
+        "passed": 125,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.229,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 599.765625,
+      "run_results_sha256": "7c968dcf9510ca2a5138896004b9101270223bdd80a0cfffce50bb4d48481f97"
+    },
+    {
+      "label": "continuation-final-CityBlockProceduralTest",
+      "classification": "clean_check",
+      "note": "Actual-outline shadow, paving, doorway and generated layout regression.",
+      "footer": {
+        "test": "CityBlockProceduralTest",
+        "passed": 6318,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.438,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 536.9921875,
+      "run_results_sha256": "5f7e6e2340a14cfcb1cea03b5e4227c866d9b93023b2cd557d2a1be68e8ab25b"
+    },
+    {
+      "label": "continuation-footway-shape-red",
+      "classification": "clean_assertion_red",
+      "note": "Square presentation footprint requires a geometry correction.",
+      "footer": {
+        "test": "CityFootwayGeometryTest",
+        "passed": 11,
+        "failed": 2
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 8.314,
+      "diagnostics": [
+        "ERROR: household approach leaves the distant frontage corners as ground, not a house-width rectangular pad",
+        "ERROR: actual approach silhouette changes width between doorway and street rather than merely feathering a rectangle"
+      ],
+      "peak_sampled_rss_mb": 485.6796875,
+      "run_results_sha256": "3789e1f0ab6c8bf8b7dd2a3be60ec44c3ed2973e623b0c169e086012704559bc"
+    },
+    {
+      "label": "continuation-footway-shape-green",
+      "classification": "clean_check",
+      "note": "Bounded connected footway geometry correction.",
+      "footer": {
+        "test": "CityFootwayGeometryTest",
+        "passed": 13,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.102,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 478.91015625,
+      "run_results_sha256": "ae7c9b0ec28628477971445a71ec8c2f1b9ce8d9e938d0f9716dc057512f8007"
+    },
+    {
+      "label": "continuation-footway-edge",
+      "classification": "clean_check",
+      "note": "Native footway edge controls before later road-join correction.",
+      "footer": {
+        "test": "CityFootwayEdgeRenderTest",
+        "passed": 8,
+        "failed": 0
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.56,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 389.484375,
+      "run_results_sha256": "0fdecabf2d97b77e5dc3b3cdc02e88382b9b600deb1898793ad5b77618b69e28"
+    },
+    {
+      "label": "continuation-road-join-red",
+      "classification": "clean_assertion_red",
+      "note": "Footway material still paints a light road patch.",
+      "footer": {
+        "test": "CityFootwayEdgeRenderTest",
+        "passed": 9,
+        "failed": 1
+      },
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 9.969,
+      "diagnostics": [
+        "ERROR: approach yields to the existing road within its join instead of adding a pale pad"
+      ],
+      "peak_sampled_rss_mb": 391.51171875,
+      "run_results_sha256": "156dc90e70ec70a80153684dd7e4bc62f78bb74c26450b14a035f4a12fa10412"
+    },
+    {
+      "label": "continuation-road-join-green",
+      "classification": "clean_check",
+      "note": "Road material join correction in native edge control.",
+      "footer": {
+        "test": "CityFootwayEdgeRenderTest",
+        "passed": 10,
+        "failed": 0
+      },
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 11.489,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 391.55078125,
+      "run_results_sha256": "f9596d56afa55831fecfed4be93c8d1f91f8d899f7b5d9f2153761c24c2a1a6a"
+    },
+    {
+      "label": "continuation-base-road-red",
+      "classification": "clean_assertion_red",
+      "note": "Reshaped overlay still leaves the underlying merged rectangular pale substrate.",
+      "footer": {
+        "test": "CityFootwayEdgeRenderTest",
+        "passed": 11,
+        "failed": 2
+      },
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 10.832,
+      "diagnostics": [
+        "ERROR: shared base reveals the ground away from the actual lane instead of repainting the parcel hull",
+        "ERROR: shared road shoulder has a bounded natural transition, partial pixels=0"
+      ],
+      "peak_sampled_rss_mb": 394.6796875,
+      "run_results_sha256": "85a1915bf5d24b3339e80422885906924188501cc73023a0c6f586dd4a285182"
+    },
+    {
+      "label": "continuation-base-road-green",
+      "classification": "clean_check",
+      "note": "Actual road and short soft shoulder own the city-ground substrate.",
+      "footer": {
+        "test": "CityFootwayEdgeRenderTest",
+        "passed": 13,
+        "failed": 0
+      },
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 12.808,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 394.87109375,
+      "run_results_sha256": "072bd630a79af41bb511c34612468125e7621b47a3edceff6b538cb8f92c964a"
+    },
+    {
+      "label": "continuation-road-scope-red",
+      "classification": "clean_assertion_red",
+      "note": "Actual-road substrate correction must opt in only for S2 and preserve other segments.",
+      "footer": {
+        "test": "CityFootwayEdgeRenderTest",
+        "passed": 13,
+        "failed": 1
+      },
+      "git_head": "7875d1981c79e85f049a07b5c696889b0350a1c4",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 10.428,
+      "diagnostics": [
+        "ERROR: S3 retains its reviewed shared paving ownership outside the lane"
+      ],
+      "peak_sampled_rss_mb": 396.77734375,
+      "run_results_sha256": "b930249115081ecdca2fb3b6ed28913129cc839d0c65abe57e3b272cf2cd27eb"
+    },
+    {
+      "label": "continuation-road-scope-green",
+      "classification": "clean_check",
+      "note": "Explicit S2 material ownership preserves default ground presentation.",
+      "footer": {
+        "test": "CityFootwayEdgeRenderTest",
+        "passed": 14,
+        "failed": 0
+      },
+      "git_head": "2921f59a0c59a8b5002b0d4f4fbdf03641e1dcea",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 10.589,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 395.2734375,
+      "run_results_sha256": "87617bbe64c8981a7b19003c91f10a030ee187faa12b3b2b6b38281d77d6b925"
+    },
+    {
+      "label": "continuation-soil-care",
+      "classification": "clean_check",
+      "note": "Textured feathered soil keeps the measured bed/tree contact and care ownership.",
+      "footer": {
+        "test": "CityGroundCareTest",
+        "passed": 125,
+        "failed": 0
+      },
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 10.202,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 600.65234375,
+      "run_results_sha256": "df072af3c1e4f14e17ea9e2fe251d3e82665c9695c953ba41f58baaeec68f969"
+    },
+    {
+      "label": "continuation-pale-red",
+      "classification": "mixed_assertion_red",
+      "note": "Intended S2 relief/cache failures plus unrelated V1 autoload-busy/RID/orphan diagnostics. Retained as a mixed failed run, not clean RED.",
+      "footer": {
+        "test": "S2PaleMasonryTest",
+        "passed": 51,
+        "failed": 19
+      },
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 7.835,
+      "diagnostics": [
+        "ERROR: 2 RID allocations of type 'N13RendererDummy15MaterialStorage13DummyMaterialE' were leaked at exit.",
+        "ERROR: 2 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.",
+        "ERROR: Parent node is busy setting up children, `add_child()` failed. Consider using `add_child.call_deferred(child)` instead.",
+        "ERROR: FAIL: Only actual S2 pale wall/window/partition/fill owners receive relief",
+        "ERROR: FAIL: S2 pale material cache is separate from the untouched S3/default cache",
+        "ERROR: FAIL: S3 reload/unload cannot reset a surviving S2 owner's material",
+        "WARNING: 13 ObjectDB instances were leaked at exit (run with `--verbose` for details).",
+        "ERROR: 4 resources still in use at exit (run with --verbose for details)."
+      ],
+      "peak_sampled_rss_mb": 441.40234375,
+      "run_results_sha256": "55571c744dfd124cb1b360eed65bd09b0f70be452bc4d3193d5c760cc8d4982f"
+    },
+    {
+      "label": "continuation-pale-green",
+      "classification": "clean_check",
+      "note": "Separate stable S2 pale/default S3/warm domestic caches, walls/window/partitions/fills and unchanged physical arrays.",
+      "footer": {
+        "test": "S2PaleMasonryTest",
+        "passed": 76,
+        "failed": 0
+      },
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.054,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 444.8984375,
+      "run_results_sha256": "d8d4b462a9e3b3f788c96d0e55af3ae4f5e0faf0915feca18d479172e94e346f"
+    },
+    {
+      "label": "continuation-pale-domestic-control",
+      "classification": "clean_check",
+      "note": "Existing domestic/default material ownership regression.",
+      "footer": {
+        "test": "DomesticWallMaterialTest",
+        "passed": 68,
+        "failed": 0
+      },
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.397,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 444.83203125,
+      "run_results_sha256": "9ce90f29e11cee3bcc4a8a88eb3da70fb433747cb94391a72273df3abcbd77e3"
+    },
+    {
+      "label": "continuation-pale-small",
+      "classification": "native_iteration",
+      "note": "First matched pale civic material/cutaway control; context predates final road substrate and coherent facade.",
+      "footer": null,
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 36.435,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 529.14453125,
+      "run_results_sha256": "630e703481b2746f78dcd7d2ad61c6ca0a0a68cd1686cc2b454e7a43a5c3df56"
+    },
+    {
+      "label": "continuation-bed-small",
+      "classification": "native_iteration",
+      "note": "First bed960 iteration with earlier paving/garden state; not final evidence.",
+      "footer": null,
+      "git_head": "ce3830cc47b119c070d4d4ce837f0e9bf553358d",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 61.57,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 567.44140625,
+      "run_results_sha256": "f2bb1fcf7f435e1534ad9119db30ef71c5983478e85f5336b7a7f6f0888f422a"
+    },
+    {
+      "label": "continuation-bed-small-final",
+      "classification": "native_rejected_iteration",
+      "note": "Historical label says final, but visual review found the broad pale city_ground substrate. Retained as an iteration, not final evidence.",
+      "footer": null,
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 61.129,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 578.87890625,
+      "run_results_sha256": "4222122faaca75a8367da3f7f4cc7effe4e7fb6e8e32856bac301109a3fdbefe"
+    },
+    {
+      "label": "continuation-bed-normal-final",
+      "classification": "native_rejected_iteration",
+      "note": "Same underlay finding at1280. Physical walkthrough passes do not close the visible paving defect.",
+      "footer": null,
+      "git_head": "50a8e64cb1afdf51fc1aa650502049984a30d11a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 71.243,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 632.265625,
+      "run_results_sha256": "f1b3b55619dc540dea12d5418135c02755aa7bff0a81ceac3e170891af0d86c0"
+    },
+    {
+      "label": "continuation-facade-cohesion-red",
+      "classification": "clean_assertion_red",
+      "note": "User rejected pasted identical whole-window panels, the tinted upper band and oversized bare recess.",
+      "footer": {
+        "test": "DomesticFacadeCohesionTest",
+        "passed": 1,
+        "failed": 4
+      },
+      "git_head": "5e1646c4e6e526f337d8de8963d3b12207e7f93d",
+      "actual_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "elapsed_seconds": 8.869,
+      "diagnostics": [
+        "ERROR: FAIL: The real home uses two distinct original window details rather than three copied boxed house panels",
+        "ERROR: FAIL: Both actual wings have continuous warm wall and a quiet original masonry base",
+        "ERROR: FAIL: Domestic entrance has a visibly folded-back timber leaf beside its open recess",
+        "ERROR: FAIL: Visual domestic door height is human scale while its physical width remains unchanged"
+      ],
+      "peak_sampled_rss_mb": 485.89453125,
+      "run_results_sha256": "06062e10cd13ff78f55018ad4f055057bf80be4477046ffc0e5d1eaed82ce5e8"
+    },
+    {
+      "label": "continuation-facade-DomesticFacadeCohesionTest",
+      "classification": "clean_check",
+      "note": "Distinct proportional original window crops, continuous warm fields/plinth, disjoint folded leaf and genuine north-entry control.",
+      "footer": {
+        "test": "DomesticFacadeCohesionTest",
+        "passed": 32,
+        "failed": 0
+      },
+      "git_head": "7875d1981c79e85f049a07b5c696889b0350a1c4",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.948,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 487.375,
+      "run_results_sha256": "8f31ae48d34b1867159cfdb9e92cf31b66a3d5f89e544cb8f3e26e2a9489f90e"
+    },
+    {
+      "label": "continuation-facade-DomesticFrontageFadeTest",
+      "classification": "clean_check",
+      "note": "Actual head/jamb/timber junctions remain disjoint at fractional cutaway.",
+      "footer": {
+        "test": "DomesticFrontageFadeTest",
+        "passed": 24,
+        "failed": 0
+      },
+      "git_head": "7875d1981c79e85f049a07b5c696889b0350a1c4",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.291,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 489.23828125,
+      "run_results_sha256": "3f28845c50daec7ff6a82b67c9a15952150f0b17d0f3a142be3b45e921856704"
+    },
+    {
+      "label": "continuation-facade-DomesticEntryFinishTest",
+      "classification": "clean_check",
+      "note": "Full128px physical doorway, human-scale visible recess, original lining/floor sources and no collisions.",
+      "footer": {
+        "test": "DomesticEntryFinishTest",
+        "passed": 68,
+        "failed": 0
+      },
+      "git_head": "7875d1981c79e85f049a07b5c696889b0350a1c4",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.367,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 488.4140625,
+      "run_results_sha256": "1c6e6a03847a29418ddba4cdf63d37bb21712c7080cedda84aa79354fb5a360b"
+    },
+    {
+      "label": "continuation-facade-DomesticFrontageFinishTest",
+      "classification": "clean_check",
+      "note": "Isotropic continuous wall material, supported header, north entry and excluded S3/nonhome ownership.",
+      "footer": {
+        "test": "DomesticFrontageFinishTest",
+        "passed": 87,
+        "failed": 0
+      },
+      "git_head": "7875d1981c79e85f049a07b5c696889b0350a1c4",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 10.533,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 500.50390625,
+      "run_results_sha256": "a31c1b022842e02067d39f266d1a35b81930d3bce45e49b26cf77094527c58ea"
+    },
+    {
+      "label": "continuation-facade-procedural",
+      "classification": "clean_check",
+      "note": "Generated physical layouts, actual-outline shadows, paving and all cardinal door directions after coherent facade.",
+      "footer": {
+        "test": "CityBlockProceduralTest",
+        "passed": 6318,
+        "failed": 0
+      },
+      "git_head": "2921f59a0c59a8b5002b0d4f4fbdf03641e1dcea",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 9.586,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 540.65625,
+      "run_results_sha256": "f93418a0ee412f94e2ea1155c254abcd750efd27c579e253945a71624d2327f3"
+    },
+    {
+      "label": "continuation-facade-early",
+      "classification": "native_iteration",
+      "note": "One controlled actual bed exterior for early composition judgment; no route/contact/cutaway claim.",
+      "footer": null,
+      "git_head": "7875d1981c79e85f049a07b5c696889b0350a1c4",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 28.137,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 510.421875,
+      "run_results_sha256": "321ade2c73ff79a4ab22ff37b835e8d2e88959a41c95a846003e327da3ecaf68"
+    },
+    {
+      "label": "continuation-final-parse",
+      "classification": "clean_check",
+      "note": "Full script parse audit after coherent facade and explicit S2 ground ownership; original launch HEAD/status/source hashes retained.",
+      "footer": {
+        "test": "ScriptParseAuditTest",
+        "passed": 558,
+        "failed": 0
+      },
+      "git_head": "2921f59a0c59a8b5002b0d4f4fbdf03641e1dcea",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 15.267,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 588.65625,
+      "run_results_sha256": "0eaf5a0e43a9312fb34a6f269f5efc99ee9aded7a63dbcb5a781d7afdbe13b1e"
+    },
+    {
+      "label": "continuation-house-bed-small",
+      "classification": "native_superseded_texture_iteration",
+      "note": "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 59.599,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 583.05859375,
+      "run_results_sha256": "80d1110c00b77364fee0598ff4d2a85869010c7ae1717f493ba7b2f80391ce45"
+    },
+    {
+      "label": "continuation-house-bed-normal",
+      "classification": "native_superseded_texture_iteration",
+      "note": "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 69.93,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 634.25390625,
+      "run_results_sha256": "7e613a298ef6b04835218cc15dcaa78d9f41c54bdb68246a225771201025f684"
+    },
+    {
+      "label": "continuation-house-fruit-small",
+      "classification": "native_superseded_texture_iteration",
+      "note": "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 53.812,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 613.01171875,
+      "run_results_sha256": "2f5cf602ce68c4c5a6b4ad0f35067d14b9aafef6ab8f502dba6b2b54153f493e"
+    },
+    {
+      "label": "continuation-house-fruit-normal",
+      "classification": "native_superseded_texture_iteration",
+      "note": "Mechanically clean household entry, six additions, four contacts and roof restore; fruit image inspection revealed repeated plaster weathering, so this source is not final visual evidence.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 64.383,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 661.5546875,
+      "run_results_sha256": "c419b93497778f2519825c7cacfa038dd22c1209c90111470442a1e64567d4fd"
+    },
+    {
+      "label": "continuation-pale-final-small",
+      "classification": "native_superseded_context_iteration",
+      "note": "Matched pale material and physical cutaway control passed; nearby household plaster source is superseded, so this is retained as earlier context.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 35.776,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 531.59375,
+      "run_results_sha256": "27e08077cf4b2161110e9f0b29aab569072c9b7ef942fc625b00f3bc41b0b68e"
+    },
+    {
+      "label": "continuation-pale-final-normal",
+      "classification": "native_superseded_context_iteration",
+      "note": "Matched pale material and physical cutaway control passed; nearby household plaster source is superseded, so this is retained as earlier context.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 37.814,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 516.7109375,
+      "run_results_sha256": "6e8557ce4439f0958fe444d3dc3145d11a47432fcb3bdd34f7ab439372b6a3ac"
+    },
+    {
+      "label": "continuation-plaster-fruit-normal",
+      "classification": "native_rejected_crop_iteration",
+      "note": "One-plate fruit1280 process clean, but image inspection rejected a visible beige/gray checkerboard from internally repeating a wider plaster crop. Not an assertion RED or final visual success.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 24.544,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 582.09765625,
+      "run_results_sha256": "3a975f93e8b0c78cfa70e7a55588fcdf8239d9e47f564ffd0dac1ea5b19aa12d"
+    },
+    {
+      "label": "continuation-plaster-blend-fruit-normal",
+      "classification": "shader_compile_failure",
+      "note": "Native process exited0 but monitor correctly failed it with runtime_diagnostics: TEXTURE was unavailable in helper scope and shader compilation failed. No visual success or clean RED claim. Sampler and pixel size are passed explicitly in the later correction.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "runtime_diagnostics",
+      "elapsed_seconds": 25.039,
+      "diagnostics": [
+        "SHADER ERROR: Unknown identifier in expression: 'TEXTURE'.",
+        "ERROR: Shader compilation failed."
+      ],
+      "peak_sampled_rss_mb": 555.08984375,
+      "run_results_sha256": "fc7b6300e3d64958a8c83474172df18d2e03b61e04a6dc37b7b2b94ff68f4b1d"
+    },
+    {
+      "label": "continuation-plaster-blend-fruit-normal2",
+      "classification": "native_iteration",
+      "note": "Clean native one-plate fruit1280 accepted removal of scalloped/checkerboard stamps; helper sampler handling was subsequently corrected for the headless backend, with equivalent field math.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 24.984,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 553.67578125,
+      "run_results_sha256": "81429e007457d103e623c2edece8267742962ed070242fac95d0dbb16a447113"
+    },
+    {
+      "label": "continuation-plaster-final-DomesticFacadeCohesionTest",
+      "classification": "sampler_compiler_diagnostic",
+      "note": "All32 assertions passed but the monitor correctly rejected a headless custom-sampler shader compiler diagnostic. A later UV-only helper keeps all texture reads in fragment; this run is not a clean GREEN.",
+      "footer": {
+        "test": "DomesticFacadeCohesionTest",
+        "passed": 32,
+        "failed": 0
+      },
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "runtime_diagnostics",
+      "elapsed_seconds": 8.245,
+      "diagnostics": [
+        "ERROR: Condition \"!actions.custom_samplers.has(function->arguments[j].tex_builtin)\" is true. Continuing."
+      ],
+      "peak_sampled_rss_mb": 499.59765625,
+      "run_results_sha256": "182332bfd1dbc5cb65c1f85ecdc3f20c69470a52b96be60e5deff71685e92dd0"
+    },
+    {
+      "label": "continuation-plaster-final2-DomesticFacadeCohesionTest",
+      "classification": "clean_check",
+      "note": "UV-only source helper compiles cleanly in headless renderer; coherent facade, disjoint fields/details and genuine north-entry controls.",
+      "footer": {
+        "test": "DomesticFacadeCohesionTest",
+        "passed": 32,
+        "failed": 0
+      },
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.185,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 500.35546875,
+      "run_results_sha256": "facc6050a2ec69ccd98cae19020b3f6f629087e415364f937595e7468a0b556f"
+    },
+    {
+      "label": "continuation-plaster-final2-DomesticFrontageFadeTest",
+      "classification": "clean_check",
+      "note": "Final UV-only helper preserves disjoint solid geometry and fractional cutaway contract.",
+      "footer": {
+        "test": "DomesticFrontageFadeTest",
+        "passed": 24,
+        "failed": 0
+      },
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 8.108,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 489.1640625,
+      "run_results_sha256": "0ee7d3bc5d4f73c4507a5ec86e1e713f6dfa2ec877225190cf60df1c83f19318"
+    },
+    {
+      "label": "continuation-plaster-final-bed-small",
+      "classification": "native_iteration",
+      "note": "Clean final-helper native bed960 one-plate visual gate; original window details and continuous quiet warm plaster independently inspected. No movement claim.",
+      "footer": null,
+      "git_head": "7e0850f76055333b9d8547b6869327cd01c3033a",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 27.739,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 512.22265625,
+      "run_results_sha256": "4c8593035ab571ca2f051d800e6842d18050059c0742f1702a3c1c1ef9af4462"
+    },
+    {
+      "label": "continuation-finish-bed-small",
+      "classification": "native_final_walkthrough",
+      "note": "Final root-selected physical entry/contact/exit walkthrough.",
+      "footer": null,
+      "git_head": "b6b91d58d6a69ce348f017f08e8806abbe825b96",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 59.832,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 582.7421875,
+      "run_results_sha256": "a5f9664c811d17e5a8b861da60284379a6448fcae3276835eb5cbe88424147bc"
+    },
+    {
+      "label": "continuation-finish-bed-normal",
+      "classification": "native_final_walkthrough",
+      "note": "Final root-selected physical entry/contact/exit walkthrough.",
+      "footer": null,
+      "git_head": "b6b91d58d6a69ce348f017f08e8806abbe825b96",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 70.019,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 636.08984375,
+      "run_results_sha256": "a3c2869c852acc219246f7b89564f7c7aa97b5426717679ffb3f0a388997a7ea"
+    },
+    {
+      "label": "continuation-finish-fruit-small",
+      "classification": "native_final_walkthrough",
+      "note": "Final root-selected physical entry/contact/exit walkthrough.",
+      "footer": null,
+      "git_head": "b6b91d58d6a69ce348f017f08e8806abbe825b96",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 54.986,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 614.5703125,
+      "run_results_sha256": "6fdf4dbf5b10d5ed0584d5ffb99369b495b439aaaeb6bb48cefe49a420b90ca3"
+    },
+    {
+      "label": "continuation-finish-fruit-normal",
+      "classification": "native_final_walkthrough",
+      "note": "Final root-selected physical entry/contact/exit walkthrough.",
+      "footer": null,
+      "git_head": "b6b91d58d6a69ce348f017f08e8806abbe825b96",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 64.126,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 659.1328125,
+      "run_results_sha256": "0b44e2c184bc83ab34800e1af884030687c2b7ea7ba9744fa25586df55750fd5"
+    },
+    {
+      "label": "continuation-pale-finish-small",
+      "classification": "native_pale_control",
+      "note": "Actual adjacent slate civic building, matched material controls and physical entry/exit.",
+      "footer": null,
+      "git_head": "b6b91d58d6a69ce348f017f08e8806abbe825b96",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 35.441,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 533.5078125,
+      "run_results_sha256": "f66b3fa287a89d90c153d0755c0ed8641fd3c1eadb251e5f974733740becf641"
+    },
+    {
+      "label": "continuation-pale-finish-normal",
+      "classification": "native_pale_control",
+      "note": "Actual adjacent slate civic building, matched material controls and physical entry/exit.",
+      "footer": null,
+      "git_head": "b6b91d58d6a69ce348f017f08e8806abbe825b96",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "elapsed_seconds": 36.574,
+      "diagnostics": [],
+      "peak_sampled_rss_mb": 532.0,
+      "run_results_sha256": "dd8d4b2365853be17db5a0844ffb4067605c62fefb6385e3103a6ed201bf498b"
+    }
+  ],
+  "captures": [
+    {
+      "label": "continuation-bed-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "46958a52e6f8b07fb740f43337340e820a02f404f6b778c3c68a7622b68c02f0",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "9bc2f641ff418d4fb3231e250abf9a1335823dc5394765e7dcda3fcffa9fc599",
+          "bytes": 786808,
+          "bundled": false
+        },
+        "interior-whole.png": {
+          "sha256": "92d2d65b5ded732ff9705460bb7fc59cf3284f7bed06a670e342323fd6c5b6ae",
+          "bytes": 787783,
+          "bundled": false
+        },
+        "interior-cot-contact.png": {
+          "sha256": "4dc2ccc525c0252bb3cce4cb51ded230fd9ebd90bd773d2db7e6d3ddc80a977f",
+          "bytes": 788270,
+          "bundled": false
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "b262ff8a400141e22e5a8115d2ac56bbd5c691b7db3b5f68834f182868184549",
+          "bytes": 788669,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "b1b3384dc23bf802084fb2405a9e6249e010b1209dc2177912b85d2cb8fb90a1",
+          "bytes": 788742,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "14da60666a80e206223cc6aef247f45b75644c7e6a295bfefa848899b339c9e4",
+          "bytes": 788945,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "72f50947513668aae9e84c6f4307a5b5dc7b3fb694197af061dfa55c76003a95",
+          "bytes": 787750,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-bed-small"
+    },
+    {
+      "label": "continuation-bed-small-final",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "accc1d90ec611a3fc07c2970565387faf50538db6857747730eaf37cd1e354bc",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "eeae40c34109e8b991218fa0ebf080f0c5122e80acaadba116a1b74f1f735eb2",
+          "bytes": 787344,
+          "bundled": false
+        },
+        "interior-whole.png": {
+          "sha256": "f7ea11c80a8bd77cdebfa54e7eca0fb7d002538ce612fa9c0275f150ebe39418",
+          "bytes": 788351,
+          "bundled": false
+        },
+        "interior-cot-contact.png": {
+          "sha256": "9fa8831b28ac2ebedaca44794a20b49d64460826a81c5cf724d0c654d76ad91a",
+          "bytes": 791438,
+          "bundled": false
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "35e7112e5e6b93a228d8a3de8441c104a748858737092854388e9225900ba77b",
+          "bytes": 791074,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "41d36d0a41748260ba4d3da34f621fe69925cd35ef4a38a4c5ea525b9ac24e07",
+          "bytes": 790870,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "d7868be49468a2b272df035c7619cf78cd791e5369ec3fe0e0709c1c8e9a31fb",
+          "bytes": 791332,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "11f9806a8efece45515888bb1d54022fbe6185989a595b9e348f7cc1dad26eb7",
+          "bytes": 791706,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-underlay-bed-small"
+    },
+    {
+      "label": "continuation-bed-normal-final",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [],
+      "capture_info_sha256": "7aaf4dc4435401efac11285967a2ed3e8f40fc9f84474a8ec7023c79fc59b68f",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "7901f8c158422d3a643c24c788739d462fe44dd39cf5561b1ec465cb994c3915",
+          "bytes": 1384091,
+          "bundled": false
+        },
+        "interior-whole.png": {
+          "sha256": "9356fa7ff0308d7f5d0b0d8970491b3116daaa94f110782deeb94164c9fa205d",
+          "bytes": 1406584,
+          "bundled": false
+        },
+        "interior-cot-contact.png": {
+          "sha256": "cf66c51840d77491fcb1cb8f33c498a585ffe5b930e58f757d729274d23a7b50",
+          "bytes": 1407411,
+          "bundled": false
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "e3e1888cb4c0c8734825208d580e6aa6c6706c7067657acd4571a7d898b8e230",
+          "bytes": 1407752,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "bc01dd548dcc5f775663d4d772a06ebc05a62cee7bce2bc33f81e37e585b9375",
+          "bytes": 1408107,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "e912121777fb3722a4b9779804d7473f8d5154061f0fb96001176a41656717dc",
+          "bytes": 1408769,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "5955e44c9b06e7778c6d36a2b681b7c91f8c8ba73b9f40aac9bc0259106a5034",
+          "bytes": 1385328,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-underlay-bed-normal"
+    },
+    {
+      "label": "continuation-pale-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "a3b09f59640ebce01405f0696b39b35b4de3256adaf624c71a4c108cd02e4d20",
+      "all_named_stills": {
+        "blue-exterior-baseline.png": {
+          "sha256": "95b810fcb75bd22599586c882b7f03c5fabfb6d73fd8e4e2e108cf4abdda9102",
+          "bytes": 834584,
+          "bundled": false
+        },
+        "blue-exterior-relief.png": {
+          "sha256": "ea7dcf49a5f410a188b040e3d1e7cf74b37d590f4e4e7e2c9a3d5b1b4f8ebffe",
+          "bytes": 835178,
+          "bundled": false
+        },
+        "blue-cutaway-baseline.png": {
+          "sha256": "2c784c27a9d5f721842d4a4493c05d7eb5549d3e6c50d07151fe9ea2bd28395e",
+          "bytes": 807723,
+          "bundled": false
+        },
+        "blue-cutaway-relief.png": {
+          "sha256": "d08ab23887b912faa471003c7b5b7ccaf3e2e1430ecdafbf9360d7d2e7623a70",
+          "bytes": 811973,
+          "bundled": false
+        },
+        "blue-exterior-restored.png": {
+          "sha256": "183d882ce003a03ed18e44171c618fc4bd9016984313ac8dc6fdd12dd552b714",
+          "bytes": 835233,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-pale-small"
+    },
+    {
+      "label": "continuation-facade-early",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "cca0a9988e5e61520ecf79804a78526ba5cca2f6c2d6672021cc8d3f17a9914d",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "ee92430e39bb789289df612d63cf38456f24049128d542846e7e5c0afc67a4dc",
+          "bytes": 782505,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-facade-early"
+    },
+    {
+      "label": "continuation-house-bed-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "44c9b90c9eb2d3e63794f86f98c40bed824d0212bdda975f26c1db8f5793501e",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "1dc580d243a8ab0c7cf14469196b6abc599260e3af1630ab355c7c49b44112af",
+          "bytes": 782543,
+          "bundled": false
+        },
+        "interior-whole.png": {
+          "sha256": "9f1f6b5e260ffab254ca120afefe674e003838d555a57d4a1bc3a3d43ef921cf",
+          "bytes": 788139,
+          "bundled": false
+        },
+        "interior-cot-contact.png": {
+          "sha256": "4ebd766feff4b4a6287c5dc515e7f1f355c53ef8e832c345d6a584043fecd2ef",
+          "bytes": 789034,
+          "bundled": false
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "96d6d7cba58cd64cb2a2dd4d5e1cb07305893c454d7165aac40ac99689f4066e",
+          "bytes": 789328,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "e48329e797234362cda61959c53354d18f1dd0d57b0e5cc22330636fb2232fde",
+          "bytes": 789281,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "c4a91e6f14c443a6e7491cba58153fa1a68de2f9fe570c9fa93478dd603b78c9",
+          "bytes": 789402,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "7f107bd1aa9a5154eba08763c03a30b549f0c6a21305add5ce700d4f5879ffea",
+          "bytes": 783072,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-bed-small"
+    },
+    {
+      "label": "continuation-house-bed-normal",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [],
+      "capture_info_sha256": "fb7d3b43f68e7b4a2ef92a4a986a053f5f693128cf89293ab8266c0c48285b42",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "056ca1074042d850baa5c2995d3db61885b92bd78f2f969fe5fd6cc7f3a0b609",
+          "bytes": 1376510,
+          "bundled": false
+        },
+        "interior-whole.png": {
+          "sha256": "72352dfb5f943733e58eefe80c6aa77df171ad3a50a3fd1cd0caa88ab42af2c8",
+          "bytes": 1406533,
+          "bundled": false
+        },
+        "interior-cot-contact.png": {
+          "sha256": "a20ad5a542e1332949fe1b819b5e93d8dcfacd886513b47093c142c2fe56949d",
+          "bytes": 1407316,
+          "bundled": false
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "e3532ea0eeb38c1c49d6e166c078f3f38b0d88e5588f448dc168bf199c99b9ad",
+          "bytes": 1407804,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "4c4dda54ec147f9ebdafe8b9ae0cc52ddfd80e6af079701cbbe5713762806fd7",
+          "bytes": 1408105,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "ad399b1e9ef5dc8ffa124a4e993bfa096096dd2c2a63c04d87f84cb6dcf0a0aa",
+          "bytes": 1408805,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "3ba149e9caa580a6a6e6503ccb292346bc43afee655e91da43adceedf8d74033",
+          "bytes": 1377829,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-bed-normal"
+    },
+    {
+      "label": "continuation-house-fruit-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "dc5349a42061187d854d0de01fc67eeda9a7e10326d51f542198a4786fe5f084",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "974be8bf83b6de23537799b46de8782ccf6ff684a9b7c14c59515301bf564b97",
+          "bytes": 857143,
+          "bundled": false
+        },
+        "interior-whole.png": {
+          "sha256": "a600a24d974d6ef1afdccced2750ef72afc0ece84a076e48c0d2bb03ad488249",
+          "bytes": 825748,
+          "bundled": false
+        },
+        "interior-cot-contact.png": {
+          "sha256": "012b0b1b007c61f494cd759c92ff58971c7eeed1aeb501efa06fb87374ebd502",
+          "bytes": 824867,
+          "bundled": false
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "b30198a4a95e860d21ae251edd6076d266594fa0f654f0cd806efb8df99033e1",
+          "bytes": 825934,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "35f2899308cc8f5b2af8183a5adec338717b23c861421d0e958cff65bdacd5bd",
+          "bytes": 825714,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "7bfbae906a8a87d09d6b16d0177b9a9541919ee571bee3b392d7a55964df9e49",
+          "bytes": 825798,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "fd6fe75fe944e51620c2d44f2970981605a5d9cc2e9c6e71669d69178e31257c",
+          "bytes": 857469,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-fruit-small"
+    },
+    {
+      "label": "continuation-house-fruit-normal",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [
+        "exterior-before-entry.png"
+      ],
+      "capture_info_sha256": "dd28223144f34988765ad33af8c729a5cc024ac86c4b7bcdc9804be4e1f3a7a2",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "1419eb04df452dd8060f0b29228dea83fc22656a04c0cd66da45e871376a0d3e",
+          "bytes": 1486355,
+          "bundled": true
+        },
+        "interior-whole.png": {
+          "sha256": "9048d4452f4e68650e15f48ba3c16312976f9f0e902c290ef1e1268c787f4cd7",
+          "bytes": 1454311,
+          "bundled": false
+        },
+        "interior-cot-contact.png": {
+          "sha256": "63b59af1dedd15ed6905cfc460358a42c1a16f73523fb906baf4274200c73db6",
+          "bytes": 1453652,
+          "bundled": false
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "724e602fbec83c2a0c3d4ce198bac6e6bd4f74b69d514fd334224e246a1c4509",
+          "bytes": 1454507,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "2466e4dc2e387832bea18e5d85363f5ace18a0473b6d05b290b5cc4bef809777",
+          "bytes": 1454574,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "52e87eb8dc32fde78dca8dac45e0acadbe02d47fba0e4ae43b95f88107cc457c",
+          "bytes": 1455052,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "09c97859ddb01adf626a5c8230f6901cb2ce65884c7d0f8f81c8f944690741cf",
+          "bytes": 1486477,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-fruit-normal"
+    },
+    {
+      "label": "continuation-pale-final-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "edfda894bdd25331468cb11e76f50fc45a1d962629acc7305716970c092c5542",
+      "all_named_stills": {
+        "blue-exterior-baseline.png": {
+          "sha256": "f72742c4685241f1962c857d24a1dff345108e555c17c18597a6c4823b84e1f0",
+          "bytes": 833414,
+          "bundled": false
+        },
+        "blue-exterior-relief.png": {
+          "sha256": "d2d4ab42b96ece0ab711eb5f9ee1c3a64b95e8ac87a4187e5d78ba69f527cf9a",
+          "bytes": 834047,
+          "bundled": false
+        },
+        "blue-cutaway-baseline.png": {
+          "sha256": "62440179c13ba915d4960be94c5f0f24a8f3bca29a1f80976be55f386b3e4f47",
+          "bytes": 806619,
+          "bundled": false
+        },
+        "blue-cutaway-relief.png": {
+          "sha256": "ea43b2a737f51081e140c79300538f0e881f39f690e6245e26f9a923c52dec3a",
+          "bytes": 810933,
+          "bundled": false
+        },
+        "blue-exterior-restored.png": {
+          "sha256": "4d65d533f8e303cf6a37a1c1383a7dd773c7cc5157fd924e26e293fef0ace7ce",
+          "bytes": 834208,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-pale-small"
+    },
+    {
+      "label": "continuation-pale-final-normal",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [],
+      "capture_info_sha256": "7e18736a07bd3b0aa9f6efdde6b1b7a65b83dcf164301c30a923d115d63f7bdf",
+      "all_named_stills": {
+        "blue-exterior-baseline.png": {
+          "sha256": "10a573ba078c5be33661b5064d98455cfc426eb19327279b1d7c67a88099c1f5",
+          "bytes": 1450170,
+          "bundled": false
+        },
+        "blue-exterior-relief.png": {
+          "sha256": "ffc5b2fb5675e9c5573d440cc39c37827019f45093bbdb9d41380192838928e8",
+          "bytes": 1451116,
+          "bundled": false
+        },
+        "blue-cutaway-baseline.png": {
+          "sha256": "d4d8b6e98490cbc34e42ba99bcdb0e4f67bad3ae9098b2aa3bccfbdd06933a97",
+          "bytes": 1402142,
+          "bundled": false
+        },
+        "blue-cutaway-relief.png": {
+          "sha256": "cb0e4b0730daad9c28607b4adf718c92706e1ff281e7590b25d780159ebdfc65",
+          "bytes": 1409474,
+          "bundled": false
+        },
+        "blue-exterior-restored.png": {
+          "sha256": "62513b20acfbd8852fc9ffec8d7320c61f95fe25947cbcc629136f44bf96cd36",
+          "bytes": 1451447,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-pale-normal"
+    },
+    {
+      "label": "continuation-plaster-fruit-normal",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [
+        "exterior-before-entry.png"
+      ],
+      "capture_info_sha256": "d1353effb721b7f69155438916525ed31655d0f3f6bb36a30ae6aefc10445d18",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "b158165228e1d9e3e581ef7badf6fe760dbff277092d73d934bc8a21fe8e8200",
+          "bytes": 1480118,
+          "bundled": true
+        }
+      },
+      "destination": "iteration-plaster-crop-fruit-normal"
+    },
+    {
+      "label": "continuation-plaster-blend-fruit-normal2",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [],
+      "capture_info_sha256": "196512b81df755acac3049add9254c783a86f731bfa23e654846ae3163579361",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "4d4fd5e2694a2d7ddceb7eac0b32195823684248cca0fdef1d779fc8220d24b7",
+          "bytes": 1443568,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-blend-fruit-normal"
+    },
+    {
+      "label": "continuation-plaster-final-bed-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [],
+      "capture_info_sha256": "6b21538176f71206959823f75d4a02bc82e002bd340671e49c2eb344ec92491e",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "7e1867926da2cd7ae6c6050c8a5b101e353055565922ab0ddae1e09671594ff2",
+          "bytes": 765431,
+          "bundled": false
+        }
+      },
+      "destination": "iteration-plaster-verified-bed-small"
+    },
+    {
+      "label": "continuation-finish-bed-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [
+        "exterior-before-entry.png",
+        "interior-whole.png",
+        "interior-cot-contact.png"
+      ],
+      "capture_info_sha256": "3ed78de6adfe5062395151ebbceeaac8ed4349aa6bd4a8d038be1833977c4a95",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "0b5fb7752b6a938471437b92eab8d0d1fc3f96833b710c9168adfb34ee91cacd",
+          "bytes": 765567,
+          "bundled": true
+        },
+        "interior-whole.png": {
+          "sha256": "1d3ce0d818681caaa2cf617f8afdd2d017502537df6b51f466f017fcb9e4671d",
+          "bytes": 788157,
+          "bundled": true
+        },
+        "interior-cot-contact.png": {
+          "sha256": "788da6f0dba471c7adb29b250e05556e660d7af1596d88f7a20b5250335506a1",
+          "bytes": 788945,
+          "bundled": true
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "ba69dc13d8ea9f5e09faa47f04bf5d70f3a1619fb7cae0938b544b83c4413614",
+          "bytes": 789250,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "c61efce5a9cc25926974c1cfdb96d97fa184d7d7e683f6e1e4843d82cea33580",
+          "bytes": 789362,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "cbe15802b73dc39a8a6ebfd6f86048b3b21456015d1c9a074d97a4fc52322a05",
+          "bytes": 789440,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "f61969c99bfd038f1c44f49e3c0552e5577554867e5bc2d6182e21040cd297e0",
+          "bytes": 766194,
+          "bundled": false
+        }
+      },
+      "destination": "bed-small"
+    },
+    {
+      "label": "continuation-finish-bed-normal",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [
+        "exterior-before-entry.png",
+        "interior-whole.png",
+        "interior-cot-contact.png"
+      ],
+      "capture_info_sha256": "b85e73b127ce49f7dfb3e2c7eb397fb5757d6d8c94212e6092c456455a482767",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "9bf83ea8fad10cc08f63ec9b2a1d3fb9d0757e1b91b29e2763f3b6e509e94120",
+          "bytes": 1350016,
+          "bundled": true
+        },
+        "interior-whole.png": {
+          "sha256": "6bb9f291908c69ffa7b334c8f06fcc5034af36fcfcfe846534de0702261bf067",
+          "bytes": 1406330,
+          "bundled": true
+        },
+        "interior-cot-contact.png": {
+          "sha256": "3aba51351d5490f7ce1c35ba13b1863f39a18267bc3bdbe461257e99f9b8cdc8",
+          "bytes": 1407277,
+          "bundled": true
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "ad04057a088a0cfb2db814835c4ba4708c2f6a5907c36d9c54d54a7f714753c5",
+          "bytes": 1407917,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "e12f65520ad301d24c24dfafe924b702d1496d66880bbc609a999bdbe72b3dc0",
+          "bytes": 1408109,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "a7900b794f50a37495ccfef5f845ca9ba747881cea3fcff380f355fef4774a1c",
+          "bytes": 1408816,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "2392bb6c1de45aca70ad9acc5dbd9d6f686b1139f4b19de9a6143b58ea4fe6c8",
+          "bytes": 1351063,
+          "bundled": false
+        }
+      },
+      "destination": "bed-normal"
+    },
+    {
+      "label": "continuation-finish-fruit-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [
+        "exterior-before-entry.png",
+        "interior-whole.png",
+        "interior-cot-contact.png"
+      ],
+      "capture_info_sha256": "15858ddac7267f0b6921ecdfd0fd5d904ef6be4e8b879761589036f026b27a9b",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "7329021432a0f865fc6dc41d6a5eadba409a7868ba80ab38386e75304d8fd136",
+          "bytes": 831425,
+          "bundled": true
+        },
+        "interior-whole.png": {
+          "sha256": "f0fecd3c5d549842c13f1c5a612ae180817f12cb6957722b735cf4e476605a45",
+          "bytes": 825831,
+          "bundled": true
+        },
+        "interior-cot-contact.png": {
+          "sha256": "258a4a25a653c672c7324f4e0564f38cd2cb7304966d46390ed23740dde3be2e",
+          "bytes": 824926,
+          "bundled": true
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "cb1d3a14e2c727ad548b8e95cc5ab83ad6226cb5ed85daf0e79e21949664b10b",
+          "bytes": 825975,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "23eed9bdd929f0e5ec153abaa971a6e566d8df279decb80362ae6dc49b62c6d7",
+          "bytes": 825764,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "6adb48e28b6efb2f0ca68b405267cb2010066f461dcca4a9906fa89421d22c20",
+          "bytes": 825712,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "e15ab227afffcd50f3802a747d16e7fc5496de96f88284e3a99e4a16c06a8f1b",
+          "bytes": 832244,
+          "bundled": false
+        }
+      },
+      "destination": "fruit-small"
+    },
+    {
+      "label": "continuation-finish-fruit-normal",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [
+        "exterior-before-entry.png",
+        "interior-whole.png",
+        "interior-cot-contact.png"
+      ],
+      "capture_info_sha256": "f66bffc0f1d635b4332d4a6d57b3b77e897eb768ec2ad3cef0ab2fbbd8f43ea2",
+      "all_named_stills": {
+        "exterior-before-entry.png": {
+          "sha256": "810b29a3db3fe18ad819a5d0fa97761c2914690c587e69ae719ab1847052949b",
+          "bytes": 1443682,
+          "bundled": true
+        },
+        "interior-whole.png": {
+          "sha256": "5bb621514006df030b6a829e38a36baf2a859c99231abd5bbeaa0f578766ed06",
+          "bytes": 1454325,
+          "bundled": true
+        },
+        "interior-cot-contact.png": {
+          "sha256": "1e0c3eabc60767cccd88e50fb00beedcf19bf271432e5ab9e83e98380849fc9b",
+          "bytes": 1453733,
+          "bundled": true
+        },
+        "interior-hearth-contact.png": {
+          "sha256": "982ab0edcbf7ead90684b6974d1b6b2f4ade95d20c0d222c1d6978b9fe4fd58c",
+          "bytes": 1454562,
+          "bundled": false
+        },
+        "interior-table-contact.png": {
+          "sha256": "31413d243118f27d648664b3fae0877009f8c124c768db8378568d04778ed6fa",
+          "bytes": 1454659,
+          "bundled": false
+        },
+        "interior-crate-contact.png": {
+          "sha256": "45690bdd5b4a42ee5558ec0a291b39d1ac787e7c327b49d7ec83c222ea95fb58",
+          "bytes": 1455128,
+          "bundled": false
+        },
+        "exterior-restored.png": {
+          "sha256": "bdbdbc314150adc12732922b4d7c6439f28386c98567f5fe4fb50ef55fbdf60c",
+          "bytes": 1443660,
+          "bundled": false
+        }
+      },
+      "destination": "fruit-normal"
+    },
+    {
+      "label": "continuation-pale-finish-small",
+      "size": [
+        960,
+        540
+      ],
+      "selected": [
+        "blue-exterior-relief.png",
+        "blue-cutaway-baseline.png",
+        "blue-cutaway-relief.png"
+      ],
+      "capture_info_sha256": "893feb1d404505757151d31d8f5a178e0e9a32ccfa8a34f9cf96b724f1fbd135",
+      "all_named_stills": {
+        "blue-exterior-baseline.png": {
+          "sha256": "b0e163bc7a0a70554c6624cbb033e5c029a587a86be7c9c661926ca652e2622c",
+          "bytes": 826390,
+          "bundled": false
+        },
+        "blue-exterior-relief.png": {
+          "sha256": "069622d3e5eabbccf2895d55837e072e3f2f7a81bd6d7f43dba5ce54132fafcd",
+          "bytes": 827082,
+          "bundled": true
+        },
+        "blue-cutaway-baseline.png": {
+          "sha256": "48208c8c231696abbceae6d2ac2c81afb2907a8a19fcad07a4c7ffbc279ac68f",
+          "bytes": 799461,
+          "bundled": true
+        },
+        "blue-cutaway-relief.png": {
+          "sha256": "09341cbc202d98cc4ef2a4d3e47abf8a5bbb57a6aab7def3e33c4e5535d7ad60",
+          "bytes": 803824,
+          "bundled": true
+        },
+        "blue-exterior-restored.png": {
+          "sha256": "26adc81840b0395654dcfd21ac58e67f28e44bda2a5121437e4bed95632dd433",
+          "bytes": 826969,
+          "bundled": false
+        }
+      },
+      "destination": "pale-small"
+    },
+    {
+      "label": "continuation-pale-finish-normal",
+      "size": [
+        1280,
+        720
+      ],
+      "selected": [
+        "blue-exterior-relief.png",
+        "blue-cutaway-baseline.png",
+        "blue-cutaway-relief.png"
+      ],
+      "capture_info_sha256": "b1bd17e9d2f9eb4a06014d2fec40ff29b79895ad9c25520157f8489a12842317",
+      "all_named_stills": {
+        "blue-exterior-baseline.png": {
+          "sha256": "e89b66b716266a6c77bb70af234635b99a42e0f378c56319a83029c05b5a328b",
+          "bytes": 1438010,
+          "bundled": false
+        },
+        "blue-exterior-relief.png": {
+          "sha256": "134374678fb55a3b8b1859cb955c9252a8d6dcfc5c8b4dca34fc1eedf3120695",
+          "bytes": 1438790,
+          "bundled": true
+        },
+        "blue-cutaway-baseline.png": {
+          "sha256": "6187b01088de3f0fb41d0b8dcff45c2191133278243c4a46b5b6cb71c0ff2063",
+          "bytes": 1390016,
+          "bundled": true
+        },
+        "blue-cutaway-relief.png": {
+          "sha256": "26549f98e46d389b547dbb9c9c418fd0752751c078a7d0030657b1c7c6d7e238",
+          "bytes": 1397338,
+          "bundled": true
+        },
+        "blue-exterior-restored.png": {
+          "sha256": "2ce336b35c18c6976a1064a9b0451bc5ef1a1166643053480651a30fd92a23ad",
+          "bytes": 1439127,
+          "bundled": false
+        }
+      },
+      "destination": "pale-normal"
+    }
+  ],
+  "final_selected_stills": 18,
+  "iteration_selected_stills": 2,
+  "walkthrough_videos": 4
+}

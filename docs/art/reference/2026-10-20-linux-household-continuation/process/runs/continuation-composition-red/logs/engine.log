@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL: Cooking heat is separate from the sleeping corner
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _check_composed_home (res://tools/tests/DomesticCompositionTest.gd:56)
+       [2] _run (res://tools/tests/DomesticCompositionTest.gd:21)
+ERROR: FAIL: A nearby table belongs to the hearth's working area
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _check_composed_home (res://tools/tests/DomesticCompositionTest.gd:57)
+       [2] _run (res://tools/tests/DomesticCompositionTest.gd:21)
+ERROR: FAIL: Actual cot corner includes the supplied flat rush mat
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _check_composed_home (res://tools/tests/DomesticCompositionTest.gd:60)
+       [2] _run (res://tools/tests/DomesticCompositionTest.gd:21)
+ERROR: FAIL: A nearby table belongs to the hearth's working area
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _check_composed_home (res://tools/tests/DomesticCompositionTest.gd:57)
+       [2] _run (res://tools/tests/DomesticCompositionTest.gd:21)
+       [3] _check_composed_home (res://tools/tests/DomesticCompositionTest.gd:87)
+ERROR: FAIL: Actual cot corner includes the supplied flat rush mat
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDomesticInteriorTest.gd:24)
+       [1] _check_composed_home (res://tools/tests/DomesticCompositionTest.gd:60)
+       [2] _run (res://tools/tests/DomesticCompositionTest.gd:21)
+       [3] _check_composed_home (res://tools/tests/DomesticCompositionTest.gd:87)
+DomesticCompositionTest: 10 passed, 5 failed
