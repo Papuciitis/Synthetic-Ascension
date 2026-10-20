@@ -5,19 +5,20 @@ Integration branch: `enemy-world-work`. Read [HANDOFF](../../HANDOFF.md) first.
 
 ## Current packet
 
-The checkpoint containing this file preserves the S2 street implementation,
-source assets, source/result records and Linux pickup instructions. The user
-authorized periodic normal commits/pushes and moving heavy work to Linux.
-This is an incomplete street milestone; sampled garden fit is kept, while final
-street appearance and ordinary gameplay approval remain open.
+Latest received Linux tip: `fd80106aed28ff49a3a7163299c6f82e29ccf322`.
+The user-authorized continuation is integrated as qualified WIP after native
+art/evidence and scoped implementation review. The [latest lead review](../art/reviews/2026-10-20-linux-city-continuation-review/README.md)
+records concrete KEEP/REWORK decisions. This is an incomplete street milestone;
+full concept fidelity, final street appearance and ordinary gameplay/performance
+approval remain open. Windows retains art/source/review; Linux retains heavy work.
 
 | ID | Direction / request | Status |
 | --- | --- | --- |
 | L0 | Linux acknowledges the received hash, imports checkout, establishes monitored isolated checks | Complete in published packet; preserved existing checkout, not fresh-clone proof |
 | L1 | Review actual S2 homes: seed16102026/chunk(0,3) bed and seed17/chunk(-3,5) fruit; resolve runtime IDs, native contact, entry/reload/combat | Native fit KEEP for these fixtures; qualified traversal/reload/fight evidence received; complete-street visual acceptance remains open |
-| L2 | Household care versus wilderness; subdued S7 moss/soil, no blue leaf carpet or ninth palette alias | KEEP moss/care foundation; REWORK lawn readability, actual chunk seam, wet-mud ribbons and dry-earth control before closing L2 |
-| L3 | Genuine ordinary-home sleep/cook/work/storage purpose and stronger domestic stone/mortar | Cot/hearth source candidates supplied; runtime integration pending |
-| V1 | Actor/entity depth across roofs and tall faces | Required visual correction before occupied-street acceptance; fully coloured enemies/projectiles currently appear on solid roofs |
+| L2 | Household care versus wilderness; subdued S7 moss/soil, no blue leaf carpet or ninth palette alias | KEEP selected moss/wet earth, real dry control and useful lawn core; organic chunk-boundary continuation remains OPEN |
+| L3 | Genuine ordinary-home sleep/cook/work/storage purpose and stronger domestic stone/mortar | KEEP functional furnishing and rough masonry; REWORK household composition and entry character; plain mat source supplied |
+| V1 | Actor/entity depth across roofs and tall faces | KEEP sampled body/icon occlusion/restoration; remaining cues, moving encounters/collection and rendering cost remain OPEN |
 
 ## Kept and rejected
 
@@ -27,8 +28,11 @@ street appearance and ordinary gameplay approval remain open.
   blue/cyan broad moss carpet, and calling an empty civic arcade a home.
 - Keep the overhead tree v2 and thin flower/herb bed for native fitting. Preserve
   original aspect and measured anchors; do not stretch the bed to make a deep plot.
-- Keep cared_lawn/damp_moss_soil as source candidates after repeat review. Their
-  broad mottling and native blending still require judgment in the actual game.
+- Keep the native sampled cared lawn, damp moss/soil and selected wet earth.
+  Preserve the stronger useful core; organic boundary continuation remains open.
+- Keep rough domestic masonry, usable purpose props, connected irregular roofs,
+  fitted outline casts, softer paving and selected S2/S3/S7 atmosphere as WIP.
+  Sparse box-like household composition and the oversized dark entry need work.
 - Retain organic development, imperfect household care and genuine wilderness.
   Passing tests do not establish a pleasing street or lived-in house.
 
@@ -79,7 +83,7 @@ Carry V1 as a required visual gate before final occupied-street acceptance.
 See the review for exact sites and return images. Cross-PC messages still travel
 through Git/status or human relay; do not assume live Linux chat delivery.
 
-## Latest acknowledgment / decision — L2
+## Previous acknowledgment / decision — L2
 
 Received `origin/codex/linux-world-production` at
 `ce5671e6b738cd3b854bee6bfc7efbadd4252c9f`;
@@ -114,3 +118,42 @@ the actual seam, the same natural S7 crop and a real dry-earth control. Return
 small native/occupied comparisons and focused evidence, then proceed to L3.
 Keep V1 explicitly blocking complete occupied-street acceptance. Use Git/status
 or human manual relay; do not start another design loop or broad asset pack.
+
+## Latest acknowledgment / decision — city continuation
+
+Received `origin/codex/linux-world-production` at
+`fd80106aed28ff49a3a7163299c6f82e29ccf322` after the human's manual push.
+It includes the Linux acknowledgment of `faf0e7f4`, final runtime
+`de93d886`, and retained checks/native evidence through fd80106a.
+The [new lead review](../art/reviews/2026-10-20-linux-city-continuation-review/README.md)
+supersedes the old next-task queue above. Publication is confirmed; old
+authentication failures in the Linux-owned record are historical.
+
+KEEP the corrected wet-earth source with a real dry control, useful care core,
+stronger masonry and functional domestic furnishing, fitted irregular roof
+planes/casts/paving, selected temperate daylight and sampled body/icon depth.
+The lead viewed current native plates and sampled three clips; 135 selected
+artifacts match incoming Git blobs. Independent scoped implementation/evidence
+reviews found no important blocker. Original launch/source limits and the
+justified actual-outline test correction remain explicit. No Windows engine ran.
+
+This is qualified integration, not full concept acceptance. Sparse slab-floored
+household boxes and large unfinished-looking entries still lack domestic
+character. Cue/projectile depth, ordinary moving encounters/collection, rendering
+cost and natural care continuation across the chunk boundary remain open.
+Current cover refresh measurements warrant a focused Linux profile without
+capture readback before performance claims or more density.
+
+One [plain rush mat](../../assets/world/domestic_interiors/rush_mat_v1/README.md)
+is supplied as an original, source-only built-in image_gen result with exact
+prompt, measured alpha/anchor/scale and QA previews. No runtime/native approval
+is implied. It adds no collision/cover and should group the cot into a sleeping
+corner; compose existing cooking/work/storage props rather than request a pack.
+
+**Next Linux action:** fetch/merge `origin/enemy-world-work`, acknowledge the
+actual feedback commit in LINUX_STATUS, then return the bounded L3 household/
+entry composition, remaining V1 moving-street cue/collection evidence and scoped
+cover/footway performance measurement described in the review. Keep the two
+existing household fixtures and the accepted materials/roof improvements.
+Record the L2 boundary limit honestly; no new district or terrain design loop.
+Use Git/status or human relay, not assumed cross-PC live messages.

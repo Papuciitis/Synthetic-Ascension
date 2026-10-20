@@ -4,14 +4,26 @@ Updated 20 October 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
 
-**Latest L2 update, 20 October:** Linux `ce5671e6` is received and integrated as
+**Latest continuation, 20 October:** Linux `fd80106a` is received and reviewed.
+Keep the selected soil, useful lawn core, rough domestic masonry/furnishings,
+connected roof planes/paving, selected daylight and sampled body/icon depth.
+Household composition and entry character still need work; ground boundary
+continuation, remaining cue depth and ordinary moving-play/performance acceptance
+stay open. A single plain rush-mat source is supplied for the sleeping corner.
+Read the [new lead review](docs/art/reviews/2026-10-20-linux-city-continuation-review/README.md)
+and [ART_STATUS](docs/handoff/ART_STATUS.md). Linux should acknowledge the received
+feedback commit and return the bounded household/visibility/performance packet.
+No Windows engine ran. Full concept fidelity remains the governing goal, not an
+achieved milestone. The checkpoints below are history.
+
+**Previous L2 update, 20 October:** Linux `ce5671e6` is received and integrated as
 qualified WIP. KEEP the subdued S7 moss and local care foundation; one bounded
 L2 correction is still needed for lawn readability, chunk-edge continuity and
 wet/dry earth. A single new wet-earth source candidate is supplied for a native
 trial after sampling/cache inspection. See the [L2 lead review](docs/art/reviews/2026-10-20-linux-l2-lead-review/README.md)
 and current ART_STATUS. L3 and V1 remain open. The older checkpoints below are history.
 
-**Later update, 20 October:** Linux packet `1fa7a552` is published and reviewed.
+**Earlier update, 20 October:** Linux packet `1fa7a552` is published and reviewed.
 L0 is established; the two native garden fits are kept at their tested scale.
 The complete street still needs work. Current direction is **L2 next**, then L3,
 with roof/entity visibility retained as a required visual gate. Read the updated

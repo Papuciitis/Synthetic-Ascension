@@ -2896,3 +2896,23 @@ control, and trials one supplied wet-earth candidate if needed. The original PNG
 and exact built-in generation prompt are preserved. No Windows engine/bake was
 used, and no new terrain or district family is requested. L3 and V1 remain open.
 See [review, asset support and return criteria](art/reviews/2026-10-20-linux-l2-lead-review/README.md).
+
+## 2026-10-20 — Linux city continuation reviewed; domestic composition remains
+
+The human published Linux `fd80106a`. Native review and independent scoped
+implementation/evidence review support qualified integration of the selected
+wet earth, useful lawn core, rough domestic masonry and purposeful furnishings,
+connected irregular roof planes/paving/casts, selected daylight and body/icon
+foreground depth. The accepted temperate uneven medieval concept remains the
+full goal; these improvements do not establish complete street/game fidelity.
+
+The next bounded correction composes the same two households into believable
+sleep/cook/work/storage spaces and finishes their unfinished-looking entry.
+Windows supplies one original plain rush-mat source with exact prompt and fit
+metadata; runtime use is unaccepted. Linux also completes remaining cue/projectile
+depth with moving occupied-street/collection evidence and profiles the changed
+cover/footway cost without capture readback. Natural chunk-edge care continuation
+remains an explicit L2 limit. No new districts or broad asset pack are requested.
+See the [lead review and return scope](art/reviews/2026-10-20-linux-city-continuation-review/README.md)
+and [ART_STATUS](handoff/ART_STATUS.md). Windows ran no engine; Linux owns heavy
+implementation/imports/captures/performance work and its status acknowledgment.
