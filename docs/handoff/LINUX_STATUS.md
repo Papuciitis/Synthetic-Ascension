@@ -97,6 +97,13 @@ source/native review supports the bounded result. Per-run input snapshots,
 failed attempts and33 scoped committed input bindings are preserved; all nine
 final actual-Game/parse records match the implementation commit exactly.
 
+Evidence commit: `b62da7e47b03e81b5936ff9d6bd2d97143c9cba7`. Root verified
+all379 packet artifact hashes/lengths from the committed Git blobs. The normal
+own-branch push was attempted and still failed with `could not read Username
+for 'https://github.com': terminal prompts disabled`. Both local commits are
+retained. When the human is back, relay the latest branch tip with
+`git push -u origin codex/linux-world-production`; authorized local work continues.
+
 This does not establish whole-street art acceptance. Façade imagery proves
 partial per-pixel coverage, not whole-body concealment everywhere. Existing
 armour collars, lock/exploration markers, attack tells/projectiles and authored
