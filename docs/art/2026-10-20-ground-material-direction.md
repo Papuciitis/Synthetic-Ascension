@@ -1,5 +1,13 @@
 # Ground material direction and S7 rework
 
+**Latest native review:** [Linux L2 review](reviews/2026-10-20-linux-l2-lead-review/README.md)
+keeps the moss replacement and care foundation, but requests clearer local lawn,
+chunk-boundary inspection and a wet/dry-earth correction. The broad blue carpet
+is fixed in sampled S7; wet-mud ribbons remain. One [quiet wet-earth candidate](../../assets/world/ground/city_care/wet_earth_v1/README.md)
+is supplied conditionally after bound-layer/repeat/cache inspection. No complete
+ground or street acceptance is implied. Earlier source decisions below retain
+their original scope and are superseded where the native review identifies a fault.
+
 20 October 2026. Direct human steering asks for distinct backgrounds for lawn, open/kept wild and neglected wild ground, appropriate dirt variation, and investigation of blue greenery around S7. The human explicitly requires the lead to challenge off-target coworker results. This is an art direction and production contract; the requested materials are not yet implemented or accepted in gameplay.
 
 ## Visual family

@@ -4,6 +4,13 @@ Updated 20 October 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
 
+**Latest L2 update, 20 October:** Linux `ce5671e6` is received and integrated as
+qualified WIP. KEEP the subdued S7 moss and local care foundation; one bounded
+L2 correction is still needed for lawn readability, chunk-edge continuity and
+wet/dry earth. A single new wet-earth source candidate is supplied for a native
+trial after sampling/cache inspection. See the [L2 lead review](docs/art/reviews/2026-10-20-linux-l2-lead-review/README.md)
+and current ART_STATUS. L3 and V1 remain open. The older checkpoints below are history.
+
 **Later update, 20 October:** Linux packet `1fa7a552` is published and reviewed.
 L0 is established; the two native garden fits are kept at their tested scale.
 The complete street still needs work. Current direction is **L2 next**, then L3,

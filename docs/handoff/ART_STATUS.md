@@ -15,7 +15,7 @@ street appearance and ordinary gameplay approval remain open.
 | --- | --- | --- |
 | L0 | Linux acknowledges the received hash, imports checkout, establishes monitored isolated checks | Complete in published packet; preserved existing checkout, not fresh-clone proof |
 | L1 | Review actual S2 homes: seed16102026/chunk(0,3) bed and seed17/chunk(-3,5) fruit; resolve runtime IDs, native contact, entry/reload/combat | Native fit KEEP for these fixtures; qualified traversal/reload/fight evidence received; complete-street visual acceptance remains open |
-| L2 | Household care versus wilderness; subdued S7 moss/soil, no blue leaf carpet or ninth palette alias | NEXT Linux packet: selected sources ready; same homes plus natural S7 and untended context |
+| L2 | Household care versus wilderness; subdued S7 moss/soil, no blue leaf carpet or ninth palette alias | KEEP moss/care foundation; REWORK lawn readability, actual chunk seam, wet-mud ribbons and dry-earth control before closing L2 |
 | L3 | Genuine ordinary-home sleep/cook/work/storage purpose and stronger domestic stone/mortar | Cot/hearth source candidates supplied; runtime integration pending |
 | V1 | Actor/entity depth across roofs and tall faces | Required visual correction before occupied-street acceptance; fully coloured enemies/projectiles currently appear on solid roofs |
 
@@ -49,7 +49,7 @@ automatically. The four earlier looping chats remain archived. The lead's
 30-minute follow-up checks new Git/status evidence, reviews art and backs up
 meaningful verified changes; unchanged state is not a reason to rerun captures.
 
-## Latest acknowledgment / decision
+## L1 acknowledgment / decision — historical
 
 Received `origin/codex/linux-world-production` at
 `1fa7a55202bf2276ccbde99450256fe8ef20c375`; implementation `5f851103`, evidence
@@ -78,3 +78,39 @@ homes. Then L3 uses the supplied cot/hearth and existing masonry/storage sources
 Carry V1 as a required visual gate before final occupied-street acceptance.
 See the review for exact sites and return images. Cross-PC messages still travel
 through Git/status or human relay; do not assume live Linux chat delivery.
+
+## Latest acknowledgment / decision — L2
+
+Received `origin/codex/linux-world-production` at
+`ce5671e6b738cd3b854bee6bfc7efbadd4252c9f`;
+implementation `0d6f761a`, evidence `d4b647a1`.
+The human's manual publication is confirmed despite the final historical
+credential-blocker note. Linux acknowledged review `24d838f7` in `3646a781`.
+
+The [L2 review and correction request](../art/reviews/2026-10-20-linux-l2-lead-review/README.md)
+keeps the non-blue S7 moss and eligible, asymmetric care system. At960 the cared
+strip still barely reads as a maintained plot; native wet mud has conspicuous
+repeated ribbons and lacks an actual dry-earth control. Bed care reaches x=0
+of its owning chunk, so boundary continuity needs a native check. V1 still shows
+actors/tells crossing opaque faces/roofs. L2 is not visually closed.
+
+The lead viewed the principal homes/controls/S7 plates and occupied stills,
+sampled all three short clips, and verified all151 artifact hashes/lengths.
+Independent runtime/cache reviewers found no important correctness blocker.
+Qualified WIP integration preserves the validated14-layer cache, staged warmup
+and care/RNG/coverage checks; no Windows engine was run. See review for the
+earlier-S7 versus final-reduced source limits and controlled-play qualifications.
+
+One [wet-earth source candidate](../../assets/world/ground/city_care/wet_earth_v1/README.md)
+was generated with built-in image_gen, preserved unchanged and inspected at
+native source/repeat sizes. It has no broad parallel ruts, but native wetness,
+seams, grit and actor contrast are unaccepted. Inspect existing layer5 sampling
+first; trial this alternative only if needed. No new terrain ID or runtime bake
+was made on Windows. Existing lawn/moss/cot/hearth sources remain available.
+
+**Next Linux action:** fetch/merge `origin/enemy-world-work`, acknowledge the
+received review hash, and perform the one L2 correction on the same two homes,
+the actual seam, the same natural S7 crop and a real dry-earth control. Return
+small native/occupied comparisons and focused evidence, then proceed to L3.
+Keep V1 explicitly blocking complete occupied-street acceptance. Use Git/status
+or human manual relay; do not start another design loop or broad asset pack.

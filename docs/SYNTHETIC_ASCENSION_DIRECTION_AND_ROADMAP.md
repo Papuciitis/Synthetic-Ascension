@@ -2880,3 +2880,19 @@ or speculative asset packs are not requested. See the [lead review and return
 criteria](art/reviews/2026-10-20-linux-s2-lead-review/README.md) and updated
 [ART_STATUS](handoff/ART_STATUS.md). Linux publication succeeded; its recorded
 authentication failure is historical, and the human can relay Git manually.
+
+## 2026-10-20 — L2 ground trial kept in part; bounded correction required
+
+Received Linux `ce5671e6` (implementation `0d6f761a`, evidence `d4b647a1`) through
+the human's push. Lead review keeps the subdued S7 moss and actual household-care
+infrastructure, with relevant source/cache/mask evidence and no important code
+blocker. Integrate as qualified WIP, not complete-ground acceptance.
+
+At960 the local cared strip is still too subtle; inspect and improve one useful
+garden-adjoining pocket and its actual owning-chunk x=0 boundary. Wet mud retains
+strong repeated ribbons and dark-actor contrast needs attention. The next bounded
+L2 correction checks sampling/cache, returns the same S7 crop and a real dry-earth
+control, and trials one supplied wet-earth candidate if needed. The original PNG
+and exact built-in generation prompt are preserved. No Windows engine/bake was
+used, and no new terrain or district family is requested. L3 and V1 remain open.
+See [review, asset support and return criteria](art/reviews/2026-10-20-linux-l2-lead-review/README.md).
