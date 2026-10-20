@@ -4,6 +4,7 @@ extends RefCounted
 const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
 const SOLID_GROUP := &"foreground_solid_occluders"
 const GROUND_META := &"foreground_ground_contact"
+const DOMESTIC_PLASTER := preload("res://scenes/world/buildings/domestic_plaster.gdshader")
 
 static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVector2Array, lantern_texture: Texture2D = null, portal_masonry: Texture2D = null) -> void:
 	var group := Node2D.new()
@@ -12,6 +13,13 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 	kit.add_child(group)
 	var box: Rect2 = kit.get("bounds")
 	var finish: Texture2D = kit.get("_facade") if Global.attempt_segment == 2 and not bool(kit.get("civic")) else null
+	var domestic: bool = Global.attempt_segment == 2 and not bool(kit.get("civic")) and StringName(kit.get_meta(&"building_usage",&"")) == &"row_house"
+	var plaster_material: ShaderMaterial
+	if domestic and finish != null:
+		plaster_material = ShaderMaterial.new()
+		plaster_material.shader = DOMESTIC_PLASTER
+		var size := finish.get_size()
+		plaster_material.set_shader_parameter("source_rect",Vector4(size.x*0.335,size.y*0.30,size.x*0.038,size.y*0.36))
 	if outline.is_empty():
 		# A continuous shaded return beneath the eave, split around side doors.
 		for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT]:
@@ -28,7 +36,7 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 			for run: Vector2 in runs:
 				if run.y <= run.x: continue
 				var face := _panel(group,Rect2(x-7,run.x,14,run.y-run.x),Color("57635f") if dir.x < 0 else Color("92998a"))
-				if finish != null: _plaster(face,finish,Color("858d80") if dir.x < 0 else Color("b7b8a5"))
+				if finish != null: _plaster(face,finish,Color("858d80") if dir.x < 0 else Color("b7b8a5"),plaster_material)
 	else:
 		# Intentional irregular fallback: masonry/eave courses follow every
 		# actual south edge, including the recessed bay and rear L wing.
@@ -50,10 +58,13 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 				var height := float(kit.get("_facade_height"))
 				_wall_bays(group,kit.get("_facade"),run,b.y-16,minf(height,112.0),bool(kit.get("civic")))
 				if height > 112.0:
-					var upper := _panel(group,Rect2(run.x,b.y-16-height,run.y-run.x,height-112),Color.WHITE)
 					var upper_finish := finish if finish != null else portal_masonry
-					if upper_finish != null: _plaster(upper,upper_finish,Color("b9b9a8"))
-					_register_solid(upper,Vector2((run.x+run.y)*0.5,b.y))
+					if domestic:
+						_domestic_upper_field(group,upper_finish,run,b.y-16-height,height-112,b.y,plaster_material,doors,cell_px)
+					else:
+						var upper := _panel(group,Rect2(run.x,b.y-16-height,run.y-run.x,height-112),Color.WHITE)
+						if upper_finish != null: _plaster(upper,upper_finish,Color("b9b9a8"),plaster_material)
+						_register_solid(upper,Vector2((run.x+run.y)*0.5,b.y))
 	for door: Dictionary in doors:
 		if door.dir == Vector2i.DOWN and outline.is_empty(): continue
 		var gap := _door_box(door,cell_px)
@@ -64,7 +75,7 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 		group.add_child(entry)
 		var dir: Vector2i = door.dir
 		if not outline.is_empty() and dir == Vector2i.DOWN:
-			_upright_irregular_portal(entry,gap,float(kit.get("_facade_height")),portal_masonry)
+			_upright_irregular_portal(entry,gap,float(kit.get("_facade_height")),portal_masonry,domestic,plaster_material)
 			continue
 		# These are contact/soffit planes within the actual carved opening,
 		# never a rotated south-facing image or a new collision shape.
@@ -102,7 +113,7 @@ static func _door_box(door: Dictionary, cell_px: int) -> Rect2:
 	var last := first + perp * (width-1)
 	return Rect2(Vector2(first)*cell_px,Vector2.ONE*cell_px).merge(Rect2(Vector2(last)*cell_px,Vector2.ONE*cell_px))
 
-static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float, facade: Texture2D) -> void:
+static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float, facade: Texture2D, domestic: bool = false, plaster_material: ShaderMaterial = null) -> void:
 	var portal := Node2D.new()
 	portal.name = "IrregularUprightPortal"
 	parent.add_child(portal)
@@ -112,15 +123,24 @@ static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float,
 	var top := bottom-height
 	var left := gap.position.x
 	var right := gap.end.x
-	portal.set_meta(&"opening_face",Rect2(left,top,gap.size.x,height))
-	var recess := _panel(portal,Rect2(left,top,gap.size.x,height),Color.WHITE)
+	var opening_height := minf(height,128.0) if domestic else height
+	var opening_top := bottom-opening_height
+	portal.set_meta(&"opening_face",Rect2(left,opening_top,gap.size.x,opening_height))
+	var recess := _panel(portal,Rect2(left,opening_top,gap.size.x,opening_height),Color.WHITE)
 	recess.name = "Recess"
 	recess.vertex_colors = PackedColorArray([Color("1d2c2e"),Color("1d2c2e"),Color("42514a"),Color("374840")])
+	var supported_header: bool = domestic and opening_top > top
+	var lintel_height := minf(14.0,opening_top-top) if supported_header else 14.0
+	if supported_header and opening_top-lintel_height > top:
+		var header := _panel(portal,Rect2(left,top,gap.size.x,opening_top-lintel_height-top),Color("b9b9a8"))
+		header.name = "DomesticDoorHeader"
+		if facade != null: _plaster(header,facade,Color("b9b9a8"),plaster_material)
+		_register_solid(header,Vector2((left+right)*0.5,gap.end.y))
 	var left_jamb := _panel(portal,Rect2(left-15,top+8,15,height-8),Color("8c9585"))
 	left_jamb.name = "LeftJamb"
 	var right_jamb := _panel(portal,Rect2(right,top+8,15,height-8),Color("b0af96"))
 	right_jamb.name = "RightJamb"
-	var lintel := _panel(portal,Rect2(left-15,top+8,gap.size.x+30,14),Color("b0b19c"))
+	var lintel := _panel(portal,Rect2(left if supported_header else left-15,opening_top-lintel_height if supported_header else top+8,gap.size.x if supported_header else gap.size.x+30,lintel_height),Color("b0b19c"))
 	lintel.name = "Lintel"
 	for face: Polygon2D in [left_jamb,right_jamb,lintel]:
 		_register_solid(face,Vector2((left+right)*0.5,gap.end.y))
@@ -131,7 +151,7 @@ static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float,
 		_masonry(left_jamb,facade,Rect2(size*Vector2(0.391,0.29),size*Vector2(0.034,0.63)))
 		_masonry(right_jamb,facade,Rect2(size*Vector2(0.575,0.29),size*Vector2(0.034,0.63)))
 		_masonry(lintel,facade,Rect2(size*Vector2(0.391,0.205),size*Vector2(0.218,0.085)))
-	_panel(portal,Rect2(left,top+22,gap.size.x,7),Color("263b39"))
+	_panel(portal,Rect2(left,opening_top if domestic else top+22,gap.size.x,7),Color("263b39"))
 	# A short, flush floor transition is distinct from the upright recess;
 	# there is no door leaf, raised step, collision or change to entry width.
 	var threshold := _panel(portal,Rect2(left,bottom-10,gap.size.x,14),Color.WHITE)
@@ -144,11 +164,71 @@ static func _masonry(shape: Polygon2D, texture: Texture2D, source: Rect2) -> voi
 	shape.uv = PackedVector2Array([source.position,Vector2(source.end.x,source.position.y),source.end,Vector2(source.position.x,source.end.y)])
 	shape.color = Color.WHITE
 
-static func _plaster(shape: Polygon2D, texture: Texture2D, tint: Color) -> void:
+static func _plaster(shape: Polygon2D, texture: Texture2D, tint: Color, material: ShaderMaterial = null) -> void:
 	# Plain field beside the existing shutter bay; no additional windows or
 	# stretched ornament. Shared quiet material retains a broad limewash plane.
 	_masonry(shape,texture,Rect2(texture.get_size()*Vector2(0.335,0.30),texture.get_size()*Vector2(0.038,0.36)))
 	shape.color = tint
+	if material != null:
+		var uv := PackedVector2Array()
+		for point: Vector2 in shape.polygon:
+			uv.append(point*2.0)
+		shape.uv = uv
+		shape.material = material
+
+static func _domestic_upper_field(parent: Node2D, texture: Texture2D, run: Vector2, top: float, height: float, ground_y: float, material: ShaderMaterial, doors: Array, cell_px: int) -> void:
+	# Extend only the existing lower bay joints, rather than adding a new
+	# decorative grid or changing the actual envelope/opening. Piers replace
+	# their field area so fractional roof fades composite the mass once.
+	var joints: Array[float] = []
+	if texture != null and run.y-run.x >= 240.0:
+		var nominal := texture.get_width()*0.40/texture.get_height()*112.0
+		var count := maxi(1,int(round((run.y-run.x)/nominal)))
+		for index in range(1,count):
+			joints.append(lerpf(run.x,run.y,float(index)/float(count)))
+	var jambs: Array[Rect2] = []
+	for door: Dictionary in doors:
+		if door.dir != Vector2i.DOWN: continue
+		var gap := _door_box(door,cell_px)
+		if not is_equal_approx(gap.end.y,ground_y): continue
+		# Match the existing portal's actual15px jamb and8px top setback.
+		jambs.append(Rect2(gap.position.x-15,top+8,15,height))
+		jambs.append(Rect2(gap.end.x,top+8,15,height))
+	var cursor: float = run.x
+	for end: float in joints+[run.y+6.0]:
+		var pieces: Array[Rect2] = [Rect2(cursor,top,end-6.0-cursor,height)]
+		for jamb: Rect2 in jambs:
+			var next: Array[Rect2] = []
+			for piece: Rect2 in pieces:
+				next.append_array(_subtract_rect(piece,jamb))
+			pieces = next
+		for piece: Rect2 in pieces:
+			var field := _panel(parent,piece,Color("b9b9a8"))
+			if field == null: continue
+			if texture != null: _plaster(field,texture,Color("b9b9a8"),material)
+			field.set_meta(&"domestic_upper_run" if is_equal_approx(piece.size.y,height) else &"domestic_upper_jamb_cap",Rect2(run.x,top,run.y-run.x,height))
+			_register_solid(field,Vector2((run.x+run.y)*0.5,ground_y))
+		cursor = end+6.0
+	for x: float in joints:
+		var pier := _panel(parent,Rect2(x-6,top,12,height),Color.WHITE)
+		pier.name = "DomesticUpperPier"
+		_masonry(pier,texture,Rect2(texture.get_size()*Vector2(0.391,0.29),texture.get_size()*Vector2(0.034,0.63)))
+		_register_solid(pier,Vector2(x,ground_y))
+
+static func _subtract_rect(field: Rect2, cut: Rect2) -> Array[Rect2]:
+	var intersection := field.intersection(cut)
+	if not intersection.has_area(): return [field]
+	var pieces: Array[Rect2] = []
+	# Keep full-height side pieces, then any cap within the cut's X span.
+	var candidates: Array[Rect2] = [
+		Rect2(field.position,Vector2(intersection.position.x-field.position.x,field.size.y)),
+		Rect2(Vector2(intersection.end.x,field.position.y),Vector2(field.end.x-intersection.end.x,field.size.y)),
+		Rect2(Vector2(intersection.position.x,field.position.y),Vector2(intersection.size.x,intersection.position.y-field.position.y)),
+		Rect2(Vector2(intersection.position.x,intersection.end.y),Vector2(intersection.size.x,field.end.y-intersection.end.y)),
+	]
+	for piece: Rect2 in candidates:
+		if piece.has_area(): pieces.append(piece)
+	return pieces
 
 static func _panel(parent: Node2D, rect: Rect2, color: Color) -> Polygon2D:
 	if not rect.has_area(): return null
