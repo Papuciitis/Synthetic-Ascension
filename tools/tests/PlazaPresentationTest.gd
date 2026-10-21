@@ -10,7 +10,13 @@ extends Node
 #    leaves every walkable cell reachable;
 #  - furniture adds no blocker and stands on open ground or on an already
 #    blocked ring / prop cell; generation is deterministic; assets load and
-#    the props registered for actor cover share one small texture.
+#    the props registered for actor cover share one small texture;
+#  - maintenance states (plaza pass 2): each family's squares draw in their
+#    own state (independent table below); only tended squares keep clipped
+#    planting, benches beyond one, and a cypress (at most one); working,
+#    ruined and military squares have no clipped beds or civic benches;
+#    ring goods / rubble stand on ring cells of non-arena rings; debris only
+#    in ruined squares, flat on open paving.
 const COVER_FULL := preload("res://scenes/world/cover/CoverFull.tscn")
 const COVER_WINDOW := preload("res://scenes/world/cover/CoverWindow.tscn")
 const COVER_HALF := preload("res://scenes/world/cover/CoverHalf.tscn")
@@ -31,19 +37,33 @@ const TARGETS := [
 	{"segment": 2, "theme": &"service_courtyards"},
 	{"segment": 3, "theme": &"checkpoint_lanes"},
 	{"segment": 4, "theme": &"civilian_cutthrough"},
+	{"segment": 4, "theme": &"collapsed_ward"},
 	{"segment": 5, "theme": &"inner_district_gate"},
 	{"segment": 6, "theme": &"industrial_cutthrough"},
+	{"segment": 6, "theme": &"ruined_services"},
 	{"segment": 7, "theme": &"canal_services"},
 	{"segment": 8, "theme": &"rail_yard"},
+	{"segment": 8, "theme": &"military_staging"},
 	{"segment": 10, "theme": &"gate_district"},
 ]
+## Maintenance state per family, written out independently of the code
+## under test: 0 tended, 1 working, 2 ruined, 3 damp, 4 military.
+const EXPECTED_STATE := {
+	&"service_courtyards": 0, &"checkpoint_lanes": 0, &"civilian_cutthrough": 0,
+	&"inner_district_gate": 0, &"gate_district": 0,
+	&"industrial_cutthrough": 1, &"rail_yard": 1,
+	&"collapsed_ward": 2, &"ruined_services": 2, &"siege_services": 2,
+	&"underpass_veins": 3, &"canal_services": 3,
+	&"military_staging": 4, &"outer_wall": 4,
+}
+const CLIPPED_PLANTING := [&"box_shrub", &"lavender", &"cypress", &"olive_planter"]
 const PLANS_PER_THEME := 3
 
 var _costs: Array[int] = []
 var _step_costs: Dictionary = {}
 var _passes := 0
 var _failures := 0
-var _stats := {"chunks": 0, "ring_cells": 0, "centrepieces": 0, "wall_fountains": 0, "skipped_centrepieces": 0, "beds": 0, "repaved_islands": 0, "bed_planters": 0, "lamps": 0, "benches": 0, "stalls": 0, "drains": 0, "notice_boards": 0, "accents": 0, "pots": 0}
+var _stats := {"chunks": 0, "ring_cells": 0, "centrepieces": 0, "wall_fountains": 0, "skipped_centrepieces": 0, "beds": 0, "repaved_islands": 0, "bed_planters": 0, "lamps": 0, "benches": 0, "stalls": 0, "drains": 0, "notice_boards": 0, "accents": 0, "pots": 0, "ring_props": 0, "debris": 0, "worn_beds": 0, "chunks_by_state": {}}
 
 
 func _ready() -> void:
@@ -157,6 +177,10 @@ func _check_plaza(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, se
 		for fixture in [base, styled, again]: fixture.manager.free()
 		return
 	var info: Dictionary = chunk.get_meta(PLAZA.META_PLAZA)
+	var state := int(EXPECTED_STATE.get(theme.district_family, 0))
+	_check(int(info.get("state", -1)) == state and s_state(styled) == state and s_state(base) == 0, tag + " squares draw in the family's maintenance state %d (presentation field only)" % state)
+	var by_state: Dictionary = _stats.chunks_by_state
+	by_state[str(state)] = int(by_state.get(str(state), 0)) + 1
 	var ring: Dictionary = {}
 	for cell: Vector2i in info.ring:
 		ring[cell] = true
@@ -320,7 +344,7 @@ func _check_plaza(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, se
 	for lamp: Dictionary in plaza_plan.get("lamps", []):
 		_stats.lamps += 1
 		_check(not clear.has(lamp.cell), tag + " lamps flank the road mouth, never stand in it")
-	for group: String in ["lamps", "benches", "drains", "stalls", "accents", "pots"]:
+	for group: String in ["lamps", "benches", "drains", "stalls", "accents", "pots", "ring_props", "debris", "edge_goods"]:
 		for item: Dictionary in plaza_plan.get(group, []):
 			_check(not anchor_box.has_area() or not anchor_box.grow(1).has_point(item.cell), tag + " %s keep off the objective anchor box" % group)
 	_stats.benches += (plaza_plan.get("benches", []) as Array).size()
@@ -343,8 +367,64 @@ func _check_plaza(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, se
 	for drain: Dictionary in plaza_plan.get("drains", []):
 		_stats.drains += 1
 		_check(plaza.has(drain.cell) and s.kind_at(drain.cell) < 0, tag + " drain grates lie on open plaza paving")
+	_check_state(tag, state, info, plaza_plan, chunk, s, ring, plaza, clear)
 	for fixture in [base, styled, again]:
 		fixture.manager.free()
+
+
+func s_state(fixture: Dictionary) -> int:
+	return int((fixture.data as ChunkBuildData).plaza_edge_state)
+
+
+## Maintenance-state presentation of one plaza chunk.
+func _check_state(tag: String, state: int, info: Dictionary, plaza_plan: Dictionary, chunk: Node2D, s: ChunkBuildData, ring: Dictionary, plaza: Dictionary, clear: Dictionary) -> void:
+	var arena := bool(info.balustrade)
+	var accents: Array = plaza_plan.get("accents", [])
+	_check(accents.size() <= 1 and (accents.is_empty() or state == 0), tag + " the frontal cypress stands in tended squares only, at most once")
+	var benches: Array = plaza_plan.get("benches", [])
+	_check(benches.is_empty() or state == 0 or (state == 3 and benches.size() <= 1), tag + " civic benches only in tended (and one in damp) squares")
+	var ring_props: Array = plaza_plan.get("ring_props", [])
+	_check(ring_props.is_empty() or (state in [1, 2, 3, 4] and not arena), tag + " ring goods / rubble only on non-arena rings of worn states")
+	for item: Dictionary in ring_props:
+		_stats.ring_props += 1
+		var cell: Vector2i = item.cell
+		_check(ring.has(cell) and s.kind_at(cell) == WorldBlockerGeometry.Kind.WALL and not clear.has(cell), tag + " ring prop %s stands on a ring WALL cell (blocked support)" % item.id)
+		var allowed: Array = {1: [&"crates_stack", &"barrels_group", &"sacks_pile"], 2: [&"rubble_pile", &"scaffold_crates"], 3: [&"barrels_group"], 4: [&"crates_stack", &"sacks_pile"]}.get(state, [])
+		_check(StringName(item.id) in allowed, tag + " ring prop %s belongs to state %d" % [item.id, state])
+	var edge_goods: Array = plaza_plan.get("edge_goods", [])
+	_check(edge_goods.size() <= 1 and (edge_goods.is_empty() or (state in [1, 4] and not arena)), tag + " edge goods (handcart / supplies) only in working and military squares, once")
+	_stats.edge_goods = int(_stats.get("edge_goods", 0)) + edge_goods.size()
+	var debris: Array = plaza_plan.get("debris", [])
+	_check(debris.is_empty() or state == 2, tag + " debris decals only in ruined squares")
+	for item: Dictionary in debris:
+		_stats.debris += 1
+		_check(plaza.has(item.cell) and s.kind_at(item.cell) < 0 and not clear.has(item.cell), tag + " debris lies flat on open plaza paving off the route")
+	var node := chunk.get_node_or_null("PlazaDressing")
+	if node == null:
+		return
+	var pieces: Dictionary = {}
+	var contacts: Dictionary = {}
+	for child: Node in node.get_children():
+		var piece := StringName(child.get_meta(&"plaza_piece", &""))
+		pieces[piece] = int(pieces.get(piece, 0)) + 1
+		if child.has_meta(&"plaza_ground_contact"):
+			contacts[Vector2i((child.get_meta(&"plaza_ground_contact") as Vector2 / CELL).floor())] = piece
+		if child is Sprite2D and (child as Sprite2D).texture == DRESSING.WORN_ATLAS:
+			_check(not child.is_in_group(FOREGROUND.GROUP), tag + " worn props are never registered as actor cover")
+	if state != 0:
+		var clipped := 0
+		for piece: StringName in CLIPPED_PLANTING:
+			clipped += int(pieces.get(piece, 0))
+		_check(clipped == 0, tag + " no clipped planting (box, lavender, cypress, olive planter) outside tended squares: %s" % [pieces])
+		if state in [1, 4]:
+			_check(int(pieces.get(&"weeds", 0)) == 0, tag + " working and military ground is bare, not weedy")
+	# Every island's existing half-cover cell still draws a prop.
+	for island: Dictionary in plaza_plan.get("islands", []):
+		var prop: Vector2i = island.prop
+		if prop.x >= 0:
+			_check(contacts.has(prop), tag + " island half-cover cell %s keeps a drawn prop in state %d" % [prop, state])
+		if state != 0 and (island.get("bed", Rect2i()) as Rect2i).has_area():
+			_stats.worn_beds += 1
 
 
 ## Street chunks: notice boards stand on open ground in front of a civic
@@ -374,14 +454,23 @@ func _check_street(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i) -
 
 
 func _check_assets() -> void:
-	for style_variant in [0, KIT.VARIANT_BALUSTRADE]:
-		for mask in 16:
-			var data := ChunkBuildData.new(Vector2i.ZERO, 4)
-			data.add_blocker(Vector2i(1, 1), WorldBlockerGeometry.Kind.WALL, mask, KIT.VARIANT_PLAZA_EDGE | style_variant)
-			var texture := KIT.texture_for(data, Vector2i(1, 1))
-			_check(texture != null and texture.get_size() == Vector2(128, 184), "plaza edge piece loads mask=%d style=%d" % [mask, style_variant])
-			_check(texture != null and texture.resource_path.begins_with("res://assets/world/plazas_v1/kit/"), "plaza edge piece comes from the plaza kit mask=%d" % mask)
-		_check(KIT.fill_texture(style_variant) != null, "plaza edge fill loads")
+	var prefix := ["planter34_", "kerb34_", "ruin34_", "moss34_", "balustrade34_"]
+	for state in 5:
+		for style_variant in [0, KIT.VARIANT_BALUSTRADE]:
+			for mask in 16:
+				var data := ChunkBuildData.new(Vector2i.ZERO, 4)
+				data.plaza_edge_state = state
+				data.add_blocker(Vector2i(1, 1), WorldBlockerGeometry.Kind.WALL, mask, KIT.VARIANT_PLAZA_EDGE | style_variant)
+				var texture := KIT.texture_for(data, Vector2i(1, 1))
+				_check(texture != null and texture.get_size() == Vector2(128, 184), "plaza edge piece loads mask=%d style=%d state=%d" % [mask, style_variant, state])
+				# The arena parapet wins in every state; military ground is a parapet too.
+				var expected: String = "balustrade34_" if style_variant != 0 else prefix[state]
+				_check(texture != null and texture.resource_path.begins_with("res://assets/world/plazas_v1/kit/" + expected), "plaza edge piece mask=%d state=%d draws %s*" % [mask, state, expected])
+	for style in 5:
+		_check(KIT.fill_texture(style) != null and KIT.fill_texture(style).get_width() > 0, "plaza edge fill loads style=%d" % style)
+	_check(DRESSING.WORN_ATLAS != null and DRESSING.WEEDS_GROUND != null and DRESSING.MOSS_SOIL != null, "worn atlas and bed fills load")
+	for id: StringName in DRESSING.WORN_REGIONS:
+		_check(Rect2(Vector2.ZERO, DRESSING.WORN_ATLAS.get_size()).encloses(DRESSING.WORN_REGIONS[id]), "worn atlas region %s inside the atlas" % id)
 	_check(DRESSING.ATLAS != null and DRESSING.STONE != null, "plaza atlas and stone tile load")
 	for id: StringName in DRESSING.REGIONS:
 		var region: Rect2 = DRESSING.REGIONS[id]
@@ -406,6 +495,23 @@ func _check_assets() -> void:
 			wall_batches += 1
 	_check(plaza_batches == 2 and wall_batches == 1, "marked ring cells draw with plaza pieces, unmarked walls keep the wall kit")
 	_check(int(renderer.get_stats().instances) == 3, "one instance per edge cell")
+	renderer.clear()
+	# A ruined chunk's ordinary ring draws the broken planter; its parapet cell
+	# (arena bit) keeps the balustrade.
+	var ruined := ChunkBuildData.new(Vector2i(1, 0), 4)
+	ruined.plaza_edge_state = KIT.STATE_RUINED
+	ruined.add_blocker(Vector2i(0, 1), WorldBlockerGeometry.Kind.WALL, WorldBlockerGeometry.E, KIT.VARIANT_PLAZA_EDGE)
+	ruined.add_blocker(Vector2i(1, 1), WorldBlockerGeometry.Kind.WALL, WorldBlockerGeometry.W, KIT.VARIANT_PLAZA_EDGE)
+	ruined.add_blocker(Vector2i(3, 3), WorldBlockerGeometry.Kind.WALL, 0, KIT.VARIANT_PLAZA_EDGE | KIT.VARIANT_BALUSTRADE)
+	renderer.add_chunk(ruined)
+	var ruin_batches := 0
+	var parapet_batches := 0
+	for batch: ChunkBlockRenderer.TextureBatch in renderer.get("_batches").values():
+		if batch.texture.resource_path.contains("plazas_v1/kit/ruin34_"):
+			ruin_batches += 1
+		elif batch.texture.resource_path.contains("plazas_v1/kit/balustrade34_"):
+			parapet_batches += 1
+	_check(ruin_batches == 2 and parapet_batches == 1, "a ruined chunk's ring draws broken planter pieces; arena cells keep the parapet")
 	renderer.clear()
 	host.free()
 
