@@ -1,10 +1,27 @@
 # Windows art direction ↔ Linux production handoff
 
-Updated 20 October 2026. This is a working checkpoint, not visual acceptance of
+Updated 21 October 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
 
-**Latest continuation, 20 October:** Linux `fd80106a` is received and reviewed.
+**Latest review, 21 October:** Linux `3d1be8b0` is received. KEEP the newer
+façade/roof/connected-frontage direction; REWORK broad grey paving, S7's lost
+damp-green setting, repeated formal squares/planters and weak district identity.
+The verified continuation through `2d749ba0` and passive reference-import
+exclusion are integrated. The later city-wide phase stays on the production
+branch pending its ground/cover corrections and a small current-source native
+walk/cost packet. Read the [lead review](docs/art/reviews/2026-10-21-linux-phase1-lead-review/README.md)
+and ART_STATUS. Normal merge, not ff-only, is now needed when exchanging lanes.
+The whole-city fidelity goal remains active; old bounded task queues below are
+historical.
+
+The human explicitly permits guarded Windows Godot checks. Linux remains the
+primary heavy-production host. A Windows cold import at e4a1a8ba stopped at the
+strict memory ceiling; no local Game capture is claimed. See the review's logs.
+Keep human-playtest exclusion, memory protections and owned-process cleanup.
+The initial scheduled review batch is paused; this review was manually requested.
+
+**Earlier continuation, 20 October:** Linux `fd80106a` is received and reviewed.
 Keep the selected soil, useful lawn core, rough domestic masonry/furnishings,
 connected roof planes/paving, selected daylight and sampled body/icon depth.
 Household composition and entry character still need work; ground boundary

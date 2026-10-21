@@ -1,24 +1,26 @@
 # Windows art lead status
 
-Owner: Windows lead-design chat. Updated 20 October 2026.
+Owner: Windows lead-design chat. Updated 21 October 2026.
 Integration branch: `enemy-world-work`. Read [HANDOFF](../../HANDOFF.md) first.
 
 ## Current packet
 
-Latest received Linux tip: `fd80106aed28ff49a3a7163299c6f82e29ccf322`.
-The user-authorized continuation is integrated as qualified WIP after native
-art/evidence and scoped implementation review. The [latest lead review](../art/reviews/2026-10-20-linux-city-continuation-review/README.md)
-records concrete KEEP/REWORK decisions. This is an incomplete street milestone;
-full concept fidelity, final street appearance and ordinary gameplay/performance
-approval remain open. Windows retains art/source/review; Linux retains heavy work.
+Latest received Linux tip: `3d1be8b0039ce96e65959958b0da10a799f8fcfb`.
+The [latest lead review](../art/reviews/2026-10-21-linux-phase1-lead-review/README.md)
+records architectural gains, ground/street corrections and evidence limits.
+Integration contains the verified continuation through `2d749ba0` plus the
+passive reference-import exclusion (`01cddc60`). The later phase is held on the
+production branch; no reset/discard is requested. Full city/game fidelity remains
+the goal. Windows may run user-authorized guarded native checks; Linux remains
+the primary heavy-production host.
 
 | ID | Direction / request | Status |
 | --- | --- | --- |
 | L0 | Linux acknowledges the received hash, imports checkout, establishes monitored isolated checks | Complete in published packet; preserved existing checkout, not fresh-clone proof |
 | L1 | Review actual S2 homes: seed16102026/chunk(0,3) bed and seed17/chunk(-3,5) fruit; resolve runtime IDs, native contact, entry/reload/combat | Native fit KEEP for these fixtures; qualified traversal/reload/fight evidence received; complete-street visual acceptance remains open |
 | L2 | Household care versus wilderness; subdued S7 moss/soil, no blue leaf carpet or ninth palette alias | KEEP selected moss/wet earth, real dry control and useful lawn core; organic chunk-boundary continuation remains OPEN |
-| L3 | Genuine ordinary-home sleep/cook/work/storage purpose and stronger domestic stone/mortar | KEEP functional furnishing and rough masonry; REWORK household composition and entry character; plain mat source supplied |
-| V1 | Actor/entity depth across roofs and tall faces | KEEP sampled body/icon occlusion/restoration; remaining cues, moving encounters/collection and rendering cost remain OPEN |
+| L3 | Genuine ordinary-home sleep/cook/work/storage purpose and stronger domestic stone/mortar | KEEP checked two-home mat/work grouping, rough masonry and traversal through 2d749; later every-home expansion needs current cutaway evidence |
+| V1 | Actor/entity depth across roofs and tall faces | KEEP checked ordinary moving cues/collection and snapshot reuse through 2d749; later spatial indexing has a descendant-reach regression; full V1/cost remain OPEN |
 
 ## Kept and rejected
 
@@ -119,7 +121,7 @@ small native/occupied comparisons and focused evidence, then proceed to L3.
 Keep V1 explicitly blocking complete occupied-street acceptance. Use Git/status
 or human manual relay; do not start another design loop or broad asset pack.
 
-## Latest acknowledgment / decision — city continuation
+## Previous acknowledgment / decision — city continuation
 
 Received `origin/codex/linux-world-production` at
 `fd80106aed28ff49a3a7163299c6f82e29ccf322` after the human's manual push.
@@ -157,3 +159,41 @@ cover/footway performance measurement described in the review. Keep the two
 existing household fixtures and the accepted materials/roof improvements.
 Record the L2 boundary limit honestly; no new district or terrain design loop.
 Use Git/status or human relay, not assumed cross-PC live messages.
+
+## Latest acknowledgment / decision — phase 1, 21 October
+
+Received `e4a1a8ba`, then `3d1be8b0` during the human-requested review.
+The checked prefix through `2d749ba0` is kept/integrated: original two-home
+purpose grouping and mat, continuous plaster, controlled road/material work,
+live moving cues/collection/streaming and reduced upload/bind work. Relevant
+original native/source evidence and independent reviews support that boundary.
+The passive reference-import exclusion from e4a1a8ba is also retained.
+
+The newer city-wide phase visibly improves façade modules, roof composition,
+frontage continuity and coherent casts. It still repeats cross streets/formal
+squares and broad grey fields. S7 loses its damp-green ecological role, while
+tidy planter rims flatten district differences. KEEP useful architecture;
+REWORK street/ground hierarchy and maintenance/use states with existing sources.
+No additional asset generation is requested.
+
+The later runtime is held pending the [specific source/runtime and native gates](../art/reviews/2026-10-21-linux-phase1-lead-review/README.md).
+The ground GPU/register issue and reported passage/door/hitch majors remain
+open. Indexed cover misses some offscreen descendant-form changes; fix explicit
+invalidation. The phase's 74 suite summaries have zero-failure assertion footers,
+but eight retain runtime diagnostics. There are no raw process/capture source
+bindings in that packet. Do not inherit the earlier performance/play acceptance.
+
+The lead viewed all 8 phase JPEGs and the relevant earlier native controls,
+plus 18 sampled video frames. Incoming 17 phase artifacts and 80 selected earlier
+artifacts match Git blobs. Windows cleanup stopped 19 old idle tool helpers;
+one guarded e4a1a8ba cold import stopped at 905 MB/44.69 s. No Windows Game capture
+was produced; the logs and limits are retained. Godot checks here are permitted
+when the existing exclusion/resource safeguards can be met.
+
+**Next Linux action:** fetch and normally merge `origin/enemy-world-work`,
+acknowledge the actual feedback hash, then return representative S2/S7 and one
+industrial/ruined theme with corrected ground/street hierarchy, one genuine
+current cutaway, a final-dressed moving route and focused source-bound cover/
+ground cost checks. Preserve useful modules and parked branches. The full-city
+goal is not reduced to the old two-home fixture, but passing old tests and making
+more sources do not establish the current city's acceptance.

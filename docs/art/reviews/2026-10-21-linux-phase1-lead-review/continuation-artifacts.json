@@ -1,0 +1,486 @@
+{
+  "received_tip": "e4a1a8bacaab0bb0ae3ffb7e798353a80f8d9054",
+  "scope": "Selected incoming artifacts match Git blobs; no engine execution or all-packet assertion.",
+  "files": [
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/README.md",
+      "sha256": "33af23461ed9945e6bc6a59fe2a06fcb4130c1dcc58433b577d985a1960e56cf",
+      "bytes": 8057,
+      "git_blob": "b0579136ece01480dd62acd6d6b5e36600b53917"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/analysis.json",
+      "sha256": "01b057b7143255a8388260d966e92e1aa15c06e7f63b885ef031f287425a424e",
+      "bytes": 45800,
+      "git_blob": "0ce86d1b4dbe6a3a98de9b002fd207498ff8c916"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/evidence-index.json",
+      "sha256": "d1ccbb3fbc1ab5da7ef25aa830ef3b7157660c7664fa5319a87b51c0523a43dd",
+      "bytes": 9808,
+      "git_blob": "ad25e66b44446631f57a9f0d7aa290fe98214066"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/process/summary.json",
+      "sha256": "7ddd6e07bc3cb6f3d7bb1178ee072b3d6b25ce61d3de1c8045353cf2fbc97d72",
+      "bytes": 3889,
+      "git_blob": "2a6b6572fdda98e9cde8ded975227bfa40d54990"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/profile-catalogue.json",
+      "sha256": "64271998dbf10050c39acf1ac3b26b33fa41296e37bc1e461c75b7922aa9daa0",
+      "bytes": 213,
+      "git_blob": "36544a4ee1708a45b5cc14daa2122962a302cc68"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/profiles/cover-stream-baseline-small/profile-info.json",
+      "sha256": "fab1b467bc0adc0b8d1a194e4cd223231722ea2a435458805d2c4b9a7c7461c5",
+      "bytes": 5102486,
+      "git_blob": "7b150678f7bd00955b748211b00d52fd90b84bda"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/profiles/cover-stream-baseline-small2/profile-info.json",
+      "sha256": "3d82a21e799c0736e9a824ab9cd87fd9c0f8076a93ff39b720f70ff3b3215a34",
+      "bytes": 2559420,
+      "git_blob": "652323b5a4d133468068ddc88661b32a6817c721"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/profiles/cover-stream-final-control-small/profile-info.json",
+      "sha256": "c7054d3b1f7a8ee2d5cb896c9fbfe5e7d9ede5af33db47954345014335f3b789",
+      "bytes": 2898453,
+      "git_blob": "95ddcbc4d7cc77c0938282fa3010ee41ec57cb32"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-cover-performance/profiles/cover-stream-final-reuse-small/profile-info.json",
+      "sha256": "88a2ca2baa0a3bcb8bbc158d0064014e2847a25ccad0ae9c78195ac91ba7fdf3",
+      "bytes": 3019042,
+      "git_blob": "fd5a16b8d9d9d61dda6df6ea2d1d1bee3ce5751b"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/README.md",
+      "sha256": "8ad9b4b3fe4daab3790d45a9790c922f045ccc8ebaed127d9642092adedf2128",
+      "bytes": 23293,
+      "git_blob": "d82b0da958ed9857e86971f4e8c2480ac56bc06d"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-normal/capture-info.json",
+      "sha256": "b85e73b127ce49f7dfb3e2c7eb397fb5757d6d8c94212e6092c456455a482767",
+      "bytes": 35859,
+      "git_blob": "0e69869bfb4fe02765288aa3883bdecc1164f585"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-normal/exterior-before-entry.png",
+      "sha256": "9bf83ea8fad10cc08f63ec9b2a1d3fb9d0757e1b91b29e2763f3b6e509e94120",
+      "bytes": 1350016,
+      "git_blob": "c9d86239665739722342c34b4d26791a03841cf0"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-normal/interior-cot-contact.png",
+      "sha256": "3aba51351d5490f7ce1c35ba13b1863f39a18267bc3bdbe461257e99f9b8cdc8",
+      "bytes": 1407277,
+      "git_blob": "160e25e682169d12dc1b1813ab10c3bcbe6f809a"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-normal/interior-whole.png",
+      "sha256": "6bb9f291908c69ffa7b334c8f06fcc5034af36fcfcfe846534de0702261bf067",
+      "bytes": 1406330,
+      "git_blob": "683c72cd78c30a5d578cd81c2f60e4e643486f2b"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-normal/walkthrough.decode.json",
+      "sha256": "f81b66ec3b79a17e34d065bf4ce0d1bb89b219ea715cae2619e890c8832addf1",
+      "bytes": 651,
+      "git_blob": "f3ab864076e50db2e5976d3ce0513fce4cdd7112"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-normal/walkthrough.encoding.json",
+      "sha256": "3802fcbfdb42d7d655bad464de788e5f52fc9f97732062a97423f49b668f53be",
+      "bytes": 11638,
+      "git_blob": "6e64ba3958f4ec01c679d3e5e76830c93e22ab5c"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-normal/walkthrough.mp4",
+      "sha256": "beaeed91e47a9352d45becf51e3774d9e7c53278f6669ec9783acc3510580473",
+      "bytes": 2671956,
+      "git_blob": "c075a895a72e6a7080ed33613e2660190c4c70bd"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-small/capture-info.json",
+      "sha256": "3ed78de6adfe5062395151ebbceeaac8ed4349aa6bd4a8d038be1833977c4a95",
+      "bytes": 35685,
+      "git_blob": "f5d101dbe80964c7689b0d22c0354af5c156cd1e"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-small/exterior-before-entry.png",
+      "sha256": "0b5fb7752b6a938471437b92eab8d0d1fc3f96833b710c9168adfb34ee91cacd",
+      "bytes": 765567,
+      "git_blob": "8821489173d1a709c3c8113ef6f81aca838a73ca"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-small/interior-cot-contact.png",
+      "sha256": "788da6f0dba471c7adb29b250e05556e660d7af1596d88f7a20b5250335506a1",
+      "bytes": 788945,
+      "git_blob": "05d63e0d5a9cbd14a1815cf070966b2295d27d12"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-small/interior-whole.png",
+      "sha256": "1d3ce0d818681caaa2cf617f8afdd2d017502537df6b51f466f017fcb9e4671d",
+      "bytes": 788157,
+      "git_blob": "055061722b858f6e87546c7e330cbdb5f4fef9a7"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-small/walkthrough.decode.json",
+      "sha256": "ad1c4ae8f395a17623b7496b4a3153be8cd0d78d17239aebc0e0f89ca077351a",
+      "bytes": 650,
+      "git_blob": "9c834dac8bd2b299784454d163d3b93375a363c6"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-small/walkthrough.encoding.json",
+      "sha256": "6da6be65187b448d569ae4d009a53e7922ed7816d903a86776e1f3e3e98fad34",
+      "bytes": 11408,
+      "git_blob": "a758a1a30d73c84829fb1b536086109a0d329a0f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/bed-small/walkthrough.mp4",
+      "sha256": "1a010e49abb5c456ad5fc3f4015d233354b3f2a7b0391a1e7e991b3b6b1f6a6f",
+      "bytes": 1521898,
+      "git_blob": "4bf6158bae58914ce32161bd8c9f6af656375558"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/capture-inputs.json",
+      "sha256": "1799e64bb6925be1d1aaf6e014d845aaa6ff09265d5ea6e247290f6cd33639fb",
+      "bytes": 7455,
+      "git_blob": "acb5f40dcc6ac733a32dead22f739e6fa4fa2b23"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/evidence-index.json",
+      "sha256": "c1f38d86742106435c9be17d50ffe66fad9c199dddbd61c95a129dabd4fc9341",
+      "bytes": 59513,
+      "git_blob": "18717193739be4b79c6def168573284e8ab8a871"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-normal/capture-info.json",
+      "sha256": "f66bffc0f1d635b4332d4a6d57b3b77e897eb768ec2ad3cef0ab2fbbd8f43ea2",
+      "bytes": 32233,
+      "git_blob": "4a4e591faa85cd6536241a002eb4b466c767e914"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-normal/exterior-before-entry.png",
+      "sha256": "810b29a3db3fe18ad819a5d0fa97761c2914690c587e69ae719ab1847052949b",
+      "bytes": 1443682,
+      "git_blob": "d375986d5be8f04bde575488894abff47a18f2be"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-normal/interior-cot-contact.png",
+      "sha256": "1e0c3eabc60767cccd88e50fb00beedcf19bf271432e5ab9e83e98380849fc9b",
+      "bytes": 1453733,
+      "git_blob": "a6c187d7bf474161f3c6874ec25ad5387e66313d"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-normal/interior-whole.png",
+      "sha256": "5bb621514006df030b6a829e38a36baf2a859c99231abd5bbeaa0f578766ed06",
+      "bytes": 1454325,
+      "git_blob": "cf882f77fb6f86a0b8a83b61458742b0198c615f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-normal/walkthrough.decode.json",
+      "sha256": "06338680ae6f6c098468af7061a1fd484b5b921c22966eb698403d1029f52586",
+      "bytes": 653,
+      "git_blob": "b86b8282f0febaa98b1144d14bedb8a1e059a087"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-normal/walkthrough.encoding.json",
+      "sha256": "f2da630ad05426aac153049025695d40b59d2768d2fb10e89a1a3f972660c067",
+      "bytes": 10612,
+      "git_blob": "c46d1a133323587bbeddcbb5e674f79a22e5c650"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-normal/walkthrough.mp4",
+      "sha256": "f0d8f6c859d9fa5250631642fcb41f8a10d1c6f81538384c7fc531e8e8b1de6f",
+      "bytes": 2879999,
+      "git_blob": "16a9957fda0e9764353f2f309a6221b604827bb6"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-small/capture-info.json",
+      "sha256": "15858ddac7267f0b6921ecdfd0fd5d904ef6be4e8b879761589036f026b27a9b",
+      "bytes": 32208,
+      "git_blob": "7533af3f98a78784a09ea7d4863ac2ff98c09d1f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-small/exterior-before-entry.png",
+      "sha256": "7329021432a0f865fc6dc41d6a5eadba409a7868ba80ab38386e75304d8fd136",
+      "bytes": 831425,
+      "git_blob": "10fba5a0e03269ddaca33451ea772d863c2cf811"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-small/interior-cot-contact.png",
+      "sha256": "258a4a25a653c672c7324f4e0564f38cd2cb7304966d46390ed23740dde3be2e",
+      "bytes": 824926,
+      "git_blob": "ed4d04ec2848b6f187e66c23c049f06688425436"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-small/interior-whole.png",
+      "sha256": "f0fecd3c5d549842c13f1c5a612ae180817f12cb6957722b735cf4e476605a45",
+      "bytes": 825831,
+      "git_blob": "a2d7ddde954ef38e0732debb407ab82f29418a70"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-small/walkthrough.decode.json",
+      "sha256": "11b1cd3253bc5c0de3e8d814b09f74eeb50ab9669b7ee499aea30a9bf1a2e7a8",
+      "bytes": 652,
+      "git_blob": "a023caceae8fb11e232f5326793ac1efc0ec6224"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-small/walkthrough.encoding.json",
+      "sha256": "4c033e3132bf9d64efe12491acc7e2fa879b80c87c4c8bc33a78e493e7ad44ac",
+      "bytes": 10563,
+      "git_blob": "b0b67ee105d9b206763166d422d18c4ab02b423e"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/fruit-small/walkthrough.mp4",
+      "sha256": "9d2d8ff59d8a41439acd996077929148d5671f3a50db3aab64cff9565777a26c",
+      "bytes": 1541234,
+      "git_blob": "17cb09639295e3eb04b2e36d77f7e49be926eb4a"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-bed-small/capture-info.json",
+      "sha256": "46958a52e6f8b07fb740f43337340e820a02f404f6b778c3c68a7622b68c02f0",
+      "bytes": 32032,
+      "git_blob": "80f9c2633d83b0dc43a4a472ba46f0d3bb8cdf0a"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-facade-early/capture-info.json",
+      "sha256": "cca0a9988e5e61520ecf79804a78526ba5cca2f6c2d6672021cc8d3f17a9914d",
+      "bytes": 12992,
+      "git_blob": "b3a8624aad976844c6c91af8687fadcbe98bddf2"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-pale-small/capture-info.json",
+      "sha256": "a3b09f59640ebce01405f0696b39b35b4de3256adaf624c71a4c108cd02e4d20",
+      "bytes": 13094,
+      "git_blob": "2cce928484b5cf88083485b6ed21cf5f4ba6125a"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-bed-normal/capture-info.json",
+      "sha256": "fb7d3b43f68e7b4a2ef92a4a986a053f5f693128cf89293ab8266c0c48285b42",
+      "bytes": 35857,
+      "git_blob": "49f6f9bf9efbe2d38629390ea575a2bd0b048988"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-bed-small/capture-info.json",
+      "sha256": "44c9b90c9eb2d3e63794f86f98c40bed824d0212bdda975f26c1db8f5793501e",
+      "bytes": 35674,
+      "git_blob": "2e732baf75de4d3d1ae9dc288fb2efe2f4d6a60a"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-blend-fruit-normal/capture-info.json",
+      "sha256": "196512b81df755acac3049add9254c783a86f731bfa23e654846ae3163579361",
+      "bytes": 10478,
+      "git_blob": "d0d77c7bde81793335422d25180f8e42f8890792"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-crop-fruit-normal/capture-info.json",
+      "sha256": "d1353effb721b7f69155438916525ed31655d0f3f6bb36a30ae6aefc10445d18",
+      "bytes": 10471,
+      "git_blob": "921f8f4f940210fcb0e8d7097fbbbebc03554483"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-crop-fruit-normal/exterior-before-entry.png",
+      "sha256": "b158165228e1d9e3e581ef7badf6fe760dbff277092d73d934bc8a21fe8e8200",
+      "bytes": 1480118,
+      "git_blob": "74a6a6e1e0153c00063c2cae531cfd6fcf0334d9"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-fruit-normal/capture-info.json",
+      "sha256": "dd28223144f34988765ad33af8c729a5cc024ac86c4b7bcdc9804be4e1f3a7a2",
+      "bytes": 32392,
+      "git_blob": "4676604ea52f1de71f35f8517889f3069b3a3ac5"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-fruit-normal/exterior-before-entry.png",
+      "sha256": "1419eb04df452dd8060f0b29228dea83fc22656a04c0cd66da45e871376a0d3e",
+      "bytes": 1486355,
+      "git_blob": "6b4129ac7e35f14522f047bafdc43d8d20d0b951"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-fruit-small/capture-info.json",
+      "sha256": "dc5349a42061187d854d0de01fc67eeda9a7e10326d51f542198a4786fe5f084",
+      "bytes": 32040,
+      "git_blob": "40aca177ec2efa17bdfe6f341ee2c7999eb45f30"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-pale-normal/capture-info.json",
+      "sha256": "7e18736a07bd3b0aa9f6efdde6b1b7a65b83dcf164301c30a923d115d63f7bdf",
+      "bytes": 13594,
+      "git_blob": "229382802b8f4ff21811db00b61b1e4009921384"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-pale-small/capture-info.json",
+      "sha256": "edfda894bdd25331468cb11e76f50fc45a1d962629acc7305716970c092c5542",
+      "bytes": 13588,
+      "git_blob": "fc5a53b8c0a7f7025217e83f16229fac10f7881b"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-plaster-verified-bed-small/capture-info.json",
+      "sha256": "6b21538176f71206959823f75d4a02bc82e002bd340671e49c2eb344ec92491e",
+      "bytes": 13003,
+      "git_blob": "5f94bf7173f09b4579d9e8d14639a4db361327aa"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-underlay-bed-normal/capture-info.json",
+      "sha256": "7aaf4dc4435401efac11285967a2ed3e8f40fc9f84474a8ec7023c79fc59b68f",
+      "bytes": 32968,
+      "git_blob": "8e04f10b55edda58a045574b343959a9ef37bb76"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/iteration-underlay-bed-small/capture-info.json",
+      "sha256": "accc1d90ec611a3fc07c2970565387faf50538db6857747730eaf37cd1e354bc",
+      "bytes": 32612,
+      "git_blob": "639d0f91e334cd4feb96477b3f08088496f8f61f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-normal/blue-cutaway-baseline.png",
+      "sha256": "6187b01088de3f0fb41d0b8dcff45c2191133278243c4a46b5b6cb71c0ff2063",
+      "bytes": 1390016,
+      "git_blob": "afda7c240a8a8c8358a15b35aadd2962cef58b2f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-normal/blue-cutaway-relief.png",
+      "sha256": "26549f98e46d389b547dbb9c9c418fd0752751c078a7d0030657b1c7c6d7e238",
+      "bytes": 1397338,
+      "git_blob": "55e4e7158507caf9bda5f355c561f5148a37f333"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-normal/blue-exterior-relief.png",
+      "sha256": "134374678fb55a3b8b1859cb955c9252a8d6dcfc5c8b4dca34fc1eedf3120695",
+      "bytes": 1438790,
+      "git_blob": "c514f79fdf73098657b7001bb71d4dc2e18e0da1"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-normal/capture-info.json",
+      "sha256": "b1bd17e9d2f9eb4a06014d2fec40ff29b79895ad9c25520157f8489a12842317",
+      "bytes": 13597,
+      "git_blob": "ac11329d6d646a82549f151ab02bbd64a897f5de"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-small/blue-cutaway-baseline.png",
+      "sha256": "48208c8c231696abbceae6d2ac2c81afb2907a8a19fcad07a4c7ffbc279ac68f",
+      "bytes": 799461,
+      "git_blob": "ee32c6fdf6f256647b915a9ef85f4e3a254ea873"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-small/blue-cutaway-relief.png",
+      "sha256": "09341cbc202d98cc4ef2a4d3e47abf8a5bbb57a6aab7def3e33c4e5535d7ad60",
+      "bytes": 803824,
+      "git_blob": "6d9935c412f87919e1b9e31fdf23d54966729bda"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-small/blue-exterior-relief.png",
+      "sha256": "069622d3e5eabbccf2895d55837e072e3f2f7a81bd6d7f43dba5ce54132fafcd",
+      "bytes": 827082,
+      "git_blob": "1e32dfbc81eaea701bc6aaabab123e8961d06092"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/pale-small/capture-info.json",
+      "sha256": "893feb1d404505757151d31d8f5a178e0e9a32ccfa8a34f9cf96b724f1fbd135",
+      "bytes": 13587,
+      "git_blob": "5254d484585d01df8048dc4391e2b0b3a5ccbaa1"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/process/reward-comparisons.json",
+      "sha256": "eda114f642442b521999253e6dcb1301af62fbbc061adf61c524dbb769880b6a",
+      "bytes": 7242,
+      "git_blob": "0afc84e23cf4cba57745984decd65e7cbc25318f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/process/source-bindings.json",
+      "sha256": "72ec4fbe8b066d5abbde97400459388beb87c2fa106866f97f2d30e451d4b93f",
+      "bytes": 242421,
+      "git_blob": "8978f9d8d3fba675eafc35ac66f5a7fd1ae015f0"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-household-continuation/process/summary.json",
+      "sha256": "3df7bd4e9314d1f9dd45d39f05dd08f42b323998dd399d596a6e63c63f3e75ca",
+      "bytes": 66711,
+      "git_blob": "868bc13297336d700ff713c9ee66d509a8bc770a"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/README.md",
+      "sha256": "89700958a65fec88b1d3c8f2d608175fceda812f1cc8d3dc700c3eb67dbe620a",
+      "bytes": 7878,
+      "git_blob": "666afceb1501cabec6fc14980e5f45f13fed737f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/code-commit-bindings.json",
+      "sha256": "a140cc88e3a23399d584506762c22130fe892a7081ec2ff6c88ab27345687414",
+      "bytes": 22994,
+      "git_blob": "19f3b48709909e3bac0ae0ee44172aa7267dd201"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/index.json",
+      "sha256": "cc1501ba96a5085a8b54f13b3d7f3057c03ab0db9b86dfd3bb5fe8ae57c17d83",
+      "bytes": 38501,
+      "git_blob": "9fdee2d6f8d0c4e8c1dfd54a89ef583e16be094f"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/moving-route.decode.json",
+      "sha256": "24493904a48fb9c8f30bccb1ccedd15b91e6020e8939658881de026068bdbfea",
+      "bytes": 633,
+      "git_blob": "186ceb403e05b9d029890603faacb79f9df9f906"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/moving-route.encoding.json",
+      "sha256": "8ac65f445cec3041fe2cd545192cbae07f18bc6dc19178c981f7eba7aea3e498",
+      "bytes": 27936,
+      "git_blob": "3d81ec23f6bfc2cd60bdfe7826d69bacbf353a01"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/moving-route.mp4",
+      "sha256": "d2f39be5ab22f96d804c802b0137a02b600f13fe337b7ed033687321e88c13d2",
+      "bytes": 9974197,
+      "git_blob": "45f2c910b784a3a3390f036f92cfcefa4ee57a70"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/native/boundary-arrival.png",
+      "sha256": "31fb154590a5681316c38dbd55c249d830d367db299bb48d5f560d1b3d520565",
+      "bytes": 769797,
+      "git_blob": "779df20e8764082a6d4dea0b1670de068a744b08"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/native/capture-info.json",
+      "sha256": "820fe75ff37483564218f109f99a2b49d1a87715834743d852faa8b54f716e32",
+      "bytes": 57151,
+      "git_blob": "fd83d80c01307adca943006190496ae08b9e0703"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/native/doorway-cutaway.png",
+      "sha256": "b104eabc85e2a4e7fdb43b558492ea6695e302e5eb3936d836f9eea1ba08950f",
+      "bytes": 733046,
+      "git_blob": "00b6aa9cdf9b6d2ea00cda1e092ef052b4d36c5a"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/native/foreground-projectile.png",
+      "sha256": "f3c45c7a3a47851d65faed9fce6c3212f1598bc2647d32cb32717873b0eb814b",
+      "bytes": 686056,
+      "git_blob": "6e32d0376f536925a4397245fc5e4dcc5572b112"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/native/ordinary-collection.png",
+      "sha256": "4c5f696f7e8a6353d8fd9300d98a1a33a2b5098cd7ee3bf056459d570ca1cff0",
+      "bytes": 725128,
+      "git_blob": "09bebc4bae6fa20121c5bfa61a814281c74f3162"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/native/visible-windup.png",
+      "sha256": "aa1057804db1e528ee8731e69742708dd897035f099d13d6581fa1a602196a91",
+      "bytes": 693105,
+      "git_blob": "67a6649881b68addd441636e9125ed091f879f97"
+    },
+    {
+      "path": "docs/art/reference/2026-10-20-linux-moving-cues/process/selected-frames.json",
+      "sha256": "06bb95d91976228ba89a0c588397d00e322d955da9f43524f6b085243b4f2655",
+      "bytes": 3193,
+      "git_blob": "5a973054ae17289c1e8a66b1b7bc7b887ad2673b"
+    }
+  ]
+}
