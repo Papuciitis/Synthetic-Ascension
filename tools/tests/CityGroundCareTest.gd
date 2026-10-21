@@ -27,7 +27,10 @@ func _bed_spec() -> Dictionary:
 		"footprint_px": PackedVector2Array([Vector2(192,768),Vector2(384,768),Vector2(384,576),Vector2(896,576),Vector2(896,1088),Vector2(192,1088)]),
 		"doors": [{"pos":Vector2i(8,16),"dir":Vector2i.DOWN,"width":2}],
 		"visual_seed": 944996572,
-		"garden_contact_px": Vector2(266,1102),
+		# The frontage dressing's kitchen bed (CityFrontageDressing), which
+		# replaced the kit's own herb bed; care anchors to whatever garden
+		# the kit declares.
+		"garden_contact_px": Vector2(287,1086),
 	}
 
 
