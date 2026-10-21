@@ -7,11 +7,23 @@ const MATERIALS := preload("res://core/systems/world/WorldDressingMaterials.gd")
 const CITY_STONE := preload("res://scenes/world/buildings/city_stone.gdshader")
 const DOMESTIC_STONE := preload("res://scenes/world/buildings/domestic_stone.gdshader")
 const SHADOW_OFFSET := DEPTH.SHADOW_DIRECTION * 8.0
+## Alpha-blend colours kept for authored cover (WorldCoverVisuals/CoverWall).
+## Batched chunk shadows below use the shared multiplicative sun shade.
 const SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
-## Three-quarter walls cast a longer shadow away from the light (top right),
-## like the reference; low props keep the short contact shadow.
-const WALL_SHADOW_OFFSET := Vector2(-9.0, 7.0)
+## Three-quarter walls cast their full kit height away from the light (top
+## right), the same rule as every other caster; low props keep the short
+## contact shadow.
+const WALL_SHADOW_OFFSET := DEPTH.SHADOW_DIRECTION * ChunkBlockVisualCatalog.KIT_HEIGHT
 const WALL_SHADOW_COLOR := Color(0.02, 0.02, 0.04, 0.42)
+## The authored Institution (S1, Level1Builder) keeps its reviewed wall
+## shadow; the shared city light below applies to procedural segments.
+const LEGACY_WALL_SHADOW_OFFSET := Vector2(-9.0, 7.0)
+## Share of the sun shade under a wall-kit silhouette and a plain prop.
+const WALL_SHADE := 0.92
+const PROP_SHADE := 0.85
+## Wall-base contact strips (ground z): where a wall's south or west face
+## meets open ground. Building envelopes draw their own kit contact.
+const CONTACT_Z := -90
 ## Shallow depth (Phase 3): caps lift slightly north and an exposed south
 ## edge hangs a stone face under the cap band (the art occupies the middle
 ## ~24 px of the cell, so the face sits at the band's foot, inside the cell).
@@ -38,12 +50,14 @@ var _cell_size := 64
 var _batches: Dictionary = {}
 var _city_material: ShaderMaterial
 var _domestic_material: ShaderMaterial
-var _s2_pale_material: ShaderMaterial
+var _contact_by_chunk: Dictionary = {}
 
 func _city_stone_material() -> ShaderMaterial:
 	if _city_material == null:
 		_city_material = ShaderMaterial.new()
 		_city_material.shader = CITY_STONE
+		# Pale dressed ashlar keeps the kit's baked relief in every segment.
+		_city_material.set_shader_parameter("source_relief", 1.0)
 	return _city_material
 
 
@@ -52,14 +66,6 @@ func _domestic_stone_material() -> ShaderMaterial:
 		_domestic_material = ShaderMaterial.new()
 		_domestic_material.shader = DOMESTIC_STONE
 	return _domestic_material
-
-
-func _s2_pale_stone_material() -> ShaderMaterial:
-	if _s2_pale_material == null:
-		_s2_pale_material = ShaderMaterial.new()
-		_s2_pale_material.shader = CITY_STONE
-		_s2_pale_material.set_shader_parameter("source_relief",0.65)
-	return _s2_pale_material
 
 
 func configure(host: Node2D, chunk_size: int, cell_size: int) -> void:
@@ -81,6 +87,7 @@ func add_chunk(data: ChunkBuildData) -> void:
 	# all twenty-five chunks' transforms - quadratic in the number of live
 	# chunks, for an append.
 	var touched: Dictionary = {}
+	var city_light := _city_light()
 	for occupied_index in data.occupied_indices():
 		var cell := data.cell_for_index(occupied_index)
 		var kind := data.kind_at(cell)
@@ -104,24 +111,21 @@ func add_chunk(data: ChunkBuildData) -> void:
 		var z := ChunkBlockVisualCatalog.PROP_Z if kind == WorldBlockerGeometry.Kind.HALF_COVER or under_roof else ChunkBlockVisualCatalog.WALL_Z
 		if under_roof:
 			key += "#under_roof"
+		if not city_light:
+			key += "#authored"
 		var city_stone := wall_like and (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_CITY_STONE) != 0
 		if city_stone:
 			key += "#city_stone"
 		var domestic_stone := wall_like and (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE) != 0
 		if domestic_stone:
 			key += "#domestic_stone"
-		# Select an explicit batch owner while loading this world's chunk.
-		# The material caches themselves have fixed profiles: later S3 loads
-		# cannot mutate or reuse a surviving S2 owner's relief material.
-		var s2_pale := city_stone and not domestic_stone and Global.attempt_segment == 2
-		if s2_pale:
-			key += "#city_s2_pale"
-		var batch := _get_or_create_batch(key, texture, false, kit, z)
+		# Materials are keyed by masonry family, never by segment: every city
+		# segment shares the pale ashlar relief and domestic homes their warm
+		# rubble, so streamed loads cannot swap a surviving owner's material.
+		var batch := _get_or_create_batch(key, texture, false, kit, z, city_light)
 		if domestic_stone:
 			batch.visual.material = _domestic_stone_material()
-		elif s2_pale:
-			batch.visual.material = _s2_pale_stone_material()
-		elif city_stone and not batch.visual.material is ShaderMaterial:
+		elif city_stone:
 			batch.visual.material = _city_stone_material()
 		if not touched.has(key):
 			touched[key] = batch.transforms.size()
@@ -142,7 +146,11 @@ func add_chunk(data: ChunkBuildData) -> void:
 			var flipped := Vector2(scale.x, -scale.y)
 			var at := world_center + ChunkBlockVisualCatalog.wall_offset()
 			batch.transforms.append(Transform2D(0.0, at).scaled_local(flipped))
-			batch.shadow_transforms.append(Transform2D(0.0, at + WALL_SHADOW_OFFSET).scaled_local(flipped))
+			# A building envelope's kit or DonJon owns its soft cast and wall
+			# contact; a second hard silhouette there would darken twice.
+			var owned := (data.variant_at(cell) & (ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE | ChunkBlockVisualCatalog.VARIANT_CITY_STONE)) == (ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE | ChunkBlockVisualCatalog.VARIANT_CITY_STONE) and not under_roof
+			var cast_offset := WALL_SHADOW_OFFSET if city_light else LEGACY_WALL_SHADOW_OFFSET
+			batch.shadow_transforms.append(Transform2D(0.0, at + cast_offset).scaled_local(Vector2.ZERO if owned and city_light else flipped))
 			batch.owners.append(data.coord)
 			_add_corner_fills(data, cell, world_center, touched, under_roof)
 			continue
@@ -166,6 +174,73 @@ func add_chunk(data: ChunkBuildData) -> void:
 				face_batch.owners.append(data.coord)
 	for key in touched:
 		_sync_batch(_batches[key] as TextureBatch, int(touched[key]))
+	if city_light:
+		_add_wall_contact(data, chunk_origin)
+
+
+## Procedural city segments share the one sun model; the authored S1
+## Institution keeps its reviewed wall presentation.
+static func _city_light() -> bool:
+	return Global.attempt_segment >= 2
+
+
+## Soft contact where freestanding wall/window cells meet open ground on their
+## shaded south and west faces: one multiplicative mesh per chunk.
+func _add_wall_contact(data: ChunkBuildData, chunk_origin: Vector2) -> void:
+	if not ChunkBlockVisualCatalog.three_quarter_walls:
+		return
+	var points := PackedVector2Array()
+	var colors := PackedColorArray()
+	var faces: Array[PackedInt32Array] = []
+	var cell_px := float(_cell_size)
+	var half := cell_px * 0.5
+	var band := cell_px * 0.25
+	var south := Vector2(DEPTH.CONTACT_SOUTH_PX, DEPTH.CONTACT_SOUTH * DEPTH.contact_strength * 0.85)
+	var west := Vector2(DEPTH.CONTACT_WEST_PX, DEPTH.CONTACT_WEST * DEPTH.contact_strength * 0.85)
+	for occupied_index in data.occupied_indices():
+		var cell := data.cell_for_index(occupied_index)
+		var kind := data.kind_at(cell)
+		if kind != WorldBlockerGeometry.Kind.WALL and kind != WorldBlockerGeometry.Kind.WINDOW:
+			continue
+		var variant := data.variant_at(cell)
+		if (variant & ChunkBlockVisualCatalog.VARIANT_UNDER_ROOF) != 0:
+			continue
+		if (variant & ChunkBlockVisualCatalog.VARIANT_BUILDING_ENVELOPE) != 0 and (variant & ChunkBlockVisualCatalog.VARIANT_CITY_STONE) != 0:
+			continue
+		var mask := data.mask_at(cell)
+		var center := chunk_origin + (Vector2(cell) + Vector2(0.5, 0.5)) * cell_px
+		# The kit's wall band is the middle half of the cell; connected arms
+		# run on to the cell edge.
+		var left := center.x - (half if (mask & WorldBlockerGeometry.W) != 0 else band)
+		var right := center.x + (half if (mask & WorldBlockerGeometry.E) != 0 else band)
+		var top := center.y - (half if (mask & WorldBlockerGeometry.N) != 0 else band)
+		var bottom := center.y + (half if (mask & WorldBlockerGeometry.S) != 0 else band)
+		if (mask & WorldBlockerGeometry.S) == 0:
+			_contact_face(points, colors, faces, PackedVector2Array([Vector2(left, bottom), Vector2(right, bottom), Vector2(right, bottom + south.x), Vector2(left, bottom + south.x)]), PackedFloat32Array([south.y, south.y, 0.0, 0.0]))
+		if (mask & WorldBlockerGeometry.W) == 0:
+			var foot := bottom if (mask & WorldBlockerGeometry.S) != 0 else bottom + south.x * 0.5
+			_contact_face(points, colors, faces, PackedVector2Array([Vector2(left - west.x, top), Vector2(left, top), Vector2(left, foot), Vector2(left - west.x, foot)]), PackedFloat32Array([0.0, west.y, west.y, 0.0]))
+	if faces.is_empty():
+		return
+	var contact := Polygon2D.new()
+	contact.name = "WallContact_%d_%d" % [data.coord.x, data.coord.y]
+	contact.polygon = points
+	contact.polygons = faces
+	contact.vertex_colors = colors
+	contact.material = DEPTH.SUN_SHADOW_MATERIAL
+	contact.z_index = CONTACT_Z
+	contact.set_meta(&"wall_contact_shade", true)
+	_host.add_child(contact)
+	_contact_by_chunk[data.coord] = contact
+
+
+static func _contact_face(points: PackedVector2Array, colors: PackedColorArray, faces: Array[PackedInt32Array], quad: PackedVector2Array, alphas: PackedFloat32Array) -> void:
+	var face := PackedInt32Array()
+	for index in quad.size():
+		face.append(points.size())
+		points.append(quad[index])
+		colors.append(Color(1, 1, 1, alphas[index]))
+	faces.append(face)
 
 
 ## Solid blocks of wall cells: fill the open corner between two arms where
@@ -184,15 +259,10 @@ func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vecto
 		var city_stone := (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_CITY_STONE) != 0
 		var domestic_stone := (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE) != 0
 		var key := _texture_key(texture) + ("#under_roof" if under_roof else "") + ("#city_stone" if city_stone else "") + ("#domestic_stone" if domestic_stone else "")
-		var s2_pale := city_stone and not domestic_stone and Global.attempt_segment == 2
-		if s2_pale:
-			key += "#city_s2_pale"
 		var fill_z := ChunkBlockVisualCatalog.PROP_Z if under_roof else ChunkBlockVisualCatalog.FILL_Z
 		var batch := _get_or_create_batch(key, texture, true, false, fill_z)
 		if domestic_stone:
 			batch.visual.material = _domestic_stone_material()
-		elif s2_pale:
-			batch.visual.material = _s2_pale_stone_material()
 		elif city_stone:
 			batch.visual.material = _city_stone_material()
 		if not touched.has(key):
@@ -205,6 +275,13 @@ func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vecto
 
 
 func remove_chunk(coord: Vector2i) -> void:
+	var contact := _contact_by_chunk.get(coord) as Polygon2D
+	if contact != null:
+		_contact_by_chunk.erase(coord)
+		if is_instance_valid(contact):
+			if contact.get_parent() != null:
+				contact.get_parent().remove_child(contact)
+			contact.queue_free()
 	var empty_keys: Array[String] = []
 	for key_value in _batches.keys():
 		var key := String(key_value)
@@ -237,6 +314,13 @@ func clear() -> void:
 	for batch_value in _batches.values():
 		_destroy_batch(batch_value as TextureBatch)
 	_batches.clear()
+	for contact_value in _contact_by_chunk.values():
+		var contact := contact_value as Polygon2D
+		if is_instance_valid(contact):
+			if contact.get_parent() != null:
+				contact.get_parent().remove_child(contact)
+			contact.queue_free()
+	_contact_by_chunk.clear()
 
 
 func get_stats() -> Dictionary:
@@ -265,7 +349,7 @@ func get_stats() -> Dictionary:
 	}
 
 
-func _get_or_create_batch(key: String, texture: Texture2D, shadowless: bool = false, wall_shadow: bool = false, z: int = ChunkBlockVisualCatalog.WALL_Z) -> TextureBatch:
+func _get_or_create_batch(key: String, texture: Texture2D, shadowless: bool = false, wall_shadow: bool = false, z: int = ChunkBlockVisualCatalog.WALL_Z, city_light: bool = true) -> TextureBatch:
 	if _batches.has(key):
 		return _batches[key] as TextureBatch
 	var batch := TextureBatch.new()
@@ -275,7 +359,12 @@ func _get_or_create_batch(key: String, texture: Texture2D, shadowless: bool = fa
 	batch.shadow_mesh = _new_multimesh(texture)
 	batch.visual = _new_instance("BlockVisual_%s" % _safe_name(key), texture, batch.visual_mesh)
 	batch.shadow = _new_instance("BlockShadow_%s" % _safe_name(key), texture, batch.shadow_mesh)
-	batch.shadow.self_modulate = WALL_SHADOW_COLOR if wall_shadow else SHADOW_COLOR
+	# Silhouettes multiply the ground by the shared sun shade, like buildings.
+	batch.shadow.self_modulate = Color(1, 1, 1, WALL_SHADE if wall_shadow else PROP_SHADE)
+	batch.shadow.material = DEPTH.SUN_SHADOW_MATERIAL
+	if not city_light:
+		batch.shadow.self_modulate = WALL_SHADOW_COLOR if wall_shadow else SHADOW_COLOR
+		batch.shadow.material = null
 	if texture is AtlasTexture:
 		batch.shadow.self_modulate = Color.WHITE
 		batch.shadow.material = MATERIALS.shadow_material(texture)
