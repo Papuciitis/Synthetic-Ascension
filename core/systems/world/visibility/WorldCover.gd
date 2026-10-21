@@ -9,6 +9,8 @@ const BUFFER_WIDTH := 256
 const VIEW_MARGIN := 256.0
 ## Dev profiling control: same live collection with legacy upload/rebind work.
 const FORCE_UPLOAD_META := &"world_cover_force_uploads"
+## Shared read-only default for cache lookups (never written).
+const _NO_ENTRY := {}
 static var _instances: Dictionary = {}
 var _frame := -1
 var _generation := 0
@@ -48,6 +50,12 @@ var _collection_usec := 0
 var _comparison_usec := 0
 var _snapshot_usec := 0
 var _binding_usec := 0
+var _roof_usec := 0
+var _solid_usec := 0
+var _sprite_usec := 0
+var _visited_roofs := 0
+var _visited_faces := 0
+var _index_resyncs := 0
 
 static func get_for(view: Node) -> Node:
 	var viewport := view.get_viewport()
@@ -87,28 +95,14 @@ func refresh(view: Node, force: bool = false) -> void:
 	area = area.grow(VIEW_MARGIN)
 	_origin = (area.position / CELL_PX).floor() * CELL_PX
 	_grid_size = Vector2i(((area.end - _origin) / CELL_PX).ceil())
-	var retained_roofs: Dictionary = {}
-	for node: Node in view.get_tree().get_nodes_in_group(&"roof_occluders"):
-		var roof := node as RoofOverlay
-		if roof == null or roof.is_queued_for_deletion() or not roof.is_visible_in_tree() or roof._inside_count > 0:
-			continue
-		var poly := roof.get_node_or_null("RoofPoly") as Polygon2D
-		if poly == null or poly.get_world_2d() != world or poly.get_canvas() != canvas or not poly.is_visible_in_tree() or roof.footprint_outline_px.size() < 3:
-			continue
-		var strength := _effective_alpha(poly)
-		if strength <= 0.0:
-			continue
-		var key := roof.get_instance_id()
-		retained_roofs[key] = true
-		var geometry := _roof_geometry(roof,poly)
-		for piece: Dictionary in geometry:
-			if not (piece.bounds as Rect2).intersects(area):
-				continue
-			_records.append({"kind":0,"points":piece.points,"front_y":piece.front_y,"strength":strength,"bounds":piece.bounds})
-	for key: Variant in _roof_cache.keys():
-		if not retained_roofs.has(key):
-			_roof_cache.erase(key)
-	_collect_solid_faces(view,area,world,canvas)
+	var roof_started := Time.get_ticks_usec()
+	var alpha_memo: Dictionary = {}
+	_collect_roofs(view,area,world,canvas,alpha_memo)
+	var solid_started := Time.get_ticks_usec()
+	_roof_usec = solid_started-roof_started
+	_collect_solid_faces(view,area,world,canvas,alpha_memo)
+	var sprite_started := Time.get_ticks_usec()
+	_solid_usec = sprite_started-solid_started
 	var sprites: Array[Dictionary] = []
 	var textures: Array[Texture2D] = []
 	for node: Node in view.get_tree().get_nodes_in_group(FOREGROUND.GROUP):
@@ -135,6 +129,7 @@ func refresh(view: Node, force: bool = false) -> void:
 		if _source_cache.has((descriptor.texture as Texture2D).get_instance_id()):
 			descriptor["layer"] = _alpha_keys.find((descriptor.texture as Texture2D).get_instance_id())
 			_records.append(descriptor)
+	_sprite_usec = Time.get_ticks_usec()-sprite_started
 	_collection_usec = Time.get_ticks_usec()-began
 	var comparison_started := Time.get_ticks_usec()
 	var semantics := _semantic_records()
@@ -180,40 +175,233 @@ func _semantic_records() -> Array:
 			result.append([1,record.strength,record.front_y,record.layer,(record.texture as Texture2D).get_instance_id(),record.world_to_uv,record.source_rect,record.bounds])
 	return result
 
-func _collect_solid_faces(view: Node, area: Rect2, world: World2D, canvas: RID) -> void:
+## Spatial occluder index (2026-10-21). Loaded occluders far outside the view
+## used to pay for every live check, alpha walk and geometry fingerprint each
+## frame, so the frame cost grew with every building in the loaded chunks
+## (1788 faces and 94 roofs cost 32 ms at an S10 street while 291 triangles
+## were in view). Each occluder now keeps its world reach - the bounds of
+## every piece it can contribute - keyed by the exact inputs of that geometry
+## (transforms, polygons, footprint), and sits in BUCKET_PX buckets by reach.
+## A refresh visits only occluders indexed in buckets the view area touches;
+## those re-check their inputs and run the full live checks as before, in
+## group order, so records, their order and their values are unchanged.
+## Group membership is compared natively every refresh and re-indexes new and
+## removed occluders at once; unchanged occluders outside the view are
+## re-validated in a rolling slice, so one moved there is re-indexed within
+## ROLLING_PERIOD refreshes (world architecture never moves).
+const BUCKET_PX := 512.0
+const ROLLING_PERIOD := 30
+const _ROOF_POLY := ^"RoofPoly"
+var _roof_index := {"nodes":[],"slot":{},"buckets":{},"rotor":0}
+var _face_index := {"nodes":[],"slot":{},"buckets":{},"rotor":0}
+
+func _collect_roofs(view: Node, area: Rect2, world: World2D, canvas: RID, alpha_memo: Dictionary) -> void:
+	var nodes := view.get_tree().get_nodes_in_group(&"roof_occluders")
+	_sync_index(_roof_index,_roof_cache,nodes,true)
+	_visited_roofs = 0
+	var previous := -1
+	for slot: int in _gather(_roof_index,area):
+		if slot == previous:
+			continue
+		previous = slot
+		var roof := nodes[slot] as RoofOverlay
+		if roof == null:
+			continue
+		var cached: Dictionary = _roof_cache.get(roof.get_instance_id(),_NO_ENTRY)
+		if cached.is_empty() or not (cached.reach as Rect2).intersects(area):
+			continue
+		var poly := roof.get_node_or_null(_ROOF_POLY) as Polygon2D
+		if poly == null:
+			continue
+		var entry := _roof_entry(roof,poly)
+		if not (entry.reach as Rect2).intersects(area):
+			continue
+		_visited_roofs += 1
+		if roof.is_queued_for_deletion() or not roof.is_visible_in_tree() or roof._inside_count > 0:
+			continue
+		if poly.get_world_2d() != world or poly.get_canvas() != canvas or not poly.is_visible_in_tree() or roof.footprint_outline_px.size() < 3:
+			continue
+		var strength := _memo_alpha(poly,alpha_memo)
+		if strength <= 0.0:
+			continue
+		for piece: Dictionary in _roof_geometry(roof,poly,entry):
+			if not (piece.bounds as Rect2).intersects(area):
+				continue
+			_records.append({"kind":0,"points":piece.points,"front_y":piece.front_y,"strength":strength,"bounds":piece.bounds})
+
+func _collect_solid_faces(view: Node, area: Rect2, world: World2D, canvas: RID, alpha_memo: Dictionary = {}) -> void:
 	# Only explicitly registered, genuinely opaque masonry is triangulated.
 	# Door recesses, thresholds and virtual roof helper masks stay separate.
-	var retained: Dictionary = {}
-	for node: Node in view.get_tree().get_nodes_in_group(&"foreground_solid_occluders"):
-		var face := node as Polygon2D
-		if face == null or face.get_world_2d() != world or face.get_canvas() != canvas or face.is_queued_for_deletion() or not face.is_visible_in_tree() or face.polygon.size() < 3 or not face.has_meta(FOREGROUND.GROUND_CONTACT):
+	var nodes := view.get_tree().get_nodes_in_group(&"foreground_solid_occluders")
+	_sync_index(_face_index,_solid_cache,nodes,false)
+	_visited_faces = 0
+	var previous := -1
+	for slot: int in _gather(_face_index,area):
+		if slot == previous:
+			continue
+		previous = slot
+		var face := nodes[slot] as Polygon2D
+		if face == null:
+			continue
+		var cached: Dictionary = _solid_cache.get(face.get_instance_id(),_NO_ENTRY)
+		if cached.is_empty() or not (cached.reach as Rect2).intersects(area):
+			continue
+		var entry := _face_entry(face)
+		if not (entry.reach as Rect2).intersects(area):
+			continue
+		_visited_faces += 1
+		if face.get_world_2d() != world or face.get_canvas() != canvas or face.is_queued_for_deletion() or not face.is_visible_in_tree() or face.polygon.size() < 3 or not face.has_meta(FOREGROUND.GROUND_CONTACT):
 			continue
 		var parent := face.get_parent() as CanvasItem
 		if parent == null:
 			continue
-		var strength := _effective_alpha(face)*face.color.a
+		var strength := _memo_alpha(face,alpha_memo)*face.color.a
 		if strength <= 0.0:
 			continue
 		var ground: Vector2 = face.get_meta(FOREGROUND.GROUND_CONTACT)
 		var front_y := (parent.get_global_transform()*ground).y
-		var key := face.get_instance_id()
-		retained[key] = true
-		var fingerprint := hash([face.global_transform,face.polygon,front_y])
-		var cached: Dictionary = _solid_cache.get(key,{})
-		if cached.is_empty() or int(cached.fingerprint) != fingerprint:
-			var points := PackedVector2Array()
-			for point: Vector2 in face.polygon:
-				points.append(face.to_global(point))
+		if entry.front_y != front_y:
 			var pieces: Array[Dictionary] = []
-			_triangulate(points,front_y,pieces)
-			cached = {"fingerprint":fingerprint,"pieces":pieces}
-			_solid_cache[key] = cached
-		for piece: Dictionary in cached.pieces:
+			_triangulate(entry.points,front_y,pieces)
+			entry.front_y = front_y
+			entry.pieces = pieces
+		for piece: Dictionary in entry.pieces:
 			if (piece.bounds as Rect2).intersects(area):
 				_records.append({"kind":0,"points":piece.points,"front_y":front_y,"strength":strength,"bounds":piece.bounds})
-	for key: Variant in _solid_cache.keys():
-		if not retained.has(key):
-			_solid_cache.erase(key)
+
+## Membership changes (streamed chunks) index every new occluder at once and
+## forget the removed ones; an unchanged membership only re-validates a
+## rolling slice of the loaded occluders.
+func _sync_index(index: Dictionary, cache: Dictionary, nodes: Array[Node], roofs: bool) -> void:
+	if nodes == index.nodes:
+		var count := nodes.size()
+		if count == 0:
+			return
+		var rotor: int = index.rotor
+		var checks := mini(ceili(float(count)/ROLLING_PERIOD),count)
+		for step in checks:
+			_validate(nodes[(rotor+step)%count],roofs)
+		index.rotor = (rotor+checks)%count
+		return
+	_index_resyncs += 1
+	var slot: Dictionary = {}
+	for at in nodes.size():
+		var node := nodes[at]
+		var key := node.get_instance_id()
+		slot[key] = at
+		if not cache.has(key):
+			_validate(node,roofs)
+	for key: Variant in cache.keys():
+		if not slot.has(key):
+			_unbucket(index,int(key),cache[key])
+			cache.erase(key)
+	index.slot = slot
+	index.nodes = nodes
+	index.rotor = 0
+
+func _validate(node: Node, roofs: bool) -> void:
+	if roofs:
+		var roof := node as RoofOverlay
+		var poly := roof.get_node_or_null(_ROOF_POLY) as Polygon2D if roof != null else null
+		if poly != null:
+			_roof_entry(roof,poly)
+	else:
+		var face := node as Polygon2D
+		if face != null:
+			_face_entry(face)
+
+## Group slots of the occluders indexed in the buckets `area` touches, sorted
+## into group order (the order the records were always collected in); an
+## occluder spanning several buckets repeats, and visitors skip the repeats.
+func _gather(index: Dictionary, area: Rect2) -> PackedInt32Array:
+	var low := Vector2i((area.position/BUCKET_PX).floor())
+	var high := Vector2i((area.end/BUCKET_PX).floor())
+	var buckets: Dictionary = index.buckets
+	var slot: Dictionary = index.slot
+	var order := PackedInt32Array()
+	for y in range(low.y,high.y+1):
+		for x in range(low.x,high.x+1):
+			var bucket: Dictionary = buckets.get(Vector2i(x,y),_NO_ENTRY)
+			for key: int in bucket:
+				order.append(slot[key])
+	order.sort()
+	return order
+
+func _bucket(index: Dictionary, key: int, entry: Dictionary) -> void:
+	var reach: Rect2 = entry.reach
+	var low := Vector2i((reach.position/BUCKET_PX).floor())
+	var high := Vector2i((reach.end/BUCKET_PX).floor())
+	var cells: Array[Vector2i] = []
+	var buckets: Dictionary = index.buckets
+	for y in range(low.y,high.y+1):
+		for x in range(low.x,high.x+1):
+			var cell := Vector2i(x,y)
+			if not buckets.has(cell):
+				buckets[cell] = {}
+			(buckets[cell] as Dictionary)[key] = true
+			cells.append(cell)
+	entry.cells = cells
+
+func _unbucket(index: Dictionary, key: int, entry: Dictionary) -> void:
+	var buckets: Dictionary = index.buckets
+	for cell: Vector2i in entry.get("cells",[]):
+		var bucket: Dictionary = buckets.get(cell,_NO_ENTRY)
+		if bucket.is_empty():
+			continue
+		bucket.erase(key)
+		if bucket.is_empty():
+			buckets.erase(cell)
+
+func _face_entry(face: Polygon2D) -> Dictionary:
+	var key := face.get_instance_id()
+	var xf := face.global_transform
+	var polygon := face.polygon
+	var entry: Dictionary = _solid_cache.get(key,_NO_ENTRY)
+	if not entry.is_empty() and entry.xf == xf and entry.polygon == polygon:
+		return entry
+	if not entry.is_empty():
+		_unbucket(_face_index,key,entry)
+	var points := xf*polygon
+	entry = {"xf":xf,"polygon":polygon,"points":points,"reach":_bounds_of(points),"front_y":NAN,"pieces":[],"cells":[]}
+	_solid_cache[key] = entry
+	_bucket(_face_index,key,entry)
+	return entry
+
+## Cached inputs of one roof's geometry, its roof forms and its reach: every
+## form is in the reach whether or not it is visible now, so a form shown
+## later can never fall outside it.
+func _roof_entry(roof: RoofOverlay, poly: Polygon2D) -> Dictionary:
+	var key := roof.get_instance_id()
+	var entry: Dictionary = _roof_cache.get(key,_NO_ENTRY)
+	if not entry.is_empty() and entry.roof_xf == roof.global_transform and entry.poly_xf == poly.global_transform and entry.outline == roof.footprint_outline_px and entry.polygon == poly.polygon and int(entry.children) == poly.get_child_count():
+		return entry
+	if not entry.is_empty():
+		_unbucket(_roof_index,key,entry)
+	var forms := _roof_forms(poly)
+	var reach := _bounds_of(poly.global_transform*poly.polygon)
+	for form: Polygon2D in forms:
+		if form.polygon.size() > 0:
+			reach = reach.merge(_bounds_of(form.global_transform*form.polygon))
+	entry = {"roof_xf":roof.global_transform,"poly_xf":poly.global_transform,"outline":roof.footprint_outline_px,"polygon":poly.polygon,
+		"children":poly.get_child_count(),"forms":forms,"reach":reach,"fingerprint":0,"pieces":[],"cells":[]}
+	_roof_cache[key] = entry
+	_bucket(_roof_index,key,entry)
+	return entry
+
+static func _roof_forms(poly: Polygon2D) -> Array:
+	var forms: Array = []
+	for node: Node in poly.find_children("*","Polygon2D",true,false):
+		if node.has_meta(&"city_roof_form"):
+			forms.append(node)
+	return forms
+
+func _bounds_of(points: PackedVector2Array) -> Rect2:
+	if points.is_empty():
+		return Rect2()
+	var bounds := Rect2(points[0],Vector2.ZERO)
+	for point: Vector2 in points:
+		bounds = bounds.expand(point)
+	return bounds
 
 func bind_material(material: ShaderMaterial) -> void:
 	if material == null:
@@ -364,19 +552,21 @@ func _upload(existing: ImageTexture, image: Image) -> ImageTexture:
 		existing.set_image(image)
 	return existing
 
-func _roof_geometry(roof: RoofOverlay, poly: Polygon2D) -> Array[Dictionary]:
+func _roof_geometry(roof: RoofOverlay, poly: Polygon2D, entry: Dictionary) -> Array[Dictionary]:
+	# The roof's forms are found once per entry (a new direct child of the roof
+	# plane renews the entry); a form freed since is found again.
+	for form: Variant in entry.forms:
+		if not is_instance_valid(form) or not (form as Node).is_inside_tree():
+			entry.forms = _roof_forms(poly)
+			break
 	var forms: Array[Polygon2D] = []
 	var signature: Array = [roof.global_transform,roof.footprint_outline_px,poly.global_transform,poly.polygon]
-	for node: Node in poly.find_children("*","Polygon2D",true,false):
-		var child := node as Polygon2D
-		if child.has_meta(&"city_roof_form"):
-			forms.append(child)
-			signature.append([child.global_transform,child.polygon,child.is_visible_in_tree(),child.get_meta(&"city_roof_lift",0.0),child.get_meta(&"roof_occlusion_full_form",false)])
-	var key := roof.get_instance_id()
+	for child: Polygon2D in entry.forms:
+		forms.append(child)
+		signature.append([child.global_transform,child.polygon,child.is_visible_in_tree(),child.get_meta(&"city_roof_lift",0.0),child.get_meta(&"roof_occlusion_full_form",false)])
 	var fingerprint := hash(signature)
-	var cached: Dictionary = _roof_cache.get(key,{})
-	if not cached.is_empty() and int(cached.fingerprint) == fingerprint:
-		return cached.pieces
+	if int(entry.fingerprint) == fingerprint and not (entry.pieces as Array).is_empty():
+		return entry.pieces
 	var pieces: Array[Dictionary] = []
 	var spans := _footprint_spans(roof)
 	var projection := poly.global_position-roof.global_position
@@ -395,7 +585,17 @@ func _roof_geometry(roof: RoofOverlay, poly: Polygon2D) -> Array[Dictionary]:
 		else:
 			var shift := projection+poly.global_transform.basis_xform(Vector2(0,-float(child.get_meta(&"city_roof_lift",0.0))))
 			_clip_roof_piece(child,spans,shift,pieces)
-	_roof_cache[key] = {"fingerprint":fingerprint,"pieces":pieces}
+	# A form reshaped in view widens the reach, so it stays a superset.
+	var reach: Rect2 = entry.reach
+	for piece: Dictionary in pieces:
+		reach = reach.merge(piece.bounds)
+	if reach != entry.reach:
+		var key := roof.get_instance_id()
+		_unbucket(_roof_index,key,entry)
+		entry.reach = reach
+		_bucket(_roof_index,key,entry)
+	entry.fingerprint = fingerprint
+	entry.pieces = pieces
 	return pieces
 
 func _footprint_spans(roof: RoofOverlay) -> Array[Rect2]:
@@ -439,6 +639,29 @@ func _triangulate(points: PackedVector2Array, front_y: float, pieces: Array[Dict
 		var bounds := Rect2(triangle[0],Vector2.ZERO).expand(triangle[1]).expand(triangle[2])
 		pieces.append({"points":triangle,"front_y":front_y,"bounds":bounds})
 
+## _effective_alpha with each ancestor chain product computed once per
+## refresh: sibling faces of one facade share every ancestor above them.
+func _memo_alpha(item: CanvasItem, memo: Dictionary) -> float:
+	var alpha := item.self_modulate.a*item.modulate.a
+	if not item.top_level:
+		var parent := item.get_parent() as CanvasItem
+		if parent != null:
+			alpha *= _chain_alpha(parent,memo)
+	return clampf(alpha,0.0,1.0)
+
+func _chain_alpha(item: CanvasItem, memo: Dictionary) -> float:
+	var key := item.get_instance_id()
+	var known: Variant = memo.get(key)
+	if known != null:
+		return known
+	var alpha := item.modulate.a
+	if not item.top_level:
+		var parent := item.get_parent() as CanvasItem
+		if parent != null:
+			alpha *= _chain_alpha(parent,memo)
+	memo[key] = alpha
+	return alpha
+
 func _effective_alpha(item: CanvasItem) -> float:
 	var alpha := item.self_modulate.a
 	var current: CanvasItem = item
@@ -475,6 +698,8 @@ func snapshot_stats() -> Dictionary:
 		"snapshot_builds":_snapshot_builds,"snapshot_reuses":_snapshot_reuses,"data_uploads":_data_uploads,"data_upload_bytes":_data_upload_bytes,
 		"alpha_uploads":_alpha_uploads,"alpha_upload_bytes":_alpha_upload_bytes,"material_binds":_material_binds,
 		"collection_usec":_collection_usec,"comparison_usec":_comparison_usec,"snapshot_usec":_snapshot_usec,"binding_usec":_binding_usec,
+		"roof_usec":_roof_usec,"solid_usec":_solid_usec,"sprite_usec":_sprite_usec,"visited_roofs":_visited_roofs,"visited_faces":_visited_faces,
+		"index_resyncs":_index_resyncs,"indexed_roofs":_roof_cache.size(),"indexed_faces":_solid_cache.size(),"roof_buckets":(_roof_index.buckets as Dictionary).size(),"face_buckets":(_face_index.buckets as Dictionary).size(),
 		"force_uploads":bool(get_meta(FORCE_UPLOAD_META,false))}
 
 func _exit_tree() -> void:
@@ -482,6 +707,8 @@ func _exit_tree() -> void:
 	_source_cache.clear()
 	_roof_cache.clear()
 	_solid_cache.clear()
+	_roof_index = {"nodes":[],"slot":{},"buckets":{},"rotor":0}
+	_face_index = {"nodes":[],"slot":{},"buckets":{},"rotor":0}
 	_snapshot_semantics.clear()
 	_snapshot_alpha = null
 	_alpha = null
