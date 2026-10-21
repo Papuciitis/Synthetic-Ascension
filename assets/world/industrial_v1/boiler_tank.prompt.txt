@@ -1,0 +1,7 @@
+Use your built-in image generation tool (image_gen) exactly ONCE. Reference image 1 (door_double_inward.png) is a STYLE reference from the same game: match its painterly rendering, palette family, lighting and level of detail; do not copy its layout. Reference image 2 (chimney_brick.png) is a STYLE reference from the same game: match its painterly rendering, palette family, lighting and level of detail; do not copy its layout.
+Pass every attached reference image to the image tool as a reference input (referenced_image_paths).
+
+Use case: stylized-concept. Asset type: production 2D game sprite for a north-up top-down medieval Mediterranean city game with restrained early-industrial retrofits. VIEW: high three-quarter overhead like the reference props. Fully TRANSPARENT background, entire object visible with alpha padding, no ground, no cast shadow, no text, no glow. Painterly hand-painted game art, broad soft shapes, no black outlines everywhere, bright temperate daylight from the upper right.
+Subject: ONE squat riveted iron BOILER / pressure tank on a stone plinth beside a workshop: a horizontal cylindrical tank with a domed end, aged green-grey paint and copper fittings, a pressure gauge, a stack pipe going up, a small coal hopper. About 3:2.
+
+After generating, copy the generated PNG from ~/.codex/generated_images/... into the current working directory as boiler_tank.png (keep the original alpha, do not resize or edit it). Do not create or modify any other file. Reply with the original generated path and the pixel size.
