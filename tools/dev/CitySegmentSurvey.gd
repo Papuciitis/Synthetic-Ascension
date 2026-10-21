@@ -6,7 +6,11 @@ extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ## against its concept plate with the same framing before and after a change.
 ## -- --segment=3 [--world-seed=16102026] [--theme=canal_services] --out=/abs/dir [--route-points=3] [--overview-zoom=0.5] [--kit-points=3]
 ## --kit-points adds gameplay-zoom close-ups of the largest buildings seen near the sampled places.
+## --plaza-points=N adds N plaza chunks centred in frame, one per plaza role in
+## PLAZA_ROLE_ORDER (landmark squares first, then courts and arenas).
 ## --theme scans seeds upward from --world-seed until the picker selects it.
+
+const PLAZA_ROLE_ORDER: Array[StringName] = [&"landmark_plaza", &"boss_arena", &"miniboss_arena", &"wardstone_court", &"checkpoint", &"exploration_reward", &"secondary_wager_shrine", &"gate", &"primary_objective"]
 
 var _survey_segment := 2
 var _survey_seed := 16102026
@@ -14,6 +18,7 @@ var _survey_theme := ""
 var _route_points := 3
 var _overview_zoom := 0.5
 var _kit_points := 0
+var _plaza_points := 0
 var _records: Array[Dictionary] = []
 var _kit_candidates: Dictionary = {}
 
@@ -26,6 +31,7 @@ func _enter_tree() -> void:
 		elif arg.begins_with("--route-points="): _route_points = clampi(int(arg.trim_prefix("--route-points=")), 0, 8)
 		elif arg.begins_with("--overview-zoom="): _overview_zoom = clampf(float(arg.trim_prefix("--overview-zoom=")), 0.2, 1.0)
 		elif arg.begins_with("--kit-points="): _kit_points = clampi(int(arg.trim_prefix("--kit-points=")), 0, 8)
+		elif arg.begins_with("--plaza-points="): _plaza_points = clampi(int(arg.trim_prefix("--plaza-points=")), 0, 8)
 	if _out == "user://dev_previews/elite_crowd_fight":
 		_out = "user://dev_previews/city_segment_survey"
 
@@ -81,6 +87,7 @@ func _run() -> void:
 		if info.has("world"):
 			points.append({"name": "objective", "world": info.world, "type": String(info.get("type",""))})
 			break
+	points.append_array(_plaza_survey_points(plan))
 	for point: Dictionary in points:
 		await _capture_point(point)
 	# Close-ups of real frontages: the largest distinct buildings seen, framed on
@@ -135,6 +142,27 @@ func _capture_point(point: Dictionary, overview: bool = true) -> void:
 	record["chunk_at"] = str(_chunks._world_to_chunk(world))
 	record["kits_within_2200px"] = buildings
 	_records.append(record)
+
+## One chunk per plaza role in PLAZA_ROLE_ORDER (lowest coord first), framed
+## on the chunk centre, until --plaza-points is reached.
+func _plaza_survey_points(plan: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if _plaza_points <= 0:
+		return result
+	var roles: Dictionary = plan.get("role_by_chunk", {})
+	for wanted: StringName in PLAZA_ROLE_ORDER:
+		if result.size() >= _plaza_points:
+			break
+		var matches: Array[Vector2i] = []
+		for coord: Vector2i in roles:
+			if StringName(roles[coord]) == wanted:
+				matches.append(coord)
+		if matches.is_empty():
+			continue
+		matches.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.y < b.y or (a.y == b.y and a.x < b.x))
+		var coord: Vector2i = matches[0]
+		result.append({"name": "plaza%d-%s" % [result.size() + 1, wanted], "world": (Vector2(coord) + Vector2.ONE * 0.5) * _chunks.chunk_size_px, "chunk": str(coord), "role": String(wanted)})
+	return result
 
 func _open_cell_near(world: Vector2) -> Vector2:
 	# Like _free_spawn_position, but a fully built place is not a failure.
