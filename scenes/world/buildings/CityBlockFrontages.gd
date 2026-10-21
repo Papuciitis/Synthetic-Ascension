@@ -2,6 +2,7 @@ extends RefCounted
 ## Geometry around real cardinal openings; painted facades stay north-up.
 
 const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
+const COMPOSER := preload("res://scenes/world/buildings/CityFacadeComposer.gd")
 const SOLID_GROUP := &"foreground_solid_occluders"
 const GROUND_META := &"foreground_ground_contact"
 const DOMESTIC_PLASTER := preload("res://scenes/world/buildings/domestic_plaster.gdshader")
@@ -16,8 +17,10 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 	group.set_meta(&"city_facade_detail", true)
 	kit.add_child(group)
 	var box: Rect2 = kit.get("bounds")
+	# Composed frontages (every segment) own all south runs and south doors.
+	var composed: bool = COMPOSER.owns(kit)
 	var finish: Texture2D = kit.get("_facade") if Global.attempt_segment == 2 and not bool(kit.get("civic")) else null
-	var domestic: bool = Global.attempt_segment == 2 and not bool(kit.get("civic")) and StringName(kit.get_meta(&"building_usage",&"")) == &"row_house"
+	var domestic: bool = not composed and Global.attempt_segment == 2 and not bool(kit.get("civic")) and StringName(kit.get_meta(&"building_usage",&"")) == &"row_house"
 	var plaster_material: ShaderMaterial
 	var plinth_material: ShaderMaterial
 	if domestic and finish != null:
@@ -75,6 +78,9 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 			var a := outline[index]
 			var b := outline[(index+1)%outline.size()]
 			if not is_equal_approx(a.y,b.y) or b.x >= a.x: continue
+			if composed:
+				COMPOSER.compose_run(group,kit,Vector2(b.x+16,a.x-16),b.y-16,float(kit.get("_facade_height")),b.y,doors,cell_px)
+				continue
 			var runs: Array[Vector2] = [Vector2(b.x+16,a.x-16)]
 			for door: Dictionary in doors:
 				if door.dir != Vector2i.DOWN: continue
@@ -97,7 +103,7 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 					if upper_finish != null: _plaster(upper,upper_finish,Color("b9b9a8"),plaster_material)
 					_register_solid(upper,Vector2((run.x+run.y)*0.5,b.y))
 	for door: Dictionary in doors:
-		if door.dir == Vector2i.DOWN and outline.is_empty() and not domestic: continue
+		if door.dir == Vector2i.DOWN and (composed or (outline.is_empty() and not domestic)): continue
 		var gap := _door_box(door,cell_px)
 		var entry := Node2D.new()
 		entry.name = "CardinalDoorRecess"

@@ -7,7 +7,18 @@ const ROOT := "res://assets/world/city_block/"
 const GUARD_ROOT := "res://assets/world/districts/checkpoint_lanes/"
 const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
 const FOOTPRINT_GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
+const COMPOSER := preload("res://scenes/world/buildings/CityFacadeComposer.gd")
+## Share of ordinary houses roofed in slate (pale ashlar walls) per district;
+## the rest keep clay over warm plaster. Civic halls are always slate.
+const SLATE_SHARE := {
+	&"service_courtyards": 0.30, &"checkpoint_lanes": 0.55, &"collapsed_ward": 0.35,
+	&"civilian_cutthrough": 0.25, &"inner_district_gate": 0.60, &"industrial_cutthrough": 0.50,
+	&"ruined_services": 0.40, &"underpass_veins": 0.55, &"canal_services": 0.45,
+	&"rail_yard": 0.50, &"military_staging": 0.60, &"outer_wall": 0.45,
+	&"siege_services": 0.50, &"gate_district": 0.65,
+}
 var bounds := Rect2()
+var _cell_px := 64
 var civic := false
 var _door_x := 0.0
 var _door_width := 128.0
@@ -39,6 +50,7 @@ static func enabled_for(_role: StringName, segment: int) -> bool:
 
 func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_civic: bool, irregular_outline: PackedVector2Array = PackedVector2Array(), shared_ground: bool = false, visual_profile: Dictionary = {}) -> void:
 	bounds = Rect2(Vector2(rect.position) * cell_px, Vector2(rect.size) * cell_px)
+	_cell_px = cell_px
 	civic = is_civic
 	_district_profile = visual_profile.duplicate()
 	set_meta(&"building_usage",StringName(visual_profile.get("building_usage",&"")))
@@ -52,10 +64,18 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	_doors = doors
 	_irregular = not irregular_outline.is_empty()
 	if _irregular: _facade_height = 112.0
-	# S2 whole-street benchmark: more wall/entry mass inside the same footprint.
-	# Other families retain their reviewed proportions.
-	if Global.attempt_segment == 2:
+	# The reviewed S2 street benchmark's wall/entry mass now applies to every
+	# ordinary city segment; only the S3 guard loggia keeps its own proportions.
+	if not _is_guard():
 		_facade_height = (240.0 if civic else 208.0) if not _irregular else 176.0
+		# A side (east/west) doorway near the front must stay visible below
+		# the south facade's eave.
+		for door: Dictionary in doors:
+			var dir: Vector2i = door.get("dir", Vector2i.ZERO)
+			if dir.x == 0: continue
+			var side := COMPOSER.door_box(door,cell_px)
+			_facade_height = minf(_facade_height,maxf(96.0,bounds.end.y-16.0-side.end.y))
+	set_meta(&"city_roof_material", &"slate" if civic or _slate_roof() else &"clay")
 	if _irregular: set_meta(&"city_irregular_outline", irregular_outline)
 	add_to_group(&"city_block_building")
 	set_meta(&"city_role", &"civic" if civic else &"residential")
@@ -80,7 +100,9 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 		roof.cover_alpha_changed.connect(_on_roof_alpha)
 		var roof_profile := _district_profile.duplicate()
 		if _is_guard(): roof_profile["infill_texture"] = _texture(GUARD_ROOT+"guard_quiet_infill_v2.png")
-		roof.apply_city_material(_texture("slate.png" if civic else "clay.png"), civic, _facade_height - ChunkBlockVisualCatalog.KIT_HEIGHT, not _irregular,roof_profile)
+		var slate := StringName(get_meta(&"city_roof_material")) == &"slate"
+		roof_profile["roof_material"] = &"slate" if slate else &"clay"
+		roof.apply_city_material(_texture("slate.png" if slate else "clay.png"), civic, _facade_height - ChunkBlockVisualCatalog.KIT_HEIGHT, not _irregular,roof_profile)
 		if civic and not _irregular and not _is_guard():
 			var plant := Sprite2D.new()
 			plant.set_meta(&"district_optional_detail",true)
@@ -132,6 +154,15 @@ func ground_care_spec() -> Dictionary:
 
 func _is_guard() -> bool:
 	return StringName(_district_profile.get("profile_id",&"")) == &"checkpoint_guard_loggia"
+
+func _slate_roof() -> bool:
+	# Stable per building: the parcel's visual seed, never the generator RNG.
+	var share: float = SLATE_SHARE.get(StringName(_district_profile.get("family_id",&"")),0.3)
+	var seed_value := int(_district_profile.get("visual_seed",int(bounds.position.x)*7+int(bounds.position.y)))
+	return float(posmod(hash(seed_value*2654435761),1000))/1000.0 < share
+
+func _composed() -> bool:
+	return not _irregular and COMPOSER.owns(self)
 
 func _on_roof_alpha(alpha: float) -> void:
 	_facade_alpha = alpha
@@ -533,7 +564,7 @@ func _add_frontage_details() -> void:
 		add_child(lamp)
 		_lamp_light = mount+(Vector2(630,980)-Vector2(205,425))*lamp.scale
 		_painted_lantern = true
-	elif not civic and _has_texture("domestic_awning.png"):
+	elif not civic and not _composed() and _has_texture("domestic_awning.png"):
 		var span := door_left-bounds.position.x-16.0
 		if span < 104.0: return
 		var awning := Sprite2D.new()
@@ -575,6 +606,10 @@ func _add_facade_faces(ground_y: float) -> void:
 	group.set_meta(&"city_facade_detail",true)
 	group.modulate.a = _facade_alpha
 	add_child(group)
+	if _composed():
+		group.name = "ComposedFacade"
+		COMPOSER.compose_run(group,self,Vector2(bounds.position.x+16.0,bounds.end.x-16.0),_front,_facade_height,ground_y,_doors,_cell_px)
+		return
 	var tex_size := _facade.get_size()
 	if _south_front:
 		var opening_left := 0.402 if civic else 0.425
@@ -613,6 +648,8 @@ func _facade_face(parent: Node2D, face_name: String, target: Rect2, source: Rect
 
 func _draw() -> void:
 	if _is_guard(): return
+	# Composed frontages carry their own eave shade, fittings and services.
+	if _composed(): return
 	if _facade != null and not _south_front and not _irregular:
 		_draw_closed_frontage()
 	if _facade != null and _south_front and not _irregular:

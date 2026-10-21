@@ -55,9 +55,10 @@ static func compose_irregular(host: Polygon2D, civic: bool) -> bool:
 		var normal: Vector2 = entry.normal
 		if not rim_materials.has(normal):
 			var material := (host.material as ShaderMaterial).duplicate() as ShaderMaterial
-			var tone := Color("777e79") if civic else Color("62685f")
-			if normal.x > 0.5: tone = Color("9aa69b") if civic else Color("929a87")
-			elif normal.x < -0.5: tone = Color("505d5e") if civic else Color("48554c")
+			var slate := civic or bool(host.get_meta(&"city_roof_slate", false))
+			var tone := Color("777e79") if slate else Color("62685f")
+			if normal.x > 0.5: tone = Color("9aa69b") if slate else Color("929a87")
+			elif normal.x < -0.5: tone = Color("505d5e") if slate else Color("48554c")
 			material.set_shader_parameter("gable",0.0)
 			material.set_shader_parameter("material_contrast",0.0)
 			material.set_shader_parameter("material_mid",Vector3(tone.r,tone.g,tone.b))
@@ -140,6 +141,8 @@ static func compose(host: Polygon2D, civic: bool, box: Rect2) -> void:
 		_chimney(group, dwelling, false)
 
 static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, lift: float, kind: String, civic: bool) -> Polygon2D:
+	# Massing follows the building's role; tones follow its actual roof stone.
+	var slate := civic or bool(source.get_meta(&"city_roof_slate", false))
 	var top := area.position + Vector2(0, -lift)
 	var end := area.end + Vector2(0, -lift)
 	var depth := 12.0 + lift
@@ -158,7 +161,7 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 	# A lit eave cap, a shaded south fascia and the short side return make
 	# each height change physical; no second outline around every roof tile.
 	if not cross_wing:
-		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, depth), Vector2(top.x, end.y + depth)]), Color("777e79") if civic else Color("62685f"))
+		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, depth), Vector2(top.x, end.y + depth)]), Color("777e79") if slate else Color("62685f"))
 	_face(group, PackedVector2Array([Vector2(end.x, top.y), end, end + Vector2(0, depth), Vector2(end.x + 7, top.y + depth)]), Color("505d5e"))
 	var roof := Polygon2D.new()
 	roof.name = "Roof_" + kind
@@ -175,15 +178,15 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 	material.set_shader_parameter("bounds", Vector4(top.x, top.y, end.x, end.y))
 	material.set_shader_parameter("ridge_along_x", 1.0 if along_x else 0.0)
 	material.set_shader_parameter("gable", 1.0)
-	material.set_shader_parameter("material_contrast", 0.42 if civic else 0.28)
-	material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if civic else Vector3(0.52, 0.29, 0.20))
+	material.set_shader_parameter("material_contrast", 0.42 if slate else 0.28)
+	material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if slate else Vector3(0.52, 0.29, 0.20))
 	material.set_shader_parameter("ridge_light", 0.19)
 	roof.material = material
 	group.add_child(roof)
 	var eave := Line2D.new()
 	eave.points = PackedVector2Array([Vector2(top.x, end.y), ridge_end, end]) if cross_wing else PackedVector2Array([Vector2(top.x, end.y), end])
 	eave.width = (3 if cross_wing else 4) if civic else 2
-	eave.default_color = Color("99a69c") if civic else Color("8c7962")
+	eave.default_color = Color("99a69c") if slate else Color("8c7962")
 	group.add_child(eave)
 	if not civic:
 		var underside := Line2D.new()

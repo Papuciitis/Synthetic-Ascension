@@ -197,9 +197,9 @@ func _frame_textured_roof() -> void:
 	# its box (a rectangle) or not (an L or a notch).
 	var fills_box := box.get_area() > 0.0 and absf(_signed_area(poly)) >= box.get_area() * 0.97
 	roof_material.set_shader_parameter("gable", 1.0 if fills_box else 0.0)
-	if Global.attempt_segment == 2:
-		# Carry the approved quiet material hierarchy into generated roofs,
-		# including irregular silhouettes. Keep their shape and actual cutaway.
+	if Global.attempt_segment >= 2:
+		# Carry the approved quiet material hierarchy into every generated
+		# city segment's roofs, including irregular silhouettes.
 		roof_material.set_shader_parameter("material_contrast", 0.50)
 		roof_material.set_shader_parameter("material_mid", Vector3(0.43,0.26,0.19) if _poly.texture == ROOF_CLAY else Vector3(0.27,0.32,0.35))
 	_poly.material = roof_material
@@ -403,7 +403,10 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 	_poly.texture = texture
 	_poly.texture_scale = Vector2.ONE * 4.0
 	_poly.texture_offset = Vector2.ZERO
-	_poly.color = Color(0.91, 0.98, 1.02) if civic else Color(0.96, 0.95, 0.93)
+	# Roof stone is chosen per building (slate or clay); massing stays by role.
+	var slate := civic or StringName(visual_profile.get("roof_material", &"")) == &"slate"
+	_poly.set_meta(&"city_roof_slate", slate)
+	_poly.color = Color(0.91, 0.98, 1.02) if slate else Color(0.96, 0.95, 0.93)
 	# Remove the old broken-roof stamps only on this selected block.
 	for child in _poly.get_children():
 		if child is Sprite2D:
@@ -438,7 +441,7 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 	if _poly.material is ShaderMaterial:
 		var base_material := _poly.material as ShaderMaterial
 		base_material.set_shader_parameter("material_contrast", 0.35)
-		base_material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if civic else Vector3(0.52, 0.29, 0.20))
+		base_material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if slate else Vector3(0.52, 0.29, 0.20))
 	if StringName(visual_profile.get("profile_id",&"")) == &"checkpoint_guard_loggia":
 		var forms := preload("res://scenes/world/buildings/CheckpointOfficeForms.gd")
 		var form_plan := forms.plan(footprint_outline_px,_poly.polygon,_doors,_cell_px,int(visual_profile.get("visual_seed",0)))
@@ -456,8 +459,7 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 		var roof_material := _poly.material as ShaderMaterial
 		roof_material.set_shader_parameter("gable",1.0)
 		_poly.set_meta(&"city_roof_form", &"irregular_hall")
-		if Global.attempt_segment == 2:
-			preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose_irregular(_poly,civic)
+		preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose_irregular(_poly,civic)
 		preload("res://scenes/world/buildings/CityBlockRoofForms.gd")._chimney(_poly,_poly,civic)
 
 

@@ -63,38 +63,37 @@ func _test_irregular_faces() -> void:
 	var fixture := _fixture(false,Vector2i.DOWN,true)
 	var kit := fixture.kit as Node2D
 	var roof := fixture.roof as RoofOverlay
-	var bays := kit.find_children("FootprintWallBay*","Sprite2D",true,false)
-	_check(not bays.is_empty(),"actual irregular house supplies its existing painted window bays")
-	var lower_bay: Sprite2D
-	for node: Node in bays:
-		var bay := node as Sprite2D
-		var span: Rect2 = bay.get_meta(&"wall_span")
-		if is_equal_approx(span.end.y,560.0):
-			lower_bay = bay
+	# Composed frontage: the opaque wall field of the lower south run (wall base
+	# 560 = footprint edge 576 - 16) is a bounded solid upright plane.
+	var lower_field: Polygon2D
+	for node: Node in kit.find_children("*","Polygon2D",true,false):
+		if not node.has_meta(&"facade_wall_field"): continue
+		var span: Rect2 = node.get_meta(&"facade_wall_field")
+		if is_equal_approx(span.end.y,560.0) and node.is_in_group(SOLID_GROUP):
+			lower_field = node
 			break
-	_check(lower_bay != null,"fixture has a lower south-facing wall bay below the roof")
-	if lower_bay != null:
-		var descriptor := FOREGROUND.describe(lower_bay)
-		_check(not descriptor.is_empty(),"actual FootprintWallBay registers its original opacity and ground depth")
-		if not descriptor.is_empty():
-			_check(is_equal_approx(float(descriptor.front_y),576.0),"irregular bay ground depth uses the real footprint edge rather than its sprite bottom")
-			var point := _opaque_point(lower_bay)
-			_cover.call("refresh",self,true)
-			_check(float(_cover.call("strength_at",point,575.0)) > 0.9,"opaque window pixels below the roof cover a behind entity")
-			_check(is_zero_approx(float(_cover.call("strength_at",point,577.0))),"the same wall pixel leaves an entity in front of the footprint normal")
-			roof._set_alpha(0)
-			_cover.call("refresh",self,true)
-			_check(is_zero_approx(float(_cover.call("strength_at",point,575.0))),"actual house cutaway clears its upright window coverage")
-			roof._set_alpha(1)
-	var portal := kit.find_child("IrregularUprightPortal",true,false) as Node2D
-	_check(portal != null,"actual irregular doorway retains its portal")
-	if portal != null:
-		for name: StringName in [&"LeftJamb",&"RightJamb",&"Lintel"]:
-			var panel := portal.get_node(NodePath(name)) as Polygon2D
-			_check(panel.is_in_group(SOLID_GROUP) and panel.has_meta(GROUND_META),"opaque upright %s has a bounded solid descriptor" % name)
-		for name: StringName in [&"Recess",&"FlushThreshold"]:
-			_check(not portal.get_node(NodePath(name)).is_in_group(SOLID_GROUP),"walkable %s remains outside solid upright coverage" % name)
-		var opening: Rect2 = portal.get_meta(&"opening_face")
+	_check(lower_field != null,"actual irregular house supplies its existing painted window bays")
+	_check(lower_field != null,"fixture has a lower south-facing wall bay below the roof")
+	if lower_field != null:
+		var ground: Vector2 = lower_field.get_meta(GROUND_META)
+		_check(is_equal_approx(ground.y,576.0),"irregular bay ground depth uses the real footprint edge rather than its sprite bottom")
+		var center := Vector2.ZERO
+		for point: Vector2 in lower_field.polygon: center += point
+		var point := lower_field.to_global(center/lower_field.polygon.size())
+		_cover.call("refresh",self,true)
+		_check(float(_cover.call("strength_at",point,575.0)) > 0.9,"opaque window pixels below the roof cover a behind entity")
+		_check(is_zero_approx(float(_cover.call("strength_at",point,577.0))),"the same wall pixel leaves an entity in front of the footprint normal")
+		roof._set_alpha(0)
+		_cover.call("refresh",self,true)
+		_check(is_zero_approx(float(_cover.call("strength_at",point,575.0))),"actual house cutaway clears its upright window coverage")
+		roof._set_alpha(1)
+	var frame := kit.find_child("FacadeDoorFrame*",true,false) as Polygon2D
+	var opening_sprite := kit.find_child("FacadeDoorOpening",true,false) as Sprite2D
+	_check(frame != null and opening_sprite != null,"actual irregular doorway retains its portal")
+	if frame != null and opening_sprite != null:
+		_check(frame.is_in_group(SOLID_GROUP) and frame.has_meta(GROUND_META),"opaque upright doorway frame has a bounded descriptor")
+		_check(not opening_sprite.is_in_group(FOREGROUND.GROUP) and not opening_sprite.is_in_group(SOLID_GROUP),"walkable opening remains outside solid upright coverage")
+		var opening: Rect2 = opening_sprite.get_meta(&"facade_door_opening")
 		_cover.call("refresh",self,true)
 		_check(is_zero_approx(float(_cover.call("strength_at",kit.to_global(Vector2(opening.get_center().x,opening.end.y-32)),575.0))),"actual doorway gap stays clear below its lintel")
 	var upper_found := false
@@ -116,6 +115,9 @@ func _test_rectangular_faces(civic: bool, direction: Vector2i) -> void:
 		if sprite.texture == kit.get("_facade") and sprite.is_in_group(FOREGROUND.GROUP):
 			faces.append(sprite)
 	var label := "%s %s frontage" % ["civic" if civic else "ordinary","open" if direction == Vector2i.DOWN else "closed"]
+	if not civic:
+		await _test_composed_rectangular(fixture,direction,label)
+		return
 	_check(faces.size() == 3 if direction == Vector2i.DOWN else not faces.is_empty(),label + " exposes its actual painted source slices as registered sprites")
 	if not faces.is_empty():
 		var face := faces[0]
@@ -133,6 +135,41 @@ func _test_rectangular_faces(civic: bool, direction: Vector2i) -> void:
 		(fixture.roof as RoofOverlay)._set_alpha(0)
 		_cover.call("refresh",self,true)
 		_check(is_zero_approx(float(_cover.call("strength_at",point,575.0))),label + " fades coverage with the actual roof cutaway")
+	(fixture.parent as Node).queue_free()
+	await get_tree().process_frame
+
+
+func _test_composed_rectangular(fixture: Dictionary, direction: Vector2i, label: String) -> void:
+	# Ordinary buildings use the composed frontage: solid wall fields at the
+	# real footprint depth, a doorway module only where a south door exists.
+	var kit := fixture.kit as Node2D
+	var fields: Array[Polygon2D] = []
+	for node: Node in kit.find_children("*","Polygon2D",true,false):
+		if node.has_meta(&"facade_wall_field") and node.is_in_group(SOLID_GROUP): fields.append(node)
+	_check(not fields.is_empty(),label + " exposes its actual painted source slices as registered sprites")
+	var frames := kit.find_children("FacadeDoorFrame*","Polygon2D",true,false)
+	_check((frames.size() >= 3) if direction == Vector2i.DOWN else frames.is_empty(),label + " paints a doorway only where the real south door is")
+	if fields.is_empty():
+		(fixture.parent as Node).queue_free()
+		await get_tree().process_frame
+		return
+	var field := fields[0]
+	var ground: Vector2 = field.get_meta(GROUND_META)
+	_check(is_equal_approx(ground.y,576.0),label + " retains footprint front depth")
+	_check(field.get_parent() is CanvasItem and (field.get_parent() as CanvasItem).show_behind_parent,label + " keeps parent-drawn service props above the original facade")
+	var center := Vector2.ZERO
+	for p: Vector2 in field.polygon: center += p
+	var point := field.to_global(center/field.polygon.size())
+	_cover.call("refresh",self,true)
+	_check(float(_cover.call("strength_at",point,575.0)) > 0.9,label + " covers an entity at an opaque original source pixel")
+	_check(is_zero_approx(float(_cover.call("strength_at",point,577.0))),label + " leaves an entity in front normal")
+	if direction == Vector2i.DOWN:
+		var door_x := float(kit.get("_door_x"))
+		var front_y := float(kit.get("_front"))
+		_check(is_zero_approx(float(_cover.call("strength_at",kit.to_global(Vector2(door_x,front_y-28)),575.0))),label + " retains the original transparent door opening")
+	(fixture.roof as RoofOverlay)._set_alpha(0)
+	_cover.call("refresh",self,true)
+	_check(is_zero_approx(float(_cover.call("strength_at",point,575.0))),label + " fades coverage with the actual roof cutaway")
 	(fixture.parent as Node).queue_free()
 	await get_tree().process_frame
 

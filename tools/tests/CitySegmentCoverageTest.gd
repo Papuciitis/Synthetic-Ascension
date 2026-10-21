@@ -60,9 +60,17 @@ func _fixture(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, origin
 			for detail: Node in child.get_children():
 				if detail.has_meta(&"city_paving"): paving += 1
 	var variants := data.blocker_variant.duplicate()
+	var kinds := data.blocker_kind_code.duplicate()
+	var masks := data.blocker_mask.duplicate()
 	for index: int in data.occupied_indices():
-		if data.blocker_kind_code[index]-1 in [WorldBlockerGeometry.Kind.WALL,WorldBlockerGeometry.Kind.WINDOW]: variants[index] &= ~ChunkBlockVisualCatalog.VARIANT_CITY_STONE
-	var snapshot := str([data.blocker_kind_code,data.blocker_mask,variants,data.floor_rect_and_style,data.floor_alpha,volumes,door_records,chunk.get_meta(&"_proc_clear_cells",{})]).sha256_text()
+		if data.blocker_kind_code[index]-1 in [WorldBlockerGeometry.Kind.WALL,WorldBlockerGeometry.Kind.WINDOW]: variants[index] &= ~(ChunkBlockVisualCatalog.VARIANT_CITY_STONE|ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE)
+		# Accepted household furnishing deliberately adds its own reviewed
+		# half-cover cells; every other physical byte must stay identical.
+		if (data.blocker_variant[index] & ChunkBlockVisualCatalog.VARIANT_FURNITURE_ART) != 0:
+			kinds[index] = 0
+			masks[index] = 0
+			variants[index] = 0
+	var snapshot := str([kinds,masks,variants,data.floor_rect_and_style,data.floor_alpha,volumes,door_records,chunk.get_meta(&"_proc_clear_cells",{})]).sha256_text()
 	manager.free()
 	return {"kits":kits,"roofs":roofs,"paving":paving,"snapshot":snapshot}
 

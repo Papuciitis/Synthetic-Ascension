@@ -199,11 +199,24 @@ func _run() -> void:
 			count += 1
 			_check(kit.has_meta(&"city_irregular_outline"),"irregular family follows actual outline")
 			_check(kit.get_node_or_null("PaintedDomesticAwning") == null and kit.get_node_or_null("CityInteriorFloor") == null,"irregular parcels don't use bounding-box awnings or floors")
-			_check(not kit.find_children("FootprintWallBay*","Sprite2D",true,false).is_empty(),"irregular silhouette has inhabited wall bays under its own exposed edges")
+			var composed_fields := kit.find_children("*","Polygon2D",true,false).filter(func(node: Node) -> bool: return node.has_meta(&"facade_wall_field"))
+			_check(not kit.find_children("FootprintWallBay*","Sprite2D",true,false).is_empty() or not composed_fields.is_empty(),"irregular silhouette has inhabited wall bays under its own exposed edges")
 			var cover: RoofOverlay = kit.get("_roof")
 			for entrance: Dictionary in cover._doors:
 				var gap := preload("res://scenes/world/buildings/CityBlockFrontages.gd")._door_box(entrance,64)
-				if entrance.dir == Vector2i.DOWN:
+				if entrance.dir == Vector2i.DOWN and not kit.find_children("FacadeDoorFrame*","Polygon2D",true,false).is_empty():
+					# Composed frontage: one doorway module whose opening spans the real gap.
+					var frames := kit.find_children("FacadeDoorFrame*","Polygon2D",true,false)
+					var openings := kit.find_children("FacadeDoorOpening*","Sprite2D",true,false)
+					_check(frames.size() >= 3 and openings.size() == 1,"irregular south opening has a coherent upright portal")
+					if not openings.is_empty():
+						var opening_face: Rect2 = openings[0].get_meta(&"facade_door_opening")
+						_check(absf(opening_face.size.x-gap.size.x) < 0.5 and absf(opening_face.position.x-gap.position.x) < 0.5,"composed doorway opening keeps the actual door width and position")
+						_check(not openings[0].is_in_group(&"foreground_occluders") and frames[0].is_in_group(&"foreground_solid_occluders"),"doorway frame occludes while the walkable opening stays uncovered")
+						cover._set_alpha(0)
+						_check(is_zero_approx((frames[0].get_parent() as CanvasItem).modulate.a),"irregular portal fades with actual roof cutaway")
+						cover._set_alpha(1)
+				elif entrance.dir == Vector2i.DOWN:
 					var portals := kit.find_children("IrregularUprightPortal*","Node2D",true,false)
 					_check(portals.size() == 1,"irregular south opening has a coherent upright portal")
 					if not portals.is_empty():
