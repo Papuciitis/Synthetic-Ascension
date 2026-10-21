@@ -2916,3 +2916,26 @@ remains an explicit L2 limit. No new districts or broad asset pack are requested
 See the [lead review and return scope](art/reviews/2026-10-20-linux-city-continuation-review/README.md)
 and [ART_STATUS](handoff/ART_STATUS.md). Windows ran no engine; Linux owns heavy
 implementation/imports/captures/performance work and its status acknowledgment.
+
+## 2026-10-21 — City-wide phase reviewed; ground hierarchy needs correction
+
+The lead received Linux `3d1be8b0` after `e4a1a8ba`. The broader city pass
+improves façade/door variety, roof joins, connected frontage and coherent casts.
+Keep those gains. Broad grey paving, recurring round squares/equal setbacks,
+S7's diminished damp-green ground and universal tidy planter rims still move
+away from the intended uneven inhabited medieval city and district ecology.
+Use existing sources to correct spatial/use/maintenance roles before more packs.
+
+The checked continuation through `2d749ba0` and passive reference-import
+exclusion are integrated; the later runtime remains on Linux pending focused
+ground/index correction and current-source native traversal/cost evidence.
+The phase JPEG survey is useful static art evidence, while its74 check summaries
+and eight remaining runtime-diagnostic classifications do not establish a clean,
+source-bound integrated result. The full concept-fidelity goal remains active.
+See the [lead review and bounded return](art/reviews/2026-10-21-linux-phase1-lead-review/README.md).
+
+The user permits guarded Godot checks on Windows. One actual cold import on
+the earlier e4a1a8ba stopped at its strict memory ceiling after cleanup of idle
+tool helpers; no local Game image is claimed. Linux remains the primary heavy
+production host. Status acknowledgments and normal Git merges keep both lanes
+intact; the initial recurring review batch stays paused.
