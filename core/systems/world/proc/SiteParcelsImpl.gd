@@ -908,16 +908,19 @@ static func _infill_usage(rng: RandomNumberGenerator, lot_len: int, depth: int, 
 ## into a party wall, so the two read as one attached group; this house's
 ## facade and roof then run over it (RoofOverlay.party_extra_px,
 ## CityBlockKit "party_extra_px"). Street continuity only, after every RNG
-## draw of this lot, so the pass off is unchanged. Both houses are composed,
-## non-civic rectangles. A slit stays open where any of its cells is protected
+## draw of this lot, so the pass off is unchanged. Both houses are non-civic
+## rectangles (composed fronts); the decision reads the lot records
+## (_note_lot), never the kits, so the physical slit is the same whether or
+## not the city style draws them. A slit stays open where any of its cells is protected
 ## route, a keepout, a reserved box, a recorded opening or a door apron, or
 ## where it is the only way from the ground behind the row to the street (a
 ## flood fill over the blockers built so far). 1-2 cell slits already count
 ## as wall for the WALL_MAX passage bound, so closing one never lengthens a
 ## measured wall. Returns {} or {"edge": _DIR_W/_DIR_E, "cells": slit rect}.
 func _party_slit(cm: Node, chunk: Node2D, rect: Rect2i, door_dir: Vector2i, placed: Array[Rect2i], keepouts: Array[Rect2i], cfg: Dictionary, civic: bool) -> Dictionary:
-	if civic or door_dir.y == 0 or not bool(cfg.get("street_continuity", false)) or not bool(cfg.get("city_block_style", false)):
+	if civic or door_dir.y == 0 or not bool(cfg.get("street_continuity", false)):
 		return {}
+	var lots: Dictionary = chunk.get_meta(&"_proc_lot_info", {})
 	var data: ChunkBuildData = cm.get("_active_build_data")
 	if data == null:
 		return {}
@@ -930,13 +933,10 @@ func _party_slit(cm: Node, chunk: Node2D, rect: Rect2i, door_dir: Vector2i, plac
 		var top := maxi(other.position.y, rect.position.y)
 		if rect.end.y - top < 3:
 			continue
-		var kit := _kit_for(chunk, other)
-		if kit == null or bool(kit.get("civic")) or bool(kit.get("_irregular")):
-			continue
-		var same_side := false
-		for door: Dictionary in kit.get("_doors"):
-			if door.get("dir", Vector2i.ZERO) == door_dir: same_side = true
-		if not same_side:
+		# The neighbour's own record (kept whether or not the city style
+		# draws kits, so physical geometry never depends on the style).
+		var info: Dictionary = lots.get(other, {})
+		if info.is_empty() or bool(info.civic) or bool(info.irregular) or info.door != door_dir:
 			continue
 		var slit := Rect2i(other.end.x if west else rect.end.x, top, 1, rect.end.y - top)
 		if not _slit_free(chunk, slit, keepouts, cfg, data, float(cm.cell_size_px)):
@@ -951,7 +951,7 @@ func _party_slit(cm: Node, chunk: Node2D, rect: Rect2i, door_dir: Vector2i, plac
 			cm.spawn_roofed_wall_cells(chunk, cells, {}, cells)
 		else:
 			cm._spawn_wall_cells(chunk, cells, {})
-		_mark_building_walls(cm, cells, true)
+		_mark_building_walls(cm, cells, bool(cfg.get("city_block_style", false)))
 		var slits: Array = chunk.get_meta(&"_proc_party_slits", [])
 		slits.append(slit)
 		chunk.set_meta(&"_proc_party_slits", slits)
@@ -959,11 +959,19 @@ func _party_slit(cm: Node, chunk: Node2D, rect: Rect2i, door_dir: Vector2i, plac
 	return {}
 
 
-static func _kit_for(chunk: Node2D, rect: Rect2i) -> Node:
-	for kit: Node in chunk.get_children():
-		if kit.is_in_group(&"city_block_building") and kit.get_meta(&"footprint_cells", Rect2i()) == rect:
-			return kit
-	return null
+## Lot record for the party-slit pass: civic (taller arcade fronts),
+## irregular (L halls) and the street-facing door side of every building.
+static func _note_lot(chunk: Node2D, rect: Rect2i, door_dir: Vector2i, civic: bool, irregular: bool) -> void:
+	var lots: Dictionary = chunk.get_meta(&"_proc_lot_info", {})
+	lots[rect] = {"civic": civic, "irregular": irregular, "door": door_dir}
+	chunk.set_meta(&"_proc_lot_info", lots)
+
+
+## The kit's civic rule (taller arcade front), from the lot alone.
+func _lot_civic(cm: Node, coord: Vector2i, rect: Rect2i, template: StringName, cfg: Dictionary, building_secondary_id: int, configured_secondary_id: int) -> bool:
+	var global_tl: Vector2i = coord * int(cm._cells_per_chunk()) + rect.grow(-1).position
+	var building_id: int = int(_mix_seed(int(cm.world_seed), global_tl.x, global_tl.y, 77) & 0x7fffffff) + 1
+	return bool(cfg.get("city_service_annex",false)) or building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
 
 
 func _slit_free(chunk: Node2D, slit: Rect2i, keepouts: Array[Rect2i], cfg: Dictionary, data: ChunkBuildData, cell_px: float) -> bool:
@@ -1491,7 +1499,7 @@ func _spawn_building_rect(
 					chunk.add_child(roof)
 					var street_infill := bool(cfg.get("city_street_infill", false))
 					var party_edges := _party_edges(build_rect, placed) if street_infill else 0
-					var civic := bool(cfg.get("city_service_annex",false)) or building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
+					var civic := _lot_civic(chunk_manager, coord, build_rect, template, cfg, building_secondary_id, configured_secondary_id)
 					# Medieval street pass: a one-cell slit to a neighbour on the
 					# same front line closes into a party wall (house groups).
 					var slit := _party_slit(chunk_manager, chunk, build_rect, door_dir, placed, keepout_rects, cfg, civic)
@@ -1519,6 +1527,7 @@ func _spawn_building_rect(
 							kit.set_meta(&"frontage_step",int(cfg.get("_frontage_step",0)))
 						_add_domestic_interior(chunk_manager,kit,wall_cells,building_id)
 
+	_note_lot(chunk, build_rect, door_dir, _lot_civic(chunk_manager, coord, build_rect, template, cfg, building_secondary_id, configured_secondary_id), false)
 	placed.append(build_rect)
 	return true
 
@@ -1730,6 +1739,7 @@ func _spawn_building_footprint(
 					kit.configure(build_rect, cell_px, visual_doors, roof, template == &"workshop" and building_id % 3 == 0, outline, bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id, template))
 					_add_domestic_interior(chunk_manager,kit,wall_cells,building_id)
 
+	_note_lot(chunk, build_rect, door_dir, true, true)
 	placed.append(build_rect)
 	return true
 
