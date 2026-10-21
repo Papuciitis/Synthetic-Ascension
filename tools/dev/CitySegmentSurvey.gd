@@ -4,7 +4,8 @@ extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ## route chunks, first secondary objective). Each place gets a gameplay-zoom
 ## still and a zoomed-out street-fabric overview, so every theme can be judged
 ## against its concept plate with the same framing before and after a change.
-## -- --segment=3 [--world-seed=16102026] [--theme=canal_services] --out=/abs/dir [--route-points=3] [--overview-zoom=0.5]
+## -- --segment=3 [--world-seed=16102026] [--theme=canal_services] --out=/abs/dir [--route-points=3] [--overview-zoom=0.5] [--kit-points=3]
+## --kit-points adds gameplay-zoom close-ups of the largest buildings seen near the sampled places.
 ## --theme scans seeds upward from --world-seed until the picker selects it.
 
 var _survey_segment := 2
@@ -12,7 +13,9 @@ var _survey_seed := 16102026
 var _survey_theme := ""
 var _route_points := 3
 var _overview_zoom := 0.5
+var _kit_points := 0
 var _records: Array[Dictionary] = []
+var _kit_candidates: Dictionary = {}
 
 func _enter_tree() -> void:
 	super._enter_tree()
@@ -22,6 +25,7 @@ func _enter_tree() -> void:
 		elif arg.begins_with("--theme="): _survey_theme = arg.trim_prefix("--theme=")
 		elif arg.begins_with("--route-points="): _route_points = clampi(int(arg.trim_prefix("--route-points=")), 0, 8)
 		elif arg.begins_with("--overview-zoom="): _overview_zoom = clampf(float(arg.trim_prefix("--overview-zoom=")), 0.2, 1.0)
+		elif arg.begins_with("--kit-points="): _kit_points = clampi(int(arg.trim_prefix("--kit-points=")), 0, 8)
 	if _out == "user://dev_previews/elite_crowd_fight":
 		_out = "user://dev_previews/city_segment_survey"
 
@@ -79,6 +83,13 @@ func _run() -> void:
 			break
 	for point: Dictionary in points:
 		await _capture_point(point)
+	# Close-ups of real frontages: the largest distinct buildings seen, framed on
+	# their south wall with the street in front (stable order by size, then id).
+	var kits: Array = _kit_candidates.values()
+	kits.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.area > b.area or (a.area == b.area and a.key < b.key))
+	for index: int in mini(_kit_points, kits.size()):
+		var kit: Dictionary = kits[index]
+		await _capture_point({"name": "kit%d" % (index+1), "world": kit.focus, "kit": kit.key, "usage": kit.usage}, false)
 	var manifest := {
 		"segment": _survey_segment, "world_seed": _survey_seed,
 		"theme_id": String(theme.id) if theme != null else "", "theme_label": theme.label if theme != null else "",
@@ -89,7 +100,7 @@ func _run() -> void:
 	if file != null: file.store_string(JSON.stringify(manifest, "  ") + "\n")
 	await _shutdown()
 
-func _capture_point(point: Dictionary) -> void:
+func _capture_point(point: Dictionary, overview: bool = true) -> void:
 	var world: Vector2 = point.world
 	# Stream the place first; the player is only staged once its cells exist.
 	_player.global_position = world
@@ -105,13 +116,20 @@ func _capture_point(point: Dictionary) -> void:
 	_save_image(get_viewport().get_texture().get_image(), _out.path_join(stem + "-play.png"))
 	var buildings := 0
 	for kit: Node in get_tree().get_nodes_in_group(&"city_block_building"):
-		if kit is Node2D and (kit as Node2D).global_position.distance_to(world) < 2200.0: buildings += 1
-	_camera.zoom = Vector2.ONE * _overview_zoom
-	_camera.force_update_scroll()
-	await _settle_streaming()
-	await _frames(6)
-	_save_image(get_viewport().get_texture().get_image(), _out.path_join(stem + "-overview.png"))
-	_camera.zoom = Vector2.ONE
+		if not kit is Node2D: continue
+		var bounds: Rect2 = kit.get("bounds")
+		var center: Vector2 = (kit as Node2D).to_global(bounds.get_center())
+		if center.distance_to(world) < 2200.0:
+			buildings += 1
+			var key := "%d,%d" % [int(center.x), int(center.y)]
+			_kit_candidates[key] = {"key": key, "area": bounds.get_area(), "focus": (kit as Node2D).to_global(Vector2(bounds.get_center().x, bounds.end.y - 40.0)), "usage": String(kit.get_meta(&"building_usage", &""))}
+	if overview:
+		_camera.zoom = Vector2.ONE * _overview_zoom
+		_camera.force_update_scroll()
+		await _settle_streaming()
+		await _frames(6)
+		_save_image(get_viewport().get_texture().get_image(), _out.path_join(stem + "-overview.png"))
+		_camera.zoom = Vector2.ONE
 	var record := point.duplicate()
 	record["world"] = [world.x, world.y]
 	record["chunk_at"] = str(_chunks._world_to_chunk(world))
