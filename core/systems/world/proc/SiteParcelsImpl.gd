@@ -11,10 +11,11 @@ const _DIR_N: int = 1
 const _DIR_E: int = 2
 const _DIR_S: int = 4
 const _DIR_W: int = 8
-## Street continuity post-pass (2026-10-21). New salt 4903 (street and
-## courtyard infill). It runs after every original lot, forced reward and
-## service annex decision, so those stay byte-identical.
+## Street continuity post-pass (2026-10-21). New salt family: 4903 street and
+## courtyard infill, 4904 framed landmark squares. It runs after every original
+## lot, forced reward and service annex decision, so those stay byte-identical.
 const INFILL_SALT := 4903
+const SQUARE_SALT := 4904
 ## The room carver needs 6x6 for a perimeter, so infill lots are at least 6
 ## long and 6 deep, and at most as long as an original lot (13); one
 ## deliberate 3-cell passage splits any long run.
@@ -244,6 +245,44 @@ static func _courtyard_rings(court: Rect2i, cpc: int) -> Array[Dictionary]:
 	else:
 		rings.append({"rect": Rect2i(east_x - 1, 1, east_w + 1, cpc - 2), "door_dir": Vector2i(-1, 0), "original": false})
 	return rings
+
+
+## A landmark square is purely cosmetic: it is cut down (ChunkGenDistrict) and
+## framed by buildings facing it, keeping square.grow(2), every lane, road and
+## access corridor, and the chunk-centred landmark box open.
+func decorate_square_frame(chunk_manager: Node, chunk: Node2D, coord: Vector2i, square: Rect2i, keepout_rects: Array[Rect2i], cfg: Dictionary) -> Array[Rect2i]:
+	var placed: Array[Rect2i] = []
+	var cpc: int = int(chunk_manager._cells_per_chunk())
+	if cpc < 24 or not square.has_area():
+		return placed
+	var extent := Rect2i(Vector2i.ZERO, Vector2i(cpc, cpc))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = _mix_seed(int(chunk_manager.world_seed), coord.x, coord.y, SQUARE_SALT)
+	var half: int = int(cpc / 2.0)
+	var reserved: Array[Rect2i] = [square.grow(2), Rect2i(Vector2i(half - 5, half - 5), Vector2i(11, 11))]
+	var infill_cfg := _infill_cfg(cfg)
+	var rings: Array[Dictionary] = [
+		{"rect": Rect2i(1, 1, cpc - 2, square.position.y - 3), "door_dir": Vector2i(0, 1)},
+		{"rect": Rect2i(1, square.end.y + 2, cpc - 2, cpc - 1 - (square.end.y + 2)), "door_dir": Vector2i(0, -1)},
+		{"rect": Rect2i(1, 1, square.position.x - 3, cpc - 2), "door_dir": Vector2i(1, 0)},
+		{"rect": Rect2i(square.end.x + 2, 1, cpc - 1 - (square.end.x + 2), cpc - 2), "door_dir": Vector2i(-1, 0)},
+	]
+	for ring: Dictionary in rings:
+		var rect: Rect2i = ring.rect
+		if rect.size.x < INFILL_MIN_DEPTH or rect.size.y < INFILL_MIN_DEPTH:
+			continue
+		var door: Vector2i = ring.door_dir
+		var usable := _infill_band_rect(rect, door, 0, cpc, false, false)
+		_infill_band(chunk_manager, chunk, coord, usable, door, door, keepout_rects, reserved, placed, infill_cfg, rng, extent, true)
+	if placed.is_empty():
+		return placed
+	chunk.set_meta(&"_proc_framed_square", square)
+	if bool(cfg.get("city_block_style", false)):
+		for kit: Node in chunk.get_children():
+			if kit.is_in_group(&"city_block_building"):
+				kit.set("_chunk_extent", Vector2.ONE * cpc * int(chunk_manager.cell_size_px))
+				kit.trim_paving(placed, int(chunk_manager.cell_size_px))
+	return placed
 
 
 ## Infill extent of one band: the margin-inset band, its depth axis clipped to

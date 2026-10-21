@@ -49,3 +49,15 @@ func decorate_urban_fill(
 	if _parcels == null:
 		return []
 	return _parcels.decorate_urban_fill(chunk_manager, chunk, coord, cfg)
+
+func decorate_square_frame(
+	chunk_manager: Node,
+	chunk: Node2D,
+	coord: Vector2i,
+	square: Rect2i,
+	keepout_rects: Array[Rect2i],
+	cfg: Dictionary
+) -> Array[Rect2i]:
+	if _parcels == null:
+		return []
+	return _parcels.decorate_square_frame(chunk_manager, chunk, coord, square, keepout_rects, cfg)
