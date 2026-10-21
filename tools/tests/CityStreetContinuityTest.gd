@@ -1,15 +1,23 @@
 extends "res://tools/tests/ProcChunkReachabilityTest.gd"
 ## Street continuity post-pass (2026-10-21) on actual production plans of all
 ## fourteen district themes. For street, courtyard and landmark chunks it proves:
-## - every original building keeps its rect, identity, loot, encounter and
-##   secondary objective with the pass on or off (the post-pass is separately
-##   salted, so the original lot RNG cannot drift);
+## - every original building keeps its rect, identity, loot, encounter,
+##   secondary objective and door sides with the pass on or off (the post-pass
+##   is separately salted, so the original lot RNG cannot drift);
 ## - infill buildings are architecture only (no loot, encounter, secondary
-##   objective or ambient spawn socket);
+##   objective, ambient spawn socket or exploration visit);
 ## - protected route cells, objective anchor boxes and the framed square stay
 ##   clear; deliberate infill passages are three cells wide and open;
 ## - every connector socket and real door is reachable and no interior is sealed;
 ## - regeneration is exact across fresh managers and generation orders.
+## Whole plans (every planned chunk, pass off and on) prove the cross-chunk
+## invariants a sample cannot see: no lane wall the infill builds or joins is
+## longer than WALL_LIMIT, joined across chunk seams; no lane wall at all
+## reaches WALL_NEVER; every door keeps the part of its apron inside its own
+## chunk free of infill (a chunk cannot see its neighbour's doors; aprons that
+## cross a seam are counted); recorded passages stay open after every later
+## ring; original doors and spawn sockets are unchanged; per-chunk
+## reachability as above.
 ## -- --out=/abs/path.json writes every sampled chunk for the replay comparison.
 
 const THEMES := [[2, ""], [3, ""], [4, "collapsed_ward"], [4, "civilian_cutthrough"], [5, ""],
@@ -20,12 +28,25 @@ const ROLES := [&"main_street", &"secondary_route", &"service_lane", &"exit_appr
 const BASE_SEED := 16102026
 const PER_ROLE := 2
 const ANCHOR_ROLES := [&"secondary_alley_cache", &"secondary_reward_building", &"optional_interior"]
+## Lane walls: buildings within WALL_ROWS cells of a lane edge, 1-2 cell slits
+## bridged, joined across chunks. Every infill lot keeps the walls it joins
+## within SiteParcelsImpl.WALL_MAX and a lane's seam cells open, so no wall
+## with infill exceeds it; original lots alone reach 27.
+const WALL_ROWS := 4
+const WALL_LIMIT := 24
+const WALL_NEVER := 32
+const DOOR_APRON := 4
 
 var _checks := 0
 var _infill_total := 0
 var _original_total := 0
 var _samples: Array = []
 var _preexisting := 0
+var _plan_chunks := 0
+var _walls: Array[int] = []
+var _infill_walls: Array[int] = []
+var _plan_doors := 0
+var _cross_seam_aprons := 0
 
 
 func _theme_seed(segment: int, theme_id: String) -> int:
@@ -147,20 +168,22 @@ func _check_chunk(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, ro
 		_infill_total += 1
 		_check(volume.small_loot_chance == 0.0 and not volume.exploration_loot_enabled and not volume.local_encounter_enabled and volume.secondary_objective_id == 0,
 			tag + " infill building carries loot or security " + record)
+		_check(not volume.visit_counts_as_exploration, tag + " infill building counts as an exploration visit " + record)
+	for record: String in on_volumes:
+		if off_ids.has((on_volumes[record] as IndoorVolume).building_id):
+			_check((on_volumes[record] as IndoorVolume).visit_counts_as_exploration, tag + " original building stopped counting as a visit " + record)
 	var off_buildings := _buildings(off.chunk)
 	var on_buildings := _buildings(chunk)
 	for building: Dictionary in on_buildings:
-		var was_original := false
+		var original_doors: Variant = null
 		for original: Dictionary in off_buildings:
-			if original.rect == building.rect: was_original = true
-		_check(was_original != bool(building.infill), tag + " infill flag disagrees with the original lot set " + str(building.rect))
-	# 3. Ambient spawn sockets: infill adds none; street chunks keep them exactly.
-	var off_sockets := _spawn_sockets(off.chunk)
-	var on_sockets := _spawn_sockets(chunk)
-	if role == &"district_fill":
-		_check(off_sockets.size() == on_sockets.size(), tag + " courtyard spawn socket count changed")
-	else:
-		_check(off_sockets == on_sockets, tag + " street spawn sockets changed")
+			if original.rect == building.rect: original_doors = original.doors
+		_check((original_doors != null) != bool(building.infill), tag + " infill flag disagrees with the original lot set " + str(building.rect))
+		if original_doors != null:
+			_check(original_doors == building.doors, tag + " original building's doors moved " + str(building.rect))
+	# 3. Ambient spawn sockets: infill adds none and original doors keep their
+	# side, so every chunk keeps them exactly.
+	_check(_spawn_sockets(off.chunk) == _spawn_sockets(chunk), tag + " spawn sockets changed")
 	# 4. Protected cells, anchors, squares and passages stay open.
 	for cell: Vector2i in chunk.get_meta(&"_proc_clear_cells", {}):
 		if data.kind_at(cell) >= 0:
@@ -239,6 +262,203 @@ func _reach_problems(fixture: Dictionary, coord: Vector2i) -> Dictionary:
 	return problems
 
 
+func _plan_manager(theme: SegmentThemeData, plan: Dictionary, enabled: bool) -> ChunkManager:
+	var cm := ChunkManager.new()
+	theme.apply_to_chunk_manager(cm)
+	cm.world_seed = int(plan.seed)
+	cm.generation_enabled = false
+	cm.ground_enabled = false
+	cm.ground_splat_enabled = false
+	cm.decals_enabled = false
+	cm.deco_enabled = false
+	cm.sites_enabled = false
+	cm.parcels_chunk_chance = 0.95
+	cm.parcels_chance_per_side = 0.80
+	cm.parcels_max_per_side = 2
+	cm.district_sidewalk_width_cells = 1
+	cm.district_sidewalk_corner_pad_cells = 1
+	cm.street_continuity_enabled = enabled
+	cm.cover_full_scene = COVER_FULL
+	cm.cover_window_scene = COVER_WINDOW
+	cm.cover_half_scene = COVER_HALF
+	add_child(cm)
+	cm._chunk_connectors = plan.connectors_by_chunk.duplicate()
+	cm._chunk_role = plan.role_by_chunk.duplicate()
+	cm._chunk_archetype = plan.archetype_by_chunk.duplicate()
+	cm._chunk_urban_access = plan.urban_access_by_chunk.duplicate()
+	return cm
+
+
+## Lane contract rects of a planned chunk (ChunkGenDistrict's lane geometry).
+func _lanes(gen: ChunkGenImpl, role: StringName, mask: int, coord: Vector2i) -> Array[Rect2i]:
+	var lane_w := 7
+	match role:
+		&"secondary_route": lane_w = 5
+		&"service_lane", &"secondary_reward_building": lane_w = 3
+		&"dangerous_alley", &"secondary_alley_cache": lane_w = 2
+		&"checkpoint", &"exit_approach", &"gate": lane_w = 7
+		&"primary_objective": lane_w = 6
+		_: lane_w = DISTRICT._remapped_lane_width(gen.district_lane_width_cells)
+	lane_w = clampi(lane_w, 2, CPC - 6)
+	var y0 := clampi(gen._lane_center_for_row(coord.y, CPC) - int(lane_w / 2.0), 1, CPC - lane_w - 1)
+	var x0 := clampi(gen._lane_center_for_col(coord.x, CPC) - int(lane_w / 2.0), 1, CPC - lane_w - 1)
+	var lanes: Array[Rect2i] = [Rect2i(), Rect2i()]
+	if mask & (2 | 8):
+		var from := 0 if mask & 8 else x0
+		var to := CPC if mask & 2 else x0 + lane_w
+		lanes[0] = Rect2i(from, y0, to - from, lane_w)
+	if mask & (1 | 4):
+		var from := 0 if mask & 1 else y0
+		var to := CPC if mask & 4 else y0 + lane_w
+		lanes[1] = Rect2i(x0, from, lane_w, to - from)
+	return lanes
+
+
+## Every planned chunk with the pass off and on: per chunk the sample checks'
+## physical invariants, then the cross-chunk walls and door aprons.
+func _check_plan(theme: SegmentThemeData, plan: Dictionary, segment: int) -> void:
+	var coords: Array[Vector2i] = []
+	for coord: Vector2i in plan.role_by_chunk:
+		coords.append(coord)
+	coords.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.x < b.x or (a.x == b.x and a.y < b.y))
+	var layouts: Array[Dictionary] = []
+	for enabled: bool in [false, true]:
+		var cm := _plan_manager(theme, plan, enabled)
+		var layout := {}
+		for coord: Vector2i in coords:
+			var built := _generate_into(cm, coord)
+			built["cm"] = cm
+			var chunk: Node2D = built.chunk
+			var data: ChunkBuildData = built.data
+			var tag := "plan seg=%d theme=%s coord=%s role=%s" % [segment, theme.id, coord, plan.role_by_chunk[coord]]
+			var record := {"buildings": _buildings(chunk), "sockets": _spawn_sockets(chunk), "problems": _reach_problems(built, coord),
+				"lanes": _lanes(cm._content_gen, plan.role_by_chunk[coord], int(plan.connectors_by_chunk.get(coord, 0)), coord)}
+			if enabled:
+				for cell: Vector2i in chunk.get_meta(&"_proc_clear_cells", {}):
+					if data.kind_at(cell) >= 0:
+						failures.append(tag + " blocked protected cell " + str(cell))
+						break
+				for passage: Rect2i in chunk.get_meta(&"_proc_frontage_passages", []):
+					_check(mini(passage.size.x, passage.size.y) >= 3, tag + " infill passage narrower than three cells " + str(passage))
+					var open := true
+					for y in range(passage.position.y, passage.end.y):
+						for x in range(passage.position.x, passage.end.x):
+							if data.kind_at(Vector2i(x, y)) >= 0: open = false
+					_check(open, tag + " infill passage blocked " + str(passage))
+				for child: Node in chunk.get_children():
+					if child is IndoorVolume and child.has_meta(&"city_street_infill"):
+						var volume := child as IndoorVolume
+						_check(volume.small_loot_chance == 0.0 and not volume.exploration_loot_enabled and not volume.local_encounter_enabled and volume.secondary_objective_id == 0 and not volume.visit_counts_as_exploration,
+							tag + " infill building carries loot, security or a visit " + str(volume.cell_tl))
+			layout[coord] = record
+			cm._unregister_chunk_cells(coord)
+			chunk.free()
+			_plan_chunks += 1
+		cm.free()
+		layouts.append(layout)
+	var off: Dictionary = layouts[0]
+	var on: Dictionary = layouts[1]
+	for coord: Vector2i in coords:
+		var tag := "plan seg=%d theme=%s coord=%s role=%s" % [segment, theme.id, coord, plan.role_by_chunk[coord]]
+		_check(off[coord].sockets == on[coord].sockets, tag + " spawn sockets changed")
+		for building: Dictionary in on[coord].buildings:
+			if building.infill:
+				continue
+			var kept := false
+			for original: Dictionary in off[coord].buildings:
+				if original.rect == building.rect and original.doors == building.doors and original.usage == building.usage: kept = true
+			_check(kept, tag + " original building changed " + str(building.rect))
+		_check(on[coord].buildings.filter(func(b: Dictionary) -> bool: return not b.infill).size() == off[coord].buildings.size(), tag + " original building count changed")
+		for problem: String in on[coord].problems:
+			_check(off[coord].problems.has(problem), tag + " " + problem)
+	# Cross-chunk: buildings by global cell (true for infill).
+	var cover := {}
+	for coord: Vector2i in coords:
+		for building: Dictionary in on[coord].buildings:
+			var rect := Rect2i(building.rect[0], building.rect[1], building.rect[2], building.rect[3])
+			for y in range(rect.position.y, rect.end.y):
+				for x in range(rect.position.x, rect.end.x):
+					cover[coord * CPC + Vector2i(x, y)] = bool(building.infill)
+	# Door aprons stay free of infill. A chunk sees only its own doors: an
+	# apron reaching into the next chunk (the rear door of an original
+	# walk-through passage on a courtyard's outer ring) is counted, not checked.
+	for coord: Vector2i in coords:
+		for building: Dictionary in on[coord].buildings:
+			for door: Array in building.doors:
+				_plan_doors += 1
+				var local := Vector2i(door[0], door[1])
+				var dir := Vector2i(door[2], door[3])
+				var across := Vector2i(absi(dir.y), absi(dir.x))
+				if not Rect2i(0, 0, CPC, CPC).has_point(local + dir * DOOR_APRON):
+					_cross_seam_aprons += 1
+					continue
+				var at := coord * CPC + local
+				for step in range(1, DOOR_APRON + 1):
+					for side in range(-1, 2):
+						var cell := at + dir * step + across * side
+						_check(not bool(cover.get(cell, false)), "plan seg=%d theme=%s door %s of %s has infill in its apron at %s" % [segment, theme.id, at, str(building.rect), cell])
+	# Lane walls joined across chunks.
+	var lines := {}
+	for coord: Vector2i in coords:
+		var lanes: Array = on[coord].lanes
+		for axis in 2:
+			var lane: Rect2i = lanes[axis]
+			if not lane.has_area():
+				continue
+			for side in [-1, 1]:
+				var key := [axis, coord.y if axis == 0 else coord.x, side]
+				var line: Dictionary = lines.get(key, {})
+				var along := range(lane.position.x, lane.end.x) if axis == 0 else range(lane.position.y, lane.end.y)
+				for t: int in along:
+					var hit := 0
+					for depth in range(1, WALL_ROWS + 1):
+						var local := Vector2i(t, lane.position.y - depth if side < 0 else lane.end.y - 1 + depth) if axis == 0 else Vector2i(lane.position.x - depth if side < 0 else lane.end.x - 1 + depth, t)
+						var cell := coord * CPC + local
+						if cover.has(cell):
+							hit = maxi(hit, 2 if bool(cover[cell]) else 1)
+					line[(coord.x if axis == 0 else coord.y) * CPC + t] = hit
+				lines[key] = line
+	for key: Variant in lines:
+		var line: Dictionary = lines[key]
+		var positions: Array = line.keys()
+		positions.sort()
+		var first := -1
+		var last := -1
+		var gap := 0
+		var infill := false
+		var previous: int = positions[0] - 1 if not positions.is_empty() else 0
+		for position: int in positions:
+			if position != previous + 1:
+				_close_wall(segment, theme.id, key, first, last, infill)
+				first = -1
+			previous = position
+			var hit: int = line[position]
+			if hit > 0:
+				if first < 0:
+					first = position
+					infill = false
+				last = position
+				gap = 0
+				infill = infill or hit == 2
+			elif first >= 0:
+				gap += 1
+				if gap > 2:
+					_close_wall(segment, theme.id, key, first, last, infill)
+					first = -1
+		_close_wall(segment, theme.id, key, first, last, infill)
+
+
+func _close_wall(segment: int, theme_id: StringName, key: Variant, first: int, last: int, infill: bool) -> void:
+	if first < 0:
+		return
+	var length := last - first + 1
+	_walls.append(length)
+	if infill:
+		_infill_walls.append(length)
+	_check(length < WALL_NEVER, "plan seg=%d theme=%s lane wall of %d cells at %s %d..%d" % [segment, theme_id, length, str(key), first, last])
+	_check(not infill or length <= WALL_LIMIT, "plan seg=%d theme=%s infill lane wall of %d cells at %s %d..%d" % [segment, theme_id, length, str(key), first, last])
+
+
 func _run() -> void:
 	var dummy := Node2D.new()
 	dummy.add_to_group(&"player")
@@ -262,6 +482,7 @@ func _run() -> void:
 			for coord: Vector2i in coords.slice(0, PER_ROLE):
 				_check_chunk(theme, plan, coord, role, segment)
 				chunks += 1
+		_check_plan(theme, plan, segment)
 	Global.attempt_segment = previous_segment
 	_check(_infill_total > 0, "The pass built no infill at all")
 	var output := ""
@@ -274,5 +495,8 @@ func _run() -> void:
 			file.close()
 	for failure: String in failures.slice(0, 30):
 		push_error(failure)
+	_walls.sort()
+	_infill_walls.sort()
+	print("CityStreetContinuityTest: plan chunks=%d doors=%d (aprons across a seam %d) lane walls=%d (longest %d) infill walls=%d (longest %d)" % [_plan_chunks, _plan_doors, _cross_seam_aprons, _walls.size(), _walls.back() if not _walls.is_empty() else 0, _infill_walls.size(), _infill_walls.back() if not _infill_walls.is_empty() else 0])
 	print("CityStreetContinuityTest: chunks=%d originals=%d infill=%d checks=%d preexisting_unreachable=%d failures=%d" % [chunks, _original_total, _infill_total, _checks, _preexisting, failures.size()])
 	get_tree().quit(1 if not failures.is_empty() else 0)

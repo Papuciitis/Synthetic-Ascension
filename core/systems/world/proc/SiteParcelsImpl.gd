@@ -17,13 +17,30 @@ const _DIR_W: int = 8
 const INFILL_SALT := 4903
 const SQUARE_SALT := 4904
 ## The room carver needs 6x6 for a perimeter, so infill lots are at least 6
-## long and 6 deep, and at most as long as an original lot (13); one
-## deliberate 3-cell passage splits any long run.
+## long and 6 deep, and at most as long as an original lot (13).
 const INFILL_MIN_LEN := 6
 const INFILL_MAX_LEN := 13
 const INFILL_MIN_DEPTH := 6
+## Width of every opening the infill leaves in a frontage.
 const INFILL_PASSAGE := 3
-const INFILL_PASSAGE_RUN := 22
+## Longest wall of buildings (1-2 cell slits count as wall) the infill builds
+## or joins, along a band's front line and beside every lane of its chunk,
+## before it leaves an opening of at least INFILL_PASSAGE cells: N = 24 cells
+## (1536 px, about one and a quarter gameplay screens). Original lots alone
+## already make walls of up to 27 cells; the pass never extends one.
+const WALL_MAX := 24
+## Cells beside a lane edge in which buildings make that lane's wall.
+const WALL_WINDOW := 4
+## A wall beside a lane never runs across a chunk seam: the infill leaves the
+## first two cells and the last cell of a chunk unbuilt where a lane crosses
+## that seam, so every seam keeps an opening of INFILL_PASSAGE (2 + 1) cells
+## between the infill of the two chunks. Original lots never touch a seam cell
+## and come no nearer than one cell, and a wall that an original already
+## carries into those cells is never extended.
+const SEAM_LOW_OPEN := 2
+const SEAM_HIGH_OPEN := 1
+## Depth of the clear apron kept in front of every doorway.
+const DOOR_APRON := 4
 
 # Dense street frontage generator. Roads define bands, bands are divided into lots,
 # and every blank frontage is an intentional passage rather than an accidental field.
@@ -156,7 +173,17 @@ func _complete_service_frontage(cm: Node, chunk: Node2D, coord: Vector2i, bands:
 # Access corridors, lane contracts, road cells, plaza keepouts and objective
 # anchor boxes are keepouts, so their passages stay exactly as wide as before.
 # Infill lots are architecture only: no secondary objective, no loot, no local
-# encounter and no ambient spawn socket.
+# encounter, no ambient spawn socket and no exploration visit.
+#
+# Combat space: along a band's front line (its two front rows) the infill plans
+# its lots so that no wall of buildings - 1-2 cell slits count as wall - grows
+# past WALL_MAX cells, measuring the wall it would join across original lots,
+# slits and blocked columns, and leaves deliberate 3-cell openings instead.
+# Every lot then passes the same bound beside every lane of the chunk
+# (WALL_WINDOW cells from the lane edge, the corner lots of crossing bands
+# included), and keeps the lane's seam cells open, so no lane wall runs across
+# a chunk seam. Every opening the infill leaves is reserved for the rest of the
+# chunk's infill, and every doorway keeps a 3-wide, DOOR_APRON-deep apron.
 
 func _infill_cfg(cfg: Dictionary) -> Dictionary:
 	var infill := cfg.duplicate(true)
@@ -175,7 +202,8 @@ func _infill_cfg(cfg: Dictionary) -> Dictionary:
 ## dropped for not fitting the chunk). Inside bands keep the original margin, so
 ## infill shares the original lots' front line. Clipped bands keep the chunk's
 ## seam ring open and, when shallow, give up street setback (2 -> 1 -> 0 cells)
-## before giving up the band. Bands on a through arm run to the chunk seam.
+## before giving up the band. Bands on a through arm run to the chunk seam's
+## open cells.
 func _infill_street_bands(cm: Node, chunk: Node2D, coord: Vector2i, bands: Array[Dictionary], lane_rect_h: Rect2i, lane_rect_v: Rect2i, keepouts: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, extent: Rect2i) -> void:
 	var cpc: int = extent.size.x
 	var rng := RandomNumberGenerator.new()
@@ -185,6 +213,7 @@ func _infill_street_bands(cm: Node, chunk: Node2D, coord: Vector2i, bands: Array
 	for box: Rect2i in cfg.get("infill_reserved", []):
 		reserved.append(box)
 	var infill_cfg := _infill_cfg(cfg)
+	var lane_walls := _lane_walls(lane_rect_h, lane_rect_v, cpc)
 	# The accepted S2 service-lane homes are pinned fixtures (exactly one home
 	# per lane); their infill stays shops, workshops and passages.
 	var allow_row_house := not bool(cfg.get("complete_service_frontage", false))
@@ -202,14 +231,16 @@ func _infill_street_bands(cm: Node, chunk: Node2D, coord: Vector2i, bands: Array
 				if _infill_depth(usable, door_dir) >= INFILL_MIN_DEPTH:
 					break
 				usable = _infill_grow_front(usable, door_dir)
-		_infill_band(cm, chunk, coord, usable, door_dir, door_dir, keepouts, reserved, placed, infill_cfg, rng, extent, allow_row_house)
+		_infill_band(cm, chunk, coord, usable, door_dir, keepouts, reserved, placed, infill_cfg, rng, extent, allow_row_house, lane_walls)
 
 
-## Courtyard rings: an original band keeps its geometry and alignment; a ring
-## too thin for an original band starts at the court keepout itself (one row
-## closer) so a 6-deep lot can complete the block. Rings facing a road
-## neighbour open toward it (front_dirs, plan data only).
-func _infill_courtyard(cm: Node, chunk: Node2D, coord: Vector2i, court: Rect2i, keepouts: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, extent: Rect2i, front_dirs: Array) -> void:
+## Courtyard rings: an original band keeps its geometry; a ring too thin for an
+## original band starts at the court keepout itself (one row closer) so a
+## 6-deep lot can complete the block. Doors face the court like the original
+## ring lots: a neighbouring street lies behind that chunk's own frontage band
+## (lane centres are hashed to 11..21 of 32 cells), so an outward door would
+## open onto the backs of the next row.
+func _infill_courtyard(cm: Node, chunk: Node2D, coord: Vector2i, court: Rect2i, keepouts: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, extent: Rect2i) -> void:
 	var cpc: int = extent.size.x
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _mix_seed(int(cm.world_seed), coord.x, coord.y, INFILL_SALT)
@@ -220,10 +251,8 @@ func _infill_courtyard(cm: Node, chunk: Node2D, coord: Vector2i, court: Rect2i, 
 		if rect.size.x < INFILL_MIN_DEPTH or rect.size.y < INFILL_MIN_DEPTH:
 			continue
 		var inward: Vector2i = ring.door_dir
-		var door: Vector2i = -inward if front_dirs.has(-inward) else inward
-		var align: Vector2i = inward if bool(ring.original) else door
-		var usable := _infill_band_rect(rect, align, 0, cpc, false, false)
-		_infill_band(cm, chunk, coord, usable, align, door, keepouts, no_reserved, placed, infill_cfg, rng, extent, true)
+		var usable := _infill_band_rect(rect, inward, 0, cpc, false, false)
+		_infill_band(cm, chunk, coord, usable, inward, keepouts, no_reserved, placed, infill_cfg, rng, extent, true, [])
 
 
 static func _courtyard_rings(court: Rect2i, cpc: int) -> Array[Dictionary]:
@@ -234,16 +263,16 @@ static func _courtyard_rings(court: Rect2i, cpc: int) -> Array[Dictionary]:
 	var east_x: int = court.end.x + 2
 	var east_w: int = maxi(0, cpc - east_x - 1)
 	var rings: Array[Dictionary] = []
-	rings.append({"rect": Rect2i(1, 1, cpc - 2, north_h), "door_dir": Vector2i(0, 1), "original": north_h >= 7})
+	rings.append({"rect": Rect2i(1, 1, cpc - 2, north_h), "door_dir": Vector2i(0, 1)})
 	if south_h >= 7:
-		rings.append({"rect": Rect2i(1, south_y, cpc - 2, south_h), "door_dir": Vector2i(0, -1), "original": true})
+		rings.append({"rect": Rect2i(1, south_y, cpc - 2, south_h), "door_dir": Vector2i(0, -1)})
 	else:
-		rings.append({"rect": Rect2i(1, south_y - 1, cpc - 2, south_h + 1), "door_dir": Vector2i(0, -1), "original": false})
-	rings.append({"rect": Rect2i(1, 1, west_w, cpc - 2), "door_dir": Vector2i(1, 0), "original": west_w >= 7})
+		rings.append({"rect": Rect2i(1, south_y - 1, cpc - 2, south_h + 1), "door_dir": Vector2i(0, -1)})
+	rings.append({"rect": Rect2i(1, 1, west_w, cpc - 2), "door_dir": Vector2i(1, 0)})
 	if east_w >= 7:
-		rings.append({"rect": Rect2i(east_x, 1, east_w, cpc - 2), "door_dir": Vector2i(-1, 0), "original": true})
+		rings.append({"rect": Rect2i(east_x, 1, east_w, cpc - 2), "door_dir": Vector2i(-1, 0)})
 	else:
-		rings.append({"rect": Rect2i(east_x - 1, 1, east_w + 1, cpc - 2), "door_dir": Vector2i(-1, 0), "original": false})
+		rings.append({"rect": Rect2i(east_x - 1, 1, east_w + 1, cpc - 2), "door_dir": Vector2i(-1, 0)})
 	return rings
 
 
@@ -261,6 +290,7 @@ func decorate_square_frame(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 	var half: int = int(cpc / 2.0)
 	var reserved: Array[Rect2i] = [square.grow(2), Rect2i(Vector2i(half - 5, half - 5), Vector2i(11, 11))]
 	var infill_cfg := _infill_cfg(cfg)
+	var lane_walls := _lane_walls(cfg.get("lane_rect_h", Rect2i()), cfg.get("lane_rect_v", Rect2i()), cpc)
 	var rings: Array[Dictionary] = [
 		{"rect": Rect2i(1, 1, cpc - 2, square.position.y - 3), "door_dir": Vector2i(0, 1)},
 		{"rect": Rect2i(1, square.end.y + 2, cpc - 2, cpc - 1 - (square.end.y + 2)), "door_dir": Vector2i(0, -1)},
@@ -273,7 +303,7 @@ func decorate_square_frame(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 			continue
 		var door: Vector2i = ring.door_dir
 		var usable := _infill_band_rect(rect, door, 0, cpc, false, false)
-		_infill_band(chunk_manager, chunk, coord, usable, door, door, keepout_rects, reserved, placed, infill_cfg, rng, extent, true)
+		_infill_band(chunk_manager, chunk, coord, usable, door, keepout_rects, reserved, placed, infill_cfg, rng, extent, true, lane_walls)
 	if placed.is_empty():
 		return placed
 	chunk.set_meta(&"_proc_framed_square", square)
@@ -287,17 +317,17 @@ func decorate_square_frame(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 
 ## Infill extent of one band: the margin-inset band, its depth axis clipped to
 ## [1, cpc-1) so the chunk's seam ring stays open, its frontage axis run to the
-## chunk edge on a through arm.
+## seam's open cells on a through arm.
 static func _infill_band_rect(rect: Rect2i, align: Vector2i, margin: int, cpc: int, seam_lo: bool, seam_hi: bool) -> Rect2i:
 	var usable := rect.grow(-margin)
 	if align.y != 0:
-		var x0: int = 0 if seam_lo else maxi(0, usable.position.x)
-		var x1: int = cpc if seam_hi else mini(cpc, usable.end.x)
+		var x0: int = SEAM_LOW_OPEN if seam_lo else maxi(0, usable.position.x)
+		var x1: int = cpc - SEAM_HIGH_OPEN if seam_hi else mini(cpc, usable.end.x)
 		var y0: int = maxi(usable.position.y, 1)
 		var y1: int = mini(usable.end.y, cpc - 1)
 		return Rect2i(x0, y0, x1 - x0, y1 - y0)
-	var top: int = 0 if seam_lo else maxi(0, usable.position.y)
-	var bottom: int = cpc if seam_hi else mini(cpc, usable.end.y)
+	var top: int = SEAM_LOW_OPEN if seam_lo else maxi(0, usable.position.y)
+	var bottom: int = cpc - SEAM_HIGH_OPEN if seam_hi else mini(cpc, usable.end.y)
 	var left: int = maxi(usable.position.x, 1)
 	var right: int = mini(usable.end.x, cpc - 1)
 	return Rect2i(left, top, right - left, bottom - top)
@@ -362,7 +392,48 @@ static func _infill_neighbour(placed: Array[Rect2i], usable: Rect2i, align: Vect
 	return Rect2i()
 
 
-func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align: Vector2i, door_dir: Vector2i, keepouts: Array[Rect2i], reserved: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, rng: RandomNumberGenerator, extent: Rect2i, allow_row_house: bool) -> void:
+## Every deliberate opening the chunk's infill has left so far (reserved for
+## the rest of its infill).
+static func _infill_openings(chunk: Node2D) -> Array[Rect2i]:
+	var openings: Array[Rect2i] = []
+	for rect: Variant in chunk.get_meta(&"_proc_infill_openings", []):
+		openings.append(rect as Rect2i)
+	return openings
+
+
+static func _reserve_opening(chunk: Node2D, rect: Rect2i) -> void:
+	if not rect.has_area():
+		return
+	var openings: Array = chunk.get_meta(&"_proc_infill_openings", [])
+	openings.append(rect)
+	chunk.set_meta(&"_proc_infill_openings", openings)
+	if mini(rect.size.x, rect.size.y) >= INFILL_PASSAGE:
+		var passages: Array = chunk.get_meta(&"_proc_frontage_passages", [])
+		passages.append(rect)
+		chunk.set_meta(&"_proc_frontage_passages", passages)
+
+
+## The clear apron of every doorway standing in the chunk: DOOR_APRON cells
+## outward from the door, three wide. The marker stands one cell outside its
+## door and records the outward direction; a marker without one gets the old
+## 3x3 threshold.
+static func _door_aprons(chunk: Node2D, cell_px: float) -> Array[Rect2i]:
+	var aprons: Array[Rect2i] = []
+	for child: Node in chunk.get_children():
+		if not (child is Marker2D and StringName(child.get_meta(&"spawn_socket_kind", &"")) == &"door"):
+			continue
+		var front := Vector2i(((child as Node2D).position / cell_px).floor())
+		var outward: Vector2i = child.get_meta(&"door_dir", Vector2i.ZERO)
+		if outward == Vector2i.ZERO:
+			aprons.append(Rect2i(front - Vector2i.ONE, Vector2i(3, 3)))
+			continue
+		var across := Vector2i(absi(outward.y), absi(outward.x))
+		var far := front + outward * (DOOR_APRON - 1)
+		aprons.append(Rect2i(front - across, Vector2i.ONE).merge(Rect2i(far + across, Vector2i.ONE)))
+	return aprons
+
+
+func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align: Vector2i, keepouts: Array[Rect2i], reserved: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, rng: RandomNumberGenerator, extent: Rect2i, allow_row_house: bool, lane_walls: Array) -> void:
 	var count: int = usable.size.x if align.y != 0 else usable.size.y
 	var max_depth: int = _infill_depth(usable, align)
 	if count < INFILL_MIN_LEN or max_depth < INFILL_MIN_DEPTH:
@@ -371,13 +442,12 @@ func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, alig
 	obstacles.append_array(keepouts)
 	obstacles.append_array(reserved)
 	obstacles.append_array(placed)
-	# Every doorway already standing (front and rear, original or infill)
-	# keeps a 3x3 threshold open in front of it.
-	var cell_px: float = float(cm.cell_size_px)
-	for child: Node in chunk.get_children():
-		if child is Marker2D and StringName(child.get_meta(&"spawn_socket_kind", &"")) == &"door":
-			var front := Vector2i(((child as Node2D).position / cell_px).floor())
-			obstacles.append(Rect2i(front - Vector2i.ONE, Vector2i(3, 3)))
+	obstacles.append_array(_infill_openings(chunk))
+	obstacles.append_array(_door_aprons(chunk, float(cm.cell_size_px)))
+	# A lane's seam cells stay open, so lots there keep their depth off them.
+	for wall: Dictionary in lane_walls:
+		for open: Rect2i in wall.open:
+			obstacles.append(open)
 	# One rasterized occupancy grid, then the free depth behind the front line
 	# per frontage column (cell lookups instead of rect tests per cell).
 	var size: int = extent.size.x
@@ -388,8 +458,18 @@ func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, alig
 		for y in range(clipped.position.y, clipped.end.y):
 			for x in range(clipped.position.x, clipped.end.x):
 				blocked[y * size + x] = 1
+	var houses := PackedByteArray()
+	houses.resize(size * size)
+	for rect: Rect2i in placed:
+		var clipped := rect.intersection(extent)
+		for y in range(clipped.position.y, clipped.end.y):
+			for x in range(clipped.position.x, clipped.end.x):
+				houses[y * size + x] = 1
 	var free := PackedInt32Array()
 	free.resize(count)
+	# The front line's wall: a building in either of the band's two front rows.
+	var built := PackedByteArray()
+	built.resize(count)
 	for t in count:
 		var depth := 0
 		while depth < max_depth:
@@ -398,6 +478,10 @@ func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, alig
 				break
 			depth += 1
 		free[t] = depth
+		for row in mini(2, max_depth):
+			var front := _infill_front_cell(usable, align, t, row)
+			if extent.has_point(front) and houses[front.y * size + front.x] != 0:
+				built[t] = 1
 	var at := 0
 	while at < count:
 		if free[at] < INFILL_MIN_DEPTH:
@@ -406,15 +490,221 @@ func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, alig
 		var run_start := at
 		while at < count and free[at] >= INFILL_MIN_DEPTH:
 			at += 1
-		_infill_run(cm, chunk, coord, usable, align, door_dir, run_start, at, free, keepouts, reserved, placed, cfg, rng, extent, allow_row_house)
+		_infill_run(cm, chunk, coord, usable, align, run_start, at, free, built, keepouts, reserved, placed, cfg, rng, extent, allow_row_house, lane_walls)
 
 
-## Tile one free run with attached lots. The run keeps one rear line (the
-## attached neighbour's depth, else 7-8) and a long run keeps one deliberate
-## 3-cell passage near its middle.
-func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align: Vector2i, door_dir: Vector2i, run_start: int, run_end: int, free: PackedInt32Array, keepouts: Array[Rect2i], reserved: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, rng: RandomNumberGenerator, extent: Rect2i, allow_row_house: bool) -> void:
-	var length: int = run_end - run_start
-	if length < INFILL_MIN_LEN:
+## Wall a lot at the start of a run would join: Vector2i(length, gap), the
+## stretch ending before `at` (1-2 cell slits included, its length counted to
+## the run) and the unbuilt columns between; length 0 when an opening or the
+## band end separates them (a band end at a seam is one).
+static func _wall_before(built: PackedByteArray, at: int) -> Vector2i:
+	var t := at - 1
+	var gap := 0
+	while t >= 0 and built[t] == 0 and gap < INFILL_PASSAGE:
+		gap += 1
+		t -= 1
+	if gap >= INFILL_PASSAGE or t < 0:
+		return Vector2i(0, gap)
+	var length := 0
+	var slit := 0
+	while t >= 0:
+		if built[t] != 0:
+			length += slit + 1
+			slit = 0
+		else:
+			slit += 1
+			if slit >= INFILL_PASSAGE:
+				break
+		t -= 1
+	return Vector2i(length + gap, gap)
+
+
+static func _wall_after(built: PackedByteArray, at: int) -> Vector2i:
+	var count := built.size()
+	var t := at
+	var gap := 0
+	while t < count and built[t] == 0 and gap < INFILL_PASSAGE:
+		gap += 1
+		t += 1
+	if gap >= INFILL_PASSAGE or t >= count:
+		return Vector2i(0, gap)
+	var length := 0
+	var slit := 0
+	while t < count:
+		if built[t] != 0:
+			length += slit + 1
+			slit = 0
+		else:
+			slit += 1
+			if slit >= INFILL_PASSAGE:
+				break
+		t += 1
+	return Vector2i(length + gap, gap)
+
+
+## The walls beside a chunk's lanes: per lane side, the WALL_WINDOW cells beside
+## the lane edge over the lane's length, and the seam cells kept open where
+## the lane meets a chunk seam.
+static func _lane_walls(lane_h: Rect2i, lane_v: Rect2i, cpc: int) -> Array:
+	var walls: Array = []
+	if lane_h.has_area():
+		for side in [-1, 1]:
+			var y0 := lane_h.position.y - WALL_WINDOW if side < 0 else lane_h.end.y
+			var window := Rect2i(lane_h.position.x, y0, lane_h.size.x, WALL_WINDOW).intersection(Rect2i(0, 0, cpc, cpc))
+			if not window.has_area():
+				continue
+			var opens: Array[Rect2i] = []
+			if lane_h.position.x == 0:
+				opens.append(Rect2i(0, window.position.y, SEAM_LOW_OPEN, window.size.y))
+			if lane_h.end.x == cpc:
+				opens.append(Rect2i(cpc - SEAM_HIGH_OPEN, window.position.y, SEAM_HIGH_OPEN, window.size.y))
+			walls.append({"window": window, "along_x": true, "open": opens})
+	if lane_v.has_area():
+		for side in [-1, 1]:
+			var x0 := lane_v.position.x - WALL_WINDOW if side < 0 else lane_v.end.x
+			var window := Rect2i(x0, lane_v.position.y, WALL_WINDOW, lane_v.size.y).intersection(Rect2i(0, 0, cpc, cpc))
+			if not window.has_area():
+				continue
+			var opens: Array[Rect2i] = []
+			if lane_v.position.y == 0:
+				opens.append(Rect2i(window.position.x, 0, window.size.x, SEAM_LOW_OPEN))
+			if lane_v.end.y == cpc:
+				opens.append(Rect2i(window.position.x, cpc - SEAM_HIGH_OPEN, window.size.x, SEAM_HIGH_OPEN))
+			walls.append({"window": window, "along_x": false, "open": opens})
+	return walls
+
+
+## A lot may stand only where every lane wall it joins (1-2 cell slits
+## bridged) stays within WALL_MAX and keeps clear of the lane's seam cells.
+static func _lane_walls_allow(lane_walls: Array, lot: Rect2i, placed: Array[Rect2i]) -> bool:
+	for wall: Dictionary in lane_walls:
+		var window: Rect2i = wall.window
+		if not window.intersects(lot):
+			continue
+		for open: Rect2i in wall.open:
+			if open.intersects(lot):
+				return false
+		var along_x: bool = wall.along_x
+		var origin: int = window.position.x if along_x else window.position.y
+		var covered := PackedByteArray()
+		covered.resize(window.size.x if along_x else window.size.y)
+		for rect: Rect2i in placed + [lot]:
+			var part := rect.intersection(window)
+			if not part.has_area():
+				continue
+			var from: int = (part.position.x if along_x else part.position.y) - origin
+			var to: int = (part.end.x if along_x else part.end.y) - origin
+			for index in range(from, to):
+				covered[index] = 1
+		var lot_part := lot.intersection(window)
+		var first: int = (lot_part.position.x if along_x else lot_part.position.y) - origin
+		var last: int = (lot_part.end.x if along_x else lot_part.end.y) - origin - 1
+		var gap := 0
+		var t := first - 1
+		while t >= 0:
+			if covered[t] != 0:
+				first = t
+				gap = 0
+			else:
+				gap += 1
+				if gap > 2:
+					break
+			t -= 1
+		gap = 0
+		t = last + 1
+		while t < covered.size():
+			if covered[t] != 0:
+				last = t
+				gap = 0
+			else:
+				gap += 1
+				if gap > 2:
+					break
+			t += 1
+		if last - first + 1 > WALL_MAX:
+			return false
+		# A wall an original lot already carries next to a seam may continue in
+		# the neighbouring chunk: never lengthen it.
+		for open: Rect2i in wall.open:
+			var span := Rect2i(origin + first, window.position.y, last - first + 1, window.size.y) if along_x else Rect2i(window.position.x, origin + first, window.size.x, last - first + 1)
+			for rect: Rect2i in placed:
+				if rect.intersects(open) and rect.intersects(span):
+					return false
+	return true
+
+
+## Building segments for the free run [start, end): the fewest attached
+## segments, 3-cell openings between them, such that no wall exceeds
+## WALL_MAX with the walls `before` and `after` the run joined (lengths
+## including the gaps; 0 when an opening separates them). A wall that leaves
+## no room for a 6-cell lot gets an opening next to it first. When the run
+## cannot be filled whole, one segment stands against one side with an
+## opening toward the other.
+static func _infill_segments(start: int, end: int, before: Vector2i, after: Vector2i, rng: RandomNumberGenerator) -> Array[Vector2i]:
+	var segments: Array[Vector2i] = []
+	var carry_lo := before.x
+	var carry_hi := after.x
+	if carry_lo > 0 and carry_lo + INFILL_MIN_LEN > WALL_MAX:
+		start += INFILL_PASSAGE - before.y
+		carry_lo = 0
+	if carry_hi > 0 and carry_hi + INFILL_MIN_LEN > WALL_MAX:
+		end -= INFILL_PASSAGE - after.y
+		carry_hi = 0
+	var span := end - start
+	if span < INFILL_MIN_LEN:
+		return segments
+	for k in range(1, 9):
+		var walls := span - INFILL_PASSAGE * (k - 1)
+		if walls < k * INFILL_MIN_LEN:
+			break
+		var caps: Array[int] = []
+		var total := 0
+		for index in k:
+			var cap := WALL_MAX
+			if index == 0:
+				cap -= carry_lo
+			if index == k - 1:
+				cap -= carry_hi
+			caps.append(cap)
+			total += cap
+		if caps.min() < INFILL_MIN_LEN or walls > total:
+			continue
+		var lengths: Array[int] = []
+		for index in k:
+			lengths.append(INFILL_MIN_LEN)
+		var extra := walls - k * INFILL_MIN_LEN
+		while extra > 0:
+			for index in k:
+				if extra > 0 and lengths[index] < caps[index]:
+					lengths[index] += 1
+					extra -= 1
+		for index in range(k - 1):
+			var low := maxi(INFILL_MIN_LEN - lengths[index], lengths[index + 1] - caps[index + 1])
+			var high := mini(caps[index] - lengths[index], lengths[index + 1] - INFILL_MIN_LEN)
+			var shift := clampi(rng.randi_range(-2, 2), low, high)
+			lengths[index] += shift
+			lengths[index + 1] -= shift
+		var cursor := start
+		for length: int in lengths:
+			segments.append(Vector2i(cursor, cursor + length))
+			cursor += length + INFILL_PASSAGE
+		return segments
+	var against_lo := mini(WALL_MAX - carry_lo, span - (INFILL_PASSAGE if carry_hi > 0 else 0))
+	if against_lo >= INFILL_MIN_LEN:
+		segments.append(Vector2i(start, start + against_lo))
+		return segments
+	var against_hi := mini(WALL_MAX - carry_hi, span - (INFILL_PASSAGE if carry_lo > 0 else 0))
+	if against_hi >= INFILL_MIN_LEN:
+		segments.append(Vector2i(end - against_hi, end))
+	return segments
+
+
+## Fill one free run with attached lots in wall-bounded segments. The run keeps
+## one rear line (the attached neighbour's depth, else 7-8). The run's
+## columns between segments, and next to a wall it may not join, are
+## reserved openings.
+func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align: Vector2i, run_start: int, run_end: int, free: PackedInt32Array, built: PackedByteArray, keepouts: Array[Rect2i], reserved: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, rng: RandomNumberGenerator, extent: Rect2i, allow_row_house: bool, lane_walls: Array) -> void:
+	if run_end - run_start < INFILL_MIN_LEN:
 		return
 	var count: int = usable.size.x if align.y != 0 else usable.size.y
 	var left := _infill_neighbour(placed, usable, align, run_start - 1, count)
@@ -426,18 +716,20 @@ func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align
 		run_depth = right.size.y if align.y != 0 else right.size.x
 	else:
 		run_depth = rng.randi_range(7, 8)
-	var segments: Array[Vector2i] = [Vector2i(run_start, run_end)]
-	if length >= INFILL_PASSAGE_RUN:
-		@warning_ignore("integer_division")
-		var mid: int = run_start + (length - INFILL_PASSAGE) / 2 + rng.randi_range(-2, 2)
-		mid = clampi(mid, run_start + INFILL_MIN_LEN, run_end - INFILL_MIN_LEN - INFILL_PASSAGE)
-		segments = [Vector2i(run_start, mid), Vector2i(mid + INFILL_PASSAGE, run_end)]
-		var passages: Array = chunk.get_meta(&"_proc_frontage_passages", [])
-		passages.append(_infill_lot(usable, align, mid, INFILL_PASSAGE, mini(run_depth, _infill_depth(usable, align))))
-		chunk.set_meta(&"_proc_frontage_passages", passages)
+	var segments := _infill_segments(run_start, run_end, _wall_before(built, run_start), _wall_after(built, run_end), rng)
+	# Run columns left open: before, between and after the segments.
+	var open_from := run_start
+	for segment: Vector2i in segments + [Vector2i(run_end, run_end)]:
+		if segment.x > open_from:
+			var shallowest := free[open_from]
+			for index in range(open_from, segment.x):
+				shallowest = mini(shallowest, free[index])
+			_reserve_opening(chunk, _infill_lot(usable, align, open_from, segment.x - open_from, mini(run_depth, shallowest)))
+		open_from = segment.y
 	var blockers: Array[Rect2i] = []
 	blockers.append_array(keepouts)
 	blockers.append_array(reserved)
+	blockers.append_array(_infill_openings(chunk))
 	for segment: Vector2i in segments:
 		var cursor: int = segment.x
 		var remaining: int = segment.y - segment.x
@@ -453,18 +745,21 @@ func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align
 			var depth: int = clampi(run_depth, INFILL_MIN_DEPTH, avail)
 			var lot := _infill_lot(usable, align, cursor, lot_len, depth)
 			var usage := _infill_usage(rng, lot_len, depth, allow_row_house)
-			# A doorway must open onto ground, never into a neighbour's wall; a
-			# walk-through passage whose rear would be walled keeps one door.
-			if _rect_can_place(lot, extent, blockers, placed) and _infill_threshold_clear(lot, door_dir, placed, extent):
-				if usage == &"passage" and not _infill_threshold_clear(lot, -door_dir, placed, extent):
+			# A doorway must open onto ground, never toward a neighbour's wall;
+			# a walk-through passage whose rear would be walled keeps one door.
+			if _rect_can_place(lot, extent, blockers, placed) and _infill_threshold_clear(lot, align, placed, extent) and _lane_walls_allow(lane_walls, lot, placed):
+				if usage == &"passage" and not _infill_threshold_clear(lot, -align, placed, extent):
 					usage = &"shop"
-				_spawn_building_rect(cm, chunk, coord, lot, door_dir, usage, keepouts, placed, cfg, rng, extent)
+				if _spawn_building_rect(cm, chunk, coord, lot, align, usage, keepouts, placed, cfg, rng, extent):
+					for index in range(cursor, cursor + lot_len):
+						built[index] = 1
 			cursor += lot_len
 			remaining -= lot_len
 
 
-## The three cells in front of the doorway `_spawn_building_rect` would cut on
-## side `dir` of `lot` are inside the chunk and outside every building.
+## The DOOR_APRON cells in front of the doorway `_spawn_building_rect` would cut
+## on side `dir` of `lot`, three wide, are inside the chunk and outside every
+## building.
 static func _infill_threshold_clear(lot: Rect2i, dir: Vector2i, placed: Array[Rect2i], extent: Rect2i) -> bool:
 	var center := Vector2i(lot.position.x + int(round(float(lot.size.x - 1) * 0.5)), lot.position.y + int(round(float(lot.size.y - 1) * 0.5)))
 	var door := Vector2i.ZERO
@@ -477,13 +772,14 @@ static func _infill_threshold_clear(lot: Rect2i, dir: Vector2i, placed: Array[Re
 	else:
 		door = Vector2i(lot.position.x, center.y)
 	var across := Vector2i(absi(dir.y), absi(dir.x))
-	for step in range(-1, 2):
-		var cell := door + dir + across * step
-		if not extent.has_point(cell):
-			return false
-		for other: Rect2i in placed:
-			if other.has_point(cell):
+	for step in range(1, DOOR_APRON + 1):
+		for side in range(-1, 2):
+			var cell := door + dir * step + across * side
+			if not extent.has_point(cell):
 				return false
+			for other: Rect2i in placed:
+				if other.has_point(cell):
+					return false
 	return true
 
 
@@ -499,12 +795,13 @@ static func _infill_usage(rng: RandomNumberGenerator, lot_len: int, depth: int, 
 
 
 ## East/west party walls shared with lots already standing (at least two cells
-## of common wall), as RoofOverlay direction bits.
+## of common wall and the same front edge, so the joined facade run stays on
+## one line), as RoofOverlay direction bits.
 static func _party_edges(rect: Rect2i, placed: Array[Rect2i]) -> int:
 	var edges := 0
 	for other: Rect2i in placed:
 		var overlap: int = mini(other.end.y, rect.end.y) - maxi(other.position.y, rect.position.y)
-		if overlap < 2:
+		if overlap < 2 or other.end.y != rect.end.y:
 			continue
 		if other.end.x == rect.position.x:
 			edges |= _DIR_W
@@ -592,11 +889,6 @@ func decorate_urban_fill(
 	fill_cfg["parcel_building_margin_cells"] = 0
 	fill_cfg["parcel_loot_chance"] = float(cfg.get("urban_fill_loot_chance", 0.18))
 	fill_cfg["local_encounter_enabled"] = false
-	# A ring whose neighbour is a road chunk presents its doors to that street
-	# (plan data only). Rectangular lots keep their exact rect, identity, loot
-	# and RNG draws; only the doorway side turns. L halls keep the inward door
-	# because their window rolls depend on the footprint orientation.
-	var front_dirs: Array = cfg.get("urban_fill_front_dirs", [])
 
 	for band_variant in bands:
 		var band_data: Dictionary = band_variant as Dictionary
@@ -604,11 +896,10 @@ func decorate_urban_fill(
 		var door_dir: Vector2i = band_data.get("door_dir", Vector2i.ZERO) as Vector2i
 		if not _rect_inside_chunk(band, chunk_rect):
 			continue
-		var street_door := -door_dir if front_dirs.has(-door_dir) else Vector2i.ZERO
-		_fill_frontage_band(chunk_manager, chunk, coord, band, door_dir, keepouts, placed, fill_cfg, rng, chunk_rect, false, street_door)
+		_fill_frontage_band(chunk_manager, chunk, coord, band, door_dir, keepouts, placed, fill_cfg, rng, chunk_rect, false)
 
 	if bool(cfg.get("street_continuity", false)):
-		_infill_courtyard(chunk_manager, chunk, coord, courtyard, keepouts, placed, fill_cfg, chunk_rect, front_dirs)
+		_infill_courtyard(chunk_manager, chunk, coord, courtyard, keepouts, placed, fill_cfg, chunk_rect)
 
 	_decorate_courtyard_props(chunk_manager, chunk, courtyard, passage_dirs, rng)
 	if bool(fill_cfg.get("city_block_style", false)):
@@ -710,8 +1001,7 @@ func _fill_frontage_band(
 	cfg: Dictionary,
 	rng: RandomNumberGenerator,
 	chunk_rect: Rect2i,
-	force_one: bool,
-	street_door: Vector2i = Vector2i.ZERO
+	force_one: bool
 ) -> bool:
 	var margin: int = maxi(0, int(cfg.get("parcel_building_margin_cells", 1)))
 	var usable: Rect2i = band.grow(-margin)
@@ -777,10 +1067,7 @@ func _fill_frontage_band(
 		if irregular:
 			spawned = _spawn_building_footprint(chunk_manager, chunk, coord, build_rect, door_dir, template, keepout_rects, placed, cfg, rng, chunk_rect)
 		else:
-			# The lot keeps its band alignment (rect, identity, RNG); a
-			# street-facing courtyard ring only moves the doorway outward.
-			var lot_door: Vector2i = street_door if street_door != Vector2i.ZERO else door_dir
-			spawned = _spawn_building_rect(chunk_manager, chunk, coord, build_rect, lot_door, template, keepout_rects, placed, cfg, rng, chunk_rect)
+			spawned = _spawn_building_rect(chunk_manager, chunk, coord, build_rect, door_dir, template, keepout_rects, placed, cfg, rng, chunk_rect)
 		if spawned:
 			made_any = true
 			coverage += lot_len
@@ -939,6 +1226,7 @@ func _spawn_building_rect(
 		if spawn_socket:
 			door_socket.add_to_group(&"enemy_spawn_socket")
 		door_socket.set_meta("spawn_socket_kind", &"door")
+		door_socket.set_meta(&"door_dir", entrance_dir)
 		chunk.add_child(door_socket)
 
 	var configured_secondary_id: int = int(cfg.get("secondary_objective_id", 0))
@@ -976,6 +1264,7 @@ func _spawn_building_rect(
 				volume.configure(global_tl, interior.size, int(chunk_manager.cell_size_px), building_id, loot_cfg)
 				if bool(cfg.get("city_street_infill", false)):
 					volume.set_meta(&"city_street_infill", true)
+					volume.visit_counts_as_exploration = false
 				chunk.add_child(volume)
 				var entry_perp := Vector2(-door_dir.y, door_dir.x)
 				var entry_center := Vector2(door_pos) + Vector2(0.5, 0.5) + entry_perp * (float(door_w - 1) * 0.5 - float(door_w >> 1))
@@ -1141,6 +1430,7 @@ func _spawn_building_footprint(
 	door_socket.position = (Vector2(door_pos + door_dir) + Vector2(0.5, 0.5)) * float(cell_px)
 	door_socket.add_to_group(&"enemy_spawn_socket")
 	door_socket.set_meta("spawn_socket_kind", &"door")
+	door_socket.set_meta(&"door_dir", door_dir)
 	chunk.add_child(door_socket)
 
 	# Two indoor volumes tile the open interior exactly (wing A's grow(-1)
