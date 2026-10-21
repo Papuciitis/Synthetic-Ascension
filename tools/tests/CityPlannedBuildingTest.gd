@@ -14,7 +14,7 @@ func _run() -> void:
 		var seen_roles: Dictionary = {}
 		for coord: Vector2i in plan.role_by_chunk:
 			var role: StringName = plan.role_by_chunk[coord]
-			if role not in [&"secondary_reward_building",&"secondary_route",&"service_lane",&"district_fill",&"dangerous_alley",&"main_route"] or seen_roles.has(role): continue
+			if role not in [&"secondary_reward_building",&"secondary_route",&"service_lane",&"district_fill",&"dangerous_alley",&"main_street"] or seen_roles.has(role): continue
 			seen_roles[role] = true
 			var manager := ChunkManager.new()
 			theme.apply_to_chunk_manager(manager)
