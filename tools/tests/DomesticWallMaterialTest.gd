@@ -40,7 +40,7 @@ func _run() -> void:
 	var original_kinds := domestic.blocker_kind_code.duplicate()
 	var original_masks := domestic.blocker_mask.duplicate()
 	var original_variants := domestic.blocker_variant.duplicate()
-	var context := {"segment":2,"usage":&"row_house","civic":false,"building_id":944996572,"visual_seed":944996572}
+	var context := {"segment":2,"usage":&"row_house","civic":false,"building_id":944996572,"visual_seed":944996572,"roof_material":&"clay"}
 	_adapter.call("mark_walls",domestic,cells,context)
 	_check(domestic.blocker_kind_code == original_kinds and domestic.blocker_mask == original_masks,"Domestic material changes no physical wall/window cells or connection masks")
 	for cell: Vector2i in cells:
@@ -57,20 +57,40 @@ func _run() -> void:
 	sensitive_context.small_count_max = 2
 	_adapter.call("mark_walls",reward_sensitive,cells,sensitive_context)
 	_check(reward_sensitive.blocker_variant != civic_before,"Multi-item household can retain domestic wall presentation while furnishing is excluded")
-	for segment: int in [1,3]:
-		var other_segment := _wall_fixture(Vector2i(2,0))
-		var before := other_segment.blocker_variant.duplicate()
-		excluded = context.duplicate()
-		excluded.segment = segment
-		_adapter.call("mark_walls",other_segment,cells,excluded)
-		_check(other_segment.blocker_variant == before,"S1 and reviewed S3 architecture retain their existing material ownership")
-	for usage: StringName in [&"workshop",&"shop",&"passage"]:
-		var nonhome := _wall_fixture(Vector2i(2,0))
-		var before := nonhome.blocker_variant.duplicate()
-		excluded = context.duplicate()
-		excluded.usage = usage
-		_adapter.call("mark_walls",nonhome,cells,excluded)
-		_check(nonhome.blocker_variant == before,"Noncivic "+String(usage)+" keeps its own masonry")
+	var authored := _wall_fixture(Vector2i(2,0))
+	var authored_before := authored.blocker_variant.duplicate()
+	excluded = context.duplicate()
+	excluded.segment = 1
+	_adapter.call("mark_walls",authored,cells,excluded)
+	_check(authored.blocker_variant == authored_before,"The authored S1 Institution retains its own material ownership")
+	# Warm cutaway walls follow the warm (clay-roofed) plaster frontage of any
+	# ordinary non-civic building in every city segment, not only S2 homes.
+	for segment: int in [2,3,4,7,10,11]:
+		for usage: StringName in [&"row_house",&"workshop",&"shop",&"passage"]:
+			var warm := _wall_fixture(Vector2i(2,0))
+			var warm_before := warm.blocker_variant.duplicate()
+			var warm_context := context.duplicate()
+			warm_context.segment = segment
+			warm_context.usage = usage
+			_adapter.call("mark_walls",warm,cells,warm_context)
+			_check(warm.blocker_kind_code == authored.blocker_kind_code and warm.blocker_mask == authored.blocker_mask,"Warm cutaway material changes no physical cell in S%d %s" % [segment,usage])
+			var marked := true
+			for cell: Vector2i in cells:
+				var original := int(warm_before[warm._index(cell)])
+				marked = marked and (warm.variant_at(cell)&ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE) != 0 and (warm.variant_at(cell)&original) == original
+			_check(marked,"Clay-roofed S%d %s cutaway walls match its warm plaster frontage" % [segment,usage])
+			var pale := _wall_fixture(Vector2i(2,0))
+			var pale_before := pale.blocker_variant.duplicate()
+			var pale_context := warm_context.duplicate()
+			pale_context.roof_material = &"slate"
+			_adapter.call("mark_walls",pale,cells,pale_context)
+			_check(pale.blocker_variant == pale_before,"Slate-roofed (pale ashlar) S%d %s keeps city stone" % [segment,usage])
+	var unknown := _wall_fixture(Vector2i(2,0))
+	var unknown_before := unknown.blocker_variant.duplicate()
+	excluded = context.duplicate()
+	excluded.erase("roof_material")
+	_adapter.call("mark_walls",unknown,cells,excluded)
+	_check(unknown.blocker_variant == unknown_before,"A building without a known warm frontage keeps city stone")
 	var host := Node2D.new()
 	add_child(host)
 	var renderer := ChunkBlockRenderer.new()

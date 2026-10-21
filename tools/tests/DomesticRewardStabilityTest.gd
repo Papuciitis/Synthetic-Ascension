@@ -17,10 +17,9 @@ func _run() -> void:
 	dummy.add_to_group(&"player")
 	add_child(dummy)
 	Global.attempt_segment = 2
-	for sample: Dictionary in [
-		{"seed":16102026,"coord":Vector2i(0,3),"id":944996572},
-		{"seed":17,"coord":Vector2i(-3,5),"id":2128236757},
-	]:
+	# Both reviewed S2 households plus furnished homes in later segments: the
+	# household fit must leave every seeded reward identity untouched there too.
+	for sample: Dictionary in HOME_FIXTURES:
 		await _check_reward_owner(sample)
 	Global.attempt_segment = previous_segment
 	Global.attempt_world_seed = previous_seed
@@ -48,8 +47,9 @@ func _owner(kit: Node2D, building_id: int) -> IndoorVolume:
 
 
 func _check_reward_owner(sample: Dictionary) -> void:
+	Global.attempt_segment = int(sample.get("segment",2))
 	Global.attempt_world_seed = int(sample.seed)
-	var manager: ChunkManager = _manager(int(sample.seed))
+	var manager: ChunkManager = _manager(int(sample.seed),int(sample.get("segment",2)))
 	var coord: Vector2i = sample.coord
 	var chunk: Node2D = manager._create_chunk(coord)
 	manager._chunks[coord] = chunk
@@ -92,7 +92,7 @@ func _check_reward_owner(sample: Dictionary) -> void:
 	_check(factory_baseline.run_state == factory_furnished.run_state,"Single-item factory manifestation RNG consumption is unchanged")
 	_check(_rights(volume) == rights_before,"Furniture comparison changes no building ID, reward range, encounter policy or exploration rights")
 	_check(manager._blocked_cells == blocked_before and manager._near_blockers == broad_before,"Synchronous baseline sampling switch restores all blocker/broad-phase state")
-	print("DomesticRewardStabilityTest evidence: "+JSON.stringify({"seed":sample.seed,"building_id":sample.id,"actual_before":baseline,"actual_furnished":furnished,"factory_before":factory_baseline,"factory_furnished":factory_furnished,"limits":"Baseline disables only six new grid exclusions synchronously, because production loot placement queries walkability, not physics. No frame or physics movement occurs during the switch. Production chance and claim path run separately from the guaranteed factory control; pickup positions may differ."}))
+	print("DomesticRewardStabilityTest evidence: "+JSON.stringify({"segment":int(sample.get("segment",2)),"seed":sample.seed,"building_id":sample.id,"actual_before":baseline,"actual_furnished":furnished,"factory_before":factory_baseline,"factory_furnished":factory_furnished,"limits":"Baseline disables only six new grid exclusions synchronously, because production loot placement queries walkability, not physics. No frame or physics movement occurs during the switch. Production chance and claim path run separately from the guaranteed factory control; pickup positions may differ."}))
 	Global.attempt_claimed_loot_ids = claims
 	Global._claimed_loot_set = claim_set
 	Global._rng.state = run_state

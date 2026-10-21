@@ -7,6 +7,17 @@ const ASSETS := {
 	&"cot": {"path":"res://assets/world/domestic_interiors/v1/timber_cot.png", "anchor":Vector2(530,1345), "scale":60.0/632.0, "ground":Rect2(215,230,632,1129)},
 	&"hearth": {"path":"res://assets/world/domestic_interiors/v1/cooking_hearth.png", "anchor":Vector2(800,805), "scale":120.0/1465.0, "ground":Rect2(69,265,1465,554)},
 }
+## Actual kept homes: the two reviewed S2 households plus ordinary homes from
+## later segments, now furnished too (S3 checkpoint, S4 civilian cut-through,
+## S8 military staging and the S11+ service-courtyard fallback).
+const HOME_FIXTURES := [
+	{"seed":16102026,"coord":Vector2i(0,3),"id":944996572},
+	{"seed":17,"coord":Vector2i(-3,5),"id":2128236757},
+	{"segment":3,"seed":16102026,"coord":Vector2i(0,0),"id":850061339},
+	{"segment":4,"seed":16102028,"coord":Vector2i(-1,-2),"id":860254754},
+	{"segment":8,"seed":16102026,"coord":Vector2i(-5,-17),"id":1242565738},
+	{"segment":11,"seed":16102026,"coord":Vector2i(2,-3),"id":962663248},
+]
 var _adapter: GDScript
 var _passed := 0
 var _failed := 0
@@ -43,10 +54,7 @@ func _run() -> void:
 	dummy.add_to_group(&"player")
 	add_child(dummy)
 	Global.attempt_segment = 2
-	for fixture: Dictionary in [
-		{"seed":16102026,"coord":Vector2i(0,3),"id":944996572},
-		{"seed":17,"coord":Vector2i(-3,5),"id":2128236757},
-	]:
+	for fixture: Dictionary in HOME_FIXTURES:
 		await _test_actual_home(fixture)
 	dummy.free()
 	Global.attempt_segment = previous_segment
@@ -107,11 +115,17 @@ func _test_plan() -> void:
 	untended.visual_seed = 944996575
 	var untended_layout: Array = _adapter.call("plan",untended)
 	_check(not untended_layout.is_empty(), "Untended exterior variant alone does not reclassify an actual dwelling as uninhabited")
-	for change: Dictionary in [{"segment":1},{"segment":3},{"civic":true},{"usage":&"workshop"},{"usage":&"shop"},{"usage":&"passage"},{"usage":&"service_annex"}]:
+	for change: Dictionary in [{"segment":1},{"civic":true},{"usage":&"workshop"},{"usage":&"shop"},{"usage":&"passage"},{"usage":&"service_annex"}]:
 		var excluded := context.duplicate(true)
 		excluded.merge(change,true)
 		var excluded_layout: Array = _adapter.call("plan",excluded)
 		_check(excluded_layout.is_empty(), "Household dressing excludes noneligible ownership " + str(change))
+	# Ordinary homes are furnished in every city segment (S2..S10 and the S11+
+	# fallback); the fit depends only on the home itself, never the segment.
+	for segment: int in [3,4,5,6,7,8,9,10,11,14]:
+		var later := context.duplicate(true)
+		later.segment = segment
+		_check(var_to_str(_adapter.call("plan",later)) == var_to_str(layout), "Ordinary S%d home receives the same household fit" % segment)
 	var tiny := context.duplicate(true)
 	tiny.floor_cells = {Vector2i(8,15):true}
 	tiny.protected_cells = {Vector2i(8,15):true}
@@ -191,9 +205,9 @@ func _flood(available: Dictionary, start: Vector2i) -> Dictionary:
 	return reached
 
 
-func _manager(attempt_seed: int) -> ChunkManager:
-	var theme := SegmentThemePicker.get_theme(2,attempt_seed)
-	var plan := DistrictPlan.generate(2,attempt_seed,2048,theme)
+func _manager(attempt_seed: int, segment: int = 2) -> ChunkManager:
+	var theme := SegmentThemePicker.get_theme(segment,attempt_seed)
+	var plan := DistrictPlan.generate(segment,attempt_seed,2048,theme)
 	var manager := ChunkManager.new()
 	theme.apply_to_chunk_manager(manager)
 	manager.generation_enabled = false
@@ -229,7 +243,8 @@ func _find_kit(chunk: Node2D, building_id: int) -> Node2D:
 
 
 func _test_actual_home(sample: Dictionary) -> void:
-	var manager := _manager(int(sample.seed))
+	Global.attempt_segment = int(sample.get("segment",2))
+	var manager := _manager(int(sample.seed),int(sample.get("segment",2)))
 	var coord: Vector2i = sample.coord
 	var signature := ""
 	for generation in range(2):

@@ -14,10 +14,21 @@ const RUSH_MAT := "res://assets/world/domestic_interiors/rush_mat_v1/rush_mat.pn
 const MAT_ANCHOR := Vector2(519,765.5)
 const MAT_VISIBLE := Rect2(53,50,932,1431)
 const MAT_SCALE := 96.0/932.0
+## Cooking heat stays at least this far from the sleeping corner when it can.
+const SLEEP_HEAT_PX := 192.0
 
 
+## Ordinary procedural homes in every city segment (S2 onward, including the
+## S11+ fallback). Authored Institution/Hub interiors have their own owners.
 static func _eligible(context: Dictionary) -> bool:
-	return int(context.get("segment",0)) == 2 and StringName(context.get("usage",&"")) == &"row_house" and not bool(context.get("civic",true))
+	return int(context.get("segment",0)) >= 2 and StringName(context.get("usage",&"")) == &"row_house" and not bool(context.get("civic",true))
+
+
+## Warm rubble cutaway walls follow the warm (clay-roofed) plaster frontage of
+## any non-civic building, so a house reads as one construction inside and
+## out; slate-roofed (pale ashlar) houses and civic halls keep city stone.
+static func _stone_eligible(context: Dictionary) -> bool:
+	return int(context.get("segment",0)) >= 2 and not bool(context.get("civic",true)) and StringName(context.get("roof_material",&"")) == &"clay"
 
 
 static func _furniture_eligible(context: Dictionary) -> bool:
@@ -52,6 +63,8 @@ static func plan(context: Dictionary) -> Array[Dictionary]:
 			record["score"] = _score(kind,record,walls,center,int(context.get("visual_seed",0)),result)
 			candidates.append(record)
 		candidates.sort_custom(func(a: Dictionary,b: Dictionary) -> bool: return float(a.score) > float(b.score))
+		if kind == &"hearth":
+			candidates = _away_from_sleeping(candidates,result)
 		for record: Dictionary in candidates:
 			var remaining := floor_cells.duplicate()
 			for cell: Vector2i in occupied:
@@ -66,6 +79,24 @@ static func plan(context: Dictionary) -> Array[Dictionary]:
 				occupied[cell] = true
 			break
 	return result
+
+
+## Small homes split by their protected door corridor can score the hearth
+## right beside the cot. Prefer any legal fit at least SLEEP_HEAT_PX from the
+## sleeping corner (score order kept within each group); homes whose best fit
+## was already separated choose exactly the same hearth as before.
+static func _away_from_sleeping(candidates: Array[Dictionary], selected: Array[Dictionary]) -> Array[Dictionary]:
+	var cot: Dictionary = {}
+	for record: Dictionary in selected:
+		if record.kind == &"cot": cot = record
+	if cot.is_empty(): return candidates
+	var far: Array[Dictionary] = []
+	var near: Array[Dictionary] = []
+	for record: Dictionary in candidates:
+		if (record.contact_px as Vector2).distance_to(cot.contact_px) >= SLEEP_HEAT_PX: far.append(record)
+		else: near.append(record)
+	far.append_array(near)
+	return far
 
 
 static func _fit(kind: StringName, first: Vector2i, floor_cells: Dictionary, walls: Dictionary, protected: Dictionary, occupied: Dictionary, outline: PackedVector2Array) -> Dictionary:
@@ -174,7 +205,7 @@ static func context_for(kit: Node2D, data: ChunkBuildData, wall_cells: Dictionar
 					protected[cell] = true
 	if start.x >= 0:
 		floor_cells = _flood(floor_cells,start)
-	var context := {"segment":Global.attempt_segment,"usage":kit.get_meta(&"building_usage",&""),"civic":bool(kit.get("civic")),"building_id":building_id,"visual_seed":building_id,"cell_px":64,"footprint_px":outline,"doors":doors,"wall_cells":wall_cells,"floor_cells":floor_cells,"protected_cells":protected,"world_origin":kit.global_position}
+	var context := {"segment":Global.attempt_segment,"usage":kit.get_meta(&"building_usage",&""),"civic":bool(kit.get("civic")),"roof_material":kit.get_meta(&"city_roof_material",&""),"building_id":building_id,"visual_seed":building_id,"cell_px":64,"footprint_px":outline,"doors":doors,"wall_cells":wall_cells,"floor_cells":floor_cells,"protected_cells":protected,"world_origin":kit.global_position}
 	context.merge(_reward_policy(chunk,roof,building_id),true)
 	return context
 
@@ -204,7 +235,7 @@ static func _reward_policy(chunk: Node2D, roof: RoofOverlay, building_id: int) -
 
 
 static func mark_walls(data: ChunkBuildData, wall_cells: Dictionary, context: Dictionary) -> void:
-	if data == null or not _eligible(context):
+	if data == null or not _stone_eligible(context):
 		return
 	for cell: Vector2i in wall_cells:
 		if data.kind_at(cell) in [WorldBlockerGeometry.Kind.WALL,WorldBlockerGeometry.Kind.WINDOW]:
