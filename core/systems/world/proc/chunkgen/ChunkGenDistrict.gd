@@ -11,6 +11,11 @@ const _DIR_N: int = 1
 const _DIR_E: int = 2
 const _DIR_S: int = 4
 const _DIR_W: int = 8
+## Medieval street pass (2026-10-21): plaza roles drawn as irregular courts
+## (ChunkShapeGen.court_polygon) from their own salt. Objective, ward, gate,
+## checkpoint and arena plazas keep their shapes.
+const COURT_SHAPE_ROLES: Array[StringName] = [&"landmark_plaza", &"entry_court", &"exploration_reward"]
+const COURT_SHAPE_SALT := 9021
 # Auto-extracted from ChunkGenImpl.gd to keep the generator modular.
 # Do not keep state here; use the passed `gen` (ChunkGenImpl) as context.
 
@@ -264,6 +269,14 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				family = 0
 			var center := Vector2(plaza_rect.position) + Vector2(plaza_rect.size) * 0.5
 			var polygon: PackedVector2Array = ChunkShapeGen.plaza_polygon(rng_roads, center, float(plaza_size) * 0.5, family)
+			if role in COURT_SHAPE_ROLES and not boss_court.has_area():
+				# Medieval street pass: landmark, entry and reward squares are
+				# irregular courts, not the same round square at every crossing.
+				# The octagon/blob above still draws its rng_roads values, so the
+				# stream stays identical; the court comes from its own salt.
+				var court_rng := RandomNumberGenerator.new()
+				court_rng.seed = gen._mix_seed_int(base_seed, COURT_SHAPE_SALT)
+				polygon = ChunkShapeGen.court_polygon(court_rng, center, float(plaza_size) * 0.5)
 			plaza_cells = ChunkShapeGen.rasterize_polygon(polygon, bounds.grow(-2))
 			if frame_square:
 				var frame_box := Rect2i(Vector2i.ONE * (int(cells / 2.0) - 6), Vector2i(12, 12))

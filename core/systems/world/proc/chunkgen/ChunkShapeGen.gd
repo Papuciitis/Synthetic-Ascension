@@ -323,6 +323,43 @@ static func plaza_polygon(rng: RandomNumberGenerator, center: Vector2, half_size
 	return pts
 
 
+## Medieval street pass (2026-10-21): an irregular, asymmetric court instead
+## of the round octagon or blob. Four corners are pulled in independently
+## (0.68-1.0 of `half_size` on each axis) around a slightly off-centre point,
+## one corner may be cut, and one side is broken by a vertex pushed inward, as
+## if a house front stood forward into the square. The straight, unequal sides
+## read as a square that grew between buildings, never as a ceremonial ring.
+## The core within about 0.4 x `half_size` of `center` always stays inside.
+static func court_polygon(rng: RandomNumberGenerator, center: Vector2, half_size: float) -> PackedVector2Array:
+	var c := center + Vector2(rng.randf_range(-0.12, 0.12), rng.randf_range(-0.12, 0.12)) * half_size
+	var corners: Array[Vector2] = [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]
+	var reach: Array[Vector2] = []
+	for i in 4:
+		reach.append(Vector2(rng.randf_range(0.68, 1.0), rng.randf_range(0.68, 1.0)) * half_size)
+	var cut_corner := rng.randi_range(0, 7) # 4..7: no cut
+	var kink_side := rng.randi_range(0, 3)
+	var kink_at := rng.randf_range(0.35, 0.65)
+	var kink_depth := rng.randf_range(0.14, 0.26) * half_size
+	var cut := rng.randf_range(0.22, 0.34) * half_size
+	var pts := PackedVector2Array()
+	for i in 4:
+		var k: Vector2 = corners[i]
+		var corner := c + k * reach[i]
+		if i == cut_corner:
+			# Chamfer: one point along the incoming side, one along the outgoing.
+			var prev: Vector2 = c + corners[(i + 3) % 4] * reach[(i + 3) % 4]
+			var next: Vector2 = c + corners[(i + 1) % 4] * reach[(i + 1) % 4]
+			pts.append(corner + (prev - corner).normalized() * cut)
+			pts.append(corner + (next - corner).normalized() * cut)
+		else:
+			pts.append(corner)
+		if i == kink_side:
+			var next_corner: Vector2 = c + corners[(i + 1) % 4] * reach[(i + 1) % 4]
+			var along := corner.lerp(next_corner, kink_at)
+			pts.append(along + (c - along).normalized() * kink_depth)
+	return pts
+
+
 static func _missing(cells: Dictionary, rect: Rect2i) -> Dictionary:
 	var missing: Dictionary = {}
 	for y in range(rect.position.y, rect.end.y):

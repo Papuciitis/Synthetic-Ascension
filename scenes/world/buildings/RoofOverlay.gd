@@ -65,6 +65,9 @@ var footprint_outline_px := PackedVector2Array()
 ## East (2) / west (8) party walls shared with a neighbour already standing
 ## (street continuity infill). Set before configure().
 var party_edges: int = 0
+## Extra reach (west, east, px) of a party side over a closed one-cell slit
+## (SiteParcelsImpl._party_slit), so the joined group reads as one roof mass.
+var party_extra_px: Vector2 = Vector2.ZERO
 var _tween: Tween
 var _eave_shadow_px := EAVE_SHADOW_PX
 
@@ -105,8 +108,8 @@ func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, 
 	if textured_roofs():
 		# A party wall is not an eave: the roof runs over it to meet the
 		# neighbour's roof edge, so an attached row reads as one terrace.
-		var west := -ROOF_INSET_PX if (party_edges & 8) != 0 else ROOF_INSET_PX
-		var east := -ROOF_INSET_PX if (party_edges & 2) != 0 else ROOF_INSET_PX
+		var west := -(ROOF_INSET_PX + party_extra_px.x) if (party_edges & 8) != 0 else ROOF_INSET_PX
+		var east := -(ROOF_INSET_PX + party_extra_px.y) if (party_edges & 2) != 0 else ROOF_INSET_PX
 		var inner := Rect2(tl, sz).grow_individual(-west, -ROOF_INSET_PX, -east, -ROOF_INSET_PX)
 		_poly.polygon = PackedVector2Array([
 			inner.position, Vector2(inner.end.x, inner.position.y), inner.end, Vector2(inner.position.x, inner.end.y),

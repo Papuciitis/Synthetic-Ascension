@@ -41,6 +41,22 @@ const SEAM_LOW_OPEN := 2
 const SEAM_HIGH_OPEN := 1
 ## Depth of the clear apron kept in front of every doorway.
 const DOOR_APRON := 4
+## Medieval street pass (2026-10-21), new salts: 4905 the setback step of each
+## infill segment, 4906 the open outskirts, 4908 the open sides of a framed
+## square. Each is a stable hash of the world seed and a global cell, so no
+## generator, parcel, chunk or infill RNG draw changes.
+const FRONTAGE_SALT := 4905
+const EDGE_SALT := 4906
+const FRAME_SIDE_SALT := 4908
+## Setback steps of an infill segment relative to its band's front line, in
+## cells (positive steps back from the street): an attached run keeps one line,
+## the next segment or the original next door stands on another.
+const SETBACK_STEPS := [0, 1, -1]
+const SETBACK_WEIGHTS := [40, 35, 25]
+## Share (percent) of the district's outer courtyard rings (a ring of an
+## envelope block backing onto a chunk outside the district plan) whose infill
+## is left out, so the outskirts keep open ground and isolated houses.
+const EDGE_OPEN_PERCENT := 50
 
 # Dense street frontage generator. Roads define bands, bands are divided into lots,
 # and every blank frontage is an intentional passage rather than an accidental field.
@@ -251,6 +267,8 @@ func _infill_courtyard(cm: Node, chunk: Node2D, coord: Vector2i, court: Rect2i, 
 		if rect.size.x < INFILL_MIN_DEPTH or rect.size.y < INFILL_MIN_DEPTH:
 			continue
 		var inward: Vector2i = ring.door_dir
+		if _edge_left_open(cm, coord, -inward):
+			continue
 		var usable := _infill_band_rect(rect, inward, 0, cpc, false, false)
 		_infill_band(cm, chunk, coord, usable, inward, keepouts, no_reserved, placed, infill_cfg, rng, extent, true, [])
 
@@ -297,9 +315,14 @@ func decorate_square_frame(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 		{"rect": Rect2i(1, 1, square.position.x - 3, cpc - 2), "door_dir": Vector2i(1, 0)},
 		{"rect": Rect2i(square.end.x + 2, 1, cpc - 1 - (square.end.x + 2), cpc - 2), "door_dir": Vector2i(-1, 0)},
 	]
-	for ring: Dictionary in rings:
+	# Not every landmark is the same ceremonial square: one or two sides
+	# (stable hash) stay open to the street, so squares are framed on four,
+	# three or two (a corner) sides.
+	var open_sides := _frame_open_sides(chunk_manager, coord)
+	for index in rings.size():
+		var ring: Dictionary = rings[index]
 		var rect: Rect2i = ring.rect
-		if rect.size.x < INFILL_MIN_DEPTH or rect.size.y < INFILL_MIN_DEPTH:
+		if open_sides & (1 << index) or rect.size.x < INFILL_MIN_DEPTH or rect.size.y < INFILL_MIN_DEPTH:
 			continue
 		var door: Vector2i = ring.door_dir
 		var usable := _infill_band_rect(rect, door, 0, cpc, false, false)
@@ -307,12 +330,77 @@ func decorate_square_frame(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 	if placed.is_empty():
 		return placed
 	chunk.set_meta(&"_proc_framed_square", square)
+	chunk.set_meta(&"_proc_framed_open_sides", open_sides)
 	if bool(cfg.get("city_block_style", false)):
 		for kit: Node in chunk.get_children():
 			if kit.is_in_group(&"city_block_building"):
 				kit.set("_chunk_extent", Vector2.ONE * cpc * int(chunk_manager.cell_size_px))
 				kit.trim_paving(placed, int(chunk_manager.cell_size_px))
 	return placed
+
+
+## The outskirts stay open: a courtyard ring whose block backs onto a chunk
+## outside the district plan is left without infill for EDGE_OPEN_PERCENT of
+## such rings, so the district edge keeps its original, looser lots, open
+## ground and isolated houses; streets keep their continuous frontage. Plan
+## data only (roles and terrain), so streaming order cannot change it; a chunk
+## without plan terrain (a hand-built fixture) has no outskirts.
+func _edge_left_open(cm: Node, coord: Vector2i, back: Vector2i) -> bool:
+	if back == Vector2i.ZERO or not cm.has_method("get_chunk_terrain") or StringName(cm.get_chunk_terrain(coord)) == &"":
+		return false
+	if StringName(cm.get_chunk_role(coord + back)) != &"unplanned":
+		return false
+	var side := 0 if back == Vector2i(0, -1) else 1 if back == Vector2i(1, 0) else 2 if back == Vector2i(0, 1) else 3
+	return absi(_mix_seed(int(cm.world_seed), coord.x * 4 + side, coord.y, EDGE_SALT)) % 100 < EDGE_OPEN_PERCENT
+
+
+## Setback step of one infill segment: a stable hash of its first front cell
+## picks 0, +1 (one cell back from the street) or -1 (one cell toward it), a
+## step differing from the previous segment of the run where it can. +1 needs
+## a cell of spare depth along the whole segment; -1 needs the two cells in
+## front of it clear of every keepout, opening, apron and building, so the
+## street contract and a one-cell walk stay open.
+func _segment_setback(cm: Node, coord: Vector2i, usable: Rect2i, align: Vector2i, segment: Vector2i, free: PackedInt32Array, ahead: PackedByteArray, previous: int) -> int:
+	var cpc: int = int(cm._cells_per_chunk())
+	var global := coord * cpc + _infill_front_cell(usable, align, segment.x, 0)
+	var roll := absi(_mix_seed(int(cm.world_seed), global.x, global.y, FRONTAGE_SALT)) % 100
+	var pick := 0
+	var acc := 0
+	for index in SETBACK_STEPS.size():
+		acc += int(SETBACK_WEIGHTS[index])
+		if roll < acc:
+			pick = index
+			break
+	var order: Array[int] = []
+	for offset in SETBACK_STEPS.size():
+		order.append(int(SETBACK_STEPS[(pick + offset) % SETBACK_STEPS.size()]))
+	if order[0] == previous and previous != 0:
+		order.push_back(order.pop_front())
+	for step: int in order:
+		var ok := true
+		for t in range(segment.x, segment.y):
+			if step > 0 and free[t] < INFILL_MIN_DEPTH + step:
+				ok = false
+			elif step < 0 and ahead[t] == 0:
+				ok = false
+			if not ok:
+				break
+		if ok:
+			return step
+	return 0
+
+
+## Framed-square sides left open, as bits of the ring order (1 north, 2
+## south, 4 west, 8 east): none for 40%, one side for 45%, two adjacent sides
+## (a corner square) for 15%.
+func _frame_open_sides(cm: Node, coord: Vector2i) -> int:
+	var h := absi(_mix_seed(int(cm.world_seed), coord.x, coord.y, FRAME_SIDE_SALT))
+	var roll := h % 100
+	if roll < 40:
+		return 0
+	if roll < 85:
+		return 1 << ((h >> 8) % 4)
+	return [1 | 4, 1 | 8, 2 | 4, 2 | 8][(h >> 8) % 4]
 
 
 ## Infill extent of one band: the margin-inset band, its depth axis clipped to
@@ -467,10 +555,21 @@ func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, alig
 				houses[y * size + x] = 1
 	var free := PackedInt32Array()
 	free.resize(count)
-	# The front line's wall: a building in either of the band's two front rows.
+	# The front line's wall: a building in either of the band's two front rows
+	# (a segment stepped one cell back or forward still stands in them).
 	var built := PackedByteArray()
 	built.resize(count)
+	# Columns where a lot may step one cell toward the street: that cell and
+	# the next one out are inside the chunk and clear of every obstacle.
+	var ahead := PackedByteArray()
+	ahead.resize(count)
 	for t in count:
+		var clear_ahead := true
+		for out in [-1, -2]:
+			var cell := _infill_front_cell(usable, align, t, out)
+			if not extent.has_point(cell) or blocked[cell.y * size + cell.x] != 0 or houses[cell.y * size + cell.x] != 0:
+				clear_ahead = false
+		ahead[t] = 1 if clear_ahead else 0
 		var depth := 0
 		while depth < max_depth:
 			var cell := _infill_front_cell(usable, align, t, depth)
@@ -490,7 +589,7 @@ func _infill_band(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, alig
 		var run_start := at
 		while at < count and free[at] >= INFILL_MIN_DEPTH:
 			at += 1
-		_infill_run(cm, chunk, coord, usable, align, run_start, at, free, built, keepouts, reserved, placed, cfg, rng, extent, allow_row_house, lane_walls)
+		_infill_run(cm, chunk, coord, usable, align, run_start, at, free, built, ahead, keepouts, reserved, placed, cfg, rng, extent, allow_row_house, lane_walls)
 
 
 ## Wall a lot at the start of a run would join: Vector2i(length, gap), the
@@ -700,10 +799,12 @@ static func _infill_segments(start: int, end: int, before: Vector2i, after: Vect
 
 
 ## Fill one free run with attached lots in wall-bounded segments. The run keeps
-## one rear line (the attached neighbour's depth, else 7-8). The run's
-## columns between segments, and next to a wall it may not join, are
+## one rear depth (the attached neighbour's, else 7-8); each segment stands on
+## its own setback step (_segment_setback), so the frontage line breaks between
+## an original and the infill attached to it and between infill segments. The
+## run's columns between segments, and next to a wall it may not join, are
 ## reserved openings.
-func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align: Vector2i, run_start: int, run_end: int, free: PackedInt32Array, built: PackedByteArray, keepouts: Array[Rect2i], reserved: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, rng: RandomNumberGenerator, extent: Rect2i, allow_row_house: bool, lane_walls: Array) -> void:
+func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align: Vector2i, run_start: int, run_end: int, free: PackedInt32Array, built: PackedByteArray, ahead: PackedByteArray, keepouts: Array[Rect2i], reserved: Array[Rect2i], placed: Array[Rect2i], cfg: Dictionary, rng: RandomNumberGenerator, extent: Rect2i, allow_row_house: bool, lane_walls: Array) -> void:
 	if run_end - run_start < INFILL_MIN_LEN:
 		return
 	var count: int = usable.size.x if align.y != 0 else usable.size.y
@@ -730,7 +831,10 @@ func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align
 	blockers.append_array(keepouts)
 	blockers.append_array(reserved)
 	blockers.append_array(_infill_openings(chunk))
+	var previous_step := 0
 	for segment: Vector2i in segments:
+		var step := _segment_setback(cm, coord, usable, align, segment, free, ahead, previous_step)
+		previous_step = step
 		var cursor: int = segment.x
 		var remaining: int = segment.y - segment.x
 		while remaining >= INFILL_MIN_LEN:
@@ -742,14 +846,18 @@ func _infill_run(cm: Node, chunk: Node2D, coord: Vector2i, usable: Rect2i, align
 			var avail: int = free[cursor]
 			for index in range(cursor, cursor + lot_len):
 				avail = mini(avail, free[index])
-			var depth: int = clampi(run_depth, INFILL_MIN_DEPTH, avail)
+			var depth: int = clampi(run_depth, INFILL_MIN_DEPTH, avail - maxi(step, 0))
 			var lot := _infill_lot(usable, align, cursor, lot_len, depth)
+			# Positive steps move the lot away from the street, negative ones
+			# toward it (the band's door direction points at the street).
+			lot.position -= align * step
 			var usage := _infill_usage(rng, lot_len, depth, allow_row_house)
 			# A doorway must open onto ground, never toward a neighbour's wall;
 			# a walk-through passage whose rear would be walled keeps one door.
 			if _rect_can_place(lot, extent, blockers, placed) and _infill_threshold_clear(lot, align, placed, extent) and _lane_walls_allow(lane_walls, lot, placed):
 				if usage == &"passage" and not _infill_threshold_clear(lot, -align, placed, extent):
 					usage = &"shop"
+				cfg["_frontage_step"] = step
 				if _spawn_building_rect(cm, chunk, coord, lot, align, usage, keepouts, placed, cfg, rng, extent):
 					for index in range(cursor, cursor + lot_len):
 						built[index] = 1
@@ -792,6 +900,115 @@ static func _infill_usage(rng: RandomNumberGenerator, lot_len: int, depth: int, 
 	if roll < 0.65 or not allow_row_house:
 		return &"shop"
 	return &"row_house"
+
+
+## Medieval street pass (2026-10-21): the one-cell slit between this house and
+## a neighbour already standing on the same south front line (east or west,
+## at least three rows of common wall, the same street-facing door side) closes
+## into a party wall, so the two read as one attached group; this house's
+## facade and roof then run over it (RoofOverlay.party_extra_px,
+## CityBlockKit "party_extra_px"). Street continuity only, after every RNG
+## draw of this lot, so the pass off is unchanged. Both houses are composed,
+## non-civic rectangles. A slit stays open where any of its cells is protected
+## route, a keepout, a reserved box, a recorded opening or a door apron, or
+## where it is the only way from the ground behind the row to the street (a
+## flood fill over the blockers built so far). 1-2 cell slits already count
+## as wall for the WALL_MAX passage bound, so closing one never lengthens a
+## measured wall. Returns {} or {"edge": _DIR_W/_DIR_E, "cells": slit rect}.
+func _party_slit(cm: Node, chunk: Node2D, rect: Rect2i, door_dir: Vector2i, placed: Array[Rect2i], keepouts: Array[Rect2i], cfg: Dictionary, civic: bool) -> Dictionary:
+	if civic or door_dir.y == 0 or not bool(cfg.get("street_continuity", false)) or not bool(cfg.get("city_block_style", false)):
+		return {}
+	var data: ChunkBuildData = cm.get("_active_build_data")
+	if data == null:
+		return {}
+	var cpc: int = int(cm._cells_per_chunk())
+	for other: Rect2i in placed:
+		var west := other.end.x + 1 == rect.position.x
+		var east := rect.end.x + 1 == other.position.x
+		if not (west or east) or other.end.y != rect.end.y:
+			continue
+		var top := maxi(other.position.y, rect.position.y)
+		if rect.end.y - top < 3:
+			continue
+		var kit := _kit_for(chunk, other)
+		if kit == null or bool(kit.get("civic")) or bool(kit.get("_irregular")):
+			continue
+		var same_side := false
+		for door: Dictionary in kit.get("_doors"):
+			if door.get("dir", Vector2i.ZERO) == door_dir: same_side = true
+		if not same_side:
+			continue
+		var slit := Rect2i(other.end.x if west else rect.end.x, top, 1, rect.end.y - top)
+		if not _slit_free(chunk, slit, keepouts, cfg, data, float(cm.cell_size_px)):
+			continue
+		var back := Vector2i(slit.position.x, slit.position.y - 1) if door_dir.y > 0 else Vector2i(slit.position.x, slit.end.y)
+		if not _reaches_street(chunk, data, back, slit, cpc):
+			continue
+		var cells: Dictionary = {}
+		for y in range(slit.position.y, slit.end.y):
+			cells[Vector2i(slit.position.x, y)] = true
+		if cm.has_method("spawn_roofed_wall_cells"):
+			cm.spawn_roofed_wall_cells(chunk, cells, {}, cells)
+		else:
+			cm._spawn_wall_cells(chunk, cells, {})
+		_mark_building_walls(cm, cells, true)
+		var slits: Array = chunk.get_meta(&"_proc_party_slits", [])
+		slits.append(slit)
+		chunk.set_meta(&"_proc_party_slits", slits)
+		return {"edge": _DIR_W if west else _DIR_E, "cells": slit}
+	return {}
+
+
+static func _kit_for(chunk: Node2D, rect: Rect2i) -> Node:
+	for kit: Node in chunk.get_children():
+		if kit.is_in_group(&"city_block_building") and kit.get_meta(&"footprint_cells", Rect2i()) == rect:
+			return kit
+	return null
+
+
+func _slit_free(chunk: Node2D, slit: Rect2i, keepouts: Array[Rect2i], cfg: Dictionary, data: ChunkBuildData, cell_px: float) -> bool:
+	var avoid: Array[Rect2i] = []
+	avoid.append_array(keepouts)
+	for box: Rect2i in cfg.get("infill_reserved", []):
+		avoid.append(box)
+	avoid.append_array(_infill_openings(chunk))
+	avoid.append_array(_door_aprons(chunk, cell_px))
+	for box: Rect2i in avoid:
+		if box.intersects(slit):
+			return false
+	var clear: Dictionary = chunk.get_meta(&"_proc_clear_cells", {})
+	for y in range(slit.position.y, slit.end.y):
+		var cell := Vector2i(slit.position.x, y)
+		if clear.has(cell) or data.kind_at(cell) >= 0:
+			return false
+	return true
+
+
+## Whether the ground behind a slit reaches protected route cells or the
+## chunk's open seam ring without passing through the slit.
+static func _reaches_street(chunk: Node2D, data: ChunkBuildData, start: Vector2i, slit: Rect2i, cpc: int) -> bool:
+	if start.x < 0 or start.y < 0 or start.x >= cpc or start.y >= cpc or data.kind_at(start) >= 0:
+		return true
+	var clear: Dictionary = chunk.get_meta(&"_proc_clear_cells", {})
+	var seen := PackedByteArray()
+	seen.resize(cpc * cpc)
+	var queue: Array[Vector2i] = [start]
+	seen[start.y * cpc + start.x] = 1
+	var head := 0
+	while head < queue.size():
+		var at: Vector2i = queue[head]
+		head += 1
+		if clear.has(at) or at.x == 0 or at.y == 0 or at.x == cpc - 1 or at.y == cpc - 1:
+			return true
+		for dir: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var next: Vector2i = at + dir
+			if next.x < 0 or next.y < 0 or next.x >= cpc or next.y >= cpc or seen[next.y * cpc + next.x] != 0:
+				continue
+			seen[next.y * cpc + next.x] = 1
+			if slit.has_point(next) or data.kind_at(next) >= 0:
+				continue
+			queue.append(next)
+	return false
 
 
 ## East/west party walls shared with lots already standing (at least two cells
@@ -1274,20 +1491,32 @@ func _spawn_building_rect(
 					chunk.add_child(roof)
 					var street_infill := bool(cfg.get("city_street_infill", false))
 					var party_edges := _party_edges(build_rect, placed) if street_infill else 0
-					if street_infill:
+					var civic := bool(cfg.get("city_service_annex",false)) or building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
+					# Medieval street pass: a one-cell slit to a neighbour on the
+					# same front line closes into a party wall (house groups).
+					var slit := _party_slit(chunk_manager, chunk, build_rect, door_dir, placed, keepout_rects, cfg, civic)
+					var party_extra := Vector2.ZERO
+					if not slit.is_empty():
+						party_edges |= int(slit.edge)
+						party_extra = Vector2(float(chunk_manager.cell_size_px), 0.0) if int(slit.edge) == _DIR_W else Vector2(0.0, float(chunk_manager.cell_size_px))
+						roof.set(&"party_extra_px", party_extra)
+					if street_infill or not slit.is_empty():
 						# Join the terrace: the roof runs over an east/west party
-						# wall to the eave of the neighbour already standing there.
+						# wall (and a closed slit) to the eave of the neighbour
+						# already standing there.
 						roof.set(&"party_edges", party_edges)
 					if roof.has_method("configure"):
 						roof.configure(build_rect, int(chunk_manager.cell_size_px), door_dir, volume, template, building_id, entrances)
 					if bool(cfg.get("city_block_style", false)):
 						var kit := CITY_KIT.new()
 						if party_edges != 0: kit.set_meta(&"party_edges", party_edges)
+						if party_extra != Vector2.ZERO: kit.set_meta(&"party_extra_px", party_extra)
 						chunk.add_child(kit)
-						var civic := bool(cfg.get("city_service_annex",false)) or building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
 						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id, template))
 						if bool(cfg.get("city_service_annex",false)): kit.set_meta(&"city_service_annex",true)
-						if street_infill: kit.set_meta(&"city_street_infill",true)
+						if street_infill:
+							kit.set_meta(&"city_street_infill",true)
+							kit.set_meta(&"frontage_step",int(cfg.get("_frontage_step",0)))
 						_add_domestic_interior(chunk_manager,kit,wall_cells,building_id)
 
 	placed.append(build_rect)

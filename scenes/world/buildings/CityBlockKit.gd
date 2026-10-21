@@ -662,8 +662,10 @@ func _add_facade_faces(ground_y: float) -> void:
 		# wall the run continues to the neighbour's facade, so no slit of
 		# ground shows between two houses; its quoin marks the division.
 		var party := int(get_meta(&"party_edges",0))
-		var run_from := bounds.position.x+(-16.0 if (party & 8) != 0 else 16.0)
-		var run_to := bounds.end.x-(-16.0 if (party & 2) != 0 else 16.0)
+		# A closed one-cell party slit: the run also covers the slit's front.
+		var extra: Vector2 = get_meta(&"party_extra_px",Vector2.ZERO)
+		var run_from := bounds.position.x+(-16.0-extra.x if (party & 8) != 0 else 16.0)
+		var run_to := bounds.end.x-(-16.0-extra.y if (party & 2) != 0 else 16.0)
 		COMPOSER.compose_run(group,self,Vector2(run_from,run_to),_front,_facade_height,ground_y,_doors,_cell_px)
 		return
 	var tex_size := _facade.get_size()
