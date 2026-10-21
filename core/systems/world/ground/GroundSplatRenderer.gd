@@ -265,6 +265,17 @@ func paint_domestic_care(coord: Vector2i, spec: Dictionary) -> void:
 			_dirty = true
 
 
+## Paint a set of cell rects (global cells) with one base material, as part
+## of a chunk's base (before its stamps). Used for the ragged margin where a
+## built district gives way to wild ground.
+func paint_base_rects(rects: Array[Rect2i], ground_index: int, brightness: float = 1.0) -> void:
+	if ground_index < 0:
+		return
+	for rect in rects:
+		if rect.size.x > 0 and rect.size.y > 0:
+			_fill(rect, ground_index, brightness, false)
+
+
 ## Exact cell probes for native evidence and deterministic stream checks.
 func care_at(cell: Vector2i) -> float:
 	return _light.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).b

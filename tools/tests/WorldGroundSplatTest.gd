@@ -36,6 +36,7 @@ func _run() -> void:
 	_test_slots()
 	_test_domestic_care_data_contract()
 	_test_district_policy_presentation()
+	_test_base_margin_rects()
 	await _test_chunk_manager_path()
 	print("WorldGroundSplatTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -201,6 +202,15 @@ func _test_district_policy_presentation() -> void:
 	splat.set_ground_family(&"")
 	roles = splat.get_shader_material().get_shader_parameter("slot_role")
 	_check(not splat.ground_policy_enabled() and roles.count(0.0) == roles.size(), "no district family presents every slot raw")
+	splat.queue_free()
+
+
+func _test_base_margin_rects() -> void:
+	var splat := _splat()
+	splat.set_chunk_base(Vector2i.ZERO, 6)
+	var rects: Array[Rect2i] = [Rect2i(0, 0, 4, 2), Rect2i(4, 0, 4, 3)]
+	splat.paint_base_rects(rects, 0, 0.96)
+	_check(splat.material_at(Vector2i(1, 1)) == 0 and splat.material_at(Vector2i(5, 2)) == 0 and splat.material_at(Vector2i(1, 2)) == 6, "a district margin lays wild cells exactly where asked")
 	splat.queue_free()
 
 

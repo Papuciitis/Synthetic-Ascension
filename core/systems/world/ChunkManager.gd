@@ -58,6 +58,7 @@ var district_common_base_preview: bool = false
 
 
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
+const _GROUND_POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
 const _SITE_MGR: Script = preload("res://core/systems/world/proc/SiteManager.gd")
 const _GEN_IMPL: Script = preload("res://core/systems/world/proc/ChunkGenImpl.gd")
 const _TILE_RENDERER: Script = preload("res://core/systems/world/ChunkTileRenderer.gd")
@@ -759,8 +760,9 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 		var splat := _ensure_ground_splat()
 		var base_shade: float = 1.0
 		if wilderness:
-			base_shade = 1.0 + (float(posmod(_seed_for_chunk(coord), 9)) / 8.0 - 0.5) * 0.09
+			base_shade = _wilderness_shade(coord)
 		splat.set_chunk_base(coord, tex_index, base_shade)
+		_paint_district_margins(splat, coord, tex_index)
 		return
 	var ground_tex: Texture2D = _WORLD_ART.ground_texture(tex_index)
 	if ground_tex == null:
@@ -803,6 +805,82 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 	)
 	spr.position = Vector2(float(chunk_size_px) * 0.5, float(chunk_size_px) * 0.5)
 	chunk.add_child(spr)
+
+func _wilderness_shade(coord: Vector2i) -> float:
+	return 1.0 + (float(posmod(_seed_for_chunk(coord), 9)) / 8.0 - 0.5) * 0.09
+
+
+## Where the built district (its hard "urban" base) meets wild ground - an
+## exploration lane, the wilderness beyond the plan - the paving gives out
+## raggedly instead of along the 2048 px chunk line: one to four cells of the
+## neighbour's own ground are laid into this chunk's base, before its stamps,
+## so roads, sidewalks and building floors stay whole. Coordinate hashed (no
+## RNG), so a streamed reload repaints the same margin.
+func _paint_district_margins(splat: GroundSplatRenderer, coord: Vector2i, tex_index: int) -> void:
+	if tex_index != _GROUND_POLICY.DISTRICT_GROUND_INDEX or not generation_enabled:
+		return
+	var n: int = _cells_per_chunk()
+	var origin: Vector2i = coord * n
+	for side in 4:
+		var direction: Vector2i = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT][side]
+		var neighbor: Vector2i = coord + direction
+		var neighbor_terrain: StringName = get_chunk_terrain(neighbor)
+		var neighbor_wild: bool = neighbor_terrain == &""
+		if neighbor_wild:
+			neighbor_terrain = _fallback_terrain
+		var neighbor_index: int = clampi(_ground_index_for_terrain(neighbor_terrain), 0, _WORLD_ART.ground_texture_count() - 1)
+		if neighbor_index == tex_index:
+			continue
+		# The shared boundary line in global cells identifies the margin, so it
+		# is the same whichever chunk streams first.
+		var line: int = origin.y if side == 0 else (origin.x + n if side == 1 else (origin.y + n if side == 2 else origin.x))
+		var rects: Array[Rect2i] = []
+		var run_start := 0
+		var run_depth := _margin_depth(line, (origin.x if side % 2 == 0 else origin.y), side)
+		for t in range(1, n + 1):
+			var depth := _margin_depth(line, (origin.x if side % 2 == 0 else origin.y) + t, side) if t < n else -1
+			if depth == run_depth:
+				continue
+			var length := t - run_start
+			match side:
+				0: rects.append(Rect2i(origin + Vector2i(run_start, 0), Vector2i(length, run_depth)))
+				1: rects.append(Rect2i(origin + Vector2i(n - run_depth, run_start), Vector2i(run_depth, length)))
+				2: rects.append(Rect2i(origin + Vector2i(run_start, n - run_depth), Vector2i(length, run_depth)))
+				_: rects.append(Rect2i(origin + Vector2i(0, run_start), Vector2i(run_depth, length)))
+			run_start = t
+			run_depth = depth
+		splat.paint_base_rects(rects, neighbor_index, _wilderness_shade(neighbor) if neighbor_wild else 1.0)
+
+
+## One to four cells, varying smoothly every few cells along a boundary.
+static func _margin_depth(line: int, along: int, side: int) -> int:
+	var lattice := floori(float(along) / 3.0)
+	var fraction := float(along) / 3.0 - float(lattice)
+	fraction = fraction * fraction * (3.0 - 2.0 * fraction)
+	var salt := line * 92821 + (side % 2) * 6151
+	var value := lerpf(_margin_hash(lattice, salt), _margin_hash(lattice + 1, salt), fraction)
+	return 1 + mini(3, floori(value * 4.0))
+
+
+static func _margin_hash(index: int, salt: int) -> float:
+	var bits := (index * 374761393) ^ (salt * 668265263) ^ 0x2C1B3C6D
+	bits = ((bits ^ (bits >> 13)) & 0x7fffffff) * 1274126177
+	bits = (bits ^ (bits >> 16)) & 0x7fffffff
+	return float(bits % 100003) / 100003.0
+
+
+## Plaza islands never need a ninth splat slot: in the built district an
+## island is the district surface (laid as a tended, kerbed bed by the
+## presentation pass); elsewhere it is the theme's own wild ground.
+func plaza_island_ground_index(coord: Vector2i) -> int:
+	var terrain: StringName = get_chunk_terrain(coord)
+	if terrain == &"":
+		terrain = _fallback_terrain
+	var base := _ground_index_for_terrain(terrain)
+	if base == _GROUND_POLICY.DISTRICT_GROUND_INDEX:
+		return base
+	return clampi(_ground_index_for_terrain(_fallback_terrain), 0, _WORLD_ART.ground_texture_count() - 1)
+
 
 func _ground_index_for_terrain(terrain: StringName) -> int:
 	match terrain:

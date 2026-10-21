@@ -75,17 +75,25 @@ func _run() -> void:
 	_check(_WORLD_ART.ground_repeat_world_px(10) == _WORLD_ART.ground_repeat_world_px(0) and _WORLD_ART.ground_repeat_world_px(12) == _WORLD_ART.ground_repeat_world_px(0) and _WORLD_ART.ground_repeat_world_px(6) != _WORLD_ART.ground_repeat_world_px(0), "meadow and moss repeat at the grass scale, urban does not")
 	var used: Dictionary = {}
 	var valid := true
-	for segment in range(2, 11):
+	var built := true
+	for segment in range(2, 12):
 		for seed_index in range(6):
 			var theme: SegmentThemeData = SegmentThemePicker.get_theme(segment, 1000 + seed_index * 7919)
 			if theme == null:
 				valid = false
 				continue
-			for terrain in [StringName(theme.base_terrain), StringName(theme.exploration_terrain)]:
+			for terrain in [StringName(theme.base_terrain), StringName(theme.exploration_terrain), StringName(theme.district_terrain)]:
 				used[terrain] = true
 				if not TERRAINS.has(terrain):
 					valid = false
-	_check(valid, "every theme from segment 2 to 10 paints known terrains")
+			# The built district is the hard urban surface; the exploration web
+			# and the wilderness beyond the plan keep wild ground.
+			if StringName(theme.district_terrain) != &"urban" or StringName(theme.exploration_terrain) == &"urban":
+				built = false
+	_check(valid, "every theme from segment 2 to 11 paints known terrains")
+	_check(built, "every theme builds its district on the urban surface and keeps a wild exploration terrain")
+	var blended := SegmentThemeData.blend(SegmentThemePicker._theme_canal_services(), SegmentThemePicker._theme_rail_yard(), 0.8)
+	_check(blended.district_terrain == "urban" and blended.exploration_terrain == SegmentThemePicker._theme_rail_yard().exploration_terrain, "blended themes carry the district terrain")
 	_check(used.has(&"meadow") and used.has(&"scrub") and used.has(&"moss"), "the later segments use meadow, scrub and moss (%s)" % str(used.keys()))
 	var ward: SegmentThemeData = SegmentThemePicker._theme_collapsed_ward()
 	var staging: SegmentThemeData = SegmentThemePicker._theme_military_staging()

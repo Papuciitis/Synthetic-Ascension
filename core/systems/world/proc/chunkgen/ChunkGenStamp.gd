@@ -1,5 +1,6 @@
 extends Object
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
+const _GROUND_POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
 # Auto-extracted from ChunkGenImpl.gd to keep the generator modular.
 # Do not keep state here; use the passed `gen` (ChunkGenImpl) as context.
 
@@ -133,6 +134,29 @@ static func _stamp_district_road_edge_noise(gen: ChunkGenImpl, chunk: Node2D, bo
 
 
 
+## A plaza island's ground. The island roll is still drawn (same RNG
+## sequence). In the built district the island is the district surface, kept
+## as a tended planted bed (see _record_planting); in wild chunks it is the
+## district's own wild ground (its exploration terrain). Either way a plaza
+## never asks for a ninth splat slot. Without a manager the original
+## grass/dirt pair remains.
+static func _island_ground_index(gen: ChunkGenImpl, grass_roll: bool) -> int:
+	if gen.cm != null and gen.cm.has_method("plaza_island_ground_index"):
+		return int(gen.cm.call("plaza_island_ground_index", gen._gen_coord))
+	return 0 if grass_roll else 1
+
+
+## Presentation bookkeeping only (no RNG, no physics): an island on the
+## district surface is remembered so the ground presentation pass can lay a
+## kerbed, tended bed over it.
+static func _record_planting(gen: ChunkGenImpl, chunk: Node2D, rect: Rect2i, tex: int) -> void:
+	if gen.cm == null or tex != _GROUND_POLICY.DISTRICT_GROUND_INDEX or rect.size.x <= 0 or rect.size.y <= 0:
+		return
+	var rects: Array = chunk.get_meta(&"_ground_planting_rects", [])
+	rects.append(rect)
+	chunk.set_meta(&"_ground_planting_rects", rects)
+
+
 static func _decorate_plaza_floor(gen: ChunkGenImpl, chunk: Node2D, bounds: Rect2i, plaza_rect: Rect2i, rng: RandomNumberGenerator, archetype: StringName) -> void:
 	# Break up huge slabs with "islands" and a faint inner curb band.
 	var inner := plaza_rect.grow(-2).intersection(bounds)
@@ -172,8 +196,9 @@ static func _decorate_plaza_floor(gen: ChunkGenImpl, chunk: Node2D, bounds: Rect
 			if absi(ix - cx) < 4 and absi(iy - cy) < 4:
 				continue
 
-		var tex := (0 if rng.randf() < 0.55 else 1) # grass/dirt
+		var tex := _island_ground_index(gen, rng.randf() < 0.55)
 		gen._stamp_floor_rect_cells_patchy(chunk, Rect2i(Vector2i(ix, iy), Vector2i(iw, ih)), tex, rng, 0.95, -93)
+		_record_planting(gen, chunk, Rect2i(Vector2i(ix, iy), Vector2i(iw, ih)), tex)
 
 		# A couple of "planter/pillar" blocks near the island edge for authored feel.
 		if gen.cover_half_scene != null and rng.randf() < 0.65:
@@ -384,8 +409,9 @@ static func _decorate_plaza_floor_cells(gen: ChunkGenImpl, chunk: Node2D, bounds
 			continue
 		if archetype == &"gate" and absi(island.position.x + (iw >> 1) - center.x) < 4 and absi(island.position.y + (ih >> 1) - center.y) < 4:
 			continue
-		var tex := (0 if rng.randf() < 0.55 else 1) # grass / dirt
+		var tex := _island_ground_index(gen, rng.randf() < 0.55)
 		gen._stamp_floor_rect_cells_patchy(chunk, island, tex, rng, 0.95, -93)
+		_record_planting(gen, chunk, island, tex)
 		if gen.cover_half_scene != null and rng.randf() < 0.65:
 			var px := clampi(island.position.x + rng.randi_range(0, island.size.x - 1), bounds.position.x + 1, bounds.end.x - 2)
 			var py := clampi(island.position.y + rng.randi_range(0, island.size.y - 1), bounds.position.y + 1, bounds.end.y - 2)
