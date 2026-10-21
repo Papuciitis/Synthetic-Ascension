@@ -1,0 +1,13 @@
+{
+ "suite": "SegmentProcStartupTest",
+ "run_root": "test-fin-b-SegmentProcStartupTest-1",
+ "stop_reason": "runtime_diagnostics",
+ "actual_exit": 0,
+ "command": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 --path /tmp/sa-calib --log-file /home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/test-fin-b-SegmentProcStartupTest-1/logs/engine.log --flush-output --headless res://tools/tests/SegmentProcStartupTest.tscn",
+ "started_utc": "2026-10-21T11:43:37.433112+00:00",
+ "elapsed_seconds": 7.157,
+ "diagnostics": [
+  "ERROR: [ChunkGenImpl] cannot generate chunks: cover scenes unassigned=[full,window,half] chunk_manager=@Node2D@39; every streamed chunk stays empty",
+  "WARNING: [ChunkManager] Player not found (group 'player')."
+ ]
+}
