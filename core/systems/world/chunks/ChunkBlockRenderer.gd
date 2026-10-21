@@ -21,9 +21,6 @@ const LEGACY_WALL_SHADOW_OFFSET := Vector2(-9.0, 7.0)
 ## Share of the sun shade under a wall-kit silhouette and a plain prop.
 const WALL_SHADE := 0.92
 const PROP_SHADE := 0.85
-## Wall-base contact strips (ground z): where a wall's south or west face
-## meets open ground. Building envelopes draw their own kit contact.
-const CONTACT_Z := -90
 ## Shallow depth (Phase 3): caps lift slightly north and an exposed south
 ## edge hangs a stone face under the cap band (the art occupies the middle
 ## ~24 px of the cell, so the face sits at the band's foot, inside the cell).
@@ -185,7 +182,8 @@ static func _city_light() -> bool:
 
 
 ## Soft contact where freestanding wall/window cells meet open ground on their
-## shaded south and west faces: one multiplicative mesh per chunk.
+## shaded south and west faces: one multiplicative mesh per chunk. Building
+## envelopes draw their own kit contact.
 func _add_wall_contact(data: ChunkBuildData, chunk_origin: Vector2) -> void:
 	if not ChunkBlockVisualCatalog.three_quarter_walls:
 		return
@@ -228,7 +226,8 @@ func _add_wall_contact(data: ChunkBuildData, chunk_origin: Vector2) -> void:
 	contact.polygons = faces
 	contact.vertex_colors = colors
 	contact.material = DEPTH.SUN_SHADOW_MATERIAL
-	contact.z_index = CONTACT_Z
+	# The shared ground shade layer, like building casts and kit contact.
+	DEPTH.place_ground_shade(contact)
 	contact.set_meta(&"wall_contact_shade", true)
 	_host.add_child(contact)
 	_contact_by_chunk[data.coord] = contact

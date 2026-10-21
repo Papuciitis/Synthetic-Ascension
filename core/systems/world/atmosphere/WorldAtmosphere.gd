@@ -55,8 +55,6 @@ var _mask_image: Image
 var _mask: ImageTexture
 var _environment_dirty := true
 var _environment_poll := 0.0
-var _roof_materials: Dictionary = {}
-var _sun_shadows: Dictionary = {}
 var _ground: WeakRef
 var _ground_signature: Array = []
 var _environment_scans := 0
@@ -138,8 +136,8 @@ func diagnostics() -> Dictionary:
 		"air_z":AIR_Z, "room_count":_rooms.size(), "mask_rebuilds":_mask_rebuilds,
 		"mask_size":_mask_size, "mask_cell_px":_mask_cell, "mask_origin":_mask_origin,
 		"particle_count":0, "vignette_strength":0.0,
-		"environment_scans":_environment_scans, "roof_material_count":_roof_materials.size(),
-		"sun_shadow_count":_sun_shadows.size(), "ground_receiver_enabled":not _ground_signature.is_empty()}
+		"environment_scans":_environment_scans, "roof_material_count":_count_roof_materials(),
+		"sun_shadow_count":_count_sun_shadows(), "ground_receiver_enabled":not _ground_signature.is_empty()}
 
 
 func _process(delta: float) -> void:
@@ -179,15 +177,10 @@ func _process(delta: float) -> void:
 func _on_room_node_changed(node: Node) -> void:
 	if node is IndoorVolume or (node is CollisionShape2D and node.get_parent() is IndoorVolume):
 		_rooms_dirty = true
-	if node is RoofOverlay or node is GroundSplatRenderer:
+	# Roofs and casts take theme light from shared uniforms; only the ground
+	# host binding needs rediscovery when streaming changes it.
+	if node is GroundSplatRenderer or (node is Sprite2D and node.get_parent() is GroundSplatRenderer):
 		_environment_dirty = true
-	elif node is Sprite2D and node.get_parent() is GroundSplatRenderer:
-		_environment_dirty = true
-	elif node is Polygon2D:
-		var polygon := node as Polygon2D
-		var material := polygon.material as ShaderMaterial
-		if polygon.has_meta(&"city_sun_shadow") or (material != null and material.shader == ROOF_SHADER):
-			_environment_dirty = true
 
 
 func refresh_environment(force: bool = false) -> void:
@@ -212,34 +205,46 @@ func _same_canvas(item: CanvasItem) -> bool:
 
 
 func _discover_environment() -> void:
-	# Theme light no longer rewrites roof planes or individual shadow alpha:
+	# Theme light never rewrites roof planes or individual shadow alpha:
 	# roofs keep their full plane hierarchy in every theme, and every sun
-	# cast shares one material whose shade the theme sets. Roof and cast
-	# receivers are still counted for diagnostics only.
+	# cast shares one material whose shade the theme sets. Only the ground
+	# host is bound here; roofs and casts are counted on request.
 	_environment_scans += 1
-	var next_materials: Dictionary = {}
-	var next_shadows: Dictionary = {}
-	var parents: Dictionary = {}
+	var ground := get_parent().get_node_or_null("GroundSplat") as GroundSplatRenderer
+	_ground = weakref(ground) if ground != null and _same_canvas(ground) else null
+
+
+## Diagnostics only: roof plane materials on this canvas.
+func _count_roof_materials() -> int:
+	if not is_inside_tree():
+		return 0
+	var materials: Dictionary = {}
 	for node: Node in get_tree().get_nodes_in_group(&"roof_occluders"):
 		var roof := node as RoofOverlay
 		if roof == null or not _same_canvas(roof):
 			continue
 		for child: Node in roof.find_children("*","Polygon2D",true,false):
-			var plane := child as Polygon2D
-			var material := plane.material as ShaderMaterial
-			if _same_canvas(plane) and material != null and material.shader == ROOF_SHADER:
-				next_materials[material.get_instance_id()] = weakref(material)
-		var parent := roof.get_parent()
-		if parent != null:
-			parents[parent.get_instance_id()] = parent
+			var material := (child as Polygon2D).material as ShaderMaterial
+			if material != null and material.shader == ROOF_SHADER:
+				materials[material.get_instance_id()] = true
+	return materials.size()
+
+
+## Diagnostics only: building and kit-foliage sun casts beside those roofs.
+func _count_sun_shadows() -> int:
+	if not is_inside_tree():
+		return 0
+	var parents: Dictionary = {}
+	for node: Node in get_tree().get_nodes_in_group(&"roof_occluders"):
+		var roof := node as RoofOverlay
+		if roof != null and _same_canvas(roof) and roof.get_parent() != null:
+			parents[roof.get_parent().get_instance_id()] = roof.get_parent()
+	var count := 0
 	for parent: Node in parents.values():
 		for child: Node in parent.find_children("*","Polygon2D",true,false):
-			if child.has_meta(&"city_sun_shadow") and _same_canvas(child as Polygon2D):
-				next_shadows[child.get_instance_id()] = weakref(child)
-	_roof_materials = next_materials
-	_sun_shadows = next_shadows
-	var ground := get_parent().get_node_or_null("GroundSplat") as GroundSplatRenderer
-	_ground = weakref(ground) if ground != null and _same_canvas(ground) else null
+			if child.has_meta(&"city_sun_shadow"):
+				count += 1
+	return count
 
 
 ## The theme's physical sun reaches every cast through the shared shade
@@ -252,8 +257,6 @@ func _restore_environment() -> void:
 	# Authored contexts call this every frame; touch the uniform only once.
 	if not DEPTH.sun_shade().is_equal_approx(DEPTH.SUN_SHADE):
 		DEPTH.set_sun_shade(DEPTH.SUN_SHADE)
-	_roof_materials.clear()
-	_sun_shadows.clear()
 	_ground = null
 	_ground_signature.clear()
 	if _mist_material != null:

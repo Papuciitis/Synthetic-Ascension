@@ -17,8 +17,16 @@ const SHADOW_Z := -7
 const SHADOW_SHADER := preload("res://core/systems/world/actor_cast_shadow.gdshader")
 ## Building, kit-foliage, chimney/roof-on-roof and wall-base contact shade:
 ## one shared material, so a theme's shade is a single uniform update.
-const SUN_SHADOW_SHADER := preload("res://core/systems/world/sun_shadow.gdshader")
 const SUN_SHADOW_MATERIAL := preload("res://core/systems/world/sun_shadow_material.tres")
+## Absolute z of every ground-level sun shade (building casts, kit foliage
+## casts, wall-base contact). It sits above every flat ground layer: splat
+## -100, floor stamps -95..-92, paving and footways -94/-93, garden soil,
+## herbs and beds, chunk decals -90. It stays below upright art: wild
+## foliage shadows -86 and plants -85, landmarks -83, room tones -80, props,
+## walls, actors and their shadows (-7). A shadow then darkens exactly the
+## ground beneath it, whatever order a kit happened to add its children in.
+## Flat ground that should receive shade draws below this layer.
+const GROUND_SHADE_Z := -87
 ## Clear-daylight ground ratio inside a cast shadow: a cool, sky-lit x0.69.
 const SUN_SHADE := Color(0.66, 0.69, 0.76)
 ## A building casts from its eave (facade height * K) plus its gable.
@@ -41,7 +49,6 @@ const CONTACT_CORNER := 0.45
 static var length_scale := 1.0
 static var penumbra_px := PENUMBRA_PX
 static var contact_strength := 1.0
-static var light_theme: StringName = &""
 
 
 static func projection_at(feet: Vector2) -> Transform2D:
@@ -73,7 +80,6 @@ static func building_shadow_offset(facade_height: float) -> Vector2:
 static func use_theme(theme_id: StringName) -> void:
 	var profiles := load("res://core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd") as GDScript
 	apply_light(profiles.call("resolve", theme_id) as Dictionary)
-	light_theme = theme_id
 
 
 static func apply_light(profile: Dictionary) -> void:
@@ -87,7 +93,6 @@ static func reset_light() -> void:
 	length_scale = 1.0
 	penumbra_px = PENUMBRA_PX
 	contact_strength = 1.0
-	light_theme = &""
 	set_sun_shade(SUN_SHADE)
 
 
@@ -103,10 +108,8 @@ static func sun_shade() -> Color:
 	return SUN_SHADE
 
 
-## Contact for a wall base whose outward ground normal is `normal`:
-## Vector2(width_px, strength). Zero width (north faces) means none.
-static func contact_for(normal: Vector2) -> Vector2:
-	if normal.y > 0.5: return Vector2(CONTACT_SOUTH_PX, CONTACT_SOUTH * contact_strength)
-	if normal.x < -0.5: return Vector2(CONTACT_WEST_PX, CONTACT_WEST * contact_strength)
-	if normal.x > 0.5: return Vector2(CONTACT_EAST_PX, CONTACT_EAST * contact_strength)
-	return Vector2.ZERO
+## Puts a ground-level shade on the shared shade layer, independent of its
+## parent's z and of its position among its siblings.
+static func place_ground_shade(item: CanvasItem) -> void:
+	item.z_as_relative = false
+	item.z_index = GROUND_SHADE_Z

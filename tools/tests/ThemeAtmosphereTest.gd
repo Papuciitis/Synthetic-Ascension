@@ -65,6 +65,10 @@ func _run() -> void:
 		var shade: Color = profile.get("sun_shade", Color.BLACK)
 		var shade_luma := shade.r*0.299+shade.g*0.587+shade.b*0.114
 		_check(shade_luma >= 0.6 and shade_luma <= 0.88 and shade.b >= shade.r, "theme sun shade stays a cool readable daylight shadow: " + String(id))
+		# Until lawns and dirt brighten, no theme casts deeper than clear S2
+		# daylight; deeper casts become near-black slabs under dark armour.
+		var clear_shade: Color = (profiles.call("resolve", &"service_courtyards") as Dictionary).get("sun_shade", Color.BLACK)
+		_check(shade_luma >= clear_shade.r*0.299+clear_shade.g*0.587+clear_shade.b*0.114-0.0005, "theme shade is never deeper than clear S2 daylight: " + String(id))
 		_check(float(profile.get("shadow_length",0.0)) >= 0.6 and float(profile.get("shadow_length",9.0)) <= 1.25 and float(profile.get("penumbra_px",99.0)) <= 12.0 and float(profile.get("contact_strength",0.0)) >= 0.8, "theme cast length, softness and contact stay bounded: " + String(id))
 	var clear: Dictionary = profiles.call("resolve", &"service_courtyards")
 	var checkpoint: Dictionary = profiles.call("resolve", &"checkpoint_lanes")
