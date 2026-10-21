@@ -1,11 +1,15 @@
 extends Node2D
 ## Additional review RED: a full-screen grade or generic outdoors mask cannot
 ## stand in for actual wet ground and environment direct/fill receivers.
+## Theme sun (2026-10-21): themes vary the shared multiplicative sun shade
+## (WorldDepthStyle), never roof-plane contrast or individual cast alpha.
 
 const ATMOSPHERE := preload("res://core/systems/world/atmosphere/WorldAtmosphere.gd")
 const GROUND := preload("res://core/systems/world/ground/GroundSplatRenderer.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const ROOF_SHADER := preload("res://scenes/world/buildings/roof.gdshader")
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
+const PROFILES := preload("res://core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd")
 var _passes := 0
 var _failures := 0
 
@@ -143,12 +147,12 @@ func _check_unset_defaults(atmosphere: Node2D) -> void:
 	_check(material.get_shader_parameter("lit_slope") == null, "default roof regression retains a genuinely unset source uniform")
 	atmosphere.call("apply_theme",&"underpass_veins",&"procedural",false)
 	atmosphere.call("refresh_environment",true)
-	_check(is_equal_approx(float(material.get_shader_parameter("lit_slope")),1.06) and is_equal_approx(float(material.get_shader_parameter("shade_slope")),0.86) and is_equal_approx(float(material.get_shader_parameter("ridge_light")),0.2), "unset actual roof uniforms derive direct/fill from source shader defaults")
+	_check(material.get_shader_parameter("lit_slope") == null and material.get_shader_parameter("shade_slope") == null and material.get_shader_parameter("ridge_light") == null, "an overcast theme leaves unset actual roof uniforms at their source defaults")
 	atmosphere.call("apply_theme",&"service_courtyards",&"procedural",false)
-	_check(material.get_shader_parameter("lit_slope") == null and material.get_shader_parameter("shade_slope") == null and material.get_shader_parameter("ridge_light") == null, "clear daylight restores the raw unset roof baseline exactly")
+	_check(material.get_shader_parameter("lit_slope") == null and material.get_shader_parameter("shade_slope") == null and material.get_shader_parameter("ridge_light") == null, "clear daylight keeps the raw unset roof baseline exactly")
 	atmosphere.call("apply_theme",&"underpass_veins",&"procedural",false)
 	atmosphere.call("apply_theme",&"service_courtyards",&"institution",false)
-	_check(material.get_shader_parameter("lit_slope") == null and material.get_shader_parameter("shade_slope") == null and material.get_shader_parameter("ridge_light") == null, "authored-space reset restores raw unset roof uniform state exactly")
+	_check(material.get_shader_parameter("lit_slope") == null and material.get_shader_parameter("shade_slope") == null and material.get_shader_parameter("ridge_light") == null, "authored-space reset keeps raw unset roof uniform state exactly")
 	kit.queue_free()
 	ground.queue_free()
 	await get_tree().process_frame
@@ -192,25 +196,31 @@ func _check_environment_planes(atmosphere: Node2D) -> void:
 	var separate_material := (separate.get_node("RoofPoly") as Polygon2D).material as ShaderMaterial
 	atmosphere.call("apply_theme",&"underpass_veins",&"procedural",false)
 	atmosphere.call("refresh_environment",true)
-	_check(is_equal_approx(float(material.get_shader_parameter("lit_slope")),1.08) and is_equal_approx(float(material.get_shader_parameter("shade_slope")),0.83), "overcast direct light changes actual roof-plane contrast around neutral fill")
-	_check(is_equal_approx(float(attached_material.get_shader_parameter("ridge_light")),0.175), "attached plane material receives the same actual direct-light contract")
-	_check(is_equal_approx(shadow.color.a,0.3*0.675) and is_equal_approx(shadow.modulate.a,0.4), "sun-shadow presentation changes color strength while preserving cutaway modulation")
+	var overcast_shade := DEPTH.sun_shade()
+	var expected: Color = PROFILES.resolve(&"underpass_veins").sun_shade
+	_check(overcast_shade.is_equal_approx(expected), "the selected theme's sun shade reaches the shared cast material")
+	_check(is_equal_approx(float(material.get_shader_parameter("lit_slope")),1.16) and is_equal_approx(float(material.get_shader_parameter("shade_slope")),0.66), "overcast theme light never flattens actual roof-plane contrast")
+	_check(is_equal_approx(float(attached_material.get_shader_parameter("ridge_light")),0.35), "attached plane material keeps its own ridge light under every theme")
+	_check(is_equal_approx(shadow.color.a,0.3) and is_equal_approx(shadow.modulate.a,0.4), "theme light leaves each cast's own strength and cutaway modulation untouched")
 	_check(poly.polygon == points and is_zero_approx(poly.color.a) and is_equal_approx(poly.modulate.a,0.4), "lighting preserves partition host draw alpha, geometry and roof coverage owner")
 	_check(is_equal_approx(float(control_material.get_shader_parameter("shade_slope")),0.66), "ordinary actor/item/unowned materials receive no plane multiplier")
 	_check(is_equal_approx(float(remote_material.get_shader_parameter("shade_slope")),0.66) and is_equal_approx(float(separate_material.get_shader_parameter("shade_slope")),0.66), "actual roof materials on another world/canvas retain their own lighting")
 	atmosphere.call("apply_theme",&"service_courtyards",&"procedural",false)
 	atmosphere.call("refresh_environment",true)
-	_check(is_equal_approx(float(material.get_shader_parameter("shade_slope")),0.66) and is_equal_approx(float(attached_material.get_shader_parameter("ridge_light")),0.35) and is_equal_approx(shadow.color.a,0.3), "clear daylight returns exact per-instance baseline roof/shadow factors")
+	var clear_shade := DEPTH.sun_shade()
+	_check(clear_shade.v < overcast_shade.v and clear_shade.is_equal_approx(DEPTH.SUN_SHADE), "clear daylight casts a deeper shade than sheltered overcast air")
+	_check(is_equal_approx(float(material.get_shader_parameter("shade_slope")),0.66) and is_equal_approx(float(attached_material.get_shader_parameter("ridge_light")),0.35) and is_equal_approx(shadow.color.a,0.3), "clear daylight leaves per-instance roof/shadow factors exact")
 	atmosphere.call("apply_theme",&"underpass_veins",&"procedural",false)
 	atmosphere.call("refresh_environment",true)
 	atmosphere.call("apply_theme",&"canal_services",&"institution",false)
 	atmosphere.call("refresh_environment",true)
-	_check(is_equal_approx(float(material.get_shader_parameter("lit_slope")),1.16) and is_equal_approx(float(material.get_shader_parameter("shade_slope")),0.66) and is_equal_approx(shadow.color.a,0.3), "authored-space bypass restores exact baseline environment materials")
+	_check(is_equal_approx(float(material.get_shader_parameter("lit_slope")),1.16) and is_equal_approx(float(material.get_shader_parameter("shade_slope")),0.66) and is_equal_approx(shadow.color.a,0.3), "authored-space bypass keeps exact baseline environment materials")
+	_check(DEPTH.sun_shade().is_equal_approx(DEPTH.SUN_SHADE), "authored-space bypass restores the neutral daylight shade")
 	atmosphere.call("apply_theme",&"underpass_veins",&"procedural",false)
 	atmosphere.call("refresh_environment",true)
 	poly.remove_child(attached)
 	atmosphere.call("refresh_environment",true)
-	_check(is_equal_approx(float(attached_material.get_shader_parameter("ridge_light")),0.35), "a detached plane restores its baseline instead of retaining another environment's light")
+	_check(is_equal_approx(float(attached_material.get_shader_parameter("ridge_light")),0.35), "a detached plane keeps its baseline instead of another environment's light")
 	attached.free()
 	kit.queue_free()
 	control.queue_free()
@@ -310,7 +320,7 @@ func _check_rendered_roof() -> void:
 	var shadow := Polygon2D.new()
 	shadow.set_meta(&"city_sun_shadow",true)
 	shadow.polygon = PackedVector2Array([Vector2(-120,64),Vector2(-75,64),Vector2(-75,78),Vector2(-120,78)])
-	shadow.color = Color(0,0,0,0.3)
+	shadow.material = DEPTH.SUN_SHADOW_MATERIAL
 	shadow.z_index = -7
 	kit.add_child(shadow)
 	var camera := Camera2D.new()
@@ -339,8 +349,10 @@ func _check_rendered_roof() -> void:
 	var overcast := view.get_texture().get_image()
 	var clear_contrast := clear.get_pixelv(lit_at).r-clear.get_pixelv(shade_at).r
 	var overcast_contrast := overcast.get_pixelv(lit_at).r-overcast.get_pixelv(shade_at).r
-	_check(clear_contrast > overcast_contrast+0.02 and overcast_contrast > 0.01, "native overcast reduces actual roof-plane contrast while retaining visible form")
-	_check(overcast.get_pixelv(shadow_at).r > clear.get_pixelv(shadow_at).r+0.008, "native overcast softens the actual sun-shadow polygon without a global grade")
+	_check(overcast_contrast > 0.05 and absf(clear_contrast-overcast_contrast) < 0.01, "native overcast keeps the actual roof-plane hierarchy instead of flattening it")
+	_check(overcast.get_pixelv(shadow_at).r > clear.get_pixelv(shadow_at).r+0.008, "native overcast lightens the shared sun shade without a global grade")
+	var ground_value := 0.3
+	_check(absf(clear.get_pixelv(shadow_at).r-ground_value*DEPTH.SUN_SHADE.r) < 0.02, "native clear-daylight cast multiplies the ground by the shared shade ratio")
 	view.queue_free()
 	await get_tree().process_frame
 	ChunkBlockVisualCatalog.three_quarter_walls = previous_kit

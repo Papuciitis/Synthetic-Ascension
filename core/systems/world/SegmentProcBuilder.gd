@@ -114,6 +114,9 @@ func _ready() -> void:
 
 	var seed_base: int = (Global.attempt_world_seed if Global != null else 1337)
 	_theme = SegmentThemePicker.get_theme(_segment, seed_base)
+	# Every cast built in this segment follows its theme's sun (length,
+	# softness, contact, shade) before any chunk streams in.
+	preload("res://core/systems/world/WorldDepthStyle.gd").use_theme(StringName(_theme.id) if _theme != null else &"service_courtyards")
 	_boss_required = (_theme != null and _theme.end_mode == "BOSS_GATE")
 	_miniboss_required = (_segment == 5)
 	_miniboss_defeated = false
