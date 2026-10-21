@@ -386,59 +386,132 @@ func paint_planting(coord: Vector2i, rect: Rect2i) -> void:
 			_dirty = true
 
 
+## Loaded neighbours for the occlusion pass: a Callable(coord) returning
+## {Vector2i offset (-1..1, -1..1): ChunkBuildData} for the streamed chunks
+## around `coord` (ChunkManager sets it). Without it occlusion stays
+## chunk-local, as bare renderers in tests expect.
+var occlusion_neighbours: Callable = Callable()
+
+
 ## Broad ground occlusion in light-map alpha: every wall, window, solid and
-## half-cover cell of the chunk shades the open ground within two cells, so
-## alleys, yards and wall feet darken while plazas stay open. Deterministic,
-## chunk-local (a reload repaints the same bytes) and presentation only.
+## half-cover cell shades the open ground within two cells, so alleys, yards
+## and wall feet darken while plazas stay open. Deterministic and presentation
+## only. Seam-continuous: a chunk's pass gathers the blockers of its loaded
+## neighbours within reach and rewrites its own cells plus a two-cell ring of
+## each loaded neighbour, so a ramp runs across the chunk line instead of
+## stopping at it. Every cell's final value is the exact sum over the loaded
+## blockers within reach whatever order the chunks stream in (the last chunk
+## to paint near a cell sees all the others), and a reload repaints the same
+## bytes.
 func paint_occlusion(coord: Vector2i, data: ChunkBuildData) -> void:
 	var n := cells_per_chunk
 	if data == null or data.cells_per_side != n:
 		return
-	var origin := Vector2i(posmod(coord.x*n,MAP_SIZE),posmod(coord.y*n,MAP_SIZE))
-	if origin.x+n > MAP_SIZE or origin.y+n > MAP_SIZE:
+	if not _block_in_map(coord):
 		return
-	var occupied := data.occupied_indices()
-	var block := Rect2i(origin,Vector2i(n,n))
-	var region := _light.get_region(block)
-	var bytes := region.get_data()
-	# Accumulate into a grid padded by the kernel radius, so the hot loop needs
-	# no bounds checks; only the chunk's own cells are written back.
+	var neighbours: Dictionary = {}
+	if occlusion_neighbours.is_valid():
+		neighbours = occlusion_neighbours.call(coord)
 	var pad := OCCLUSION_RADIUS
-	var stride := n+pad*2
+	# Cells rewritten: the chunk, plus the ring of each loaded neighbour. Their
+	# blockers can lie one more radius out, and a blocker scatters one more
+	# radius again, so the scratch grid spans the block grown by three radii
+	# and the hot loop needs no bounds checks.
+	var reach := pad if not neighbours.is_empty() else 0
+	var margin := pad*3 if not neighbours.is_empty() else pad
+	var stride := n+margin*2
 	var shade := PackedFloat32Array()
 	shade.resize(stride*stride)
 	_ensure_occlusion_kernel(stride)
+	# Sources in one fixed order of world position (row by row), so every cell
+	# sums the same contributions in the same float order whichever chunk
+	# paints it: the bytes are identical for any streaming order.
+	for oy in range(-1,2):
+		for ox in range(-1,2):
+			var offset := Vector2i(ox,oy)
+			var source: ChunkBuildData = data if offset == Vector2i.ZERO else neighbours.get(offset) as ChunkBuildData
+			if source == null or source.cells_per_side != n:
+				continue
+			_scatter_occlusion(shade,stride,margin,offset*n,source,-pad*2,n+pad*2)
+	var changed := false
+	for oy in range(-1,2):
+		for ox in range(-1,2):
+			var offset := Vector2i(ox,oy)
+			if offset != Vector2i.ZERO and not neighbours.has(offset):
+				continue
+			if offset != Vector2i.ZERO and not _block_in_map(coord+offset):
+				continue
+			# This chunk's part of the rewritten region, in its own cells.
+			var part := Rect2i(Vector2i(-reach,-reach),Vector2i(n+reach*2,n+reach*2)).intersection(Rect2i(offset*n,Vector2i(n,n)))
+			if not part.has_area():
+				continue
+			if _write_occlusion(coord,part,shade,stride,margin):
+				changed = true
+	if changed:
+		_dirty = true
+
+
+## Whether a chunk's block lies whole inside the wrapped maps (always, when
+## cells_per_chunk divides MAP_SIZE).
+func _block_in_map(coord: Vector2i) -> bool:
+	var n := cells_per_chunk
+	var origin := Vector2i(posmod(coord.x*n,MAP_SIZE),posmod(coord.y*n,MAP_SIZE))
+	return origin.x+n <= MAP_SIZE and origin.y+n <= MAP_SIZE
+
+
+## Add the blockers of `data` (a chunk whose cells start at `origin`, in the
+## painting chunk's local cells) that lie in [lo, hi) of those local cells to
+## the scratch grid.
+func _scatter_occlusion(shade: PackedFloat32Array, stride: int, margin: int, origin: Vector2i, data: ChunkBuildData, lo: int, hi: int) -> void:
+	var n := cells_per_chunk
 	var offsets := _occlusion_offsets
 	var weights := _occlusion_weights
 	var taps := offsets.size()
 	var kinds := data.blocker_kind_code
-	for index in occupied:
+	var whole := origin == Vector2i.ZERO
+	for index in data.occupied_indices():
 		var code := int(kinds[index])
 		if code == 0:
+			continue
+		var x := origin.x+(index % n)
+		var y := origin.y+floori(float(index)/float(n))
+		if not whole and (x < lo or y < lo or x >= hi or y >= hi):
 			continue
 		# Kinds + 1: SOLID_CELL, WALL, WINDOW carry full weight; fences and
 		# half cover (crates, planters) cast a lighter contact shade.
 		var weight := 1.0 if code <= 3 else 0.4
-		var base := (floori(float(index)/float(n))+pad)*stride+(index % n)+pad
+		var base := (y+margin)*stride+x+margin
 		for k in taps:
 			shade[base+offsets[k]] += weight*weights[k]
-	var changed := false
+
+
+## Write the accumulated occlusion of `part` (painting-chunk local cells, all
+## inside one chunk's block) into the light map's alpha. True if any changed.
+func _write_occlusion(coord: Vector2i, part: Rect2i, shade: PackedFloat32Array, stride: int, margin: int) -> bool:
+	var n := cells_per_chunk
+	var at_chunk := Vector2i(floori(float(part.position.x)/float(n)),floori(float(part.position.y)/float(n)))
+	var target := coord+at_chunk
+	var origin := Vector2i(posmod(target.x*n,MAP_SIZE),posmod(target.y*n,MAP_SIZE))
+	var local := part.position-at_chunk*n
+	var map_rect := Rect2i(origin+local,part.size)
+	var region := _light.get_region(map_rect)
+	var bytes := region.get_data()
 	var scale := 255.0/OCCLUSION_FULL
+	var changed := false
 	var index := 0
-	for y in n:
-		var padded := (y+pad)*stride+pad
-		for x in n:
+	for y in part.size.y:
+		var padded := (part.position.y+y+margin)*stride+part.position.x+margin
+		for x in part.size.x:
 			var value := 255-mini(255,roundi(shade[padded+x]*scale))
 			var at := index*4+3
 			if bytes[at] != value:
 				bytes[at] = value
 				changed = true
 			index += 1
-	if not changed:
-		return
-	region.set_data(n,n,false,Image.FORMAT_RGBA8,bytes)
-	_light.blit_rect(region,Rect2i(Vector2i.ZERO,Vector2i(n,n)),origin)
-	_dirty = true
+	if changed:
+		region.set_data(part.size.x,part.size.y,false,Image.FORMAT_RGBA8,bytes)
+		_light.blit_rect(region,Rect2i(Vector2i.ZERO,part.size),map_rect.position)
+	return changed
 
 
 ## Exact cell probe of the occlusion term (1 = open), for tests and evidence.

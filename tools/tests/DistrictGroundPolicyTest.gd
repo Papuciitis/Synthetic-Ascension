@@ -250,6 +250,25 @@ func _test_theme_district(segment: int, theme_id: StringName) -> void:
 		occlusion_ms = float(Time.get_ticks_usec() - started) / 1000.0
 		_check(randi() == expected_next and Global._rng.state == rng_state, "%s ground presentation consumes no RNG" % theme_id)
 		_check(light == (splat.get("_light") as Image).get_data() and cover == (splat.get("_cover_a") as Image).get_data(), "%s repeated presentation reproduces exact bytes" % theme_id)
+	# Occlusion is the exact sum over every loaded blocker within reach,
+	# across chunk lines too (the pass used to stop at each chunk's edge).
+	var seam := _occlusion_against_reference(cm, chosen)
+	_check(int(seam.mismatched) == 0, "%s occlusion equals the whole-district reference on every loaded cell, seams included (%d of %d cells off, %d shaded seam cells)" % [theme_id, int(seam.mismatched), int(seam.cells), int(seam.seam_shaded)])
+	if theme_id == &"service_courtyards" and segment == 2 or theme_id == &"canal_services":
+		# Streaming order: the same chunks in reverse give the same bytes.
+		var reversed := _manager(theme, plan)
+		var backwards := chosen.duplicate()
+		backwards.reverse()
+		for coord: Vector2i in backwards:
+			reversed._chunks[coord] = reversed._create_chunk(coord)
+		var same := true
+		for coord: Vector2i in chosen:
+			for y in CPC:
+				for x in CPC:
+					var cell := coord * CPC + Vector2i(x, y)
+					if reversed.get_ground_splat().openness_at(cell) != splat.openness_at(cell): same = false
+		_check(same, "%s seam occlusion is identical whatever order the chunks stream in" % theme_id)
+		reversed.free()
 	# Upload cost of the coverage mip chain (CPU side; headless has a dummy GPU).
 	splat.set("_dirty", true)
 	var flush_started := Time.get_ticks_usec()
@@ -258,6 +277,58 @@ func _test_theme_district(segment: int, theme_id: StringName) -> void:
 	_samples.append({"flush_ms": flush_ms, "segment": segment, "seed": seed_value, "theme": String(theme_id), "slots": Array(active), "district_cells": district_cells, "wild_cells": wild_cells, "wild_margin_cells_in_district": wild_in_district, "chunks": chosen.size(), "presentation_ms": presentation_ms, "occlusion_ms": occlusion_ms, "blockers": cm.get_chunk_build_data(district_coord).occupied_indices().size() if district_coord != Vector2i(999999, 999999) else 0})
 	cm.free()
 	_test_carriageway_index(theme, plan, theme_id)
+
+
+## The reference occlusion of the loaded chunks, summed over every blocker in
+## world cells with GroundSplatRenderer's kernel, compared byte by byte
+## (one byte of rounding allowed for the renderer's float32 sums).
+func _occlusion_against_reference(cm: ChunkManager, chosen: Array[Vector2i]) -> Dictionary:
+	var splat := cm.get_ground_splat()
+	var shade: Dictionary = {}
+	var radius := GroundSplatRenderer.OCCLUSION_RADIUS
+	for coord: Vector2i in chosen:
+		var data := cm.get_chunk_build_data(coord)
+		if data == null:
+			continue
+		for index in data.occupied_indices():
+			var code := int(data.blocker_kind_code[index])
+			if code == 0:
+				continue
+			var weight := 1.0 if code <= 3 else 0.4
+			var cell := coord * CPC + data.cell_for_index(index)
+			for dy in range(-radius, radius + 1):
+				for dx in range(-radius, radius + 1):
+					if dx == 0 and dy == 0:
+						continue
+					var offset := Vector2(dx, dy)
+					var distance := offset.length()
+					if distance > float(radius) + 0.5:
+						continue
+					var side := maxf(0.0, offset.normalized().dot(Vector2(-0.8214, 0.5704)))
+					var target := cell + Vector2i(dx, dy)
+					shade[target] = float(shade.get(target, 0.0)) + weight * clampf(1.0 - (distance - 0.6) / 2.4, 0.0, 1.0) * (0.55 + 0.45 * side)
+	var loaded: Dictionary = {}
+	for coord: Vector2i in chosen: loaded[coord] = true
+	var mismatched := 0
+	var cells := 0
+	var seam_shaded := 0
+	for coord: Vector2i in chosen:
+		for y in CPC:
+			for x in CPC:
+				var cell := coord * CPC + Vector2i(x, y)
+				var expected := 255 - mini(255, roundi(float(shade.get(cell, 0.0)) * 255.0 / GroundSplatRenderer.OCCLUSION_FULL))
+				var actual := roundi(splat.openness_at(cell) * 255.0)
+				cells += 1
+				if absi(expected - actual) > 1:
+					mismatched += 1
+				# Shaded cells within reach of a line shared with another loaded chunk.
+				if expected < 255:
+					for direction: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+						var across := Vector2i(x, y) + direction * radius
+						if (across.x < 0 or across.y < 0 or across.x >= CPC or across.y >= CPC) and loaded.has(coord + direction):
+							seam_shaded += 1
+							break
+	return {"mismatched": mismatched, "cells": cells, "seam_shaded": seam_shaded}
 
 
 ## The district's carriageway uses of the old index 3 (exit approach and
