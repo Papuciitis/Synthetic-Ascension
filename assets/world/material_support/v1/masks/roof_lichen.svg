@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Sparse roof-plane lichen near lower eave; clamp; grayscale data</title>
+  <defs>
+    <radialGradient id="patch">
+      <stop offset="0" stop-color="#a3a3a3"/>
+      <stop offset="0.48" stop-color="#676767"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="#000000"/>
+  <path d="M38 402 C57 377 81 391 92 365 C112 349 130 366 143 382 C171 371 192 388 184 414 C162 431 157 457 128 449 C107 465 83 448 76 429 C53 442 32 429 38 402 Z" fill="url(#patch)"/>
+  <path d="M278 434 C282 407 304 398 321 412 C336 391 358 398 369 419 C390 410 413 430 401 450 C379 464 370 481 346 470 C325 487 302 470 300 456 C284 461 273 450 278 434 Z" fill="url(#patch)" opacity="0.84"/>
+  <path d="M413 293 C426 275 443 282 451 300 C469 295 480 310 471 324 C455 332 436 333 426 318 C409 321 402 307 413 293 Z" fill="url(#patch)" opacity="0.53"/>
+  <ellipse cx="215" cy="361" rx="17" ry="11" fill="url(#patch)" opacity="0.45"/>
+</svg>

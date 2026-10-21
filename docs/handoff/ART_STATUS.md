@@ -5,6 +5,22 @@ Integration branch: `enemy-world-work`. Read [HANDOFF](../../HANDOFF.md) first.
 
 ## Current packet
 
+**21 October — segment materials/air direction:** the requested
+[fourteen-theme brief and curation](../art/2026-10-21-segment-material-atmosphere-direction/README.md)
+and [new support pack](../../assets/world/material_support/v1/README.md) are
+supplied as source/design work. Four grayscale masks cover wall-foot damp,
+leak runoff, vent soot and sparse roof lichen; exact-ID profiles and sRGB
+palettes guide the existing/parked shader work. S1/Hub retain authored owners,
+S11+ remains unresolved beyond the current fallback. Existing incoming packs
+are pinned and labelled R/A/S versus earlier bounded KEEP assets.
+
+Fresh source validation and an isolated Godot4.7.1 SVG decode verify the masks;
+the lead viewed the decoded masks and labelled palette board. No Game runtime,
+whole-city import or new native aesthetic acceptance is claimed. Normal-merge
+this packet on Linux, acknowledge its actual received hash in LINUX_STATUS, then
+return current-source material comparisons and occupied/cost evidence under the
+brief's conditions. Do not treat this pushed file as Linux acknowledgment.
+
 Latest received Linux tip: `3d1be8b0039ce96e65959958b0da10a799f8fcfb`.
 The [latest lead review](../art/reviews/2026-10-21-linux-phase1-lead-review/README.md)
 records architectural gains, ground/street corrections and evidence limits.

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Soot deposit above a vent at 256,420; clamp; grayscale data</title>
+  <defs>
+    <radialGradient id="broad">
+      <stop offset="0" stop-color="#727272"/>
+      <stop offset="0.45" stop-color="#3d3d3d"/>
+      <stop offset="1" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="core">
+      <stop offset="0" stop-color="#dedede"/>
+      <stop offset="0.32" stop-color="#999999"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="drift">
+      <stop offset="0" stop-color="#555555"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="#000000"/>
+  <ellipse cx="274" cy="258" rx="132" ry="204" fill="url(#broad)"/>
+  <ellipse cx="308" cy="164" rx="109" ry="118" fill="url(#drift)"/>
+  <ellipse cx="256" cy="386" rx="48" ry="67" fill="url(#core)"/>
+  <ellipse cx="264" cy="335" rx="65" ry="104" fill="url(#core)" opacity="0.45"/>
+</svg>
