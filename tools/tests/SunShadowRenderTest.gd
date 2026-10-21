@@ -3,7 +3,9 @@ extends Node2D
 ## A cast must multiply any ground by one ratio, feather through vertex alpha,
 ## keep the cutaway's modulate residual, follow a theme's shade uniform, and
 ## the production bed home's soft cast must darken real ground only where the
-## ground-footprint caster reaches. Headless runs skip the rendered checks.
+## ground-footprint caster reaches, and its garden (soil, herbs and the herb
+## bed) must take the same shade whatever order the kit added it in.
+## Headless runs skip the rendered checks.
 
 const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const FIXTURE := preload("res://tools/tests/CitySceneDepthFixture.gd")
@@ -35,6 +37,7 @@ func _run() -> void:
 	if DisplayServer.get_name() != "headless":
 		await _check_rendered_ratio()
 		await _check_rendered_kit()
+		await _check_rendered_garden()
 	DEPTH.reset_light()
 	print("SunShadowRenderTest: %d passed, %d failed" % [_passes,_failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -159,6 +162,77 @@ func _check_rendered_kit() -> void:
 	var base := _pixel(view,image,Vector2(300,1080)).r
 	var open := _pixel(view,image,Vector2(300,1130)).r
 	_check(base < open-0.02,"wall-base contact deepens the cast at the south wall foot; base=%.3f open=%.3f" % [base,open])
+	view.queue_free()
+	await get_tree().process_frame
+	Global.attempt_segment = previous
+
+
+## Review 2026-10-21: an isolated kit (trimmed alone) kept its cast early in
+## its child order and its garden soil drew over the multiplied shade. The
+## garden must take the shade ratio with every kit layer visible.
+func _check_rendered_garden() -> void:
+	var previous := Global.attempt_segment
+	Global.attempt_segment = 2
+	var made := _view(Vector2i(512,320),Vector2(300,1080))
+	var view: SubViewport = made[0]
+	var world: Node2D = made[1]
+	_ground(world,Rect2(-200,700,1300,700),0.5)
+	var bed := FIXTURE.create(world)
+	var kit := bed.kit as Node2D
+	var placed: Array[Rect2i] = [FIXTURE.BED_RECT]
+	kit.call(&"trim_paving",placed,64)
+	var soil := kit.get_node_or_null(^"TendedDomesticBed") as Polygon2D
+	_check(soil != null and kit.get_node_or_null(^"DomesticHerbBed") != null,"the recorded bed home keeps its soil and herb bed")
+	if soil == null:
+		view.queue_free()
+		Global.attempt_segment = previous
+		return
+	var shades: Array[CanvasItem] = []
+	var cores: Array[PackedVector2Array] = []
+	for child: Node in kit.get_children():
+		if child is Polygon2D and (child.has_meta(&"city_contact_shade") or (child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null)):
+			shades.append(child as CanvasItem)
+		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null:
+			var cast := child as Polygon2D
+			for face_value: Variant in cast.polygons:
+				var face := PackedVector2Array()
+				var full := true
+				for index: int in (face_value as PackedInt32Array):
+					face.append(cast.polygon[index])
+					full = full and cast.vertex_colors[index].a > 0.999
+				if full: cores.append(face)
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	var shaded := view.get_texture().get_image()
+	for shade: CanvasItem in shades: shade.visible = false
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	var open := view.get_texture().get_image()
+	var outline := soil.polygon.slice(0,6)
+	var front: float = kit.get("_front")
+	var shade := DEPTH.SUN_SHADE
+	var samples := 0
+	var matched := 0
+	var ratios: Array[float] = []
+	for y in range(int(front)+31,int(front)+56,3):
+		for x in range(190,340,3):
+			var at := Vector2(x+0.5,y+0.5)
+			if not Geometry2D.is_point_in_polygon(at,outline): continue
+			var inside := false
+			for core: PackedVector2Array in cores:
+				if Geometry2D.is_point_in_polygon(at,core): inside = true
+			if not inside: continue
+			var lit := _pixel(view,open,at)
+			if lit.g < 0.12: continue
+			var dark := _pixel(view,shaded,at)
+			samples += 1
+			var ratio := Vector3(dark.r/maxf(lit.r,0.001),dark.g/maxf(lit.g,0.001),dark.b/maxf(lit.b,0.001))
+			ratios.append(ratio.y)
+			if absf(ratio.x-shade.r) < 0.06 and absf(ratio.y-shade.g) < 0.06 and absf(ratio.z-shade.b) < 0.06: matched += 1
+	ratios.sort()
+	var median := ratios[ratios.size()/2] if not ratios.is_empty() else 1.0
+	_check(samples >= 40,"the garden inside the bed home's cast core is sampled; samples=%d" % samples)
+	_check(matched >= int(samples*0.95),"soil, herbs and herb bed inside the cast all take the shared shade; matched=%d/%d median_g=%.3f want %.3f" % [matched,samples,median,shade.g])
 	view.queue_free()
 	await get_tree().process_frame
 	Global.attempt_segment = previous

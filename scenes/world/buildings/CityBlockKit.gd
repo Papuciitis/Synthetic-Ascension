@@ -230,7 +230,7 @@ func _rebuild_sun_shadow(others: Array[Dictionary], receivers: Array[PackedVecto
 	shade.polygons = cast.faces
 	shade.vertex_colors = cast.colors
 	shade.material = DEPTH.SUN_SHADOW_MATERIAL
-	shade.z_index = -90
+	DEPTH.place_ground_shade(shade)
 	# A cutaway leaves the established residual cast on the ground outside.
 	shade.modulate.a = 0.65+0.35*_facade_alpha
 	add_child(shade)
@@ -298,7 +298,7 @@ func _add_contact_shade() -> void:
 	contact.polygons = faces.faces
 	contact.vertex_colors = faces.colors
 	contact.material = DEPTH.SUN_SHADOW_MATERIAL
-	contact.z_index = -90
+	DEPTH.place_ground_shade(contact)
 	add_child(contact)
 
 ## Kit tree/planter casts share the sun material and never darken ground the
@@ -314,6 +314,7 @@ func _recut_foliage_shadows(cuts: Array[PackedVector2Array]) -> void:
 		if pieces.size() == 1 and pieces[0] == source.polygon:
 			source.material = DEPTH.SUN_SHADOW_MATERIAL
 			source.color = Color(1,1,1,FOLIAGE_SHADE)
+			DEPTH.place_ground_shade(source)
 			continue
 		var inverse: Transform2D = source.get_meta(&"shadow_uv_transform")
 		var uv_offset: Vector2 = source.get_meta(&"shadow_uv_offset")
@@ -328,7 +329,7 @@ func _recut_foliage_shadows(cuts: Array[PackedVector2Array]) -> void:
 			shade.texture = source.texture
 			shade.color = Color(1,1,1,FOLIAGE_SHADE)
 			shade.material = DEPTH.SUN_SHADOW_MATERIAL
-			shade.z_index = source.z_index
+			DEPTH.place_ground_shade(shade)
 			shade.modulate = source.modulate
 			add_child(shade)
 		remove_child(source)
@@ -659,7 +660,10 @@ func _add_domestic_garden_bed(width: float, variant: int) -> void:
 		bed_sprite.modulate = Color(0.94,0.93,0.87)
 		var contact := Vector2(left+width*0.5,front+22)
 		bed_sprite.position = contact+(bed_sprite.texture.get_size()*0.5-Vector2(955,485))*bed_sprite.scale
-		bed_sprite.z_index = 1
+		# A flush bed is flat ground: it takes the building's shade and the
+		# actors' shadows like the soil around it (WorldDepthStyle layers).
+		bed_sprite.z_as_relative = false
+		bed_sprite.z_index = DEPTH.GROUND_SHADE_Z-1
 		bed_sprite.set_meta(&"city_garden_contact",contact)
 		add_child(bed_sprite)
 	for index in range(3 if variant == 2 else 2):

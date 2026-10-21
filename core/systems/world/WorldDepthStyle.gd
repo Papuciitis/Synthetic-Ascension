@@ -19,6 +19,15 @@ const SHADOW_SHADER := preload("res://core/systems/world/actor_cast_shadow.gdsha
 ## one shared material, so a theme's shade is a single uniform update.
 const SUN_SHADOW_SHADER := preload("res://core/systems/world/sun_shadow.gdshader")
 const SUN_SHADOW_MATERIAL := preload("res://core/systems/world/sun_shadow_material.tres")
+## Absolute z of every ground-level sun shade (building casts, kit foliage
+## casts, wall-base contact). It sits above every flat ground layer: splat
+## -100, floor stamps -95..-92, paving and footways -94/-93, garden soil,
+## herbs and beds, chunk decals -90. It stays below upright art: wild
+## foliage shadows -86 and plants -85, landmarks -83, room tones -80, props,
+## walls, actors and their shadows (-7). A shadow then darkens exactly the
+## ground beneath it, whatever order a kit happened to add its children in.
+## Flat ground that should receive shade draws below this layer.
+const GROUND_SHADE_Z := -87
 ## Clear-daylight ground ratio inside a cast shadow: a cool, sky-lit x0.69.
 const SUN_SHADE := Color(0.66, 0.69, 0.76)
 ## A building casts from its eave (facade height * K) plus its gable.
@@ -110,3 +119,10 @@ static func contact_for(normal: Vector2) -> Vector2:
 	if normal.x < -0.5: return Vector2(CONTACT_WEST_PX, CONTACT_WEST * contact_strength)
 	if normal.x > 0.5: return Vector2(CONTACT_EAST_PX, CONTACT_EAST * contact_strength)
 	return Vector2.ZERO
+
+
+## Puts a ground-level shade on the shared shade layer, independent of its
+## parent's z and of its position among its siblings.
+static func place_ground_shade(item: CanvasItem) -> void:
+	item.z_as_relative = false
+	item.z_index = GROUND_SHADE_Z
