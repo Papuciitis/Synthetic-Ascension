@@ -15,6 +15,9 @@ max side 768 px; materials and the wall face stay opaque, max side 1024 px).
 | rail_track, rail_wagon, yard_crane, coal_bunker | Rail yard (S8A) and industrial yards (S6) |
 | army_tent | Military staging ground (S8B) |
 | wall_fountain | Civilian cut-through squares (S4B) and courts |
+| tower_top, gatehouse_dome, wall_stair | Wall towers seen from above, copper-capped gatehouse turrets (S5, S10), wall-walk stairs |
+| canal_coping | Canal bank coping seen from above (the bank whose face points away from the camera) |
+| viaduct_arch | Underpass viaduct south face with see-through arches (S7A) |
 
 Source only: runtime placement, scale, collision and anchors are decided by the
 code that adopts each asset.
