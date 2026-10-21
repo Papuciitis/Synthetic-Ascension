@@ -363,10 +363,12 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var plaza_ring_cells: Dictionary = {}
 	if has_plaza:
 		if role != &"primary_objective":
+			_PLAZA.begin_floor(gen) # plaza presentation: record the islands as stamped
 			if organic and not plaza_cells.is_empty():
 				gen._decorate_plaza_floor_cells(chunk, bounds, plaza_cells, rng_plaza_deco, archetype)
 			else:
 				gen._decorate_plaza_floor(chunk, bounds, plaza_rect, rng_plaza_deco, archetype)
+			_PLAZA.end_floor(gen, chunk)
 		var rng_ring := RandomNumberGenerator.new()
 		rng_ring.seed = gen._mix_seed_int(base_seed, 9011)
 		if organic and not plaza_cells.is_empty():
