@@ -26,7 +26,7 @@ static func resolve(theme_id: StringName, context: StringName = &"procedural") -
 			profile["cloud_velocity"] = Vector2(-7.0,1.8)
 		&"collapsed_ward":
 			profile["label"] = "Dry exposed masonry and passing cloud"
-			_light(profile,Color(0.64,0.67,0.73),1.10,3.0,0.90)
+			_light(profile,Color(0.67,0.69,0.74),1.10,3.0,0.90)
 			profile["environment_tint"] = Color(1.0,0.985,0.96)
 			profile["direct_light"] = 0.90
 			profile["cloud_opacity"] = 0.065
@@ -57,7 +57,7 @@ static func resolve(theme_id: StringName, context: StringName = &"procedural") -
 			profile["cloud_velocity"] = Vector2(-6.5,1.6)
 		&"ruined_services":
 			profile["label"] = "Wind over dry abandoned services"
-			_light(profile,Color(0.65,0.68,0.73),1.05,3.0,0.95)
+			_light(profile,Color(0.68,0.69,0.73),1.05,3.0,0.95)
 			profile["environment_tint"] = Color(1.0,0.98,0.95)
 			profile["direct_light"] = 0.88
 			profile["cloud_opacity"] = 0.08
@@ -87,7 +87,7 @@ static func resolve(theme_id: StringName, context: StringName = &"procedural") -
 			profile["mist_tint"] = Color(0.70,0.75,0.71)
 		&"rail_yard":
 			profile["label"] = "Exposed dry loading-ground sun"
-			_light(profile,Color(0.62,0.65,0.71),1.05,2.0,0.90)
+			_light(profile,Color(0.66,0.69,0.77),1.05,2.0,0.90)
 			profile["environment_tint"] = Color(1.0,0.99,0.97)
 			profile["cloud_opacity"] = 0.025
 			profile["cloud_scale_px"] = 1120.0
@@ -103,7 +103,7 @@ static func resolve(theme_id: StringName, context: StringName = &"procedural") -
 			profile["cloud_velocity"] = Vector2(-9.5,2.5)
 		&"outer_wall":
 			profile["label"] = "Clear windy outer approaches"
-			_light(profile,Color(0.63,0.66,0.73),1.18,3.0,0.95)
+			_light(profile,Color(0.66,0.69,0.78),1.18,3.0,0.95)
 			profile["environment_tint"] = Color(0.995,0.995,0.985)
 			profile["cloud_opacity"] = 0.03
 			profile["cloud_scale_px"] = 1240.0
@@ -145,6 +145,9 @@ static func _base(id: StringName, context: StringName) -> Dictionary:
 ## wall-base contact. Overcast or sheltered air lightens and softens shadows
 ## and deepens contact; open sun casts long, crisp, cool shadows. The sun's
 ## direction never changes and nothing here flattens roofs or tints actors.
+## No theme's shade is deeper than clear S2 daylight (luma x0.69): on the
+## current dark lawns and dirt a deeper shade turns casts into near-black
+## slabs where dark armour would lose its contrast in a fight.
 static func _light(profile: Dictionary, shade: Color, length: float, penumbra: float, contact: float) -> void:
 	profile["sun_shade"] = shade
 	profile["shadow_length"] = length
