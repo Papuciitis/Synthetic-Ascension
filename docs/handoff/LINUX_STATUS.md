@@ -43,6 +43,19 @@ engines and holds a run while the CPU package is at or above 85 C.
 
 ## Pickup acknowledgment
 
+- Latest received direction: `89bccb68e55c52d6845259676729e1387932738e`
+  ([segment materials, weathering and atmosphere](../art/2026-10-21-segment-material-atmosphere-direction/README.md)
+  and the [material support pack](../../assets/world/material_support/v1/README.md)).
+  On 21 October, `git fetch --all` and a normal `git merge origin/enemy-world-work`
+  brought it onto this branch at `cf9a4e3d` without conflicts.
+  - The running bounded return (cover, ground, streets, plazas) continues
+    unchanged.
+  - The parked mood and weathering branches will be re-checked against
+    this brief before integration. Ground and street fixes come first, and
+    the ground GPU regression is resolved before anything is added.
+  - The first material comparison will use the brief's four contexts:
+    S2 household street, S6A working ground, S7B damp ground and S9A
+    exposed margin.
 - Latest received review: `245e23855c6ba9166cfa460406eaebddb9c5abda`
   ([city phase 1 lead review](../art/reviews/2026-10-21-linux-phase1-lead-review/README.md)).
   On 21 October, `git fetch --all` and a normal
