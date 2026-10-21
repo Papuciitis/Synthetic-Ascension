@@ -1,0 +1,7 @@
+Use your built-in image generation tool (image_gen) exactly ONCE. Reference image 1 (timber_cot.png) is a STYLE reference from the same game: match its painterly rendering, palette family, lighting and level of detail; do not copy its layout. Reference image 2 (cooking_hearth.png) is a STYLE reference from the same game: match its painterly rendering, palette family, lighting and level of detail; do not copy its layout.
+Pass every attached reference image to the image tool as a reference input (referenced_image_paths).
+
+Use case: stylized-concept. Asset type: production seamless floor material texture for a north-up top-down medieval Mediterranean city game (interiors seen from directly above when the roof is cut away). Flat orthographic view from directly above, no perspective, no objects, no text, no border; uniform flat diffuse light so it tiles; low contrast so characters and loot stay readable; painterly, no black outlines.
+Subject: ONE seamless tileable SQUARE texture of a worn square TERRACOTTA tile floor seen from above (shop floor): muted rust and ochre square tiles, some chipped, soft dust, low contrast joints. Edges tile seamlessly.
+
+After generating, copy the generated PNG from ~/.codex/generated_images/... into the current working directory as floor_terracotta.png (keep the original alpha, do not resize or edit it). Do not create or modify any other file. Reply with the original generated path and the pixel size.
