@@ -34,8 +34,14 @@ const WALL_FACE_INSET := 16.0
 
 
 ## Occupied wall faces of every placed parcel: the receivers no exterior cast
-## may darken (interiors show through in cutaway). Convex pieces.
+## may darken (interiors show through in cutaway). Convex pieces, shared and
+## read-only: every kit of a chunk trims against the same parcel list in one
+## pass, so the walls are collected once per pass, not once per kit. The key
+## also changes whenever the chunk gains or loses a node.
 static func occupied_wall_parts(chunk: Node, footprints: Array[Rect2i], cell_px: int) -> Array[PackedVector2Array]:
+	var key := hash([footprints,cell_px,chunk.get_child_count()])
+	if int(chunk.get_meta(&"_city_wall_parts_key",-1)) == key and chunk.has_meta(&"_city_wall_parts"):
+		return chunk.get_meta(&"_city_wall_parts")
 	var exact: Dictionary = {}
 	for child: Node in chunk.get_children():
 		if child.is_in_group(&"city_block_building") and child.has_meta(&"footprint_cells"):
@@ -48,6 +54,8 @@ static func occupied_wall_parts(chunk: Node, footprints: Array[Rect2i], cell_px:
 			continue
 		var outline: PackedVector2Array = outline_for(kit) if kit != null else rect_polygon(Rect2(Vector2(footprint.position)*cell_px,Vector2(footprint.size)*cell_px))
 		result.append_array(convex_parts(inset_outline(outline,WALL_FACE_INSET)))
+	chunk.set_meta(&"_city_wall_parts_key",key)
+	chunk.set_meta(&"_city_wall_parts",result)
 	return result
 
 

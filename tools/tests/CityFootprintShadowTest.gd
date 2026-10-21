@@ -41,7 +41,11 @@ func _run() -> void:
 	add_child(chunk)
 	var bed := FIXTURE.create(chunk)
 	var kit := bed.kit as Node2D
-	_check(not FIXTURE.untextured_shadows(kit).is_empty(),"actual production bed kit creates a sun shadow")
+	# The cast is drawn once per pass: parcel trimming draws it with the
+	# neighbours; a kit nobody trims casts alone before its frame is drawn.
+	_check(FIXTURE.untextured_shadows(kit).is_empty() and bool(kit.get("_cast_pending")),"configure leaves the cast to the parcel trim instead of drawing it twice")
+	await get_tree().process_frame
+	_check(not FIXTURE.untextured_shadows(kit).is_empty() and not bool(kit.get("_cast_pending")),"an untrimmed production bed kit still casts alone by the end of its frame")
 	_probes(kit,"configured production kit")
 	var placed: Array[Rect2i] = [FIXTURE.BED_RECT]
 	kit.trim_paving(placed,64)

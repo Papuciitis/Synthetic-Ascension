@@ -48,7 +48,10 @@ var _district_profile: Dictionary = {}
 var _sun_shapes: Array[Dictionary] = []
 var _sun_cores: Array[PackedVector2Array] = []
 var _wall_parts: Array[PackedVector2Array] = []
-var _cast_clip := Rect2()
+## Set at configure until the soft cast is drawn, exactly once per pass:
+## by trim_paving with the chunk's neighbours (every generated kit), or at
+## the end of the frame alone for a kit nobody trims (fixtures, previews).
+var _cast_pending := false
 static var preview_original_materials := false
 static var _texture_cache: Dictionary = {}
 
@@ -138,7 +141,6 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	else:
 		preload("res://scenes/world/buildings/CityBlockFrontages.gd").compose(self, doors, cell_px, irregular_outline, _texture("wall_lantern.png") if civic else null, _texture("house_front.png") if _irregular else null)
 	if not _irregular: _add_frontage_details()
-	_recut_foliage_shadows(_own_wall_parts())
 	if _is_guard():
 		for detail: Node in get_children():
 			if detail.name in [&"PaintedEntryLantern",&"PaintedCornerPlanter",&"CityTemperateTree",&"CityFoliageShadow"]: detail.set_meta(&"district_optional_detail",true)
@@ -186,9 +188,24 @@ func _on_roof_alpha(alpha: float) -> void:
 func _add_ground_shadow() -> void:
 	# One sun for every building: cast from the ground footprint (the drawn
 	# roof dropped by the wall height), as long as the drawn wall, softened at
-	# its outer edge. Neighbours and their walls are folded in by trim_paving.
+	# its outer edge. Neighbours and their walls are folded in by trim_paving,
+	# which draws the cast; nothing is drawn here that trimming would redo.
 	_sun_shapes = sun_cast_shapes(true)
-	_rebuild_sun_shadow([],_own_wall_parts())
+	_cast_pending = true
+	_draw_pending_cast.call_deferred()
+
+## A kit placed without parcel trimming still casts, alone, before the
+## frame is drawn. Generated chunks trim every kit synchronously instead.
+func _draw_pending_cast() -> void:
+	if _cast_pending and not is_queued_for_deletion():
+		_draw_sun_cast([],_own_wall_parts())
+
+## Draws this building's soft cast against `others` (neighbouring casters)
+## and `receivers` (occupied wall faces), then re-cuts its kit foliage casts.
+func _draw_sun_cast(others: Array[Dictionary], receivers: Array[PackedVector2Array]) -> void:
+	_cast_pending = false
+	_rebuild_sun_shadow(others,receivers)
+	_recut_foliage_shadows(receivers)
 
 ## This building's convex sun casters with a stable order key (shade shared
 ## with a neighbour belongs to the lower key, so no ground darkens twice).
@@ -219,8 +236,7 @@ func _rebuild_sun_shadow(others: Array[Dictionary], receivers: Array[PackedVecto
 		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null:
 			remove_child(child)
 			child.queue_free()
-	_cast_clip = _shadow_clip()
-	var cast := FOOTPRINT_GEOMETRY.soft_cast(sun_cast_shapes(),others,receivers,_cast_clip)
+	var cast := FOOTPRINT_GEOMETRY.soft_cast(sun_cast_shapes(),others,receivers,_shadow_clip())
 	_sun_cores = cast.cores
 	if (cast.points as PackedVector2Array).is_empty(): return
 	var shade := Polygon2D.new()
@@ -234,22 +250,6 @@ func _rebuild_sun_shadow(others: Array[Dictionary], receivers: Array[PackedVecto
 	# A cutaway leaves the established residual cast on the ground outside.
 	shade.modulate.a = 0.65+0.35*_facade_alpha
 	add_child(shade)
-
-## True when another building's wall face lies within this building's cast
-## or kit foliage cast, so trimming would change what was drawn alone.
-func _foreign_walls_near(walls: Array[PackedVector2Array]) -> bool:
-	var reach := Rect2()
-	for shape: Dictionary in sun_cast_shapes():
-		reach = shape.bounds if not reach.has_area() else reach.merge(shape.bounds)
-	for child: Node in get_children():
-		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture != null:
-			var foliage := FOOTPRINT_GEOMETRY.bounds_of((child as Polygon2D).polygon)
-			reach = foliage if not reach.has_area() else reach.merge(foliage)
-	var own := wall_parts()
-	for part: PackedVector2Array in walls:
-		if own.has(part): continue
-		if FOOTPRINT_GEOMETRY.bounds_of(part).intersects(reach.grow(1.0)): return true
-	return false
 
 ## Neighbouring kits' casters near this one, for one disjoint shared shade.
 func _sibling_casts() -> Array[Dictionary]:
@@ -489,14 +489,9 @@ static func compose_street(chunk: Node2D, footprints: Array[Rect2i], lane_h: Rec
 func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 	# Parcel composition knows all neighbours only after the frontage pass.
 	# Subtract their real wall faces so ground cannot paint a neighbour's room,
-	# and share one disjoint soft shadow with neighbouring casters.
-	var walls := FOOTPRINT_GEOMETRY.occupied_wall_parts(get_parent(),footprints,cell_px)
-	var others := _sibling_casts()
-	# A building with no neighbouring caster or wall within reach keeps the
-	# identical cast it built alone (chunk-build cost, not appearance).
-	if not others.is_empty() or _shadow_clip() != _cast_clip or _foreign_walls_near(walls):
-		_rebuild_sun_shadow(others,walls)
-		_recut_foliage_shadows(walls)
+	# and share one disjoint soft shadow with neighbouring casters. This is
+	# where a generated kit's cast is drawn, once per trim.
+	_draw_sun_cast(_sibling_casts(),FOOTPRINT_GEOMETRY.occupied_wall_parts(get_parent(),footprints,cell_px))
 	for child: Node in get_children():
 		if not child is Polygon2D or not child.has_meta(&"city_paving"): continue
 		var paving := child as Polygon2D
