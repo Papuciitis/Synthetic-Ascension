@@ -43,6 +43,21 @@ engines and holds a run while the CPU package is at or above 85 C.
 
 ## Pickup acknowledgment
 
+- Latest received review: `245e23855c6ba9166cfa460406eaebddb9c5abda`
+  ([city phase 1 lead review](../art/reviews/2026-10-21-linux-phase1-lead-review/README.md)).
+  On 21 October, `git fetch --all` and a normal
+  `git merge origin/enemy-world-work` brought it onto this branch at
+  `63100bdb` without conflicts; nothing was reset or force-pushed.
+  Decisions recorded:
+  - KEEP the architecture direction and the checked household prefix;
+  - REWORK street relationships, ground hierarchy, S7 ecology and theme
+    placement/maintenance;
+  - hold phase 1 pending the bounded return (street and ground in S2, S7
+    and an industrial or ruined theme, a live cutaway and moving route,
+    the WorldCover descendant-invalidation fix, the ground GPU fix with
+    no-readback timing, and source-bound evidence).
+  Mood, weathering and district walls stay separate until reviewed.
+
 - Latest received continuation review: `6554c100305ab96444af86dccab84d3420f200c9`.
   On 20 October, `git fetch origin` followed by
   `git merge --ff-only origin/enemy-world-work` advanced this branch from
