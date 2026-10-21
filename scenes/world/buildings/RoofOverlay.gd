@@ -448,7 +448,7 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 		set_meta(&"district_form_plan",form_plan)
 		forms.compose_roof(self,form_plan,{"slate":texture,"infill":visual_profile.get("infill_texture")})
 	elif compound:
-		preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose(_poly, civic, box)
+		preload("res://scenes/world/buildings/CityBlockRoofForms.gd").compose(_poly, civic, box, visual_profile)
 		# Compound caps must not fill the actual north/east/west door notch.
 		for plane: Node in _poly.find_children("*", "Polygon2D", true, false):
 			if plane.get_parent().name == &"CityRoofComposition":

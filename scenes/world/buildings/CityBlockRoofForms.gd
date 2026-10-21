@@ -118,7 +118,7 @@ static func _partition_plane(group: Node2D, source: Polygon2D, points: PackedVec
 	plane.material = material
 	group.add_child(plane)
 
-static func compose(host: Polygon2D, civic: bool, box: Rect2) -> void:
+static func compose(host: Polygon2D, civic: bool, box: Rect2, profile: Dictionary = {}) -> void:
 	var group := Node2D.new()
 	group.name = "CityRoofComposition"
 	host.add_child(group)
@@ -133,12 +133,83 @@ static func compose(host: Polygon2D, civic: bool, box: Rect2) -> void:
 		_cap(group, host, Rect2(x, y, w*0.29, h*0.86), false, 38, "stair_wing", true)
 		_cap(group, host, Rect2(x, y + h*0.79, w, h*0.21), true, 0, "portico", true)
 		_chimney(group, hall, true)
+		return
+	# Ordinary roofs vary per building (stable visual seed, never generator
+	# RNG): a dwelling gable beside its service room on either side, two
+	# attached house gables, or one long street gable with a rear wing.
+	var usage := StringName(profile.get("building_usage", &"row_house"))
+	var seed_value := int(profile.get("visual_seed", int(x) * 31 + int(y)))
+	var variant := posmod(hash(seed_value * 7919 + 4243), 100)
+	var main: Polygon2D
+	var ridged: Array[Polygon2D] = []
+	if usage == &"workshop":
+		# A working hall: one broad gable along the street with a glazed lantern.
+		main = _cap(group, host, Rect2(x, y + h*0.22, w, h*0.78), true, 14, "hall_roof", false)
+		_cap(group, host, Rect2(x + w*(0.64 if variant % 2 == 0 else 0.0), y, w*0.36, h*0.40), false, 22, "rear_wing", false)
+		ridged.append(main)
+	elif variant < 30:
+		main = _cap(group, host, Rect2(x, y, w*0.64, h), false, 23, "dwelling", false)
+		ridged.append(_cap(group, host, Rect2(x + w*0.61, y + h*0.29, w*0.39, h*0.71), true, 0, "service_room", false))
+	elif variant < 52:
+		main = _cap(group, host, Rect2(x + w*0.36, y, w*0.64, h), false, 23, "dwelling", false)
+		ridged.append(_cap(group, host, Rect2(x, y + h*0.29, w*0.39, h*0.71), true, 0, "service_room", false))
+	elif variant < 76 and w >= 448.0:
+		# Two attached houses under their own gables, one slightly taller.
+		var split := 0.5 + float(posmod(seed_value, 7) - 3) * 0.02
+		main = _cap(group, host, Rect2(x, y, w*split, h), false, 23, "dwelling", false)
+		_cap(group, host, Rect2(x + w*split, y + h*0.06, w*(1.0 - split), h*0.94), false, 11, "attached_house", false)
+		ridged.append(_cap(group, host, Rect2(x + w*0.18, y + h*0.62, w*0.64, h*0.38), true, 0, "street_range", false))
 	else:
-		# An inhabited narrow gable beside a lower attached service room;
-		# deliberately unlike the civic hall's broad horizontal composition.
-		var dwelling := _cap(group, host, Rect2(x, y, w*0.64, h), false, 23, "dwelling", false)
-		_cap(group, host, Rect2(x + w*0.61, y + h*0.29, w*0.39, h*0.71), true, 0, "service_room", false)
-		_chimney(group, dwelling, false)
+		main = _cap(group, host, Rect2(x, y + h*0.30, w, h*0.70), true, 16, "street_gable", false)
+		_cap(group, host, Rect2(x + w*(0.62 if variant % 2 == 0 else 0.0), y, w*0.38, h*0.46), false, 24, "rear_wing", false)
+		ridged.append(main)
+	if usage == &"workshop":
+		_chimney(group, main, false, true)
+		_rooftop(group, main, "roof_lantern.png", Vector2(0.50, 0.34), maxf(96.0, w*0.42), &"lantern")
+		_rooftop(group, main, "roof_vents.png", Vector2(0.24 if variant % 2 == 0 else 0.76, 0.46), 46.0, &"vents")
+	else:
+		_chimney(group, main, false)
+		# Dormers face the street on east-west gables (south slope).
+		var dormer := "dormer_slate.png" if bool(host.get_meta(&"city_roof_slate", false)) else "dormer_clay.png"
+		for plane: Polygon2D in ridged:
+			var count := 1 if plane.get_meta(&"city_roof_form") == &"service_room" else (2 if posmod(seed_value, 3) != 0 else 1)
+			for index: int in count:
+				var fx := (float(index) + 1.0) / float(count + 1)
+				fx += (float(posmod(seed_value >> (index * 3), 5)) - 2.0) * 0.03
+				_rooftop(group, plane, dormer, Vector2(fx, 0.70), 44.0, &"dormer")
+
+## A painted rooftop element seated on a roof plane (fraction of its bounds),
+## with a short projected contact shadow. It belongs to the fading roof.
+static func _rooftop(group: Node2D, plane: Polygon2D, file: String, at: Vector2, width: float, kind: StringName) -> Sprite2D:
+	var path := "res://assets/world/rooftops_v1/" + file
+	if not ResourceLoader.exists(path, "Texture2D"): return null
+	var texture := load(path) as Texture2D
+	var box := Rect2(plane.polygon[0], Vector2.ZERO)
+	for point: Vector2 in plane.polygon: box = box.expand(point)
+	var size := texture.get_size() * (width / texture.get_width())
+	var base := box.position + box.size * at
+	var rect := Rect2(base - Vector2(size.x * 0.5, size.y), size)
+	for corner: Vector2 in [rect.position + Vector2(4, size.y * 0.55), Vector2(rect.end.x - 4, rect.position.y + size.y * 0.55), rect.end - Vector2(4, 2), Vector2(rect.position.x + 4, rect.end.y - 2)]:
+		if not Geometry2D.is_point_in_polygon(corner, plane.polygon): return null
+	var shade := Polygon2D.new()
+	shade.name = "RooftopShadow"
+	var shift := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(size.y * 0.55)
+	var foot := PackedVector2Array([Vector2(rect.position.x + 3, rect.end.y - 6), Vector2(rect.end.x - 3, rect.end.y - 6), Vector2(rect.end.x - 3, rect.end.y), Vector2(rect.position.x + 3, rect.end.y)])
+	var cast := foot.duplicate()
+	for point: Vector2 in foot: cast.append(point + shift)
+	shade.polygon = Geometry2D.convex_hull(cast)
+	shade.color = Color(0.03, 0.04, 0.05, 0.24)
+	group.add_child(shade)
+	var sprite := Sprite2D.new()
+	sprite.name = "Rooftop" + String(kind).capitalize()
+	sprite.texture = texture
+	sprite.centered = false
+	sprite.position = rect.position
+	sprite.scale = Vector2.ONE * (width / texture.get_width())
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	sprite.set_meta(&"city_rooftop", kind)
+	group.add_child(sprite)
+	return sprite
 
 static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, lift: float, kind: String, civic: bool) -> Polygon2D:
 	# Massing follows the building's role; tones follow its actual roof stone.
@@ -209,7 +280,7 @@ static func _face(parent: Node2D, points: PackedVector2Array, color: Color) -> P
 	parent.add_child(face)
 	return face
 
-static func _chimney(parent: Node2D, plane: Polygon2D, civic: bool) -> bool:
+static func _chimney(parent: Node2D, plane: Polygon2D, civic: bool, brick: bool = false) -> bool:
 	var box := Rect2(plane.polygon[0],Vector2.ZERO)
 	for point: Vector2 in plane.polygon: box = box.expand(point)
 	var span_variant := absi(int(box.position.x/64)+int(box.position.y/64)*3+int(box.size.x/64)) % 3
@@ -232,47 +303,38 @@ static func _chimney(parent: Node2D, plane: Polygon2D, civic: bool) -> bool:
 		break
 	if not found: return false
 	var stack := Node2D.new()
-	stack.name = "CivicFlue" if civic else "DomesticFlue"
+	stack.name = "CivicFlue" if civic else ("WorkshopStack" if brick else "DomesticFlue")
 	stack.position = base
-	stack.set_meta(&"city_chimney",&"civic" if civic else &"domestic")
+	stack.set_meta(&"city_chimney",&"civic" if civic else (&"workshop" if brick else &"domestic"))
 	stack.set_meta(&"support_polygon",plane.polygon)
 	stack.set_meta(&"supporting_roof_form",plane.get_meta(&"city_roof_form"))
 	parent.add_child(stack)
-	var w := 32.0 if civic else 26.0
-	var height := 43.0 if civic else 25.0
-	var side := Vector2(9,-7)
-	var left := -w*0.5
-	var right := w*0.5
-	var footprint := PackedVector2Array([Vector2(left,0),Vector2(right,0),Vector2(right,0)+side,Vector2(left,0)+side])
+	# Painted stone stack with clay pots (homes, civic) or a tall sooted brick
+	# workshop stack, seated in the same flashing skirt and casting the same sun.
+	var path := "res://assets/world/rooftops_v1/" + ("chimney_brick.png" if brick else "chimney_stone.png")
+	var texture: Texture2D = load(path) as Texture2D if ResourceLoader.exists(path,"Texture2D") else null
+	var w := (24.0 if brick else 30.0) if not civic else 40.0
+	var height: float = w * (texture.get_height() / float(texture.get_width())) if texture != null else 30.0
+	var footprint := PackedVector2Array([Vector2(-w*0.5,0),Vector2(w*0.5,0),Vector2(w*0.5,-6),Vector2(-w*0.5,-6)])
 	var shadow_points := footprint.duplicate()
-	var shift := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(38)
+	var shift := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(height*0.8)
 	for point: Vector2 in footprint: shadow_points.append(point+shift)
-	_face(stack,Geometry2D.convex_hull(shadow_points),Color(0.02,0.04,0.04,0.20))
+	_face(stack,Geometry2D.convex_hull(shadow_points),Color(0.02,0.04,0.04,0.22))
 	var flashing := _face(stack,flashing_points,Color("414d49"))
 	flashing.name = "RoofFlashing"
-	_face(stack,PackedVector2Array([Vector2(-23,3),Vector2(-12,-10),Vector2(27,-7),Vector2(16,7)]),Color("68756b"))
-	_face(stack,PackedVector2Array([Vector2(left,0),Vector2(left,-height),Vector2(right,-height),Vector2(right,0)]),Color("7e8575") if civic else Color("8a7f6c"))
-	_face(stack,PackedVector2Array([Vector2(right,0),Vector2(right,-height),Vector2(right,-height)+side,Vector2(right,0)+side]),Color("515f54") if civic else Color("5f6557"))
-	# Broad weathering and two selected masonry courses, not brick outlines.
-	_face(stack,PackedVector2Array([Vector2(left+3,-height+10),Vector2(2,-height+12),Vector2(5,-12),Vector2(left+4,-8)]),Color(0.53,0.57,0.47,0.45))
-	for row in range(2):
-		var yy := -9.0-row*13.0
-		_face(stack,PackedVector2Array([Vector2(left+3,yy),Vector2(right-6,yy),Vector2(right-6,yy+1.5),Vector2(left+3,yy+1.5)]),Color(0.27,0.34,0.28,0.35))
-	if civic:
-		# Projecting coping, substantial dark opening and a grouped soot patch.
-		_face(stack,PackedVector2Array([Vector2(left-5,-height-3),Vector2(right+5,-height-3),Vector2(right+5,-height+4),Vector2(left-5,-height+4)]),Color("697562"))
-		_face(stack,PackedVector2Array([Vector2(left-5,-height-3),Vector2(right+5,-height-3),Vector2(right+5,-height-3)+side,Vector2(left-5,-height-3)+side]),Color("a0a78e"))
-		var mouth := _face(stack,PackedVector2Array([Vector2(left+4,-height-4),Vector2(right-2,-height-4),Vector2(right+4,-height-9),Vector2(left+10,-height-9)]),Color("25332e"))
-		mouth.name = "FlueMouth"
-		_face(stack,PackedVector2Array([Vector2(-8,-height+4),Vector2(9,-height+4),Vector2(6,-height+15),Vector2(-5,-height+12)]),Color(0.13,0.19,0.16,0.27))
-	else:
-		_face(stack,PackedVector2Array([Vector2(left,-height),Vector2(right,-height),Vector2(right,-height)+side,Vector2(left,-height)+side]),Color("9a9a80"))
-		var pot := Vector2(4,-height-3)
-		_face(stack,PackedVector2Array([pot+Vector2(-7,0),pot+Vector2(-10,-17),pot+Vector2(9,-17),pot+Vector2(7,0)]),Color("a0714d"))
-		_face(stack,PackedVector2Array([pot+Vector2(2,0),pot+Vector2(2,-17),pot+Vector2(9,-17),pot+Vector2(7,0)]),Color("795640"))
-		_oval(stack,pot+Vector2(0,-17),Vector2(12,5),Color("ac805b"))
-		var mouth := _oval(stack,pot+Vector2(0,-18),Vector2(7,2.8),Color("29372f"))
-		mouth.name = "FlueMouth"
+	if texture != null:
+		var sprite := Sprite2D.new()
+		sprite.name = "ChimneyStack"
+		sprite.texture = texture
+		sprite.centered = false
+		sprite.scale = Vector2.ONE * (w / texture.get_width())
+		sprite.position = Vector2(-w*0.5, 4.0-height)
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		stack.add_child(sprite)
+	var mouth := Node2D.new()
+	mouth.name = "FlueMouth"
+	mouth.position = Vector2(0, 8.0-height)
+	stack.add_child(mouth)
 	return true
 
 static func _oval(parent: Node2D, center: Vector2, radius: Vector2, color: Color) -> Polygon2D:
