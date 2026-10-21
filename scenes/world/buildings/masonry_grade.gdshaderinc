@@ -14,11 +14,9 @@ vec3 masonry_grade(vec3 rgb, float value, vec3 tint, float brightness, float cur
 }
 
 // Dressed ashlar has fine joints: a dark texel next to brighter stone (two
-// diagonal taps) is lifted toward it, thinning mortar lines without touching
-// the top/face plane split or the stones themselves.
-float masonry_fine_joints(sampler2D source, vec2 uv, vec2 texel, float value, float lift) {
-	vec2 step = texel * 2.5;
-	float a = masonry_value(texture(source, uv + step).rgb);
-	float b = masonry_value(texture(source, uv - step).rgb);
-	return max(value, mix(value, max(a, b), lift));
+// diagonal neighbour values, sampled by the caller) is lifted toward it,
+// thinning mortar lines without touching the plane split or the stones.
+// Built-in TEXTURE cannot be passed into functions, so callers fetch.
+float masonry_fine_joints(float value, float neighbour_a, float neighbour_b, float lift) {
+	return max(value, mix(value, max(neighbour_a, neighbour_b), lift));
 }
