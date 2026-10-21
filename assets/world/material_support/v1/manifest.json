@@ -1,0 +1,82 @@
+{
+  "format": "synthetic-ascension-source-manifest-v1",
+  "date": "2026-10-21",
+  "author": "Windows art lead; authored vector geometry and material targets",
+  "creation": "Direct SVG paths/gradients and JSON palette values; no image generation or bitmap editing",
+  "status": "source-only; no runtime integration/native aesthetic acceptance",
+  "mask_encoding": "Opaque grayscale; red channel is linear data; black=0 white=1; not a visible sprite",
+  "assets": [
+    {
+      "file": "masks/wall_base_damp.svg",
+      "size": [
+        1024,
+        256
+      ],
+      "anchor": {
+        "kind": "bottom_edge",
+        "y": 256
+      },
+      "sampling": "repeat X only; clamp Y; fit at actual wall foot",
+      "sha256": "06202c74aa9b0d01658a897dcec1369a6046573476b023e47f3c4b3d8979ab8c",
+      "bytes": 55428
+    },
+    {
+      "file": "masks/runoff_streaks.svg",
+      "size": [
+        256,
+        512
+      ],
+      "anchor": {
+        "kind": "leak_source",
+        "xy": [
+          128,
+          32
+        ]
+      },
+      "sampling": "clamp XY; gravity +Y on vertical receiver",
+      "sha256": "ea677bcd783cddfccc733fcabd640a3b0db6d3bbfa2fcc7883a29e2c2bcad35e",
+      "bytes": 2153
+    },
+    {
+      "file": "masks/vent_soot.svg",
+      "size": [
+        512,
+        512
+      ],
+      "anchor": {
+        "kind": "outlet_source",
+        "xy": [
+          256,
+          420
+        ]
+      },
+      "sampling": "clamp XY; deposit rises -Y on vertical receiver",
+      "sha256": "4975297d047649336a661ff6da4dcf5eccabb14d2d91202f3d81e0b72f803cc4",
+      "bytes": 1092
+    },
+    {
+      "file": "masks/roof_lichen.svg",
+      "size": [
+        512,
+        512
+      ],
+      "anchor": {
+        "kind": "eave_edge",
+        "y": 512
+      },
+      "sampling": "clamp XY; map into roof plane; fade with roof",
+      "sha256": "501011e21d1cf8878b0741f732ac439c28752ba75a9d6fa89edf5a72e7f3369a",
+      "bytes": 1091
+    },
+    {
+      "file": "segment_profiles.json",
+      "sha256": "17156f450e3d1608b33cf9ac472e9b2f434bb1d33f53d883136c6b173eb78f89",
+      "bytes": 13693
+    },
+    {
+      "file": "segment_palettes.gpl",
+      "sha256": "ae93de3ec1c0ede998992e2545123e409f3b4aa90fb8fd626e0a8152ff4ff873",
+      "bytes": 3152
+    }
+  ]
+}
