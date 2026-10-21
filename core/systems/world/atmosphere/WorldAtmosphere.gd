@@ -20,10 +20,15 @@ const MASK_CELLS := 126.0
 const ROOF_DEFAULTS := {"lit_slope":1.12,"shade_slope":0.72,"ridge_light":0.4}
 const GROUND_DEFAULTS := {"cell_px":64.0,"map_size":256.0,"warp_cells":0.62,
 	"grain":0.3,"overgrowth_bias":0.08,"overgrowth_a":Vector4.ZERO,
-	"overgrowth_b":Vector4.ZERO,"stain_strength":0.8,"stain_layer":5.0}
+	"overgrowth_b":Vector4.ZERO,"stain_strength":0.8,"stain_layer":5.0,
+	"policy_enabled":false,"hard_a":Vector4.ZERO,"hard_b":Vector4.ZERO,
+	"paved_stain_strength":1.0}
+## Mirrored onto the air as receiver_<name>: the warp/winner inputs and the
+## district ground policy's paved classification (DistrictGroundPolicy).
 const GROUND_PARAMETERS: Array[String] = ["cover_a","cover_b","light_map","noise_tex",
 	"cell_px","map_size","warp_cells","grain","overgrowth_bias",
-	"overgrowth_a","overgrowth_b","stain_strength"]
+	"overgrowth_a","overgrowth_b","stain_strength","policy_enabled",
+	"hard_a","hard_b","paved_stain_strength"]
 
 signal profile_changed(profile: Dictionary)
 

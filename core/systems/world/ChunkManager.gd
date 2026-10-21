@@ -1302,7 +1302,9 @@ func _ensure_ground_splat() -> GroundSplatRenderer:
 		_ground_splat.configure(cell_size_px, _cells_per_chunk())
 		add_child(_ground_splat)
 	_ground_splat.set_world_tint(district_tint)
-	_ground_splat.set_city_streetscape(Global.attempt_segment == 2)
+	# Keyed by the district family, not the segment number: S2..S10 and the
+	# S11+ fallback each get their theme's ground; S1/Hub (no family) stay raw.
+	_ground_splat.set_ground_family(district_family)
 	return _ground_splat
 
 

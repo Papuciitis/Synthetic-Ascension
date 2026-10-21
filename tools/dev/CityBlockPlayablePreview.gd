@@ -446,7 +446,7 @@ func _ground_evidence(coord: Vector2i) -> Dictionary:
 				care_bounds = care_bounds.expand(Vector2i(x,y)) if has_care else Rect2i(Vector2i(x,y),Vector2i.ONE)
 				has_care = true
 	var uniforms: Dictionary = {}
-	for key: StringName in [&"slot_index",&"slot_layer",&"slot_repeat_px",&"cared_lawn_layer",&"cared_lawn_repeat_px",&"city_streetscape",&"world_tint",&"overgrowth_a",&"overgrowth_b"]:
+	for key: StringName in [&"slot_index",&"slot_layer",&"slot_repeat_px",&"cared_lawn_layer",&"cared_lawn_repeat_px",&"policy_enabled",&"slot_role",&"ao_strength",&"world_tint",&"overgrowth_a",&"overgrowth_b"]:
 		var value: Variant = shader.get_shader_parameter(key)
 		uniforms[String(key)] = Array(value) if value is PackedFloat32Array else str(value)
 	var source_records: Array = []

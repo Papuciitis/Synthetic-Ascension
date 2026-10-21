@@ -21,6 +21,7 @@ class_name GroundSplatRenderer
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const SHADER := preload("res://core/systems/world/ground/ground_splat.gdshader")
 const _CITY_GROUND_CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
+const _POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
 
 ## Cells, wrapped. 256 cells = 8 chunks at 32 cells/chunk = 16384 px: larger than any streamed
 ## window, and the whole of Segment 1 fits without wrapping onto itself.
@@ -50,6 +51,11 @@ var _authored: Array[Image] = []
 var _authored_mask: Image = null
 
 var _slot_material := PackedInt32Array()
+## Materials that found every slot taken and had to borrow one (tests).
+var _slot_borrows := 0
+## The district presentation (DistrictGroundPolicy.resolve); empty = legacy.
+var _policy: Dictionary = {}
+var _policy_family: StringName = &"__unset__"
 var _material: ShaderMaterial
 var _quad_texture: ImageTexture
 var _quads: Dictionary = {}
@@ -64,8 +70,10 @@ func _init() -> void:
 	_cover_a = _blank_map()
 	_cover_b = _blank_map()
 	_light = _blank_map()
-	_cover_a_texture = ImageTexture.create_from_image(_cover_a)
-	_cover_b_texture = ImageTexture.create_from_image(_cover_b)
+	# Coverage carries a mip chain: the policy reads paved-to-paved edges from
+	# a smoothed level (crisp kerbs that follow the street, not the cell steps).
+	_cover_a_texture = ImageTexture.create_from_image(_mipmapped(_cover_a))
+	_cover_b_texture = ImageTexture.create_from_image(_mipmapped(_cover_b))
 	_light_texture = ImageTexture.create_from_image(_light)
 	_slot_material.resize(SLOTS)
 	_slot_material.fill(-1)
@@ -79,6 +87,9 @@ func _init() -> void:
 	_material.set_shader_parameter("light_map", _light_texture)
 	_material.set_shader_parameter("noise_tex", noise_texture())
 	_material.set_shader_parameter("map_size", float(MAP_SIZE))
+	if OS.is_debug_build() and OS.has_environment("SA_GROUND_DEBUG_VIEW"):
+		_material.set_shader_parameter("debug_view", int(OS.get_environment("SA_GROUND_DEBUG_VIEW")))
+	_push_role_uniforms()
 	_push_slot_uniforms()
 
 
@@ -131,16 +142,38 @@ func set_world_tint(tint: Color) -> void:
 	_material.set_shader_parameter("world_tint", tint)
 
 
-func set_city_streetscape(enabled: bool) -> void:
-	# Presentation only: retain the exact splat ownership, organic edges and
-	# stamped indoor/plaza/road hierarchy. Other segments use their old palette.
-	_material.set_shader_parameter("city_streetscape", enabled)
-	_material.set_shader_parameter("seam_shadow", 0.0 if enabled else 0.12)
-	_material.set_shader_parameter("lip_shadow", 0.22 if enabled else 0.36)
+## Present the ground as `family`'s district (DistrictGroundPolicy). Cheap
+## when unchanged, so callers may repeat it on every paint.
+func set_ground_family(family: StringName) -> void:
+	if family == _policy_family:
+		return
+	set_ground_policy(_POLICY.resolve(family))
+	_policy_family = family
+
+
+## Presentation only: material ownership, slots, organic soil edges and the
+## stamped indoor/plaza/road hierarchy never change with the policy.
+func set_ground_policy(policy: Dictionary) -> void:
+	_policy = policy.duplicate(true)
+	_policy_family = StringName(_policy.get("family", &"__unset__"))
+	var enabled := bool(_policy.get("enabled", false))
+	_material.set_shader_parameter("policy_enabled", enabled)
+	_material.set_shader_parameter("seam_shadow", float(_policy.get("seam_shadow", 0.0)) if enabled else 0.12)
+	_material.set_shader_parameter("lip_shadow", float(_policy.get("lip_shadow", 0.22)) if enabled else 0.36)
 	if enabled and _material.get_shader_parameter("city_setts") == null:
 		var kit := preload("res://scenes/world/buildings/CityBlockKit.gd")
 		_material.set_shader_parameter("city_setts", kit._texture("worn_setts.png"))
 		_material.set_shader_parameter("city_limestone", kit._texture("paving.png"))
+	_push_role_uniforms()
+	_push_slot_uniforms()
+
+
+func ground_policy() -> Dictionary:
+	return _policy.duplicate(true)
+
+
+func ground_policy_enabled() -> bool:
+	return bool(_policy.get("enabled", false))
 
 
 func get_shader_material() -> ShaderMaterial:
@@ -254,6 +287,7 @@ func clear() -> void:
 	_authored.clear()
 	_authored_mask = null
 	_slot_material.fill(-1)
+	_slot_borrows = 0
 	_push_slot_uniforms()
 	_dirty = true
 	for quad in _quads.values():
@@ -264,6 +298,20 @@ func clear() -> void:
 
 func quad_count() -> int:
 	return _quads.size()
+
+
+## Distinct semantic materials holding a slot, and how many paints had to
+## borrow a slot because all eight were taken (tests: a district must fit).
+func active_slot_materials() -> PackedInt32Array:
+	var active := PackedInt32Array()
+	for slot in SLOTS:
+		if _slot_material[slot] >= 0:
+			active.append(_slot_material[slot])
+	return active
+
+
+func slot_borrow_count() -> int:
+	return _slot_borrows
 
 
 ## Ground material at a global cell (base or stamp), -1 where nothing is
@@ -288,8 +336,8 @@ func flush() -> void:
 	if not _dirty:
 		return
 	_dirty = false
-	_cover_a_texture.update(_cover_a)
-	_cover_b_texture.update(_cover_b)
+	_cover_a_texture.update(_mipmapped(_cover_a))
+	_cover_b_texture.update(_mipmapped(_cover_b))
 	_light_texture.update(_light)
 
 
@@ -345,6 +393,7 @@ func _slot_for(ground_index: int) -> int:
 			_slot_material[slot] = ground_index
 			_push_slot_uniforms()
 			return slot
+	_slot_borrows += 1
 	var overgrowth := _WORLD_ART.is_overgrowth_ground(ground_index)
 	for slot in SLOTS:
 		if _WORLD_ART.is_overgrowth_ground(_slot_material[slot]) == overgrowth:
@@ -357,7 +406,12 @@ func _push_slot_uniforms() -> void:
 	var indices := PackedFloat32Array()
 	var repeats := PackedFloat32Array()
 	var tints := PackedColorArray()
+	var roles := PackedFloat32Array()
 	var og := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var hard := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var road := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var lane := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var enabled := ground_policy_enabled()
 	for slot in SLOTS:
 		var ground_index := maxi(0, _slot_material[slot])
 		var layer := material_layer(ground_index)
@@ -367,12 +421,67 @@ func _push_slot_uniforms() -> void:
 		tints.append(material_tint(ground_index))
 		if _slot_material[slot] >= 0 and _WORLD_ART.is_overgrowth_ground(ground_index):
 			og[slot] = 1.0
+		var role := _POLICY.role_for_index(ground_index) if enabled and _slot_material[slot] >= 0 else _POLICY.ROLE_RAW
+		roles.append(float(role))
+		if _POLICY.is_paved_role(role):
+			hard[slot] = 1.0
+		if role == _POLICY.ROLE_ROAD:
+			road[slot] = 1.0
+		elif role == _POLICY.ROLE_LANE:
+			lane[slot] = 1.0
 	_material.set_shader_parameter("slot_layer", layers)
 	_material.set_shader_parameter("slot_index", indices)
 	_material.set_shader_parameter("slot_repeat_px", repeats)
 	_material.set_shader_parameter("slot_tint", tints)
+	_material.set_shader_parameter("slot_role", roles)
 	_material.set_shader_parameter("overgrowth_a", Vector4(og[0], og[1], og[2], og[3]))
 	_material.set_shader_parameter("overgrowth_b", Vector4(og[4], og[5], og[6], og[7]))
+	_material.set_shader_parameter("hard_a", Vector4(hard[0], hard[1], hard[2], hard[3]))
+	_material.set_shader_parameter("hard_b", Vector4(hard[4], hard[5], hard[6], hard[7]))
+	_material.set_shader_parameter("road_a", Vector4(road[0], road[1], road[2], road[3]))
+	_material.set_shader_parameter("road_b", Vector4(road[4], road[5], road[6], road[7]))
+	_material.set_shader_parameter("lane_a", Vector4(lane[0], lane[1], lane[2], lane[3]))
+	_material.set_shader_parameter("lane_b", Vector4(lane[4], lane[5], lane[6], lane[7]))
+
+
+## The policy's per-role sources and grades (a disabled policy draws raw).
+func _push_role_uniforms() -> void:
+	var samples := PackedVector4Array()
+	var mids := PackedColorArray()
+	var tints := PackedColorArray()
+	var roles: Dictionary = _policy.get("roles", {})
+	for role in 8:
+		var entry: Dictionary = roles.get(role, {})
+		var source := int(entry.get("source", _POLICY.SOURCE_OWN))
+		var repeat_px := maxf(16.0, float(entry.get("repeat_px", 384.0)))
+		samples.append(Vector4(float(source), float(entry.get("layer", 0)), repeat_px, 1.0 if _POLICY.is_paved_role(role) else 0.0))
+		mids.append(entry.get("mid", Color(0.5, 0.5, 0.5, 0.0)))
+		tints.append(entry.get("tint", Color.WHITE))
+	_material.set_shader_parameter("role_sample", samples)
+	_material.set_shader_parameter("role_mid", mids)
+	_material.set_shader_parameter("role_tint", tints)
+	var enabled := ground_policy_enabled()
+	_material.set_shader_parameter("kerb_strength", float(_policy.get("kerb", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("gutter_strength", float(_policy.get("gutter", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("joint_strength", float(_policy.get("joint", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("kerb_lod", float(_policy.get("kerb_lod", 1.0)))
+	_material.set_shader_parameter("kerb_warp_cells", float(_policy.get("kerb_warp_cells", 0.1)))
+	_material.set_shader_parameter("ao_strength", float(_policy.get("ao", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("lawn_mottle", float(_policy.get("lawn_mottle", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("paving_variation", float(_policy.get("paving_variation", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("paved_stain_strength", float(_policy.get("paved_stain_strength", 1.0)) if enabled else 1.0)
+	_material.set_shader_parameter("wet_patches", float(_policy.get("wet_patches", 0.0)) if enabled else 0.0)
+	var yard_patch: Dictionary = _policy.get("yard_patch", {}) if enabled else {}
+	if yard_patch.is_empty():
+		_material.set_shader_parameter("yard_patch", Vector4(-1.0, 0.0, 384.0, 0.5))
+	else:
+		_material.set_shader_parameter("yard_patch", Vector4(float(yard_patch.get("layer", -1)), float(yard_patch.get("coverage", 0.0)), float(yard_patch.get("repeat_px", 384.0)), float(yard_patch.get("weight", 0.5))))
+		_material.set_shader_parameter("yard_patch_tint", yard_patch.get("tint", Color.WHITE))
+	var verge_layer := int(_policy.get("verge_layer", -1)) if enabled else -1
+	_material.set_shader_parameter("verge_layer", float(verge_layer))
+	_material.set_shader_parameter("verge_strength", float(_policy.get("verge_strength", 0.0)) if enabled else 0.0)
+	if verge_layer >= 0:
+		_material.set_shader_parameter("verge_repeat_px", float(_WORLD_ART.ground_repeat_world_px(verge_layer)))
 
 
 func _ensure_quad(coord: Vector2i) -> void:
@@ -411,6 +520,14 @@ static func _blank_map() -> Image:
 	var image := Image.create(MAP_SIZE, MAP_SIZE, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0))
 	return image
+
+
+## A copy of a coverage map with its box-filtered mip chain (the paint maps
+## themselves stay single-level so fill_rect edits remain exact).
+static func _mipmapped(image: Image) -> Image:
+	var copy := Image.create_from_data(image.get_width(), image.get_height(), false, image.get_format(), image.get_data())
+	copy.generate_mipmaps()
+	return copy
 
 
 ## Tileable RGBA noise for the shader: R, G = a low, broad warp field; B = a

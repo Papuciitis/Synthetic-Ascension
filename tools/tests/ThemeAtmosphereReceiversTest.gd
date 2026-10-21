@@ -84,6 +84,18 @@ func _check_ground_binding(atmosphere: Node2D) -> void:
 	_check(ground.material_at(Vector2i.ZERO) == 1 and ground.material_at(Vector2i(1,0)) == 5 and ground.material_at(Vector2i(2,0)) == 12 and ground.material_at(Vector2i(3,0)) == 1, "receiver fixture retains dry1, wet5, moss12 and stained dry1 semantic ownership")
 	var damp_a: Vector4 = air.get_shader_parameter("receiver_damp_a")
 	_check(is_zero_approx(damp_a.x) and is_equal_approx(damp_a.y,1.0) and is_equal_approx(damp_a.z,1.0), "actual first-allocated dry/wet/moss slots receive only physical damp eligibility")
+	_check(air.get_shader_parameter("receiver_policy_enabled") == false, "a ground without a district family mirrors the raw winner logic")
+	# A district policy refines paved winners among paved slots only and draws
+	# stains on paving more lightly; the air mirrors exactly that.
+	ground.paint_rect(Rect2i(4,0,1,1),7,1.0)
+	ground.set_ground_family(&"canal_services")
+	ground.flush()
+	atmosphere.call("refresh_environment",true)
+	_check(air.get_shader_parameter("receiver_policy_enabled") == true and air.get_shader_parameter("receiver_hard_a") == actual.get_shader_parameter("hard_a") and air.get_shader_parameter("receiver_hard_b") == actual.get_shader_parameter("hard_b"), "low air mirrors the district policy's paved slots")
+	_check(is_equal_approx(float(air.get_shader_parameter("receiver_paved_stain_strength")),float(actual.get_shader_parameter("paved_stain_strength"))), "low air mirrors the policy's lighter stains on paving")
+	var hard_a: Vector4 = air.get_shader_parameter("receiver_hard_a")
+	var still_damp: Vector4 = air.get_shader_parameter("receiver_damp_a")
+	_check(is_equal_approx(hard_a.w,1.0) and is_zero_approx(hard_a.y) and is_zero_approx(hard_a.z) and still_damp == damp_a, "paving never becomes damp; wet and moss eligibility is unchanged by the policy")
 	var other_world := SubViewport.new()
 	other_world.world_2d = World2D.new()
 	add_child(other_world)

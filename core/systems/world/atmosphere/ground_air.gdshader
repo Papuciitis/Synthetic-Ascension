@@ -29,6 +29,13 @@ uniform vec4 receiver_overgrowth_b = vec4(0.0);
 uniform vec4 receiver_damp_a = vec4(0.0);
 uniform vec4 receiver_damp_b = vec4(0.0);
 uniform bool receiver_damp_stain = false;
+// District ground policy mirror (ground_splat.gdshader): paved winners are
+// refined only among paved slots (never damp), and stains on paving draw at
+// the policy's reduced strength.
+uniform bool receiver_policy_enabled = false;
+uniform vec4 receiver_hard_a = vec4(0.0);
+uniform vec4 receiver_hard_b = vec4(0.0);
+uniform float receiver_paved_stain_strength = 1.0;
 varying vec2 world_position;
 
 void vertex() {
@@ -49,20 +56,25 @@ float ground_dampness(vec2 world) {
 	vec4 sb = cb + step(0.004, cb) * ((receiver_overgrowth_b * 2.0 - 1.0) * grain + receiver_overgrowth_b * receiver_overgrowth_bias);
 	float best = sa.x;
 	float damp = receiver_damp_a.x;
+	float paved = receiver_hard_a.x;
 	for (int slot = 1; slot < 4; slot++) {
-		if (sa[slot] > best) { best = sa[slot]; damp = receiver_damp_a[slot]; }
+		if (sa[slot] > best) { best = sa[slot]; damp = receiver_damp_a[slot]; paved = receiver_hard_a[slot]; }
 	}
 	for (int slot = 0; slot < 4; slot++) {
-		if (sb[slot] > best) { best = sb[slot]; damp = receiver_damp_b[slot]; }
+		if (sb[slot] > best) { best = sb[slot]; damp = receiver_damp_b[slot]; paved = receiver_hard_b[slot]; }
 	}
 	if (dot(ca, vec4(1.0)) + dot(cb, vec4(1.0)) < 0.5) { return 0.0; }
+	// A paved winner may be re-chosen among paved slots by the host's crisp
+	// edge pass; paved slots are never damp, so dampness is already final.
+	bool on_paving = receiver_policy_enabled && paved > 0.5;
+	if (on_paving) { damp = 0.0; }
 	if (receiver_damp_stain) {
 		float stain = texture(receiver_light_map, p / receiver_map_size).g;
 		// Match the host's local stain guard. A noise peak on clean G0 ground
 		// must not invent moisture where the ground shader draws no stain.
 		if (stain > 0.01) {
 			float cut = smoothstep(0.4, 0.62, stain * 0.9 + (n.a - 0.5) * 0.9);
-			damp = max(damp, cut * receiver_stain_strength);
+			damp = max(damp, cut * receiver_stain_strength * (on_paving ? receiver_paved_stain_strength : 1.0));
 		}
 	}
 	return clamp(damp, 0.0, 1.0);

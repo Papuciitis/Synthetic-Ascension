@@ -35,6 +35,7 @@ func _run() -> void:
 	_test_wrap_reclaims_block()
 	_test_slots()
 	_test_domestic_care_data_contract()
+	_test_district_policy_presentation()
 	await _test_chunk_manager_path()
 	print("WorldGroundSplatTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -112,9 +113,11 @@ func _test_slots() -> void:
 	for material in [0, 1, 2, 3, 4, 5, 7, 8]:
 		splat.paint_rect(Rect2i(material, 0, 1, 1), material, 0.9)
 	_check(splat.material_at(Vector2i(8, 0)) == 8, "eight materials each get a slot")
+	_check(splat.slot_borrow_count() == 0 and splat.active_slot_materials().size() == 8, "eight materials fit without borrowing")
 	splat.paint_rect(Rect2i(9, 0, 1, 1), 10, 0.9)
 	var borrowed := splat.material_at(Vector2i(9, 0))
 	_check(borrowed == 0, "a ninth, grass-like material borrows the grass slot (%d)" % borrowed)
+	_check(splat.slot_borrow_count() == 1, "a borrowed slot is counted so district tests can forbid it (%d)" % splat.slot_borrow_count())
 	splat.paint_rect(Rect2i(10, 0, 1, 1), 9, 0.9)
 	var paving := splat.material_at(Vector2i(10, 0))
 	_check(paving != 0 and paving != 5 and paving >= 0, "a ninth paving material borrows a paving slot (%d)" % paving)
@@ -168,6 +171,36 @@ func _test_domestic_care_data_contract() -> void:
 	splat.clear()
 	var empty: PackedByteArray = splat.call("care_signature",Vector2i.ZERO)
 	_check(empty.count(0) == empty.size(),"world clear removes household care completely")
+	splat.queue_free()
+
+
+func _bytes(splat: GroundSplatRenderer, field: String) -> PackedByteArray:
+	return (splat.get(field) as Image).get_data()
+
+
+func _test_district_policy_presentation() -> void:
+	var splat := _splat()
+	splat.set_chunk_base(Vector2i.ZERO, 6)
+	splat.paint_rect(Rect2i(4, 4, 10, 3), 7, 0.9)
+	splat.paint_rect(Rect2i(4, 7, 10, 1), 2, 0.9)
+	splat.paint_rect(Rect2i(20, 4, 3, 3), 0, 0.95)
+	var a := _bytes(splat, "_cover_a")
+	var b := _bytes(splat, "_cover_b")
+	var light := _bytes(splat, "_light")
+	var slots := splat.active_slot_materials()
+	splat.set_ground_family(&"collapsed_ward")
+	splat.set_ground_family(&"collapsed_ward")
+	splat.set_ground_family(&"rail_yard")
+	_check(a == _bytes(splat, "_cover_a") and b == _bytes(splat, "_cover_b") and light == _bytes(splat, "_light") and slots == splat.active_slot_materials(), "switching district policies leaves coverage, light bytes and slots untouched")
+	_check(StringName(splat.ground_policy().get("id", &"")) == &"rail_yard" and splat.ground_policy_enabled(), "the renderer reports the active district policy")
+	var roles: PackedFloat32Array = splat.get_shader_material().get_shader_parameter("slot_role")
+	var road: Vector4 = splat.get_shader_material().get_shader_parameter("road_a")
+	var hard: Vector4 = splat.get_shader_material().get_shader_parameter("hard_a")
+	_check(int(roles[0]) == 4 and int(roles[1]) == 1 and int(roles[2]) == 3 and int(roles[3]) == 5, "yard, road, footway and lawn slots carry their presentation roles (%s)" % str(roles))
+	_check(road == Vector4(0, 1, 0, 0) and hard == Vector4(1, 1, 1, 0), "only the carriageway is kerbed; yard, road and footway are paved, lawn is not")
+	splat.set_ground_family(&"")
+	roles = splat.get_shader_material().get_shader_parameter("slot_role")
+	_check(not splat.ground_policy_enabled() and roles.count(0.0) == roles.size(), "no district family presents every slot raw")
 	splat.queue_free()
 
 
