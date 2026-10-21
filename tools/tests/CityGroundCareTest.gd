@@ -191,7 +191,12 @@ func _test_production_footway_pockets() -> void:
 				positive += 1
 				if care >= 0.7: strong += 1
 		if int(sample.id) == 944996572:
-			_check(counts == {0:716,2:125,3:6,4:177},"the bed fixture retains the production floor ownership from the failed native trial")
+			# Street continuity (2026-10-21) attaches three architecture-only
+			# infill lots in this lane (a shop beside the home, a shop beside
+			# the service annex, one across the lane); their floors and aprons
+			# own those cells. With street_continuity_enabled off the chunk still
+			# yields the native-trial histogram {0:716,2:125,3:6,4:177}.
+			_check(counts == {0:525,2:117,3:180,4:202},"the bed fixture retains the production floor ownership from the failed native trial")
 			var compact_core := true
 			for core_y in range(14,17):
 				for core_x in range(0,3):
