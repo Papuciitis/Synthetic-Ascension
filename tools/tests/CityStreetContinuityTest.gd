@@ -18,7 +18,15 @@ extends "res://tools/tests/ProcChunkReachabilityTest.gd"
 ## cross a seam are counted); recorded passages stay open after every later
 ## ring; original doors and spawn sockets are unchanged; per-chunk
 ## reachability as above.
+## Medieval street pass (2026-10-21) on the same plans: courtyard ring doors
+## face their court (no outward flip toward a back alley; a walk-through
+## passage keeps its rear door); a framed square's open sides carry no frame
+## house; infill segments stand on all three setback steps somewhere in every
+## run, and each step's lots stay reachable like every other lot.
 ## -- --out=/abs/path.json writes every sampled chunk for the replay comparison.
+## -- --deco=1 builds every fixture with the environment decoration and plaza
+## dressing pass on (props, vegetation, centrepieces), so the reachability,
+## protected-cell, passage and door-apron checks hold for final-dressed chunks.
 
 const THEMES := [[2, ""], [3, ""], [4, "collapsed_ward"], [4, "civilian_cutthrough"], [5, ""],
 	[6, "industrial_cutthrough"], [6, "ruined_services"], [7, "underpass_veins"], [7, "canal_services"],
@@ -47,6 +55,11 @@ var _walls: Array[int] = []
 var _infill_walls: Array[int] = []
 var _plan_doors := 0
 var _cross_seam_aprons := 0
+var _deco := false
+var _steps := {-1: 0, 0: 0, 1: 0}
+var _court_doors := 0
+var _framed := 0
+var _framed_open_sides := 0
 
 
 func _theme_seed(segment: int, theme_id: String) -> int:
@@ -66,7 +79,7 @@ func _fixture_for(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, en
 	cm.ground_enabled = false
 	cm.ground_splat_enabled = false
 	cm.decals_enabled = false
-	cm.deco_enabled = false
+	cm.deco_enabled = _deco
 	cm.sites_enabled = false
 	cm.parcels_chunk_chance = 0.95
 	cm.parcels_chance_per_side = 0.80
@@ -82,6 +95,7 @@ func _fixture_for(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, en
 	cm._chunk_role = plan.role_by_chunk.duplicate()
 	cm._chunk_archetype = plan.archetype_by_chunk.duplicate()
 	cm._chunk_urban_access = plan.urban_access_by_chunk.duplicate()
+	cm._chunk_terrain = plan.terrain_by_chunk.duplicate()
 	if warm.x != 1 << 20:
 		# Generate a neighbour first: a chunk must not depend on load order.
 		_generate_into(cm, warm)
@@ -118,7 +132,8 @@ func _buildings(chunk: Node2D) -> Array:
 		for door: Dictionary in kit.get("_doors"):
 			doors.append([door.pos.x, door.pos.y, door.dir.x, door.dir.y])
 		out.append({"rect": [rect.position.x, rect.position.y, rect.size.x, rect.size.y], "usage": String(kit.get_meta(&"building_usage", &"")),
-			"infill": bool(kit.get_meta(&"city_street_infill", false)), "irregular": bool(kit.get("_irregular")), "doors": doors, "civic": bool(kit.get("civic"))})
+			"infill": bool(kit.get_meta(&"city_street_infill", false)), "irregular": bool(kit.get("_irregular")), "doors": doors, "civic": bool(kit.get("civic")),
+			"step": int(kit.get_meta(&"frontage_step", 0))})
 	out.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.rect) < str(b.rect))
 	return out
 
@@ -270,7 +285,7 @@ func _plan_manager(theme: SegmentThemeData, plan: Dictionary, enabled: bool) -> 
 	cm.ground_enabled = false
 	cm.ground_splat_enabled = false
 	cm.decals_enabled = false
-	cm.deco_enabled = false
+	cm.deco_enabled = _deco
 	cm.sites_enabled = false
 	cm.parcels_chunk_chance = 0.95
 	cm.parcels_chance_per_side = 0.80
@@ -286,6 +301,7 @@ func _plan_manager(theme: SegmentThemeData, plan: Dictionary, enabled: bool) -> 
 	cm._chunk_role = plan.role_by_chunk.duplicate()
 	cm._chunk_archetype = plan.archetype_by_chunk.duplicate()
 	cm._chunk_urban_access = plan.urban_access_by_chunk.duplicate()
+	cm._chunk_terrain = plan.terrain_by_chunk.duplicate()
 	return cm
 
 
@@ -350,6 +366,9 @@ func _check_plan(theme: SegmentThemeData, plan: Dictionary, segment: int) -> voi
 						var volume := child as IndoorVolume
 						_check(volume.small_loot_chance == 0.0 and not volume.exploration_loot_enabled and not volume.local_encounter_enabled and volume.secondary_objective_id == 0 and not volume.visit_counts_as_exploration,
 							tag + " infill building carries loot, security or a visit " + str(volume.cell_tl))
+				# Courtyard blocks are the connector-less district_fill chunks.
+				var court_role: StringName = StringName(plan.role_by_chunk[coord]) if int(plan.connectors_by_chunk.get(coord, 0)) == 0 else &"street"
+				_check_street_relationships(chunk, court_role, record.buildings, tag)
 			layout[coord] = record
 			cm._unregister_chunk_cells(coord)
 			chunk.free()
@@ -448,6 +467,37 @@ func _check_plan(theme: SegmentThemeData, plan: Dictionary, segment: int) -> voi
 		_close_wall(segment, theme.id, key, first, last, infill)
 
 
+## Door sides and framed squares of one generated chunk (pass on).
+func _check_street_relationships(chunk: Node2D, role: StringName, buildings: Array, tag: String) -> void:
+	for building: Dictionary in buildings:
+		if building.infill:
+			_steps[int(building.step)] = int(_steps.get(int(building.step), 0)) + 1
+		# Courtyard rings open onto their court: a single door faces the
+		# chunk centre (the court lies within two cells of it). Only a
+		# walk-through passage's rear door faces out.
+		if role == &"district_fill" and (building.doors as Array).size() == 1:
+			var door: Array = building.doors[0]
+			var toward := Vector2(CPC * 0.5, CPC * 0.5) - Vector2(door[0] + 0.5, door[1] + 0.5)
+			_court_doors += 1
+			_check(Vector2(door[2], door[3]).dot(toward) > 0.0, tag + " courtyard door faces away from its court " + str(building.rect) + " " + str(door))
+	if chunk.has_meta(&"_proc_framed_square"):
+		_framed += 1
+		var open: int = int(chunk.get_meta(&"_proc_framed_open_sides", 0))
+		if open != 0:
+			_framed_open_sides += 1
+		# Ring order north, south, west, east; a frame house's door faces
+		# the square, so its direction names its ring.
+		var ring_dirs := [Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0)]
+		for building: Dictionary in buildings:
+			if not building.infill:
+				continue
+			for door: Array in building.doors:
+				var dir := Vector2i(door[2], door[3])
+				for index in 4:
+					if open & (1 << index) and dir == ring_dirs[index]:
+						failures.append(tag + " frame house stands on an open side " + str(building.rect))
+
+
 func _close_wall(segment: int, theme_id: StringName, key: Variant, first: int, last: int, infill: bool) -> void:
 	if first < 0:
 		return
@@ -460,6 +510,8 @@ func _close_wall(segment: int, theme_id: StringName, key: Variant, first: int, l
 
 
 func _run() -> void:
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--deco="): _deco = arg.trim_prefix("--deco=") != "0"
 	var dummy := Node2D.new()
 	dummy.add_to_group(&"player")
 	add_child(dummy)
@@ -485,6 +537,9 @@ func _run() -> void:
 		_check_plan(theme, plan, segment)
 	Global.attempt_segment = previous_segment
 	_check(_infill_total > 0, "The pass built no infill at all")
+	for step: int in [-1, 0, 1]:
+		_check(int(_steps[step]) > 0, "No infill segment stands on setback step %d" % step)
+	_check(_framed > 0 and _framed_open_sides > 0 and _framed_open_sides < _framed, "framed squares: %d, with open sides %d (want some of each)" % [_framed, _framed_open_sides])
 	var output := ""
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--out="): output = arg.trim_prefix("--out=")
@@ -498,5 +553,6 @@ func _run() -> void:
 	_walls.sort()
 	_infill_walls.sort()
 	print("CityStreetContinuityTest: plan chunks=%d doors=%d (aprons across a seam %d) lane walls=%d (longest %d) infill walls=%d (longest %d)" % [_plan_chunks, _plan_doors, _cross_seam_aprons, _walls.size(), _walls.back() if not _walls.is_empty() else 0, _infill_walls.size(), _infill_walls.back() if not _infill_walls.is_empty() else 0])
+	print("CityStreetContinuityTest: deco=%s setback steps (lots) %s courtyard doors=%d framed squares=%d (open sides %d)" % [str(_deco), str(_steps), _court_doors, _framed, _framed_open_sides])
 	print("CityStreetContinuityTest: chunks=%d originals=%d infill=%d checks=%d preexisting_unreachable=%d failures=%d" % [chunks, _original_total, _infill_total, _checks, _preexisting, failures.size()])
 	get_tree().quit(1 if not failures.is_empty() else 0)

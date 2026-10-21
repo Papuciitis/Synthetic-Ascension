@@ -7,7 +7,10 @@ const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const CELL := 64
 ## Whole-chunk material histogram of the bed home's chunk with the street
 ## continuity pass on (pass off keeps the native-trial {0:716,2:125,3:6,4:177}).
-const BED_CONTINUITY_HISTOGRAM := {0:542,2:115,3:173,4:194}
+## Measured 2026-10-21 with the bounded infill (24-cell walls, 2+1 open seam
+## cells, 4-deep door aprons) and its setback steps; the home's own care
+## (15 cared cells, 9 strong) is identical with the pass on and off.
+const BED_CONTINUITY_HISTOGRAM := {0:546,2:114,3:157,4:207}
 var _passed := 0
 var _failed := 0
 
