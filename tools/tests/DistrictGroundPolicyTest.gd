@@ -8,6 +8,7 @@ extends Node
 ## Run: <godot> --headless --path . res://tools/tests/DistrictGroundPolicyTest.tscn
 
 const POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
+const CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
 const COVER_FULL := preload("res://scenes/world/cover/CoverFull.tscn")
 const COVER_WINDOW := preload("res://scenes/world/cover/CoverWindow.tscn")
 const COVER_HALF := preload("res://scenes/world/cover/CoverHalf.tscn")
@@ -269,6 +270,7 @@ func _test_theme_district(segment: int, theme_id: StringName) -> void:
 					if reversed.get_ground_splat().openness_at(cell) != splat.openness_at(cell): same = false
 		_check(same, "%s seam occlusion is identical whatever order the chunks stream in" % theme_id)
 		reversed.free()
+	_test_paving_beds(cm, chosen, exploration, theme_id)
 	# Upload cost of the coverage mip chain (CPU side; headless has a dummy GPU).
 	splat.set("_dirty", true)
 	var flush_started := Time.get_ticks_usec()
@@ -329,6 +331,43 @@ func _occlusion_against_reference(cm: ChunkManager, chosen: Array[Vector2i]) -> 
 							seam_shaded += 1
 							break
 	return {"mismatched": mismatched, "cells": cells, "seam_shaded": seam_shaded}
+
+
+## On the district's hard surface a tended household plot is a bed against
+## the house: every cared paving cell lies within the bed depth of the
+## actual footprint it belongs to, none floats free on the stone.
+func _test_paving_beds(cm: ChunkManager, chosen: Array[Vector2i], exploration: Dictionary, theme_id: StringName) -> void:
+	var splat := cm.get_ground_splat()
+	var bed_cells := 0
+	var free_cells := 0
+	for coord: Vector2i in chosen:
+		if exploration.has(coord):
+			continue
+		var chunk := cm._chunks[coord] as Node2D
+		var footprints: Array[PackedVector2Array] = []
+		for kit: Node in chunk.get_children():
+			if kit.is_in_group(&"city_block_building") and kit.has_method("ground_care_spec"):
+				var spec: Dictionary = kit.call("ground_care_spec")
+				if not spec.is_empty(): footprints.append(spec.footprint_px)
+		for y in CPC:
+			for x in CPC:
+				var cell := coord * CPC + Vector2i(x, y)
+				if splat.care_at(cell) <= 0.0 or splat.material_at(cell) != POLICY.DISTRICT_GROUND_INDEX:
+					continue
+				var point := (Vector2(x, y) + Vector2(0.5, 0.5)) * 64.0
+				var nearest := INF
+				for footprint: PackedVector2Array in footprints:
+					nearest = minf(nearest, CARE._wall_distance(point, footprint))
+				# Plaza beds are laid by the district itself, not by a home.
+				var planted := false
+				for rect: Rect2i in chunk.get_meta(&"_ground_planting_rects", []):
+					if rect.has_point(Vector2i(x, y)): planted = true
+				if planted:
+					continue
+				bed_cells += 1
+				if nearest > CARE.PAVING_BED_DEPTH_CELLS * 64.0 + 0.01:
+					free_cells += 1
+	_check(free_cells == 0, "%s household beds on paving all meet their house wall (%d bed cells, %d free)" % [theme_id, bed_cells, free_cells])
 
 
 ## The district's carriageway uses of the old index 3 (exit approach and

@@ -12,9 +12,11 @@ shader_type canvas_item;
 // below-left of another material gets a lip shadow (light from the top right).
 //
 // light_map: R = brightness / 2, G = stain amount (the stain draws
-// stain_layer through a noise cut, never as a rectangle), B = household care,
-// A = ground openness (1 = open sky, lower = occluded by nearby walls/props;
-// the pass is continuous across chunk lines).
+// stain_layer through a noise cut, never as a rectangle), B = household care
+// (a tended wash on lawn and bare earth; on the district paving a planted bed,
+// which CityGroundCare keeps to a strip against the house wall), A = ground
+// openness (1 = open sky, lower = occluded by nearby walls/props; the pass is
+// continuous across chunk lines).
 //
 // District ground policy (DistrictGroundPolicy.gd, 2026-10-21): procedural
 // districts present each semantic material through a role (road, lane,
@@ -273,20 +275,43 @@ void fragment() {
 			col = mix(mid.rgb, col * role_tint[role].rgb, mid.a);
 			if (paved) {
 				col *= 1.0 + (n.g - 0.5) * paving_variation;
-				if (role == 4 && yard_patch.x >= 0.0) {
-					// Broad patches (the low warp channel) with a little edge detail.
-					float field = n.g * 0.7 + n.a * 0.3;
-					float edge = 0.5 - yard_patch.y * 0.25;
-					float amount = smoothstep(edge + 0.05, edge - 0.05, field);
-					if (amount > 0.001) {
-						vec3 pc = textureGrad(materials, vec3(world_pos / yard_patch.z, yard_patch.x), ddx / yard_patch.z, ddy / yard_patch.z).rgb;
-						pc = mix(yard_patch_mid.rgb, pc * yard_patch_tint.rgb, yard_patch.w);
-						col = mix(col, pc, amount);
+				if (role == 4) {
+					if (yard_patch.x >= 0.0) {
+						// Broad patches (the low warp channel) with a little edge detail.
+						float field = n.g * 0.7 + n.a * 0.3;
+						float edge = 0.5 - yard_patch.y * 0.25;
+						float amount = smoothstep(edge + 0.05, edge - 0.05, field);
+						if (amount > 0.001) {
+							vec3 pc = textureGrad(materials, vec3(world_pos / yard_patch.z, yard_patch.x), ddx / yard_patch.z, ddy / yard_patch.z).rgb;
+							pc = mix(yard_patch_mid.rgb, pc * yard_patch_tint.rgb, yard_patch.w);
+							col = mix(col, pc, amount);
+						}
 					}
-				}
-				if (role == 4 && wet_patches > 0.0) {
-					float wet = smoothstep(0.35, 0.29, n.a) * wet_patches;
-					col = mix(col, col * vec3(0.76, 0.81, 0.88), wet);
+					if (wet_patches > 0.0) {
+						float wet = smoothstep(0.35, 0.29, n.a) * wet_patches;
+						col = mix(col, col * vec3(0.76, 0.81, 0.88), wet);
+					}
+					if (light.b > 0.001) {
+						// A tended bed on the district paving. CityGroundCare lays
+						// it as a strip of cells against the house wall; here it is
+						// cut exactly on those cells (no soft lozenge), planted
+						// inside a margin of dug soil that meets the stone flush,
+						// without a pale rim.
+						ivec2 cell = ivec2(mod(floor(p), map_size));
+						int last = int(map_size) - 1;
+						if (texelFetch(light_map, cell, 0).b > 0.5) {
+							vec2 f = fract(p);
+							float side = 1.0;
+							if (texelFetch(light_map, ivec2(cell.x == 0 ? last : cell.x - 1, cell.y), 0).b <= 0.5) { side = min(side, f.x); }
+							if (texelFetch(light_map, ivec2(cell.x == last ? 0 : cell.x + 1, cell.y), 0).b <= 0.5) { side = min(side, 1.0 - f.x); }
+							if (texelFetch(light_map, ivec2(cell.x, cell.y == 0 ? last : cell.y - 1), 0).b <= 0.5) { side = min(side, f.y); }
+							if (texelFetch(light_map, ivec2(cell.x, cell.y == last ? 0 : cell.y + 1), 0).b <= 0.5) { side = min(side, 1.0 - f.y); }
+							vec3 plant = textureGrad(materials, vec3(world_pos / cared_lawn_repeat_px, cared_lawn_layer), ddx / cared_lawn_repeat_px, ddy / cared_lawn_repeat_px).rgb;
+							plant = mix(vec3(0.38, 0.45, 0.28), plant * vec3(1.14, 1.20, 1.02), 0.85);
+							vec3 soil = role_mid[6].rgb * (0.88 + (n.b - 0.5) * 0.10);
+							col = mix(soil, plant, smoothstep(0.11, 0.18, side + (n.a - 0.5) * 0.05));
+						}
+					}
 				}
 			} else {
 				if (role == 5) {
@@ -300,26 +325,15 @@ void fragment() {
 						col = mix(col, mix(role_mid[5].rgb, v * role_tint[5].rgb, 0.6), verge);
 					}
 				}
+				// Household care on lawn or bare earth: a tended wash over the
+				// household's own ground.
+				if (light.b > 0.001) {
+					vec3 lawn = textureGrad(materials, vec3(world_pos / cared_lawn_repeat_px, cared_lawn_layer), ddx / cared_lawn_repeat_px, ddy / cared_lawn_repeat_px).rgb;
+					lawn = mix(vec3(0.38, 0.43, 0.29), lawn * vec3(1.10, 1.12, 1.0), 0.78);
+					lawn *= 1.0 + (n.r - 0.5) * lawn_mottle;
+					col = mix(col, lawn, light.b);
+				}
 			}
-		}
-		// Household care: a tended wash on lawn; on stone or bare earth a
-		// planted plot with a definite edge (a light dressed-stone edging on the
-		// paving side, a thin shaded soil line inside it). The kerb-band terms
-		// the first policy version also folded in are part of the relief now.
-		if (light.b > 0.001 && (role == 4 || role == 5 || role == 6)) {
-			vec3 lawn = textureGrad(materials, vec3(world_pos / cared_lawn_repeat_px, cared_lawn_layer), ddx / cared_lawn_repeat_px, ddy / cared_lawn_repeat_px).rgb;
-			lawn = mix(vec3(0.38, 0.43, 0.29), lawn * vec3(1.10, 1.12, 1.0), 0.78);
-			lawn *= 1.0 + (n.r - 0.5) * lawn_mottle;
-			float amount = light.b;
-			if (role != 5) {
-				float e = light.b + (n.a - 0.5) * 0.10;
-				amount = smoothstep(0.47, 0.51, e);
-				float edging = smoothstep(0.39, 0.42, e) * (1.0 - smoothstep(0.46, 0.49, e));
-				float soil = smoothstep(0.49, 0.52, e) * (1.0 - smoothstep(0.54, 0.60, e));
-				col *= 1.0 + edging * 0.16;
-				lawn *= 1.0 - soil * 0.28;
-			}
-			col = mix(col, lawn, amount);
 		}
 
 		col *= light.r * 2.0;

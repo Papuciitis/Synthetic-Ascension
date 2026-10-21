@@ -1319,9 +1319,9 @@ func _activate_ground_care(coord: Vector2i, chunk: Node2D) -> void:
 		return
 	# One eligibility read for every home of the chunk, limited to where their
 	# gardens can reach.
-	var eligible := splat.care_eligibility(coord, reach)
+	var ground := splat.care_ground(coord, reach)
 	for spec: Dictionary in specs:
-		splat.paint_domestic_care(coord, spec, eligible)
+		splat.paint_domestic_care(coord, spec, ground.eligible, ground.paving)
 
 
 func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, texture_index: int, alpha: float, z: int) -> void:

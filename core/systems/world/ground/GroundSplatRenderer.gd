@@ -259,12 +259,22 @@ static func care_eligible_index(index: int) -> bool:
 ## touch a house floor or a footway. `region` (chunk-local cells) limits the
 ## work to where gardens can reach; cells outside it read as not eligible.
 func care_eligibility(coord: Vector2i, region: Rect2i = Rect2i(0,0,1 << 20,1 << 20)) -> PackedByteArray:
+	return care_ground(coord, region).eligible
+
+
+## care_eligibility plus, as "paving", 1 on the eligible cells that are the
+## district's hard surface: there a household plot is a planted bed against
+## the house wall (CityGroundCare.plan), not a lawn laid on the stone.
+func care_ground(coord: Vector2i, region: Rect2i = Rect2i(0,0,1 << 20,1 << 20)) -> Dictionary:
 	var n := cells_per_chunk
 	var eligible := PackedByteArray()
 	eligible.resize(n*n)
+	var paving := PackedByteArray()
+	paving.resize(n*n)
+	var result := {"eligible": eligible, "paving": paving}
 	region = region.intersection(Rect2i(0,0,n,n))
 	if not region.has_area():
-		return eligible
+		return result
 	var slot_kind := PackedByteArray()
 	slot_kind.resize(SLOTS)
 	for slot in SLOTS:
@@ -281,8 +291,11 @@ func care_eligibility(coord: Vector2i, region: Rect2i = Rect2i(0,0,1 << 20,1 << 
 	if origin.x+n > MAP_SIZE or origin.y+n > MAP_SIZE:
 		for y in range(region.position.y,region.end.y):
 			for x in range(region.position.x,region.end.x):
-				if care_eligible_index(material_at(coord*n+Vector2i(x,y))): eligible[y*n+x] = 1
-		return eligible
+				var material := material_at(coord*n+Vector2i(x,y))
+				if care_eligible_index(material):
+					eligible[y*n+x] = 1
+					if material == _POLICY.DISTRICT_GROUND_INDEX: paving[y*n+x] = 1
+		return {"eligible": eligible, "paving": paving}
 	var block := Rect2i(origin,Vector2i(n,n))
 	# Coverage is one-hot: each cell's RGBA word is 0 or exactly one channel at
 	# 255, so comparing whole words replaces the per-channel scan.
@@ -337,18 +350,27 @@ func care_eligibility(coord: Vector2i, region: Rect2i = Rect2i(0,0,1 << 20,1 << 
 		for cell in district:
 			if near_bytes[cell*2+1] > 127:
 				eligible[cell] = 0
-	return eligible
+	for cell in district:
+		if eligible[cell] != 0:
+			paving[cell] = 1
+	return {"eligible": eligible, "paving": paving}
 
 
 ## Called after the chunk's floors. This changes only presentation (light-map
 ## blue) on cells a household may tend; lawn never requests a semantic
-## material/coverage slot. `eligible` may be shared by every home of a chunk.
-func paint_domestic_care(coord: Vector2i, spec: Dictionary, eligible: PackedByteArray = PackedByteArray()) -> void:
+## material/coverage slot. `eligible` (and `paving`, see care_ground) may be
+## shared by every home of a chunk; on paving the plot is kept to a bed
+## against the house wall.
+func paint_domestic_care(coord: Vector2i, spec: Dictionary, eligible: PackedByteArray = PackedByteArray(), paving: PackedByteArray = PackedByteArray()) -> void:
 	var n := cells_per_chunk
 	if eligible.size() != n*n:
-		eligible = care_eligibility(coord)
+		var ground := care_ground(coord)
+		eligible = ground.eligible
+		paving = ground.paving
+	elif paving.size() != n*n:
+		paving = care_ground(coord, _CITY_GROUND_CARE.window_of(spec,cell_px,n)).paving
 	var origin := coord*n
-	var weights := _CITY_GROUND_CARE.plan(coord,spec,cell_px,n,eligible)
+	var weights := _CITY_GROUND_CARE.plan(coord,spec,cell_px,n,eligible,paving)
 	var window := _CITY_GROUND_CARE.window_of(spec,cell_px,n)
 	for y in range(window.position.y,window.end.y):
 		for x in range(window.position.x,window.end.x):
