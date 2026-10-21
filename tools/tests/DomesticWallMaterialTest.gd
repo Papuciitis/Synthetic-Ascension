@@ -63,34 +63,55 @@ func _run() -> void:
 	excluded.segment = 1
 	_adapter.call("mark_walls",authored,cells,excluded)
 	_check(authored.blocker_variant == authored_before,"The authored S1 Institution retains its own material ownership")
-	# Warm cutaway walls follow the warm (clay-roofed) plaster frontage of any
-	# ordinary non-civic building in every city segment, not only S2 homes.
+	# Warm cutaway walls: every ordinary home in every city segment, whatever
+	# its roof (the reviewed slate-roofed S2 bed home keeps its lived-in rubble
+	# instead of the pale placeholder relief), and every other clay-roofed
+	# (warm plaster) non-civic building. Slate working buildings keep city stone.
 	for segment: int in [2,3,4,7,10,11]:
 		for usage: StringName in [&"row_house",&"workshop",&"shop",&"passage"]:
-			var warm := _wall_fixture(Vector2i(2,0))
-			var warm_before := warm.blocker_variant.duplicate()
-			var warm_context := context.duplicate()
-			warm_context.segment = segment
-			warm_context.usage = usage
-			_adapter.call("mark_walls",warm,cells,warm_context)
-			_check(warm.blocker_kind_code == authored.blocker_kind_code and warm.blocker_mask == authored.blocker_mask,"Warm cutaway material changes no physical cell in S%d %s" % [segment,usage])
-			var marked := true
-			for cell: Vector2i in cells:
-				var original := int(warm_before[warm._index(cell)])
-				marked = marked and (warm.variant_at(cell)&ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE) != 0 and (warm.variant_at(cell)&original) == original
-			_check(marked,"Clay-roofed S%d %s cutaway walls match its warm plaster frontage" % [segment,usage])
-			var pale := _wall_fixture(Vector2i(2,0))
-			var pale_before := pale.blocker_variant.duplicate()
-			var pale_context := warm_context.duplicate()
-			pale_context.roof_material = &"slate"
-			_adapter.call("mark_walls",pale,cells,pale_context)
-			_check(pale.blocker_variant == pale_before,"Slate-roofed (pale ashlar) S%d %s keeps city stone" % [segment,usage])
+			for roof: StringName in [&"clay",&"slate"]:
+				var marked_fixture := _wall_fixture(Vector2i(2,0))
+				var before := marked_fixture.blocker_variant.duplicate()
+				var roof_context := context.duplicate()
+				roof_context.segment = segment
+				roof_context.usage = usage
+				roof_context.roof_material = roof
+				_adapter.call("mark_walls",marked_fixture,cells,roof_context)
+				_check(marked_fixture.blocker_kind_code == authored.blocker_kind_code and marked_fixture.blocker_mask == authored.blocker_mask,"Cutaway material changes no physical cell in S%d %s %s" % [segment,usage,roof])
+				var warm := usage == &"row_house" or roof == &"clay"
+				if not warm:
+					_check(marked_fixture.blocker_variant == before,"Slate-roofed (pale ashlar) S%d %s keeps city stone" % [segment,usage])
+					continue
+				var marked := true
+				for cell: Vector2i in cells:
+					var original := int(before[marked_fixture._index(cell)])
+					marked = marked and (marked_fixture.variant_at(cell)&ChunkBlockVisualCatalog.VARIANT_DOMESTIC_STONE) != 0 and (marked_fixture.variant_at(cell)&original) == original
+				_check(marked,"%s S%d %s cutaway walls keep warm domestic rubble" % [String(roof).capitalize(),segment,usage])
 	var unknown := _wall_fixture(Vector2i(2,0))
 	var unknown_before := unknown.blocker_variant.duplicate()
 	excluded = context.duplicate()
+	excluded.usage = &"workshop"
 	excluded.erase("roof_material")
 	_adapter.call("mark_walls",unknown,cells,excluded)
-	_check(unknown.blocker_variant == unknown_before,"A building without a known warm frontage keeps city stone")
+	_check(unknown.blocker_variant == unknown_before,"A working building without a known warm frontage keeps city stone")
+	# The kit gate that lets every other building skip the context scan agrees
+	# with the context rules for homes, warm and pale working fronts and halls.
+	var previous_segment := Global.attempt_segment
+	for sample: Dictionary in [
+		{"segment":3,"usage":&"row_house","civic":false,"roof":&"slate","eligible":true},
+		{"segment":7,"usage":&"workshop","civic":false,"roof":&"clay","eligible":true},
+		{"segment":2,"usage":&"shop","civic":false,"roof":&"slate","eligible":false},
+		{"segment":11,"usage":&"workshop","civic":true,"roof":&"slate","eligible":false},
+		{"segment":1,"usage":&"row_house","civic":false,"roof":&"clay","eligible":false},
+	]:
+		Global.attempt_segment = int(sample.segment)
+		var probe: Node2D = preload("res://scenes/world/buildings/CityBlockKit.gd").new()
+		probe.set("civic",bool(sample.civic))
+		probe.set_meta(&"building_usage",sample.usage)
+		probe.set_meta(&"city_roof_material",sample.roof)
+		_check(bool(_adapter.call("eligible_kit",probe)) == bool(sample.eligible),"Context gate matches the context rules for S%d %s %s civic=%s" % [sample.segment,sample.roof,sample.usage,sample.civic])
+		probe.free()
+	Global.attempt_segment = previous_segment
 	var host := Node2D.new()
 	add_child(host)
 	var renderer := ChunkBlockRenderer.new()
