@@ -8,6 +8,8 @@ const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const COMPOSER := preload("res://scenes/world/buildings/CityFacadeComposer.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const OUTLINE_POINTS := [Vector2(192,768),Vector2(384,768),Vector2(384,576),Vector2(896,576),Vector2(896,1088),Vector2(192,1088)]
+## A recessed south bay: the door sits in the bay's back wall between two wings.
+const BAY_POINTS := [Vector2(192,576),Vector2(896,576),Vector2(896,1088),Vector2(640,1088),Vector2(640,1024),Vector2(320,1024),Vector2(320,1088),Vector2(192,1088)]
 const SOLID_GROUP := &"foreground_solid_occluders"
 var _passed := 0
 var _failed := 0
@@ -25,7 +27,7 @@ func _check(condition: bool, message: String) -> void:
 		push_error("FAIL: "+message)
 
 
-func _fixture(segment: int, usage: StringName, door_dir: Vector2i, irregular: bool, seed_value: int, family: StringName = &"service_courtyards") -> Dictionary:
+func _fixture(segment: int, usage: StringName, door_dir: Vector2i, irregular: bool, seed_value: int, family: StringName = &"service_courtyards", bay: bool = false) -> Dictionary:
 	Global.attempt_segment = segment
 	var host := Node2D.new()
 	add_child(host)
@@ -38,6 +40,10 @@ func _fixture(segment: int, usage: StringName, door_dir: Vector2i, irregular: bo
 		Vector2i.UP: doors = [{"pos":Vector2i(9,15),"dir":Vector2i.UP,"width":2}]
 		Vector2i.RIGHT: doors = [{"pos":Vector2i(14,19),"dir":Vector2i.RIGHT,"width":2}]
 	var outline := PackedVector2Array(OUTLINE_POINTS) if irregular else PackedVector2Array()
+	if bay:
+		outline = PackedVector2Array(BAY_POINTS)
+		# Generator geometry: the door sits 128 px from the bay's west end, 64 px from its east end.
+		doors = [{"pos":Vector2i(7,15),"dir":Vector2i.DOWN,"width":2}]
 	if irregular:
 		roof.configure_polygon(outline,Vector2(192,1088),Vector2(896,1088),[],usage,seed_value,doors,64)
 	else:
@@ -48,12 +54,28 @@ func _fixture(segment: int, usage: StringName, door_dir: Vector2i, irregular: bo
 	return {"host":host,"kit":kit,"roof":roof,"doors":doors}
 
 
+## Registered coverage faces of the composed frontage.
 func _solids(kit: Node2D) -> Array[Polygon2D]:
 	var result: Array[Polygon2D] = []
 	for node: Node in kit.find_children("*","Polygon2D",true,false):
-		if node.is_in_group(SOLID_GROUP) and (node.has_meta(&"facade_wall_field") or node.has_meta(&"facade_plinth") or node.has_meta(&"facade_module")):
+		if node.is_in_group(SOLID_GROUP) and node.has_meta(&"facade_coverage"):
 			result.append(node)
 	return result
+
+
+## Visible opaque pieces: wall fields, plinths and modules.
+func _visible(kit: Node2D) -> Array[Polygon2D]:
+	var result: Array[Polygon2D] = []
+	for node: Node in kit.find_children("*","Polygon2D",true,false):
+		if node.has_meta(&"facade_wall_field") or node.has_meta(&"facade_plinth") or node.has_meta(&"facade_module"):
+			result.append(node)
+	return result
+
+
+func _covered(kit: Node2D, point: Vector2) -> bool:
+	for face: Polygon2D in _solids(kit):
+		if Geometry2D.is_point_in_polygon(face.to_local(kit.to_global(point)),face.polygon): return true
+	return false
 
 
 func _rect_of(shape: Polygon2D) -> Rect2:
@@ -64,7 +86,7 @@ func _rect_of(shape: Polygon2D) -> Rect2:
 
 func _layout(kit: Node2D) -> String:
 	var parts: Array[String] = []
-	for shape: Polygon2D in _solids(kit):
+	for shape: Polygon2D in _visible(kit):
 		if shape.has_meta(&"facade_module"): parts.append("%s@%s" % [shape.get_meta(&"facade_module"),_rect_of(shape)])
 	parts.sort()
 	return ",".join(parts)
@@ -88,13 +110,25 @@ func _run() -> void:
 					_check(kit.find_children("*","CollisionObject2D",true,false).is_empty(),label+": composed frontage adds no collision")
 					var solids := _solids(kit)
 					_check(not solids.is_empty(),label+": south wall has registered composed masonry")
+					var runs := kit.find_children("*","Polygon2D",true,false).filter(func(node: Node) -> bool: return node.has_meta(&"facade_wall_field")).map(func(node: Node) -> Rect2: return node.get_meta(&"facade_wall_field"))
+					var distinct_runs: Dictionary = {}
+					for run_rect: Rect2 in runs: distinct_runs[run_rect] = true
+					_check(solids.size() <= 4*maxi(1,distinct_runs.size()),label+": a few coverage faces per run keep WorldCover's per-frame scan small (%d)" % solids.size())
 					var overlap := false
 					for a: int in solids.size():
 						for b: int in range(a+1,solids.size()):
 							if _rect_of(solids[a]).intersection(_rect_of(solids[b])).get_area() > 0.5: overlap = true
-					_check(not overlap,label+": every opaque facade pixel has exactly one registered owner")
-					for shape: Polygon2D in solids:
+					_check(not overlap,label+": coverage faces never double an actor's cover")
+					var visible := _visible(kit)
+					var visible_overlap := false
+					for a: int in visible.size():
+						for b: int in range(a+1,visible.size()):
+							if _rect_of(visible[a]).intersection(_rect_of(visible[b])).get_area() > 0.5: visible_overlap = true
+					_check(not visible_overlap,label+": every opaque facade pixel is drawn by exactly one piece")
+					for shape: Polygon2D in visible:
 						if not shape.has_meta(&"facade_module") or shape.texture == null: continue
+						# Doorways fit the physical gap exactly and may compress under the eave.
+						if String(shape.get_meta(&"facade_module")).begins_with("door"): continue
 						# Uniform scale between the mapped texture region and the drawn rect.
 						var box := _rect_of(shape)
 						var uv_box := Rect2(shape.uv[0],Vector2.ZERO)
@@ -113,8 +147,14 @@ func _run() -> void:
 							_check(not openings[0].is_in_group(&"foreground_occluders"),label+": walkable opening stays uncovered")
 							for shape: Polygon2D in solids:
 								_check(not _rect_of(shape).intersects(opening.grow(-1.0)),label+": no masonry or module covers the open doorway")
+							# Feet on the threshold, just inside or just outside the facade foot.
+							for probe_y: float in [gap.end.y-24.0,gap.end.y-8.0,gap.end.y+2.0]:
+								_check(not _covered(kit,Vector2(gap.get_center().x,probe_y)),label+": walkable threshold stays uncovered at y=%d" % probe_y)
 						for frame: Node in frames:
-							_check(frame.is_in_group(SOLID_GROUP),label+": doorway frame occludes like the wall around it")
+							# Side jambs cover like the wall; the head above an arch is open.
+							var frame_box := _rect_of(frame as Polygon2D)
+							if frame_box.end.x <= gap.position.x+0.5 or frame_box.position.x >= gap.end.x-0.5:
+								_check(_covered(kit,frame_box.get_center()),label+": doorway frame occludes like the wall around it")
 					else:
 						_check(frames.is_empty() and openings.is_empty(),label+": visible south wall invents no door for a %s entry" % door_dir)
 					if door_dir == Vector2i.RIGHT:
@@ -138,6 +178,20 @@ func _run() -> void:
 					_check(_layout(again.kit) == _layout(kit),label+": composition is deterministic for one building")
 					(again.host as Node).free()
 					(fixture.host as Node).free()
+	for usage: StringName in [&"row_house",&"workshop",&"passage"]:
+		var recessed := _fixture(3,usage,Vector2i.DOWN,true,4242,&"service_courtyards",true)
+		var pieces := _visible(recessed.kit)
+		var clash := false
+		for a: int in pieces.size():
+			for b: int in range(a+1,pieces.size()):
+				if _rect_of(pieces[a]).intersection(_rect_of(pieces[b])).get_area() > 0.5: clash = true
+		_check(not clash,"recessed %s bay: quoins never overlap the doorway frame" % usage)
+		var bay_quoins := 0
+		for piece: Polygon2D in pieces:
+			var box := _rect_of(piece)
+			if piece.get_meta(&"facade_module",&"") == &"quoin" and box.end.y > 1024.0-40.0 and box.end.y < 1024.0: bay_quoins += 1
+		_check(bay_quoins == 0,"recessed %s bay: inner corners of the bay carry no quoins" % usage)
+		(recessed.host as Node).free()
 	var seeds: Dictionary = {}
 	var slate := 0
 	for seed_value: int in range(1,41):

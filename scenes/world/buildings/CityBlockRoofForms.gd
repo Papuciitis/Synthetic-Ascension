@@ -184,6 +184,7 @@ static func _rooftop(group: Node2D, plane: Polygon2D, file: String, at: Vector2,
 	var path := "res://assets/world/rooftops_v1/" + file
 	if not ResourceLoader.exists(path, "Texture2D"): return null
 	var texture := load(path) as Texture2D
+	if texture == null: return null
 	var box := Rect2(plane.polygon[0], Vector2.ZERO)
 	for point: Vector2 in plane.polygon: box = box.expand(point)
 	var size := texture.get_size() * (width / texture.get_width())
@@ -191,6 +192,9 @@ static func _rooftop(group: Node2D, plane: Polygon2D, file: String, at: Vector2,
 	var rect := Rect2(base - Vector2(size.x * 0.5, size.y), size)
 	for corner: Vector2 in [rect.position + Vector2(4, size.y * 0.55), Vector2(rect.end.x - 4, rect.position.y + size.y * 0.55), rect.end - Vector2(4, 2), Vector2(rect.position.x + 4, rect.end.y - 2)]:
 		if not Geometry2D.is_point_in_polygon(corner, plane.polygon): return null
+	# The roof is notched over every doorway after composition: keep clear.
+	for notch: Rect2 in door_notches(plane):
+		if notch.grow(6.0).intersects(rect): return null
 	var shade := Polygon2D.new()
 	shade.name = "RooftopShadow"
 	var shift := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(size.y * 0.55)
@@ -297,6 +301,8 @@ static func _chimney(parent: Node2D, plane: Polygon2D, civic: bool, brick: bool 
 		var fits := true
 		for corner: Vector2 in flashing_points:
 			if not Geometry2D.is_point_in_polygon(candidate+corner,plane.polygon): fits = false
+		for notch: Rect2 in door_notches(plane):
+			if notch.grow(8.0).intersects(Rect2(candidate+Vector2(-30,-60),Vector2(64,74))): fits = false
 		if not fits: continue
 		base = candidate
 		found = true
@@ -336,6 +342,28 @@ static func _chimney(parent: Node2D, plane: Polygon2D, civic: bool, brick: bool 
 	mouth.position = Vector2(0, 8.0-height)
 	stack.add_child(mouth)
 	return true
+
+## The rectangles RoofOverlay cuts out of its roof over each door (door cells
+## plus the eave reach outward), in the roof polygon's space.
+static func door_notches(plane: Node) -> Array[Rect2]:
+	var result: Array[Rect2] = []
+	var overlay: Node = plane
+	while overlay != null and not overlay is RoofOverlay: overlay = overlay.get_parent()
+	if overlay == null: return result
+	var cell := float(overlay.get("_cell_px"))
+	for door_value: Variant in overlay.get("_doors"):
+		var door := door_value as Dictionary
+		if door == null or not door.has("pos") or not door.has("dir"): continue
+		var pos: Vector2i = door["pos"]
+		var dir: Vector2i = door["dir"]
+		var width: int = int(door.get("width", 2))
+		var perp := Vector2i(-dir.y, dir.x)
+		var first := pos + perp * -(width >> 1)
+		var last := first + perp * (width - 1)
+		var cells := Rect2(Vector2(first) * cell, Vector2.ONE * cell).merge(Rect2(Vector2(last) * cell, Vector2.ONE * cell))
+		var outward := Vector2(dir) * (RoofOverlay.ROOF_INSET_PX + 24.0)
+		result.append(cells.merge(Rect2(cells.position + outward, cells.size)))
+	return result
 
 static func _oval(parent: Node2D, center: Vector2, radius: Vector2, color: Color) -> Polygon2D:
 	var points := PackedVector2Array()

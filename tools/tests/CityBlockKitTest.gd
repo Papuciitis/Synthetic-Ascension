@@ -212,7 +212,13 @@ func _run() -> void:
 					if not openings.is_empty():
 						var opening_face: Rect2 = openings[0].get_meta(&"facade_door_opening")
 						_check(absf(opening_face.size.x-gap.size.x) < 0.5 and absf(opening_face.position.x-gap.position.x) < 0.5,"composed doorway opening keeps the actual door width and position")
-						_check(not openings[0].is_in_group(&"foreground_occluders") and frames[0].is_in_group(&"foreground_solid_occluders"),"doorway frame occludes while the walkable opening stays uncovered")
+						var coverage := kit.find_children("FacadeCoverage*","Polygon2D",true,false)
+						var opening_clear := true
+						for face: Node in coverage:
+							var box := Rect2((face as Polygon2D).polygon[0],Vector2.ZERO)
+							for point: Vector2 in (face as Polygon2D).polygon: box = box.expand(point)
+							if box.intersects(opening_face.grow(-1.0)): opening_clear = false
+						_check(not openings[0].is_in_group(&"foreground_occluders") and not coverage.is_empty() and opening_clear,"doorway frame occludes while the walkable opening stays uncovered")
 						cover._set_alpha(0)
 						_check(is_zero_approx((frames[0].get_parent() as CanvasItem).modulate.a),"irregular portal fades with actual roof cutaway")
 						cover._set_alpha(1)

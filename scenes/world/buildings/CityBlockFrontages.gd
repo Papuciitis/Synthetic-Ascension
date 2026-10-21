@@ -79,7 +79,12 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 			var b := outline[(index+1)%outline.size()]
 			if not is_equal_approx(a.y,b.y) or b.x >= a.x: continue
 			if composed:
-				COMPOSER.compose_run(group,kit,Vector2(b.x+16,a.x-16),b.y-16,float(kit.get("_facade_height")),b.y,doors,cell_px)
+				# Quoins only where the outline turns away northward (an outer
+				# corner); a wall projecting south beside the run is an inner corner.
+				var after := outline[(index+2)%outline.size()]
+				var before := outline[(index-1+outline.size())%outline.size()]
+				var corners := Vector2i(1 if after.y < b.y else 0,1 if before.y < a.y else 0)
+				COMPOSER.compose_run(group,kit,Vector2(b.x+16,a.x-16),b.y-16,float(kit.get("_facade_height")),b.y,doors,cell_px,corners)
 				continue
 			var runs: Array[Vector2] = [Vector2(b.x+16,a.x-16)]
 			for door: Dictionary in doors:

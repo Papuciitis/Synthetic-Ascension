@@ -65,10 +65,11 @@ func _test_irregular_faces() -> void:
 	var roof := fixture.roof as RoofOverlay
 	# Composed frontage: the opaque wall field of the lower south run (wall base
 	# 560 = footprint edge 576 - 16) is a bounded solid upright plane.
+	# Coverage faces of the lower south run (wall base 560 = footprint edge 576 - 16).
 	var lower_field: Polygon2D
 	for node: Node in kit.find_children("*","Polygon2D",true,false):
-		if not node.has_meta(&"facade_wall_field"): continue
-		var span: Rect2 = node.get_meta(&"facade_wall_field")
+		if not node.has_meta(&"facade_coverage"): continue
+		var span: Rect2 = node.get_meta(&"facade_coverage")
 		if is_equal_approx(span.end.y,560.0) and node.is_in_group(SOLID_GROUP):
 			lower_field = node
 			break
@@ -91,11 +92,17 @@ func _test_irregular_faces() -> void:
 	var opening_sprite := kit.find_child("FacadeDoorOpening",true,false) as Sprite2D
 	_check(frame != null and opening_sprite != null,"actual irregular doorway retains its portal")
 	if frame != null and opening_sprite != null:
-		_check(frame.is_in_group(SOLID_GROUP) and frame.has_meta(GROUND_META),"opaque upright doorway frame has a bounded descriptor")
+		var frame_center := Vector2.ZERO
+		for point: Vector2 in frame.polygon: frame_center += point
+		frame_center /= frame.polygon.size()
+		_cover.call("refresh",self,true)
+		_check(float(_cover.call("strength_at",frame.to_global(frame_center),575.0)) > 0.9,"opaque upright doorway frame has a bounded descriptor")
 		_check(not opening_sprite.is_in_group(FOREGROUND.GROUP) and not opening_sprite.is_in_group(SOLID_GROUP),"walkable opening remains outside solid upright coverage")
 		var opening: Rect2 = opening_sprite.get_meta(&"facade_door_opening")
 		_cover.call("refresh",self,true)
 		_check(is_zero_approx(float(_cover.call("strength_at",kit.to_global(Vector2(opening.get_center().x,opening.end.y-32)),575.0))),"actual doorway gap stays clear below its lintel")
+		for probe_y: float in [568.0,578.0]:
+			_check(is_zero_approx(float(_cover.call("strength_at",kit.to_global(Vector2(opening.get_center().x,probe_y)),probe_y+4.0))),"feet on the walkable threshold stay uncovered at y=%d" % probe_y)
 	var upper_found := false
 	for node: Node in kit.find_children("*","Polygon2D",true,false):
 		var panel := node as Polygon2D
@@ -145,7 +152,7 @@ func _test_composed_rectangular(fixture: Dictionary, direction: Vector2i, label:
 	var kit := fixture.kit as Node2D
 	var fields: Array[Polygon2D] = []
 	for node: Node in kit.find_children("*","Polygon2D",true,false):
-		if node.has_meta(&"facade_wall_field") and node.is_in_group(SOLID_GROUP): fields.append(node)
+		if node.has_meta(&"facade_coverage") and node.is_in_group(SOLID_GROUP): fields.append(node)
 	_check(not fields.is_empty(),label + " exposes its actual painted source slices as registered sprites")
 	var frames := kit.find_children("FacadeDoorFrame*","Polygon2D",true,false)
 	_check((frames.size() >= 3) if direction == Vector2i.DOWN else frames.is_empty(),label + " paints a doorway only where the real south door is")
