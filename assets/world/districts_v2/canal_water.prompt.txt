@@ -1,0 +1,7 @@
+Use your built-in image generation tool (image_gen) exactly ONCE. Reference image 1 (paving.png) is a STYLE reference from the same game: match its painterly rendering, palette family, lighting and level of detail; do not copy its layout.
+Pass every attached reference image to the image tool as a reference input (referenced_image_paths).
+
+Use case: stylized-concept. Asset type: production seamless game ground/material texture for a north-up top-down medieval Mediterranean city game. Flat orthographic view, no perspective, no objects, no text, no border; uniform flat diffuse light so it tiles; low contrast so dense combat stays readable; painterly but quiet, no black outlines.
+Subject: ONE seamless SQUARE texture of calm city CANAL WATER seen from directly above: muted green-grey water with gentle soft ripples and a few faint pale reflections, slightly darker toward nothing in particular (uniform), no objects, no boats, no leaves. Edges tile seamlessly.
+
+After generating, copy the generated PNG from ~/.codex/generated_images/... into the current working directory as canal_water.png (keep the original alpha, do not resize or edit it). Do not create or modify any other file. Reply with the original generated path and the pixel size.
