@@ -993,6 +993,7 @@ func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype:
 		var oy_cells := rng.randi_range(-offset_cells, offset_cells)
 		var half_cells := floori(float(cells) * 0.5)
 		var landmark_cell := Vector2i(half_cells + ox_cells, half_cells + oy_cells)
+		chunk.set_meta(&"_landmark_cell", landmark_cell) # PlazaPresentation keeps its centrepiece clear of it
 		var alpha := 0.82 if force_landmark else 0.72
 		if tiled_world_rendering:
 			_ensure_tile_renderer()

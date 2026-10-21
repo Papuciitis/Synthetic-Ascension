@@ -96,6 +96,11 @@ const VARIANT_DOMESTIC_STONE := 8
 ## HALF_COVER already uses bits0..4 for its normal texture/rotation. These
 ## fitted cells retain its physics but one separately anchored prop owns art.
 const VARIANT_FURNITURE_ART := 32
+# --- plaza edges (PlazaEdgeKit): WALL-cell bits 16 and 64 ---
+const PLAZA_EDGE_KIT := preload("res://core/systems/world/chunks/PlazaEdgeKit.gd")
+const VARIANT_PLAZA_EDGE := PLAZA_EDGE_KIT.VARIANT_PLAZA_EDGE
+const VARIANT_PLAZA_BALUSTRADE := PLAZA_EDGE_KIT.VARIANT_BALUSTRADE
+# --- end plaza edges ---
 
 
 ## World offset of a quadrant fill's centre from its cell centre.
@@ -199,9 +204,10 @@ static func half_rotation(variant: int) -> float:
 
 static func texture_count() -> int:
 	if three_quarter_walls:
-		# 16 mask pieces, 2 windows, 4 rhythm variants, 4 corner fills, props.
-		return KIT_TEXTURES.size() + 2 + 4 + KIT_FILLS.size() + HALF_TEXTURES.size()
-	return 18 + HALF_TEXTURES.size()
+		# 16 mask pieces, 2 windows, 4 rhythm variants, 4 corner fills, props,
+		# and the low plaza edge kits.
+		return KIT_TEXTURES.size() + 2 + 4 + KIT_FILLS.size() + HALF_TEXTURES.size() + PLAZA_EDGE_KIT.texture_count()
+	return 18 + HALF_TEXTURES.size() + PLAZA_EDGE_KIT.texture_count()
 
 
 ## The south face for a wall-like cell, or null where one is not drawn: a

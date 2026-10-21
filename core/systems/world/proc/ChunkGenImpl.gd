@@ -11,6 +11,7 @@ const _STAMP: Script = preload("res://core/systems/world/proc/chunkgen/ChunkGenS
 const _WALLS: Script = preload("res://core/systems/world/proc/chunkgen/ChunkGenWalls.gd")
 const _STRUCT: Script = preload("res://core/systems/world/proc/chunkgen/ChunkGenStructures.gd")
 const _DECO: Script = preload("res://core/systems/world/proc/chunkgen/ChunkGenDeco.gd")
+const _PLAZA := preload("res://core/systems/world/proc/chunkgen/PlazaPresentation.gd")
 
 var cm: ChunkManager = null
 var _site_mgr: SiteManager = null
@@ -321,6 +322,8 @@ func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:
 	# Post-pass: non-blocking environment deco (veg/landmarks)
 	if deco_enabled:
 		_add_environment_deco(chunk, rng, archetype, conn_mask)
+		# Plaza dressing after the landmark exists (PlazaPresentation).
+		_PLAZA.dress_chunk(self, chunk, coord)
 	steps["deco"] = Time.get_ticks_usec() - step_started_usec
 	debug_last_content_steps = steps
 
@@ -361,6 +364,7 @@ func _stamp_floor_rect_cells(chunk: Node2D, rect: Rect2i, tex_index: int, rng: R
 	_STAMP._stamp_floor_rect_cells(self, chunk, rect, tex_index, rng, alpha, z)
 
 func _stamp_floor_rect_cells_patchy(chunk: Node2D, rect: Rect2i, tex_index: int, rng: RandomNumberGenerator, alpha: float, z: int) -> void:
+	_PLAZA.note_island_stamp(rect, tex_index) # plaza islands (no-op outside the plaza floor pass)
 	_STAMP._stamp_floor_rect_cells_patchy(self, chunk, rect, tex_index, rng, alpha, z)
 
 func _stamp_district_sidewalks(chunk: Node2D, bounds: Rect2i, lane_rect_h: Rect2i, lane_rect_v: Rect2i, rng: RandomNumberGenerator) -> void:
