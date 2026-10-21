@@ -57,6 +57,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			"parcel_loot_rarity_max": 5,
 			"parcel_loot_pickup_delay": 0.15,
 			"urban_access_mask": urban_access_mask,
+			"street_continuity": gen.street_continuity_enabled,
+			"urban_fill_front_dirs": _road_facing_dirs(gen, coord) if gen.street_continuity_enabled else [],
 		}
 		gen._site_mgr.decorate_urban_fill(gen.cm, chunk, coord, fill_cfg)
 		steps["fill"] = Time.get_ticks_usec() - step_started_usec
@@ -344,6 +346,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				"local_encounter_enabled": role == &"secondary_reward_building",
 				"local_encounter_count": 5 + mini(3, int(float(Global.attempt_segment if Global != null else 2) / 3.0)),
 				"secondary_objective_id": (DistrictPlan.secondary_objective_id(gen.world_seed, coord, &"searchable_reward_building") if role == &"secondary_reward_building" else 0),
+				"street_continuity": gen.street_continuity_enabled,
+				"infill_reserved": _objective_anchor_boxes(role, cells),
 			}
 			var parcel_rects: Array[Rect2i] = gen._site_mgr.decorate_district_parcels(gen.cm, chunk, coord, lane_rect_h, lane_rect_v, keepout_rects, pcfg)
 			if parcel_rects.size() > 0:
@@ -839,3 +843,28 @@ static func _lane_center_for_col(gen: ChunkGenImpl, col: int, cells: int) -> int
 	var rr := RandomNumberGenerator.new()
 	rr.seed = gen._mix_seed_int(gen.world_seed, col * 928371 + 7703)
 	return rr.randi_range(int(floor(float(cells) * 0.35)), int(ceil(float(cells) * 0.65)))
+
+
+## Courtyard rings whose neighbour carries road connectors (plan data only, so
+## streaming order cannot change it) open toward that street. North rings stay
+## inward: in the 3/4 view a north doorway shows no facade, so turning them
+## would only trade the court's entrances for blank walls.
+static func _road_facing_dirs(gen: ChunkGenImpl, coord: Vector2i) -> Array[Vector2i]:
+	var dirs: Array[Vector2i] = []
+	for dir: Vector2i in [Vector2i(0, 1), Vector2i(1, 0), Vector2i(-1, 0)]:
+		if gen.get_chunk_connectors(coord + dir) != 0:
+			dirs.append(dir)
+	return dirs
+
+
+## Chunk-centred objective anchor boxes the street infill keeps open.
+## SegmentProcBuilder drops the cursed vault +-2 cells around the centre of a
+## reward chunk without a walkability check; street-archetype reward chunks
+## (alley cache, searchable building, optional interior) get the 2-cell jitter
+## box plus a one-cell ring.
+static func _objective_anchor_boxes(role: StringName, cells: int) -> Array[Rect2i]:
+	var boxes: Array[Rect2i] = []
+	if role == &"secondary_alley_cache" or role == &"secondary_reward_building" or role == &"optional_interior":
+		var half := int(cells / 2.0)
+		boxes.append(Rect2i(Vector2i(half - 3, half - 3), Vector2i(7, 7)))
+	return boxes
