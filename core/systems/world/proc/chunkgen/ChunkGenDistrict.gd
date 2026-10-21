@@ -4,6 +4,7 @@ const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/Ind
 const _BOSS_ARENA_SPACE := preload("res://core/systems/world/proc/BossArenaSpace.gd")
 const DUNGEON := preload("res://core/systems/world/proc/DungeonLayout.gd")
 const DUNGEON_BUILDING := preload("res://scenes/world/buildings/DungeonBuilding.gd")
+const _PLAZA := preload("res://core/systems/world/proc/chunkgen/PlazaPresentation.gd")
 
 # Direction bits used by `conn_mask` (must match the producer of conn_mask).
 const _DIR_N: int = 1
@@ -359,6 +360,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var window_cells: Dictionary = {}
 
 	# Plazas/arenas/gates: break up huge slabs + add a stronger perimeter language.
+	var plaza_ring_cells: Dictionary = {}
 	if has_plaza:
 		if role != &"primary_objective":
 			if organic and not plaza_cells.is_empty():
@@ -371,6 +373,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			gen._add_plaza_ring_cells(wall_cells, plaza_cells, cells, rng_ring, archetype)
 		else:
 			gen._add_plaza_ring(wall_cells, plaza_rect, cells, rng_ring, archetype)
+		plaza_ring_cells = wall_cells.duplicate() # the ring is the first writer of wall_cells
 
 	# Donjon-style micro carving in the side regions:
 	# - Keeps the street cores open (your bullet-heaven needs space)
@@ -672,6 +675,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	steps["wall_lines"] = Time.get_ticks_usec() - step_started_usec
 	step_started_usec = Time.get_ticks_usec()
 	gen._spawn_wall_cells(chunk, wall_cells, window_cells)
+	if has_plaza: # plaza presentation: surviving ring walls draw as low planter / parapet edges
+		_PLAZA.mark_ring(gen, chunk, role, archetype, plaza_cells if organic and not plaza_cells.is_empty() else ChunkShapeGen.rect_cells(plaza_rect), plaza_ring_cells)
 	var dungeon_data: ChunkBuildData = gen.cm.get("_active_build_data")
 	if dungeon_data != null:
 		for cell: Vector2i in enclosed_dungeon_walls:

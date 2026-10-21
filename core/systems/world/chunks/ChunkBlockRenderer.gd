@@ -6,6 +6,7 @@ const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const MATERIALS := preload("res://core/systems/world/WorldDressingMaterials.gd")
 const CITY_STONE := preload("res://scenes/world/buildings/city_stone.gdshader")
 const DOMESTIC_STONE := preload("res://scenes/world/buildings/domestic_stone.gdshader")
+const PLAZA_EDGE := preload("res://core/systems/world/chunks/PlazaEdgeKit.gd")
 const SHADOW_OFFSET := DEPTH.SHADOW_DIRECTION * 8.0
 const SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
 ## Three-quarter walls cast a longer shadow away from the light (top right),
@@ -86,12 +87,16 @@ func add_chunk(data: ChunkBuildData) -> void:
 		var kind := data.kind_at(cell)
 		var texture: Texture2D
 		var rotation := 0.0
+		# Plaza ring cells draw as low edges (PlazaEdgeKit).
+		var plaza_edge := PLAZA_EDGE.owns(kind, data.variant_at(cell))
 		if kind == WorldBlockerGeometry.Kind.HALF_COVER:
 			var variant := data.variant_at(cell)
 			if (variant & ChunkBlockVisualCatalog.VARIANT_FURNITURE_ART) != 0:
 				continue
 			texture = ChunkBlockVisualCatalog.half_texture(variant)
 			rotation = ChunkBlockVisualCatalog.half_rotation(variant)
+		elif plaza_edge:
+			texture = PLAZA_EDGE.texture_for(data, cell)
 		else:
 			var global_cell := data.coord * data.cells_per_side + cell
 			texture = ChunkBlockVisualCatalog.wall_texture_at(kind, data.mask_at(cell), global_cell, data.variant_at(cell))
@@ -99,7 +104,7 @@ func add_chunk(data: ChunkBuildData) -> void:
 			continue
 		var key := _texture_key(texture)
 		var wall_like := kind == WorldBlockerGeometry.Kind.WALL or kind == WorldBlockerGeometry.Kind.WINDOW
-		var kit := wall_like and ChunkBlockVisualCatalog.three_quarter_walls
+		var kit := wall_like and (ChunkBlockVisualCatalog.three_quarter_walls or plaza_edge)
 		var under_roof := kit and (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_UNDER_ROOF) != 0
 		var z := ChunkBlockVisualCatalog.PROP_Z if kind == WorldBlockerGeometry.Kind.HALF_COVER or under_roof else ChunkBlockVisualCatalog.WALL_Z
 		if under_roof:
@@ -140,11 +145,15 @@ func add_chunk(data: ChunkBuildData) -> void:
 			# QuadMesh is authored Y-up (3D), so in 2D its texture draws upside
 			# down; the kit pieces are not vertically symmetric.
 			var flipped := Vector2(scale.x, -scale.y)
-			var at := world_center + ChunkBlockVisualCatalog.wall_offset()
+			var at := world_center + ChunkBlockVisualCatalog.KIT_OFFSET
+			var shadow_offset := PLAZA_EDGE.SHADOW_OFFSET if plaza_edge else WALL_SHADOW_OFFSET
 			batch.transforms.append(Transform2D(0.0, at).scaled_local(flipped))
-			batch.shadow_transforms.append(Transform2D(0.0, at + WALL_SHADOW_OFFSET).scaled_local(flipped))
+			batch.shadow_transforms.append(Transform2D(0.0, at + shadow_offset).scaled_local(flipped))
 			batch.owners.append(data.coord)
-			_add_corner_fills(data, cell, world_center, touched, under_roof)
+			if plaza_edge:
+				_add_plaza_fills(data, cell, world_center, touched)
+			else:
+				_add_corner_fills(data, cell, world_center, touched, under_roof)
 			continue
 		var lift := Vector2.ZERO
 		if depth_faces_enabled and kind != WorldBlockerGeometry.Kind.HALF_COVER:
@@ -204,6 +213,31 @@ func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vecto
 		batch.owners.append(data.coord)
 
 
+## Plaza edge blocks (two arms and the diagonal are edge cells of the same
+## style) close their open quadrant with the kit's fill, so the block reads as
+## one bed or one parapet slab.
+func _add_plaza_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vector2, touched: Dictionary) -> void:
+	var mask := data.mask_at(cell)
+	var variant := data.variant_at(cell)
+	for fill in ChunkBlockVisualCatalog.KIT_FILLS:
+		var bits := int(fill[0])
+		if (mask & bits) != bits:
+			continue
+		var diagonal: Vector2i = fill[1]
+		var neighbour_variant := data.variant_at(cell + diagonal)
+		if not PLAZA_EDGE.owns(data.kind_at(cell + diagonal), neighbour_variant) or PLAZA_EDGE.is_balustrade(neighbour_variant) != PLAZA_EDGE.is_balustrade(variant):
+			continue
+		var texture := PLAZA_EDGE.fill_texture(variant)
+		var key := _texture_key(texture)
+		var batch := _get_or_create_batch(key, texture, true, false, ChunkBlockVisualCatalog.FILL_Z)
+		if not touched.has(key):
+			touched[key] = batch.transforms.size()
+		var scale := ChunkBlockVisualCatalog.cell_scale(texture, float(texture.get_width()) * 0.5)
+		batch.transforms.append(Transform2D(0.0, world_center + PLAZA_EDGE.fill_offset(variant, diagonal)).scaled_local(Vector2(scale.x, -scale.y)))
+		batch.shadow_transforms.append(Transform2D())
+		batch.owners.append(data.coord)
+
+
 func remove_chunk(coord: Vector2i) -> void:
 	var empty_keys: Array[String] = []
 	for key_value in _batches.keys():
@@ -247,7 +281,7 @@ func get_stats() -> Dictionary:
 	var batch_nodes := 0
 	for batch_value in _batches.values():
 		var batch := batch_value as TextureBatch
-		if batch.shadowless and batch.texture.resource_path.get_file().begins_with("wall34_fill"):
+		if batch.shadowless and batch.texture.resource_path.get_file().contains("34_fill"):
 			fill_instances += batch.visual_mesh.visible_instance_count
 		elif batch.shadowless:
 			face_instances += batch.visual_mesh.visible_instance_count
