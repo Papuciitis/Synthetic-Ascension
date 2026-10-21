@@ -8,6 +8,9 @@ const GUARD_ROOT := "res://assets/world/districts/checkpoint_lanes/"
 const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
 const FOOTPRINT_GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
 const COMPOSER := preload("res://scenes/world/buildings/CityFacadeComposer.gd")
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
+## Kit tree/planter casts: a canopy passes some light, the wall none.
+const FOLIAGE_SHADE := 0.85
 ## Share of ordinary houses roofed in slate (pale ashlar walls) per district;
 ## the rest keep clay over warm plaster. Civic halls are always slate.
 const SLATE_SHARE := {
@@ -40,6 +43,11 @@ var _awning_cast := Rect2()
 var _doors: Array = []
 var _irregular := false
 var _district_profile: Dictionary = {}
+## Sun casters of this building (WorldDepthStyle light, built once) and the
+## full-shade cores last drawn, which kit foliage casts must not darken twice.
+var _sun_shapes: Array[Dictionary] = []
+var _sun_cores: Array[PackedVector2Array] = []
+var _wall_parts: Array[PackedVector2Array] = []
 static var preview_original_materials := false
 static var _texture_cache: Dictionary = {}
 
@@ -116,6 +124,7 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 			roof_poly.add_child(plant)
 	if not shared_ground: _add_frontage_ground()
 	_add_ground_shadow()
+	_add_contact_shade()
 	if not _irregular: _add_interior_floor(cell_px)
 	if not _irregular: _add_entry_ground()
 	if not _irregular:
@@ -128,6 +137,7 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	else:
 		preload("res://scenes/world/buildings/CityBlockFrontages.gd").compose(self, doors, cell_px, irregular_outline, _texture("wall_lantern.png") if civic else null, _texture("house_front.png") if _irregular else null)
 	if not _irregular: _add_frontage_details()
+	_recut_foliage_shadows(_own_wall_parts())
 	if _is_guard():
 		for detail: Node in get_children():
 			if detail.name in [&"PaintedEntryLantern",&"PaintedCornerPlanter",&"CityTemperateTree",&"CityFoliageShadow"]: detail.set_meta(&"district_optional_detail",true)
@@ -173,21 +183,138 @@ func _on_roof_alpha(alpha: float) -> void:
 	queue_redraw()
 
 func _add_ground_shadow() -> void:
-	var offset := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(170.0 if civic else 126.0)
-	var points := PackedVector2Array([bounds.position,Vector2(bounds.end.x,bounds.position.y),bounds.end,Vector2(bounds.position.x,bounds.end.y)])
-	var cast := points.duplicate()
-	for point: Vector2 in points: cast.append(point+offset)
-	var pieces: Array[PackedVector2Array] = Geometry2D.clip_polygons(Geometry2D.convex_hull(cast),points)
-	if not _is_guard():
-		pieces = FOOTPRINT_GEOMETRY.shadow(FOOTPRINT_GEOMETRY.outline_for(self),offset)
-	for piece: PackedVector2Array in pieces:
-		var shade := Polygon2D.new()
-		shade.name = "CitySunShadow"
-		shade.set_meta(&"city_sun_shadow",true)
-		shade.polygon = piece
-		shade.color = Color(0.10,0.15,0.20,0.21)
-		shade.z_index = -90
-		add_child(shade)
+	# One sun for every building: cast from the ground footprint (the drawn
+	# roof dropped by the wall height), as long as the drawn wall, softened at
+	# its outer edge. Neighbours and their walls are folded in by trim_paving.
+	_sun_shapes = sun_cast_shapes(true)
+	_rebuild_sun_shadow([],_own_wall_parts())
+
+## This building's convex sun casters with a stable order key (shade shared
+## with a neighbour belongs to the lower key, so no ground darkens twice).
+func sun_cast_shapes(rebuild: bool = false) -> Array[Dictionary]:
+	if not rebuild and not _sun_shapes.is_empty(): return _sun_shapes
+	var shapes: Array[Dictionary] = []
+	var offset := DEPTH.building_shadow_offset(_facade_height)
+	var casters := FOOTPRINT_GEOMETRY.ground_casters(FOOTPRINT_GEOMETRY.outline_for(self),_facade_height,ChunkBlockVisualCatalog.KIT_HEIGHT)
+	var origin := Vector2i((bounds.position/maxf(1.0,float(_cell_px))).round())
+	for index in casters.size():
+		var shape := FOOTPRINT_GEOMETRY.cast_shape(casters[index],offset,DEPTH.penumbra_px)
+		shape["key"] = ((origin.y+1024)*4096+(origin.x+1024))*16+mini(index,15)
+		shapes.append(shape)
+	return shapes
+
+## This building's occupied wall faces (convex), the receivers no cast may
+## darken. Built once; the footprint never changes after configure.
+func wall_parts() -> Array[PackedVector2Array]:
+	if _wall_parts.is_empty():
+		_wall_parts = FOOTPRINT_GEOMETRY.convex_parts(FOOTPRINT_GEOMETRY.inset_outline(FOOTPRINT_GEOMETRY.outline_for(self),FOOTPRINT_GEOMETRY.WALL_FACE_INSET))
+	return _wall_parts
+
+func _own_wall_parts() -> Array[PackedVector2Array]:
+	return wall_parts().duplicate()
+
+func _rebuild_sun_shadow(others: Array[Dictionary], receivers: Array[PackedVector2Array]) -> void:
+	for child: Node in get_children():
+		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null:
+			remove_child(child)
+			child.queue_free()
+	var cast := FOOTPRINT_GEOMETRY.soft_cast(sun_cast_shapes(),others,receivers,_shadow_clip())
+	_sun_cores = cast.cores
+	if (cast.points as PackedVector2Array).is_empty(): return
+	var shade := Polygon2D.new()
+	shade.name = "CitySunShadow"
+	shade.set_meta(&"city_sun_shadow",true)
+	shade.polygon = cast.points
+	shade.polygons = cast.faces
+	shade.vertex_colors = cast.colors
+	shade.material = DEPTH.SUN_SHADOW_MATERIAL
+	shade.z_index = -90
+	# A cutaway leaves the established residual cast on the ground outside.
+	shade.modulate.a = 0.65+0.35*_facade_alpha
+	add_child(shade)
+
+## Neighbouring kits' casters near this one, for one disjoint shared shade.
+func _sibling_casts() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var parent := get_parent()
+	if parent == null: return result
+	var area := Rect2()
+	for shape: Dictionary in sun_cast_shapes():
+		area = shape.bounds if not area.has_area() else area.merge(shape.bounds)
+	for child: Node in parent.get_children():
+		if child == self or not child.is_in_group(&"city_block_building") or not child.has_method(&"sun_cast_shapes"): continue
+		for shape: Dictionary in child.call(&"sun_cast_shapes"):
+			if (shape.bounds as Rect2).intersects(area.grow(2.0)): result.append(shape)
+	return result
+
+## Stream-safe extent: a cast may reach two cells into a neighbouring
+## chunk's open margin (never its walls) and is cut there, not beyond.
+func _shadow_clip() -> Rect2:
+	var extent := _chunk_extent if _chunk_extent.x > 0.0 else Vector2.ONE*32.0*float(_cell_px)
+	return Rect2(Vector2.ZERO,extent).grow(2.0*float(_cell_px))
+
+## Wall-base contact shade where the ground footprint meets open ground:
+## deepest under the shaded south face, lighter west, faint east, plus inner
+## corners. Presentation only: no blocker, cover or occluder registration.
+func _add_contact_shade() -> void:
+	var old := get_node_or_null(^"CityContactShade")
+	if old != null:
+		remove_child(old)
+		old.queue_free()
+	var outline := FOOTPRINT_GEOMETRY.outline_for(self)
+	var ground := FOOTPRINT_GEOMETRY.ground_footprint(outline,_facade_height,ChunkBlockVisualCatalog.KIT_HEIGHT)
+	if ground.is_empty(): return
+	var cuts := _own_wall_parts()
+	for door: Dictionary in _doors:
+		if not door.has("pos") or not door.has("dir"): continue
+		var gap := COMPOSER.door_box(door,_cell_px)
+		var outward := Vector2(door.dir as Vector2i)
+		cuts.append(FOOTPRINT_GEOMETRY.rect_polygon(gap.merge(Rect2(gap.position+outward*28.0,gap.size)).grow(2.0)))
+	var strength := DEPTH.contact_strength
+	var faces := FOOTPRINT_GEOMETRY.contact_shade(ground,Vector2(DEPTH.CONTACT_SOUTH_PX,DEPTH.CONTACT_SOUTH*strength),Vector2(DEPTH.CONTACT_WEST_PX,DEPTH.CONTACT_WEST*strength),Vector2(DEPTH.CONTACT_EAST_PX,DEPTH.CONTACT_EAST*strength),Vector2(DEPTH.CONTACT_CORNER_PX,DEPTH.CONTACT_CORNER*strength),cuts,_shadow_clip())
+	if (faces.points as PackedVector2Array).is_empty(): return
+	var contact := Polygon2D.new()
+	contact.name = "CityContactShade"
+	contact.set_meta(&"city_contact_shade",true)
+	contact.polygon = faces.points
+	contact.polygons = faces.faces
+	contact.vertex_colors = faces.colors
+	contact.material = DEPTH.SUN_SHADOW_MATERIAL
+	contact.z_index = -90
+	add_child(contact)
+
+## Kit tree/planter casts share the sun material and never darken ground the
+## building's own full shade already covers, nor any occupied wall face.
+func _recut_foliage_shadows(cuts: Array[PackedVector2Array]) -> void:
+	var all_cuts: Array[PackedVector2Array] = cuts.duplicate()
+	all_cuts.append_array(_sun_cores)
+	for child: Node in get_children():
+		if not child is Polygon2D or not child.has_meta(&"city_sun_shadow") or (child as Polygon2D).texture == null: continue
+		var source := child as Polygon2D
+		var whole: Array[PackedVector2Array] = [source.polygon]
+		var pieces := FOOTPRINT_GEOMETRY.subtract_convex(whole,FOOTPRINT_GEOMETRY._near(all_cuts,FOOTPRINT_GEOMETRY.bounds_of(source.polygon)))
+		if pieces.size() == 1 and pieces[0] == source.polygon:
+			source.material = DEPTH.SUN_SHADOW_MATERIAL
+			source.color = Color(1,1,1,FOLIAGE_SHADE)
+			continue
+		var inverse: Transform2D = source.get_meta(&"shadow_uv_transform")
+		var uv_offset: Vector2 = source.get_meta(&"shadow_uv_offset")
+		for piece: PackedVector2Array in pieces:
+			var shade := Polygon2D.new()
+			shade.name = source.name
+			for meta: StringName in source.get_meta_list(): shade.set_meta(meta,source.get_meta(meta))
+			shade.polygon = piece
+			var uv := PackedVector2Array()
+			for point: Vector2 in piece: uv.append(inverse*point+uv_offset)
+			shade.uv = uv
+			shade.texture = source.texture
+			shade.color = Color(1,1,1,FOLIAGE_SHADE)
+			shade.material = DEPTH.SUN_SHADOW_MATERIAL
+			shade.z_index = source.z_index
+			shade.modulate = source.modulate
+			add_child(shade)
+		remove_child(source)
+		source.queue_free()
 
 func _add_frontage_ground(area_override: Rect2 = Rect2()) -> void:
 	var texture := _texture("paving.png")
@@ -342,44 +469,14 @@ static func compose_street(chunk: Node2D, footprints: Array[Rect2i], lane_h: Rec
 
 func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 	# Parcel composition knows all neighbours only after the frontage pass.
-	# Subtract their real footprints so ground cannot paint a neighbour's room.
-	var exact_cuts: Array[PackedVector2Array] = []
-	if not _is_guard(): exact_cuts = FOOTPRINT_GEOMETRY.occupied_parts(get_parent(),footprints,cell_px)
+	# Subtract their real wall faces so ground cannot paint a neighbour's room,
+	# and share one disjoint soft shadow with neighbouring casters.
+	var walls := FOOTPRINT_GEOMETRY.occupied_wall_parts(get_parent(),footprints,cell_px)
+	_rebuild_sun_shadow(_sibling_casts(),walls)
+	_recut_foliage_shadows(walls)
 	for child: Node in get_children():
-		if not child is Polygon2D or not (child.has_meta(&"city_paving") or child.has_meta(&"city_sun_shadow")): continue
+		if not child is Polygon2D or not child.has_meta(&"city_paving"): continue
 		var paving := child as Polygon2D
-		if paving.has_meta(&"city_sun_shadow"):
-			var shade_pieces: Array[PackedVector2Array] = [paving.polygon]
-			if not _is_guard():
-				shade_pieces = FOOTPRINT_GEOMETRY.difference(FOOTPRINT_GEOMETRY.convex_parts(paving.polygon),exact_cuts)
-			else:
-				for footprint: Rect2i in footprints:
-					var cut := Rect2(Vector2(footprint.position)*cell_px,Vector2(footprint.size)*cell_px)
-					var box := PackedVector2Array([cut.position,Vector2(cut.end.x,cut.position.y),cut.end,Vector2(cut.position.x,cut.end.y)])
-					var remaining: Array[PackedVector2Array] = []
-					for piece: PackedVector2Array in shade_pieces: remaining.append_array(Geometry2D.clip_polygons(piece,box))
-					shade_pieces = remaining
-			for piece: PackedVector2Array in shade_pieces:
-				var shade := Polygon2D.new()
-				shade.name = "CitySunShadow"
-				shade.set_meta(&"city_sun_shadow",true)
-				shade.polygon = piece
-				shade.color = paving.color
-				shade.z_index = paving.z_index
-				shade.texture = paving.texture
-				if not _is_guard(): shade.modulate = paving.modulate
-				if paving.texture != null:
-					var inverse: Transform2D = paving.get_meta(&"shadow_uv_transform")
-					var uv_offset: Vector2 = paving.get_meta(&"shadow_uv_offset")
-					var uv := PackedVector2Array()
-					for point: Vector2 in piece: uv.append(inverse*point+uv_offset)
-					shade.uv = uv
-					shade.set_meta(&"shadow_uv_transform",inverse)
-					shade.set_meta(&"shadow_uv_offset",uv_offset)
-				add_child(shade)
-			remove_child(paving)
-			paving.queue_free()
-			continue
 		var rect := Rect2(paving.polygon[0], Vector2.ZERO)
 		for point: Vector2 in paving.polygon: rect = rect.expand(point)
 		var pieces: Array[Rect2] = [rect]

@@ -193,10 +193,20 @@ func _check_ground(fixture: Dictionary, repeated: Dictionary) -> void:
 func _shadow_overlaps_receiver(shadow: Polygon2D, receiver: RoofOverlay) -> bool:
 	# Independent live occupancy, rather than the caster's subtraction helper
 	# or the parcel bounding rectangle: an L notch is actual exterior ground.
+	# Real walls stand 16 px inside the parcel cells; the outer rim is open
+	# ground where a cast meets the wall base. Every drawn face is checked.
 	var occupied := PackedVector2Array()
 	for point: Vector2 in receiver.footprint_outline_px:
 		occupied.append(shadow.to_local(receiver.to_global(point)))
-	return not Geometry2D.intersect_polygons(shadow.polygon,occupied).is_empty()
+	var walls := PackedVector2Array()
+	for candidate: PackedVector2Array in Geometry2D.offset_polygon(occupied,-16.0,Geometry2D.JOIN_MITER):
+		if candidate.size() > walls.size(): walls = candidate
+	for face: PackedVector2Array in preload("res://scenes/world/buildings/CityFootprintGeometry.gd").faces_of(shadow):
+		for overlap: PackedVector2Array in Geometry2D.intersect_polygons(face,walls):
+			var area := 0.0
+			for index in overlap.size(): area += overlap[index].cross(overlap[(index+1)%overlap.size()])
+			if absf(area)*0.5 > 0.5: return true
+	return false
 
 
 func _check_receiver_detector(receiver: RoofOverlay) -> void:

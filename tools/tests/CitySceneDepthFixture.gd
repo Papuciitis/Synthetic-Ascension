@@ -3,6 +3,7 @@ extends RefCounted
 ## Exercises the production kit/composer; owns no fake geometry implementation.
 
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
+const GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const BED_RECT := Rect2i(3,9,11,8)
 const BED_OUTLINE := [Vector2(192,768),Vector2(384,768),Vector2(384,576),Vector2(896,576),Vector2(896,1088),Vector2(192,1088)]
@@ -29,10 +30,13 @@ static func untextured_shadows(kit: Node) -> Array[Polygon2D]:
 	return result
 
 
+## Drawn shadow faces covering a ground point. A soft cast is one Polygon2D of
+## disjoint faces (full-shade core plus feathered band), so faces are counted.
 static func covering_pieces(kit: Node, point: Vector2) -> int:
 	var count := 0
 	for shade: Polygon2D in untextured_shadows(kit):
-		if Geometry2D.is_point_in_polygon(point,shade.polygon): count += 1
+		for face: PackedVector2Array in GEOMETRY.faces_of(shade):
+			if Geometry2D.is_point_in_polygon(point,face): count += 1
 	return count
 
 

@@ -1,9 +1,12 @@
 extends Node2D
 ## Later real procedural L parcels must use the same exact caster as S2.
-## Independent reference: a ground point is shadowed only when the finite
-## ray toward the light enters the actual occupied outline.
+## Independent reference: a ground point outside the occupied wall faces is
+## shadowed only when the finite ray toward the light, as long as the drawn
+## wall's cast, enters the building's ground footprint (the drawn roof field
+## dropped by the wall height onto the wall base).
 
 const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
+const GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
 var _passes := 0
 var _failures := 0
 
@@ -19,18 +22,39 @@ func _check(ok: bool, label: String) -> void:
 		push_error(label)
 
 
-func _reference(outline: PackedVector2Array, point: Vector2, offset: Vector2) -> bool:
-	if Geometry2D.is_point_in_polygon(point,outline): return false
-	if Geometry2D.is_point_in_polygon(point-offset,outline): return true
-	for index in outline.size():
-		var hit: Variant = Geometry2D.segment_intersects_segment(point,point-offset,outline[index],outline[(index+1)%outline.size()])
-		if hit != null and Geometry2D.is_point_in_polygon((hit as Vector2)-offset.normalized()*0.05,outline): return true
+func _ray_enters(caster: PackedVector2Array, point: Vector2, offset: Vector2) -> bool:
+	if Geometry2D.is_point_in_polygon(point-offset,caster): return true
+	for index in caster.size():
+		var hit: Variant = Geometry2D.segment_intersects_segment(point,point-offset,caster[index],caster[(index+1)%caster.size()])
+		if hit != null and Geometry2D.is_point_in_polygon((hit as Vector2)-offset.normalized()*0.05,caster): return true
 	return false
+
+
+func _reference(walls: PackedVector2Array, casters: Array[PackedVector2Array], point: Vector2, offset: Vector2) -> bool:
+	if Geometry2D.is_point_in_polygon(point,walls): return false
+	for caster: PackedVector2Array in casters:
+		if _ray_enters(caster,point,offset): return true
+	return false
+
+
+func _inset(outline: PackedVector2Array, amount: float) -> PackedVector2Array:
+	var best := PackedVector2Array()
+	for candidate: PackedVector2Array in Geometry2D.offset_polygon(outline,-amount,Geometry2D.JOIN_MITER):
+		if absf(_area(candidate)) > absf(_area(best)): best = candidate
+	return best
+
+
+func _area(points: PackedVector2Array) -> float:
+	var total := 0.0
+	for index in points.size(): total += points[index].cross(points[(index+1)%points.size()])
+	return total*0.5
 
 
 func _covered(kit: Node, point: Vector2) -> bool:
 	for node: Node in kit.get_children():
-		if node is Polygon2D and node.texture == null and node.has_meta(&"city_sun_shadow") and Geometry2D.is_point_in_polygon(point,node.polygon): return true
+		if node is Polygon2D and node.texture == null and node.has_meta(&"city_sun_shadow"):
+			for face: PackedVector2Array in GEOMETRY.faces_of(node as Polygon2D):
+				if Geometry2D.is_point_in_polygon(point,face): return true
 	return false
 
 
@@ -77,11 +101,27 @@ func _test_segment(segment: int, direction: Vector2i) -> void:
 		var false_positive := 0
 		var false_negative := 0
 		var positives := 0
-		var offset := DEPTH.offset_for_height(126.0)
+		var height: float = kit.get("_facade_height")
+		var offset := DEPTH.building_shadow_offset(height)
+		_check(offset.length() > DEPTH.offset_for_height(height*0.8).length(),"S%d cast length follows the drawn wall, not a fixed 126 px" % segment)
+		# Independent ground footprint: wall faces 16 px inside the parcel,
+		# intersected with themselves dropped by the eave height.
+		var walls := _inset(outline,16.0)
+		var dropped := walls.duplicate()
+		for index in dropped.size(): dropped[index] += Vector2(0.0,height-28.0)
+		var casters: Array[PackedVector2Array] = []
+		for piece: PackedVector2Array in Geometry2D.intersect_polygons(walls,dropped): casters.append(piece)
+		# A wing too shallow to reach the ground keeps its whole base.
+		for part: PackedVector2Array in GEOMETRY.convex_parts(walls):
+			var reached := false
+			for caster: PackedVector2Array in casters:
+				if not Geometry2D.intersect_polygons(part,caster).is_empty(): reached = true
+			if not reached: casters.append(part)
+		bounds = bounds.grow(maxf(0.0,absf(offset.x)-130.0))
 		for y in range(int(bounds.position.y),int(bounds.end.y),19):
 			for x in range(int(bounds.position.x),int(bounds.end.x),17):
 				var point := Vector2(x+0.37,y+0.61)
-				var expected := _reference(outline,point,offset)
+				var expected := _reference(walls,casters,point,offset)
 				var actual := _covered(kit,point)
 				if expected: positives += 1
 				if actual and not expected: false_positive += 1
