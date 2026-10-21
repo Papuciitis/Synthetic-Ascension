@@ -14,10 +14,7 @@ func _run() -> void:
 	dummy.add_to_group(&"player")
 	add_child(dummy)
 	Global.attempt_segment = 2
-	for sample: Dictionary in [
-		{"seed":16102026,"coord":Vector2i(0,3),"id":944996572},
-		{"seed":17,"coord":Vector2i(-3,5),"id":2128236757},
-	]:
+	for sample: Dictionary in HOME_FIXTURES:
 		await _check_composed_home(sample)
 	_check(Global._rng.state == previous_rng,"Composed households consume no run-owned RNG")
 	dummy.free()
@@ -27,7 +24,8 @@ func _run() -> void:
 
 
 func _check_composed_home(sample: Dictionary) -> void:
-	var manager: ChunkManager = _manager(int(sample.seed))
+	Global.attempt_segment = int(sample.get("segment",2))
+	var manager: ChunkManager = _manager(int(sample.seed),int(sample.get("segment",2)))
 	var coord: Vector2i = sample.coord
 	var chunk: Node2D = manager._create_chunk(coord)
 	manager._chunks[coord] = chunk

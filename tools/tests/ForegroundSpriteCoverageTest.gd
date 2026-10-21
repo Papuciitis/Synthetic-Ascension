@@ -193,15 +193,29 @@ func _test_actual_city_trees() -> void:
 			continue
 		_check(tree.is_in_group(GROUP), "actual city trees register their foreground lifetime")
 		var descriptor := _describe(tree)
+		# The root stands on whichever blocked south corner the dressing chose
+		# (bounds 128..640 x 192..640, translated by the streamed parent).
+		var root: Vector2 = tree.get_meta(&"city_ground_contact", Vector2.INF)
+		_check(is_equal_approx(root.y, 619.0) and (is_equal_approx(root.x, 136.0) or is_equal_approx(root.x, 632.0)), "actual tree root stands on a blocked south corner band")
 		_check(is_equal_approx(float(descriptor.get("front_y", 0)), 2619.0), "actual tree depth uses the measured root in a translated streamed chunk")
 		var source_root := Vector2(660, 1060) if domestic else Vector2(650, 1170)
-		_check(_uv(descriptor, Vector2(1136, 2619)).is_equal_approx(source_root / 1254.0), "actual ordinary and fruit-tree roots sample their distinct measured source anchors")
+		_check(_uv(descriptor, parent.position + root).is_equal_approx(source_root / 1254.0), "actual ordinary and fruit-tree roots sample their distinct measured source anchors")
 		_check(tree.texture.resource_path.ends_with("fruit_tree_overhead_v2.png" if domestic else "temperate_tree.png"), "coverage keeps the selected original tree resource")
 		_check(tree.z_index == 1 and kit.z_index == -2, "coverage registration preserves existing tree presentation depth")
-		var registered := 0
-		for child: Node in kit.get_children():
-			if child.is_in_group(GROUP):
-				registered += 1
-		_check(registered == 1, "low shrubs and foliage shadows do not enter the first foreground class")
+		var trees := 0
+		# Planting and street dressing only; facade slices own their own cover.
+		var planting: Array[Node] = kit.get_children()
+		for group_name: String in ["FrontageDressing", "DomesticGarden"]:
+			var group := kit.get_node_or_null(group_name)
+			if group != null: planting.append_array(group.get_children())
+		for node: Node in planting:
+			if not node.is_in_group(GROUP): continue
+			if node == tree:
+				trees += 1
+				continue
+			# Only tall street furniture joins the trees; low props, beds,
+			# pots and every projected shadow stay out of the foreground class.
+			_check(node is Sprite2D and node.get_meta(&"city_dressing_prop", &"") in [&"cypress_tree", &"lamp_post", &"tree_planter"], "low shrubs, street props and foliage shadows do not enter the first foreground class")
+		_check(trees == 1, "one corner tree registers per planted building")
 	parent.free()
 	Global.attempt_segment = previous_segment

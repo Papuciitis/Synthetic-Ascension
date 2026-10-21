@@ -1,5 +1,7 @@
 extends Node
 
+const CITY_KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
+
 var failures: Array[String] = []
 
 func _ready() -> void:
@@ -7,6 +9,7 @@ func _ready() -> void:
 
 func _run() -> void:
 	var invalid := 0
+	var crowded := 0
 	var total := 0
 	for seed_value in range(12):
 		var manager := ChunkManager.new()
@@ -22,6 +25,13 @@ func _run() -> void:
 		var clear := ChunkShapeGen.rect_cells(Rect2i(Vector2i(20, 3), Vector2i(5, 26)))
 		chunk.set_meta(&"_proc_clear_cells", clear)
 		for y in range(3, 29): manager._blocked_cells[Vector2i(3, y)] = true
+		# A dressed city frontage: its garden/street groups reserve their wall
+		# foot so wild scatter keeps the doorstep row in front of them clear.
+		var kit := CITY_KIT.new()
+		chunk.add_child(kit)
+		kit.configure(Rect2i(21, 21, 9, 7), 64, [{"pos": Vector2i(25, 27), "dir": Vector2i.DOWN, "width": 2}], null, true, PackedVector2Array(), true, {"building_usage": &"workshop", "visual_seed": 9001 + seed_value, "family_id": &"service_courtyards"})
+		var dressed: Dictionary = chunk.get_meta(&"_proc_deco_clear_cells", {}).duplicate()
+		if dressed.is_empty(): failures.append("dressed frontage reserves its wall foot from wild scatter at seed %d" % seed_value)
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed_value
 		manager._scatter_vegetation(chunk, rng, 32, 20)
@@ -33,6 +43,9 @@ func _run() -> void:
 		for placement in placements:
 			var cell: Vector2i = placement.cell
 			if interior.has_point(cell) or clear.has(cell) or manager._blocked_cells.has(cell): invalid += 1
+			for oy in range(-1, 2):
+				for ox in range(-1, 2):
+					if dressed.has(cell + Vector2i(ox, oy)): crowded += 1
 		var repeat_rng := RandomNumberGenerator.new()
 		repeat_rng.seed = seed_value
 		var repeated: Array = manager._DECO_PLANNER.plan_vegetation(manager, chunk, repeat_rng, 32, 20)
@@ -47,7 +60,8 @@ func _run() -> void:
 		total += placements.size()
 		manager.free()
 	if invalid > 0: failures.append("foliage obscures %d reserved lane/interior cells" % invalid)
+	if crowded > 0: failures.append("wild foliage crowds %d tended garden/street dressing cells" % crowded)
 	if total < 12 * 10: failures.append("sufficient exterior foliage: got %d placements" % total)
 	for failure in failures: push_error(failure)
-	print("WorldFoliagePlacementTest: %d placements, %d invalid, %d failures" % [total, invalid, failures.size()])
+	print("WorldFoliagePlacementTest: %d placements, %d invalid, %d crowding dressing, %d failures" % [total, invalid, crowded, failures.size()])
 	get_tree().quit(1 if not failures.is_empty() else 0)

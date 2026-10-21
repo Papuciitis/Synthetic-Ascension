@@ -120,6 +120,24 @@ func _run() -> void:
 				strips += 1
 				_check(not Geometry2D.is_point_in_polygon(bounds.get_center(), child.polygon), "outdoor paving excludes interior floor")
 		_check(strips == 4, "frontage uses four bounded paving strips")
+		# Street life stands on the building's own blocked wall foot, adds no
+		# body, and stays outside when the roof opens for the interior.
+		var dressing_items := 0
+		for item: Node in kit.find_children("*","Sprite2D",true,false):
+			if not item.has_meta(&"city_dressing_prop"): continue
+			dressing_items += 1
+			var foot: Vector2 = item.get_meta(&"city_dressing_contact")
+			_check(data_b.kind_at(Vector2i((foot/64.0).floor())) >= 0, "street dressing stands on the building's own blocked wall foot")
+		_check(kit.find_children("*","CollisionObject2D",true,false).is_empty(), "street dressing and gardens add no physical body")
+		var dressing_root := kit.get_node_or_null("FrontageDressing") as CanvasItem
+		if dressing_root != null:
+			var dressing_cover := kit.get("_roof") as RoofOverlay
+			dressing_cover._set_alpha(0.0)
+			_check(is_equal_approx(dressing_root.modulate.a,1.0), "outdoor street dressing does not fade with the interior roof")
+			dressing_cover._set_alpha(1.0)
+		if bool(kit.get("civic")):
+			_check(dressing_items >= 2, "the civic street door receives anchored planting instead of a drawn corner box")
+			_check(not bool(kit.call("_draws_services")), "the sliced civic arcade keeps its painted downpipe; no drawn pipe or cabinet doubles it")
 	await get_tree().process_frame
 	var neighbouring_footprints: Array[Rect2i] = [Rect2i(13, 4, 7, 9)]
 	for kit: Node2D in kits:
