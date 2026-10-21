@@ -48,6 +48,7 @@ var _district_profile: Dictionary = {}
 var _sun_shapes: Array[Dictionary] = []
 var _sun_cores: Array[PackedVector2Array] = []
 var _wall_parts: Array[PackedVector2Array] = []
+var _cast_clip := Rect2()
 static var preview_original_materials := false
 static var _texture_cache: Dictionary = {}
 
@@ -218,7 +219,8 @@ func _rebuild_sun_shadow(others: Array[Dictionary], receivers: Array[PackedVecto
 		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null:
 			remove_child(child)
 			child.queue_free()
-	var cast := FOOTPRINT_GEOMETRY.soft_cast(sun_cast_shapes(),others,receivers,_shadow_clip())
+	_cast_clip = _shadow_clip()
+	var cast := FOOTPRINT_GEOMETRY.soft_cast(sun_cast_shapes(),others,receivers,_cast_clip)
 	_sun_cores = cast.cores
 	if (cast.points as PackedVector2Array).is_empty(): return
 	var shade := Polygon2D.new()
@@ -232,6 +234,22 @@ func _rebuild_sun_shadow(others: Array[Dictionary], receivers: Array[PackedVecto
 	# A cutaway leaves the established residual cast on the ground outside.
 	shade.modulate.a = 0.65+0.35*_facade_alpha
 	add_child(shade)
+
+## True when another building's wall face lies within this building's cast
+## or kit foliage cast, so trimming would change what was drawn alone.
+func _foreign_walls_near(walls: Array[PackedVector2Array]) -> bool:
+	var reach := Rect2()
+	for shape: Dictionary in sun_cast_shapes():
+		reach = shape.bounds if not reach.has_area() else reach.merge(shape.bounds)
+	for child: Node in get_children():
+		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture != null:
+			var foliage := FOOTPRINT_GEOMETRY.bounds_of((child as Polygon2D).polygon)
+			reach = foliage if not reach.has_area() else reach.merge(foliage)
+	var own := wall_parts()
+	for part: PackedVector2Array in walls:
+		if own.has(part): continue
+		if FOOTPRINT_GEOMETRY.bounds_of(part).intersects(reach.grow(1.0)): return true
+	return false
 
 ## Neighbouring kits' casters near this one, for one disjoint shared shade.
 func _sibling_casts() -> Array[Dictionary]:
@@ -472,8 +490,12 @@ func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 	# Subtract their real wall faces so ground cannot paint a neighbour's room,
 	# and share one disjoint soft shadow with neighbouring casters.
 	var walls := FOOTPRINT_GEOMETRY.occupied_wall_parts(get_parent(),footprints,cell_px)
-	_rebuild_sun_shadow(_sibling_casts(),walls)
-	_recut_foliage_shadows(walls)
+	var others := _sibling_casts()
+	# A building with no neighbouring caster or wall within reach keeps the
+	# identical cast it built alone (chunk-build cost, not appearance).
+	if not others.is_empty() or _shadow_clip() != _cast_clip or _foreign_walls_near(walls):
+		_rebuild_sun_shadow(others,walls)
+		_recut_foliage_shadows(walls)
 	for child: Node in get_children():
 		if not child is Polygon2D or not child.has_meta(&"city_paving"): continue
 		var paving := child as Polygon2D

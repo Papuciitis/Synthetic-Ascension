@@ -160,18 +160,31 @@ static func soft_cast(own: Array[Dictionary], others: Array[Dictionary], receive
 ## overlaps it (separating axes), so faces are not split needlessly.
 static func subtract_convex(subjects: Array[PackedVector2Array], cuts: Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	var result: Array[PackedVector2Array] = subjects.duplicate()
+	var boxes: Array[Rect2] = []
+	var reach := Rect2()
+	for subject: PackedVector2Array in result:
+		var box := bounds_of(subject)
+		boxes.append(box)
+		reach = box if not reach.has_area() else reach.merge(box)
 	for cut: PackedVector2Array in cuts:
 		if cut.size() < 3: continue
 		var cut_bounds := bounds_of(cut)
+		if not cut_bounds.intersects(reach): continue
 		var next: Array[PackedVector2Array] = []
-		for subject: PackedVector2Array in result:
-			if not bounds_of(subject).intersects(cut_bounds) or not convex_overlap(subject,cut):
+		var next_boxes: Array[Rect2] = []
+		for index in result.size():
+			var subject := result[index]
+			if not boxes[index].intersects(cut_bounds) or not convex_overlap(subject,cut):
 				next.append(subject)
+				next_boxes.append(boxes[index])
 				continue
 			var single: Array[PackedVector2Array] = [subject]
 			var single_cut: Array[PackedVector2Array] = [cut]
-			next.append_array(difference(single,single_cut))
+			for piece: PackedVector2Array in difference(single,single_cut):
+				next.append(piece)
+				next_boxes.append(bounds_of(piece))
 		result = next
+		boxes = next_boxes
 		if result.is_empty(): break
 	return result
 
