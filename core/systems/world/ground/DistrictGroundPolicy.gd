@@ -14,8 +14,16 @@ extends RefCounted
 ## Concept direction (docs/art/concepts/2026-10-19-segment-directions and the
 ## governing 08 plate): bright temperate daylight, cool-neutral limestone and
 ## grey setts, crisp kerbs where carriageway meets footway, combat ground kept
-## quiet (low texture weight, broad value structure instead of outlines), no
-## beige desert drift, wild ground only outside the built district.
+## quiet (broad value structure instead of outlines), no beige desert drift,
+## wild ground only outside the built district.
+##
+## Role values are calibrated against in-game captures (2026-10-21): each
+## mid is the pre-light mean a role should land on, its tint carries the
+## source texture onto that mean, and the weight lets the stones themselves
+## read at gameplay zoom (lit luminance spread about 0.055-0.075, where the
+## first pass measured 0.035-0.055 and read as a smooth mat). Footways sit a
+## step above the carriageway and lanes level with it, so door aprons do not
+## read as darker squares.
 
 ## Presentation roles. A slot's ground index maps to one of these.
 const ROLE_RAW := 0
@@ -134,10 +142,10 @@ static func _service_courtyards() -> Dictionary:
 		"enabled": true,
 		"district_terrain": DISTRICT_TERRAIN,
 		"roles": {
-			ROLE_ROAD: _role(SOURCE_SETTS, 272.0, Color(0.455, 0.47, 0.48), 0.42, Color(0.91, 0.95, 0.98)),
-			ROLE_LANE: _role(SOURCE_SETTS, 256.0, Color(0.48, 0.49, 0.49), 0.40, Color(0.93, 0.95, 0.97)),
-			ROLE_FOOTWAY: _role(SOURCE_FLAGS, 384.0, Color(0.61, 0.615, 0.585), 0.46, Color(1.0, 1.0, 0.98)),
-			ROLE_YARD: _role(SOURCE_FLAGS, 448.0, Color(0.585, 0.59, 0.56), 0.46, Color(0.99, 0.99, 0.96)),
+			ROLE_ROAD: _role(SOURCE_SETTS, 272.0, Color(0.503, 0.50, 0.501), 0.71, Color(0.88, 0.90, 0.94)),
+			ROLE_LANE: _role(SOURCE_SETTS, 256.0, Color(0.502, 0.501, 0.501), 0.66, Color(0.88, 0.90, 0.94)),
+			ROLE_FOOTWAY: _role(SOURCE_FLAGS, 384.0, Color(0.623, 0.622, 0.615), 0.66, Color(1.12, 1.12, 1.12)),
+			ROLE_YARD: _role(SOURCE_FLAGS, 448.0, Color(0.592, 0.591, 0.594), 0.72, Color(1.06, 1.06, 1.08)),
 			ROLE_LAWN: _role(SOURCE_OWN, 320.0, Color(0.31, 0.37, 0.27), 0.50, Color(1.10, 1.14, 1.04)),
 			ROLE_SOIL: _role(SOURCE_OWN, 384.0, Color(0.40, 0.38, 0.33), 0.45, Color(1.0, 1.0, 1.0)),
 		},
@@ -168,10 +176,10 @@ static func _patch(layer: int, coverage: float, repeat_px: float, weight: float,
 static func _checkpoint_lanes() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"checkpoint_lanes"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 336.0, Color(0.415, 0.435, 0.45), 0.48, Color(0.90, 0.94, 0.97))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 320.0, Color(0.455, 0.47, 0.48), 0.44, Color(0.92, 0.95, 0.97))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.575, 0.585, 0.585), 0.44, Color(0.97, 0.99, 1.0))
-	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 288.0, Color(0.49, 0.505, 0.51), 0.44, Color(0.92, 0.95, 0.98))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 336.0, Color(0.537, 0.529, 0.52), 0.73, Color(0.94, 0.96, 0.98))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 320.0, Color(0.519, 0.512, 0.504), 0.67, Color(0.91, 0.92, 0.95))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.662, 0.655, 0.637), 0.68, Color(1.19, 1.18, 1.16))
+	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 288.0, Color(0.611, 0.603, 0.615), 0.67, Color(1.07, 1.09, 1.16))
 	p.kerb = 0.95
 	p.gutter = 0.70
 	p.ao = 0.27
@@ -183,10 +191,10 @@ static func _checkpoint_lanes() -> Dictionary:
 static func _collapsed_ward() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"collapsed_ward"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 304.0, Color(0.40, 0.405, 0.40), 0.52, Color(0.90, 0.92, 0.93))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 288.0, Color(0.45, 0.455, 0.45), 0.48, Color(0.93, 0.95, 0.96))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.57, 0.57, 0.545), 0.50, Color(0.98, 0.98, 0.96))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 384.0, Color(0.545, 0.54, 0.515), 0.40, Color(1.13, 1.13, 1.30), LAYER_WEEDY_FLAGS)
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 304.0, Color(0.503, 0.501, 0.502), 0.75, Color(0.88, 0.91, 0.95))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 288.0, Color(0.537, 0.538, 0.538), 0.66, Color(0.94, 0.97, 1.01))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.631, 0.631, 0.628), 0.69, Color(1.13, 1.14, 1.14))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 384.0, Color(0.598, 0.592, 0.563), 0.77, Color(1.29, 1.29, 1.50), LAYER_WEEDY_FLAGS)
 	p.roles[ROLE_LAWN] = _role(SOURCE_OWN, 320.0, Color(0.33, 0.37, 0.26), 0.55, Color(1.06, 1.10, 1.0))
 	p.yard_patch = _patch(LAYER_COBBLE, 0.32, 256.0, 0.55, Color(1.55, 1.53, 1.58))
 	p.kerb = 0.55
@@ -202,9 +210,10 @@ static func _collapsed_ward() -> Dictionary:
 static func _civilian_cutthrough() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"civilian_cutthrough"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 240.0, Color(0.445, 0.45, 0.45), 0.44, Color(0.93, 0.95, 0.96))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 320.0, Color(0.625, 0.62, 0.585), 0.46, Color(1.0, 0.99, 0.97))
-	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 176.0, Color(0.60, 0.595, 0.565), 0.40, Color(1.02, 1.01, 0.98))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 240.0, Color(0.528, 0.525, 0.525), 0.68, Color(0.92, 0.95, 0.99))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.522, 0.52, 0.52), 0.63, Color(0.91, 0.94, 0.98))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 320.0, Color(0.658, 0.655, 0.651), 0.64, Color(1.18, 1.18, 1.19))
+	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 176.0, Color(0.656, 0.653, 0.667), 0.60, Color(1.15, 1.18, 1.26))
 	p.roles[ROLE_LAWN] = _role(SOURCE_OWN, 320.0, Color(0.30, 0.38, 0.26), 0.50, Color(1.08, 1.16, 1.02))
 	p.kerb = 0.70
 	return p
@@ -215,10 +224,10 @@ static func _civilian_cutthrough() -> Dictionary:
 static func _inner_district_gate() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"inner_district_gate"
-	p.roles[ROLE_ROAD] = _role(SOURCE_FLAGS, 512.0, Color(0.55, 0.565, 0.565), 0.46, Color(0.95, 0.98, 1.0))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.44, 0.46, 0.48), 0.42, Color(0.90, 0.94, 0.98))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 448.0, Color(0.62, 0.63, 0.62), 0.44, Color(0.99, 1.0, 1.0))
-	p.roles[ROLE_YARD] = _role(SOURCE_FLAGS, 576.0, Color(0.635, 0.64, 0.625), 0.42, Color(0.99, 1.0, 0.99))
+	p.roles[ROLE_ROAD] = _role(SOURCE_FLAGS, 512.0, Color(0.611, 0.604, 0.584), 0.66, Color(1.09, 1.09, 1.06))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.528, 0.524, 0.517), 0.66, Color(0.92, 0.95, 0.97))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 448.0, Color(0.66, 0.656, 0.632), 0.66, Color(1.18, 1.18, 1.15))
+	p.roles[ROLE_YARD] = _role(SOURCE_FLAGS, 576.0, Color(0.658, 0.654, 0.655), 0.68, Color(1.18, 1.18, 1.19))
 	p.kerb = 0.85
 	p.gutter = 0.65
 	return p
@@ -229,10 +238,10 @@ static func _inner_district_gate() -> Dictionary:
 static func _industrial_cutthrough() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"industrial_cutthrough"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.38, 0.39, 0.40), 0.50, Color(0.86, 0.88, 0.90))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.42, 0.42, 0.42), 0.46, Color(0.88, 0.90, 0.91))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.545, 0.545, 0.525), 0.46, Color(0.96, 0.96, 0.94))
-	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 240.0, Color(0.46, 0.46, 0.45), 0.46, Color(0.90, 0.91, 0.91))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.441, 0.442, 0.443), 0.83, Color(0.77, 0.80, 0.84))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.433, 0.433, 0.431), 0.78, Color(0.76, 0.78, 0.81))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.612, 0.611, 0.605), 0.75, Color(1.10, 1.10, 1.10))
+	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 240.0, Color(0.57, 0.564, 0.546), 0.76, Color(1.00, 1.02, 1.03))
 	p.roles[ROLE_SOIL] = _role(SOURCE_OWN, 384.0, Color(0.42, 0.405, 0.375), 0.45, Color(1.08, 1.07, 1.04))
 	p.yard_patch = _patch(LAYER_DIRT, 0.55, 384.0, 0.42, Color(1.30, 1.28, 1.22))
 	p.kerb = 0.65
@@ -246,8 +255,10 @@ static func _industrial_cutthrough() -> Dictionary:
 static func _ruined_services() -> Dictionary:
 	var p := _industrial_cutthrough()
 	p.id = &"ruined_services"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 304.0, Color(0.40, 0.41, 0.41), 0.52, Color(0.88, 0.90, 0.91))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 384.0, Color(0.415, 0.42, 0.405), 0.46, Color(1.12, 1.22, 1.26), LAYER_WET_EARTH)
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 304.0, Color(0.475, 0.477, 0.468), 0.81, Color(0.83, 0.86, 0.88))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.473, 0.47, 0.463), 0.74, Color(0.83, 0.85, 0.87))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.58, 0.579, 0.559), 0.75, Color(1.04, 1.04, 1.02))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 384.0, Color(0.485, 0.471, 0.442), 0.57, Color(1.66, 2.04, 2.48), LAYER_WET_EARTH)
 	p.yard_patch = _patch(LAYER_COBBLE, 0.40, 320.0, 0.42, Color(1.30, 1.32, 1.36))
 	p.kerb = 0.45
 	p.gutter = 0.55
@@ -263,9 +274,10 @@ static func _ruined_services() -> Dictionary:
 static func _underpass_veins() -> Dictionary:
 	var p := _checkpoint_lanes()
 	p.id = &"underpass_veins"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 320.0, Color(0.39, 0.415, 0.435), 0.46, Color(0.88, 0.93, 0.97))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 352.0, Color(0.43, 0.455, 0.465), 0.46, Color(1.42, 1.46, 1.54), LAYER_DARK_FLAGS)
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 352.0, Color(0.53, 0.55, 0.56), 0.44, Color(0.96, 0.98, 1.0))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 320.0, Color(0.525, 0.506, 0.493), 0.76, Color(0.92, 0.91, 0.93))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 320.0, Color(0.517, 0.499, 0.486), 0.71, Color(0.90, 0.90, 0.92))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 352.0, Color(0.534, 0.555, 0.552), 0.88, Color(1.75, 1.83, 2.00), LAYER_DARK_FLAGS)
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 352.0, Color(0.637, 0.617, 0.594), 0.72, Color(1.14, 1.11, 1.08))
 	p.kerb = 0.80
 	p.ao = 0.32
 	return p
@@ -276,9 +288,10 @@ static func _underpass_veins() -> Dictionary:
 static func _canal_services() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"canal_services"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.41, 0.435, 0.445), 0.44, Color(0.89, 0.93, 0.96))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 416.0, Color(0.56, 0.575, 0.57), 0.46, Color(0.97, 0.99, 0.99))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 448.0, Color(0.53, 0.55, 0.54), 0.42, Color(1.24, 1.20, 1.42), LAYER_MOSSY_FLAGS)
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.539, 0.516, 0.511), 0.73, Color(0.94, 0.93, 0.96))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.545, 0.521, 0.515), 0.67, Color(0.95, 0.94, 0.97))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 416.0, Color(0.681, 0.649, 0.636), 0.68, Color(1.22, 1.17, 1.16))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 448.0, Color(0.632, 0.658, 0.627), 0.60, Color(1.67, 1.61, 2.00), LAYER_MOSSY_FLAGS)
 	p.roles[ROLE_SOIL] = _role(SOURCE_OWN, 384.0, Color(0.36, 0.35, 0.31), 0.50, Color(1.04, 1.04, 1.02))
 	p.ao = 0.28
 	p.verge_layer = LAYER_DAMP_MOSS
@@ -290,10 +303,11 @@ static func _canal_services() -> Dictionary:
 static func _rail_yard() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"rail_yard"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.42, 0.43, 0.43), 0.44, Color(0.90, 0.92, 0.94))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.56, 0.56, 0.54), 0.46, Color(0.98, 0.98, 0.96))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.479, 0.479, 0.483), 0.74, Color(0.84, 0.87, 0.91))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.463, 0.463, 0.465), 0.69, Color(0.81, 0.84, 0.88))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.575, 0.575, 0.572), 0.70, Color(1.03, 1.04, 1.04))
 	# The sett source at a small repeat reads as coarse gravel at gameplay zoom.
-	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 104.0, Color(0.495, 0.49, 0.47), 0.42, Color(0.93, 0.93, 0.92))
+	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 104.0, Color(0.622, 0.635, 0.655), 0.71, Color(1.09, 1.15, 1.23))
 	p.yard_patch = _patch(LAYER_DIRT, 0.18, 384.0, 0.35, Color(1.45, 1.42, 1.36))
 	p.kerb = 0.70
 	p.paving_variation = 0.08
@@ -304,9 +318,10 @@ static func _rail_yard() -> Dictionary:
 static func _military_staging() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"military_staging"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.41, 0.43, 0.44), 0.44, Color(0.89, 0.93, 0.95))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.56, 0.565, 0.55), 0.46, Color(0.98, 0.99, 0.97))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 384.0, Color(0.525, 0.515, 0.49), 0.42, Color(1.30, 1.28, 1.22), LAYER_DIRT)
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.502, 0.489, 0.485), 0.73, Color(0.88, 0.88, 0.91))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.494, 0.482, 0.478), 0.67, Color(0.86, 0.87, 0.90))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.596, 0.581, 0.571), 0.68, Color(1.07, 1.05, 1.04))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 384.0, Color(0.62, 0.595, 0.56), 0.88, Color(2.22, 2.40, 2.77), LAYER_DIRT)
 	p.kerb = 0.75
 	p.paving_variation = 0.05
 	return p
@@ -317,9 +332,10 @@ static func _military_staging() -> Dictionary:
 static func _outer_wall() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"outer_wall"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 352.0, Color(0.43, 0.44, 0.45), 0.46, Color(0.90, 0.93, 0.95))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.58, 0.58, 0.56), 0.46, Color(0.99, 0.99, 0.97))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 320.0, Color(0.50, 0.515, 0.48), 0.55, Color(1.18, 1.12, 1.34), LAYER_ROUND_COBBLE)
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 352.0, Color(0.511, 0.505, 0.503), 0.71, Color(0.89, 0.91, 0.95))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.498, 0.492, 0.49), 0.66, Color(0.87, 0.89, 0.92))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.616, 0.611, 0.601), 0.67, Color(1.10, 1.10, 1.10))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 320.0, Color(0.573, 0.586, 0.543), 0.57, Color(1.46, 1.39, 1.67), LAYER_ROUND_COBBLE)
 	p.kerb = 0.70
 	p.verge_layer = LAYER_SCRUB
 	p.verge_strength = 0.70
@@ -330,9 +346,10 @@ static func _outer_wall() -> Dictionary:
 static func _siege_services() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"siege_services"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.42, 0.42, 0.42), 0.46, Color(0.90, 0.92, 0.93))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.57, 0.565, 0.545), 0.46, Color(0.98, 0.97, 0.95))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 448.0, Color(0.535, 0.53, 0.515), 0.48, Color(1.60, 1.58, 1.62), LAYER_COBBLE)
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.513, 0.517, 0.52), 0.73, Color(0.90, 0.93, 0.98))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.488, 0.493, 0.494), 0.67, Color(0.85, 0.89, 0.93))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.646, 0.658, 0.655), 0.68, Color(1.16, 1.18, 1.19))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 448.0, Color(0.633, 0.628, 0.606), 0.88, Color(1.94, 1.91, 1.98), LAYER_COBBLE)
 	p.kerb = 0.65
 	p.paving_variation = 0.08
 	return p
@@ -343,10 +360,10 @@ static func _siege_services() -> Dictionary:
 static func _gate_district() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"gate_district"
-	p.roles[ROLE_ROAD] = _role(SOURCE_FLAGS, 544.0, Color(0.565, 0.58, 0.585), 0.46, Color(0.96, 0.99, 1.0))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.42, 0.45, 0.48), 0.44, Color(0.89, 0.94, 0.98))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 448.0, Color(0.63, 0.64, 0.63), 0.44, Color(0.99, 1.0, 1.0))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 512.0, Color(0.625, 0.63, 0.62), 0.45, Color(1.62, 1.62, 1.66), LAYER_STONE_TILES)
+	p.roles[ROLE_ROAD] = _role(SOURCE_FLAGS, 544.0, Color(0.61, 0.603, 0.584), 0.64, Color(1.09, 1.09, 1.06))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.531, 0.529, 0.524), 0.66, Color(0.93, 0.96, 0.99))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 448.0, Color(0.661, 0.656, 0.631), 0.63, Color(1.18, 1.18, 1.15))
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 512.0, Color(0.656, 0.656, 0.648), 0.88, Color(1.80, 1.82, 1.85), LAYER_STONE_TILES)
 	p.kerb = 0.90
 	p.gutter = 0.65
 	return p
