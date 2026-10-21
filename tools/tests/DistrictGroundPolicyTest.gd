@@ -179,8 +179,17 @@ func _test_theme_district(segment: int, theme_id: StringName) -> void:
 		return da < db if da != db else (a.y < b.y if a.y != b.y else a.x < b.x))
 	var wild_chosen := 0
 	var fill_chosen := 0
+	# The presentation maps are a ring of MAP_SIZE cells: two chunks a whole
+	# ring apart share one slot and are never streamed together, so the
+	# fixture never loads such a pair either.
+	var ring := GroundSplatRenderer.MAP_SIZE / CPC
 	for coord: Vector2i in by_distance:
 		var role: StringName = plan.role_by_chunk[coord]
+		var aliased := false
+		for other: Vector2i in chosen:
+			if other != coord and posmod(other.x - coord.x, ring) == 0 and posmod(other.y - coord.y, ring) == 0: aliased = true
+		if aliased:
+			continue
 		if exploration.has(coord) and wild_chosen < 2 and not chosen.has(coord):
 			chosen.append(coord)
 			wild_chosen += 1
