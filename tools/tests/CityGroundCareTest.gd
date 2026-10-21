@@ -84,9 +84,25 @@ func _test_policy() -> void:
 	neglected["visual_seed"] = 944996575
 	var untended := _kit_fixture(neglected)
 	_check((untended.call("ground_care_spec") as Dictionary).is_empty(),"stable variant three leaves a real home untended")
-	Global.attempt_segment = 3
-	var later := _kit_fixture(_bed_spec())
-	_check((later.call("ground_care_spec") as Dictionary).is_empty(),"S3 retains its existing ground presentation")
+	# Care follows the household in every procedural district (S2..S10 and the
+	# S11+ fallback), not the segment number; authored S1 never takes it.
+	for segment: int in [3,7,11]:
+		Global.attempt_segment = segment
+		var later := _kit_fixture(_bed_spec())
+		var later_spec: Dictionary = later.call("ground_care_spec")
+		_check(not later_spec.is_empty() and later_spec.get("footprint_px",PackedVector2Array()) == _bed_spec().footprint_px and later_spec.get("doors",[]) == _bed_spec().doors,"segment %d homes are tended with their exact footprint and doors" % segment)
+	Global.attempt_segment = 1
+	var authored := _kit_fixture(_bed_spec())
+	_check((authored.call("ground_care_spec") as Dictionary).is_empty(),"authored Segment 1 architecture never receives household care")
+	Global.attempt_segment = 4
+	var replaced := _kit_fixture(_bed_spec())
+	var bed := Node2D.new()
+	bed.name = "ReplacementGardenBed"
+	bed.set_meta(&"city_garden_contact",Vector2(300,1110))
+	replaced.add_child(bed)
+	replaced.move_child(bed,0)
+	var replaced_spec: Dictionary = replaced.call("ground_care_spec")
+	_check(replaced_spec.get("garden_contact_px",Vector2.INF).is_equal_approx(Vector2(300,1110)),"any garden art that declares a garden contact anchors the household pocket")
 	Global.attempt_segment = 2
 
 

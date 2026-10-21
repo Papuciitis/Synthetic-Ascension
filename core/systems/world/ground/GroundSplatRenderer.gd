@@ -21,6 +21,7 @@ class_name GroundSplatRenderer
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const SHADER := preload("res://core/systems/world/ground/ground_splat.gdshader")
 const _CITY_GROUND_CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
+const _POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
 
 ## Cells, wrapped. 256 cells = 8 chunks at 32 cells/chunk = 16384 px: larger than any streamed
 ## window, and the whole of Segment 1 fits without wrapping onto itself.
@@ -31,6 +32,10 @@ const NOISE_PX := 128
 const STAIN_ALPHA := 0.5
 ## light_map R stores brightness / 2 so authored stamps may run above 1.
 const BRIGHTNESS_SCALE := 0.5
+## Ground occlusion (light_map A): blocker weights accumulated over a radius of
+## two cells; this much accumulated weight reads as fully occluded.
+const OCCLUSION_FULL := 2.4
+const OCCLUSION_RADIUS := 2
 
 var cell_px := 64
 var cells_per_chunk := 32
@@ -38,7 +43,8 @@ var cells_per_chunk := 32
 ## One-hot material coverage: slots 0-3 in _cover_a, 4-7 in _cover_b.
 var _cover_a: Image
 var _cover_b: Image
-## R = brightness / 2, G = stain amount, B = local household care.
+## R = brightness / 2, G = stain amount, B = local household care,
+## A = ground openness (1 open sky; walls and props nearby lower it).
 var _light: Image
 var _cover_a_texture: ImageTexture
 var _cover_b_texture: ImageTexture
@@ -50,6 +56,11 @@ var _authored: Array[Image] = []
 var _authored_mask: Image = null
 
 var _slot_material := PackedInt32Array()
+## Materials that found every slot taken and had to borrow one (tests).
+var _slot_borrows := 0
+## The district presentation (DistrictGroundPolicy.resolve); empty = legacy.
+var _policy: Dictionary = {}
+var _policy_family: StringName = &"__unset__"
 var _material: ShaderMaterial
 var _quad_texture: ImageTexture
 var _quads: Dictionary = {}
@@ -64,8 +75,10 @@ func _init() -> void:
 	_cover_a = _blank_map()
 	_cover_b = _blank_map()
 	_light = _blank_map()
-	_cover_a_texture = ImageTexture.create_from_image(_cover_a)
-	_cover_b_texture = ImageTexture.create_from_image(_cover_b)
+	# Coverage carries a mip chain: the policy reads paved-to-paved edges from
+	# a smoothed level (crisp kerbs that follow the street, not the cell steps).
+	_cover_a_texture = ImageTexture.create_from_image(_mipmapped(_cover_a))
+	_cover_b_texture = ImageTexture.create_from_image(_mipmapped(_cover_b))
 	_light_texture = ImageTexture.create_from_image(_light)
 	_slot_material.resize(SLOTS)
 	_slot_material.fill(-1)
@@ -79,6 +92,9 @@ func _init() -> void:
 	_material.set_shader_parameter("light_map", _light_texture)
 	_material.set_shader_parameter("noise_tex", noise_texture())
 	_material.set_shader_parameter("map_size", float(MAP_SIZE))
+	if OS.is_debug_build() and OS.has_environment("SA_GROUND_DEBUG_VIEW"):
+		_material.set_shader_parameter("debug_view", int(OS.get_environment("SA_GROUND_DEBUG_VIEW")))
+	_push_role_uniforms()
 	_push_slot_uniforms()
 
 
@@ -131,16 +147,38 @@ func set_world_tint(tint: Color) -> void:
 	_material.set_shader_parameter("world_tint", tint)
 
 
-func set_city_streetscape(enabled: bool) -> void:
-	# Presentation only: retain the exact splat ownership, organic edges and
-	# stamped indoor/plaza/road hierarchy. Other segments use their old palette.
-	_material.set_shader_parameter("city_streetscape", enabled)
-	_material.set_shader_parameter("seam_shadow", 0.0 if enabled else 0.12)
-	_material.set_shader_parameter("lip_shadow", 0.22 if enabled else 0.36)
+## Present the ground as `family`'s district (DistrictGroundPolicy). Cheap
+## when unchanged, so callers may repeat it on every paint.
+func set_ground_family(family: StringName) -> void:
+	if family == _policy_family:
+		return
+	set_ground_policy(_POLICY.resolve(family))
+	_policy_family = family
+
+
+## Presentation only: material ownership, slots, organic soil edges and the
+## stamped indoor/plaza/road hierarchy never change with the policy.
+func set_ground_policy(policy: Dictionary) -> void:
+	_policy = policy.duplicate(true)
+	_policy_family = StringName(_policy.get("family", &"__unset__"))
+	var enabled := bool(_policy.get("enabled", false))
+	_material.set_shader_parameter("policy_enabled", enabled)
+	_material.set_shader_parameter("seam_shadow", float(_policy.get("seam_shadow", 0.0)) if enabled else 0.12)
+	_material.set_shader_parameter("lip_shadow", float(_policy.get("lip_shadow", 0.22)) if enabled else 0.36)
 	if enabled and _material.get_shader_parameter("city_setts") == null:
 		var kit := preload("res://scenes/world/buildings/CityBlockKit.gd")
 		_material.set_shader_parameter("city_setts", kit._texture("worn_setts.png"))
 		_material.set_shader_parameter("city_limestone", kit._texture("paving.png"))
+	_push_role_uniforms()
+	_push_slot_uniforms()
+
+
+func ground_policy() -> Dictionary:
+	return _policy.duplicate(true)
+
+
+func ground_policy_enabled() -> bool:
+	return bool(_policy.get("enabled", false))
 
 
 func get_shader_material() -> ShaderMaterial:
@@ -206,23 +244,119 @@ func paint_chunk_stamps(data: ChunkBuildData) -> void:
 		paint_rect(rect, packed[offset + 4], data.floor_alpha[index])
 
 
-## Called after the chunk's floors. This changes only presentation on existing
-## vegetated cells; lawn never requests a semantic material/coverage slot.
-func paint_domestic_care(coord: Vector2i, spec: Dictionary) -> void:
-	var origin := coord*cells_per_chunk
+## Ground a household may tend: vegetation, bare earth and the built
+## district's open hard surface. Roads, lanes, aprons, footways and floors
+## never become lawn.
+static func care_eligible_index(index: int) -> bool:
+	return _WORLD_ART.is_overgrowth_ground(index) or index == 1 or index == 5 or index == _POLICY.DISTRICT_GROUND_INDEX
+
+
+## One byte per chunk cell: 1 where care may draw (see care_eligible_index).
+## Reads the chunk's coverage block once instead of probing every cell. On the
+## district's hard surface a garden keeps a paved margin from the carriageway,
+## lanes and door aprons (a cell touching one in its 8-neighbourhood is not
+## tended), so lawns never run up to a kerb or a threshold; they may still
+## touch a house floor or a footway. `region` (chunk-local cells) limits the
+## work to where gardens can reach; cells outside it read as not eligible.
+func care_eligibility(coord: Vector2i, region: Rect2i = Rect2i(0,0,1 << 20,1 << 20)) -> PackedByteArray:
+	var n := cells_per_chunk
 	var eligible := PackedByteArray()
-	eligible.resize(cells_per_chunk*cells_per_chunk)
-	for y in cells_per_chunk:
-		for x in cells_per_chunk:
-			if _WORLD_ART.is_overgrowth_ground(material_at(origin+Vector2i(x,y))):
-				eligible[y*cells_per_chunk+x] = 1
-	var weights := _CITY_GROUND_CARE.plan(coord,spec,cell_px,cells_per_chunk,eligible)
-	for y in cells_per_chunk:
-		for x in cells_per_chunk:
-			var amount := float(weights[y*cells_per_chunk+x])/255.0
-			var cell := origin+Vector2i(x,y)
-			if amount <= 0.0 or not _WORLD_ART.is_overgrowth_ground(material_at(cell)):
+	eligible.resize(n*n)
+	region = region.intersection(Rect2i(0,0,n,n))
+	if not region.has_area():
+		return eligible
+	var slot_kind := PackedByteArray()
+	slot_kind.resize(SLOTS)
+	for slot in SLOTS:
+		var index := _slot_material[slot]
+		if index < 0:
+			continue
+		if index == _POLICY.DISTRICT_GROUND_INDEX:
+			slot_kind[slot] = 2
+		elif care_eligible_index(index):
+			slot_kind[slot] = 1
+		elif _POLICY.role_for_index(index) in [_POLICY.ROLE_ROAD, _POLICY.ROLE_LANE]:
+			slot_kind[slot] = 3
+	var origin := Vector2i(posmod(coord.x*n,MAP_SIZE),posmod(coord.y*n,MAP_SIZE))
+	if origin.x+n > MAP_SIZE or origin.y+n > MAP_SIZE:
+		for y in range(region.position.y,region.end.y):
+			for x in range(region.position.x,region.end.x):
+				if care_eligible_index(material_at(coord*n+Vector2i(x,y))): eligible[y*n+x] = 1
+		return eligible
+	var block := Rect2i(origin,Vector2i(n,n))
+	# Coverage is one-hot: each cell's RGBA word is 0 or exactly one channel at
+	# 255, so comparing whole words replaces the per-channel scan.
+	var a := _cover_a.get_region(block).get_data().to_int32_array()
+	var b := _cover_b.get_region(block).get_data().to_int32_array()
+	var words := PackedInt32Array()
+	for channel in 4:
+		var bytes := PackedByteArray([0,0,0,0])
+		bytes[channel] = 255
+		words.append(bytes.to_int32_array()[0])
+	var w0 := words[0]
+	var w1 := words[1]
+	var w2 := words[2]
+	var ka := [int(slot_kind[0]),int(slot_kind[1]),int(slot_kind[2]),int(slot_kind[3])]
+	var kb := [int(slot_kind[4]),int(slot_kind[5]),int(slot_kind[6]),int(slot_kind[7])]
+	# Street cells as an LA8 mask (the region plus a one-cell rim, so the
+	# margin sees streets just outside it); its dilation is eight native blends.
+	var street := PackedByteArray()
+	street.resize(n*n*2)
+	var has_street := false
+	var district := PackedInt32Array()
+	var scan := region.grow(1).intersection(Rect2i(0,0,n,n))
+	for y in range(scan.position.y,scan.end.y):
+		var inside_y := y >= region.position.y and y < region.end.y
+		for x in range(scan.position.x,scan.end.x):
+			var index := y*n+x
+			var word := a[index]
+			var kind := 0
+			if word != 0:
+				kind = ka[0] if word == w0 else (ka[1] if word == w1 else (ka[2] if word == w2 else ka[3]))
+			else:
+				word = b[index]
+				if word != 0:
+					kind = kb[0] if word == w0 else (kb[1] if word == w1 else (kb[2] if word == w2 else kb[3]))
+			if kind == 3:
+				street[index*2] = 255
+				street[index*2+1] = 255
+				has_street = true
+			elif inside_y and x >= region.position.x and x < region.end.x:
+				if kind == 1:
+					eligible[index] = 1
+				elif kind == 2:
+					eligible[index] = 1
+					district.append(index)
+	if has_street and not district.is_empty():
+		var mask := Image.create_from_data(n,n,false,Image.FORMAT_LA8,street)
+		var near := mask.duplicate() as Image
+		var whole := Rect2i(Vector2i.ZERO,Vector2i(n,n))
+		for offset: Vector2i in [Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1),Vector2i(-1,0),Vector2i(1,0),Vector2i(-1,1),Vector2i(0,1),Vector2i(1,1)]:
+			near.blend_rect(mask,whole,offset)
+		var near_bytes := near.get_data()
+		for cell in district:
+			if near_bytes[cell*2+1] > 127:
+				eligible[cell] = 0
+	return eligible
+
+
+## Called after the chunk's floors. This changes only presentation (light-map
+## blue) on cells a household may tend; lawn never requests a semantic
+## material/coverage slot. `eligible` may be shared by every home of a chunk.
+func paint_domestic_care(coord: Vector2i, spec: Dictionary, eligible: PackedByteArray = PackedByteArray()) -> void:
+	var n := cells_per_chunk
+	if eligible.size() != n*n:
+		eligible = care_eligibility(coord)
+	var origin := coord*n
+	var weights := _CITY_GROUND_CARE.plan(coord,spec,cell_px,n,eligible)
+	var window := _CITY_GROUND_CARE.window_of(spec,cell_px,n)
+	for y in range(window.position.y,window.end.y):
+		for x in range(window.position.x,window.end.x):
+			var index := y*n+x
+			if weights[index] == 0 or eligible[index] == 0:
 				continue
+			var amount := float(weights[index])/255.0
+			var cell := origin+Vector2i(x,y)
 			var at := Vector2i(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
 			var current := _light.get_pixelv(at)
 			if amount <= current.b:
@@ -230,6 +364,125 @@ func paint_domestic_care(coord: Vector2i, spec: Dictionary) -> void:
 			current.b = amount
 			_light.set_pixelv(at,current)
 			_dirty = true
+
+
+## A planted bed laid by the district itself (a plaza island): full care over
+## the given chunk-local cells where the ground may be tended. Presentation
+## only, idempotent (max-composite), cleared with the chunk base.
+func paint_planting(coord: Vector2i, rect: Rect2i) -> void:
+	var n := cells_per_chunk
+	var local := rect.intersection(Rect2i(Vector2i.ZERO, Vector2i(n, n)))
+	for y in range(local.position.y, local.end.y):
+		for x in range(local.position.x, local.end.x):
+			var cell := coord*n+Vector2i(x,y)
+			if not care_eligible_index(material_at(cell)):
+				continue
+			var at := Vector2i(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
+			var current := _light.get_pixelv(at)
+			if current.b >= 1.0:
+				continue
+			current.b = 1.0
+			_light.set_pixelv(at,current)
+			_dirty = true
+
+
+## Broad ground occlusion in light-map alpha: every wall, window, solid and
+## half-cover cell of the chunk shades the open ground within two cells, so
+## alleys, yards and wall feet darken while plazas stay open. Deterministic,
+## chunk-local (a reload repaints the same bytes) and presentation only.
+func paint_occlusion(coord: Vector2i, data: ChunkBuildData) -> void:
+	var n := cells_per_chunk
+	if data == null or data.cells_per_side != n:
+		return
+	var origin := Vector2i(posmod(coord.x*n,MAP_SIZE),posmod(coord.y*n,MAP_SIZE))
+	if origin.x+n > MAP_SIZE or origin.y+n > MAP_SIZE:
+		return
+	var occupied := data.occupied_indices()
+	var block := Rect2i(origin,Vector2i(n,n))
+	var region := _light.get_region(block)
+	var bytes := region.get_data()
+	# Accumulate into a grid padded by the kernel radius, so the hot loop needs
+	# no bounds checks; only the chunk's own cells are written back.
+	var pad := OCCLUSION_RADIUS
+	var stride := n+pad*2
+	var shade := PackedFloat32Array()
+	shade.resize(stride*stride)
+	_ensure_occlusion_kernel(stride)
+	var offsets := _occlusion_offsets
+	var weights := _occlusion_weights
+	var taps := offsets.size()
+	var kinds := data.blocker_kind_code
+	for index in occupied:
+		var code := int(kinds[index])
+		if code == 0:
+			continue
+		# Kinds + 1: SOLID_CELL, WALL, WINDOW carry full weight; fences and
+		# half cover (crates, planters) cast a lighter contact shade.
+		var weight := 1.0 if code <= 3 else 0.4
+		var base := (floori(float(index)/float(n))+pad)*stride+(index % n)+pad
+		for k in taps:
+			shade[base+offsets[k]] += weight*weights[k]
+	var changed := false
+	var scale := 255.0/OCCLUSION_FULL
+	var index := 0
+	for y in n:
+		var padded := (y+pad)*stride+pad
+		for x in n:
+			var value := 255-mini(255,roundi(shade[padded+x]*scale))
+			var at := index*4+3
+			if bytes[at] != value:
+				bytes[at] = value
+				changed = true
+			index += 1
+	if not changed:
+		return
+	region.set_data(n,n,false,Image.FORMAT_RGBA8,bytes)
+	_light.blit_rect(region,Rect2i(Vector2i.ZERO,Vector2i(n,n)),origin)
+	_dirty = true
+
+
+## Exact cell probe of the occlusion term (1 = open), for tests and evidence.
+func openness_at(cell: Vector2i) -> float:
+	return _light.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).a
+
+
+static var _occlusion_stride := -1
+static var _occlusion_offsets := PackedInt32Array()
+static var _occlusion_weights := PackedFloat32Array()
+
+
+## The occlusion kernel as flat offsets into a padded grid of `stride` and
+## their weights (built once per stride).
+static func _ensure_occlusion_kernel(stride: int) -> void:
+	if stride == _occlusion_stride:
+		return
+	_occlusion_stride = stride
+	_occlusion_offsets = PackedInt32Array()
+	_occlusion_weights = PackedFloat32Array()
+	for dy in range(-OCCLUSION_RADIUS,OCCLUSION_RADIUS+1):
+		for dx in range(-OCCLUSION_RADIUS,OCCLUSION_RADIUS+1):
+			if dx == 0 and dy == 0:
+				continue
+			var offset := Vector2(dx,dy)
+			var distance := offset.length()
+			if distance > float(OCCLUSION_RADIUS)+0.5:
+				continue
+			# Ground on a blocker's shadow side (south-west, the projected sun
+			# direction) is shaded more than ground on its lit side.
+			var shadow_side := maxf(0.0, offset.normalized().dot(Vector2(-0.8214,0.5704)))
+			_occlusion_offsets.append(dy*stride+dx)
+			_occlusion_weights.append(clampf(1.0-(distance-0.6)/2.4,0.0,1.0)*(0.55+0.45*shadow_side))
+
+
+## Paint a set of cell rects (global cells) with one base material, as part
+## of a chunk's base (before its stamps). Used for the ragged margin where a
+## built district gives way to wild ground.
+func paint_base_rects(rects: Array[Rect2i], ground_index: int, brightness: float = 1.0) -> void:
+	if ground_index < 0:
+		return
+	for rect in rects:
+		if rect.size.x > 0 and rect.size.y > 0:
+			_fill(rect, ground_index, brightness, false)
 
 
 ## Exact cell probes for native evidence and deterministic stream checks.
@@ -254,6 +507,7 @@ func clear() -> void:
 	_authored.clear()
 	_authored_mask = null
 	_slot_material.fill(-1)
+	_slot_borrows = 0
 	_push_slot_uniforms()
 	_dirty = true
 	for quad in _quads.values():
@@ -264,6 +518,20 @@ func clear() -> void:
 
 func quad_count() -> int:
 	return _quads.size()
+
+
+## Distinct semantic materials holding a slot, and how many paints had to
+## borrow a slot because all eight were taken (tests: a district must fit).
+func active_slot_materials() -> PackedInt32Array:
+	var active := PackedInt32Array()
+	for slot in SLOTS:
+		if _slot_material[slot] >= 0:
+			active.append(_slot_material[slot])
+	return active
+
+
+func slot_borrow_count() -> int:
+	return _slot_borrows
 
 
 ## Ground material at a global cell (base or stamp), -1 where nothing is
@@ -288,8 +556,8 @@ func flush() -> void:
 	if not _dirty:
 		return
 	_dirty = false
-	_cover_a_texture.update(_cover_a)
-	_cover_b_texture.update(_cover_b)
+	_cover_a_texture.update(_mipmapped(_cover_a))
+	_cover_b_texture.update(_mipmapped(_cover_b))
 	_light_texture.update(_light)
 
 
@@ -345,6 +613,7 @@ func _slot_for(ground_index: int) -> int:
 			_slot_material[slot] = ground_index
 			_push_slot_uniforms()
 			return slot
+	_slot_borrows += 1
 	var overgrowth := _WORLD_ART.is_overgrowth_ground(ground_index)
 	for slot in SLOTS:
 		if _WORLD_ART.is_overgrowth_ground(_slot_material[slot]) == overgrowth:
@@ -357,7 +626,12 @@ func _push_slot_uniforms() -> void:
 	var indices := PackedFloat32Array()
 	var repeats := PackedFloat32Array()
 	var tints := PackedColorArray()
+	var roles := PackedFloat32Array()
 	var og := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var hard := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var road := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var lane := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var enabled := ground_policy_enabled()
 	for slot in SLOTS:
 		var ground_index := maxi(0, _slot_material[slot])
 		var layer := material_layer(ground_index)
@@ -367,12 +641,67 @@ func _push_slot_uniforms() -> void:
 		tints.append(material_tint(ground_index))
 		if _slot_material[slot] >= 0 and _WORLD_ART.is_overgrowth_ground(ground_index):
 			og[slot] = 1.0
+		var role := _POLICY.role_for_index(ground_index) if enabled and _slot_material[slot] >= 0 else _POLICY.ROLE_RAW
+		roles.append(float(role))
+		if _POLICY.is_paved_role(role):
+			hard[slot] = 1.0
+		if role == _POLICY.ROLE_ROAD:
+			road[slot] = 1.0
+		elif role == _POLICY.ROLE_LANE:
+			lane[slot] = 1.0
 	_material.set_shader_parameter("slot_layer", layers)
 	_material.set_shader_parameter("slot_index", indices)
 	_material.set_shader_parameter("slot_repeat_px", repeats)
 	_material.set_shader_parameter("slot_tint", tints)
+	_material.set_shader_parameter("slot_role", roles)
 	_material.set_shader_parameter("overgrowth_a", Vector4(og[0], og[1], og[2], og[3]))
 	_material.set_shader_parameter("overgrowth_b", Vector4(og[4], og[5], og[6], og[7]))
+	_material.set_shader_parameter("hard_a", Vector4(hard[0], hard[1], hard[2], hard[3]))
+	_material.set_shader_parameter("hard_b", Vector4(hard[4], hard[5], hard[6], hard[7]))
+	_material.set_shader_parameter("road_a", Vector4(road[0], road[1], road[2], road[3]))
+	_material.set_shader_parameter("road_b", Vector4(road[4], road[5], road[6], road[7]))
+	_material.set_shader_parameter("lane_a", Vector4(lane[0], lane[1], lane[2], lane[3]))
+	_material.set_shader_parameter("lane_b", Vector4(lane[4], lane[5], lane[6], lane[7]))
+
+
+## The policy's per-role sources and grades (a disabled policy draws raw).
+func _push_role_uniforms() -> void:
+	var samples := PackedVector4Array()
+	var mids := PackedColorArray()
+	var tints := PackedColorArray()
+	var roles: Dictionary = _policy.get("roles", {})
+	for role in 8:
+		var entry: Dictionary = roles.get(role, {})
+		var source := int(entry.get("source", _POLICY.SOURCE_OWN))
+		var repeat_px := maxf(16.0, float(entry.get("repeat_px", 384.0)))
+		samples.append(Vector4(float(source), float(entry.get("layer", 0)), repeat_px, 1.0 if _POLICY.is_paved_role(role) else 0.0))
+		mids.append(entry.get("mid", Color(0.5, 0.5, 0.5, 0.0)))
+		tints.append(entry.get("tint", Color.WHITE))
+	_material.set_shader_parameter("role_sample", samples)
+	_material.set_shader_parameter("role_mid", mids)
+	_material.set_shader_parameter("role_tint", tints)
+	var enabled := ground_policy_enabled()
+	_material.set_shader_parameter("kerb_strength", float(_policy.get("kerb", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("gutter_strength", float(_policy.get("gutter", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("joint_strength", float(_policy.get("joint", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("kerb_lod", float(_policy.get("kerb_lod", 1.0)))
+	_material.set_shader_parameter("kerb_warp_cells", float(_policy.get("kerb_warp_cells", 0.1)))
+	_material.set_shader_parameter("ao_strength", float(_policy.get("ao", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("lawn_mottle", float(_policy.get("lawn_mottle", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("paving_variation", float(_policy.get("paving_variation", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("paved_stain_strength", float(_policy.get("paved_stain_strength", 1.0)) if enabled else 1.0)
+	_material.set_shader_parameter("wet_patches", float(_policy.get("wet_patches", 0.0)) if enabled else 0.0)
+	var yard_patch: Dictionary = _policy.get("yard_patch", {}) if enabled else {}
+	if yard_patch.is_empty():
+		_material.set_shader_parameter("yard_patch", Vector4(-1.0, 0.0, 384.0, 0.5))
+	else:
+		_material.set_shader_parameter("yard_patch", Vector4(float(yard_patch.get("layer", -1)), float(yard_patch.get("coverage", 0.0)), float(yard_patch.get("repeat_px", 384.0)), float(yard_patch.get("weight", 0.5))))
+		_material.set_shader_parameter("yard_patch_tint", yard_patch.get("tint", Color.WHITE))
+	var verge_layer := int(_policy.get("verge_layer", -1)) if enabled else -1
+	_material.set_shader_parameter("verge_layer", float(verge_layer))
+	_material.set_shader_parameter("verge_strength", float(_policy.get("verge_strength", 0.0)) if enabled else 0.0)
+	if verge_layer >= 0:
+		_material.set_shader_parameter("verge_repeat_px", float(_WORLD_ART.ground_repeat_world_px(verge_layer)))
 
 
 func _ensure_quad(coord: Vector2i) -> void:
@@ -411,6 +740,14 @@ static func _blank_map() -> Image:
 	var image := Image.create(MAP_SIZE, MAP_SIZE, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0))
 	return image
+
+
+## A copy of a coverage map with its box-filtered mip chain (the paint maps
+## themselves stay single-level so fill_rect edits remain exact).
+static func _mipmapped(image: Image) -> Image:
+	var copy := Image.create_from_data(image.get_width(), image.get_height(), false, image.get_format(), image.get_data())
+	copy.generate_mipmaps()
+	return copy
 
 
 ## Tileable RGBA noise for the shader: R, G = a low, broad warp field; B = a

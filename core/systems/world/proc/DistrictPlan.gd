@@ -91,6 +91,10 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var landmark_count: int = 2
 	var base_terrain: StringName = &"grass"
 	var exploration_terrain: StringName = &"grass"
+	# The built district's own ground. Themes default to the hard "urban"
+	# surface (presented per theme by DistrictGroundPolicy); without a theme
+	# the legacy wild base is kept.
+	var district_terrain: StringName = &""
 	var theme_id: StringName = &"service_courtyards"
 	var envelope_cardinal_chance: float = 0.88
 	var envelope_diagonal_chance: float = 0.42
@@ -120,6 +124,7 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 		envelope_diagonal_chance = clampf(theme.urban_envelope_diagonal_chance, 0.0, 1.0)
 		base_terrain = StringName(theme.base_terrain)
 		exploration_terrain = StringName(theme.exploration_terrain)
+		district_terrain = StringName(theme.district_terrain)
 		theme_id = theme.id
 		want_miniboss_arena = theme.has_miniboss_arena
 		want_boss_arena = theme.has_boss_arena
@@ -305,12 +310,18 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var landmark_chunks: Array[Vector2i] = _choose_landmarks(main_route, landmark_count, wardstone_chunks, miniboss_chunk, primary_chunk, rng)
 
 	# Semantic role assignment. Priority increases toward the bottom of this block.
+	# Terrain: the built district (streets, courts, envelope blocks) stands on
+	# the theme's district ground; the exploration web below and everything
+	# beyond the plan keep the wild exploration terrain. Terrain is presentation
+	# only (ChunkManager._add_ground) and draws no RNG.
+	if district_terrain == &"":
+		district_terrain = base_terrain
 	var role_by_chunk: Dictionary = {}
 	var terrain_by_chunk: Dictionary = {}
 	for key in chunk_set.keys():
 		var c_all: Vector2i = key
 		role_by_chunk[c_all] = &"district_fill"
-		terrain_by_chunk[c_all] = base_terrain
+		terrain_by_chunk[c_all] = district_terrain
 
 	for c_route: Vector2i in main_route:
 		role_by_chunk[c_route] = &"main_street"

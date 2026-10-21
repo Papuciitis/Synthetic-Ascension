@@ -1,6 +1,7 @@
 extends Node
 
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
+const GROUND_POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
 var passed := 0
 var failed := 0
 var samples: Array[Dictionary] = []
@@ -114,6 +115,10 @@ func _run() -> void:
 				if role in [&"district_fill",&"secondary_reward_building"] and not roles.has(role): roles[role] = coord
 			if roles.size() != 2: continue
 			found = true
+			# Ground presentation is keyed by the family (S11+ shares Service
+			# Courtyards); every theme draws its own district surface.
+			var ground_policy: Dictionary = GROUND_POLICY.resolve(theme.district_family)
+			_check(bool(ground_policy.get("enabled",false)) and StringName(ground_policy.get("id",&"")) == theme.district_family and theme.district_terrain == "urban","Every theme presents its own district ground segment=%d theme=%s" % [segment,theme.id])
 			for role: StringName in roles:
 				var coord: Vector2i = roles[role]
 				var baseline := _fixture(theme,plan,coord,true)

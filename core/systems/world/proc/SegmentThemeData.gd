@@ -9,6 +9,11 @@ class_name SegmentThemeData
 @export var district_family: StringName = &"service_courtyards"
 @export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var base_terrain: String = "grass"
 @export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var exploration_terrain: String = "grass"
+## The built district's ground: street, court and envelope chunks. "urban" is
+## the continuous hard surface that DistrictGroundPolicy presents as this
+## family's yard/court paving; exploration chunks and the wilderness beyond the
+## plan keep exploration_terrain. base_terrain remains the theme's wild soil.
+@export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var district_terrain: String = "urban"
 ## How much city sits OFF the streets.
 ##
 ## The urban envelope - the ring of courtyard blocks around every road chunk -
@@ -98,6 +103,7 @@ static func blend(a: SegmentThemeData, b: SegmentThemeData, t: float) -> Segment
 	out.district_family = a.district_family if t < 0.5 else b.district_family
 	out.base_terrain = a.base_terrain if t < 0.5 else b.base_terrain
 	out.exploration_terrain = a.exploration_terrain if t < 0.5 else b.exploration_terrain
+	out.district_terrain = a.district_terrain if t < 0.5 else b.district_terrain
 	out.landmark_count = int(round(lerpf(float(a.landmark_count), float(b.landmark_count), t)))
 	out.district_tint = a.district_tint.lerp(b.district_tint, t)
 	out.urban_envelope_cardinal_chance = lerpf(a.urban_envelope_cardinal_chance, b.urban_envelope_cardinal_chance, t)

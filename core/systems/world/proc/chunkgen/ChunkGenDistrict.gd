@@ -284,7 +284,10 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	# --- sidewalks + curb pads (visual readability) ---
 	if organic and not road_cells.is_empty():
 		# The sidewalk is the wider band around the bent road; the hub gets a
-		# stone pad instead of the four corner pads.
+		# stone pad instead of the four corner pads. A plaza is its own square:
+		# the band must not cut kerbed sidewalk fragments through it (stamps
+		# only, no RNG; the plaza is stamped earlier at the same z).
+		ChunkShapeGen.erase_cells(walk_cells, plaza_cells)
 		gen._stamp_floor_cells(chunk, walk_cells, 2, rng_sidewalk, clampf(gen.district_sidewalk_alpha, 0.0, 1.0), -94)
 		var pad: int = maxi(0, gen.district_sidewalk_corner_pad_cells)
 		if pad > 0 and has_h and has_v:

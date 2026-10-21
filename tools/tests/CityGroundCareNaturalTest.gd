@@ -6,6 +6,8 @@ const ART := preload("res://core/systems/world/WorldArt.gd")
 const MAX_S2_CHUNKS := 24
 const MAX_S7_PAIRS := 8
 const PAVING := [2,3,4,6,7,8,9]
+## Stamped street paving (the district surface 6 is counted on its own).
+const STREET_PAVING := [2,3,4,7,8,9]
 
 
 func _manager(theme: SegmentThemeData, plan: Dictionary) -> ChunkManager:
@@ -201,7 +203,7 @@ func _home(seed_value: int, coord: Vector2i, expected_id: int) -> Dictionary:
 
 func _material_window(cm: ChunkManager, cell: Vector2i) -> Dictionary:
 	var splat := cm.get_ground_splat()
-	var counts: Dictionary = {"12":0,"5":0,"paving":0}
+	var counts: Dictionary = {"6":0,"5":0,"paving":0}
 	for y in range(cell.y-8,cell.y+9):
 		for x in range(cell.x-12,cell.x+13):
 			var at := Vector2i(x,y)
@@ -209,8 +211,44 @@ func _material_window(cm: ChunkManager, cell: Vector2i) -> Dictionary:
 			var material := splat.material_at(at)
 			var key := str(material)
 			counts[key] = int(counts.get(key,0))+1
-			if material in PAVING: counts.paving = int(counts.paving)+1
+			if material in STREET_PAVING: counts.paving = int(counts.paving)+1
 	return counts
+
+
+## Every cared cell of a chunk must belong to a household pocket (within six
+## cells of an eligible home's planted contact, or its default south-west
+## corner) or to a planted plaza bed the district recorded. Care is ungated
+## across segments, so this replaces "S7 has none".
+func _care_is_household_local(cm: ChunkManager, coord: Vector2i) -> Dictionary:
+	var chunk := cm._chunks[coord] as Node2D
+	var contacts: Array[Vector2] = []
+	for kit: Node in chunk.get_children():
+		if not kit.is_in_group(&"city_block_building") or not kit.has_method("ground_care_spec"): continue
+		var spec: Dictionary = kit.call("ground_care_spec")
+		if spec.is_empty(): continue
+		var outline: PackedVector2Array = spec.footprint_px
+		var bounds := Rect2(outline[0],Vector2.ZERO)
+		for point: Vector2 in outline: bounds = bounds.expand(point)
+		contacts.append(chunk.to_global(spec.get("garden_contact_px",Vector2(bounds.position.x,bounds.end.y))))
+	var splat := cm.get_ground_splat()
+	var planted: Array = chunk.get_meta(&"_ground_planting_rects",[])
+	var cared := 0
+	var stray := 0
+	for y in CPC:
+		for x in CPC:
+			var cell := coord*CPC+Vector2i(x,y)
+			if splat.care_at(cell) <= 0.0: continue
+			cared += 1
+			var in_bed := false
+			for rect: Rect2i in planted:
+				if rect.has_point(Vector2i(x,y)): in_bed = true
+			if in_bed: continue
+			var world := cm.cell_to_world_center(cell)
+			var near := false
+			for contact: Vector2 in contacts:
+				if world.distance_to(contact) < 6.5*cm.cell_size_px: near = true
+			if not near: stray += 1
+	return {"eligible_homes":contacts.size(),"cared_cells":cared,"stray_cells":stray}
 
 
 func _s7_boundary() -> Dictionary:
@@ -221,8 +259,10 @@ func _s7_boundary() -> Dictionary:
 	if theme.id != &"canal_services": failures.append("Natural S7 seed four no longer selects canal_services")
 	var pairs := 0
 	var selected: Dictionary = {}
+	# The canal district stands on its quay surface ("urban"); its exploration
+	# web keeps wet mud. Sample a real boundary between the two.
 	for coord: Vector2i in plan.terrain_by_chunk:
-		if plan.terrain_by_chunk[coord] != &"moss": continue
+		if plan.terrain_by_chunk[coord] != &"urban": continue
 		for direction: Vector2i in [Vector2i.RIGHT,Vector2i.DOWN,Vector2i.LEFT,Vector2i.UP]:
 			var neighbor := coord+direction
 			if plan.terrain_by_chunk.get(neighbor,&"") != &"mud": continue
@@ -236,17 +276,25 @@ func _s7_boundary() -> Dictionary:
 				var cell := coord*CPC+local
 				if not cm.is_cell_walkable(cell) or not cm.is_cell_walkable(cell+direction): continue
 				var counts := _material_window(cm,cell)
-				if int(counts["12"]) <= 0 or int(counts["5"]) <= 0 or int(counts.paving) <= 0: continue
+				if int(counts["6"]) <= 0 or int(counts["5"]) <= 0 or int(counts.paving) <= 0: continue
 				var world := cm.cell_to_world_center(cell)
-				selected = {"classification":"natural_moss_mud_paving_boundary","moss_coord":str(coord),"mud_coord":str(neighbor),"coord":str(coord),"cell":[cell.x,cell.y],"world_px":[world.x,world.y],"walkable":true,"material_at_point":cm.get_ground_splat().material_at(cell),"care_at_point":cm.get_ground_splat().care_at(cell),"material_window_half_extent_cells":[12,8],"material_counts":counts,"moss_stability":_check_stability(cm,coord),"mud_stability":_check_stability(cm,neighbor)}
-				if int(selected.moss_stability.cared_cells) != 0 or int(selected.mud_stability.cared_cells) != 0: failures.append("S7 natural ground acquired household care")
+				# The district gives way raggedly: its own edge toward the mud
+				# chunk carries mud margin cells, never a straight chunk line.
+				var margin := 0
+				for t in CPC:
+					for depth in range(0,4):
+						var edge := Vector2i(CPC-1-depth,t) if direction == Vector2i.RIGHT else Vector2i(depth,t) if direction == Vector2i.LEFT else Vector2i(t,CPC-1-depth) if direction == Vector2i.DOWN else Vector2i(t,depth)
+						if cm.get_ground_splat().material_at(coord*CPC+edge) == 5: margin += 1
+				selected = {"classification":"natural_quay_mud_paving_boundary","district_coord":str(coord),"mud_coord":str(neighbor),"coord":str(coord),"cell":[cell.x,cell.y],"world_px":[world.x,world.y],"walkable":true,"material_at_point":cm.get_ground_splat().material_at(cell),"care_at_point":cm.get_ground_splat().care_at(cell),"material_window_half_extent_cells":[12,8],"material_counts":counts,"district_margin_mud_cells":margin,"district_stability":_check_stability(cm,coord),"mud_stability":_check_stability(cm,neighbor),"district_care":_care_is_household_local(cm,coord),"mud_care":_care_is_household_local(cm,neighbor)}
+				if margin <= 0: failures.append("S7 district edge toward mud has no ragged margin")
+				if int(selected.district_care.stray_cells) != 0 or int(selected.mud_care.stray_cells) != 0: failures.append("S7 care reached ground away from any tended home")
 				break
 			cm.free()
 			if not selected.is_empty(): break
 		if not selected.is_empty() or pairs >= MAX_S7_PAIRS: break
 	result["adjacent_pairs_tested"] = pairs
 	result["sample"] = selected
-	if selected.is_empty(): failures.append("No bounded natural S7 moss/mud/paving view found")
+	if selected.is_empty(): failures.append("No bounded natural S7 quay/mud/paving view found")
 	return result
 
 
