@@ -15,6 +15,10 @@ var floor_alpha := PackedFloat32Array()
 ## a chunk build - and then never looked at by anything. Kept as a field only
 ## because ChunkBuildData is serialised shape; the scans are gone.
 var interactive_nodes: Array[Node] = []
+## Presentation only: the maintenance state a plaza chunk's low edges draw in
+## (PlazaEdgeKit.STATE_*; 0 = tended). Set by PlazaPresentation.mark_ring
+## from the district family; never read by physics or generation.
+var plaza_edge_state := 0
 
 var _occupied := PackedInt32Array()
 
