@@ -259,9 +259,25 @@ def broken_coping(piece, top: np.ndarray, inner: np.ndarray, seed: int, gaps: in
     arms = _arms(piece.mask)
     for k in range(gaps):
         axis, lo, hi, _ = arms[k % len(arms)]
-        # Only a front (south) coping and its face crumble: the break reads
-        # at the edge the camera sees, not as holes through the band.
-        if axis != "x" or hi - lo < 18.0 or piece.mask & S:
+        if hi - lo < 18.0:
+            continue
+        if axis == "y":
+            # A vertical run loses a stretch of one side coping: the earth
+            # spills through where the stone has gone.
+            at = rng.uniform(lo + 7.0, hi - 7.0)
+            half = rng.uniform(5.0, 8.0)
+            west = bool(rng.integers(0, 2))
+            jag = _smooth_noise(seed + k * 17, (piece.h, piece.w), world(1.2))
+            along = piece.yy / RS - K.HEADROOM + piece.lift
+            px = piece.xx / RS
+            side = (px < piece.t0 + piece.coping + 0.5) if west else (px > piece.t1 - piece.coping - 0.5)
+            rim_part = (np.abs(along - at) + jag * 1.4 < half) & side & top & ~inner
+            piece.rgba[rim_part, :3] = np.clip(RUIN_GROUND[piece.yy[rim_part] % 256, piece.xx[rim_part] % 256], 0, 255)
+            centres.append(("y", at, piece.t0 + 4.0 if west else piece.t1 - 4.0))
+            continue
+        # A horizontal run's front (south) coping and face crumble: the break
+        # reads at the edge the camera sees, not as holes through the band.
+        if piece.mask & S:
             continue
         at = rng.uniform(lo + 7.0, hi - 7.0)
         half = rng.uniform(5.0, 8.5)
@@ -283,7 +299,7 @@ def broken_coping(piece, top: np.ndarray, inner: np.ndarray, seed: int, gaps: in
             cut = ys < (ys.min() + world(piece.lift * 0.55)) + jag[face_part] * world(1.5)
             idx = np.where(face_part)
             piece.rgba[idx[0][cut], idx[1][cut], 3] = 0.0
-        centres.append((axis, at))
+        centres.append((axis, at, CELL / 2.0))
     return centres
 
 
@@ -303,11 +319,11 @@ def build_ruin(mask: int, variant: int = 0) -> Image.Image:
     rng = np.random.default_rng(503 + mask * 23 + variant)
     c = CELL / 2.0
     front = piece.t1 - 3.0
-    for k, (axis, at) in enumerate(centres):
+    for k, (axis, at, across) in enumerate(centres):
         if axis == "x":
             chip(piece, k + variant, at, front + 2.0, rng.uniform(18.0, 22.0), flip=bool(k % 2))
         else:
-            chip(piece, k + variant, c, at + 4.0, rng.uniform(15.0, 18.0), flip=bool(k % 2))
+            chip(piece, k + variant, across, at + 5.0, rng.uniform(13.0, 16.0), flip=bool(k % 2))
     # Weeds: one or two unclipped tufts, low, never a hedge.
     if mask == (N | S):
         tufts = [(c + rng.uniform(-5.0, 5.0), 28.0 + 10.0 * variant), (c + rng.uniform(-5.0, 5.0), 52.0)]
