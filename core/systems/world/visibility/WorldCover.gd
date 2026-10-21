@@ -95,6 +95,13 @@ func refresh(view: Node, force: bool = false) -> void:
 	area = area.grow(VIEW_MARGIN)
 	_origin = (area.position / CELL_PX).floor() * CELL_PX
 	_grid_size = Vector2i(((area.end - _origin) / CELL_PX).ceil())
+	# Entering or leaving the uncached control rebuilds the index, so indexed
+	# entries are always watched.
+	var uncached := bool(get_meta(INDEX_DISABLED_META,false))
+	if uncached or uncached != _uncached:
+		_reset_index()
+	_uncached = uncached
+	_validation_usec = 0
 	var roof_started := Time.get_ticks_usec()
 	var alpha_memo: Dictionary = {}
 	_collect_roofs(view,area,world,canvas,alpha_memo)
@@ -180,41 +187,75 @@ func _semantic_records() -> Array:
 ## frame, so the frame cost grew with every building in the loaded chunks
 ## (1788 faces and 94 roofs cost 32 ms at an S10 street while 291 triangles
 ## were in view). Each occluder now keeps its world reach - the bounds of
-## every piece it can contribute - keyed by the exact inputs of that geometry
-## (transforms, polygons, footprint), and sits in BUCKET_PX buckets by reach.
-## A refresh visits only occluders indexed in buckets the view area touches;
-## those re-check their inputs and run the full live checks as before, in
-## group order, so records, their order and their values are unchanged.
-## Group membership is compared natively every refresh and re-indexes new and
-## removed occluders at once; unchanged occluders outside the view are
-## re-validated in a rolling slice, so one moved there is re-indexed within
-## ROLLING_PERIOD refreshes (world architecture never moves).
+## every piece it can contribute - and sits in BUCKET_PX buckets by reach.
+## A refresh visits only occluders indexed in buckets the view area touches
+## and runs the full live checks on them as before, in group order, so
+## records, their order and their values are unchanged.
+##
+## Live-transform contract (phase-1 lead review, 21 October 2026): the reach
+## is exact at every refresh. Before the gather, every indexed occluder's
+## reach inputs are compared exactly with the inputs it was built from - a
+## face's global transform and polygon; a roof plane's global transform and
+## polygon and, for every roof form at any depth below it, that form's global
+## transform and polygon. Structural edits below a roof (a form added,
+## removed or reparented at any depth, or a replaced roof plane) arrive as
+## child_entered_tree/child_exiting_tree from every watched node of the roof
+## subtree. An occluder moved or reshaped from anywhere into view is
+## therefore gathered on the next refresh, never after a rolling delay. The
+## comparison is a typed loop of native getters, not the old per-occluder
+## live checks, alpha walk and geometry hash; only changed entries rebuild.
+## Group membership is still compared natively every refresh, and new or
+## removed occluders re-index at once. INDEX_DISABLED_META is the uncached
+## control: every refresh then rebuilds every entry and visits every
+## occluder without the view index or watches.
 const BUCKET_PX := 512.0
-const ROLLING_PERIOD := 30
+const INDEX_DISABLED_META := &"world_cover_index_disabled"
 const _ROOF_POLY := ^"RoofPoly"
-var _roof_index := {"nodes":[],"slot":{},"buckets":{},"rotor":0}
-var _face_index := {"nodes":[],"slot":{},"buckets":{},"rotor":0}
+var _roof_index := {"nodes":[],"slot":{},"buckets":{}}
+var _face_index := {"nodes":[],"slot":{},"buckets":{}}
+## The exact inputs each indexed reach was built from, in flat typed arrays
+## so validation is one tight loop per kind. Faces and roof planes are
+## slot-aligned (group order; rebuilt on membership changes); roof forms of
+## every roof are one flat list with their owning roof slot.
+var _roof_nodes: Array[RoofOverlay] = []
+var _plane_nodes: Array[Polygon2D] = []
+var _plane_xfs: Array[Transform2D] = []
+var _plane_polys: Array[PackedVector2Array] = []
+var _form_nodes: Array[Polygon2D] = []
+var _form_xfs: Array[Transform2D] = []
+var _form_polys: Array[PackedVector2Array] = []
+var _form_slots := PackedInt32Array()
+var _forms_stale := true
+var _dirty_roofs: Dictionary = {}
+var _face_nodes: Array[Polygon2D] = []
+var _face_xfs: Array[Transform2D] = []
+var _face_polys: Array[PackedVector2Array] = []
+var _uncached := false
+var _validation_usec := 0
+var _renewed_roofs := 0
+var _renewed_faces := 0
+var _structure_events := 0
 
 func _collect_roofs(view: Node, area: Rect2, world: World2D, canvas: RID, alpha_memo: Dictionary) -> void:
 	var nodes := view.get_tree().get_nodes_in_group(&"roof_occluders")
-	_sync_index(_roof_index,_roof_cache,nodes,true)
+	_sync_roofs(nodes)
+	var validation_started := Time.get_ticks_usec()
+	_validate_roofs()
+	_validation_usec += Time.get_ticks_usec()-validation_started
 	_visited_roofs = 0
 	var previous := -1
-	for slot: int in _gather(_roof_index,area):
+	for slot: int in (_all_slots(nodes.size()) if _uncached else _gather(_roof_index,area)):
 		if slot == previous:
 			continue
 		previous = slot
-		var roof := nodes[slot] as RoofOverlay
+		var roof := _roof_nodes[slot]
 		if roof == null:
 			continue
-		var cached: Dictionary = _roof_cache.get(roof.get_instance_id(),_NO_ENTRY)
-		if cached.is_empty() or not (cached.reach as Rect2).intersects(area):
+		var entry: Dictionary = _roof_cache.get(roof.get_instance_id(),_NO_ENTRY)
+		if entry.is_empty() or (not _uncached and not (entry.reach as Rect2).intersects(area)):
 			continue
-		var poly := roof.get_node_or_null(_ROOF_POLY) as Polygon2D
+		var poly := _plane_nodes[slot]
 		if poly == null:
-			continue
-		var entry := _roof_entry(roof,poly)
-		if not (entry.reach as Rect2).intersects(area):
 			continue
 		_visited_roofs += 1
 		if roof.is_queued_for_deletion() or not roof.is_visible_in_tree() or roof._inside_count > 0:
@@ -233,21 +274,21 @@ func _collect_solid_faces(view: Node, area: Rect2, world: World2D, canvas: RID, 
 	# Only explicitly registered, genuinely opaque masonry is triangulated.
 	# Door recesses, thresholds and virtual roof helper masks stay separate.
 	var nodes := view.get_tree().get_nodes_in_group(&"foreground_solid_occluders")
-	_sync_index(_face_index,_solid_cache,nodes,false)
+	_sync_faces(nodes)
+	var validation_started := Time.get_ticks_usec()
+	_validate_faces()
+	_validation_usec += Time.get_ticks_usec()-validation_started
 	_visited_faces = 0
 	var previous := -1
-	for slot: int in _gather(_face_index,area):
+	for slot: int in (_all_slots(nodes.size()) if _uncached else _gather(_face_index,area)):
 		if slot == previous:
 			continue
 		previous = slot
-		var face := nodes[slot] as Polygon2D
+		var face := _face_nodes[slot]
 		if face == null:
 			continue
-		var cached: Dictionary = _solid_cache.get(face.get_instance_id(),_NO_ENTRY)
-		if cached.is_empty() or not (cached.reach as Rect2).intersects(area):
-			continue
-		var entry := _face_entry(face)
-		if not (entry.reach as Rect2).intersects(area):
+		var entry: Dictionary = _solid_cache.get(face.get_instance_id(),_NO_ENTRY)
+		if entry.is_empty() or (not _uncached and not (entry.reach as Rect2).intersects(area)):
 			continue
 		_visited_faces += 1
 		if face.get_world_2d() != world or face.get_canvas() != canvas or face.is_queued_for_deletion() or not face.is_visible_in_tree() or face.polygon.size() < 3 or not face.has_meta(FOREGROUND.GROUND_CONTACT):
@@ -270,45 +311,227 @@ func _collect_solid_faces(view: Node, area: Rect2, world: World2D, canvas: RID, 
 				_records.append({"kind":0,"points":piece.points,"front_y":front_y,"strength":strength,"bounds":piece.bounds})
 
 ## Membership changes (streamed chunks) index every new occluder at once and
-## forget the removed ones; an unchanged membership only re-validates a
-## rolling slice of the loaded occluders.
-func _sync_index(index: Dictionary, cache: Dictionary, nodes: Array[Node], roofs: bool) -> void:
-	if nodes == index.nodes:
-		var count := nodes.size()
-		if count == 0:
-			return
-		var rotor: int = index.rotor
-		var checks := mini(ceili(float(count)/ROLLING_PERIOD),count)
-		for step in checks:
-			_validate(nodes[(rotor+step)%count],roofs)
-		index.rotor = (rotor+checks)%count
+## forget the removed ones; slot order is the group order.
+func _sync_faces(nodes: Array[Node]) -> void:
+	if nodes == _face_index.nodes:
 		return
 	_index_resyncs += 1
 	var slot: Dictionary = {}
+	_face_nodes.resize(nodes.size())
+	_face_xfs.resize(nodes.size())
+	_face_polys.resize(nodes.size())
 	for at in nodes.size():
-		var node := nodes[at]
-		var key := node.get_instance_id()
+		var face := nodes[at] as Polygon2D
+		_face_nodes[at] = face
+		if face == null:
+			_face_xfs[at] = Transform2D()
+			_face_polys[at] = PackedVector2Array()
+			continue
+		var key := face.get_instance_id()
 		slot[key] = at
-		if not cache.has(key):
-			_validate(node,roofs)
-	for key: Variant in cache.keys():
+		var entry: Dictionary = _solid_cache.get(key,_NO_ENTRY)
+		if entry.is_empty():
+			entry = _face_entry(face)
+		_face_xfs[at] = entry.xf
+		_face_polys[at] = entry.polygon
+	for key: Variant in _solid_cache.keys():
 		if not slot.has(key):
-			_unbucket(index,int(key),cache[key])
-			cache.erase(key)
-	index.slot = slot
-	index.nodes = nodes
-	index.rotor = 0
+			_unbucket(_face_index,int(key),_solid_cache[key])
+			_solid_cache.erase(key)
+	_face_index.slot = slot
+	_face_index.nodes = nodes
 
-func _validate(node: Node, roofs: bool) -> void:
-	if roofs:
-		var roof := node as RoofOverlay
-		var poly := roof.get_node_or_null(_ROOF_POLY) as Polygon2D if roof != null else null
-		if poly != null:
-			_roof_entry(roof,poly)
-	else:
-		var face := node as Polygon2D
-		if face != null:
-			_face_entry(face)
+func _sync_roofs(nodes: Array[Node]) -> void:
+	if nodes == _roof_index.nodes:
+		return
+	_index_resyncs += 1
+	var slot: Dictionary = {}
+	_roof_nodes.resize(nodes.size())
+	for at in nodes.size():
+		var roof := nodes[at] as RoofOverlay
+		_roof_nodes[at] = roof
+		if roof != null:
+			slot[roof.get_instance_id()] = at
+	for key: Variant in _roof_cache.keys():
+		if not slot.has(key):
+			_unbucket(_roof_index,int(key),_roof_cache[key])
+			_roof_cache.erase(key)
+	_roof_index.slot = slot
+	_roof_index.nodes = nodes
+	_plane_nodes.resize(nodes.size())
+	_plane_xfs.resize(nodes.size())
+	_plane_polys.resize(nodes.size())
+	for at in nodes.size():
+		_plane_nodes[at] = null
+		var roof := _roof_nodes[at]
+		if roof == null:
+			continue
+		var key := roof.get_instance_id()
+		var entry: Dictionary = _roof_cache.get(key,_NO_ENTRY)
+		if entry.is_empty():
+			var poly := roof.get_node_or_null(_ROOF_POLY) as Polygon2D
+			if poly == null:
+				# A roof plane added later is a structural edit of this roof.
+				if not _uncached:
+					_watch_roof(roof)
+				continue
+			entry = _roof_entry(roof,poly,true)
+		elif not is_instance_valid(entry.poly):
+			_dirty_roofs[key] = true
+			continue
+		_set_plane(at,entry)
+	_forms_stale = true
+
+func _set_plane(at: int, entry: Dictionary) -> void:
+	_plane_nodes[at] = entry.poly
+	_plane_xfs[at] = entry.poly_xf
+	_plane_polys[at] = entry.polygon
+
+## The flat roof-form inputs, in roof slot order, from the roof entries.
+func _rebuild_forms() -> void:
+	_form_nodes.clear()
+	_form_xfs.clear()
+	_form_polys.clear()
+	_form_slots.clear()
+	for at in _roof_nodes.size():
+		var roof := _roof_nodes[at]
+		if roof == null:
+			continue
+		var entry: Dictionary = _roof_cache.get(roof.get_instance_id(),_NO_ENTRY)
+		if entry.is_empty():
+			continue
+		var forms: Array = entry.forms
+		var form_xfs: Array[Transform2D] = entry.form_xfs
+		var form_polys: Array[PackedVector2Array] = entry.form_polys
+		for index in forms.size():
+			_form_nodes.append(forms[index])
+			_form_xfs.append(form_xfs[index])
+			_form_polys.append(form_polys[index])
+			_form_slots.append(at)
+	_forms_stale = false
+
+## Exact reach inputs of every loaded face, every refresh.
+func _validate_faces() -> void:
+	_renewed_faces = 0
+	if _uncached:
+		return
+	var xfs := _face_xfs
+	var polys := _face_polys
+	var at := -1
+	for face: Polygon2D in _face_nodes:
+		at += 1
+		if face == null:
+			continue
+		if face.global_transform != xfs[at] or face.polygon != polys[at]:
+			var entry := _face_entry(face)
+			xfs[at] = entry.xf
+			polys[at] = entry.polygon
+			_renewed_faces += 1
+
+## Exact reach inputs of every loaded roof plane and roof form, every refresh,
+## after the structural edits signalled since the last one. A plane or form
+## is never freed unsignalled (its watched parent reports the exit); the
+## validity tests are a cheap safeguard before each typed read.
+func _validate_roofs() -> void:
+	_renewed_roofs = 0
+	if _uncached:
+		return
+	var renew: Dictionary = {}
+	for key: Variant in _dirty_roofs:
+		var at: int = (_roof_index.slot as Dictionary).get(key,-1)
+		if at >= 0:
+			renew[at] = true
+	_dirty_roofs.clear()
+	if not renew.is_empty():
+		_renew_roofs(renew)
+		renew.clear()
+	if _forms_stale:
+		_rebuild_forms()
+	var planes := _plane_nodes
+	var plane_xfs := _plane_xfs
+	var plane_polys := _plane_polys
+	for at in planes.size():
+		if not is_instance_valid(planes[at]):
+			# A planeless roof, or (never expected) a plane freed unsignalled.
+			var roof := _roof_nodes[at]
+			if roof != null and _roof_cache.has(roof.get_instance_id()):
+				renew[at] = true
+			continue
+		var plane := planes[at]
+		if plane.global_transform != plane_xfs[at] or plane.polygon != plane_polys[at]:
+			renew[at] = false
+	var forms := _form_nodes
+	var form_xfs := _form_xfs
+	var form_polys := _form_polys
+	for index in forms.size():
+		if not is_instance_valid(forms[index]):
+			renew[_form_slots[index]] = true
+			continue
+		var form := forms[index]
+		if form.global_transform != form_xfs[index] or form.polygon != form_polys[index]:
+			renew[_form_slots[index]] = renew.get(_form_slots[index],false)
+	if not renew.is_empty():
+		_renew_roofs(renew)
+		_rebuild_forms()
+
+## Rebuilds the entries of roof slots (slot -> whether to re-find forms).
+func _renew_roofs(renew: Dictionary) -> void:
+	for at: int in renew:
+		var roof := _roof_nodes[at]
+		if roof == null:
+			continue
+		_renewed_roofs += 1
+		_forms_stale = true
+		var key := roof.get_instance_id()
+		var poly := roof.get_node_or_null(_ROOF_POLY) as Polygon2D
+		if poly == null:
+			var entry: Dictionary = _roof_cache.get(key,_NO_ENTRY)
+			if not entry.is_empty():
+				_unbucket(_roof_index,key,entry)
+				_roof_cache.erase(key)
+			_plane_nodes[at] = null
+			continue
+		_set_plane(at,_roof_entry(roof,poly,bool(renew[at])))
+
+func _reset_index() -> void:
+	_roof_cache.clear()
+	_solid_cache.clear()
+	_roof_index = {"nodes":[],"slot":{},"buckets":{}}
+	_face_index = {"nodes":[],"slot":{},"buckets":{}}
+	_roof_nodes.clear()
+	_plane_nodes.clear()
+	_plane_xfs.clear()
+	_plane_polys.clear()
+	_form_nodes.clear()
+	_form_xfs.clear()
+	_form_polys.clear()
+	_form_slots.clear()
+	_forms_stale = true
+	_dirty_roofs.clear()
+	_face_nodes.clear()
+	_face_xfs.clear()
+	_face_polys.clear()
+
+func _on_roof_subtree_changed(node: Node) -> void:
+	# A node entered or left a watched roof subtree: the first indexed roof
+	# above it re-finds its plane and forms on the next refresh.
+	var at := node.get_parent()
+	while at != null:
+		if at is RoofOverlay:
+			var key := at.get_instance_id()
+			if (_roof_index.slot as Dictionary).has(key):
+				_dirty_roofs[key] = true
+				_structure_events += 1
+			return
+		at = at.get_parent()
+
+func _watch_roof(roof: RoofOverlay) -> void:
+	var watcher := _on_roof_subtree_changed
+	for node: Node in [roof]+roof.find_children("*","",true,false):
+		# Reference-counted, so a re-watch after a structural edit is cheap
+		# and never a duplicate-connection error.
+		node.child_entered_tree.connect(watcher,CONNECT_REFERENCE_COUNTED)
+		node.child_exiting_tree.connect(watcher,CONNECT_REFERENCE_COUNTED)
 
 ## Group slots of the occluders indexed in the buckets `area` touches, sorted
 ## into group order (the order the records were always collected in); an
@@ -325,6 +548,14 @@ func _gather(index: Dictionary, area: Rect2) -> PackedInt32Array:
 			for key: int in bucket:
 				order.append(slot[key])
 	order.sort()
+	return order
+
+## Every group slot in group order: the uncached control visits them all.
+func _all_slots(count: int) -> PackedInt32Array:
+	var order := PackedInt32Array()
+	order.resize(count)
+	for at in count:
+		order[at] = at
 	return order
 
 func _bucket(index: Dictionary, key: int, entry: Dictionary) -> void:
@@ -352,38 +583,52 @@ func _unbucket(index: Dictionary, key: int, entry: Dictionary) -> void:
 		if bucket.is_empty():
 			buckets.erase(cell)
 
+## (Re)builds one face's entry and its buckets from its current inputs.
 func _face_entry(face: Polygon2D) -> Dictionary:
 	var key := face.get_instance_id()
+	var previous: Dictionary = _solid_cache.get(key,_NO_ENTRY)
+	if not previous.is_empty():
+		_unbucket(_face_index,key,previous)
 	var xf := face.global_transform
 	var polygon := face.polygon
-	var entry: Dictionary = _solid_cache.get(key,_NO_ENTRY)
-	if not entry.is_empty() and entry.xf == xf and entry.polygon == polygon:
-		return entry
-	if not entry.is_empty():
-		_unbucket(_face_index,key,entry)
 	var points := xf*polygon
-	entry = {"xf":xf,"polygon":polygon,"points":points,"reach":_bounds_of(points),"front_y":NAN,"pieces":[],"cells":[]}
+	var entry := {"xf":xf,"polygon":polygon,"points":points,"reach":_bounds_of(points),"front_y":NAN,"pieces":[],"cells":[]}
 	_solid_cache[key] = entry
 	_bucket(_face_index,key,entry)
 	return entry
 
-## Cached inputs of one roof's geometry, its roof forms and its reach: every
+## (Re)builds one roof's reach from its current plane and roof forms: every
 ## form is in the reach whether or not it is visible now, so a form shown
-## later can never fall outside it.
-func _roof_entry(roof: RoofOverlay, poly: Polygon2D) -> Dictionary:
+## later can never fall outside it. `rescan` re-finds the forms at any depth
+## (new roof, structural edit, replaced plane or freed form); otherwise the
+## known forms are kept. Pieces stay keyed by their own fingerprint.
+func _roof_entry(roof: RoofOverlay, poly: Polygon2D, rescan: bool) -> Dictionary:
 	var key := roof.get_instance_id()
-	var entry: Dictionary = _roof_cache.get(key,_NO_ENTRY)
-	if not entry.is_empty() and entry.roof_xf == roof.global_transform and entry.poly_xf == poly.global_transform and entry.outline == roof.footprint_outline_px and entry.polygon == poly.polygon and int(entry.children) == poly.get_child_count():
-		return entry
-	if not entry.is_empty():
-		_unbucket(_roof_index,key,entry)
-	var forms := _roof_forms(poly)
-	var reach := _bounds_of(poly.global_transform*poly.polygon)
+	var previous: Dictionary = _roof_cache.get(key,_NO_ENTRY)
+	if not previous.is_empty():
+		_unbucket(_roof_index,key,previous)
+	if not rescan and not previous.is_empty():
+		for form: Variant in previous.forms:
+			if not is_instance_valid(form) or not (form as Node).is_inside_tree():
+				rescan = true
+				break
+	var forms: Array = _roof_forms(poly) if rescan or previous.is_empty() else previous.forms
+	if not _uncached and (previous.is_empty() or rescan):
+		_watch_roof(roof)
+	var poly_xf := poly.global_transform
+	var polygon := poly.polygon
+	var reach := _bounds_of(poly_xf*polygon)
+	var form_xfs: Array[Transform2D] = []
+	var form_polys: Array[PackedVector2Array] = []
 	for form: Polygon2D in forms:
-		if form.polygon.size() > 0:
-			reach = reach.merge(_bounds_of(form.global_transform*form.polygon))
-	entry = {"roof_xf":roof.global_transform,"poly_xf":poly.global_transform,"outline":roof.footprint_outline_px,"polygon":poly.polygon,
-		"children":poly.get_child_count(),"forms":forms,"reach":reach,"fingerprint":0,"pieces":[],"cells":[]}
+		var form_xf := form.global_transform
+		var form_polygon := form.polygon
+		form_xfs.append(form_xf)
+		form_polys.append(form_polygon)
+		if form_polygon.size() > 0:
+			reach = reach.merge(_bounds_of(form_xf*form_polygon))
+	var entry := {"poly":poly,"poly_xf":poly_xf,"polygon":polygon,"forms":forms,"form_xfs":form_xfs,"form_polys":form_polys,
+		"reach":reach,"fingerprint":previous.get("fingerprint",0),"pieces":previous.get("pieces",[]),"cells":[]}
 	_roof_cache[key] = entry
 	_bucket(_roof_index,key,entry)
 	return entry
@@ -553,11 +798,14 @@ func _upload(existing: ImageTexture, image: Image) -> ImageTexture:
 	return existing
 
 func _roof_geometry(roof: RoofOverlay, poly: Polygon2D, entry: Dictionary) -> Array[Dictionary]:
-	# The roof's forms are found once per entry (a new direct child of the roof
-	# plane renews the entry); a form freed since is found again.
+	# The roof's forms are found when its entry is built and again after any
+	# structural edit below the roof; validation has already checked them this
+	# refresh. Defensively, a form freed since is found again and the entry
+	# is rebuilt (with aligned inputs) on the next refresh.
 	for form: Variant in entry.forms:
 		if not is_instance_valid(form) or not (form as Node).is_inside_tree():
 			entry.forms = _roof_forms(poly)
+			_dirty_roofs[roof.get_instance_id()] = true
 			break
 	var forms: Array[Polygon2D] = []
 	var signature: Array = [roof.global_transform,roof.footprint_outline_px,poly.global_transform,poly.polygon]
@@ -700,15 +948,13 @@ func snapshot_stats() -> Dictionary:
 		"collection_usec":_collection_usec,"comparison_usec":_comparison_usec,"snapshot_usec":_snapshot_usec,"binding_usec":_binding_usec,
 		"roof_usec":_roof_usec,"solid_usec":_solid_usec,"sprite_usec":_sprite_usec,"visited_roofs":_visited_roofs,"visited_faces":_visited_faces,
 		"index_resyncs":_index_resyncs,"indexed_roofs":_roof_cache.size(),"indexed_faces":_solid_cache.size(),"roof_buckets":(_roof_index.buckets as Dictionary).size(),"face_buckets":(_face_index.buckets as Dictionary).size(),
+		"validation_usec":_validation_usec,"renewed_roofs":_renewed_roofs,"renewed_faces":_renewed_faces,"structure_events":_structure_events,"index_disabled":_uncached,
 		"force_uploads":bool(get_meta(FORCE_UPLOAD_META,false))}
 
 func _exit_tree() -> void:
 	_materials.clear()
 	_source_cache.clear()
-	_roof_cache.clear()
-	_solid_cache.clear()
-	_roof_index = {"nodes":[],"slot":{},"buckets":{},"rotor":0}
-	_face_index = {"nodes":[],"slot":{},"buckets":{},"rotor":0}
+	_reset_index()
 	_snapshot_semantics.clear()
 	_snapshot_alpha = null
 	_alpha = null
