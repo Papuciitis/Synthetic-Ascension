@@ -1,0 +1,7 @@
+Use your built-in image generation tool (image_gen) exactly ONCE. Reference image 1 (planted_stone_trough.png) is a STYLE reference from the same game: match its painterly rendering, palette family, lighting and level of detail; do not copy its layout. Reference image 2 (well_stone.png) is a STYLE reference from the same game: match its painterly rendering, palette family, lighting and level of detail; do not copy its layout.
+Pass every attached reference image to the image tool as a reference input (referenced_image_paths).
+
+Use case: stylized-concept. Asset type: production 2D game sprite placed ON a roof in a north-up steep top-down medieval Mediterranean city game; roofs are seen almost from directly above with a slight south tilt, so we see mostly the top of the element and a short south face. Fully TRANSPARENT background, entire object visible with alpha padding, no roof tiles around it, no cast shadow, no text, no glow. Painterly hand-painted game art matching the references, broad soft shapes, no black outlines everywhere, bright temperate daylight from the upper right.
+Subject: ONE small gabled roof DORMER with a small-paned window facing south, its little roof covered in blue-grey slate, limestone cheeks. About 1:1.
+
+After generating, copy the generated PNG from ~/.codex/generated_images/... into the current working directory as dormer_slate.png (keep the original alpha, do not resize or edit it). Do not create or modify any other file. Reply with the original generated path and the pixel size.
