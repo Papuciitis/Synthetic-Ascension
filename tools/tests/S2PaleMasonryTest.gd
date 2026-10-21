@@ -1,5 +1,6 @@
 extends "res://tools/tests/DomesticWallMaterialTest.gd"
-## S2 cool masonry gains relief without poisoning S3 or warm-home materials.
+## City masonry keeps its baked relief in every segment (one pale ashlar
+## family material, keyed by family, not segment) without poisoning warm homes.
 
 
 func _run() -> void:
@@ -42,12 +43,13 @@ func _run() -> void:
 			if warm: continue
 			var raw: Variant = material.get_shader_parameter("source_relief")
 			var relief: float = float(raw) if raw != null else 0.0
-			_check(is_zero_approx(relief) if owner == Vector2i(2,0) else relief > 0.0,"Only actual S2 pale wall/window/partition/fill owners receive relief")
+			_check(is_equal_approx(relief,1.0),"Every city wall/window/partition/fill owner, S2 or later, receives the full pale relief")
 	for owner: Vector2i in originals:
 		_check(int(counts.get(owner,0)) == 4 and int(fills.get(owner,0)) > 0,"Envelope, window, real under-roof partition and corner plugs keep their owned presentation")
-	if materials.has_all([Vector2i.ZERO,Vector2i(2,0),Vector2i(3,0)]):
-		_check(materials[Vector2i.ZERO] != materials[Vector2i(2,0)],"S2 pale material cache is separate from the untouched S3/default cache")
+	if materials.has_all([Vector2i.ZERO,Vector2i(1,0),Vector2i(2,0),Vector2i(3,0)]):
+		_check(materials[Vector2i.ZERO] == materials[Vector2i(2,0)],"S2 and S3 city stone share one family material instead of a per-segment cache")
 		_check(materials[Vector2i.ZERO] == materials[Vector2i(3,0)],"Returning to S2 reuses its own stable material after S3 loads")
+		_check(materials[Vector2i(1,0)] != materials[Vector2i.ZERO],"Warm domestic rubble keeps its own family material")
 	renderer.remove_chunk(Vector2i.ZERO)
 	Global.attempt_segment = 3
 	renderer.add_chunk(originals[Vector2i(2,0)])
@@ -55,7 +57,7 @@ func _run() -> void:
 		if not batch.owners.has(Vector2i(3,0)): continue
 		var material := batch.visual.material as ShaderMaterial
 		var raw: Variant = material.get_shader_parameter("source_relief") if material != null else null
-		_check(raw != null and float(raw) > 0.0,"S3 reload/unload cannot reset a surviving S2 owner's material")
+		_check(raw != null and is_equal_approx(float(raw),1.0),"S3 reload/unload keeps the shared family relief material")
 	renderer.clear()
 	host.free()
 	Global.attempt_segment = previous_segment

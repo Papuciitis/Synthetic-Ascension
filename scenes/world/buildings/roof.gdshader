@@ -1,10 +1,13 @@
 shader_type canvas_item;
 
 // Textured roof (RoofOverlay.gd, building pass 2026-09-27). The roof art is a
-// flat shingle field; this gives it a gable so the building reads as a mass:
-// the slope facing the light (top right) a touch brighter, the other in
-// shade, a lit ridge between them, and darker eaves at the roof's edge. Footprints that are not rectangles (L shapes) skip the gable
-// and keep only the eaves.
+// flat shingle field; this gives it a gable so the building reads as a mass
+// under the one top-right sun (WorldDepthStyle): the slope facing the light
+// brighter, the other in shade, each slope opening toward the ridge, a lit
+// ridge cap with a dark line under it on the shaded side, and a directional
+// edge: north/east rims catch light while south/west eaves drip into shade.
+// Footprints that are not rectangles (L shapes) skip the gable and keep only
+// the edges. eave_px scales every edge cue; ~0 disables them (fascia strips).
 
 uniform vec4 bounds = vec4(0.0, 0.0, 256.0, 256.0);
 uniform float ridge_along_x = 1.0;
@@ -17,6 +20,11 @@ uniform float eave_px = 12.0;
 // its material units while keeping the structural ridge/eave shading crisp.
 uniform float material_contrast = 1.0;
 uniform vec3 material_mid = vec3(0.3);
+// Sky opening toward the ridge (+/-), lit north/east rim, south/west drip.
+uniform float pitch_gradient = 0.06;
+uniform float rim_light = 0.08;
+uniform float drip_shade = 0.74;
+uniform float under_ridge = 0.84;
 
 varying vec2 local_pos;
 varying vec4 surface_tint;
@@ -31,7 +39,8 @@ void fragment() {
 	vec4 c = COLOR;
 	c.rgb = mix(material_mid * surface_tint.rgb, c.rgb, material_contrast);
 	vec2 size = max(bounds.zw - bounds.xy, vec2(1.0));
-	vec2 t = (local_pos - bounds.xy) / size;
+	vec2 local = local_pos - bounds.xy;
+	vec2 t = local / size;
 	float shade = 1.0;
 	if (gable > 0.5) {
 		bool along_x = ridge_along_x > 0.5;
@@ -39,14 +48,25 @@ void fragment() {
 		// foreshortened, so the ridge sits above the middle.
 		float across = along_x ? t.y : t.x;
 		float ridge = along_x ? 0.42 : 0.5;
+		float span = along_x ? size.y : size.x;
 		// Light from the top right: the north slope of an east-west ridge,
 		// the EAST slope of a north-south one.
 		bool lit = along_x ? across < ridge : across > ridge;
 		shade = lit ? lit_slope : shade_slope;
-		float d = abs(across - ridge) * (along_x ? size.y : size.x);
+		float d = abs(across - ridge) * span;
+		float slope = max(1.0, (across < ridge ? ridge : 1.0 - ridge) * span);
+		shade *= mix(1.0 - pitch_gradient, 1.0 + pitch_gradient, 1.0 - clamp(d / slope, 0.0, 1.0));
 		shade += smoothstep(4.0, 0.0, d) * ridge_light;
+		if (!lit) {
+			shade *= mix(under_ridge, 1.0, smoothstep(3.0, 9.0, d));
+		}
 	}
-	float edge = min(min(t.x, 1.0 - t.x) * size.x, min(t.y, 1.0 - t.y) * size.y);
-	shade *= mix(0.68, 1.0, smoothstep(0.0, eave_px, edge));
+	float edge = clamp(eave_px / 12.0, 0.0, 1.0);
+	float rim_px = max(0.01, 3.0 * edge);
+	float drip_px = max(0.01, 9.0 * edge);
+	float lit_rim = max(smoothstep(rim_px, 0.0, local.y), smoothstep(rim_px, 0.0, size.x - local.x));
+	float drip = max(smoothstep(drip_px, 0.0, size.y - local.y), smoothstep(drip_px * 0.75, 0.0, local.x));
+	shade *= 1.0 + rim_light * edge * lit_rim;
+	shade *= mix(1.0, drip_shade, drip * edge);
 	COLOR = vec4(c.rgb * shade, c.a);
 }

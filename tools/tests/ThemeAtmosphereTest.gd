@@ -60,11 +60,26 @@ func _run() -> void:
 		_check(minf(fill.r,minf(fill.g,fill.b)) >= 0.85, "daylight fill retains readable dark art: " + String(id))
 		_check(float(profile.get("cloud_opacity",1.0)) <= 0.18 and float(profile.get("mist_opacity",1.0)) <= 0.06, "cloud and mist contribution stay bounded: " + String(id))
 		_check(StringName(profile.get("particle_kind", &"fireflies")) != &"fireflies" and float(profile.get("vignette_strength",1.0)) <= 0.15, "ordinary climate avoids universal magic and heavy vignette: " + String(id))
+		# Physical sun per theme: a daylight shade (never night-dark, never
+		# erased), bounded cast length/softness/contact; direction is fixed.
+		var shade: Color = profile.get("sun_shade", Color.BLACK)
+		var shade_luma := shade.r*0.299+shade.g*0.587+shade.b*0.114
+		_check(shade_luma >= 0.6 and shade_luma <= 0.88 and shade.b >= shade.r, "theme sun shade stays a cool readable daylight shadow: " + String(id))
+		_check(float(profile.get("shadow_length",0.0)) >= 0.6 and float(profile.get("shadow_length",9.0)) <= 1.25 and float(profile.get("penumbra_px",99.0)) <= 12.0 and float(profile.get("contact_strength",0.0)) >= 0.8, "theme cast length, softness and contact stay bounded: " + String(id))
 	var clear: Dictionary = profiles.call("resolve", &"service_courtyards")
 	var checkpoint: Dictionary = profiles.call("resolve", &"checkpoint_lanes")
 	var canal: Dictionary = profiles.call("resolve", &"canal_services")
 	_check(float(checkpoint.cloud_opacity) > float(clear.cloud_opacity), "checkpoint exposure differs from the open courtyard sky")
 	_check(float(canal.mist_opacity) > 0.0 and is_zero_approx(float(clear.mist_opacity)), "damp canal atmosphere differs from the dry courtyard")
+	var underpass: Dictionary = profiles.call("resolve", &"underpass_veins")
+	var outer: Dictionary = profiles.call("resolve", &"outer_wall")
+	_check((underpass.sun_shade as Color).v > (clear.sun_shade as Color).v and float(underpass.shadow_length) < float(clear.shadow_length) and float(underpass.penumbra_px) > float(clear.penumbra_px), "sheltered overcast casts lighter, shorter, softer shadows than the open courtyard")
+	_check(float(outer.shadow_length) > float(clear.shadow_length) and float(outer.penumbra_px) <= float(clear.penumbra_px), "open outer approaches cast longer, crisper shadows")
+	var lights: Dictionary = {}
+	for id: StringName in THEME_IDS:
+		var light_profile: Dictionary = profiles.call("resolve", id)
+		lights[[light_profile.sun_shade, light_profile.shadow_length, light_profile.penumbra_px]] = true
+	_check(lights.size() >= 10, "themes express distinct physical light, not one shared grade; distinct=%d" % lights.size())
 	var hub: Dictionary = profiles.call("resolve", &"canal_services", &"hub")
 	var institution: Dictionary = profiles.call("resolve", &"canal_services", &"institution")
 	_check(not bool(hub.get("enabled",true)) and is_zero_approx(float(hub.get("mist_opacity",1.0))), "authored Hub bypasses procedural lighting and damp air")

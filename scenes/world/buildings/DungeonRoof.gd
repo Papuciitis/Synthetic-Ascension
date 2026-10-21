@@ -40,14 +40,16 @@ func configure_slice(wing: Rect2, clip: Rect2, coverage: Array[Rect2], lift: flo
 	_poly.texture = preload("res://assets/world/city_block/clay.png") if clay else SLATE
 	_poly.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	_poly.texture_scale = Vector2.ONE*3.2
-	_poly.color = Color(0.87,0.94,0.99)
+	# The same blue-grey slate and muted clay as city roofs (RoofOverlay);
+	# the broad halls stay a little quieter than house-scale roofs.
+	_poly.color = RoofOverlay.CLAY_TINT if clay else RoofOverlay.SLATE_TINT
 	var roof_material := ShaderMaterial.new()
 	roof_material.shader = ROOF_SHADER
 	roof_material.set_shader_parameter("bounds",Vector4(visible_roof.position.x,visible_roof.position.y,visible_roof.end.x,visible_roof.end.y))
 	roof_material.set_shader_parameter("gable",1.0)
 	roof_material.set_shader_parameter("ridge_along_x",1.0 if wing.size.x > wing.size.y else 0.0)
-	roof_material.set_shader_parameter("material_contrast",0.30)
-	roof_material.set_shader_parameter("material_mid",Vector3(0.43,0.28,0.21) if clay else Vector3(0.25,0.31,0.34))
+	roof_material.set_shader_parameter("material_contrast",0.50)
+	roof_material.set_shader_parameter("material_mid",RoofOverlay.CLAY_MID if clay else RoofOverlay.SLATE_MID)
 	roof_material.set_shader_parameter("ridge_light",0.16)
 	_poly.material = roof_material
 	for index in range(1,pieces.size()):

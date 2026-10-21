@@ -5,6 +5,12 @@ extends RefCounted
 const ROOF := preload("res://scenes/world/buildings/DungeonRoof.gd")
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const STONE := preload("res://assets/world/walls/wall_stone_face.png")
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
+const GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
+## The tallest gatehouse/hall fronts (DungeonRoof lift) cast the one sun.
+const WING_FRONT_PX := 128.0
+## Masonry relief runs (_wall_relief) are drawn this tall above their base.
+const RELIEF_PX := 112.0
 
 static func attach(chunk: Node2D, plan: Dictionary, offset: Vector2i, cells_per_chunk: int, cell_px: int) -> Node2D:
 	var host := Node2D.new()
@@ -41,10 +47,9 @@ static func attach(chunk: Node2D, plan: Dictionary, offset: Vector2i, cells_per_
 	for wing: Rect2i in plan.roofs:
 		var interior := wing.intersection(region.grow(-1))
 		covered.append(Rect2(host.global_position+Vector2(interior.position)*cell_px,Vector2(interior.size)*cell_px))
-	# Broad wing shadows, quiet court/hall floor, not a second decorative tile grid.
-	for wing: Rect2i in plan.roofs:
-		var area := Rect2(Vector2(wing.position)*cell_px,Vector2(wing.size)*cell_px)
-		_panel(host,area.grow(18).intersection(Rect2(Vector2(region.position)*cell_px,Vector2(region.size)*cell_px)),clip,Color(0.06,0.12,0.13,0.15),-8)
+	# Roofed wings and enclosure walls cast the shared sun shade southwest
+	# from their wall bases: one soft, disjoint cast, as city buildings do.
+	_sun_casts(host,plan,clip,cell_px)
 	_wall_relief(host,plan,clip,cell_px)
 	var holes := _portal_roof_holes(plan,cell_px)
 	# Three separately shaded gables share the full-plan texture/ridge origin.
@@ -78,6 +83,78 @@ static func attach(chunk: Node2D, plan: Dictionary, offset: Vector2i, cells_per_
 	_chambers(host,plan,clip,cell_px)
 	_court(host,plan,clip,cell_px)
 	return host
+
+static func _sun_casts(host: Node2D, plan: Dictionary, clip: Rect2, cell_px: int) -> void:
+	var region: Rect2i = plan.region
+	var region_px := Rect2(Vector2(region.position)*cell_px,Vector2(region.size)*cell_px)
+	var shapes: Array[Dictionary] = []
+	var receivers: Array[PackedVector2Array] = []
+	# A compact hall is roofed indoors: its wings shade only the street outside.
+	if not plan.get("court_outdoor",true): receivers.append(GEOMETRY.rect_polygon(region_px.grow(-16.0)))
+	for index in range(plan.roofs.size()):
+		var wing: Rect2i = plan.roofs[index]
+		var area := Rect2(Vector2(wing.position)*cell_px,Vector2(wing.size)*cell_px)
+		receivers.append(GEOMETRY.rect_polygon(area.grow(-16.0)))
+		# DungeonRoof drops its roof field by the front lift onto the wall base.
+		var front := minf(WING_FRONT_PX+(20.0 if index == 2 else 0.0),area.size.y*0.40)
+		var ground := Rect2(area.position+Vector2(16.0,front),area.size-Vector2(32.0,front+16.0))
+		if not ground.has_area(): ground = area.grow(-16.0)
+		if not ground.has_area(): continue
+		var shape := GEOMETRY.cast_shape(GEOMETRY.rect_polygon(ground),DEPTH.building_shadow_offset(front),DEPTH.penumbra_px)
+		shape["key"] = index
+		shapes.append(shape)
+	# Enclosure walls own their cast here (the batched kit skips envelope
+	# drop shadows): masonry-faced runs stand as tall as their relief, the
+	# rest at the kit's three-quarter height.
+	var walls: Dictionary = plan.carve.wall_cells
+	var used: Dictionary = {}
+	var key := 1000
+	for y in range(region.position.y,region.end.y):
+		var x := region.position.x
+		while x < region.end.x:
+			if not walls.has(Vector2i(x,y)):
+				x += 1
+				continue
+			var begin := x
+			while x < region.end.x and walls.has(Vector2i(x,y)): x += 1
+			if x-begin < 2: continue
+			for cell_x in range(begin,x): used[Vector2i(cell_x,y)] = true
+			var band := Rect2(begin*cell_px,y*cell_px+16,(x-begin)*cell_px,32)
+			var shape := GEOMETRY.cast_shape(GEOMETRY.rect_polygon(band),DEPTH.building_shadow_offset(RELIEF_PX),DEPTH.penumbra_px)
+			shape["key"] = key
+			key += 1
+			shapes.append(shape)
+	for x in range(region.position.x,region.end.x):
+		var y := region.position.y
+		while y < region.end.y:
+			var cell := Vector2i(x,y)
+			if not walls.has(cell) or used.has(cell):
+				y += 1
+				continue
+			var begin := y
+			while y < region.end.y and walls.has(Vector2i(x,y)) and not used.has(Vector2i(x,y)): y += 1
+			var band := Rect2(x*cell_px+16,begin*cell_px,32,(y-begin)*cell_px)
+			var shape := GEOMETRY.cast_shape(GEOMETRY.rect_polygon(band),DEPTH.offset_for_height(ChunkBlockVisualCatalog.KIT_HEIGHT),DEPTH.penumbra_px)
+			shape["key"] = key
+			key += 1
+			shapes.append(shape)
+	var bounds := region_px.grow(2.0*cell_px).intersection(clip)
+	if not bounds.has_area() or shapes.is_empty(): return
+	var near: Array[Dictionary] = []
+	for shape: Dictionary in shapes:
+		if (shape.bounds as Rect2).intersects(bounds): near.append(shape)
+	if near.is_empty(): return
+	var cast := GEOMETRY.soft_cast(near,[],receivers,bounds)
+	if (cast.points as PackedVector2Array).is_empty(): return
+	var shade := Polygon2D.new()
+	shade.name = "DungeonSunCast"
+	shade.set_meta(&"dungeon_sun_shadow",true)
+	shade.polygon = cast.points
+	shade.polygons = cast.faces
+	shade.vertex_colors = cast.colors
+	shade.material = DEPTH.SUN_SHADOW_MATERIAL
+	shade.z_index = -8
+	host.add_child(shade)
 
 static func _panel(host: Node2D, area: Rect2, clip: Rect2, color: Color, layer: int = -2) -> Polygon2D:
 	var part := area.intersection(clip)
@@ -125,7 +202,8 @@ static func _pier(host: Node2D, foot: Vector2, clip: Rect2, height: float = 152.
 	var source := KIT._texture("donjon_gate_arch.png")
 	if source == null: return
 	var width := height*315.0/800.0
-	_panel(host,Rect2(foot+Vector2(-width*0.5+12,-height+12),Vector2(width,height)),clip,Color(0.04,0.08,0.08,0.25),-5)
+	var pier_shade := _panel(host,Rect2(foot+Vector2(-width*0.5-12,-height+12),Vector2(width,height)),clip,Color(1,1,1,0.72),-5)
+	if pier_shade != null: pier_shade.material = DEPTH.SUN_SHADOW_MATERIAL
 	_image_region(host,Rect2(foot-Vector2(width*0.5,height),Vector2(width,height)),clip,source,Rect2(165,112,315,800))
 
 static func _wall_relief(host: Node2D, plan: Dictionary, clip: Rect2, cell_px: int) -> void:
@@ -141,7 +219,7 @@ static func _wall_relief(host: Node2D, plan: Dictionary, clip: Rect2, cell_px: i
 			while x < region.end.x and walls.has(Vector2i(x,y)): x += 1
 			if x-begin < 2: continue
 			var area := Rect2(begin*cell_px+16,y*cell_px-68,(x-begin)*cell_px-32,112)
-			_panel(host,Rect2(area.position+Vector2(10,16),area.size+Vector2(16,12)),clip,Color(0.03,0.08,0.09,0.26),-5)
+			# Its ground cast belongs to _sun_casts (southwest, from the base).
 			_masonry_run(host,area,clip,region.position.x*cell_px+16.0)
 			for pier_x in range(begin+3,x,7):
 				var p := Vector2(pier_x*cell_px+32,y*cell_px+32)

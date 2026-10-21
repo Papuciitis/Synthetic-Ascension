@@ -18,9 +18,15 @@ func _check(ok: bool, label: String) -> void:
 
 
 func _probes(kit: Node, stage: String) -> void:
+	# Casts start at the ground footprint (the drawn roof dropped by the wall
+	# height), so the east wing reaches only the notch's lower corner and the
+	# lower west wing's cast begins below its wall base, not beside its roof.
 	_check(FIXTURE.covering_pieces(kit,Vector2(150,650)) == 0,stage+": no phantom caster over the empty northwest notch")
-	_check(FIXTURE.covering_pieces(kit,Vector2(340,680)) == 1,stage+": the real east wing casts into its empty L notch")
-	_check(FIXTURE.covering_pieces(kit,Vector2(150,900)) == 1,stage+": the lower west wing retains its real cast")
+	_check(FIXTURE.covering_pieces(kit,Vector2(340,680)) == 0,stage+": the notch beside the east wing's raised roof stays sunlit")
+	_check(FIXTURE.covering_pieces(kit,Vector2(380,764)) == 1,stage+": the real east wing casts into its empty L notch")
+	_check(FIXTURE.covering_pieces(kit,Vector2(150,900)) == 0,stage+": no cast beside the lower west wing's roof")
+	_check(FIXTURE.covering_pieces(kit,Vector2(150,1050)) == 1,stage+": the lower west wing retains its real cast")
+	_check(FIXTURE.covering_pieces(kit,Vector2(300,1080)) == 1,stage+": the cast reaches the wall base across the open ground rim")
 	var disjoint := true
 	for y in range(579,1150,19):
 		for x in range(103,899,23):
@@ -50,13 +56,21 @@ func _run() -> void:
 	roof._set_alpha(1.0)
 	# This second real orthogonal shape has empty ground in the top-right
 	# of its parcel bounds. It must not erase a valid neighboring cast there.
-	var neighbor_outline := PackedVector2Array([Vector2(64,768),Vector2(128,768),Vector2(128,896),Vector2(192,896),Vector2(192,1024),Vector2(64,1024)])
-	var neighbor := FIXTURE.create(chunk,Vector2i.UP,neighbor_outline,Rect2i(1,12,2,4))
-	placed.append(Rect2i(1,12,2,4))
+	var neighbor_outline := PackedVector2Array([Vector2(64,960),Vector2(128,960),Vector2(128,1088),Vector2(192,1088),Vector2(192,1216),Vector2(64,1216)])
+	var neighbor := FIXTURE.create(chunk,Vector2i.UP,neighbor_outline,Rect2i(1,15,2,4))
+	placed.append(Rect2i(1,15,2,4))
 	kit.trim_paving(placed,64)
+	(neighbor.kit as Node).call(&"trim_paving",placed,64)
 	await get_tree().process_frame
-	_check(FIXTURE.covering_pieces(kit,Vector2(150,850)) == 1,"neighbor's empty concave ground does not erase the bed wing cast")
-	_check(FIXTURE.covering_pieces(kit,Vector2(150,950)) == 0,"neighbor's actual interior does clip the bed wing cast")
+	_check(FIXTURE.covering_pieces(kit,Vector2(160,1050)) == 1,"neighbor's empty concave ground does not erase the bed wing cast")
+	_check(FIXTURE.covering_pieces(kit,Vector2(100,1100)) == 0,"neighbor's actual interior does clip the bed wing cast")
+	var disjoint := true
+	for y in range(900,1250,13):
+		for x in range(40,420,11):
+			var at := Vector2(x+0.31,y+0.47)
+			var both := FIXTURE.covering_pieces(kit,at)+FIXTURE.covering_pieces(neighbor.kit,at)
+			if both > 1: disjoint = false
+	_check(disjoint,"neighbouring buildings share one disjoint cast; no ground darkens twice")
 	_check((neighbor.outline as PackedVector2Array).size() == 6,"neighbor clipping fixture retains its recorded concavity")
 	chunk.queue_free()
 	await get_tree().process_frame

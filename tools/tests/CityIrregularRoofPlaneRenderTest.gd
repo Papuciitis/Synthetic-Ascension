@@ -1,6 +1,8 @@
 extends Node2D
 ## The real bed L must read as connected lit roof masses, not one horizontal
 ## bounding-box gradient. White probe input removes tile-art variation only.
+## Every city segment now shares the reviewed S2 wall height (176 px L walls)
+## and its connected planes, so S3 is held to the same silhouette and light.
 
 const FIXTURE := preload("res://tools/tests/CitySceneDepthFixture.gd")
 const ROOF_SHADER := preload("res://scenes/world/buildings/roof.gdshader")
@@ -8,7 +10,6 @@ const WORLD_COVER := preload("res://core/systems/world/visibility/WorldCover.gd"
 # Independently derived: footprint inset10, eroded north by facade_depth148.
 # RoofPoly is then positioned28px north; this literal is in its local space.
 const S2_VISIBLE := [Vector2(202,778),Vector2(394,778),Vector2(394,586),Vector2(886,586),Vector2(886,930),Vector2(202,930)]
-const S3_VISIBLE := [Vector2(202,778),Vector2(394,778),Vector2(394,586),Vector2(886,586),Vector2(886,994),Vector2(202,994)]
 var _passes := 0
 var _failures := 0
 var _white: ImageTexture
@@ -82,41 +83,37 @@ func _test_segment(segment: int) -> void:
 	var host := roof.get_node("RoofPoly") as Polygon2D
 	var kit := fixture.kit as Node2D
 	kit.hide()
-	var literal := PackedVector2Array(S2_VISIBLE if segment == 2 else S3_VISIBLE)
+	var literal := PackedVector2Array(S2_VISIBLE)
 	_check(Geometry2D.clip_polygons(host.polygon,literal).is_empty() and Geometry2D.clip_polygons(literal,host.polygon).is_empty(),"S%d preserves the hand-derived original visible roof silhouette" % segment)
 	_check(roof.footprint_outline_px == PackedVector2Array(FIXTURE.BED_OUTLINE),"S%d retains the actual physical footprint source" % segment)
 	var planes := _roof_planes(host)
-	if segment == 2:
-		_check(planes.size() >= 2,"actual S2 L roof supplies connected renderable main/front planes")
-		var gap_count := 0
-		var outside_count := 0
-		var overlap_count := 0
-		for y in range(589,939,19):
-			for x in range(205,900,17):
-				var point := Vector2(x,y)
-				var inside := Geometry2D.is_point_in_polygon(point,literal)
-				var covers := 0
-				for plane: Polygon2D in planes:
-					if Geometry2D.is_point_in_polygon(point,_host_points(host,plane)): covers += 1
-				if inside and covers == 0: gap_count += 1
-				if not inside and covers > 0: outside_count += 1
-				if covers > 1: overlap_count += 1
-		_check(gap_count == 0,"actual connected roof planes cover the full visible L without gaps; gaps=%d" % gap_count)
-		_check(outside_count == 0,"actual connected roof planes never fill outside the original L/notch; outside=%d" % outside_count)
-		_check(overlap_count == 0,"main/front roof lighting planes do not overlap and double-shade; overlaps=%d" % overlap_count)
+	_check(planes.size() >= 2,"actual S%d L roof supplies connected renderable main/front planes" % segment)
+	var gap_count := 0
+	var outside_count := 0
+	var overlap_count := 0
+	for y in range(589,939,19):
+		for x in range(205,900,17):
+			var point := Vector2(x,y)
+			var inside := Geometry2D.is_point_in_polygon(point,literal)
+			var covers := 0
+			for plane: Polygon2D in planes:
+				if Geometry2D.is_point_in_polygon(point,_host_points(host,plane)): covers += 1
+			if inside and covers == 0: gap_count += 1
+			if not inside and covers > 0: outside_count += 1
+			if covers > 1: overlap_count += 1
+	_check(gap_count == 0,"actual connected roof planes cover the full visible L without gaps; gaps=%d" % gap_count)
+	_check(outside_count == 0,"actual connected roof planes never fill outside the original L/notch; outside=%d" % outside_count)
+	_check(overlap_count == 0,"main/front roof lighting planes do not overlap and double-shade; overlaps=%d" % overlap_count)
 	_white_input(host)
 	var pixels := await _pixels(view)
 	_check(pixels != null and pixels.get_pixel(500,650).a > 0.98 and pixels.get_pixel(800,650).a > 0.98,"S%d native samples hit the actual opaque main roof, not empty background" % segment)
 	if pixels != null:
 		var west := _luma(pixels,Vector2i(500,650))
 		var east := _luma(pixels,Vector2i(800,650))
-		if segment == 2:
-			_check(east > west+0.10,"main L wing has its own northeast-lit east slope; west=%.3f east=%.3f" % [west,east])
-			var north := _luma(pixels,Vector2i(300,780))
-			var south := _luma(pixels,Vector2i(300,870))
-			_check(north > south+0.10,"short front L wing has its own north/south roof planes; north=%.3f south=%.3f" % [north,south])
-		else:
-			_check(planes.is_empty() and absf(east-west) < 0.02,"S3 keeps its established irregular roof presentation and slope axis")
+		_check(east > west+0.10,"S%d main L wing has its own northeast-lit east slope; west=%.3f east=%.3f" % [segment,west,east])
+		var north := _luma(pixels,Vector2i(300,780))
+		var south := _luma(pixels,Vector2i(300,870))
+		_check(north > south+0.10,"S%d short front L wing has its own north/south roof planes; north=%.3f south=%.3f" % [segment,north,south])
 	if segment == 2:
 		var cover := WORLD_COVER.get_for(chunk)
 		cover.call("refresh",chunk,true)

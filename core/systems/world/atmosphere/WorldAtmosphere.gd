@@ -9,15 +9,13 @@ const PROFILES := preload("res://core/systems/world/atmosphere/ThemeAtmospherePr
 const SHADER := preload("res://core/systems/world/atmosphere/world_atmosphere.gdshader")
 const MIST_SHADER := preload("res://core/systems/world/atmosphere/ground_air.gdshader")
 const ROOF_SHADER := preload("res://scenes/world/buildings/roof.gdshader")
-const ROOF_BASELINE: StringName = &"_theme_atmosphere_roof_baseline"
-const SUN_BASELINE: StringName = &"_theme_atmosphere_sun_baseline"
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const Z := 1400
 const AIR_Z := -8
 const ROOM_POLL_SECONDS := 0.5
 const MASK_CELLS := 126.0
-# Headless RenderingServer uses dummy values. These mirror the two source
-# shader contracts only for that fallback; native reads the actual defaults.
-const ROOF_DEFAULTS := {"lit_slope":1.12,"shade_slope":0.72,"ridge_light":0.4}
+# Headless RenderingServer uses dummy values. These mirror the source shader
+# contract only for that fallback; native reads the actual defaults.
 const GROUND_DEFAULTS := {"cell_px":64.0,"map_size":256.0,"warp_cells":0.62,
 	"grain":0.3,"overgrowth_bias":0.08,"overgrowth_a":Vector4.ZERO,
 	"overgrowth_b":Vector4.ZERO,"stain_strength":0.8,"stain_layer":5.0}
@@ -197,7 +195,7 @@ func refresh_environment(force: bool = false) -> void:
 		_environment_dirty = false
 		_environment_poll = ROOM_POLL_SECONDS
 		_discover_environment()
-		_apply_direct_light(float(_profile.direct_light))
+		_apply_direct_light(_profile)
 	# Ground maps can be repainted in place while the node survives. Sampling
 	# its eight-slot signature is constant work and cannot hold stale wet slots
 	# for the slower discovery interval after a stream/reset.
@@ -209,6 +207,10 @@ func _same_canvas(item: CanvasItem) -> bool:
 
 
 func _discover_environment() -> void:
+	# Theme light no longer rewrites roof planes or individual shadow alpha:
+	# roofs keep their full plane hierarchy in every theme, and every sun
+	# cast shares one material whose shade the theme sets. Roof and cast
+	# receivers are still counted for diagnostics only.
 	_environment_scans += 1
 	var next_materials: Dictionary = {}
 	var next_shadows: Dictionary = {}
@@ -219,84 +221,32 @@ func _discover_environment() -> void:
 			continue
 		for child: Node in roof.find_children("*","Polygon2D",true,false):
 			var plane := child as Polygon2D
-			if not _same_canvas(plane):
-				continue
 			var material := plane.material as ShaderMaterial
-			if material == null or material.shader != ROOF_SHADER:
-				continue
-			var key := material.get_instance_id()
-			if not material.has_meta(ROOF_BASELINE):
-				material.set_meta(ROOF_BASELINE,{
-					"lit_slope":material.get_shader_parameter("lit_slope"),
-					"shade_slope":material.get_shader_parameter("shade_slope"),
-					"ridge_light":material.get_shader_parameter("ridge_light")})
-			next_materials[key] = weakref(material)
+			if _same_canvas(plane) and material != null and material.shader == ROOF_SHADER:
+				next_materials[material.get_instance_id()] = weakref(material)
 		var parent := roof.get_parent()
 		if parent != null:
 			parents[parent.get_instance_id()] = parent
-	# Each loaded building/chunk scope is visited once per invalidation/poll,
-	# even when many roofs share it. No full-tree search runs each frame.
 	for parent: Node in parents.values():
 		for child: Node in parent.find_children("*","Polygon2D",true,false):
-			var shadow := child as Polygon2D
-			if not shadow.has_meta(&"city_sun_shadow") or not _same_canvas(shadow):
-				continue
-			if not shadow.has_meta(SUN_BASELINE):
-				shadow.set_meta(SUN_BASELINE,shadow.color.a)
-			next_shadows[shadow.get_instance_id()] = weakref(shadow)
-	for key: Variant in _roof_materials.keys():
-		if not next_materials.has(key):
-			_restore_roof((_roof_materials[key] as WeakRef).get_ref() as ShaderMaterial)
-	for key: Variant in _sun_shadows.keys():
-		if not next_shadows.has(key):
-			_restore_sun((_sun_shadows[key] as WeakRef).get_ref() as Polygon2D)
+			if child.has_meta(&"city_sun_shadow") and _same_canvas(child as Polygon2D):
+				next_shadows[child.get_instance_id()] = weakref(child)
 	_roof_materials = next_materials
 	_sun_shadows = next_shadows
 	var ground := get_parent().get_node_or_null("GroundSplat") as GroundSplatRenderer
 	_ground = weakref(ground) if ground != null and _same_canvas(ground) else null
 
 
-func _apply_direct_light(direct: float) -> void:
-	var amount := clampf(direct,0.0,1.0)
-	for ref: WeakRef in _roof_materials.values():
-		var material := ref.get_ref() as ShaderMaterial
-		if material == null:
-			continue
-		if is_equal_approx(amount,1.0):
-			_restore_roof(material)
-			continue
-		var base: Dictionary = material.get_meta(ROOF_BASELINE)
-		material.set_shader_parameter("lit_slope",1.0+(_roof_value(material,base,"lit_slope")-1.0)*amount)
-		material.set_shader_parameter("shade_slope",1.0+(_roof_value(material,base,"shade_slope")-1.0)*amount)
-		material.set_shader_parameter("ridge_light",_roof_value(material,base,"ridge_light")*amount)
-	for ref: WeakRef in _sun_shadows.values():
-		var shadow := ref.get_ref() as Polygon2D
-		if shadow != null:
-			var color := shadow.color
-			color.a = float(shadow.get_meta(SUN_BASELINE))*(0.35+0.65*amount)
-			shadow.color = color
-
-
-func _restore_roof(material: ShaderMaterial) -> void:
-	if material == null or not material.has_meta(ROOF_BASELINE):
-		return
-	var base: Dictionary = material.get_meta(ROOF_BASELINE)
-	for key: String in ["lit_slope","shade_slope","ridge_light"]:
-		material.set_shader_parameter(key,base[key])
-
-
-func _restore_sun(shadow: Polygon2D) -> void:
-	if shadow != null and shadow.has_meta(SUN_BASELINE):
-		var color := shadow.color
-		color.a = float(shadow.get_meta(SUN_BASELINE))
-		shadow.color = color
+## The theme's physical sun reaches every cast through the shared shade
+## material (WorldDepthStyle); lengths and softness were set at build time.
+func _apply_direct_light(profile: Dictionary) -> void:
+	DEPTH.set_sun_shade(profile.get("sun_shade",DEPTH.SUN_SHADE) as Color)
 
 
 func _restore_environment() -> void:
-	for ref: WeakRef in _roof_materials.values():
-		_restore_roof(ref.get_ref() as ShaderMaterial)
-	for ref: WeakRef in _sun_shadows.values():
-		_restore_sun(ref.get_ref() as Polygon2D)
+	# Authored contexts call this every frame; touch the uniform only once.
+	if not DEPTH.sun_shade().is_equal_approx(DEPTH.SUN_SHADE):
+		DEPTH.set_sun_shade(DEPTH.SUN_SHADE)
 	_roof_materials.clear()
 	_sun_shadows.clear()
 	_ground = null
@@ -354,13 +304,6 @@ func _source_default(shader: Shader, key: String, fallback: Variant) -> Variant:
 		var value: Variant = RenderingServer.shader_get_parameter_default(shader.get_rid(),StringName(key))
 		_shader_defaults[cache_key] = value if value != null else fallback
 	return _shader_defaults[cache_key]
-
-
-func _roof_value(material: ShaderMaterial, base: Dictionary, key: String) -> float:
-	# Read the preserved raw baseline, never the previously scaled override.
-	# Restoring null below restores the owner's exact unset/default state.
-	var raw: Variant = base[key]
-	return float(raw if raw != null else _source_default(material.shader,key,ROOF_DEFAULTS[key]))
 
 
 func _refresh_rooms() -> void:

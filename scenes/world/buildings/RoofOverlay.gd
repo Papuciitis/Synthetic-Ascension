@@ -38,8 +38,17 @@ const ROOF_TEXEL_SCALE := 1.6
 ## face is 16 px in (a 32 px band through the cell centre), and the eave
 ## overhangs it by 6 px.
 const ROOF_INSET_PX := 10.0
-## Depth of the eave's shadow on the façade below it.
+## Depth of the eave's shadow on the façade below it, for the old 112 px
+## walls; taller drawn walls hang a proportionally deeper eave shade.
 const EAVE_SHADOW_PX := 9.0
+## Roof texture contrast against its family mid: tiles and courses read,
+## while the roof stays a quieter field than actors and upright walls.
+const CITY_MATERIAL_CONTRAST := 0.62
+## Slate is a blue-grey stone, not a saturated blue; clay a muted brick.
+const SLATE_TINT := Color(0.97, 0.95, 0.93)
+const SLATE_MID := Vector3(0.29, 0.31, 0.34)
+const CLAY_TINT := Color(0.96, 0.95, 0.93)
+const CLAY_MID := Vector3(0.51, 0.29, 0.21)
 
 @onready var _poly: Polygon2D = get_node("RoofPoly") as Polygon2D
 @onready var _edge: Line2D = get_node("FrontEdge") as Line2D
@@ -57,6 +66,7 @@ var footprint_outline_px := PackedVector2Array()
 ## (street continuity infill). Set before configure().
 var party_edges: int = 0
 var _tween: Tween
+var _eave_shadow_px := EAVE_SHADOW_PX
 
 
 func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, indoor_volume: Area2D, building_kind: StringName = &"row_house", visual_seed: int = 0, doors: Array = []) -> void:
@@ -207,8 +217,8 @@ func _frame_textured_roof() -> void:
 	if Global.attempt_segment >= 2:
 		# Carry the approved quiet material hierarchy into every generated
 		# city segment's roofs, including irregular silhouettes.
-		roof_material.set_shader_parameter("material_contrast", 0.50)
-		roof_material.set_shader_parameter("material_mid", Vector3(0.43,0.26,0.19) if _poly.texture == ROOF_CLAY else Vector3(0.27,0.32,0.35))
+		roof_material.set_shader_parameter("material_contrast", CITY_MATERIAL_CONTRAST)
+		roof_material.set_shader_parameter("material_mid", Vector3(0.43,0.26,0.19) if _poly.texture == ROOF_CLAY else Vector3(0.28,0.30,0.33))
 	_poly.material = roof_material
 	poly = _notch_doors(poly)
 	_poly.polygon = poly
@@ -277,7 +287,7 @@ func _add_eave_shadow(poly: PackedVector2Array) -> void:
 		if outward.y < 0.7:
 			continue
 		var strip := Polygon2D.new()
-		strip.polygon = PackedVector2Array([a, b, b + Vector2(0.0, EAVE_SHADOW_PX), a + Vector2(0.0, EAVE_SHADOW_PX)])
+		strip.polygon = PackedVector2Array([a, b, b + Vector2(0.0, _eave_shadow_px), a + Vector2(0.0, _eave_shadow_px)])
 		strip.vertex_colors = PackedColorArray([
 			Color(0, 0, 0, 0.5), Color(0, 0, 0, 0.5), Color(0, 0, 0, 0.0), Color(0, 0, 0, 0.0),
 		])
@@ -413,7 +423,10 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 	# Roof stone is chosen per building (slate or clay); massing stays by role.
 	var slate := civic or StringName(visual_profile.get("roof_material", &"")) == &"slate"
 	_poly.set_meta(&"city_roof_slate", slate)
-	_poly.color = Color(0.91, 0.98, 1.02) if slate else Color(0.96, 0.95, 0.93)
+	_poly.color = SLATE_TINT if slate else CLAY_TINT
+	# The drawn wall is facade_depth + the 28 px kit lift tall: its eave hangs
+	# a deeper soft shade on taller walls (9 px at 112, about 15 at 208).
+	_eave_shadow_px = clampf(EAVE_SHADOW_PX + (facade_depth + ChunkBlockVisualCatalog.KIT_HEIGHT - 112.0) * 0.06, EAVE_SHADOW_PX, 18.0)
 	# Remove the old broken-roof stamps only on this selected block.
 	for child in _poly.get_children():
 		if child is Sprite2D:
@@ -447,8 +460,8 @@ func apply_city_material(texture: Texture2D, civic: bool, facade_depth: float, c
 		(_poly.material as ShaderMaterial).set_shader_parameter("bounds", Vector4(box.position.x, box.position.y, box.end.x, box.end.y))
 	if _poly.material is ShaderMaterial:
 		var base_material := _poly.material as ShaderMaterial
-		base_material.set_shader_parameter("material_contrast", 0.35)
-		base_material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if slate else Vector3(0.52, 0.29, 0.20))
+		base_material.set_shader_parameter("material_contrast", CITY_MATERIAL_CONTRAST)
+		base_material.set_shader_parameter("material_mid", SLATE_MID if slate else CLAY_MID)
 	if StringName(visual_profile.get("profile_id",&"")) == &"checkpoint_guard_loggia":
 		var forms := preload("res://scenes/world/buildings/CheckpointOfficeForms.gd")
 		var form_plan := forms.plan(footprint_outline_px,_poly.polygon,_doors,_cell_px,int(visual_profile.get("visual_seed",0)))
