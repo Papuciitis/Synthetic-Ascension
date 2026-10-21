@@ -31,6 +31,12 @@ static func _stone_eligible(context: Dictionary) -> bool:
 	return int(context.get("segment",0)) >= 2 and not bool(context.get("civic",true)) and StringName(context.get("roof_material",&"")) == &"clay"
 
 
+## _eligible for the context context_for(kit, ...) would build, without
+## building it.
+static func eligible_kit(kit: Node2D) -> bool:
+	return Global.attempt_segment == 2 and StringName(kit.get_meta(&"building_usage",&"")) == &"row_house" and not bool(kit.get("civic"))
+
+
 static func _furniture_eligible(context: Dictionary) -> bool:
 	# Placement can consume more seeded draws after each item is generated.
 	# Only an actual known single-item ambient owner permits new blockers.
@@ -179,8 +185,17 @@ static func context_for(kit: Node2D, data: ChunkBuildData, wall_cells: Dictionar
 	var floor_cells: Dictionary = {}
 	var chunk := kit.get_parent() as Node2D
 	var manager := chunk.get_parent() as ChunkManager
-	for y in data.cells_per_side:
-		for x in data.cells_per_side:
+	# Only cells whose centre can lie inside the outline: its bounding box.
+	var low := Vector2i.ZERO
+	var high := Vector2i.ONE*data.cells_per_side
+	if outline.size() > 0:
+		var box := Rect2(outline[0],Vector2.ZERO)
+		for point: Vector2 in outline:
+			box = box.expand(point)
+		low = Vector2i((box.position/CELL).floor()).clamp(Vector2i.ZERO,high)
+		high = Vector2i((box.end/CELL).ceil()).clamp(Vector2i.ZERO,high)
+	for y in range(low.y,high.y):
+		for x in range(low.x,high.x):
 			var cell := Vector2i(x,y)
 			if data.kind_at(cell) < 0 and (manager == null or not manager.is_cell_blocked(data.coord*data.cells_per_side+cell)) and Geometry2D.is_point_in_polygon((Vector2(cell)+Vector2.ONE*0.5)*CELL,outline):
 				floor_cells[cell] = true
