@@ -62,8 +62,11 @@ func _run() -> void:
 		var coords: Array = (plan.get("role_by_chunk", {}) as Dictionary).keys()
 		var start_chunk := _chunks._world_to_chunk(start)
 		coords.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return (a - start_chunk).length_squared() < (b - start_chunk).length_squared())
-		for coord: Vector2i in coords.slice(0, 16):
-			_player.global_position = _free_spawn_position((Vector2(coord) + Vector2.ONE * 0.5) * _chunks.chunk_size_px)
+		for coord: Vector2i in coords.slice(0, 40):
+			var warp := _walkable_near((Vector2(coord) + Vector2.ONE * 0.5) * _chunks.chunk_size_px)
+			if warp == Vector2.INF:
+				continue
+			_player.global_position = warp
 			await _settle()
 			_dismiss_dossiers()
 			var found := _nearest_passage(_player.global_position)
@@ -162,6 +165,18 @@ func _physics_process(_delta: float) -> void:
 	_set_axis(&"aim_left", &"aim_right", aim.x)
 	_set_axis(&"aim_up", &"aim_down", aim.y)
 	Input.action_press(&"attack")
+
+
+## A walkable cell centre within 12 cells of `desired`, or INF (no failure:
+## the passage search simply tries the next chunk).
+func _walkable_near(desired: Vector2) -> Vector2:
+	var cell := _chunks.world_to_cell(desired)
+	for radius in range(13):
+		for y in range(-radius, radius + 1):
+			for x in range(-radius, radius + 1):
+				if maxi(absi(x), absi(y)) == radius and _chunks.is_cell_walkable(cell + Vector2i(x, y)):
+					return _chunks.cell_to_world_center(cell + Vector2i(x, y))
+	return Vector2.INF
 
 
 func _nearest_passage(origin: Vector2) -> Dictionary:
