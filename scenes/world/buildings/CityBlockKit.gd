@@ -136,15 +136,18 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 
 ## Exact chunk-local use/footprint context for the shared ground's presentation.
 ## Noncivic is not sufficient: workshops and passages must retain rough ground.
+## Every procedural segment tends its homes (stable variant three stays
+## untended). The planted contact is any child declaring a garden contact,
+## whichever garden art draws it, else the kept fruit tree's root.
 func ground_care_spec() -> Dictionary:
 	var seed_value: int = int(_district_profile.get("visual_seed",0))
-	if Global.attempt_segment != 2 or civic or StringName(_district_profile.get("building_usage",&"")) != &"row_house" or absi(seed_value)%4 == 3:
+	if Global.attempt_segment < 2 or civic or StringName(_district_profile.get("building_usage",&"")) != &"row_house" or absi(seed_value)%4 == 3:
 		return {}
 	if _roof == null or not is_instance_valid(_roof) or _roof.footprint_outline_px.size() < 3 or _doors.is_empty():
 		return {}
 	var spec := {"footprint_px":_roof.footprint_outline_px.duplicate(),"doors":_doors.duplicate(true),"visual_seed":seed_value}
 	for child: Node in get_children():
-		if child.name == &"DomesticHerbBed" and child.has_meta(&"city_garden_contact"):
+		if child.has_meta(&"city_garden_contact"):
 			spec["garden_contact_px"] = child.get_meta(&"city_garden_contact")
 			break
 		if child.name == &"CityTemperateTree" and child.has_meta(&"city_ground_contact"):

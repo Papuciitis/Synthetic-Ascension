@@ -36,6 +36,9 @@ func _run() -> void:
 	_test_slots()
 	_test_domestic_care_data_contract()
 	_test_district_policy_presentation()
+	_test_district_care_eligibility()
+	_test_ground_occlusion()
+	_test_planting()
 	_test_base_margin_rects()
 	await _test_chunk_manager_path()
 	print("WorldGroundSplatTest: %d passed, %d failed" % [_passes, _failures])
@@ -202,6 +205,90 @@ func _test_district_policy_presentation() -> void:
 	splat.set_ground_family(&"")
 	roles = splat.get_shader_material().get_shader_parameter("slot_role")
 	_check(not splat.ground_policy_enabled() and roles.count(0.0) == roles.size(), "no district family presents every slot raw")
+	splat.queue_free()
+
+
+func _test_district_care_eligibility() -> void:
+	var splat := _splat()
+	splat.set_ground_family(&"service_courtyards")
+	splat.set_chunk_base(Vector2i.ZERO, 6)
+	splat.paint_rect(Rect2i(0, 0, 32, 2), 7, 0.9)
+	splat.paint_rect(Rect2i(0, 2, 16, 1), 2, 0.9)
+	splat.paint_rect(Rect2i(8, 3, 5, 2), 4, 0.92)
+	splat.paint_rect(Rect2i(20, 20, 4, 4), 0, 0.95)
+	splat.paint_rect(Rect2i(26, 20, 4, 4), 1, 0.95)
+	var eligible := splat.care_eligibility(Vector2i.ZERO)
+	var exact := true
+	for y in 32:
+		for x in 32:
+			var material := splat.material_at(Vector2i(x, y))
+			var expected := GroundSplatRenderer.care_eligible_index(material)
+			if expected and material == 6:
+				# The district surface keeps a paved margin beside streets.
+				for dy in range(-1, 2):
+					for dx in range(-1, 2):
+						if splat.material_at(Vector2i(x + dx, y + dy)) in [3, 4, 7, 8, 9] and x + dx >= 0 and y + dy >= 0 and x + dx < 32 and y + dy < 32:
+							expected = false
+			if eligible[y * 32 + x] != (1 if expected else 0):
+				exact = false
+	_check(exact, "the block-read care eligibility matches per-cell material probes and the street margin exactly")
+	_check(eligible[10 * 32 + 10] == 1 and eligible[21 * 32 + 21] == 1 and eligible[21 * 32 + 27] == 1, "the district surface, lawn and bare earth can be tended")
+	_check(eligible[0] == 0 and eligible[2 * 32 + 3] == 0 and eligible[3 * 32 + 9] == 0, "roads, footways and door aprons never become lawn")
+	_check(eligible[2 * 32 + 20] == 0 and eligible[5 * 32 + 9] == 0 and eligible[6 * 32 + 20] == 1, "a garden on the district surface keeps a paved margin beside the carriageway and the apron")
+	_check(eligible[3 * 32 + 4] == 1, "a garden may still meet a footway or a house floor")
+	var spec := {"footprint_px": PackedVector2Array([Vector2(640, 640), Vector2(1152, 640), Vector2(1152, 1024), Vector2(640, 1024)]), "doors": [{"pos": Vector2i(14, 15), "dir": Vector2i.DOWN, "width": 2}], "visual_seed": 944996572, "garden_contact_px": Vector2(660, 1040)}
+	var before_a := _bytes(splat, "_cover_a")
+	splat.paint_domestic_care(Vector2i.ZERO, spec, eligible)
+	var cared := 0
+	var off_ground := 0
+	for y in 32:
+		for x in 32:
+			if splat.care_at(Vector2i(x, y)) > 0.0:
+				cared += 1
+				if eligible[y * 32 + x] == 0: off_ground += 1
+	_check(cared >= 8 and off_ground == 0, "a home on the district surface gets a tended pocket on eligible ground only (%d cells)" % cared)
+	_check(before_a == _bytes(splat, "_cover_a"), "district care leaves material ownership untouched")
+	splat.queue_free()
+
+
+func _test_ground_occlusion() -> void:
+	var splat := _splat()
+	splat.set_chunk_base(Vector2i.ZERO, 6)
+	var data := ChunkBuildData.new(Vector2i.ZERO, 32)
+	for x in range(10, 16):
+		data.add_blocker(Vector2i(x, 10), WorldBlockerGeometry.Kind.WALL)
+	data.add_blocker(Vector2i(25, 25), WorldBlockerGeometry.Kind.HALF_COVER)
+	var before := _bytes(splat, "_light")
+	var a := _bytes(splat, "_cover_a")
+	splat.paint_occlusion(Vector2i.ZERO, data)
+	var after := _bytes(splat, "_light")
+	var alpha_only := true
+	for index in before.size():
+		if index % 4 != 3 and before[index] != after[index]: alpha_only = false
+	_check(alpha_only and a == _bytes(splat, "_cover_a"), "occlusion writes only light-map alpha")
+	_check(splat.openness_at(Vector2i(2, 2)) == 1.0 and splat.openness_at(Vector2i(30, 2)) == 1.0, "open ground far from any blocker stays fully lit")
+	_check(splat.openness_at(Vector2i(12, 11)) < 0.9 and splat.openness_at(Vector2i(12, 11)) < splat.openness_at(Vector2i(12, 9)), "a wall shades the ground at its feet, more on its shadow (south-west) side")
+	var prop := splat.openness_at(Vector2i(24, 26))
+	_check(prop < 1.0 and prop > splat.openness_at(Vector2i(12, 11)), "half cover casts a lighter contact shade than a wall (%.3f)" % prop)
+	splat.paint_occlusion(Vector2i.ZERO, data)
+	_check(after == _bytes(splat, "_light"), "repainting occlusion reproduces the exact bytes")
+	splat.set_chunk_base(Vector2i.ZERO, 6)
+	_check(splat.openness_at(Vector2i(12, 11)) == 1.0, "replacing the chunk base clears its old occlusion")
+	splat.queue_free()
+
+
+func _test_planting() -> void:
+	var splat := _splat()
+	splat.set_chunk_base(Vector2i.ZERO, 7)
+	splat.paint_rect(Rect2i(10, 10, 4, 3), 6, 0.95)
+	var a := _bytes(splat, "_cover_a")
+	splat.paint_planting(Vector2i.ZERO, Rect2i(9, 9, 6, 5))
+	_check(splat.care_at(Vector2i(11, 11)) == 1.0 and splat.care_at(Vector2i(10, 12)) == 1.0, "a recorded plaza island becomes a fully tended bed")
+	_check(splat.care_at(Vector2i(9, 9)) == 0.0 and splat.care_at(Vector2i(14, 13)) == 0.0, "the bed never spills onto the surrounding carriageway")
+	_check(a == _bytes(splat, "_cover_a"), "planting leaves material ownership untouched")
+	var light := _bytes(splat, "_light")
+	splat.paint_planting(Vector2i.ZERO, Rect2i(9, 9, 6, 5))
+	_check(light == _bytes(splat, "_light"), "replanting is idempotent")
 	splat.queue_free()
 
 

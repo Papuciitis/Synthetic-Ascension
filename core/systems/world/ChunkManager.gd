@@ -59,6 +59,7 @@ var district_common_base_preview: bool = false
 
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const _GROUND_POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
+const _CITY_GROUND_CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
 const _SITE_MGR: Script = preload("res://core/systems/world/proc/SiteManager.gd")
 const _GEN_IMPL: Script = preload("res://core/systems/world/proc/ChunkGenImpl.gd")
 const _TILE_RENDERER: Script = preload("res://core/systems/world/ChunkTileRenderer.gd")
@@ -1281,15 +1282,39 @@ func _activate_floor_stamps(data: ChunkBuildData, chunk: Node2D) -> void:
 		)
 
 
+## The ground presentation pass after a chunk's floors, in every procedural
+## district: broad occlusion from the chunk's walls and props, then household
+## care pockets beside homes. Presentation only (light-map alpha and blue), no
+## RNG, idempotent, so a streamed rebuild repaints identical bytes.
 func _activate_ground_care(coord: Vector2i, chunk: Node2D) -> void:
-	if not generation_enabled or not ground_enabled or not ground_splat_enabled or Global.attempt_segment != 2:
+	if not generation_enabled or not ground_enabled or not ground_splat_enabled:
 		return
+	var splat := _ensure_ground_splat()
+	if not splat.ground_policy_enabled():
+		return
+	var data := get_chunk_build_data(coord)
+	if data != null:
+		splat.paint_occlusion(coord, data)
+	for rect: Rect2i in chunk.get_meta(&"_ground_planting_rects", []):
+		splat.paint_planting(coord, rect)
+	var specs: Array[Dictionary] = []
+	var reach := Rect2i()
 	for kit: Node in chunk.get_children():
 		if not kit.is_in_group(&"city_block_building") or not kit.has_method("ground_care_spec"):
 			continue
 		var spec: Dictionary = kit.call("ground_care_spec")
-		if not spec.is_empty():
-			_ensure_ground_splat().paint_domestic_care(coord,spec)
+		if spec.is_empty():
+			continue
+		var window: Rect2i = _CITY_GROUND_CARE.window_of(spec, cell_size_px, _cells_per_chunk())
+		reach = window if specs.is_empty() else reach.merge(window)
+		specs.append(spec)
+	if specs.is_empty():
+		return
+	# One eligibility read for every home of the chunk, limited to where their
+	# gardens can reach.
+	var eligible := splat.care_eligibility(coord, reach)
+	for spec: Dictionary in specs:
+		splat.paint_domestic_care(coord, spec, eligible)
 
 
 func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, texture_index: int, alpha: float, z: int) -> void:

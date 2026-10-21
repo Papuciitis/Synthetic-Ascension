@@ -32,6 +32,10 @@ const NOISE_PX := 128
 const STAIN_ALPHA := 0.5
 ## light_map R stores brightness / 2 so authored stamps may run above 1.
 const BRIGHTNESS_SCALE := 0.5
+## Ground occlusion (light_map A): blocker weights accumulated over a radius of
+## two cells; this much accumulated weight reads as fully occluded.
+const OCCLUSION_FULL := 2.4
+const OCCLUSION_RADIUS := 2
 
 var cell_px := 64
 var cells_per_chunk := 32
@@ -39,7 +43,8 @@ var cells_per_chunk := 32
 ## One-hot material coverage: slots 0-3 in _cover_a, 4-7 in _cover_b.
 var _cover_a: Image
 var _cover_b: Image
-## R = brightness / 2, G = stain amount, B = local household care.
+## R = brightness / 2, G = stain amount, B = local household care,
+## A = ground openness (1 open sky; walls and props nearby lower it).
 var _light: Image
 var _cover_a_texture: ImageTexture
 var _cover_b_texture: ImageTexture
@@ -239,23 +244,119 @@ func paint_chunk_stamps(data: ChunkBuildData) -> void:
 		paint_rect(rect, packed[offset + 4], data.floor_alpha[index])
 
 
-## Called after the chunk's floors. This changes only presentation on existing
-## vegetated cells; lawn never requests a semantic material/coverage slot.
-func paint_domestic_care(coord: Vector2i, spec: Dictionary) -> void:
-	var origin := coord*cells_per_chunk
+## Ground a household may tend: vegetation, bare earth and the built
+## district's open hard surface. Roads, lanes, aprons, footways and floors
+## never become lawn.
+static func care_eligible_index(index: int) -> bool:
+	return _WORLD_ART.is_overgrowth_ground(index) or index == 1 or index == 5 or index == _POLICY.DISTRICT_GROUND_INDEX
+
+
+## One byte per chunk cell: 1 where care may draw (see care_eligible_index).
+## Reads the chunk's coverage block once instead of probing every cell. On the
+## district's hard surface a garden keeps a paved margin from the carriageway,
+## lanes and door aprons (a cell touching one in its 8-neighbourhood is not
+## tended), so lawns never run up to a kerb or a threshold; they may still
+## touch a house floor or a footway. `region` (chunk-local cells) limits the
+## work to where gardens can reach; cells outside it read as not eligible.
+func care_eligibility(coord: Vector2i, region: Rect2i = Rect2i(0,0,1 << 20,1 << 20)) -> PackedByteArray:
+	var n := cells_per_chunk
 	var eligible := PackedByteArray()
-	eligible.resize(cells_per_chunk*cells_per_chunk)
-	for y in cells_per_chunk:
-		for x in cells_per_chunk:
-			if _WORLD_ART.is_overgrowth_ground(material_at(origin+Vector2i(x,y))):
-				eligible[y*cells_per_chunk+x] = 1
-	var weights := _CITY_GROUND_CARE.plan(coord,spec,cell_px,cells_per_chunk,eligible)
-	for y in cells_per_chunk:
-		for x in cells_per_chunk:
-			var amount := float(weights[y*cells_per_chunk+x])/255.0
-			var cell := origin+Vector2i(x,y)
-			if amount <= 0.0 or not _WORLD_ART.is_overgrowth_ground(material_at(cell)):
+	eligible.resize(n*n)
+	region = region.intersection(Rect2i(0,0,n,n))
+	if not region.has_area():
+		return eligible
+	var slot_kind := PackedByteArray()
+	slot_kind.resize(SLOTS)
+	for slot in SLOTS:
+		var index := _slot_material[slot]
+		if index < 0:
+			continue
+		if index == _POLICY.DISTRICT_GROUND_INDEX:
+			slot_kind[slot] = 2
+		elif care_eligible_index(index):
+			slot_kind[slot] = 1
+		elif _POLICY.role_for_index(index) in [_POLICY.ROLE_ROAD, _POLICY.ROLE_LANE]:
+			slot_kind[slot] = 3
+	var origin := Vector2i(posmod(coord.x*n,MAP_SIZE),posmod(coord.y*n,MAP_SIZE))
+	if origin.x+n > MAP_SIZE or origin.y+n > MAP_SIZE:
+		for y in range(region.position.y,region.end.y):
+			for x in range(region.position.x,region.end.x):
+				if care_eligible_index(material_at(coord*n+Vector2i(x,y))): eligible[y*n+x] = 1
+		return eligible
+	var block := Rect2i(origin,Vector2i(n,n))
+	# Coverage is one-hot: each cell's RGBA word is 0 or exactly one channel at
+	# 255, so comparing whole words replaces the per-channel scan.
+	var a := _cover_a.get_region(block).get_data().to_int32_array()
+	var b := _cover_b.get_region(block).get_data().to_int32_array()
+	var words := PackedInt32Array()
+	for channel in 4:
+		var bytes := PackedByteArray([0,0,0,0])
+		bytes[channel] = 255
+		words.append(bytes.to_int32_array()[0])
+	var w0 := words[0]
+	var w1 := words[1]
+	var w2 := words[2]
+	var ka := [int(slot_kind[0]),int(slot_kind[1]),int(slot_kind[2]),int(slot_kind[3])]
+	var kb := [int(slot_kind[4]),int(slot_kind[5]),int(slot_kind[6]),int(slot_kind[7])]
+	# Street cells as an LA8 mask (the region plus a one-cell rim, so the
+	# margin sees streets just outside it); its dilation is eight native blends.
+	var street := PackedByteArray()
+	street.resize(n*n*2)
+	var has_street := false
+	var district := PackedInt32Array()
+	var scan := region.grow(1).intersection(Rect2i(0,0,n,n))
+	for y in range(scan.position.y,scan.end.y):
+		var inside_y := y >= region.position.y and y < region.end.y
+		for x in range(scan.position.x,scan.end.x):
+			var index := y*n+x
+			var word := a[index]
+			var kind := 0
+			if word != 0:
+				kind = ka[0] if word == w0 else (ka[1] if word == w1 else (ka[2] if word == w2 else ka[3]))
+			else:
+				word = b[index]
+				if word != 0:
+					kind = kb[0] if word == w0 else (kb[1] if word == w1 else (kb[2] if word == w2 else kb[3]))
+			if kind == 3:
+				street[index*2] = 255
+				street[index*2+1] = 255
+				has_street = true
+			elif inside_y and x >= region.position.x and x < region.end.x:
+				if kind == 1:
+					eligible[index] = 1
+				elif kind == 2:
+					eligible[index] = 1
+					district.append(index)
+	if has_street and not district.is_empty():
+		var mask := Image.create_from_data(n,n,false,Image.FORMAT_LA8,street)
+		var near := mask.duplicate() as Image
+		var whole := Rect2i(Vector2i.ZERO,Vector2i(n,n))
+		for offset: Vector2i in [Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1),Vector2i(-1,0),Vector2i(1,0),Vector2i(-1,1),Vector2i(0,1),Vector2i(1,1)]:
+			near.blend_rect(mask,whole,offset)
+		var near_bytes := near.get_data()
+		for cell in district:
+			if near_bytes[cell*2+1] > 127:
+				eligible[cell] = 0
+	return eligible
+
+
+## Called after the chunk's floors. This changes only presentation (light-map
+## blue) on cells a household may tend; lawn never requests a semantic
+## material/coverage slot. `eligible` may be shared by every home of a chunk.
+func paint_domestic_care(coord: Vector2i, spec: Dictionary, eligible: PackedByteArray = PackedByteArray()) -> void:
+	var n := cells_per_chunk
+	if eligible.size() != n*n:
+		eligible = care_eligibility(coord)
+	var origin := coord*n
+	var weights := _CITY_GROUND_CARE.plan(coord,spec,cell_px,n,eligible)
+	var window := _CITY_GROUND_CARE.window_of(spec,cell_px,n)
+	for y in range(window.position.y,window.end.y):
+		for x in range(window.position.x,window.end.x):
+			var index := y*n+x
+			if weights[index] == 0 or eligible[index] == 0:
 				continue
+			var amount := float(weights[index])/255.0
+			var cell := origin+Vector2i(x,y)
 			var at := Vector2i(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
 			var current := _light.get_pixelv(at)
 			if amount <= current.b:
@@ -263,6 +364,114 @@ func paint_domestic_care(coord: Vector2i, spec: Dictionary) -> void:
 			current.b = amount
 			_light.set_pixelv(at,current)
 			_dirty = true
+
+
+## A planted bed laid by the district itself (a plaza island): full care over
+## the given chunk-local cells where the ground may be tended. Presentation
+## only, idempotent (max-composite), cleared with the chunk base.
+func paint_planting(coord: Vector2i, rect: Rect2i) -> void:
+	var n := cells_per_chunk
+	var local := rect.intersection(Rect2i(Vector2i.ZERO, Vector2i(n, n)))
+	for y in range(local.position.y, local.end.y):
+		for x in range(local.position.x, local.end.x):
+			var cell := coord*n+Vector2i(x,y)
+			if not care_eligible_index(material_at(cell)):
+				continue
+			var at := Vector2i(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
+			var current := _light.get_pixelv(at)
+			if current.b >= 1.0:
+				continue
+			current.b = 1.0
+			_light.set_pixelv(at,current)
+			_dirty = true
+
+
+## Broad ground occlusion in light-map alpha: every wall, window, solid and
+## half-cover cell of the chunk shades the open ground within two cells, so
+## alleys, yards and wall feet darken while plazas stay open. Deterministic,
+## chunk-local (a reload repaints the same bytes) and presentation only.
+func paint_occlusion(coord: Vector2i, data: ChunkBuildData) -> void:
+	var n := cells_per_chunk
+	if data == null or data.cells_per_side != n:
+		return
+	var origin := Vector2i(posmod(coord.x*n,MAP_SIZE),posmod(coord.y*n,MAP_SIZE))
+	if origin.x+n > MAP_SIZE or origin.y+n > MAP_SIZE:
+		return
+	var occupied := data.occupied_indices()
+	var block := Rect2i(origin,Vector2i(n,n))
+	var region := _light.get_region(block)
+	var bytes := region.get_data()
+	# Accumulate into a grid padded by the kernel radius, so the hot loop needs
+	# no bounds checks; only the chunk's own cells are written back.
+	var pad := OCCLUSION_RADIUS
+	var stride := n+pad*2
+	var shade := PackedFloat32Array()
+	shade.resize(stride*stride)
+	_ensure_occlusion_kernel(stride)
+	var offsets := _occlusion_offsets
+	var weights := _occlusion_weights
+	var taps := offsets.size()
+	var kinds := data.blocker_kind_code
+	for index in occupied:
+		var code := int(kinds[index])
+		if code == 0:
+			continue
+		# Kinds + 1: SOLID_CELL, WALL, WINDOW carry full weight; fences and
+		# half cover (crates, planters) cast a lighter contact shade.
+		var weight := 1.0 if code <= 3 else 0.4
+		var base := (floori(float(index)/float(n))+pad)*stride+(index % n)+pad
+		for k in taps:
+			shade[base+offsets[k]] += weight*weights[k]
+	var changed := false
+	var scale := 255.0/OCCLUSION_FULL
+	var index := 0
+	for y in n:
+		var padded := (y+pad)*stride+pad
+		for x in n:
+			var value := 255-mini(255,roundi(shade[padded+x]*scale))
+			var at := index*4+3
+			if bytes[at] != value:
+				bytes[at] = value
+				changed = true
+			index += 1
+	if not changed:
+		return
+	region.set_data(n,n,false,Image.FORMAT_RGBA8,bytes)
+	_light.blit_rect(region,Rect2i(Vector2i.ZERO,Vector2i(n,n)),origin)
+	_dirty = true
+
+
+## Exact cell probe of the occlusion term (1 = open), for tests and evidence.
+func openness_at(cell: Vector2i) -> float:
+	return _light.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).a
+
+
+static var _occlusion_stride := -1
+static var _occlusion_offsets := PackedInt32Array()
+static var _occlusion_weights := PackedFloat32Array()
+
+
+## The occlusion kernel as flat offsets into a padded grid of `stride` and
+## their weights (built once per stride).
+static func _ensure_occlusion_kernel(stride: int) -> void:
+	if stride == _occlusion_stride:
+		return
+	_occlusion_stride = stride
+	_occlusion_offsets = PackedInt32Array()
+	_occlusion_weights = PackedFloat32Array()
+	for dy in range(-OCCLUSION_RADIUS,OCCLUSION_RADIUS+1):
+		for dx in range(-OCCLUSION_RADIUS,OCCLUSION_RADIUS+1):
+			if dx == 0 and dy == 0:
+				continue
+			var offset := Vector2(dx,dy)
+			var distance := offset.length()
+			if distance > float(OCCLUSION_RADIUS)+0.5:
+				continue
+			# Ground on a blocker's shadow side (south-west, the projected sun
+			# direction) is shaded more than ground on its lit side.
+			var shadow_side := maxf(0.0, offset.normalized().dot(Vector2(-0.8214,0.5704)))
+			_occlusion_offsets.append(dy*stride+dx)
+			_occlusion_weights.append(clampf(1.0-(distance-0.6)/2.4,0.0,1.0)*(0.55+0.45*shadow_side))
 
 
 ## Paint a set of cell rects (global cells) with one base material, as part

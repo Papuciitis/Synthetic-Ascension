@@ -9,10 +9,7 @@ static func plan(coord: Vector2i, spec: Dictionary, cell_px: int, cells_per_chun
 	var footprint: PackedVector2Array = spec.get("footprint_px",PackedVector2Array())
 	if footprint.size() < 3 or cell_px <= 0:
 		return weights
-	var bounds := Rect2(footprint[0],Vector2.ZERO)
-	for point: Vector2 in footprint:
-		bounds = bounds.expand(point)
-	var anchor: Vector2 = spec.get("garden_contact_px",Vector2(bounds.position.x,bounds.end.y))
+	var anchor := anchor_of(spec)
 	var edge := _nearest_edge(footprint,anchor,float(cell_px))
 	if edge.is_empty():
 		return weights
@@ -30,8 +27,11 @@ static func plan(coord: Vector2i, spec: Dictionary, cell_px: int, cells_per_chun
 	var cells: Array[Vector2i] = []
 	var points := PackedVector2Array()
 	var variation := PackedFloat32Array()
-	for y in cells_per_chunk:
-		for x in cells_per_chunk:
+	# Only cells within six cells of the anchor can qualify; visit just that
+	# window (same row-major order, so ties and the result are unchanged).
+	var window := window_of(spec,cell_px,cells_per_chunk)
+	for y in range(window.position.y,window.end.y):
+		for x in range(window.position.x,window.end.x):
 			if has_ground and eligible[y*cells_per_chunk+x] == 0:
 				continue
 			var point := (Vector2(x,y)+Vector2(0.5,0.5))*cell_px
@@ -63,14 +63,38 @@ static func plan(coord: Vector2i, spec: Dictionary, cell_px: int, cells_per_chun
 	return weights
 
 
+## The planted contact a pocket grows from: the declared garden contact, else
+## the footprint's south-west corner.
+static func anchor_of(spec: Dictionary) -> Vector2:
+	if spec.has("garden_contact_px"):
+		return spec.garden_contact_px
+	var footprint: PackedVector2Array = spec.get("footprint_px",PackedVector2Array())
+	if footprint.is_empty():
+		return Vector2.ZERO
+	var bounds := Rect2(footprint[0],Vector2.ZERO)
+	for point: Vector2 in footprint:
+		bounds = bounds.expand(point)
+	return Vector2(bounds.position.x,bounds.end.y)
+
+
+## Chunk-local cells a pocket can reach (within six cells of its anchor).
+static func window_of(spec: Dictionary, cell_px: int, cells_per_chunk: int) -> Rect2i:
+	var anchor := anchor_of(spec)
+	var first := Vector2i(clampi(floori(anchor.x/cell_px-6.5),0,cells_per_chunk),clampi(floori(anchor.y/cell_px-6.5),0,cells_per_chunk))
+	var last := Vector2i(clampi(ceili(anchor.x/cell_px+6.5),0,cells_per_chunk),clampi(ceili(anchor.y/cell_px+6.5),0,cells_per_chunk))
+	return Rect2i(first,(last-first).max(Vector2i.ZERO))
+
+
 static func _field(center: Vector2, normal: Vector2, tangent: Vector2, points: PackedVector2Array, variation: PackedFloat32Array, cell_px: int) -> PackedByteArray:
 	var field := PackedByteArray()
 	field.resize(points.size())
 	for index in points.size():
 		var relative := (points[index]-center)/cell_px
-		var along := relative.dot(tangent)/2.6
-		var outward := relative.dot(normal)/2.1
-		var radius := Vector2(along,outward).length()/variation[index]
+		var along := absf(relative.dot(tangent)/2.6)
+		var outward := absf(relative.dot(normal)/2.1)
+		# A squarish (superellipse) plot laid along the house wall reads as a
+		# tended garden; a round lens reads as a lawn patch dropped on paving.
+		var radius := sqrt(sqrt(along*along*along*along+outward*outward*outward*outward))/variation[index]
 		# Keep the existing irregular support while giving its legal center a
 		# useful short-grass area; the outer edge and all ground vetoes stay put.
 		field[index] = roundi((1.0-smoothstep(0.50,1.05,radius))*255.0)
