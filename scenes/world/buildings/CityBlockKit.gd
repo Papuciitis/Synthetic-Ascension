@@ -687,7 +687,9 @@ func _draw() -> void:
 				draw_rect(Rect2(lamp-Vector2(3,7),Vector2(6,13)),Color(0.83,0.69,0.41,_facade_alpha))
 	# Foundation-mounted pipe and pressure cabinet, kept inside blocked wall
 	# cells; service machinery therefore never implies an invisible blocker.
-	if _irregular: return
+	# Only where the painted frontage has no services of its own: the civic
+	# arcade's entrance slicing already carries its downpipe on the right wing.
+	if _irregular or not _draws_services(): return
 	var pipe_x := bounds.end.x - 25.0
 	for door: Dictionary in _doors:
 		if door.dir == Vector2i.RIGHT: pipe_x = bounds.position.x + 25.0
@@ -747,6 +749,22 @@ func _draw() -> void:
 	draw_rect(drain, Color("293a37"))
 	for x in range(5):
 		draw_line(drain.position + Vector2(4 + x * 6, 3), drain.position + Vector2(4 + x * 6, 15), Color("75817a"), 2)
+
+## Hand-drawn pipe, cabinet and drain: only for frontages whose painted art
+## has no services. Composed fronts carry their own fittings and the sliced
+## civic arcade entrance shows its downpipe; the closed civic bays do not.
+func _draws_services() -> bool:
+	if _is_guard() or _composed() or _irregular: return false
+	return not (civic and _south_front)
+
+## Kit-local x span the hand-drawn services occupy at the wall foot, so street
+## dressing can keep clear of them (Vector2.ZERO when none are drawn).
+func service_clear_span() -> Vector2:
+	if not _draws_services(): return Vector2.ZERO
+	var pipe_x := bounds.end.x - 25.0
+	for door: Dictionary in _doors:
+		if door.dir == Vector2i.RIGHT: pipe_x = bounds.position.x + 25.0
+	return Vector2(pipe_x - 34.0, pipe_x + 34.0)
 
 func _draw_closed_frontage() -> void:
 	# Reuse only the closed side bay, at its native aspect ratio. Repeating

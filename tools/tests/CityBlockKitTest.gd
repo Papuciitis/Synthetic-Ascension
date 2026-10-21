@@ -120,6 +120,8 @@ func _run() -> void:
 				strips += 1
 				_check(not Geometry2D.is_point_in_polygon(bounds.get_center(), child.polygon), "outdoor paving excludes interior floor")
 		_check(strips == 4, "frontage uses four bounded paving strips")
+		if bool(kit.get("civic")):
+			_check(not bool(kit.call("_draws_services")), "the sliced civic arcade keeps its painted downpipe; no drawn pipe or cabinet doubles it")
 	await get_tree().process_frame
 	var neighbouring_footprints: Array[Rect2i] = [Rect2i(13, 4, 7, 9)]
 	for kit: Node2D in kits:
