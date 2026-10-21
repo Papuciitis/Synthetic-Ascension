@@ -85,6 +85,7 @@ var parcels_building_margin_cells: int = 1
 var parcels_door_width: int = 2
 var parcels_apron_len: int = 2
 var parcels_window_chance: float = 0.22
+var street_continuity_enabled: bool = true
 var sites_enabled: bool = true
 var sites_only_on_default_chunks: bool = true
 var sites_anchor_spacing: int = 2
@@ -166,6 +167,7 @@ func sync_from_chunk_manager() -> void:
 	parcels_door_width = cm.parcels_door_width
 	parcels_apron_len = cm.parcels_apron_len
 	parcels_window_chance = cm.parcels_window_chance
+	street_continuity_enabled = cm.street_continuity_enabled
 	sites_enabled = cm.sites_enabled
 	sites_only_on_default_chunks = cm.sites_only_on_default_chunks
 	sites_anchor_spacing = cm.sites_anchor_spacing

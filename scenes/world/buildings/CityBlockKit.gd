@@ -540,7 +540,13 @@ func _add_facade_faces(ground_y: float) -> void:
 	add_child(group)
 	if _composed():
 		group.name = "ComposedFacade"
-		COMPOSER.compose_run(group,self,Vector2(bounds.position.x+16.0,bounds.end.x-16.0),_front,_facade_height,ground_y,_doors,_cell_px)
+		# Attached terrace (street continuity): across an east/west party
+		# wall the run continues to the neighbour's facade, so no slit of
+		# ground shows between two houses; its quoin marks the division.
+		var party := int(get_meta(&"party_edges",0))
+		var run_from := bounds.position.x+(-16.0 if (party & 8) != 0 else 16.0)
+		var run_to := bounds.end.x-(-16.0 if (party & 2) != 0 else 16.0)
+		COMPOSER.compose_run(group,self,Vector2(run_from,run_to),_front,_facade_height,ground_y,_doors,_cell_px)
 		return
 	var tex_size := _facade.get_size()
 	if _south_front:

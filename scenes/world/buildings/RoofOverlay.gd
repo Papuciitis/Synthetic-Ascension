@@ -53,6 +53,9 @@ var _cell_px: int = 64
 ## The footprint outline this roof was configured with (before insets and
 ## door notches), in chunk-local pixels. Tests read the building's shape here.
 var footprint_outline_px := PackedVector2Array()
+## East (2) / west (8) party walls shared with a neighbour already standing
+## (street continuity infill). Set before configure().
+var party_edges: int = 0
 var _tween: Tween
 
 
@@ -90,7 +93,11 @@ func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, 
 	_poly.z_index = -92
 	footprint_outline_px = PackedVector2Array([tl, tl + Vector2(sz.x, 0.0), tl + sz, tl + Vector2(0.0, sz.y)])
 	if textured_roofs():
-		var inner := Rect2(tl, sz).grow(-ROOF_INSET_PX)
+		# A party wall is not an eave: the roof runs over it to meet the
+		# neighbour's roof edge, so an attached row reads as one terrace.
+		var west := -ROOF_INSET_PX if (party_edges & 8) != 0 else ROOF_INSET_PX
+		var east := -ROOF_INSET_PX if (party_edges & 2) != 0 else ROOF_INSET_PX
+		var inner := Rect2(tl, sz).grow_individual(-west, -ROOF_INSET_PX, -east, -ROOF_INSET_PX)
 		_poly.polygon = PackedVector2Array([
 			inner.position, Vector2(inner.end.x, inner.position.y), inner.end, Vector2(inner.position.x, inner.end.y),
 		])

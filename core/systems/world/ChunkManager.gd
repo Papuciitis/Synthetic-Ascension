@@ -130,6 +130,11 @@ const _BOSS_ARENA_SPACE := preload("res://core/systems/world/proc/BossArenaSpace
 @export_range(1, 4, 1) var parcels_door_width: int = 2
 @export_range(1, 4, 1) var parcels_apron_len: int = 2
 @export_range(0.0, 1.0, 0.01) var parcels_window_chance: float = 0.22
+## Street continuity pass (2026-10-21): attached infill rows in frontage
+## bands, rescued shallow bands, through-street seams, street-facing
+## courtyard blocks and framed landmark squares. A separately salted post-pass:
+## original lots, building IDs, rewards and parcel RNG are identical either way.
+@export var street_continuity_enabled: bool = true
 
 
 @export_group("Sites (POI Overlay)")

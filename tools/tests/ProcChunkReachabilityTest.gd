@@ -67,9 +67,11 @@ func _run() -> void:
 		var seed_value := 251337 + seed_index * 48271
 		var coord := Vector2i(seed_index % 3 - 1, seed_index % 5 - 2)
 		for mask in range(1, 16):
-			for role in [&"main_route", &"checkpoint", &"secondary_alley_cache", &"secondary_reward_building"]:
+			# main_street is the production main-route role (DistrictPlan); its
+			# frontage parcels and street-continuity infill are exercised too.
+			for role in [&"main_street", &"checkpoint", &"secondary_alley_cache", &"secondary_reward_building"]:
 				var tag := "seed=%d coord=%s mask=%d role=%s" % [seed_value, coord, mask, role]
-				var fixture := _fixture(seed_value, coord, mask, role, role == &"secondary_reward_building")
+				var fixture := _fixture(seed_value, coord, mask, role, role == &"secondary_reward_building" or role == &"main_street")
 				var manager: ChunkManager = fixture.manager
 				var chunk: Node2D = fixture.chunk
 				var data: ChunkBuildData = fixture.data
@@ -100,9 +102,10 @@ func _run() -> void:
 						# A carved district region's volume (exploration loot off)
 						# spans its whole region, whose outer ring is open paving;
 						# only floor inside that ring proves a usable street door.
-						# Parcel volumes already cover just the walled interior.
+						# Parcel volumes already cover just the walled interior,
+						# including street-continuity infill (loot off by design).
 						var inner := Rect2i(local, volume.size_cells)
-						if not volume.exploration_loot_enabled and not volume.has_meta(&"dungeon_roof_volume"):
+						if not volume.exploration_loot_enabled and not volume.has_meta(&"dungeon_roof_volume") and not volume.has_meta(&"city_street_infill"):
 							inner = inner.grow(-2)
 						for y in range(inner.position.y, inner.end.y):
 							for x in range(inner.position.x, inner.end.x):

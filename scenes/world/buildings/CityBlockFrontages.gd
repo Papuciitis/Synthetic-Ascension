@@ -56,7 +56,10 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 			for run: Vector2 in front_runs:
 				_domestic_wall(group,finish,run,box.end.y-16,float(kit.get("_facade_height")),box.end.y,plaster_material,plinth_material,doors,cell_px)
 		# A continuous shaded return beneath the eave, split around side doors.
+		# A party wall shared with an attached neighbour has no exposed return.
+		var party := int(kit.get_meta(&"party_edges",0))
 		for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT]:
+			if (dir.x < 0 and (party & 8) != 0) or (dir.x > 0 and (party & 2) != 0): continue
 			var x := box.position.x+16 if dir.x < 0 else box.end.x-16
 			var runs: Array[Vector2] = [Vector2(box.position.y+12, box.end.y-20)]
 			for door: Dictionary in doors:

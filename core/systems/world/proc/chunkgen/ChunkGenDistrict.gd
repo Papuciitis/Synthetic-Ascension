@@ -57,6 +57,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			"parcel_loot_rarity_max": 5,
 			"parcel_loot_pickup_delay": 0.15,
 			"urban_access_mask": urban_access_mask,
+			"street_continuity": gen.street_continuity_enabled,
+			"urban_fill_front_dirs": _road_facing_dirs(gen, coord) if gen.street_continuity_enabled else [],
 		}
 		gen._site_mgr.decorate_urban_fill(gen.cm, chunk, coord, fill_cfg)
 		steps["fill"] = Time.get_ticks_usec() - step_started_usec
@@ -108,8 +110,16 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var boss_court: Rect2i = _BOSS_ARENA_SPACE.clear_rect(role, cells)
 	if boss_court.has_area():
 		plaza_size = boss_court.size.x
+	# Street continuity: a landmark square is purely cosmetic (only the landmark
+	# sprite reads its role), so it becomes a smaller square framed by buildings
+	# instead of a lawn-sized court. Objective, gate and arena plazas never do.
+	var frame_square: bool = gen.street_continuity_enabled and role == &"landmark_plaza" and gen.parcels_enabled and gen._site_mgr != null
 	if role == &"landmark_plaza":
 		plaza_size = mini(cells - 4, plaza_size + 4)
+		if frame_square:
+			# 12-14 cells, centred on the chunk: every side keeps a ring deep
+			# enough for a 7-cell house, and the lanes still cross the square.
+			plaza_size = clampi(plaza_size - 10, 12, 14)
 	elif role == &"entry_court" or role == &"wardstone_court" or role == &"checkpoint":
 		plaza_size = mini(cells - 4, plaza_size + 2)
 
@@ -226,7 +236,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	if archetype == &"plaza" or archetype == &"arena" or archetype == &"gate" or semantic_plaza:
 		var pcx := (lane_cx if has_v else int(cells / 2.0))
 		var pcy := (lane_cy if has_h else int(cells / 2.0))
-		if boss_court.has_area():
+		if boss_court.has_area() or frame_square:
 			pcx = int(cells / 2.0)
 			pcy = int(cells / 2.0)
 
@@ -290,6 +300,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 
 	# --- streetfront parcels (shops/facilities hugging the lane) ---
 	var parcels_placed: bool = false
+	var square_framed: bool = false
 	var forced_reward_building: bool = role == &"optional_interior" or role == &"secondary_reward_building"
 	var parcel_roll_chance: float = 1.0 if forced_reward_building else gen.parcels_chunk_chance
 	if gen.parcels_enabled and gen._site_mgr != null and rng.randf() < parcel_roll_chance and not has_plaza:
@@ -344,12 +355,41 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				"local_encounter_enabled": role == &"secondary_reward_building",
 				"local_encounter_count": 5 + mini(3, int(float(Global.attempt_segment if Global != null else 2) / 3.0)),
 				"secondary_objective_id": (DistrictPlan.secondary_objective_id(gen.world_seed, coord, &"searchable_reward_building") if role == &"secondary_reward_building" else 0),
+				"street_continuity": gen.street_continuity_enabled,
+				"infill_reserved": _objective_anchor_boxes(role, cells),
 			}
 			var parcel_rects: Array[Rect2i] = gen._site_mgr.decorate_district_parcels(gen.cm, chunk, coord, lane_rect_h, lane_rect_v, keepout_rects, pcfg)
 			if parcel_rects.size() > 0:
 				parcels_placed = true
 				for r: Rect2i in parcel_rects:
 					keepout_rects.append(r)
+	elif frame_square and has_plaza:
+		var square_cfg := {
+			"district_family": gen.district_family,
+			"district_common_base_preview": gen.district_common_base_preview,
+			"city_block_style": preload("res://scenes/world/buildings/CityBlockKit.gd").enabled_for(role, Global.attempt_segment),
+			"city_shared_ground": true,
+			"parcel_door_width": gen.parcels_door_width,
+			"parcel_apron_len": gen.parcels_apron_len,
+			"facility_window_chance": gen.parcels_window_chance,
+			"facility_room_attempts": 28,
+			"indoor_floor_tex": 3,
+			"indoor_floor_alpha": 0.95,
+			"indoor_floor_z": -94,
+			"residential_floor_tex": 2,
+			"workshop_floor_tex": 4,
+			"facility_floor_corr_tex": 2,
+			"door_apron_tex": 4,
+			"door_apron_alpha": 0.92,
+			"door_apron_z": -93,
+		}
+		var framed: Array[Rect2i] = gen._site_mgr.decorate_square_frame(gen.cm, chunk, coord, plaza_rect, keepout_rects, square_cfg)
+		if not framed.is_empty():
+			# The frame replaces the broken ring walls and street-edge ruin lines.
+			parcels_placed = true
+			square_framed = true
+			for r: Rect2i in framed:
+				keepout_rects.append(r)
 
 	steps["parcels"] = Time.get_ticks_usec() - step_started_usec
 	step_started_usec = Time.get_ticks_usec()
@@ -367,7 +407,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				gen._decorate_plaza_floor(chunk, bounds, plaza_rect, rng_plaza_deco, archetype)
 		var rng_ring := RandomNumberGenerator.new()
 		rng_ring.seed = gen._mix_seed_int(base_seed, 9011)
-		if organic and not plaza_cells.is_empty():
+		if square_framed:
+			pass
+		elif organic and not plaza_cells.is_empty():
 			gen._add_plaza_ring_cells(wall_cells, plaza_cells, cells, rng_ring, archetype)
 		else:
 			gen._add_plaza_ring(wall_cells, plaza_rect, cells, rng_ring, archetype)
@@ -839,3 +881,28 @@ static func _lane_center_for_col(gen: ChunkGenImpl, col: int, cells: int) -> int
 	var rr := RandomNumberGenerator.new()
 	rr.seed = gen._mix_seed_int(gen.world_seed, col * 928371 + 7703)
 	return rr.randi_range(int(floor(float(cells) * 0.35)), int(ceil(float(cells) * 0.65)))
+
+
+## Courtyard rings whose neighbour carries road connectors (plan data only, so
+## streaming order cannot change it) open toward that street. North rings stay
+## inward: in the 3/4 view a north doorway shows no facade, so turning them
+## would only trade the court's entrances for blank walls.
+static func _road_facing_dirs(gen: ChunkGenImpl, coord: Vector2i) -> Array[Vector2i]:
+	var dirs: Array[Vector2i] = []
+	for dir: Vector2i in [Vector2i(0, 1), Vector2i(1, 0), Vector2i(-1, 0)]:
+		if gen.get_chunk_connectors(coord + dir) != 0:
+			dirs.append(dir)
+	return dirs
+
+
+## Chunk-centred objective anchor boxes the street infill keeps open.
+## SegmentProcBuilder drops the cursed vault +-2 cells around the centre of a
+## reward chunk without a walkability check; street-archetype reward chunks
+## (alley cache, searchable building, optional interior) get the 2-cell jitter
+## box plus a one-cell ring.
+static func _objective_anchor_boxes(role: StringName, cells: int) -> Array[Rect2i]:
+	var boxes: Array[Rect2i] = []
+	if role == &"secondary_alley_cache" or role == &"secondary_reward_building" or role == &"optional_interior":
+		var half := int(cells / 2.0)
+		boxes.append(Rect2i(Vector2i(half - 3, half - 3), Vector2i(7, 7)))
+	return boxes
