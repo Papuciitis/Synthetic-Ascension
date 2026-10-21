@@ -43,7 +43,7 @@ var _costs: Array[int] = []
 var _step_costs: Dictionary = {}
 var _passes := 0
 var _failures := 0
-var _stats := {"chunks": 0, "ring_cells": 0, "centrepieces": 0, "wall_fountains": 0, "skipped_centrepieces": 0, "beds": 0, "repaved_islands": 0, "bed_planters": 0, "lamps": 0, "benches": 0, "stalls": 0, "drains": 0, "notice_boards": 0, "accents": 0}
+var _stats := {"chunks": 0, "ring_cells": 0, "centrepieces": 0, "wall_fountains": 0, "skipped_centrepieces": 0, "beds": 0, "repaved_islands": 0, "bed_planters": 0, "lamps": 0, "benches": 0, "stalls": 0, "drains": 0, "notice_boards": 0, "accents": 0, "pots": 0}
 
 
 func _ready() -> void:
@@ -320,7 +320,7 @@ func _check_plaza(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, se
 	for lamp: Dictionary in plaza_plan.get("lamps", []):
 		_stats.lamps += 1
 		_check(not clear.has(lamp.cell), tag + " lamps flank the road mouth, never stand in it")
-	for group: String in ["lamps", "benches", "drains", "stalls", "accents"]:
+	for group: String in ["lamps", "benches", "drains", "stalls", "accents", "pots"]:
 		for item: Dictionary in plaza_plan.get(group, []):
 			_check(not anchor_box.has_area() or not anchor_box.grow(1).has_point(item.cell), tag + " %s keep off the objective anchor box" % group)
 	_stats.benches += (plaza_plan.get("benches", []) as Array).size()
@@ -333,6 +333,10 @@ func _check_plaza(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, se
 				_check(ring.has(at), tag + " a ring stall stands on ring cells (blocked support)")
 			else:
 				_check(plaza.has(at) and s.kind_at(at) < 0 and not clear.has(at) and not plaza.has(at + Vector2i.UP), tag + " an open-edge stall stands on the square's open north edge row, off the route")
+	for pots: Dictionary in plaza_plan.get("pots", []):
+		_stats.pots += 1
+		var at: Vector2i = pots.cell
+		_check((ring.has(at) if bool(pots.ring) else (plaza.has(at) and s.kind_at(at) < 0)) and not clear.has(at), tag + " pots stand beside the stalls on a planter or the open edge, off the route")
 	for accent: Dictionary in plaza_plan.get("accents", []):
 		_stats.accents += 1
 		_check(ring.has(accent.cell) and not bool(info.balustrade), tag + " cypress accents stand in planter ends (blocked support), never on parapets")

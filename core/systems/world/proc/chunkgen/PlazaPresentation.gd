@@ -247,10 +247,15 @@ static func plan_plaza(gen: ChunkGenImpl, chunk: Node2D, coord: Vector2i) -> Dic
 	if anchor.has_area():
 		ChunkShapeGen.add_rect(avoid, anchor.grow(1))
 	if market and (plan.stalls as Array).size() < MAX_STALLS:
-		var open_stalls := _plan_open_stalls(plaza, ring_set, data, clear, anchor, avoid, MAX_STALLS - (plan.stalls as Array).size(), base_seed)
-		for stall: Dictionary in open_stalls:
+		plan.stalls.append_array(_plan_open_stalls(plaza, ring_set, data, clear, anchor, avoid, MAX_STALLS - (plan.stalls as Array).size(), base_seed))
+	if market and not (plan.stalls as Array).is_empty():
+		plan["pots"] = _plan_pots(plan.stalls, plaza, ring_set, data, clear, edge_taken, avoid)
+		for pots: Dictionary in plan.pots:
+			edge_taken[pots.cell] = true
+			avoid[pots.cell] = true
+	for stall: Dictionary in plan.stalls:
+		if not bool(stall.ring):
 			ChunkShapeGen.add_rect(avoid, Rect2i(stall.cell, Vector2i(2, 1)).grow(1))
-		plan.stalls.append_array(open_stalls)
 	plan.lamps = _plan_lamps(plaza, ring_set, data, clear, centroid, avoid, edge_taken, boss, cells)
 	if not bool(info.balustrade):
 		plan.benches = _plan_benches(ring_set, plaza, data, clear, edge_taken, avoid, base_seed)
@@ -683,6 +688,36 @@ static func _plan_open_stalls(plaza: Dictionary, ring_set: Dictionary, data: Chu
 	for stall: Dictionary in stalls:
 		stall["ring"] = false
 	return stalls
+
+
+## One cluster of pots beside the first stall group's east end, on the same
+## row: on the next north-edge planter cell for a ring stall, on the open edge
+## row for an open one. Visual, or on blocked support.
+static func _plan_pots(stalls: Array, plaza: Dictionary, ring_set: Dictionary, data: ChunkBuildData, clear: Dictionary, edge_taken: Dictionary, avoid: Dictionary) -> Array:
+	var first: Dictionary = stalls[0]
+	var ring := bool(first.ring)
+	var row_start: Vector2i = first.cell
+	var row_end: Vector2i = first.cell
+	var taken: Dictionary = {}
+	for stall: Dictionary in stalls:
+		var cell: Vector2i = stall.cell
+		taken[cell] = true
+		taken[cell + Vector2i.RIGHT] = true
+		if cell.y == row_end.y and bool(stall.ring) == ring:
+			if cell.x > row_end.x: row_end = cell
+			if cell.x < row_start.x: row_start = cell
+	for at: Vector2i in [row_end + Vector2i(2, 0), row_start - Vector2i(1, 0)]:
+		if clear.has(at) or avoid.has(at) or taken.has(at):
+			continue
+		if ring:
+			if edge_taken.has(at) and not taken.has(at):
+				continue
+			if not _north_edge(at, ring_set, plaza, data):
+				continue
+		elif not plaza.has(at) or plaza.has(at + Vector2i.UP) or ring_set.has(at + Vector2i.UP) or (data != null and data.kind_at(at) >= 0):
+			continue
+		return [{"cell": at, "ring": ring}]
+	return []
 
 
 ## Up to `wanted` stalls: a seeded first stall, its neighbour two cells along

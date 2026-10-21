@@ -2,8 +2,9 @@ extends Node2D
 ## Plaza dressing drawn from a PlazaPresentation plan: edged planting beds on
 ## the plaza islands, the centrepiece (fountain, well or wall fountain), lamp
 ## pairs at road mouths, cypress accents in planter ends, benches along
-## planters or the square's open edge, market stalls on north-edge planters,
-## drain grates in the gutters and notice boards at civic entries.
+## planters or the square's open edge, market stalls (with a cluster of pots)
+## on north-edge planters or the open north edge, drain grates in the gutters
+## and notice boards at civic entries.
 ##
 ## Presentation only: this node owns no collision, encounters, rewards or
 ## random generator state; every position comes from the plan. The props all
@@ -72,6 +73,9 @@ func compose(plan: Dictionary, cell_px: int) -> void:
 		# the open edge row it stands at the back of the row.
 		var foot_y := cell.y * _cell + (62 if bool(stall.get("ring", true)) else 40)
 		_prop(&"market_stall", Vector2((cell.x + 1) * _cell, foot_y), 1.0, true)
+	for pots: Dictionary in plan.get("pots", []):
+		var cell: Vector2i = pots.cell
+		_prop(&"pots_cluster", Vector2((cell.x + 0.5) * _cell, cell.y * _cell + (60 if bool(pots.ring) else 40)), 1.0, false)
 	for bench: Dictionary in plan.get("benches", []):
 		var cell: Vector2i = bench.cell
 		if bool(bench.get("open", false)):
