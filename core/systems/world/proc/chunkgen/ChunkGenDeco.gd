@@ -2,6 +2,10 @@ extends Object
 # Auto-extracted from ChunkGenImpl.gd to keep the generator modular.
 # Do not keep state here; use the passed `gen` (ChunkGenImpl) as context.
 
+const _GROUND_POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
+## GroundSplatRenderer.STAIN_ALPHA: a lighter floor stamp only stains.
+const _STAIN_ALPHA := 0.5
+
 static func _add_environment_deco(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberGenerator, archetype: StringName, conn_mask: int) -> void:
 	if gen.cm != null:
 		gen.cm._add_environment_deco(chunk, rng, archetype, conn_mask)
@@ -78,3 +82,44 @@ static func plan_vegetation(cm: ChunkManager, chunk: Node2D, rng: RandomNumberGe
 				"turns": 0 if taller else rng.randi_range(0, 3),
 			})
 	return placements
+
+
+## Wild scatter belongs to wild ground. Where a district ground policy draws
+## the built city, a plant that would stand on paving (carriageway, lane,
+## footway or the district's hard surface) is left out unless a planted bed
+## holds it; lawn, bare earth and wild chunks keep theirs. Presentation only:
+## the plan and its RNG draws are unchanged, and the result depends only on
+## the chunk's recorded floors, so a streamed rebuild drops the same plants.
+static func off_built_paving(cm: ChunkManager, chunk: Node2D, placements: Array[Dictionary]) -> Array[Dictionary]:
+	if placements.is_empty() or not cm.ground_splat_enabled or not bool(_GROUND_POLICY.resolve(cm.district_family).get("enabled", false)):
+		return placements
+	var terrain: StringName = cm.get_chunk_terrain(cm._gen_coord)
+	var base: int = cm._ground_index_for_terrain(terrain if terrain != &"" else cm._fallback_terrain)
+	var data := chunk.get_meta(&"_chunk_build_data", cm._active_build_data) as ChunkBuildData
+	# Floor stamps in paint order (z, then record order); the last one that
+	# fills a cell decides its ground.
+	var order: Array[int] = []
+	if data != null:
+		for index in data.floor_stamp_count():
+			if data.floor_alpha[index] >= _STAIN_ALPHA: order.append(index)
+		var packed := data.floor_rect_and_style
+		order.sort_custom(func(a: int, b: int) -> bool:
+			return packed[a * 6 + 5] < packed[b * 6 + 5] if packed[a * 6 + 5] != packed[b * 6 + 5] else a < b)
+	var beds: Array = chunk.get_meta(&"_ground_planting_rects", [])
+	var kept: Array[Dictionary] = []
+	for placement: Dictionary in placements:
+		var cell: Vector2i = placement.cell
+		var ground := base
+		for step in range(order.size() - 1, -1, -1):
+			var offset := order[step] * 6
+			var packed := data.floor_rect_and_style
+			if Rect2i(packed[offset], packed[offset + 1], packed[offset + 2], packed[offset + 3]).has_point(cell):
+				ground = packed[offset + 4]
+				break
+		var planted := false
+		for bed: Rect2i in beds:
+			if bed.has_point(cell): planted = true
+		if planted or not _GROUND_POLICY.is_paved_role(_GROUND_POLICY.role_for_index(ground)):
+			kept.append(placement)
+	return kept
+

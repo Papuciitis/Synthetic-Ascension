@@ -59,9 +59,45 @@ func _run() -> void:
 		if instances != placements.size() * 2: failures.append("every plant has one batched visual and shadow")
 		total += placements.size()
 		manager.free()
+	_check_built_paving()
 	if invalid > 0: failures.append("foliage obscures %d reserved lane/interior cells" % invalid)
 	if crowded > 0: failures.append("wild foliage crowds %d tended garden/street dressing cells" % crowded)
 	if total < 12 * 10: failures.append("sufficient exterior foliage: got %d placements" % total)
 	for failure in failures: push_error(failure)
 	print("WorldFoliagePlacementTest: %d placements, %d invalid, %d crowding dressing, %d failures" % [total, invalid, crowded, failures.size()])
 	get_tree().quit(1 if not failures.is_empty() else 0)
+
+
+## In a district drawn by a ground policy, wild scatter stays off the built
+## paving (roads, lanes, footways, the district surface) but keeps lawn, bare
+## earth and planted beds; the plan itself is untouched.
+func _check_built_paving() -> void:
+	var manager := ChunkManager.new()
+	manager._gen_coord = Vector2i(3, 2)
+	manager.tiled_world_rendering = false
+	manager.ground_splat_enabled = true
+	manager.district_family = &"service_courtyards"
+	manager._chunk_terrain[Vector2i(3, 2)] = &"urban"
+	var chunk := Node2D.new()
+	manager.add_child(chunk)
+	var data := ChunkBuildData.new(Vector2i(3, 2), 32)
+	data.add_floor_stamp(Rect2i(0, 0, 32, 10), 7, 1.0, -95)
+	data.add_floor_stamp(Rect2i(0, 10, 16, 22), 0, 1.0, -95)
+	data.add_floor_stamp(Rect2i(4, 12, 4, 4), 2, 1.0, -94)
+	data.add_floor_stamp(Rect2i(10, 12, 4, 4), 7, 0.2, -93)
+	chunk.set_meta(&"_chunk_build_data", data)
+	chunk.set_meta(&"_ground_planting_rects", [Rect2i(20, 20, 3, 3)])
+	var plan: Array[Dictionary] = []
+	for cell: Vector2i in [Vector2i(5, 5), Vector2i(5, 13), Vector2i(2, 20), Vector2i(11, 13), Vector2i(24, 14), Vector2i(21, 21)]:
+		plan.append({"cell": cell, "species": 0, "scale": 1.0, "alpha": 0.8, "turns": 0})
+	var kept: Array[Dictionary] = manager._DECO_PLANNER.off_built_paving(manager, chunk, plan)
+	var cells: Array[Vector2i] = []
+	for placement: Dictionary in kept: cells.append(placement.cell)
+	if cells != [Vector2i(2, 20), Vector2i(11, 13), Vector2i(21, 21)]:
+		failures.append("built paving drops road, footway and district-surface plants but keeps lawn, a stained lawn and a planted bed: got %s" % str(cells))
+	if plan.size() != 6: failures.append("filtering never edits the plan")
+	manager.district_family = &""
+	if manager._DECO_PLANNER.off_built_paving(manager, chunk, plan).size() != plan.size():
+		failures.append("worlds without a district ground policy keep every plant")
+	manager.free()
+

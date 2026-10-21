@@ -1024,6 +1024,7 @@ func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype:
 ## walk around, or notice from across a plaza.
 func _scatter_vegetation(chunk: Node2D, rng: RandomNumberGenerator, cells: int, budget: int) -> void:
 	var placements: Array[Dictionary] = _DECO_PLANNER.plan_vegetation(self, chunk, rng, cells, budget)
+	placements = _DECO_PLANNER.off_built_paving(self, chunk, placements)
 	chunk.set_meta(&"_foliage_placements", placements)
 	_FOLIAGE_RENDERER.add_to_chunk(chunk, placements, cell_size_px, district_tint)
 
