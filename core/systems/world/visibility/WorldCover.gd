@@ -232,6 +232,7 @@ var _face_xfs: Array[Transform2D] = []
 var _face_polys: Array[PackedVector2Array] = []
 var _uncached := false
 var _validation_usec := 0
+var _roof_validation_usec := 0
 var _renewed_roofs := 0
 var _renewed_faces := 0
 var _structure_events := 0
@@ -241,7 +242,8 @@ func _collect_roofs(view: Node, area: Rect2, world: World2D, canvas: RID, alpha_
 	_sync_roofs(nodes)
 	var validation_started := Time.get_ticks_usec()
 	_validate_roofs()
-	_validation_usec += Time.get_ticks_usec()-validation_started
+	_roof_validation_usec = Time.get_ticks_usec()-validation_started
+	_validation_usec += _roof_validation_usec
 	_visited_roofs = 0
 	var previous := -1
 	for slot: int in (_all_slots(nodes.size()) if _uncached else _gather(_roof_index,area)):
@@ -948,7 +950,7 @@ func snapshot_stats() -> Dictionary:
 		"collection_usec":_collection_usec,"comparison_usec":_comparison_usec,"snapshot_usec":_snapshot_usec,"binding_usec":_binding_usec,
 		"roof_usec":_roof_usec,"solid_usec":_solid_usec,"sprite_usec":_sprite_usec,"visited_roofs":_visited_roofs,"visited_faces":_visited_faces,
 		"index_resyncs":_index_resyncs,"indexed_roofs":_roof_cache.size(),"indexed_faces":_solid_cache.size(),"roof_buckets":(_roof_index.buckets as Dictionary).size(),"face_buckets":(_face_index.buckets as Dictionary).size(),
-		"validation_usec":_validation_usec,"renewed_roofs":_renewed_roofs,"renewed_faces":_renewed_faces,"structure_events":_structure_events,"index_disabled":_uncached,
+		"validation_usec":_validation_usec,"roof_validation_usec":_roof_validation_usec,"indexed_forms":_form_nodes.size(),"renewed_roofs":_renewed_roofs,"renewed_faces":_renewed_faces,"structure_events":_structure_events,"index_disabled":_uncached,
 		"force_uploads":bool(get_meta(FORCE_UPLOAD_META,false))}
 
 func _exit_tree() -> void:
