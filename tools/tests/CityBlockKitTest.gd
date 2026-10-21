@@ -146,6 +146,7 @@ func _run() -> void:
 						_check(Geometry2D.is_point_in_polygon(corner+assembly.position,support),"procedural flashing stays on its supporting roof plane")
 			_check(chimneys == 1,"each safe sample roof has one role-specific installed chimney")
 			var forms := 0
+			var returns := 0
 			var orientations: Dictionary = {}
 			for plane: Node in poly.find_children("*", "Polygon2D", true, false):
 				if plane.has_meta(&"city_roof_form"):
@@ -154,7 +155,22 @@ func _run() -> void:
 					orientations[plane_material.get_shader_parameter("ridge_along_x")] = true
 					var contrast := float(plane_material.get_shader_parameter("material_contrast"))
 					_check(contrast >= 0.55 and contrast <= 0.75, "city roof tiles read while the material stays quieter than its raw source")
+					# The 7 px east return wedge drawn just before each cap takes
+					# the cap's own sunlit tone: a plane edge, never a pale stroke.
+					var return_face := plane.get_parent().get_child(plane.get_index()-1) as Polygon2D if plane.get_index() > 0 else null
+					if return_face != null and return_face.material == null and return_face.polygon.size() >= 3:
+						var extent := Rect2(return_face.polygon[0],Vector2.ZERO)
+						for point: Vector2 in return_face.polygon: extent = extent.expand(point)
+						if extent.size.x <= 7.5:
+							returns += 1
+							var mid: Vector3 = plane_material.get_shader_parameter("material_mid")
+							var lit_value: Variant = plane_material.get_shader_parameter("lit_slope")
+							var tint := (plane as Polygon2D).color
+							var lit := Color(mid.x*tint.r,mid.y*tint.g,mid.z*tint.b).get_luminance()*(float(lit_value) if lit_value != null else 1.12)
+							var tone := return_face.color.get_luminance()
+							_check(tone >= lit*0.98 and tone <= lit*1.12, "a raised cap's east return matches its sunlit slope (tone %.3f, lit slope %.3f)" % [tone,lit])
 			_check(forms >= 2, "occupied building has composed roof forms, not one uninterrupted tile field")
+			_check(returns >= 1, "raised caps draw their east returns")
 			_check(orientations.size() == 2, "compound roof uses distinct connected gable directions")
 			var box := Rect2(poly.polygon[0], Vector2.ZERO)
 			for point: Vector2 in poly.polygon: box = box.expand(point)

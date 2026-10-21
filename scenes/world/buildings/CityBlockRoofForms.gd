@@ -4,11 +4,13 @@ extends RefCounted
 
 const FOOTPRINT_GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
 const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
-## Raised caps' east returns face the top-right sun: a step lighter than
-## their shaded south fascia, never the darkest face, and not so bright that
-## a seven-pixel return reads as a drawn line.
-const EAST_SLATE := Color("7f8683")
-const EAST_CLAY := Color("8a7c68")
+## Raised caps' east returns face the top-right sun. They take the tone of
+## the cap's own sunlit slope (family mid x tint x lit slope), at most a
+## step brighter, so a seven-pixel return reads as the roof plane turning a
+## corner, never as a pale drawn stroke (simplified, not over-lined).
+const RETURN_LIFT := 1.04
+## roof.gdshader's lit_slope default, for materials that leave it unset.
+const ROOF_LIT_SLOPE := 1.12
 
 ## Fitted S2 L/recessed roofs: independent gable planes and a shallow rim,
 ## with exactly the original visible union and one inherited fade per pixel.
@@ -168,8 +170,8 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 	# each height change physical; no second outline around every roof tile.
 	if not cross_wing:
 		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, depth), Vector2(top.x, end.y + depth)]), Color("777e79") if slate else Color("62685f"))
-	# The short side return faces east, toward the sun: lit, never darkest.
-	_face(group, PackedVector2Array([Vector2(end.x, top.y), end, end + Vector2(0, depth), Vector2(end.x + 7, top.y + depth)]), EAST_SLATE if slate else EAST_CLAY)
+	# The short side return faces east, toward the sun: the lit roof's tone.
+	_face(group, PackedVector2Array([Vector2(end.x, top.y), end, end + Vector2(0, depth), Vector2(end.x + 7, top.y + depth)]), return_tone(source, slate))
 	var roof := Polygon2D.new()
 	roof.name = "Roof_" + kind
 	roof.set_meta(&"city_roof_form", kind)
@@ -208,6 +210,15 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 		ridge.default_color = Color("91a29a")
 		group.add_child(ridge)
 	return roof
+
+## The east return's flat tone: the cap's family mid under the host tint,
+## lit like the gable's sunlit slope and lifted a step.
+static func return_tone(source: Polygon2D, slate: bool) -> Color:
+	var mid: Vector3 = RoofOverlay.SLATE_MID if slate else RoofOverlay.CLAY_MID
+	var lit: Variant = (source.material as ShaderMaterial).get_shader_parameter("lit_slope") if source.material is ShaderMaterial else null
+	var gain := (float(lit) if lit != null else ROOF_LIT_SLOPE)*RETURN_LIFT
+	var tint := source.color
+	return Color(mid.x*tint.r*gain, mid.y*tint.g*gain, mid.z*tint.b*gain)
 
 static func _face(parent: Node2D, points: PackedVector2Array, color: Color) -> Polygon2D:
 	var face := Polygon2D.new()
