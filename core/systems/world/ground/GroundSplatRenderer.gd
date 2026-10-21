@@ -789,12 +789,15 @@ func _push_role_uniforms() -> void:
 	var yard_patch: Dictionary = _policy.get("yard_patch", {}) if enabled else {}
 	if yard_patch.is_empty():
 		_material.set_shader_parameter("yard_patch", Vector4(-1.0, 0.0, 384.0, 0.5))
+		_material.set_shader_parameter("yard_patch_place", Vector4(0.0, 0.0, 0.05, 0.0))
 	else:
 		_material.set_shader_parameter("yard_patch", Vector4(float(yard_patch.get("layer", -1)), float(yard_patch.get("coverage", 0.0)), float(yard_patch.get("repeat_px", 384.0)), float(yard_patch.get("weight", 0.5))))
 		_material.set_shader_parameter("yard_patch_tint", yard_patch.get("tint", Color.WHITE))
-		# The patch's quiet mid tone: the yard's a shade darker.
+		# The patch's quiet mid tone: its own, else the yard's a shade darker.
 		var yard_mid: Color = ((roles.get(_POLICY.ROLE_YARD, {}) as Dictionary).get("mid", Color(0.5, 0.5, 0.5)) as Color) * 0.92
-		_material.set_shader_parameter("yard_patch_mid", Color(yard_mid.r, yard_mid.g, yard_mid.b, 1.0))
+		var patch_mid: Color = yard_patch.get("mid", Color(yard_mid.r, yard_mid.g, yard_mid.b, 1.0))
+		_material.set_shader_parameter("yard_patch_mid", Color(patch_mid.r, patch_mid.g, patch_mid.b, float(yard_patch.get("noise", 1.0))))
+		_material.set_shader_parameter("yard_patch_place", Vector4(float(yard_patch.get("open_bias", 0.0)), float(yard_patch.get("rim", 0.0)), float(yard_patch.get("edge", 0.05)), float(yard_patch.get("ragged", 0.0))))
 	var verge_layer := int(_policy.get("verge_layer", -1)) if enabled else -1
 	_material.set_shader_parameter("verge_layer", float(verge_layer))
 	_material.set_shader_parameter("verge_strength", float(_policy.get("verge_strength", 0.0)) if enabled else 0.0)

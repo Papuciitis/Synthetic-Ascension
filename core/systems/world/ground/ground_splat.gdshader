@@ -98,14 +98,24 @@ uniform float verge_strength = 0.0;
 uniform float verge_repeat_px = 320.0;
 // Darker, cooler standing-water patches on the district surface (puddled yards).
 uniform float wet_patches = 0.0;
-// A second material in broad noise patches on the district surface (dirt
-// among setts, weeds in worn flags): x = array layer (-1 off), y = coverage,
-// z = repeat px, w = texture weight; rgb tint in yard_patch_tint, the
-// patch's own mid tone in yard_patch_mid (GroundSplatRenderer defaults it
-// to the yard's mid, a shade darker).
+// A second material in patches on the district surface (packed earth in
+// working yards, damp moss in neglected ones, sett remnants in ruined flags):
+// x = array layer (-1 off), y = coverage, z = repeat px, w = texture weight;
+// rgb grade in yard_patch_tint, the patch's own mid tone in yard_patch_mid.rgb
+// (GroundSplatRenderer defaults it to the yard's mid, a shade darker) and in
+// yard_patch_mid.a how much the broad noise field decides the placement (1 =
+// the free field; lower = placed mostly by use, see yard_patch_place).
 uniform vec4 yard_patch = vec4(-1.0, 0.0, 384.0, 0.5);
 uniform vec4 yard_patch_tint = vec4(1.0);
 uniform vec4 yard_patch_mid = vec4(0.5, 0.5, 0.5, 1.0);
+// Where the patches go and how their edge reads: x = pull toward open ground
+// (> 0: worn, packed use-areas in the open middle of a yard, setts kept along
+// the walls) or toward wall feet and enclosed corners (< 0: damp neglect),
+// following the occlusion term instead of free noise; y = darkening of a
+// narrow worn rim along the patch edge; z = edge half-width (noise units:
+// 0.05 soft, 0.006 crisp); w = fine-grain raggedness of that edge. The
+// default is the free noise field with a soft edge.
+uniform vec4 yard_patch_place = vec4(0.0, 0.0, 0.05, 0.0);
 // Diagnostics only (GroundSplatRenderer reads SA_GROUND_DEBUG_VIEW in debug
 // builds): 1 = presentation roles, 2 = occlusion (grey) and care (green).
 uniform int debug_view = 0;
@@ -277,14 +287,23 @@ void fragment() {
 				col *= 1.0 + (n.g - 0.5) * paving_variation;
 				if (role == 4) {
 					if (yard_patch.x >= 0.0) {
-						// Broad patches (the low warp channel) with a little edge detail.
-						float field = n.g * 0.7 + n.a * 0.3;
-						float edge = 0.5 - yard_patch.y * 0.25;
-						float amount = smoothstep(edge + 0.05, edge - 0.05, field);
-						if (amount > 0.001) {
+						// Patches on the broad field (the low warp channel), pulled
+						// toward open ground or toward the walls by the occlusion
+						// term, so a working yard wears in its open middle and a
+						// neglected one greens at its wall feet and corners.
+						float field = 0.5 + (n.g * 0.7 + n.a * 0.3 - 0.5) * yard_patch_mid.a + (n.b - 0.5) * yard_patch_place.w - yard_patch_place.x * (light.a - 0.75);
+						float inside = 0.5 - yard_patch.y * 0.25 - field;
+						float soft = yard_patch_place.z;
+						if (inside > -soft - 0.03) {
+							float amount = smoothstep(-soft, soft, inside);
 							vec3 pc = textureGrad(materials, vec3(world_pos / yard_patch.z, yard_patch.x), ddx / yard_patch.z, ddy / yard_patch.z).rgb;
 							pc = mix(yard_patch_mid.rgb, pc * yard_patch_tint.rgb, yard_patch.w);
+							// Broad tone drift inside a placed patch (trodden tracks,
+							// drier ground) so a use-area is not one flat field.
+							pc *= 1.0 + (n.r - 0.5) * 0.14 * step(0.001, abs(yard_patch_place.x));
 							col = mix(col, pc, amount);
+							// A worn rut where the use-area meets the paving.
+							col *= 1.0 - (1.0 - smoothstep(0.0, soft + 0.022, abs(inside))) * yard_patch_place.y;
 						}
 					}
 					if (wet_patches > 0.0) {

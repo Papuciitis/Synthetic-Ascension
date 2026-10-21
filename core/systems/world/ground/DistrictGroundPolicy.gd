@@ -24,6 +24,15 @@ extends RefCounted
 ## first pass measured 0.035-0.055 and read as a smooth mat). Footways sit a
 ## step above the carriageway and lanes level with it, so door aprons do not
 ## read as darker squares.
+##
+## Hierarchy pass (2026-10-21 lead review, S2 / S6A / S7): the carriageway is
+## the quiet field combat runs over (a lower texture weight on the same mean,
+## so the actors keep the strongest contrast); household approaches and
+## service lanes sit between it and the yard instead of matching the road;
+## working yards wear into packed use-areas in their open middle
+## (yard_patch.open_bias > 0) and neglected damp ones green at their wall feet
+## (< 0) instead of carrying free camouflage blotches; S7 gets its damp green
+## setting back with smaller, darker, mossier stone.
 
 ## Presentation roles. A slot's ground index maps to one of these.
 const ROLE_RAW := 0
@@ -148,8 +157,8 @@ static func _service_courtyards() -> Dictionary:
 		"enabled": true,
 		"district_terrain": DISTRICT_TERRAIN,
 		"roles": {
-			ROLE_ROAD: _role(SOURCE_SETTS, 272.0, Color(0.503, 0.50, 0.501), 0.71, Color(0.88, 0.90, 0.94)),
-			ROLE_LANE: _role(SOURCE_SETTS, 256.0, Color(0.502, 0.501, 0.501), 0.66, Color(0.88, 0.90, 0.94)),
+			ROLE_ROAD: _role(SOURCE_SETTS, 272.0, Color(0.503, 0.50, 0.501), 0.60, Color(0.88, 0.90, 0.94)),
+			ROLE_LANE: _role(SOURCE_SETTS, 224.0, Color(0.547, 0.545, 0.545), 0.54, Color(0.96, 0.98, 1.02)),
 			ROLE_FOOTWAY: _role(SOURCE_FLAGS, 384.0, Color(0.623, 0.622, 0.615), 0.66, Color(1.12, 1.12, 1.12)),
 			ROLE_YARD: _role(SOURCE_FLAGS, 448.0, Color(0.592, 0.591, 0.594), 0.72, Color(1.06, 1.06, 1.08)),
 			ROLE_LAWN: _role(SOURCE_OWN, 320.0, Color(0.31, 0.37, 0.27), 0.50, Color(1.10, 1.14, 1.04)),
@@ -175,6 +184,20 @@ static func _service_courtyards() -> Dictionary:
 
 static func _patch(layer: int, coverage: float, repeat_px: float, weight: float, tint: Color) -> Dictionary:
 	return {"layer": layer, "coverage": coverage, "repeat_px": repeat_px, "weight": weight, "tint": tint}
+
+
+## A patch placed by use rather than by free noise (ground_splat's
+## yard_patch_place): open_bias > 0 wears it into the open middle of a yard,
+## < 0 settles it at the wall feet and enclosed corners; threshold is the
+## level the placement field must stay under (higher = more ground taken;
+## the shader's coverage term is 0.5 - coverage / 4, so coverage is derived
+## from it); noise is how much the broad noise field still moves it (1 = free
+## field); rim darkens a worn edge, edge is the half-width of the
+## transition, ragged its fine breakup, mid the patch's own quiet tone.
+static func _placed_patch(layer: int, threshold: float, repeat_px: float, weight: float, tint: Color, mid: Color, open_bias: float, noise: float, rim: float, edge: float, ragged: float) -> Dictionary:
+	var patch := _patch(layer, (0.5 - threshold) * 4.0, repeat_px, weight, tint)
+	patch.merge({"mid": mid, "open_bias": open_bias, "noise": noise, "rim": rim, "edge": edge, "ragged": ragged})
+	return patch
 
 
 ## Checkpoint Lanes (S3): crooked grey cobbled lanes with kerbs opening into a
@@ -244,12 +267,14 @@ static func _inner_district_gate() -> Dictionary:
 static func _industrial_cutthrough() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"industrial_cutthrough"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.441, 0.442, 0.443), 0.83, Color(0.77, 0.80, 0.84))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 272.0, Color(0.433, 0.433, 0.431), 0.78, Color(0.76, 0.78, 0.81))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.441, 0.442, 0.443), 0.68, Color(0.77, 0.80, 0.84))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 240.0, Color(0.478, 0.477, 0.474), 0.60, Color(0.84, 0.86, 0.89))
 	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.612, 0.611, 0.605), 0.75, Color(1.10, 1.10, 1.10))
-	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 240.0, Color(0.57, 0.564, 0.546), 0.76, Color(1.00, 1.02, 1.03))
+	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 240.0, Color(0.57, 0.564, 0.546), 0.62, Color(1.00, 1.02, 1.03))
 	p.roles[ROLE_SOIL] = _role(SOURCE_OWN, 384.0, Color(0.42, 0.405, 0.375), 0.45, Color(1.08, 1.07, 1.04))
-	p.yard_patch = _patch(LAYER_DIRT, 0.55, 384.0, 0.42, Color(1.30, 1.28, 1.22))
+	# Packed earth worn into the open middle of the working yards; setts stay
+	# along the walls and a worn rut edges each use-area.
+	p.yard_patch = _placed_patch(LAYER_DIRT, 0.40, 352.0, 0.60, Color(1.80, 1.95, 2.25), Color(0.53, 0.515, 0.485), 1.0, 0.45, 0.12, 0.010, 0.14)
 	p.kerb = 0.65
 	p.gutter = 0.70
 	p.ao = 0.30
@@ -280,12 +305,17 @@ static func _ruined_services() -> Dictionary:
 static func _underpass_veins() -> Dictionary:
 	var p := _checkpoint_lanes()
 	p.id = &"underpass_veins"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 320.0, Color(0.525, 0.506, 0.493), 0.76, Color(0.92, 0.91, 0.93))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 320.0, Color(0.517, 0.499, 0.486), 0.71, Color(0.90, 0.90, 0.92))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 352.0, Color(0.534, 0.555, 0.552), 0.88, Color(1.75, 1.83, 2.00), LAYER_DARK_FLAGS)
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 352.0, Color(0.637, 0.617, 0.594), 0.72, Color(1.14, 1.11, 1.08))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 272.0, Color(0.525, 0.506, 0.493), 0.62, Color(0.92, 0.91, 0.93))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.537, 0.522, 0.51), 0.56, Color(0.93, 0.93, 0.95))
+	# Small yards of damp dark flags, smaller and quieter than the first pass
+	# (their big pale joints competed with the actor), greening at the walls.
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 240.0, Color(0.50, 0.52, 0.505), 0.48, Color(1.64, 1.72, 1.84), LAYER_DARK_FLAGS)
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 352.0, Color(0.637, 0.617, 0.594), 0.66, Color(1.14, 1.11, 1.08))
+	p.yard_patch = _placed_patch(LAYER_DAMP_MOSS, 0.45, 320.0, 0.55, Color(1.38, 1.62, 2.27), Color(0.43, 0.47, 0.37), -0.9, 0.8, 0.0, 0.03, 0.26)
 	p.kerb = 0.80
 	p.ao = 0.32
+	p.verge_layer = LAYER_DAMP_MOSS
+	p.verge_strength = 0.65
 	return p
 
 
@@ -294,14 +324,18 @@ static func _underpass_veins() -> Dictionary:
 static func _canal_services() -> Dictionary:
 	var p := _service_courtyards()
 	p.id = &"canal_services"
-	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 288.0, Color(0.539, 0.516, 0.511), 0.73, Color(0.94, 0.93, 0.96))
-	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.545, 0.521, 0.515), 0.67, Color(0.95, 0.94, 0.97))
-	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 416.0, Color(0.681, 0.649, 0.636), 0.68, Color(1.22, 1.17, 1.16))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 448.0, Color(0.632, 0.658, 0.627), 0.60, Color(1.67, 1.61, 2.00), LAYER_MOSSY_FLAGS)
-	p.roles[ROLE_SOIL] = _role(SOURCE_OWN, 384.0, Color(0.36, 0.35, 0.31), 0.50, Color(1.04, 1.04, 1.02))
+	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 256.0, Color(0.525, 0.512, 0.507), 0.60, Color(0.92, 0.92, 0.95))
+	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 240.0, Color(0.545, 0.535, 0.525), 0.55, Color(0.95, 0.95, 0.98))
+	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 352.0, Color(0.64, 0.625, 0.61), 0.62, Color(1.15, 1.13, 1.12))
+	# Quay yards: smaller, darker mossy flags (the first pass's big pale tiles
+	# competed with the actor and lost the damp green setting), damp moss
+	# settled along the wall feet and in enclosed corners.
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 224.0, Color(0.50, 0.535, 0.485), 0.40, Color(1.32, 1.31, 1.55), LAYER_MOSSY_FLAGS)
+	p.roles[ROLE_SOIL] = _role(SOURCE_OWN, 384.0, Color(0.355, 0.36, 0.31), 0.50, Color(1.04, 1.08, 1.02))
+	p.yard_patch = _placed_patch(LAYER_DAMP_MOSS, 0.49, 320.0, 0.55, Color(1.38, 1.62, 2.27), Color(0.43, 0.47, 0.37), -0.9, 0.8, 0.0, 0.03, 0.26)
 	p.ao = 0.28
 	p.verge_layer = LAYER_DAMP_MOSS
-	p.verge_strength = 0.75
+	p.verge_strength = 0.85
 	return p
 
 
@@ -314,7 +348,7 @@ static func _rail_yard() -> Dictionary:
 	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.575, 0.575, 0.572), 0.70, Color(1.03, 1.04, 1.04))
 	# The sett source at a small repeat reads as coarse gravel at gameplay zoom.
 	p.roles[ROLE_YARD] = _role(SOURCE_SETTS, 104.0, Color(0.622, 0.635, 0.655), 0.71, Color(1.09, 1.15, 1.23))
-	p.yard_patch = _patch(LAYER_DIRT, 0.18, 384.0, 0.35, Color(1.45, 1.42, 1.36))
+	p.yard_patch = _placed_patch(LAYER_DIRT, 0.36, 384.0, 0.36, Color(1.80, 1.95, 2.25), Color(0.55, 0.545, 0.53), 0.8, 0.5, 0.10, 0.012, 0.12)
 	p.kerb = 0.70
 	p.paving_variation = 0.08
 	return p

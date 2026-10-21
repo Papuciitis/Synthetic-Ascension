@@ -108,11 +108,51 @@ func _test_policy_catalogue() -> void:
 	var first := POLICY.resolve(&"canal_services")
 	first.roles[POLICY.ROLE_YARD]["repeat_px"] = 1.0
 	_check(float(POLICY.resolve(&"canal_services").roles[POLICY.ROLE_YARD].repeat_px) > 64.0, "resolved policies are independent copies")
+	_test_hierarchy_values()
 	var expected := {7: POLICY.ROLE_ROAD, 8: POLICY.ROLE_ROAD, 9: POLICY.ROLE_ROAD, 3: POLICY.ROLE_FOOTWAY, 4: POLICY.ROLE_LANE, 2: POLICY.ROLE_FOOTWAY, 6: POLICY.ROLE_YARD, 0: POLICY.ROLE_LAWN, 10: POLICY.ROLE_LAWN, 11: POLICY.ROLE_LAWN, 12: POLICY.ROLE_LAWN, 1: POLICY.ROLE_SOIL, 5: POLICY.ROLE_SOIL}
 	var mapped := true
 	for index: int in expected:
 		if POLICY.role_for_index(index) != int(expected[index]): mapped = false
 	_check(mapped, "semantic materials map to their presentation roles")
+
+
+## The hierarchy pass (2026-10-21 lead review): quiet carriageways,
+## approaches between road and yard, working yards worn by use, the damp S7
+## setting with smaller quieter stone; families without a placed patch keep
+## the free noise field exactly as before.
+func _test_hierarchy_values() -> void:
+	var weight := func(policy: Dictionary, role: int) -> float: return ((policy.roles[role] as Dictionary).mid as Color).a
+	var value := func(policy: Dictionary, role: int) -> float: return _luminance((policy.roles[role] as Dictionary).mid as Color)
+	for family: StringName in [&"service_courtyards", &"industrial_cutthrough", &"underpass_veins", &"canal_services"]:
+		var policy := POLICY.resolve(family)
+		_check(float(weight.call(policy, POLICY.ROLE_ROAD)) <= 0.685 and float(weight.call(policy, POLICY.ROLE_LANE)) <= 0.625, "%s keeps its carriageway and lanes quiet (texture weight %.2f / %.2f)" % [family, float(weight.call(policy, POLICY.ROLE_ROAD)), float(weight.call(policy, POLICY.ROLE_LANE))])
+	for family: StringName in [&"service_courtyards", &"industrial_cutthrough"]:
+		var policy := POLICY.resolve(family)
+		var road: float = value.call(policy, POLICY.ROLE_ROAD)
+		var lane: float = value.call(policy, POLICY.ROLE_LANE)
+		var yard: float = value.call(policy, POLICY.ROLE_YARD)
+		_check(lane > road + 0.02 and lane < yard, "%s household approaches sit between the carriageway and the yard (%.3f < %.3f < %.3f)" % [family, road, lane, yard])
+	for family: StringName in [&"industrial_cutthrough", &"rail_yard"]:
+		var patch: Dictionary = POLICY.resolve(family).yard_patch
+		_check(float(patch.get("open_bias", 0.0)) > 0.0 and float(patch.get("noise", 1.0)) < 1.0 and float(patch.get("rim", 0.0)) > 0.0, "%s wears its yards into edged use-areas in the open, not free blotches" % family)
+	for family: StringName in [&"underpass_veins", &"canal_services"]:
+		var policy := POLICY.resolve(family)
+		var patch: Dictionary = policy.yard_patch
+		var yard: Dictionary = policy.roles[POLICY.ROLE_YARD]
+		_check(int(patch.get("layer", -1)) == POLICY.LAYER_DAMP_MOSS and float(patch.get("open_bias", 0.0)) < 0.0 and int(policy.verge_layer) == POLICY.LAYER_DAMP_MOSS, "%s settles damp moss at its wall feet and banks" % family)
+		_check(float(yard.repeat_px) <= 256.0 and float(weight.call(policy, POLICY.ROLE_YARD)) <= 0.5, "%s yard stone is smaller and quieter than the actor-sized pale tiles (%d px, %.2f)" % [family, int(yard.repeat_px), float(weight.call(policy, POLICY.ROLE_YARD))])
+	var splat := GroundSplatRenderer.new()
+	add_child(splat)
+	splat.configure(64, 32)
+	var material := splat.get_shader_material()
+	splat.set_ground_family(&"collapsed_ward")
+	var legacy_mid: Color = (POLICY.resolve(&"collapsed_ward").roles[POLICY.ROLE_YARD] as Dictionary).mid
+	var pushed: Color = material.get_shader_parameter("yard_patch_mid")
+	_check(material.get_shader_parameter("yard_patch_place") == Vector4(0.0, 0.0, 0.05, 0.0) and pushed.is_equal_approx(Color(legacy_mid.r * 0.92, legacy_mid.g * 0.92, legacy_mid.b * 0.92, 1.0)), "a free-noise patch keeps the phase-1 field, edge and mid tone")
+	splat.set_ground_family(&"industrial_cutthrough")
+	var place: Vector4 = material.get_shader_parameter("yard_patch_place")
+	_check(place.x > 0.0 and place.y > 0.0 and float((material.get_shader_parameter("yard_patch_mid") as Color).a) < 1.0, "the renderer passes a placed patch's use bias, rim and noise to the shader")
+	splat.free()
 
 
 func _theme_seed(segment: int, theme_id: StringName) -> int:
