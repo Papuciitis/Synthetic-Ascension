@@ -498,6 +498,21 @@ static func _infill_usage(rng: RandomNumberGenerator, lot_len: int, depth: int, 
 	return &"row_house"
 
 
+## East/west party walls shared with lots already standing (at least two cells
+## of common wall), as RoofOverlay direction bits.
+static func _party_edges(rect: Rect2i, placed: Array[Rect2i]) -> int:
+	var edges := 0
+	for other: Rect2i in placed:
+		var overlap: int = mini(other.end.y, rect.end.y) - maxi(other.position.y, rect.position.y)
+		if overlap < 2:
+			continue
+		if other.end.x == rect.position.x:
+			edges |= _DIR_W
+		elif other.position.x == rect.end.x:
+			edges |= _DIR_E
+	return edges
+
+
 # Generates a complete courtyard block in a district-fill chunk. These chunks form
 # the one-chunk urban envelope around roads and stop the district reading as a road
 # laid across grass.
@@ -969,10 +984,16 @@ func _spawn_building_rect(
 					var roof := ROOF_OVERLAY_SCENE.instantiate()
 					chunk.add_child(roof)
 					var street_infill := bool(cfg.get("city_street_infill", false))
+					var party_edges := _party_edges(build_rect, placed) if street_infill else 0
+					if street_infill:
+						# Join the terrace: the roof runs over an east/west party
+						# wall to the eave of the neighbour already standing there.
+						roof.set(&"party_edges", party_edges)
 					if roof.has_method("configure"):
 						roof.configure(build_rect, int(chunk_manager.cell_size_px), door_dir, volume, template, building_id, entrances)
 					if bool(cfg.get("city_block_style", false)):
 						var kit := CITY_KIT.new()
+						if party_edges != 0: kit.set_meta(&"party_edges", party_edges)
 						chunk.add_child(kit)
 						var civic := bool(cfg.get("city_service_annex",false)) or building_secondary_id > 0 or (configured_secondary_id == 0 and template == &"workshop" and building_id % 3 == 0)
 						kit.configure(build_rect, int(chunk_manager.cell_size_px), entrances, roof, civic, PackedVector2Array(), bool(cfg.get("city_shared_ground", false)), _district_profile(cfg, building_id, template))
