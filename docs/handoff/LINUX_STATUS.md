@@ -1,7 +1,45 @@
 # Linux production status
 
-Owner: Linux production worker. Updated 20 October 2026.
+Owner: Linux production worker. Updated 21 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
+
+## 21 October — city concept-fidelity pass, phase 1 (Claude)
+
+At the user's request, Claude took over this lane. The aim was to move the
+whole procedural city, in every segment, toward plate 08 and the segment
+plates, not one fixture.
+
+Phase 1 is integrated on this branch:
+
+- composed house frontages;
+- seeded roof compositions;
+- attached street infill and framed squares;
+- one sun model with contact shade;
+- per-family ground policy, calibrated against in-game captures;
+- frontage dressing and gardens;
+- plaza planter rings and furniture;
+- two integration fixes.
+
+All 74 suites pass on their latest run, re-run after the host restart. Evidence, the checks and the open items are in the
+[phase-1 packet](../art/reference/2026-10-21-linux-city-concept-pass/README.md).
+
+Parked on local branches, not merged:
+
+| Branch | State |
+| --- | --- |
+| `claude/wp-mood-wip` | per-theme mood shaders, WIP |
+| `claude/wp-weathering-wip` | weathering, WIP |
+| `claude/wp-ground-wip` | GPU fix for the ground shader, WIP |
+| `claude/wp-dressing-wip` | review fixes, WIP |
+| `claude/wp-street-wip` | review fixes, WIP |
+| `claude/wp-interiors-wip` | lived-in interiors, WIP |
+| `claude/wp-districts` | walls and gates, reviewed, blocker open |
+
+Building families and chunk-build performance have not started.
+
+Host note: parallel engine runs overheated the T480 (CPU at 96 C), and
+system-wide crashes followed. The lane's engine queue now runs at most two
+engines and holds a run while the CPU package is at or above 85 C.
 
 ## Pickup acknowledgment
 

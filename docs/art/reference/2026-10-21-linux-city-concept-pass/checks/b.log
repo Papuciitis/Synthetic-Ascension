@@ -1,0 +1,32 @@
+DungeonArchitectureTest | completed 0 0 | DungeonArchitectureTest: 33001 passed, 0 failed
+DungeonProductionTest | completed 0 0 | DungeonProductionTest: 762 passed, 0 failed
+DungeonRoofContractTest | completed 0 0 | DungeonRoofContractTest: 99 passed, 0 failed
+ForegroundSpriteCoverageTest | completed 0 0 | ForegroundSpriteCoverageTest: 49 passed, 0 failed
+GroundLootCapTest | completed 0 0 | GroundLootCapTest: 6 passed, 0 failed
+GroundMaterialCacheTest | completed 0 0 | GroundMaterialCacheTest: 38 passed, 0 failed
+PickupCoverTest | completed 0 0 | PickupCoverTest passes=16 failures=0
+PlayerRoofOcclusionTest | completed 0 0 | PlayerRoofOcclusionTest: 11 passed, 0 failed
+ProcChunkReachabilityTest | completed 0 0 | ProcChunkReachabilityTest: 3840 chunks, 9311 doors, 1344 rewards, 0 failures
+ProcSeedSweepTest | completed 0 0 | ProcSeedSweepTest: 8 passed, 0 failed
+S2PaleMasonryTest | completed 0 0 | S2PaleMasonryTest: 71 passed, 0 failed
+SegmentProcStartupTest | runtime_diagnostics 0 2 | SegmentProcStartupTest: 11 passed, 0 failed
+SiteWallContinuityTest | completed 0 0 | SiteWallContinuityTest: 21547 passed, 0 failed; 2x1/1x2/2x2 sites, normal/reverse reload order
+TaggedCacheStreamingTest | completed 0 0 | TaggedCacheStreamingTest: 0 failed
+ThemeAtmosphereReceiversTest | completed 0 0 | ThemeAtmosphereReceiversTest: 36 passed, 0 failed
+ThemeAtmosphereTest | completed 0 0 | ThemeAtmosphereTest passes=132 failures=0
+WorldCoverSnapshotReuseTest | completed 0 0 | WorldCoverSnapshotReuseTest: 23 passed, 0 failed
+WorldCoverTest | completed 0 0 | WorldCoverTest: 25 passed, 0 failed
+WorldFoliagePlacementTest | completed 0 0 | WorldFoliagePlacementTest: 240 placements, 0 invalid, 0 crowding dressing, 0 failures
+WorldFootprintTest | other_godot_running None 0 | 
+WorldGroundSplatTest | completed 0 0 | WorldGroundSplatTest: 58 passed, 0 failed
+WorldShapeGenTest | completed 0 0 | WorldShapeGenTest: 33 passed, 0 failed
+WorldTerrainTest | completed 0 0 | WorldTerrainTest: 25 passed, 0 failed
+BossArenaSpaceTest | completed 0 0 | BossArenaSpaceTest: 728 passed, 0 failed; 88 generated arena chunks across 40 seeds; elapsed 2138ms
+ActorDepthShadowTest | completed 0 0 | ActorDepthShadowTest passes=38 failures=0
+CityFrontageDressingTest | completed 0 0 | CityFrontageDressingTest: 30947 passed, 0 failed
+CityStreetContinuityTest | completed 0 0 | CityStreetContinuityTest: chunks=197 originals=493 infill=479 checks=3175 preexisting_unreachable=17 failures=0
+DistrictGroundPolicyTest | completed 0 0 | DistrictGroundPolicyTest: 237 passed, 0 failed
+PlazaPresentationTest | completed 0 0 | PlazaPresentationTest: 11518 passed, 0 failed; elapsed 20889ms
+SunShadowLayerTest | nonzero_exit 1 2 | SunShadowLayerTest: 2 passed, 2 failed
+      "ERROR: FAIL: real S2 garden beds lie inside their building casts (beds=0 in_cast=0)",
+      "ERROR: FAIL: herb bed sprites are exercised (0)"

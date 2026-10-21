@@ -1,0 +1,21 @@
+SunShadowLayerTest | completed 0 0 | SunShadowLayerTest: 4 passed, 0 failed
+ChunkStreamingSchedulerTest | runtime_diagnostics 0 1 | ChunkStreamingSchedulerTest: 6 passed, 0 failed
+CityBlockKitTest | completed 0 0 | CityBlockKitTest: 1314 passed, 0 failed
+WorldFootprintTest | completed 0 0 | WorldFootprintTest: 11 passed, 0 failed
+CityDomesticInteriorTest | completed 0 0 | CityDomesticInteriorTest: 693 passed, 0 failed
+DomesticRewardStabilityTest | completed 0 0 | DomesticRewardStabilityTest: 111 passed, 0 failed
+DomesticWallMaterialTest | completed 0 0 | DomesticWallMaterialTest: 137 passed, 0 failed
+CityFrontageDressingTest | nonzero_exit 1 60 | CityFrontageDressingTest: 30887 passed, 60 failed
+      "ERROR: FAIL: seg7 service_courtyards row_house (0, 1) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg7 service_courtyards row_house (0, -1) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg7 service_courtyards row_house (-1, 0) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg7 service_courtyards row_house (1, 0) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg3 checkpoint_lanes row_house (0, 1) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg11 checkpoint_lanes row_house (0, 1) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg3 checkpoint_lanes row_house (0, -1) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg11 checkpoint_lanes row_house (0, -1) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg3 checkpoint_lanes row_house (-1, 0) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg11 checkpoint_lanes row_house (-1, 0) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg3 checkpoint_lanes row_house (1, 0) props draw with the kit trees, under every actor",
+      "ERROR: FAIL: seg11 checkpoint_lanes row_house (1, 0) props draw with the kit trees, under every actor",
+CityStreetContinuityTest | completed 0 0 | CityStreetContinuityTest: chunks=197 originals=493 infill=479 checks=3175 preexisting_unreachable=17 failures=0
