@@ -134,13 +134,17 @@ func _run() -> void:
 					if casts.size() != 1:
 						stats.cast_count += 1
 						_check(false,"%s: expected one building cast after the chunk build, found %d" % [where,casts.size()])
-					var soil := child.get_node_or_null(^"TendedDomesticBed") as Polygon2D
-					if child.get_node_or_null(^"DomesticHerbBed") != null: herb_beds += 1
+					# Household gardens are laid by CityFrontageDressing: the flat
+					# kitchen bed is a garden_bed prop under the DomesticGarden node.
+					var soil: Sprite2D = null
+					var garden := child.get_node_or_null(^"DomesticGarden")
+					if garden != null:
+						for prop: Node in garden.get_children():
+							if prop is Sprite2D and prop.get_meta(&"city_dressing_prop",&"") == &"garden_bed": soil = prop
 					if soil == null: continue
+					herb_beds += 1
 					beds += 1
-					var centre := Vector2.ZERO
-					for point: Vector2 in soil.polygon: centre += point
-					centre /= maxf(1.0,soil.polygon.size())
+					var centre: Vector2 = soil.get_meta(&"city_dressing_contact")
 					for cast: Polygon2D in casts:
 						var inside := false
 						for face: PackedVector2Array in GEOMETRY.faces_of(cast):
@@ -160,7 +164,7 @@ func _run() -> void:
 	Global.attempt_segment = previous
 	_check(kits > 20 and shades > kits,"real chunks exercise many kits and their shades (kits=%d shades=%d)" % [kits,shades])
 	_check(beds > 10 and beds_in_cast > 10,"real S2 garden beds lie inside their building casts (beds=%d in_cast=%d)" % [beds,beds_in_cast])
-	_check(herb_beds > 0,"herb bed sprites are exercised (%d)" % herb_beds)
+	_check(herb_beds > 0,"kitchen garden bed sprites are exercised (%d)" % herb_beds)
 	_check(stats.layer_mismatch == 0 and stats.shared_layer == 0 and stats.ground_above == 0 and stats.bed_unshaded == 0 and stats.cast_count == 0,"layering summary %s" % str(stats))
 	print("SunShadowLayerTest stats kits=%d shades=%d beds=%d beds_in_cast=%d herb_beds=%d wall_contacts=%d %s" % [kits,shades,beds,beds_in_cast,herb_beds,wall_contacts,str(stats)])
 	player.queue_free()

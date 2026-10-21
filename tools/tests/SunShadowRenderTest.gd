@@ -9,6 +9,7 @@ extends Node2D
 
 const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const FIXTURE := preload("res://tools/tests/CitySceneDepthFixture.gd")
+const DRESSING := preload("res://scenes/world/buildings/CityFrontageDressing.gd")
 var _passes := 0
 var _failures := 0
 
@@ -181,16 +182,25 @@ func _check_rendered_garden() -> void:
 	var kit := bed.kit as Node2D
 	var placed: Array[Rect2i] = [FIXTURE.BED_RECT]
 	kit.call(&"trim_paving",placed,64)
-	var soil := kit.get_node_or_null(^"TendedDomesticBed") as Polygon2D
-	_check(soil != null and kit.get_node_or_null(^"DomesticHerbBed") != null,"the recorded bed home keeps its soil and herb bed")
+	# The household's flat kitchen bed is laid by CityFrontageDressing (a
+	# garden_bed prop under the DomesticGarden node) and draws beneath the
+	# shared shade layer, so inside the cast it must take the same shade.
+	var garden := kit.get_node_or_null(^"DomesticGarden") as Node2D
+	var soil: Sprite2D = null
+	if garden != null:
+		for prop: Node in garden.get_children():
+			if prop is Sprite2D and prop.get_meta(&"city_dressing_prop",&"") == &"garden_bed": soil = prop
+	_check(soil != null,"the recorded bed home keeps its kitchen garden bed")
 	if soil == null:
 		view.queue_free()
 		Global.attempt_segment = previous
 		return
+	# Only the building's cast is toggled: the kitchen bed stands at the wall
+	# foot, inside the wall-contact band, which stays on in both frames.
 	var shades: Array[CanvasItem] = []
 	var cores: Array[PackedVector2Array] = []
 	for child: Node in kit.get_children():
-		if child is Polygon2D and (child.has_meta(&"city_contact_shade") or (child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null)):
+		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null:
 			shades.append(child as CanvasItem)
 		if child is Polygon2D and child.has_meta(&"city_sun_shadow") and (child as Polygon2D).texture == null:
 			var cast := child as Polygon2D
@@ -208,14 +218,19 @@ func _check_rendered_garden() -> void:
 	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw
 	var open := view.get_texture().get_image()
-	var outline := soil.polygon.slice(0,6)
-	var front: float = kit.get("_front")
+	var source: Rect2 = DRESSING.PROPS[&"garden_bed"].rect
+	var half := soil.texture.get_size()*0.5
+	var top_left := garden.position+soil.position+(source.position-half)*soil.scale
+	var bottom_right := garden.position+soil.position+(source.end-half)*soil.scale
+	# The painted bed's inner soil, clear of its stone edging.
+	var inner := Rect2(top_left,bottom_right-top_left).grow(-6.0)
+	var outline := PackedVector2Array([inner.position,Vector2(inner.end.x,inner.position.y),inner.end,Vector2(inner.position.x,inner.end.y)])
 	var shade := DEPTH.SUN_SHADE
 	var samples := 0
 	var matched := 0
 	var ratios: Array[float] = []
-	for y in range(int(front)+31,int(front)+56,3):
-		for x in range(190,340,3):
+	for y in range(int(inner.position.y),int(inner.end.y),2):
+		for x in range(int(inner.position.x),int(inner.end.x),3):
 			var at := Vector2(x+0.5,y+0.5)
 			if not Geometry2D.is_point_in_polygon(at,outline): continue
 			var inside := false
@@ -232,7 +247,7 @@ func _check_rendered_garden() -> void:
 	ratios.sort()
 	var median := ratios[ratios.size()/2] if not ratios.is_empty() else 1.0
 	_check(samples >= 40,"the garden inside the bed home's cast core is sampled; samples=%d" % samples)
-	_check(matched >= int(samples*0.95),"soil, herbs and herb bed inside the cast all take the shared shade; matched=%d/%d median_g=%.3f want %.3f" % [matched,samples,median,shade.g])
+	_check(matched >= int(samples*0.95),"the kitchen bed inside the cast takes the shared shade; matched=%d/%d median_g=%.3f want %.3f" % [matched,samples,median,shade.g])
 	view.queue_free()
 	await get_tree().process_frame
 	Global.attempt_segment = previous

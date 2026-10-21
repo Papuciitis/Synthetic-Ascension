@@ -8,6 +8,7 @@ extends Node
 
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const DRESSING := preload("res://scenes/world/buildings/CityFrontageDressing.gd")
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const COMPOSER := preload("res://scenes/world/buildings/CityFacadeComposer.gd")
 const FOREGROUND_GROUP := &"foreground_occluders"
@@ -343,7 +344,12 @@ func _check_kit(kit: Node2D, tag: String) -> void:
 			_check(right.x <= gap.position.x - DRESSING.DOOR_CLEAR_PX + 0.5 or left.x >= gap.end.x + DRESSING.DOOR_CLEAR_PX - 0.5, tag + " %s keeps the doorway and its frame clear" % prop)
 		_check(sprite.is_in_group(FOREGROUND_GROUP) == DRESSING.is_tall(prop), tag + " only tall %s registers as foreground cover" % prop)
 		if DRESSING.is_tall(prop): tall += 1
-		_check(sprite.z_index + kit.z_index + (sprite.get_parent() as Node2D).z_index == -1, tag + " props draw with the kit trees, under every actor")
+		if prop in DRESSING.FLAT_PROPS:
+			# Flat ground (a kitchen bed) draws beneath the shared shade layer,
+			# so the building's cast darkens it like the soil around it.
+			_check(not sprite.z_as_relative and sprite.z_index == DEPTH.GROUND_SHADE_Z - 1, tag + " flat %s draws just beneath the shared ground shade" % prop)
+		else:
+			_check(sprite.z_index + kit.z_index + (sprite.get_parent() as Node2D).z_index == -1, tag + " props draw with the kit trees, under every actor")
 	_check(tall <= (2 if bool(kit.get("civic")) else 1), tag + " tall props stay sparse")
 	for node: Node in kit.get_children():
 		if node is Polygon2D and node.has_meta(&"city_dressing_shadow"):

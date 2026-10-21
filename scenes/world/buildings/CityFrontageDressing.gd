@@ -142,6 +142,9 @@ const FENCE_MIN_PX := 84.0
 ## repeating the same group on the next facade.
 const NEARBY_PX := 1400.0
 
+## Props that lie flat on the ground and so draw beneath the shared shade.
+const FLAT_PROPS: Array[StringName] = [&"garden_bed"]
+
 ## Props that rise over windows and register as foreground cover.
 const TALL: Array[StringName] = [&"cypress_tree", &"lamp_post", &"tree_planter"]
 
@@ -755,6 +758,11 @@ static func _add_prop(kit: Node2D, parent: Node2D, record: Dictionary) -> void:
 	sprite.position = foot + (texture.get_size() * 0.5 - Vector2(rect.get_center().x, rect.end.y)) * scale_value
 	sprite.modulate = PROP_TINT
 	sprite.z_index = 1
+	if prop in FLAT_PROPS:
+		# A flush garden bed is flat ground: it takes the building's shade and
+		# the actors' shadows like the soil around it (WorldDepthStyle layers).
+		sprite.z_as_relative = false
+		sprite.z_index = DEPTH.GROUND_SHADE_Z - 1
 	sprite.set_meta(&"city_dressing_prop", prop)
 	sprite.set_meta(&"city_dressing_contact", foot)
 	sprite.set_meta(&"city_dressing_role", record.role)
