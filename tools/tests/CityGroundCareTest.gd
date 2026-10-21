@@ -214,8 +214,11 @@ func _test_production_footway_pockets() -> void:
 			# infill lots in this lane (a shop beside the home, a shop beside
 			# the service annex, one across the lane); their floors and aprons
 			# own those cells. With street_continuity_enabled off the chunk still
-			# yields the native-trial histogram {0:716,2:125,3:6,4:177}.
-			_check(counts == {0:525,2:117,3:180,4:202},"the bed fixture retains the production floor ownership from the failed native trial")
+			# yields the native-trial histogram {0:716,2:125,4:177,7:6}. The six
+			# hub-pad cells stamp the kerbed main-street index 7 since the
+			# index-3 role split (2026-10-21; they stamped 3, now the stone floor
+			# of buildings and rooms, and drew identically as carriageway).
+			_check(counts == {0:525,2:117,3:174,4:202,7:6},"the bed fixture retains the production floor ownership from the failed native trial")
 			var compact_core := true
 			for core_y in range(14,17):
 				for core_x in range(0,3):

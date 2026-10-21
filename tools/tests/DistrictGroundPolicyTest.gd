@@ -107,7 +107,7 @@ func _test_policy_catalogue() -> void:
 	var first := POLICY.resolve(&"canal_services")
 	first.roles[POLICY.ROLE_YARD]["repeat_px"] = 1.0
 	_check(float(POLICY.resolve(&"canal_services").roles[POLICY.ROLE_YARD].repeat_px) > 64.0, "resolved policies are independent copies")
-	var expected := {7: POLICY.ROLE_ROAD, 8: POLICY.ROLE_ROAD, 9: POLICY.ROLE_ROAD, 3: POLICY.ROLE_ROAD, 4: POLICY.ROLE_LANE, 2: POLICY.ROLE_FOOTWAY, 6: POLICY.ROLE_YARD, 0: POLICY.ROLE_LAWN, 10: POLICY.ROLE_LAWN, 11: POLICY.ROLE_LAWN, 12: POLICY.ROLE_LAWN, 1: POLICY.ROLE_SOIL, 5: POLICY.ROLE_SOIL}
+	var expected := {7: POLICY.ROLE_ROAD, 8: POLICY.ROLE_ROAD, 9: POLICY.ROLE_ROAD, 3: POLICY.ROLE_FOOTWAY, 4: POLICY.ROLE_LANE, 2: POLICY.ROLE_FOOTWAY, 6: POLICY.ROLE_YARD, 0: POLICY.ROLE_LAWN, 10: POLICY.ROLE_LAWN, 11: POLICY.ROLE_LAWN, 12: POLICY.ROLE_LAWN, 1: POLICY.ROLE_SOIL, 5: POLICY.ROLE_SOIL}
 	var mapped := true
 	for index: int in expected:
 		if POLICY.role_for_index(index) != int(expected[index]): mapped = false
@@ -256,4 +256,39 @@ func _test_theme_district(segment: int, theme_id: StringName) -> void:
 	splat.flush()
 	var flush_ms := float(Time.get_ticks_usec() - flush_started) / 1000.0
 	_samples.append({"flush_ms": flush_ms, "segment": segment, "seed": seed_value, "theme": String(theme_id), "slots": Array(active), "district_cells": district_cells, "wild_cells": wild_cells, "wild_margin_cells_in_district": wild_in_district, "chunks": chosen.size(), "presentation_ms": presentation_ms, "occlusion_ms": occlusion_ms, "blockers": cm.get_chunk_build_data(district_coord).occupied_indices().size() if district_coord != Vector2i(999999, 999999) else 0})
+	cm.free()
+	_test_carriageway_index(theme, plan, theme_id)
+
+
+## The district's carriageway uses of the old index 3 (exit approach and
+## checkpoint lanes, gate and arena courts, hub pads) stamp the kerbed
+## main-street index; index 3 is left to building and room floors.
+func _test_carriageway_index(theme: SegmentThemeData, plan: Dictionary, theme_id: StringName) -> void:
+	var targets: Array[Vector2i] = []
+	for coord: Vector2i in plan.role_by_chunk:
+		if plan.role_by_chunk[coord] in [&"exit_approach", &"gate", &"checkpoint", &"miniboss_arena", &"boss_arena"]:
+			targets.append(coord)
+	targets.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.y < b.y or (a.y == b.y and a.x < b.x))
+	if targets.is_empty():
+		return
+	var cm := _manager(theme, plan)
+	var road_cells := 0
+	var floor_on_road := 0
+	var ring := GroundSplatRenderer.MAP_SIZE / CPC
+	var loaded: Array[Vector2i] = []
+	for coord: Vector2i in targets:
+		var aliased := false
+		for other: Vector2i in loaded:
+			if posmod(other.x - coord.x, ring) == 0 and posmod(other.y - coord.y, ring) == 0: aliased = true
+		if aliased:
+			continue
+		loaded.append(coord)
+		var chunk := cm._create_chunk(coord)
+		cm._chunks[coord] = chunk
+		var clear: Dictionary = chunk.get_meta(&"_proc_clear_cells", {})
+		for local: Vector2i in clear:
+			var material := cm.get_ground_splat().material_at(coord * CPC + local)
+			if material == 7: road_cells += 1
+			elif material == 3: floor_on_road += 1
+	_check(road_cells > 0 and floor_on_road == 0, "%s approach, gate and court carriageways stamp the main-street paving, never the floor index (%d road cells, %d floor cells)" % [theme_id, road_cells, floor_on_road])
 	cm.free()

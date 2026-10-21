@@ -27,13 +27,19 @@ extends RefCounted
 
 ## Presentation roles. A slot's ground index maps to one of these.
 const ROLE_RAW := 0
-## Kerbed carriageway and its squares: main streets and plazas (7), secondary
-## routes / alleys / courts (8), the primary objective (9), and the stone
-## courts, plaza lips, hub pads and checkpoint lanes (3) that sit inside them.
+## Kerbed carriageway and its squares: main streets and plazas, checkpoint
+## lanes, gate and arena courts, hub pads (7), secondary routes / alleys /
+## courts (8), the primary objective (9).
 const ROLE_ROAD := 1
 ## Flush setts: service lanes, door aprons, access corridors, passages (4).
 const ROLE_LANE := 2
-## Flags: sidewalks and house floors (2).
+## Flags: sidewalks and house floors (2), and the dressed stone floor (3) of
+## shops, civic and passage parcels, structures, facility and DonJon rooms.
+## Index 3 used to present as kerbed carriageway, so every such floor drew a
+## dark sett sliver and a kerb at its building's base and kerbs between
+## DonJon rooms and halls; the district's carriageway stamps that used it now
+## stamp the main-street index (ChunkGenDistrict, ChunkGenStamp), which draws
+## the same, so the split needs no further splat slot.
 const ROLE_FOOTWAY := 3
 ## The built district's continuous hard surface (semantic terrain "urban", 6).
 const ROLE_YARD := 4
@@ -54,7 +60,7 @@ const DISTRICT_GROUND_INDEX := 6
 const DISTRICT_TERRAIN := &"urban"
 
 const INDEX_ROLES := {
-	0: ROLE_LAWN, 1: ROLE_SOIL, 2: ROLE_FOOTWAY, 3: ROLE_ROAD, 4: ROLE_LANE,
+	0: ROLE_LAWN, 1: ROLE_SOIL, 2: ROLE_FOOTWAY, 3: ROLE_FOOTWAY, 4: ROLE_LANE,
 	5: ROLE_SOIL, 6: ROLE_YARD, 7: ROLE_ROAD, 8: ROLE_ROAD, 9: ROLE_ROAD,
 	10: ROLE_LAWN, 11: ROLE_LAWN, 12: ROLE_LAWN,
 }
