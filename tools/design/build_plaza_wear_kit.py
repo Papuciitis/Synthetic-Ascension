@@ -58,9 +58,12 @@ CELL = K.CELL
 N, E, S, W = K.N, K.E, K.S, K.W
 world = K.world
 
+# Band thickness, lift (the run's height at a continuing cell edge) and
+# coping per style; PlazaEdgeKit.STYLE_THICK / STYLE_LIFT / STYLE_COPING
+# carry the same numbers for the quadrant fills.
 K.STYLES.update({
     "kerb": {"thick": 26, "lift": 8, "coping": 0},
-    "ruin": {"thick": 40, "lift": 14, "coping": 5},
+    "ruin": {"thick": 30, "lift": 6, "coping": 0},
     "moss": {"thick": 40, "lift": 16, "coping": 5},
 })
 
@@ -251,146 +254,355 @@ def _inner(piece) -> np.ndarray:
     return K.erode(virtual_p, world(piece.coping))[crop] & piece.top_mask()
 
 
-def broken_coping(piece, top: np.ndarray, inner: np.ndarray, seed: int, gaps: int) -> list:
-    """Break the coping and the face's upper course over short stretches of
-    the arms: the band drops onto rubble there. Returns the gap centres."""
-    rng = np.random.default_rng(seed)
-    centres = []
-    arms = _arms(piece.mask)
-    for k in range(gaps):
-        axis, lo, hi, _ = arms[k % len(arms)]
-        if hi - lo < 18.0:
-            continue
-        if axis == "y":
-            # A vertical run loses a stretch of one side coping: the earth
-            # spills through where the stone has gone.
-            at = rng.uniform(lo + 7.0, hi - 7.0)
-            half = rng.uniform(5.0, 8.0)
-            west = bool(rng.integers(0, 2))
-            jag = _smooth_noise(seed + k * 17, (piece.h, piece.w), world(1.2))
-            along = piece.yy / RS - K.HEADROOM + piece.lift
-            px = piece.xx / RS
-            side = (px < piece.t0 + piece.coping + 0.5) if west else (px > piece.t1 - piece.coping - 0.5)
-            rim_part = (np.abs(along - at) + jag * 1.4 < half) & side & top & ~inner
-            piece.rgba[rim_part, :3] = np.clip(RUIN_GROUND[piece.yy[rim_part] % 256, piece.xx[rim_part] % 256], 0, 255)
-            centres.append(("y", at, piece.t0 + 4.0 if west else piece.t1 - 4.0))
-            continue
-        # A horizontal run's front (south) coping and face crumble: the break
-        # reads at the edge the camera sees, not as holes through the band.
-        if piece.mask & S:
-            continue
-        at = rng.uniform(lo + 7.0, hi - 7.0)
-        half = rng.uniform(5.0, 8.5)
-        jag = _smooth_noise(seed + k * 17, (piece.h, piece.w), world(1.2))
-        if axis == "x":
-            along = piece.xx / RS
-        else:
-            along = piece.yy / RS - K.HEADROOM + piece.lift
-        region = np.abs(along - at) + jag * 1.6 < half
-        broken = region & (piece.rgba[:, :, 3] > 0)
-        # Coping and upper course gone: the top drops to the rubble fill,
-        # the face loses its upper rows (jagged), leaving a low stump.
-        south_rim = top & ~inner & (piece.yy > piece.lifted(piece.t1 - piece.coping - 1.0))
-        rim_part = broken & south_rim
-        piece.rgba[rim_part, :3] = np.clip(RUIN_GROUND[piece.yy[rim_part] % 256, piece.xx[rim_part] % 256], 0, 255)
-        face_part = broken & ~top
-        if face_part.any():
-            ys = piece.yy[face_part]
-            cut = ys < (ys.min() + world(piece.lift * 0.55)) + jag[face_part] * world(1.5)
-            idx = np.where(face_part)
-            piece.rgba[idx[0][cut], idx[1][cut], 3] = 0.0
-        centres.append((axis, at, CELL / 2.0))
-    return centres
+# ------------------------------------------------------------ ruin edge ---
+# A ruined square's ring is no planter at all: the stump of a tumbled wall.
+# A low base course of loose dressed blocks (some gone, the rubble bed
+# showing) with here and there a stone of the next course still on it, and
+# fallen blocks, chips and dry weeds at its foot (concept plate 04). Cell
+# edges are always block joints and every block on a cell edge where the run
+# continues is base course at RUIN_EDGE_LIFT, so any variant meets any
+# neighbour; all damage lives inside the cell.
+
+RUIN_THICK = 30.0
+RUIN_EDGE_LIFT = 6.0
+RUIN_BOUND = 7.0
+# Weathered stone: under the parapet's value, cool, never a pale band.
+RUIN_VALUE = 0.70
+RUIN_GREY = 0.28
+RUIN_BASE = (0.0, 3.0, 4.0, 5.0, 6.0, 7.0)
+RUIN_BASE_P = (0.16, 0.12, 0.18, 0.2, 0.2, 0.14)
+assert K.STYLES["ruin"] == {"thick": RUIN_THICK, "lift": RUIN_EDGE_LIFT, "coping": 0}
+# Per-cell variants (PlazaEdgeKit picks one per global cell by hash):
+# straight runs carry most of a ring, so they get the most.
+VARIANTS = {E | W: 4, N | S: 4}
+
+
+def variant_count(mask: int) -> int:
+    return VARIANTS.get(mask, 2)
+
+
+def _row(v: float) -> int:
+    return world(v + K.HEADROOM)
+
+
+def _tileable(path: Path, size: int) -> np.ndarray:
+    """A ground source resized to one cell (`size` texels) and cross-faded
+    across its own wrap, so a piece's soil continues into its neighbour."""
+    img = Image.open(path).convert("RGB").resize((size, size), Image.LANCZOS)
+    a = np.asarray(img, dtype=np.float64)
+    b = np.roll(a, (size // 2, size // 2), axis=(0, 1))
+    ramp = np.abs(np.linspace(-1.0, 1.0, size))
+    w = np.clip(np.maximum(ramp[:, None], ramp[None, :]) * 1.6 - 0.6, 0.0, 1.0)[:, :, None]
+    return a * (1.0 - w) + b * w
+
+
+RUIN_BED = _cool(_tileable(ROOT / "assets/world/ground/ground_dirt_01.png", CELL * RS) * 1.15, 0.30)
+MOSS_SOIL_T = _tileable(ROOT / "assets/world/ground/city_care/v1/damp_moss_soil.png", CELL * RS)
+MUD_T = _tileable(ROOT / "assets/world/ground/ground_mud_wet_01.png", CELL * RS)
+
+
+def ruin_block(piece, x0: float, y0: float, x1: float, y1: float, h: float, tone: float, seed: int, floor_h: float = 0.0, split: tuple = ()) -> None:
+    """One loose block: its top lifted by h, its south face down to the
+    surface it stands on (the ground, or the base course at floor_h)."""
+    c0, c1 = world(x0), world(x1)
+    if c1 <= c0 or h <= floor_h:
+        return
+    r0, r1, ground = max(0, _row(y0 - h)), _row(y1 - h), _row(y1 - floor_h)
+    cols = np.arange(c0, c1)
+    if r1 > r0:
+        rows = np.arange(r0, r1)
+        lime = K.LIME[rows[:, None] % K.LIME.shape[0], cols[None, :] % K.LIME.shape[1]].copy()
+        lime *= RUIN_VALUE * tone
+        blot = _smooth_noise(seed, (r1 - r0, c1 - c0), world(1.4))
+        lime *= (1.0 - 0.08 * np.clip(blot, 0.0, 2.0))[:, :, None]
+        lip = (rows - r0) < world(0.8)
+        lime[lip] = lime[lip] * 1.05 + 3.0
+        lime[:, :world(0.5)] *= 0.78
+        if split:
+            # Two stones across the band: one joint along the run.
+            axis, at = split
+            if axis == "x":
+                j = _row(at - h) - r0
+                lime[max(0, j):max(0, j + world(0.5))] *= 0.74
+            else:
+                j = world(at) - c0
+                lime[:, max(0, j):max(0, j + world(0.5))] *= 0.74
+        piece.rgba[r0:r1, c0:c1, :3] = _cool(lime, RUIN_GREY)
+        piece.rgba[r0:r1, c0:c1, 3] = 255.0
+    if ground > r1:
+        rows = np.arange(r1, ground)
+        strip = K.FACE_STRIP
+        v = np.clip(((rows - r1) / float(world(16.0)) * (strip.shape[0] - 1)).astype(int) + 6, 0, strip.shape[0] - 1)
+        face = strip[v][:, cols % strip.shape[1], :3].copy()
+        t = ((rows - r1) / max(1.0, float(ground - r1)))[:, None, None]
+        face *= 0.72 * tone * (0.94 - 0.14 * t)
+        if floor_h <= 0.0:
+            face[(ground - rows) < world(1.2)] *= 0.78
+        face[:, :world(0.5)] *= 0.76
+        piece.rgba[r1:ground, c0:c1, :3] = _cool(face, RUIN_GREY + 0.06)
+        piece.rgba[r1:ground, c0:c1, 3] = 255.0
+
+
+def _partition(rng, a: float, b: float, bound_lo: bool, bound_hi: bool, lo: float = 10.0, hi: float = 19.0) -> list:
+    """Blocks [(a0, a1, kind)] along one span; kind 'edge' on a continuing
+    cell edge (fixed lift), else 'loose'."""
+    out = []
+    if bound_lo:
+        out.append((a, a + RUIN_BOUND, "edge"))
+        a += RUIN_BOUND
+    tail = []
+    if bound_hi:
+        tail = [(b - RUIN_BOUND, b, "edge")]
+        b -= RUIN_BOUND
+    at = a
+    while b - at > 0.01:
+        length = rng.uniform(lo, hi)
+        if b - (at + length) < 6.0:
+            length = b - at
+        out.append((at, at + length, "loose"))
+        at += length
+    return out + tail
+
+
+def _ruin_layout(mask: int, rng, t0: float, t1: float) -> tuple:
+    """(base, upper) blocks of a ruin piece as (x0, y0, x1, y1, h, axis);
+    upper stones stand on a base block (their faces stop at its top)."""
+    base, upper = [], []
+    spans = []
+    if mask & (E | W) or not mask & (N | S):
+        spans.append(("x", 0.0 if mask & W else t0, CELL if mask & E else t1, bool(mask & W), bool(mask & E)))
+        if mask & N:
+            spans.append(("y", 0.0, t0, True, False))
+        if mask & S:
+            spans.append(("y", t1, CELL, False, True))
+    else:
+        spans.append(("y", 0.0 if mask & N else t0, CELL if mask & S else t1, bool(mask & N), bool(mask & S)))
+    for axis, a, b, lo, hi in spans:
+        parts = _partition(rng, a, b, lo, hi)
+        loose = [k for k, p in enumerate(parts) if p[2] == "loose"]
+        hs = list(rng.choice(RUIN_BASE, size=len(parts), p=RUIN_BASE_P))
+        # A longer stretch always shows one lost block.
+        if b - a >= 28.0 and len(loose) >= 2 and min(hs[k] for k in loose) > 0.0:
+            hs[loose[int(rng.integers(0, len(loose)))]] = 0.0
+        for k, (p0, p1, kind) in enumerate(parts):
+            h = RUIN_EDGE_LIFT if kind == "edge" else float(hs[k])
+            j0 = 0.0 if kind == "edge" else rng.uniform(0.0, 2.0)
+            j1 = 0.0 if kind == "edge" else rng.uniform(0.0, 2.0)
+            if axis == "x":
+                rect = (p0, t0 + j0, p1, t1 - j1)
+            else:
+                rect = (t0 + j0, p0, t1 - j1, p1)
+            split = ()
+            if kind == "loose" and h > 0.0 and rng.random() < 0.5:
+                split = (axis, t0 + (t1 - t0) * rng.uniform(0.4, 0.62))
+            base.append(rect + (h, axis, split))
+            # A stone of the next course left standing on some loose blocks.
+            if kind != "loose" or h <= 0.0 or rng.random() > 0.45:
+                continue
+            top = h + rng.uniform(4.0, 9.0)
+            length = (p1 - p0) * rng.uniform(0.55, 0.95)
+            s0 = p0 + rng.uniform(0.0, (p1 - p0) - length)
+            if axis == "x":
+                back = rng.random() < 0.6
+                y1 = (t0 + t1) * 0.5 + rng.uniform(-2.0, 3.0) if back else t1 - j1 - rng.uniform(0.0, 2.0)
+                if mask & N:
+                    top = min(top, t0 + RUIN_EDGE_LIFT)
+                upper.append((s0, t0 + j0 + rng.uniform(0.0, 2.0), s0 + length, y1, top, axis, h))
+            else:
+                if mask & N:
+                    top = min(top, s0 + RUIN_EDGE_LIFT)
+                side = rng.random() < 0.5
+                x0 = t0 + j0 + (0.0 if side else rng.uniform(4.0, 10.0))
+                x1 = t1 - j1 - (rng.uniform(4.0, 10.0) if side else 0.0)
+                upper.append((x0, s0, x1, s0 + length, top, axis, h))
+    return base, upper
+
+
+def _gap_chip(piece, k: int, cx: float, base_plan_y: float, width: float, flip: bool) -> None:
+    src = CHIPS[k % len(CHIPS)]
+    img = K.scaled(src, world(width) / src.shape[1], flip)
+    img[:, :, :3] = _cool(img[:, :, :3], 0.34) * 0.84
+    half = img.shape[1] / 2.0
+    left = int(round(np.clip(world(cx) - half, world(3.0), piece.w - img.shape[1] - world(3.0))))
+    K.over(piece.rgba, img, left, _row(base_plan_y) - img.shape[0] + world(2.0))
+
+
+def _tuft(piece, k: int, cx: float, base_row: int, height: float, flip: bool, dry: bool, ceiling: int = 0) -> None:
+    src = WEEDS[k % len(WEEDS)]
+    height = min(height, (base_row - ceiling) / RS) if ceiling > 0 else height
+    if height < 4.0:
+        return
+    img = K.scaled(src, world(height) / src.shape[0], flip)
+    img[:, :, :3] = _cool(img[:, :, :3], 0.12) * 0.92
+    if dry:
+        img[:, :, :3] *= np.array([1.06, 1.0, 0.74])[None, None, :]
+    half = img.shape[1] / 2.0
+    left = int(round(np.clip(world(cx) - half, world(2.0), piece.w - img.shape[1] - world(2.0))))
+    K.over(piece.rgba, img, left, base_row - img.shape[0] + world(1.5))
 
 
 def build_ruin(mask: int, variant: int = 0) -> Image.Image:
     piece = K.Piece("ruin", mask)
-    for x0, x1, plan_y in piece.face_rects():
-        K.stone_face(piece, x0, x1, plan_y, shade=0.86)
-    top = K.build_top(piece, True)
-    inner = _inner(piece)
-    # Dry, weedy soil, never the clipped bed's dark loam.
-    _soil(piece, inner, RUIN_GROUND, 1.0, 31 + mask)
-    rgb = piece.rgba[:, :, :3]
-    piece.rgba[:, :, :3] = np.where(top[:, :, None] & ~inner[:, :, None], _cool(rgb, 0.25) * 0.92, rgb)
-    chipped_arris(piece, top & ~inner, 307 + mask * 11 + variant)
-    gaps = 1 if (mask in (E | W, N | S) and variant == 0) else (2 if mask in (E | W, N | S) else 1)
-    centres = broken_coping(piece, top, inner, 401 + mask * 19 + variant * 5, gaps)
-    rng = np.random.default_rng(503 + mask * 23 + variant)
-    c = CELL / 2.0
-    front = piece.t1 - 3.0
-    for k, (axis, at, across) in enumerate(centres):
+    rng = np.random.default_rng(9001 + mask * 97 + variant * 7919)
+    t0, t1 = piece.t0, piece.t1
+    # The rubble bed under the band (seen through the gaps).
+    for x0, y0, x1, y1 in piece.plan_rects():
+        r0, r1, c0, c1 = _row(y0), _row(y1), world(x0), world(x1)
+        rows, cols = np.arange(r0, r1), np.arange(c0, c1)
+        piece.rgba[r0:r1, c0:c1, :3] = RUIN_BED[rows[:, None] % RUIN_BED.shape[0], cols[None, :] % RUIN_BED.shape[1]]
+        piece.rgba[r0:r1, c0:c1, 3] = 255.0
+    base, upper = _ruin_layout(mask, rng, t0, t1)
+    # Painter's order: by south edge, base course first, then what stands on it.
+    gaps = []
+    for n, (x0, y0, x1, y1, h, axis, split) in enumerate(sorted(base, key=lambda b: (b[3], b[0]))):
+        if h <= 0.0:
+            gaps.append((x0, y0, x1, y1, axis))
+            continue
+        ruin_block(piece, x0, y0, x1, y1, h, rng.uniform(0.92, 1.05), 70 + mask * 13 + variant * 5 + n, 0.0, split)
+    for n, (x0, y0, x1, y1, h, axis, floor_h) in enumerate(sorted(upper, key=lambda b: (b[3], b[0]))):
+        ruin_block(piece, x0, y0, x1, y1, h, rng.uniform(0.94, 1.06), 300 + mask * 11 + variant * 7 + n, floor_h)
+    ceiling = _row(-RUIN_EDGE_LIFT) if mask & N else 0
+    # Rubble and a weed where blocks are gone.
+    for k, (x0, y0, x1, y1, axis) in enumerate(gaps):
         if axis == "x":
-            chip(piece, k + variant, at, front + 2.0, rng.uniform(18.0, 22.0), flip=bool(k % 2))
+            _gap_chip(piece, k + variant, (x0 + x1) * 0.5, t1 - 1.0, rng.uniform(9.0, 12.0), bool(k % 2))
+            if rng.random() < 0.7:
+                _tuft(piece, k + mask, (x0 + x1) * 0.5 + rng.uniform(-2.0, 2.0), _row(t1 - 4.0), rng.uniform(10.0, 15.0), bool((k + variant) % 2), True, ceiling)
         else:
-            chip(piece, k + variant, across, at + 5.0, rng.uniform(13.0, 16.0), flip=bool(k % 2))
-    # Weeds: one or two unclipped tufts, low, never a hedge.
-    if mask == (N | S):
-        tufts = [(c + rng.uniform(-5.0, 5.0), 28.0 + 10.0 * variant), (c + rng.uniform(-5.0, 5.0), 52.0)]
-    elif mask & N and not mask & S:
-        tufts = [(c, 24.0)]
-    elif mask == (E | W):
-        tufts = [(14.0 + 6.0 * variant + rng.uniform(-3.0, 3.0), front), (44.0 + rng.uniform(-4.0, 4.0), front)]
-    else:
-        tufts = [(c + rng.uniform(-12.0, 12.0), front)]
-    for k, (cx, base) in enumerate(tufts):
-        height = rng.uniform(15.0, 20.0)
-        if mask & N:
-            height = min(height, (piece.lifted(base) - piece.lifted(0.0)) / RS)
-        weed(piece, k + mask, cx, base, height, flip=bool((mask + k) % 2), dry=True)
-    # Ends and corners without a break still show the neglect: a fallen chip.
-    if not centres and mask not in (E | W, N | S):
-        chip(piece, mask + variant, c + rng.uniform(-8.0, 8.0), front + 2.0, rng.uniform(14.0, 17.0), flip=bool(mask % 2))
+            _gap_chip(piece, k + variant, CELL / 2.0, y1 - 1.0, rng.uniform(9.0, 12.0), bool(k % 2))
+            if rng.random() < 0.5:
+                _tuft(piece, k + mask + 1, CELL / 2.0 + rng.uniform(-4.0, 4.0), _row(y1 - 2.0), rng.uniform(9.0, 13.0), bool(k % 2), True, ceiling)
+    # Fallen blocks and chips at the foot of the band (inside the cell).
+    for f in range(int(rng.integers(1, 4))):
+        w, d, h = rng.uniform(6.0, 10.0), rng.uniform(4.0, 6.5), rng.uniform(2.5, 4.0)
+        west_zone = (3.0, t0 - 2.0 - w)
+        east_zone = (t1 + 2.0, CELL - 3.0 - w)
+        if mask & (E | W) or not mask & (N | S):
+            south = rng.random() < 0.7
+            if south and mask & S:
+                south = False
+            if not south and mask & N:
+                continue
+            if mask & (N | S):
+                zone = west_zone if rng.random() < 0.5 else east_zone
+                x = rng.uniform(*zone)
+            else:
+                x = rng.uniform(3.0, CELL - 3.0 - w)
+            y = rng.uniform(t1 + 3.0, t1 + 9.0) if south else rng.uniform(5.0, t0 - 7.0)
+        else:
+            x = rng.uniform(*(east_zone if rng.random() < 0.6 else west_zone))
+            y = rng.uniform(10.0, CELL - 12.0)
+        ruin_block(piece, x, y, x + w, y + d, h, rng.uniform(0.88, 1.0), 500 + mask * 7 + f + variant * 3)
+        if rng.random() < 0.6:
+            _gap_chip(piece, f + mask, min(x + w + 3.0, CELL - 6.0), y + d + 1.0, rng.uniform(7.0, 10.0), bool(f % 2))
+    # A dry tuft or two along the foot.
+    for k in range(int(rng.integers(1, 3))):
+        if mask & (E | W) or not mask & (N | S):
+            cx = rng.uniform(8.0, CELL - 8.0)
+            if mask & S and t0 - 4.0 < cx < t1 + 4.0:
+                continue
+            _tuft(piece, k + 2 * mask + variant, cx, _row(t1 + 1.5), rng.uniform(9.0, 14.0), bool(k % 2), True, ceiling)
+        else:
+            cx = t1 + 2.0 if rng.random() < 0.5 else t0 - 2.0
+            _tuft(piece, k + mask + variant, cx, _row(rng.uniform(16.0, CELL - 6.0)), rng.uniform(9.0, 13.0), bool(k % 2), True, ceiling)
+    if mask & S:
+        # The south neighbour owns everything below its lifted north edge.
+        piece.rgba[_row(CELL - RUIN_EDGE_LIFT):, world(t0):world(t1), 3] = 0.0
     K.contact_shadow(piece)
     return K.reduce(piece)
 
 
+# ------------------------------------------------------------ damp edge ---
+# A damp S7 square keeps its planter, neglected: the coping in separate
+# stones under moss (some gone, the bed spilling through), wet dark soil
+# with rank unclipped growth spilling over the front, ivy and water stains.
+
+MOSS_DARK = np.array([62.0, 72.0, 44.0])
+MOSS_LIGHT = np.array([104.0, 116.0, 66.0])
+
+
+def _stone_ids(piece, rim: np.ndarray, rng) -> tuple:
+    """Coping stones along the rim: per rim pixel, the stone it belongs to
+    (cell edges are always joints) and whether it sits on a joint."""
+    plan_x = piece.xx / RS
+    plan_y = piece.yy / RS - K.HEADROOM + piece.lift
+    vertical = (plan_x >= piece.t0) & (plan_x <= piece.t1) & ((plan_y < piece.t0) | (plan_y > piece.t1))
+    along = np.where(vertical, plan_y, plan_x)
+    side = np.where(vertical, plan_x > CELL / 2.0, plan_y > CELL / 2.0)
+    cuts = [0.0]
+    at = 0.0
+    while True:
+        at += rng.uniform(9.0, 15.0)
+        if at > CELL - 6.0:
+            break
+        cuts.append(at)
+    cuts.append(CELL)
+    cuts = np.array(cuts)
+    ids = np.searchsorted(cuts, along, side="right") * 4 + side.astype(int) * 2 + vertical.astype(int)
+    near = np.min(np.abs(along[:, :, None] - cuts[None, None, :]), axis=2)
+    joint = rim & (near < 0.45)
+    return ids, joint
+
+
 def build_moss(mask: int, variant: int = 0) -> Image.Image:
     piece = K.Piece("moss", mask)
+    rng = np.random.default_rng(12011 + mask * 89 + variant * 6151)
     for x0, x1, plan_y in piece.face_rects():
-        K.stone_face(piece, x0, x1, plan_y, shade=0.84)
+        K.stone_face(piece, x0, x1, plan_y, shade=0.80)
     faces = piece.rgba[:, :, 3] > 0
     top = K.build_top(piece, True)
     inner = _inner(piece)
-    _soil(piece, inner, MOSS_SOIL, 0.88, 41 + mask)
     rim = top & ~inner
-    # Moss over the coping in soft patches, heavier toward the shaded edges.
-    blot = _smooth_noise(601 + mask * 3 + variant, (piece.h, piece.w), world(1.2))
-    # Moss creeps from the wet soil over the coping's inner lip, with a few
-    # sparse cushions elsewhere: a damp edge, not a stained slab.
-    near_soil = np.zeros_like(inner)
-    grown = Image.fromarray((inner * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(2 * world(1.6) + 1))
-    near_soil = (np.asarray(grown) > 0) & ~inner
-    cover = np.where(near_soil, 0.55 + 0.15 * np.clip(blot, -1.0, 1.0), np.clip(blot - 1.2, 0.0, 0.5))
-    moss = np.clip(MOSS * 0.92, 0, 255)
-    mixed = piece.rgba[:, :, :3] * (1.0 - cover[:, :, None]) + moss[None, None, :] * cover[:, :, None]
-    piece.rgba[rim, :3] = mixed[rim] * 0.96
-    # Water stain: the face darkens and greens toward its wet foot.
+    # Wet bed: moss soil with darker mud hollows.
+    mud = _smooth_noise(41 + mask + variant * 3, (piece.h, piece.w), world(2.5))
+    soil = MOSS_SOIL_T[piece.yy % MOSS_SOIL_T.shape[0], piece.xx % MOSS_SOIL_T.shape[1]] * 0.80
+    wet = MUD_T[piece.yy % MUD_T.shape[0], piece.xx % MUD_T.shape[1]] * 0.70
+    mix = np.clip((mud - 0.3) * 0.6, 0.0, 0.6)[:, :, None]
+    piece.rgba[inner, :3] = (soil * (1.0 - mix) + wet * mix)[inner]
+    # Coping: wet stone (no pale arris), stone by stone under moss.
+    piece.rgba[rim, :3] = _cool(piece.rgba[rim, :3], 0.18) * 0.80
+    ids, joint = _stone_ids(piece, rim, rng)
+    blot = _smooth_noise(601 + mask * 3 + variant * 11, (piece.h, piece.w), world(1.0))
+    edge_cells = (piece.xx < world(1.0)) | (piece.xx >= piece.w - world(1.0))
+    moss_rgb = MOSS_DARK[None, None, :] * (1.0 - np.clip(blot * 0.4 + 0.5, 0, 1))[:, :, None] + MOSS_LIGHT[None, None, :] * np.clip(blot * 0.4 + 0.5, 0, 1)[:, :, None]
+    for sid in np.unique(ids[rim]):
+        stone = rim & (ids == sid)
+        amount = rng.uniform(0.45, 0.95)
+        gone = rng.random() < 0.22 and not stone[:, :world(2.0)].any() and not stone[:, -world(2.0):].any()
+        if gone:
+            # A lost coping stone: the bed spills through at soil level.
+            piece.rgba[stone, :3] = (soil * 0.9)[stone] * 0.85 + moss_rgb[stone] * 0.15
+            continue
+        cover = np.clip(amount + 0.35 * blot, 0.0, 1.0)
+        piece.rgba[stone, :3] = piece.rgba[stone, :3] * (1.0 - cover[stone, None]) + moss_rgb[stone] * cover[stone, None]
+        piece.rgba[stone, :3] *= rng.uniform(0.92, 1.04)
+    piece.rgba[joint, :3] *= 0.70
+    # Water stain and moss creeping down the face.
     face_only = faces & ~top
     rows = piece.yy[face_only]
     if rows.size:
         t = ((rows - rows.min()) / max(1, rows.max() - rows.min()))[:, None]
         base = piece.rgba[face_only, :3]
-        wet = base * (0.90 - 0.22 * t) * (1.0 - 0.25 * t) + moss[None, :] * 0.25 * t
-        piece.rgba[face_only, :3] = wet
-    rng = np.random.default_rng(709 + mask * 29 + variant)
+        creep = np.clip(blot[face_only] - 0.4, 0.0, 1.0)[:, None] * (1.0 - t)
+        stained = base * (0.90 - 0.24 * t) + MOSS_DARK[None, :] * 0.30 * t
+        piece.rgba[face_only, :3] = stained * (1.0 - creep) + MOSS_DARK[None, :] * creep
+    # Rank growth: tufts in the bed, some leaning over the front coping.
     c = CELL / 2.0
-    front = piece.t1 - 4.0
-    if mask & N and not mask & S:
-        tufts = [(c, 24.0)]
+    ceiling = piece.lifted(0.0) if mask & N else 0
+    spots = []
+    if mask == (E | W):
+        spots = [(rng.uniform(8.0, 26.0), piece.t1 - 3.0), (rng.uniform(36.0, 56.0), piece.t1 + 1.0)]
     elif mask == (N | S):
-        tufts = [(c + rng.uniform(-4.0, 4.0), 26.0 + 8.0 * variant), (c + rng.uniform(-4.0, 4.0), 54.0)]
-    elif mask == (E | W):
-        tufts = [(16.0 + rng.uniform(-3.0, 3.0), front), (46.0 + 4.0 * variant + rng.uniform(-3.0, 3.0), front)]
+        spots = [(c + rng.uniform(-5.0, 5.0), rng.uniform(18.0, 34.0)), (c + rng.uniform(-5.0, 5.0), rng.uniform(44.0, 58.0))]
     else:
-        tufts = [(c + rng.uniform(-12.0, 12.0), front)]
-    for k, (cx, base) in enumerate(tufts):
-        height = rng.uniform(16.0, 22.0)
-        if mask & N:
-            height = min(height, (piece.lifted(base) - piece.lifted(0.0)) / RS)
-        weed(piece, k + mask + 1, cx, base, height, flip=bool((mask + k + variant) % 2))
-    if mask == (E | W) or (bin(mask).count("1") <= 1 and variant == 0):
-        K.ivy(piece, 6.0 if variant == 0 else 28.0, piece.t1, bool(variant))
+        spots = [(c + rng.uniform(-10.0, 10.0), piece.t1 - 2.0)]
+    if rng.random() < 0.5:
+        spots.append((c + rng.uniform(-14.0, 14.0), piece.t1 + 1.5))
+    for k, (cx, base) in enumerate(spots):
+        _tuft(piece, k + mask + variant, cx, piece.lifted(base), rng.uniform(14.0, 21.0), bool((mask + k + variant) % 2), False, ceiling)
+    if rng.random() < 0.6 and piece.face_rects():
+        x0, x1, plan_y = piece.face_rects()[int(rng.integers(0, len(piece.face_rects())))]
+        K.ivy(piece, float(np.clip(rng.uniform(x0, max(x0, x1 - 20.0)), 2.0, CELL - 24.0)), plan_y, bool(variant % 2))
     K.contact_shadow(piece)
     return K.reduce(piece)
 
@@ -402,9 +614,17 @@ def build_fill(style: str) -> Image.Image:
     if style == "kerb":
         rgb = _cool(K.LIME[:px, :px] * KERB_VALUE, KERB_GREY)
     elif style == "moss":
-        rgb = MOSS_SOIL[:px, :px] * 0.88
+        rgb = MOSS_SOIL_T[:px, :px] * 0.80
     else:
-        rgb = RUIN_GROUND[:px, :px]
+        # A ruined double ring's quadrant: a low mass of tumbled blocks at
+        # the edge lift, dark joints between them.
+        rng = np.random.default_rng(77)
+        lime = K.LIME[:px, :px] * RUIN_VALUE
+        yy, xx = np.mgrid[0:px, 0:px]
+        cut_x, cut_y = rng.uniform(0.3, 0.7) * px, rng.uniform(0.3, 0.7) * px
+        joint = (np.abs(xx - cut_x) < world(0.5)) | (np.abs(yy - cut_y) < world(0.5))
+        lime[joint] *= 0.62
+        rgb = _cool(lime, RUIN_GREY)
     arr = np.dstack([rgb, np.full((px, px, 1), 255.0)])
     img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGBA")
     return img.resize((round(side * K.SCALE), round(side * K.SCALE)), Image.LANCZOS)
@@ -459,12 +679,16 @@ def build_worn_atlas():
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    builders = {"kerb": build_kerb, "ruin": build_ruin, "moss": build_moss}
-    for style, build in builders.items():
+    for mask in range(16):
+        build_kerb(mask).save(OUT / f"kerb34_{mask:02d}.png")
+    build_kerb(E | W, 1).save(OUT / "kerb34_h_b.png")
+    build_kerb(N | S, 1).save(OUT / "kerb34_v_b.png")
+    build_fill("kerb").save(OUT / "kerb34_fill.png")
+    # Ruined and damp edges: hash-picked variants per mask (ruin34_MM_V).
+    for style, build in (("ruin", build_ruin), ("moss", build_moss)):
         for mask in range(16):
-            build(mask).save(OUT / f"{style}34_{mask:02d}.png")
-        build(E | W, 1).save(OUT / f"{style}34_h_b.png")
-        build(N | S, 1).save(OUT / f"{style}34_v_b.png")
+            for v in range(variant_count(mask)):
+                build(mask, v).save(OUT / f"{style}34_{mask:02d}_{v}.png")
         build_fill(style).save(OUT / f"{style}34_fill.png")
     # Bed fills (one repeat each at one texel per world px).
     Image.fromarray(np.clip(MOSS_SOIL, 0, 255).astype(np.uint8), "RGB").save(OUT / "plaza_moss_soil.png")
@@ -475,6 +699,7 @@ def main() -> None:
     print("wrote", OUT)
     for name in sorted(regions):
         print(f'\t&"{name}": Rect2({", ".join(str(v) for v in regions[name])}),')
+    print("variants:", {m: variant_count(m) for m in range(16)})
 
 
 if __name__ == "__main__":

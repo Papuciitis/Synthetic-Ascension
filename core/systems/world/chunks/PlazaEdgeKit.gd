@@ -10,9 +10,10 @@ extends RefCounted
 ##
 ## Maintenance states (plaza pass 2, after the lead's phase-1 review): the
 ## ordinary ring follows its district's use and upkeep instead of one tidy
-## planter family; a worn kerb in working yards, a broken weedy planter in
-## ruined districts, a mossy one in damp S7, the bare parapet on military
-## ground (tools/design/build_plaza_wear_kit.py, processed existing kits).
+## planter family; a worn kerb in working yards, the stump of a tumbled wall
+## in ruined districts, a neglected mossy planter in damp S7, the bare
+## parapet on military ground (tools/design/build_plaza_wear_kit.py,
+## processed existing kits).
 
 const N := WorldBlockerGeometry.N
 const E := WorldBlockerGeometry.E
@@ -79,6 +80,23 @@ const STATE_RUINED := 2
 const STATE_DAMP := 3
 const STATE_MILITARY := 4
 
+## Maintenance state of each district family's squares (lead review of
+## phase 1, "Theme identity"): tended civic and market squares keep their
+## planters; working yards get worn kerbs, stacked goods and bare packed
+## ground; ruined districts tumbled wall stumps, rubble, weeds and neglected
+## beds; damp S7 mossy rims and wet beds; military ground bare stone and
+## supplies. Unlisted families (S1, the hub, S11+ fallbacks) stay tended.
+const STATE_BY_FAMILY := {
+	&"service_courtyards": STATE_TENDED, &"checkpoint_lanes": STATE_TENDED,
+	&"civilian_cutthrough": STATE_TENDED, &"inner_district_gate": STATE_TENDED,
+	&"gate_district": STATE_TENDED,
+	&"industrial_cutthrough": STATE_WORKING, &"rail_yard": STATE_WORKING,
+	&"collapsed_ward": STATE_RUINED, &"ruined_services": STATE_RUINED,
+	&"siege_services": STATE_RUINED,
+	&"underpass_veins": STATE_DAMP, &"canal_services": STATE_DAMP,
+	&"military_staging": STATE_MILITARY, &"outer_wall": STATE_MILITARY,
+}
+
 ## Edge styles a ring cell draws in: the balustrade bit (arenas and gates)
 ## wins in every state; military ground takes the same plain parapet.
 const STYLE_PLANTER := 0
@@ -87,85 +105,45 @@ const STYLE_KERB := 2
 const STYLE_RUIN := 3
 const STYLE_MOSS := 4
 
-## Working districts: a low worn kerb, no planting (build_plaza_wear_kit.py).
-const KERB: Array[Texture2D] = [
-	preload("res://assets/world/plazas_v1/kit/kerb34_00.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_01.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_02.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_03.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_04.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_05.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_06.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_07.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_08.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_09.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_10.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_11.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_12.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_13.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_14.png"),
-	preload("res://assets/world/plazas_v1/kit/kerb34_15.png"),
-]
-const KERB_H_B := preload("res://assets/world/plazas_v1/kit/kerb34_h_b.png")
-const KERB_V_B := preload("res://assets/world/plazas_v1/kit/kerb34_v_b.png")
-const KERB_FILL := preload("res://assets/world/plazas_v1/kit/kerb34_fill.png")
-## Ruined districts: the planter neglected, coping broken, weeds.
-const RUIN: Array[Texture2D] = [
-	preload("res://assets/world/plazas_v1/kit/ruin34_00.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_01.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_02.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_03.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_04.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_05.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_06.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_07.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_08.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_09.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_10.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_11.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_12.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_13.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_14.png"),
-	preload("res://assets/world/plazas_v1/kit/ruin34_15.png"),
-]
-const RUIN_H_B := preload("res://assets/world/plazas_v1/kit/ruin34_h_b.png")
-const RUIN_V_B := preload("res://assets/world/plazas_v1/kit/ruin34_v_b.png")
-const RUIN_FILL := preload("res://assets/world/plazas_v1/kit/ruin34_fill.png")
-## Damp districts: mossy coping, wet soil, unclipped weeds and ivy.
-const MOSS: Array[Texture2D] = [
-	preload("res://assets/world/plazas_v1/kit/moss34_00.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_01.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_02.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_03.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_04.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_05.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_06.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_07.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_08.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_09.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_10.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_11.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_12.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_13.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_14.png"),
-	preload("res://assets/world/plazas_v1/kit/moss34_15.png"),
-]
-const MOSS_H_B := preload("res://assets/world/plazas_v1/kit/moss34_h_b.png")
-const MOSS_V_B := preload("res://assets/world/plazas_v1/kit/moss34_v_b.png")
-const MOSS_FILL := preload("res://assets/world/plazas_v1/kit/moss34_fill.png")
+## The worn edge kits (tools/design/build_plaza_wear_kit.py, processed from
+## existing kits): a worn kerb for working yards, the stump of a tumbled
+## wall for ruined districts, a neglected mossy planter for damp S7. Only the
+## active segment's state is resident (warm_state, called when the segment's
+## world is configured): a set is 19 (kerb) or 37 (ruin, moss) pieces of
+## 128 x 184 RGBA, ~94 KB each uncompressed and without mipmaps, so all three
+## at once would hold ~8.7 MB of shared GPU memory no segment can use.
+## Ruined and damp pieces carry several variants per mask (straight runs 4,
+## others 2), picked per global cell by a stable hash (SALT_VARIANT), so a
+## run never repeats one break every other cell.
+const KIT_DIR := "res://assets/world/plazas_v1/kit/"
+const WORN_STEMS := {STYLE_KERB: "kerb34", STYLE_RUIN: "ruin34", STYLE_MOSS: "moss34"}
+const SALT_VARIANT := 0x51A7EA
+## Textures the dressing of a worn square adds (PlazaDressing): the worn prop
+## atlas in every worn state, the dry weedy bed fill in ruined squares and the
+## wet moss bed fill in damp ones. Loaded with the state's edge set.
+const WORN_ATLAS_PATH := KIT_DIR + "plaza_props_worn.png"
+const WEEDS_GROUND_PATH := KIT_DIR + "plaza_weeds.png"
+const MOSS_SOIL_PATH := KIT_DIR + "plaza_moss_soil.png"
+
+static var _loaded_style := -1
+## [mask] -> Array of the variant pieces of _loaded_style.
+static var _loaded_pieces: Array = []
+static var _loaded_fill: Texture2D = null
+static var _dressing_state := -1
+static var _dressing: Dictionary = {}
 
 ## Geometry baked into the pieces (world px): band thickness, lift (face
-## height) and planter coping per style (STYLE_* order). Fills cover an open
-## quadrant (plus, for a planter-shaped style, the coping of the arms beside
-## it).
+## height; for the ruin, its height at a continuing cell edge) and planter
+## coping per style (STYLE_* order). Fills cover an open quadrant (plus, for
+## a planter-shaped style, the coping of the arms beside it).
 const PLANTER_THICK := 40.0
 const PLANTER_LIFT := 16.0
 const PLANTER_COPING := 5.0
 const BALUSTRADE_THICK := 28.0
 const BALUSTRADE_LIFT := 17.0
-const STYLE_THICK: Array[float] = [40.0, 28.0, 26.0, 40.0, 40.0]
-const STYLE_LIFT: Array[float] = [16.0, 17.0, 8.0, 14.0, 16.0]
-const STYLE_COPING: Array[float] = [5.0, 0.0, 0.0, 5.0, 5.0]
+const STYLE_THICK: Array[float] = [40.0, 28.0, 26.0, 30.0, 40.0]
+const STYLE_LIFT: Array[float] = [16.0, 17.0, 8.0, 6.0, 16.0]
+const STYLE_COPING: Array[float] = [5.0, 0.0, 0.0, 0.0, 5.0]
 ## A knee-high edge casts a short contact shadow, not the wall kit's long one.
 const SHADOW_OFFSET := Vector2(-5.0, 4.0)
 ## Parapet piers along straight runs, staggered per row like the wall kit.
@@ -180,13 +158,21 @@ static func is_balustrade(variant: int) -> bool:
 	return (variant & VARIANT_BALUSTRADE) != 0
 
 
+static func state_for_family(family: StringName) -> int:
+	return int(STATE_BY_FAMILY.get(family, STATE_TENDED))
+
+
 ## The style a plaza edge cell draws in: arena and gate rings keep the plain
 ## parapet in every district; otherwise the chunk's maintenance state picks
-## the finish (tended planter, worn kerb, broken planter, mossy planter, or
-## the bare parapet of military ground).
+## the finish (tended planter, worn kerb, tumbled wall stump, mossy planter,
+## or the bare parapet of military ground).
 static func style_of(variant: int, state: int) -> int:
 	if is_balustrade(variant):
 		return STYLE_BALUSTRADE
+	return style_for_state(state)
+
+
+static func style_for_state(state: int) -> int:
 	match state:
 		STATE_WORKING:
 			return STYLE_KERB
@@ -211,13 +197,15 @@ static func texture_for(data: ChunkBuildData, cell: Vector2i) -> Texture2D:
 	var global_cell := data.coord * data.cells_per_side + cell
 	var horizontal := mask == (E | W)
 	var vertical := mask == (N | S)
-	if style != STYLE_BALUSTRADE:
-		var pieces: Array = _pieces_of(style)
+	if style == STYLE_PLANTER:
 		if horizontal and posmod(global_cell.x, 2) == 1:
-			return pieces[1]
+			return PLANTER_H_B
 		if vertical and posmod(global_cell.y, 2) == 1:
-			return pieces[2]
-		return (pieces[0] as Array)[mask]
+			return PLANTER_V_B
+		return PLANTER[mask]
+	if style != STYLE_BALUSTRADE:
+		var variants: Array = _worn_pieces(style)[mask]
+		return variants[variant_index(global_cell, variants.size())]
 	if horizontal or vertical:
 		var along := global_cell.x if horizontal else global_cell.y
 		var across := global_cell.y if horizontal else global_cell.x
@@ -228,18 +216,105 @@ static func texture_for(data: ChunkBuildData, cell: Vector2i) -> Texture2D:
 	return BALUSTRADE[mask]
 
 
-## [masks, straight-run alternate (E-W), alternate (N-S), fill] per style.
-static func _pieces_of(style: int) -> Array:
-	match style:
-		STYLE_KERB:
-			return [KERB, KERB_H_B, KERB_V_B, KERB_FILL]
-		STYLE_RUIN:
-			return [RUIN, RUIN_H_B, RUIN_V_B, RUIN_FILL]
-		STYLE_MOSS:
-			return [MOSS, MOSS_H_B, MOSS_V_B, MOSS_FILL]
-		STYLE_BALUSTRADE:
-			return [BALUSTRADE, BALUSTRADE_PIER_H, BALUSTRADE_PIER_V, BALUSTRADE_FILL]
-	return [PLANTER, PLANTER_H_B, PLANTER_V_B, PLANTER_FILL]
+## Stable per-cell variant pick (own salt; no generator, chunk or global RNG).
+static func variant_index(global_cell: Vector2i, count: int) -> int:
+	if count <= 1:
+		return 0
+	var h := int((SALT_VARIANT * 0x9E3779B9) & 0x7FFFFFFF)
+	h = int((h ^ (global_cell.x * 73856093)) & 0x7FFFFFFF)
+	h = int((h ^ (global_cell.y * 19349663)) & 0x7FFFFFFF)
+	h = int((h * 1103515245 + 12345) & 0x7FFFFFFF)
+	return (h >> 7) % count
+
+
+## Variants baked per connection mask (build_plaza_wear_kit.variant_count).
+static func variant_count(style: int, mask: int) -> int:
+	if style == STYLE_KERB:
+		return 2 if mask == (E | W) or mask == (N | S) else 1
+	if style == STYLE_RUIN or style == STYLE_MOSS:
+		return 4 if mask == (E | W) or mask == (N | S) else 2
+	return 1
+
+
+static func piece_paths(style: int) -> Array:
+	var stem: String = KIT_DIR + String(WORN_STEMS[style])
+	var out: Array = []
+	for mask in 16:
+		var paths: Array[String] = []
+		if style == STYLE_KERB:
+			paths.append("%s_%02d.png" % [stem, mask])
+			if mask == (E | W):
+				paths.append(stem + "_h_b.png")
+			elif mask == (N | S):
+				paths.append(stem + "_v_b.png")
+		else:
+			for v in variant_count(style, mask):
+				paths.append("%s_%02d_%d.png" % [stem, mask, v])
+		out.append(paths)
+	return out
+
+
+## Make a maintenance state's edge set and dressing textures resident and
+## release the previous state's (their textures free once no batch or node
+## holds them). ChunkManager calls this when a segment's world is configured,
+## so streaming never pays the first-touch load; texture_for loads on demand
+## as a fallback (tests, direct chunk builds).
+static func warm_state(state: int) -> void:
+	var style := style_for_state(state)
+	if WORN_STEMS.has(style):
+		_load_style(style)
+	_load_dressing(state)
+
+
+static func warm_family(family: StringName) -> void:
+	warm_state(state_for_family(family))
+
+
+## The style whose edge set is resident, or -1 (planter and parapet only).
+static func resident_style() -> int:
+	return _loaded_style
+
+
+static func _worn_pieces(style: int) -> Array:
+	if _loaded_style != style:
+		_load_style(style)
+	return _loaded_pieces
+
+
+static func _load_style(style: int) -> void:
+	if _loaded_style == style:
+		return
+	var pieces: Array = []
+	for paths: Array in piece_paths(style):
+		var variants: Array[Texture2D] = []
+		for path: String in paths:
+			variants.append(load(path) as Texture2D)
+		pieces.append(variants)
+	_loaded_pieces = pieces
+	_loaded_fill = load(KIT_DIR + String(WORN_STEMS[style]) + "_fill.png") as Texture2D
+	_loaded_style = style
+
+
+static func _load_dressing(state: int) -> void:
+	if _dressing_state == state:
+		return
+	var out: Dictionary = {}
+	if state != STATE_TENDED:
+		out[&"worn_atlas"] = load(WORN_ATLAS_PATH) as Texture2D
+	if state == STATE_RUINED:
+		out[&"weeds_ground"] = load(WEEDS_GROUND_PATH) as Texture2D
+	elif state == STATE_DAMP:
+		out[&"moss_soil"] = load(MOSS_SOIL_PATH) as Texture2D
+	_dressing = out
+	_dressing_state = state
+
+
+## A worn square's dressing texture (&"worn_atlas", &"weeds_ground",
+## &"moss_soil") for `state`, loaded with the state if it is not resident.
+static func dressing_texture(state: int, id: StringName) -> Texture2D:
+	if _dressing_state != state:
+		_load_dressing(state)
+	return _dressing.get(id) as Texture2D
 
 
 static func _straight(data: ChunkBuildData, cell: Vector2i, mask: int) -> bool:
@@ -250,7 +325,14 @@ static func _straight(data: ChunkBuildData, cell: Vector2i, mask: int) -> bool:
 
 
 static func fill_texture(style: int) -> Texture2D:
-	return _pieces_of(style)[3]
+	match style:
+		STYLE_PLANTER:
+			return PLANTER_FILL
+		STYLE_BALUSTRADE:
+			return BALUSTRADE_FILL
+	if _loaded_style != style:
+		_load_style(style)
+	return _loaded_fill
 
 
 ## World offset of a quadrant fill's centre from its cell centre.
@@ -259,6 +341,30 @@ static func fill_offset(style: int, diagonal: Vector2i) -> Vector2:
 	return Vector2(diagonal) * (32.0 - side * 0.5) + Vector2(0.0, -STYLE_LIFT[style])
 
 
-## Distinct textures this kit can add to the renderer's batches.
+## Pieces, alternates and the fill of one style.
+static func style_texture_count(style: int) -> int:
+	if style == STYLE_PLANTER or style == STYLE_BALUSTRADE:
+		return 16 + 2 + 1
+	var total := 1
+	for mask in 16:
+		total += variant_count(style, mask)
+	return total
+
+
+## Distinct textures this kit can add to the renderer's batches, over every
+## state: planter 19 + parapet 19 + kerb 19 + ruin 37 + moss 37.
 static func texture_count() -> int:
-	return PLANTER.size() + 3 + BALUSTRADE.size() + 3 + KERB.size() + 3 + RUIN.size() + 3 + MOSS.size() + 3
+	var total := 0
+	for style in 5:
+		total += style_texture_count(style)
+	return total
+
+
+## Textures resident while a segment in `state` streams: the always-loaded
+## planter and parapet sets plus that state's worn set (if any).
+static func resident_texture_count(state: int) -> int:
+	var style := style_for_state(state)
+	var total := style_texture_count(STYLE_PLANTER) + style_texture_count(STYLE_BALUSTRADE)
+	if WORN_STEMS.has(style):
+		total += style_texture_count(style)
+	return total
