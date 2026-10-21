@@ -42,16 +42,16 @@ const PROPS := {
 	&"bench_stone": {"file": "bench_stone.png", "rect": Rect2(3, 2, 506, 122), "width": 90.0},
 	&"bollard_pair": {"file": "bollard_pair.png", "rect": Rect2(4, 4, 503, 298), "width": 52.0},
 	&"crates_stack": {"file": "crates_stack.png", "rect": Rect2(4, 4, 503, 394), "width": 70.0},
-	&"cypress_tree": {"file": "cypress_tree.png", "rect": Rect2(3, 4, 176, 504), "height": 150.0, "tall": true},
+	&"cypress_tree": {"file": "cypress_tree.png", "rect": Rect2(3, 4, 176, 504), "height": 150.0},
 	&"garden_bed": {"file": "garden_bed.png", "rect": Rect2(2, 4, 507, 156), "width": 150.0},
 	&"handcart": {"file": "handcart.png", "rect": Rect2(3, 3, 504, 326), "width": 82.0},
-	&"lamp_post": {"file": "lamp_post.png", "rect": Rect2(3, 3, 91, 505), "height": 110.0, "tall": true},
+	&"lamp_post": {"file": "lamp_post.png", "rect": Rect2(3, 3, 91, 505), "height": 110.0},
 	&"pots_cluster": {"file": "pots_cluster.png", "rect": Rect2(4, 3, 504, 325), "width": 64.0},
 	&"rubble_pile": {"file": "rubble_pile.png", "rect": Rect2(3, 5, 503, 175), "width": 84.0},
 	&"sacks_pile": {"file": "sacks_pile.png", "rect": Rect2(4, 3, 503, 334), "width": 60.0},
 	&"scaffold_crates": {"file": "scaffold_crates.png", "rect": Rect2(3, 3, 505, 248), "width": 92.0},
 	&"table_benches": {"file": "table_benches.png", "rect": Rect2(4, 4, 504, 296), "width": 88.0},
-	&"tree_planter": {"file": "tree_planter.png", "rect": Rect2(4, 4, 362, 503), "height": 130.0, "tall": true},
+	&"tree_planter": {"file": "tree_planter.png", "rect": Rect2(4, 4, 362, 503), "height": 130.0},
 	&"water_trough": {"file": "water_trough.png", "rect": Rect2(3, 3, 505, 177), "width": 92.0},
 	&"wattle_fence": {"file": "wattle_fence.png", "rect": Rect2(2, 2, 507, 99), "width": 96.0},
 }
@@ -142,7 +142,11 @@ const FENCE_MIN_PX := 84.0
 ## repeating the same group on the next facade.
 const NEARBY_PX := 1400.0
 
+## Props that rise over windows and register as foreground cover.
+const TALL: Array[StringName] = [&"cypress_tree", &"lamp_post", &"tree_planter"]
+
 static var _cache: Dictionary = {}
+static var _sizes: Dictionary = {}
 
 
 ## Gardens, corner tree and dressing for one configured kit.
@@ -431,13 +435,17 @@ static func prop_scale(prop: StringName) -> float:
 	return float(spec.width) / rect.size.x if spec.has("width") else float(spec.height) / rect.size.y
 
 
-## Visible world size of a prop's opaque art.
+## Visible world size of a prop's opaque art (cached: planning asks often).
 static func prop_size(prop: StringName) -> Vector2:
-	return (PROPS[prop].rect as Rect2).size * prop_scale(prop)
+	var size: Variant = _sizes.get(prop)
+	if size == null:
+		size = (PROPS[prop].rect as Rect2).size * prop_scale(prop)
+		_sizes[prop] = size
+	return size
 
 
 static func is_tall(prop: StringName) -> bool:
-	return bool((PROPS[prop] as Dictionary).get("tall", false))
+	return TALL.has(prop)
 
 
 static func _template_width(template: Array) -> float:
