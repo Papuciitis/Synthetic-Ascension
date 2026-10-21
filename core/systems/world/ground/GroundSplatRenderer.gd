@@ -770,6 +770,9 @@ func _push_role_uniforms() -> void:
 	else:
 		_material.set_shader_parameter("yard_patch", Vector4(float(yard_patch.get("layer", -1)), float(yard_patch.get("coverage", 0.0)), float(yard_patch.get("repeat_px", 384.0)), float(yard_patch.get("weight", 0.5))))
 		_material.set_shader_parameter("yard_patch_tint", yard_patch.get("tint", Color.WHITE))
+		# The patch's quiet mid tone: the yard's a shade darker.
+		var yard_mid: Color = ((roles.get(_POLICY.ROLE_YARD, {}) as Dictionary).get("mid", Color(0.5, 0.5, 0.5)) as Color) * 0.92
+		_material.set_shader_parameter("yard_patch_mid", Color(yard_mid.r, yard_mid.g, yard_mid.b, 1.0))
 	var verge_layer := int(_policy.get("verge_layer", -1)) if enabled else -1
 	_material.set_shader_parameter("verge_layer", float(verge_layer))
 	_material.set_shader_parameter("verge_strength", float(_policy.get("verge_strength", 0.0)) if enabled else 0.0)
