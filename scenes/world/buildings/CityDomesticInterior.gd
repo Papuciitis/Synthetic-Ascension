@@ -31,10 +31,12 @@ static func _stone_eligible(context: Dictionary) -> bool:
 	return int(context.get("segment",0)) >= 2 and not bool(context.get("civic",true)) and StringName(context.get("roof_material",&"")) == &"clay"
 
 
-## _eligible for the context context_for(kit, ...) would build, without
-## building it.
+## Whether the context context_for(kit, ...) would build passes _eligible
+## (furnishing) or _stone_eligible (warm cutaway masonry), without building
+## it. Reads the same inputs; keep the three rules in step.
 static func eligible_kit(kit: Node2D) -> bool:
-	return Global.attempt_segment == 2 and StringName(kit.get_meta(&"building_usage",&"")) == &"row_house" and not bool(kit.get("civic"))
+	var context := {"segment":Global.attempt_segment,"usage":kit.get_meta(&"building_usage",&""),"civic":bool(kit.get("civic")),"roof_material":kit.get_meta(&"city_roof_material",&"")}
+	return _eligible(context) or _stone_eligible(context)
 
 
 static func _furniture_eligible(context: Dictionary) -> bool:

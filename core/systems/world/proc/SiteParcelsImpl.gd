@@ -1219,11 +1219,11 @@ func _add_domestic_interior(chunk_manager: Node, kit: Node2D, wall_cells: Dictio
 	var data := chunk_manager.get("_active_build_data") as ChunkBuildData
 	if data == null:
 		return
-	# Only an S2 non-civic row house is furnished or gets domestic masonry
-	# (CityDomesticInterior._eligible); the context is pure but scans the
-	# building's cells, so every other building skips it (2026-10-21: the scan
-	# of all 1024 chunk cells was about half of each building's build cost in
-	# every segment).
+	# Only a building that will be furnished or get warm domestic masonry
+	# (CityDomesticInterior._eligible / _stone_eligible) needs the context; it
+	# is pure but scans the building's cells, so every other building skips it
+	# (2026-10-21: the scan of all 1024 chunk cells was about half of each
+	# building's build cost in every segment).
 	if not DOMESTIC.eligible_kit(kit):
 		return
 	var context := DOMESTIC.context_for(kit,data,wall_cells,building_id)
