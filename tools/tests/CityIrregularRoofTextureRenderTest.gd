@@ -1,10 +1,13 @@
 extends Node2D
 ## Actual roof mesh UVs and native source-Y calibration expose tile courses
 ## which continue through a turned ridge despite the new light-plane axis.
+## Every city segment shares the S2 connected planes; the roof stone is the
+## building's own stable clay or slate choice (CityBlockKit SLATE_SHARE).
 
 const FIXTURE := preload("res://tools/tests/CitySceneDepthFixture.gd")
 const ROOF_SHADER := preload("res://scenes/world/buildings/roof.gdshader")
 const CLAY := "res://assets/world/city_block/clay.png"
+const SLATE := "res://assets/world/city_block/slate.png"
 var _passes := 0
 var _failures := 0
 var _calibration: ImageTexture
@@ -79,15 +82,14 @@ func _test_segment(segment: int) -> void:
 	var front := _at(meshes,Vector2(280,800))
 	_check(main != null and front != null,"S%d probe selects actual opaque production roof meshes" % segment)
 	if main != null and front != null:
-		_check(main.texture.resource_path == CLAY and front.texture.resource_path == CLAY,"S%d both wings retain the original clay source resource" % segment)
+		_check(main.texture == front.texture and main.texture.resource_path in [CLAY,SLATE],"S%d both wings share the building's one clay/slate source resource" % segment)
 		var main_basis := _uv_basis(main)
 		var front_basis := _uv_basis(front)
 		var main_density := Vector2(main_basis.x.length()/main.texture_scale.x,main_basis.y.length()/main.texture_scale.y)
 		var front_density := Vector2(front_basis.x.length()/front.texture_scale.x,front_basis.y.length()/front.texture_scale.y)
 		_check(absf(main_density.x-main_density.y) < 0.001 and absf(front_density.x-front_density.y) < 0.001 and main_density.x > 0.0,"S%d real mesh UVs retain isotropic nonzero texel density" % segment)
 		_check(absf(main_density.x-front_density.x) < 0.001 and main.texture_scale.is_equal_approx(front.texture_scale),"S%d turning a wing preserves the original attached wing's texel density" % segment)
-		if segment == 2:
-			_check(absf(main_basis.x.y) > absf(main_basis.x.x)*4.0 and absf(main_basis.y.x) > absf(main_basis.y.y)*4.0,"NS main roof maps source barrel Y across world X instead of down its ridge")
+		_check(absf(main_basis.x.y) > absf(main_basis.x.x)*4.0 and absf(main_basis.y.x) > absf(main_basis.y.y)*4.0,"S%d NS main roof maps source barrel Y across world X instead of down its ridge" % segment)
 		_check(absf(front_basis.y.y) > absf(front_basis.y.x)*4.0 and absf(front_basis.x.x) > absf(front_basis.x.y)*4.0,"S%d EW/front roof preserves its original source-Y downslope mapping" % segment)
 	# Source-Y bands isolate actual texture direction while leaving every
 	# production polygon, UV, texture scale and draw-alpha unchanged.
@@ -110,10 +112,7 @@ func _test_segment(segment: int) -> void:
 	if pixels != null:
 		var main_variation := _variation(pixels,Vector2i(700,640))
 		var front_variation := _variation(pixels,Vector2i(275,790))
-		if segment == 2:
-			_check(main_variation.x > 0.001 and main_variation.y < 0.001,"native NS main roof source-Y variation runs across X; xy="+str(main_variation))
-		else:
-			_check(main_variation.y > 0.001 and main_variation.x < 0.001,"S3 native original tile direction stays unchanged; xy="+str(main_variation))
+		_check(main_variation.x > 0.001 and main_variation.y < 0.001,"S%d native NS main roof source-Y variation runs across X; xy=" % segment+str(main_variation))
 		_check(front_variation.y > 0.001 and front_variation.x < 0.001,"S%d native EW/front roof retains source-Y variation along Y; xy=" % segment+str(front_variation))
 		print("CityIrregularRoofTextureRenderTest S%d actual variation main=%s front=%s" % [segment,str(main_variation),str(front_variation)])
 	pixels = null

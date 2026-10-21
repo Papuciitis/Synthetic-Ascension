@@ -3,6 +3,12 @@ extends RefCounted
 ## They change projected building forms, never parcel/door/collision data.
 
 const FOOTPRINT_GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
+## Raised caps' east returns face the top-right sun: a step lighter than
+## their shaded south fascia, never the darkest face, and not so bright that
+## a seven-pixel return reads as a drawn line.
+const EAST_SLATE := Color("7f8683")
+const EAST_CLAY := Color("8a7c68")
 
 ## Fitted S2 L/recessed roofs: independent gable planes and a shallow rim,
 ## with exactly the original visible union and one inherited fade per pixel.
@@ -162,7 +168,8 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 	# each height change physical; no second outline around every roof tile.
 	if not cross_wing:
 		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, depth), Vector2(top.x, end.y + depth)]), Color("777e79") if slate else Color("62685f"))
-	_face(group, PackedVector2Array([Vector2(end.x, top.y), end, end + Vector2(0, depth), Vector2(end.x + 7, top.y + depth)]), Color("505d5e"))
+	# The short side return faces east, toward the sun: lit, never darkest.
+	_face(group, PackedVector2Array([Vector2(end.x, top.y), end, end + Vector2(0, depth), Vector2(end.x + 7, top.y + depth)]), EAST_SLATE if slate else EAST_CLAY)
 	var roof := Polygon2D.new()
 	roof.name = "Roof_" + kind
 	roof.set_meta(&"city_roof_form", kind)
@@ -178,8 +185,8 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 	material.set_shader_parameter("bounds", Vector4(top.x, top.y, end.x, end.y))
 	material.set_shader_parameter("ridge_along_x", 1.0 if along_x else 0.0)
 	material.set_shader_parameter("gable", 1.0)
-	material.set_shader_parameter("material_contrast", 0.42 if slate else 0.28)
-	material.set_shader_parameter("material_mid", Vector3(0.29, 0.35, 0.40) if slate else Vector3(0.52, 0.29, 0.20))
+	material.set_shader_parameter("material_contrast", RoofOverlay.CITY_MATERIAL_CONTRAST)
+	material.set_shader_parameter("material_mid", RoofOverlay.SLATE_MID if slate else RoofOverlay.CLAY_MID)
 	material.set_shader_parameter("ridge_light", 0.19)
 	roof.material = material
 	group.add_child(roof)
@@ -245,14 +252,18 @@ static func _chimney(parent: Node2D, plane: Polygon2D, civic: bool) -> bool:
 	var right := w*0.5
 	var footprint := PackedVector2Array([Vector2(left,0),Vector2(right,0),Vector2(right,0)+side,Vector2(left,0)+side])
 	var shadow_points := footprint.duplicate()
-	var shift := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(38)
+	var shift := DEPTH.offset_for_height(height+8.0)
 	for point: Vector2 in footprint: shadow_points.append(point+shift)
-	_face(stack,Geometry2D.convex_hull(shadow_points),Color(0.02,0.04,0.04,0.20))
+	# The stack casts onto its own roof with the shared sun shade.
+	var cast := _face(stack,Geometry2D.convex_hull(shadow_points),Color(1,1,1,0.9))
+	cast.name = "FlueCast"
+	cast.material = DEPTH.SUN_SHADOW_MATERIAL
 	var flashing := _face(stack,flashing_points,Color("414d49"))
 	flashing.name = "RoofFlashing"
 	_face(stack,PackedVector2Array([Vector2(-23,3),Vector2(-12,-10),Vector2(27,-7),Vector2(16,7)]),Color("68756b"))
 	_face(stack,PackedVector2Array([Vector2(left,0),Vector2(left,-height),Vector2(right,-height),Vector2(right,0)]),Color("7e8575") if civic else Color("8a7f6c"))
-	_face(stack,PackedVector2Array([Vector2(right,0),Vector2(right,-height),Vector2(right,-height)+side,Vector2(right,0)+side]),Color("515f54") if civic else Color("5f6557"))
+	# East face toward the sun: brighter than the shaded south front.
+	_face(stack,PackedVector2Array([Vector2(right,0),Vector2(right,-height),Vector2(right,-height)+side,Vector2(right,0)+side]),Color("9fa691") if civic else Color("aa9f86"))
 	# Broad weathering and two selected masonry courses, not brick outlines.
 	_face(stack,PackedVector2Array([Vector2(left+3,-height+10),Vector2(2,-height+12),Vector2(5,-12),Vector2(left+4,-8)]),Color(0.53,0.57,0.47,0.45))
 	for row in range(2):

@@ -152,7 +152,8 @@ func _run() -> void:
 					forms += 1
 					var plane_material := plane.material as ShaderMaterial
 					orientations[plane_material.get_shader_parameter("ridge_along_x")] = true
-					_check(float(plane_material.get_shader_parameter("material_contrast")) <= 0.5, "city roof material recedes behind its structural planes")
+					var contrast := float(plane_material.get_shader_parameter("material_contrast"))
+					_check(contrast >= 0.55 and contrast <= 0.75, "city roof tiles read while the material stays quieter than its raw source")
 			_check(forms >= 2, "occupied building has composed roof forms, not one uninterrupted tile field")
 			_check(orientations.size() == 2, "compound roof uses distinct connected gable directions")
 			var box := Rect2(poly.polygon[0], Vector2.ZERO)

@@ -131,17 +131,22 @@ static func compose_roof(roof: RoofOverlay, form_plan: Dictionary, textures: Dic
 	var front_end := box.end.x-28.0*scale_value
 	var front_width := front_end-box.position.x
 	var cast := support.duplicate()
-	var offset := preload("res://core/systems/world/WorldDepthStyle.gd").offset_for_height(lift)
+	var depth_style := preload("res://core/systems/world/WorldDepthStyle.gd")
+	var offset := depth_style.offset_for_height(lift)
 	for point: Vector2 in support: cast.append(point+offset)
+	# The raised watch casts onto the hall roof with the shared sun shade.
 	for shadow: PackedVector2Array in Geometry2D.intersect_polygons(Geometry2D.convex_hull(cast),host.polygon):
-		_face(group,shadow,Color(0.07,0.12,0.15,0.23))
+		var roof_cast := _face(group,shadow,Color(1,1,1,0.85))
+		roof_cast.name = "GuardWatchRoofCast"
+		roof_cast.material = depth_style.SUN_SHADOW_MATERIAL
 	var front := PackedVector2Array([Vector2(box.position.x,box.end.y-lift),Vector2(front_end,box.end.y-lift),Vector2(front_end,box.end.y),Vector2(box.position.x,box.end.y)])
 	var body := _surface(group,front,textures,Color("c2c5b7"),&"infill")
 	body.name = "GuardWatchFront"
 	var side_points := PackedVector2Array([front[1],Vector2(box.end.x,box.end.y-lift-24.0*scale_value),Vector2(box.end.x,box.end.y-24.0*scale_value),front[2]])
 	var rear_contact := _face(group,PackedVector2Array([side_points[1],side_points[1]+Vector2(7,5),side_points[2]+Vector2(7,5),side_points[2]]),Color(0.08,0.14,0.13,0.38))
 	rear_contact.name = "GuardWatchRearContact"
-	var side := _surface(group,side_points,textures,Color("9daa97"),&"infill")
+	# The side return faces east, toward the sun: lit above the shaded front.
+	var side := _surface(group,side_points,textures,Color("ccd0bf"),&"infill")
 	side.name = "GuardWatchSide"
 	# A compact raised pitch makes this a watch pavilion rather than another
 	# flat equipment box. Its small overhang stays within the fitted margin.
