@@ -8,6 +8,7 @@ const GUARD_ROOT := "res://assets/world/districts/checkpoint_lanes/"
 const FOREGROUND := preload("res://core/systems/world/visibility/ForegroundSpriteCoverage.gd")
 const FOOTPRINT_GEOMETRY := preload("res://scenes/world/buildings/CityFootprintGeometry.gd")
 const COMPOSER := preload("res://scenes/world/buildings/CityFacadeComposer.gd")
+const FRONTAGE_DRESSING := preload("res://scenes/world/buildings/CityFrontageDressing.gd")
 ## Share of ordinary houses roofed in slate (pale ashlar walls) per district;
 ## the rest keep clay over warm plaster. Civic halls are always slate.
 const SLATE_SHARE := {
@@ -120,9 +121,8 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 	if not _irregular: _add_entry_ground()
 	if not _irregular:
 		_add_records_board(cell_px, doors)
-		_add_planting()
-	elif Global.attempt_segment == 2 and StringName(_district_profile.get("building_usage",&"")) == &"row_house" and Geometry2D.is_point_in_polygon(Vector2(bounds.position.x+24,_front-8),irregular_outline):
-		_add_planting()
+		# The reviewed S3 guard loggia keeps its own corner planting.
+		if _is_guard(): _add_planting()
 	if _is_guard() and roof != null:
 		preload("res://scenes/world/buildings/CheckpointOfficeForms.gd").compose_frontage(self,roof.get_meta(&"district_form_plan",{}),{"arch_open":_texture(GUARD_ROOT+"guard_arch_open.png"),"arch_closed":_texture(GUARD_ROOT+"guard_arch_closed.png"),"infill":_texture(GUARD_ROOT+"guard_quiet_infill_v2.png")})
 	else:
@@ -132,6 +132,10 @@ func configure(rect: Rect2i, cell_px: int, doors: Array, roof: RoofOverlay, is_c
 		for detail: Node in get_children():
 			if detail.name in [&"PaintedEntryLantern",&"PaintedCornerPlanter",&"CityTemperateTree",&"CityFoliageShadow"]: detail.set_meta(&"district_optional_detail",true)
 		if _records_board != null: _records_board.set_meta(&"district_optional_detail",true)
+	else:
+		# Every other city building, in every segment: household garden, corner
+		# tree and use/district street dressing at the foot of its south wall.
+		FRONTAGE_DRESSING.compose(self)
 	queue_redraw()
 
 ## Exact chunk-local use/footprint context for the shared ground's presentation.
@@ -409,29 +413,16 @@ func trim_paving(footprints: Array[Rect2i], cell_px: int) -> void:
 		paving.queue_free()
 
 func _add_planting() -> void:
-	# Small stable domestic groups join the public tree, without consuming
-	# the parcel RNG or planting every doorway with the same finished object.
-	var domestic_garden := not civic and Global.attempt_segment == 2 and StringName(_district_profile.get("building_usage",&"")) == &"row_house"
-	var garden_variant := absi(int(_district_profile.get("visual_seed",int(bounds.position.x/64)+int(bounds.position.y/64)))) % 4
-	if domestic_garden and garden_variant == 3: return
-	if not civic and not domestic_garden and (int(bounds.position.x/64)+int(bounds.position.y/64)) % 3 != 0: return
+	# The accepted S3 guard loggia's corner group: planter, shade tree and two
+	# low shrubs on the west wall band. Ordinary buildings get their gardens,
+	# trees and street dressing from CityFrontageDressing instead.
 	var texture := ART.dressing_texture(&"olive_shrub")
 	if texture == null: return
 	var tree: Texture2D = _texture("temperate_tree.png") if _has_texture("temperate_tree.png") else null
-	if domestic_garden and garden_variant != 1: tree = null
 	var tree_anchor := Vector2(650,1170)
 	var tree_scale := 280.0/tree.get_width() if tree != null else 1.0
-	if domestic_garden and garden_variant == 1:
-		tree = _texture("res://assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png")
-		tree_anchor = Vector2(660,1060)
-		tree_scale = 135.0/1167.0
 	var planter: Texture2D = _texture("planted_corner.png") if _has_texture("planted_corner.png") else null
 	var planter_width := minf(160.0,_door_x-_door_width*0.5-bounds.position.x-24.0) if _south_front else 160.0
-	if domestic_garden:
-		planter_width = minf(planter_width,128.0)
-		if _south_front and planter_width >= 80.0: _add_domestic_garden_bed(planter_width,garden_variant)
-		planter = null
-		if garden_variant != 1: return
 	if planter != null and planter_width >= 80.0:
 		var piece := Sprite2D.new()
 		piece.name = "PaintedCornerPlanter"
@@ -446,13 +437,12 @@ func _add_planting() -> void:
 	var anchor := Vector2(bounds.position.x + 4, _front - 30)
 	var offsets := [Vector2(0,-38), Vector2(-22,18), Vector2(28,8)]
 	for index in offsets.size():
-		if domestic_garden and index > (0 if tree != null or _painted_planter else 1): continue
 		if _painted_planter and index > 0: continue
 		var source: Texture2D = tree if index == 0 and tree != null else texture
 		var plant := Sprite2D.new()
 		plant.texture = source
 		plant.position = anchor + offsets[index]
-		plant.scale = Vector2.ONE * (tree_scale if index == 0 and tree != null else ([60.0,44.0,36.0][index] if domestic_garden else [180.0,100.0,68.0][index])/source.get_width())
+		plant.scale = Vector2.ONE * (tree_scale if index == 0 and tree != null else [180.0,100.0,68.0][index]/source.get_width())
 		var feet := plant.position+Vector2(0,source.get_height()*plant.scale.y*0.5)
 		if index == 0 and tree != null:
 			# Measured root contact in the original 1254-square transparent asset.
@@ -489,64 +479,6 @@ func _add_planting() -> void:
 		shade.color = Color(0.06,0.10,0.13,0.25)
 		shade.z_index = -90
 		add_child(shade)
-
-func _add_domestic_garden_bed(width: float, variant: int) -> void:
-	# A trampled, flush herb/flower pocket at the inhabited edge. The root and
-	# stone planter remain on the existing wall band; this soil owns no blocker.
-	var left := bounds.position.x+10
-	var front := _front+8
-	var depth := 48.0 if variant == 0 else 72.0
-	var bed := PackedVector2Array([Vector2(left,front),Vector2(left+width-14,front+3),Vector2(left+width,front+depth*0.52),Vector2(left+width-24,front+depth),Vector2(left+16,front+depth-9),Vector2(left-7,front+depth*0.42)])
-	var soil := _flat(self,bed,Color("514b39"))
-	soil.name = "TendedDomesticBed"
-	soil.z_index = -90
-	soil.set_meta(&"city_domestic_garden",variant)
-	# A planted pocket sits in the same earth as the surrounding ground.
-	# Feather its mesh edge instead of leaving an opaque flat polygon sticker.
-	var center := Vector2.ZERO
-	for point: Vector2 in bed: center += point
-	center /= bed.size()
-	var points := bed.duplicate()
-	var colors := PackedColorArray()
-	var faces: Array[PackedInt32Array] = []
-	for point: Vector2 in bed:
-		points.append(point.lerp(center,0.24))
-		colors.append(Color(1,1,1,0))
-	for index: int in bed.size(): colors.append(Color.WHITE)
-	points.append(center)
-	colors.append(Color.WHITE)
-	for index: int in bed.size():
-		var next := (index+1)%bed.size()
-		faces.append(PackedInt32Array([index,next,next+bed.size(),index+bed.size()]))
-		faces.append(PackedInt32Array([bed.size()*2,index+bed.size(),next+bed.size()]))
-	soil.polygon = points
-	soil.polygons = faces
-	soil.vertex_colors = colors
-	soil.texture = _texture("res://assets/world/ground/ground_dirt_01.png")
-	soil.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-	soil.color = Color(0.82,0.77,0.65)
-	var soil_uv := PackedVector2Array()
-	for point: Vector2 in points:
-		soil_uv.append(to_global(point)*soil.texture.get_size()/300.0)
-	soil.uv = soil_uv
-	if variant != 1:
-		var bed_sprite := Sprite2D.new()
-		bed_sprite.name = "DomesticHerbBed"
-		bed_sprite.texture = _texture("res://assets/world/domestic_gardens/v1/flower_herb_bed.png")
-		bed_sprite.scale = Vector2.ONE*(minf(width,115.0)/1761.0)
-		# Original art is reduced roughly fifteen-fold. Its mip chain keeps
-		# fine leaves/stone from becoming isolated bright sampling speckles.
-		bed_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-		bed_sprite.modulate = Color(0.94,0.93,0.87)
-		var contact := Vector2(left+width*0.5,front+22)
-		bed_sprite.position = contact+(bed_sprite.texture.get_size()*0.5-Vector2(955,485))*bed_sprite.scale
-		bed_sprite.z_index = 1
-		bed_sprite.set_meta(&"city_garden_contact",contact)
-		add_child(bed_sprite)
-	for index in range(3 if variant == 2 else 2):
-		var at := Vector2(left+22+index*width*0.24,front+depth*0.46+(index%2)*9)
-		var herbs := _flat(self,PackedVector2Array([at-Vector2(9,5),at+Vector2(6,-8),at+Vector2(13,3),at+Vector2(-3,8)]),Color("737d53") if variant == 2 else Color("829365"))
-		herbs.z_index = -89
 
 func _add_frontage_details() -> void:
 	if not _south_front: return
@@ -722,12 +654,7 @@ func _draw() -> void:
 	# The shared ground material owns road-union curbs/gutters. No rectangular
 	# outline around the block: unused edges transition through soil and grass.
 	if not civic: return
-	# The leafy group grows from a contained stone base on the blocked corner.
-	if not _painted_planter:
-		var bed := Rect2(bounds.position.x+2,_front-15,46,24)
-		draw_rect(bed.grow(3),Color("38463d"))
-		draw_rect(bed,Color("929789"))
-		draw_rect(Rect2(bed.position+Vector2(4,3),bed.size-Vector2(8,10)),Color("454b36"))
+	# Corner planting now belongs to CityFrontageDressing (planters, trees).
 	var drain := Rect2(pipe_x-3,_front+11,32,18)
 	var outlet := Vector2(pipe_x+12,_front+3)
 	# A mounted downpipe stops over a flush catch drain, with a short shaded

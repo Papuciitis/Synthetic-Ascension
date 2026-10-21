@@ -33,8 +33,8 @@ func _runtime_building(chunk: Node2D, kit: Node, context: String) -> Dictionary:
 
 func _check_handoff_samples(samples: Array) -> void:
 	for expected: Dictionary in [
-		{"seed":16102026,"coord":Vector2i(0,3),"entry_direction":Vector2.DOWN,"garden_variant":0,"herb_bed":true,"fruit_tree":false,"irregular":true},
-		{"seed":17,"coord":Vector2i(-3,5),"entry_direction":Vector2.UP,"garden_variant":1,"herb_bed":false,"fruit_tree":true},
+		{"seed":16102026,"coord":Vector2i(0,3),"entry_direction":Vector2.DOWN,"garden_variant":0,"kitchen_bed":true,"fruit_tree":false,"irregular":true},
+		{"seed":17,"coord":Vector2i(-3,5),"entry_direction":Vector2.UP,"garden_variant":1,"kitchen_bed":false,"fruit_tree":true},
 	]:
 		var homes: Array[Dictionary] = []
 		for sample: Dictionary in samples:
@@ -50,7 +50,7 @@ func _check_handoff_samples(samples: Array) -> void:
 			failures.append("Handoff home lacks unique domestic runtime identity " + context)
 		if home.entry_direction != str(expected.entry_direction): failures.append("Handoff home entry direction changed " + context)
 		if expected.has("irregular") and home.irregular != expected.irregular: failures.append("Handoff home footprint changed " + context)
-		if home.garden_variant != expected.garden_variant or home.herb_bed != expected.herb_bed or home.fruit_tree != expected.fruit_tree:
+		if home.garden_variant != expected.garden_variant or home.kitchen_bed != expected.kitchen_bed or home.fruit_tree != expected.fruit_tree:
 			failures.append("Handoff home garden fit changed " + context)
 
 func actual_fixture(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i) -> Dictionary:
@@ -118,17 +118,27 @@ func _run() -> void:
 				if not child.is_in_group(&"city_block_building"): continue
 				var annex := bool(child.get_meta(&"city_service_annex",false))
 				if annex: annexes += 1
-				if child.get_node_or_null("DomesticHerbBed") != null or child.get_node_or_null("TendedDomesticBed") != null:
+				var garden_node := child.get_node_or_null("DomesticGarden") as Node2D
+				var kitchen_bed := false
+				if garden_node != null:
 					if StringName(child.get_meta(&"building_usage",&"")) != &"row_house" or child.get("civic"): failures.append("Household garden assigned to a non-dwelling")
-					var garden := child.get_node("TendedDomesticBed") as CanvasItem
 					child.call("_on_roof_alpha",0.0)
-					if not is_equal_approx(garden.modulate.a,1.0): failures.append("Outdoor garden fades with an interior roof")
+					if not is_equal_approx(garden_node.modulate.a,1.0): failures.append("Outdoor garden fades with an interior roof")
 					child.call("_on_roof_alpha",1.0)
-				var garden_node := child.get_node_or_null("TendedDomesticBed")
+					# The garden belongs to its house: it stands on the home's own
+					# blocked wall foot, never on road or footway paving.
+					var contact: Vector2 = garden_node.get_meta(&"city_garden_contact",Vector2.INF)
+					var contact_cell := Vector2i((contact/64.0).floor())
+					if not (child.get("bounds") as Rect2).has_point(contact) or data.kind_at(contact_cell) < 0: failures.append("Household garden contact leaves its own wall foot seed=%d coord=%s" % [seed_value,coord])
+					for item: Node in garden_node.get_children():
+						if not item.has_meta(&"city_dressing_prop"): continue
+						if item.get_meta(&"city_dressing_prop") == &"garden_bed": kitchen_bed = true
+						var foot: Vector2 = item.get_meta(&"city_dressing_contact")
+						if data.kind_at(Vector2i((foot/64.0).floor())) < 0: failures.append("Garden piece stands on walkable ground seed=%d coord=%s" % [seed_value,coord])
 				var tree := child.get_node_or_null("CityTemperateTree") as Sprite2D
 				var fruit_tree := tree != null and tree.texture != null and tree.texture.resource_path == FRUIT_TREE_PATH
-				var garden_variant := int(garden_node.get_meta(&"city_domestic_garden",-1)) if garden_node != null else (1 if fruit_tree else -1)
-				var parcel := {"bounds":str(child.get("bounds")),"usage":String(child.get_meta(&"building_usage",&"")),"civic":child.get("civic"),"annex":annex,"visual_seed":child.get("_district_profile").get("visual_seed"),"doors":str(child.get("_doors")),"irregular":bool(child.get("_irregular")),"garden_variant":garden_variant,"herb_bed":child.get_node_or_null("DomesticHerbBed") != null,"fruit_tree":fruit_tree}
+				var garden_variant := int(garden_node.get_meta(&"city_domestic_garden",-1)) if garden_node != null else -1
+				var parcel := {"bounds":str(child.get("bounds")),"usage":String(child.get_meta(&"building_usage",&"")),"civic":child.get("civic"),"annex":annex,"visual_seed":child.get("_district_profile").get("visual_seed"),"doors":str(child.get("_doors")),"irregular":bool(child.get("_irregular")),"garden_variant":garden_variant,"kitchen_bed":kitchen_bed,"fruit_tree":fruit_tree}
 				parcel.merge(_runtime_building(chunk,child,"seed=%d coord=%s bounds=%s" % [seed_value,coord,child.get("bounds")]))
 				parcels.append(parcel)
 			if annexes > 1: failures.append("Natural sparse lane received more than one annex")
