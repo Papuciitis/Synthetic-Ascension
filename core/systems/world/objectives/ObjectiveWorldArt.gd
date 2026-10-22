@@ -2,6 +2,7 @@ extends Sprite2D
 ## Visual only: one stable world form per site, sharing its real site's origin.
 ## State writes are latched; no independent animation, gameplay clock or tween.
 const STATE_SHADER := preload("res://core/systems/world/objectives/objective_world_art.gdshader")
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const ART_DIRECTORY := "res://assets/world/objectives/painted/"
 const TEXTURES := {
 	"wardstone": preload("res://assets/world/objectives/painted/wardstone_v2.png"),
@@ -36,6 +37,7 @@ var _ground := false
 var _depth_elapsed := 0.0
 var _viewer: Node2D
 var _shadow: Node2D
+var _cast: Sprite2D
 
 class ContactShadow extends Node2D:
 	var extent := Vector2(20.0, 7.0)
@@ -79,6 +81,21 @@ func configure(art_name: String, height: float) -> void:
 		var occupied_width := texture.get_width() * scale.x * float((PLACEMENT.get(art_name, {}).get("extent", Vector2.ONE) as Vector2).x)
 		_shadow.set("extent", Vector2(occupied_width * 0.32, height * 0.055))
 		_shadow.queue_redraw()
+	if not _ground and _cast == null:
+		# An upright form also casts its silhouette southwest from its contact
+		# point, as actors do (one sun: WorldDepthStyle), not only a centred pool.
+		_cast = Sprite2D.new()
+		_cast.name = "CastShadow"
+		_cast.z_as_relative = false
+		_cast.z_index = DEPTH.SHADOW_Z
+		_cast.transform = DEPTH.projection_at(Vector2.ZERO)
+		_cast.texture_filter = texture_filter
+		var cast_material := ShaderMaterial.new()
+		cast_material.shader = DEPTH.SHADOW_SHADER
+		cast_material.set_shader_parameter("shadow_color", DEPTH.SHADOW_COLOR)
+		_cast.material = cast_material
+		add_child(_cast)
+		_apply_placement()
 
 func _apply_placement() -> void:
 	if texture == null:
@@ -93,6 +110,10 @@ func _apply_placement() -> void:
 	offset = size * (Vector2(0.5, 0.5) - anchor)
 	if is_instance_valid(_shadow):
 		_shadow.scale = Vector2.ONE / scale
+	if is_instance_valid(_cast):
+		# Same texture and anchor; the projection pivots on the contact point.
+		_cast.texture = texture
+		_cast.offset = offset
 
 func feature_offset(feature: String) -> Vector2:
 	if texture == null:
