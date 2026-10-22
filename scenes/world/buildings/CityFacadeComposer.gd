@@ -126,10 +126,13 @@ static func compose_run(group: Node2D, kit: Node2D, run: Vector2, bottom: float,
 	var modules: Array[Dictionary] = []
 	for span: Vector2 in spans:
 		cuts.append_array(_fill_span(group, family, usage, span, bottom, height, rng, modules))
+	# Runoff below real sills: wall pieces cut from the field like modules,
+	# so every facade pixel keeps one opaque owner (own salts).
+	var stains := WEATHERING.plan_run(kit, modules, cuts, bottom)
+	for stain: Dictionary in stains: cuts.append(stain.area)
 	_wall_field(group, family, Rect2(run.x, top, run.y - run.x, height), cuts)
 	_plinth(group, Rect2(run.x, bottom - PLINTH_PX, run.y - run.x, PLINTH_PX), cuts)
-	# Runoff below real sills and soot above a working vent (own salts).
-	WEATHERING.decorate_run(group, kit, modules, cuts, bottom, height)
+	WEATHERING.draw_run(group, _family_material(family, false), stains, Rect2(run.x, top, run.y - run.x, height), FACE_LIGHT)
 	# Cover the wall's height over its run, widened to any doorway frame that
 	# reaches into a corner zone; never below the wall base (the street).
 	var cover_span := run

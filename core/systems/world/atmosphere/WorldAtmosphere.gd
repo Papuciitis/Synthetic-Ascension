@@ -98,6 +98,8 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_restore_environment()
+	# The next scene (S1, the Hub, a menu) must not inherit district damp/lichen.
+	WEATHERING.apply_theme(&"")
 
 
 func apply_theme(theme_id: StringName, context: StringName = &"procedural", reduced_motion: bool = false) -> void:

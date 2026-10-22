@@ -87,8 +87,11 @@ void fragment() {
 			float coverage = texture(sa_weather_lichen_mask, vec2(lichen_uv.x, min(lichen_uv.y, 0.995))).r;
 			// Shaded slopes and older (high-seed) roofs carry more growth.
 			float shaded = shade < 1.0 ? 1.0 : 0.55;
-			float amount = coverage * sa_weather_lichen * shaded * mix(0.4, 1.5, plane_seed);
-			c.rgb = mix(c.rgb, sa_weather_lichen_tint.rgb * dot(c.rgb, vec3(0.333)) * 1.6, clamp(amount * 2.5, 0.0, 1.0));
+			// sa_weather_lichen: share of the way to the lichen hue at full
+			// coverage (the roof's own value is kept).
+			float amount = coverage * sa_weather_lichen * shaded * mix(0.6, 1.3, plane_seed);
+			vec3 hue = sa_weather_lichen_tint.rgb / max(dot(sa_weather_lichen_tint.rgb, vec3(0.299, 0.587, 0.114)), 0.001);
+			c.rgb = mix(c.rgb, hue * dot(c.rgb, vec3(0.299, 0.587, 0.114)), clamp(amount, 0.0, 1.0));
 		}
 	}
 	COLOR = vec4(c.rgb * shade, c.a);

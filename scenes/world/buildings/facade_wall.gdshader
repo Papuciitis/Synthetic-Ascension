@@ -11,18 +11,16 @@ uniform float base_fraction = 0.18;
 uniform float base_strength = 0.14;
 varying vec2 world_pos;
 varying vec4 instance_color;
-varying flat float building_seed;
 
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
 	instance_color = COLOR;
-	building_seed = facade_building_seed(MODEL_MATRIX);
 }
 
 void fragment() {
 	vec3 col = facade_wall(world_pos);
 	float base = smoothstep(1.0 - base_fraction, 1.0, UV.y);
 	col *= 1.0 - base * base_strength;
-	col = facade_damp(col, world_pos, (1.0 - UV.y) * UV.x + PLINTH_PX, building_seed);
+	col = facade_damp(col, world_pos, (1.0 - UV.y) * UV.x + PLINTH_PX);
 	COLOR = vec4(col, 1.0) * instance_color;
 }
