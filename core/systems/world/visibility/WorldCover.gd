@@ -530,10 +530,12 @@ func _on_roof_subtree_changed(node: Node) -> void:
 func _watch_roof(roof: RoofOverlay) -> void:
 	var watcher := _on_roof_subtree_changed
 	for node: Node in [roof]+roof.find_children("*","",true,false):
-		# Reference-counted, so a re-watch after a structural edit is cheap
-		# and never a duplicate-connection error.
-		node.child_entered_tree.connect(watcher,CONNECT_REFERENCE_COUNTED)
-		node.child_exiting_tree.connect(watcher,CONNECT_REFERENCE_COUNTED)
+		# A structural rescan or index reset must retain one subscription,
+		# rather than acquiring another reference to the existing connection.
+		if not node.child_entered_tree.is_connected(watcher):
+			node.child_entered_tree.connect(watcher)
+		if not node.child_exiting_tree.is_connected(watcher):
+			node.child_exiting_tree.connect(watcher)
 
 ## Group slots of the occluders indexed in the buckets `area` touches, sorted
 ## into group order (the order the records were always collected in); an
