@@ -1319,9 +1319,9 @@ func _activate_ground_care(coord: Vector2i, chunk: Node2D) -> void:
 		return
 	# One eligibility read for every home of the chunk, limited to where their
 	# gardens can reach.
-	var eligible := splat.care_eligibility(coord, reach)
+	var ground := splat.care_ground(coord, reach)
 	for spec: Dictionary in specs:
-		splat.paint_domestic_care(coord, spec, eligible)
+		splat.paint_domestic_care(coord, spec, ground.eligible, ground.paving)
 
 
 func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, texture_index: int, alpha: float, z: int) -> void:
@@ -1410,12 +1410,33 @@ func _ensure_ground_splat() -> GroundSplatRenderer:
 	if _ground_splat == null or not is_instance_valid(_ground_splat):
 		_ground_splat = GroundSplatRenderer.new()
 		_ground_splat.configure(cell_size_px, _cells_per_chunk())
+		# Occlusion reads the loaded neighbours' blockers so its ramps run
+		# across chunk lines (GroundSplatRenderer.paint_occlusion).
+		_ground_splat.occlusion_neighbours = _occlusion_neighbours
 		add_child(_ground_splat)
 	_ground_splat.set_world_tint(district_tint)
 	# Keyed by the district family, not the segment number: S2..S10 and the
 	# S11+ fallback each get their theme's ground; S1/Hub (no family) stay raw.
 	_ground_splat.set_ground_family(district_family)
 	return _ground_splat
+
+
+## The streamed neighbours of `coord` that carry build data, keyed by offset,
+## for the seam-continuous ground occlusion. A chunk still being built is not
+## in _chunks yet, so only finished neighbours are returned.
+func _occlusion_neighbours(coord: Vector2i) -> Dictionary:
+	var result: Dictionary = {}
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			if dx == 0 and dy == 0:
+				continue
+			var other := coord + Vector2i(dx, dy)
+			if not _chunks.has(other):
+				continue
+			var data := get_chunk_build_data(other)
+			if data != null:
+				result[Vector2i(dx, dy)] = data
+	return result
 
 
 func get_ground_splat() -> GroundSplatRenderer:

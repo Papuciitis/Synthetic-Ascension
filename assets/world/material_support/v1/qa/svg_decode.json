@@ -1,0 +1,81 @@
+{
+  "engine": {
+    "build": "official",
+    "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+    "hex": 263937,
+    "major": 4,
+    "minor": 7,
+    "patch": 1,
+    "status": "stable",
+    "string": "4.7.1-stable (official)",
+    "timestamp": 0
+  },
+  "masks": [
+    {
+      "alpha_min": 255,
+      "channel_difference_max": 0,
+      "file": "masks/wall_base_damp.svg",
+      "fraction_above_16": 0.400146484375,
+      "mean_mask": 0.143979540058211,
+      "red_max": 220,
+      "red_min": 0,
+      "size": [
+        1024,
+        256
+      ],
+      "x_edge_difference_max": 0,
+      "source_sha256": "cf1de37683b234106243163fe3faa4f9262d43709c72e90905069742ee14aab7",
+      "preview_sha256": "42ff6628097f5a9a13b02553cbb0855015ed41f81e442c5903dff9de65a1b04d"
+    },
+    {
+      "alpha_min": 255,
+      "channel_difference_max": 0,
+      "file": "masks/runoff_streaks.svg",
+      "fraction_above_16": 0.122627258300781,
+      "mean_mask": 0.0301421819948683,
+      "red_max": 180,
+      "red_min": 0,
+      "size": [
+        256,
+        512
+      ],
+      "x_edge_difference_max": 0,
+      "source_sha256": "ea677bcd783cddfccc733fcabd640a3b0db6d3bbfa2fcc7883a29e2c2bcad35e",
+      "preview_sha256": "935d3d368ab084a8f8e9e18bb0cfdbe482ddbf239b5c403ede0b4d8707d77299"
+    },
+    {
+      "alpha_min": 255,
+      "channel_difference_max": 0,
+      "file": "masks/vent_soot.svg",
+      "fraction_above_16": 0.239131927490234,
+      "mean_mask": 0.0525032941032858,
+      "red_max": 184,
+      "red_min": 0,
+      "size": [
+        512,
+        512
+      ],
+      "x_edge_difference_max": 0,
+      "source_sha256": "4975297d047649336a661ff6da4dcf5eccabb14d2d91202f3d81e0b72f803cc4",
+      "preview_sha256": "ac5f72b059b3229e7017bf64cd0872b7e4775f5b0dc4b5886d2054847a68607a"
+    },
+    {
+      "alpha_min": 255,
+      "channel_difference_max": 0,
+      "file": "masks/roof_lichen.svg",
+      "fraction_above_16": 0.0487785339355469,
+      "mean_mask": 0.0140806310317096,
+      "red_max": 161,
+      "red_min": 0,
+      "size": [
+        512,
+        512
+      ],
+      "x_edge_difference_max": 0,
+      "source_sha256": "501011e21d1cf8878b0741f732ac439c28752ba75a9d6fa89edf5a72e7f3369a",
+      "preview_sha256": "41e4cf00a8a92fec4ac9941c1336ea9d933649c86fc0e6e4d211134978ad3fb8"
+    }
+  ],
+  "scope": "isolated SVG source decode only; no Game imports or runtime visual acceptance",
+  "source_text_encoding": "Canonical UTF-8 LF; newline normalization after decode does not change SVG content or pixels"
+}

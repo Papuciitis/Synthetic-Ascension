@@ -6,11 +6,11 @@ const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const CELL := 64
 ## Whole-chunk material histogram of the bed home's chunk with the street
-## continuity pass on (pass off keeps the native-trial {0:716,2:125,3:6,4:177}).
+## continuity pass on (pass off keeps the native-trial {0:716,2:125,4:177,7:6}).
 ## Measured 2026-10-21 with the bounded infill (24-cell walls, 2+1 open seam
 ## cells, 4-deep door aprons) and its setback steps; the home's own care
 ## (15 cared cells, 9 strong) is identical with the pass on and off.
-const BED_CONTINUITY_HISTOGRAM := {0:546,2:114,3:157,4:207}
+const BED_CONTINUITY_HISTOGRAM := {0:546,2:114,3:151,4:207,7:6}
 var _passed := 0
 var _failed := 0
 
@@ -222,10 +222,9 @@ func _test_production_footway_pockets() -> void:
 				if care >= 0.7: strong += 1
 		if int(sample.id) == 944996572:
 			if not bool(sample.continuity):
-				_check(counts == {0:716,2:125,3:6,4:177},"the bed fixture retains the production floor ownership from the failed native trial")
+				_check(counts == {0:716,2:125,4:177,7:6},"the bed fixture retains road index 7 with street continuity disabled")
 			else:
-				# Street continuity (2026-10-21) attaches architecture-only infill
-				# lots in this lane; their floors and aprons own those cells.
+				# Infill/aprons change ownership; keep the street fixture pinned.
 				print("Production care fixture (street continuity) histogram: ", counts)
 				_check(counts == BED_CONTINUITY_HISTOGRAM,"with street continuity the bed chunk keeps its pinned floor ownership")
 			var compact_core := true

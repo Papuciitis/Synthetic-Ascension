@@ -1,0 +1,19 @@
+{
+  "snapshot": "merged-before.json",
+  "source_commit": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+  "snapshot_preserved_unchanged": true,
+  "scope": "148 scoped inputs, including 32 generated ground .ctex/.md5 files. This snapshot does not inventory the complete texture import cache used by Game buildings/plazas.",
+  "subsequent_execution_evidence_reported_by_root": {
+    "run_name": "ground22-merged-policy-1",
+    "classification": "Failed integrated verification attempt; runtime diagnostics, not a clean check result.",
+    "diagnosis": "Production checkout lacks dozens of .godot/imported textures used by wall/plaza/house-front/domestic assets; candidate checkout cache is complete.",
+    "monitor_actual_exit": 0,
+    "monitor_stop_reason": "runtime_diagnostics",
+    "monitor_elapsed_seconds": 88.69,
+    "wrapper_thermal_stop": "Reported single 98 C at about85.5 s after earlier stable54-65 C; original records remain authoritative.",
+    "godot_remaining": "Root confirms none"
+  },
+  "repair_plan_reported_by_root": "Copy only missing imported bytes from candidate after exact source PNG, .import and .md5 identity checks. No global cold import.",
+  "next_binding": "Record a fresh post-repair snapshot before the clean retry, including exact repaired import paths from the root repair manifest. Do not relabel the earlier snapshot as proving complete-cache readiness.",
+  "io_hold": "Copy/hash work is held while root validates and repairs cache."
+}

@@ -1,0 +1,13 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/ground22-gpu-s7b-start-safe-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 98.8,
+ "peak_rss_mb": 440,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (2/24 lines) ---
+GROUND_PROBE_POINT {"chunks_loaded":16,"name":"start","quads":16,"results":{"current":{"frame_ms_median":16.653,"frame_ms_rounds":[16.635,16.653,16.6615],"gpu_ms_median":5.36099982261658,"gpu_ms_rounds":[4.99850010871887,5.48099994659424,5.36099982261658]},"none":{"frame_ms_median":16.663,"frame_ms_rounds":[16.663,16.6485,16.6705],"gpu_ms_median":0.0120000001043081,"gpu_ms_rounds":[0.0120000001043081,0.00999999977648258,0.028999999165535]},"phase1":{"frame_ms_median":16.6645,"frame_ms_rounds":[16.6495,16.6645,16.6705],"gpu_ms_median":7.55999994277954,"gpu_ms_rounds":[7.20099997520447,7.55999994277954,7.64100003242493]}},"world":[-1024.0,-1024.0]}
+GROUND_PROBE {"cooldown_seconds":2.0,"frames":120,"ground_only":true,"points":[{"chunks_loaded":16,"name":"start","quads":16,"results":{"current":{"frame_ms_median":16.653,"frame_ms_rounds":[16.635,16.653,16.6615],"gpu_ms_median":5.36099982261658,"gpu_ms_rounds":[4.99850010871887,5.48099994659424,5.36099982261658]},"none":{"frame_ms_median":16.663,"frame_ms_rounds":[16.663,16.6485,16.6705],"gpu_ms_median":0.0120000001043081,"gpu_ms_rounds":[0.0120000001043081,0.00999999977648258,0.028999999165535]},"phase1":{"frame_ms_median":16.6645,"frame_ms_rounds":[16.6495,16.6645,16.6705],"gpu_ms_median":7.55999994277954,"gpu_ms_rounds":[7.20099997520447,7.55999994277954,7.64100003242493]}},"world":[-1024.0,-1024.0]}],"renderer":"Mesa Intel(R) UHD Graphics 620 (KBL GT2) / 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4","rounds":3,"sampling_fps_cap":60,"segment":7,"setup_fps_cap":30,"theme":"canal_services","variants":[{"name":"none","path":"","sha256":"","streetscape":false},{"name":"current","path":"res://core/systems/world/ground/ground_splat.gdshader","sha256":"a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9","streetscape":false},{"name":"phase1","path":"/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-ground-20261022/variants/phase1.gdshader","sha256":"4382a6428902b64a190f4081d3480a3c1b1466369b80969533aaeec3339ccfd2","streetscape":false}],"warmup":30,"window":[1920,1040],"world_seed":16102028}

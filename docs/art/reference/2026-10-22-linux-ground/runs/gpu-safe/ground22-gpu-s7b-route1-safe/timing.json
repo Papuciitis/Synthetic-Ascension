@@ -1,0 +1,92 @@
+{
+ "cooldown_seconds": 2.0,
+ "frames": 120,
+ "ground_only": true,
+ "points": [
+  {
+   "chunks_loaded": 13,
+   "name": "route1",
+   "quads": 25,
+   "results": {
+    "current": {
+     "frame_ms_median": 16.666,
+     "frame_ms_rounds": [
+      16.666,
+      16.664,
+      16.6745
+     ],
+     "gpu_ms_median": 5.41950011253357,
+     "gpu_ms_rounds": [
+      5.5164999961853,
+      5.41950011253357,
+      5.31900000572205
+     ]
+    },
+    "none": {
+     "frame_ms_median": 16.6625,
+     "frame_ms_rounds": [
+      16.6625,
+      16.6615,
+      16.6645
+     ],
+     "gpu_ms_median": 0.0130000002682209,
+     "gpu_ms_rounds": [
+      0.0130000002682209,
+      0.0130000002682209,
+      0.0130000002682209
+     ]
+    },
+    "phase1": {
+     "frame_ms_median": 16.6605,
+     "frame_ms_rounds": [
+      16.6605,
+      16.6765,
+      16.6565
+     ],
+     "gpu_ms_median": 7.46050000190735,
+     "gpu_ms_rounds": [
+      7.57550001144409,
+      7.46050000190735,
+      7.43300008773804
+     ]
+    }
+   },
+   "world": [
+    -9216.0,
+    1024.0
+   ]
+  }
+ ],
+ "renderer": "Mesa Intel(R) UHD Graphics 620 (KBL GT2) / 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4",
+ "rounds": 3,
+ "sampling_fps_cap": 60,
+ "segment": 7,
+ "setup_fps_cap": 30,
+ "theme": "canal_services",
+ "variants": [
+  {
+   "name": "none",
+   "path": "",
+   "sha256": "",
+   "streetscape": false
+  },
+  {
+   "name": "current",
+   "path": "res://core/systems/world/ground/ground_splat.gdshader",
+   "sha256": "a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9",
+   "streetscape": false
+  },
+  {
+   "name": "phase1",
+   "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-ground-20261022/variants/phase1.gdshader",
+   "sha256": "4382a6428902b64a190f4081d3480a3c1b1466369b80969533aaeec3339ccfd2",
+   "streetscape": false
+  }
+ ],
+ "warmup": 30,
+ "window": [
+  1920,
+  1040
+ ],
+ "world_seed": 16102028
+}

@@ -1,0 +1,64 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "0,1",
+    "python3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+    "--name",
+    "ground22-gpu-s2-start-cool",
+    "--project",
+    "/tmp/sa-wp2-ground",
+    "--exclusive",
+    "--timeout",
+    "240",
+    "--max-wait",
+    "180",
+    "--tail",
+    "2",
+    "--",
+    "--rendering-driver",
+    "opengl3",
+    "--audio-driver",
+    "Dummy",
+    "res://tools/dev/GroundShaderCostProbe.tscn",
+    "--",
+    "--segment=2",
+    "--theme=service_courtyards",
+    "--variants=none,current,phase1=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-ground-20261022/variants/phase1.gdshader",
+    "--rounds=5",
+    "--frames=120",
+    "--warmup=45",
+    "--cooldown-seconds=3",
+    "--points=start",
+    "--json=/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-ground-20261022/ground22-gpu-s2-start-cool.json"
+  ],
+  "environment_overrides": {
+    "SA_ENGINE_SLOTS": "1",
+    "SA_ENGINE_THERMAL_LIMIT_C": "65",
+    "SA_FULL_PROVENANCE": "1"
+  },
+  "cpu_affinity": [
+    0,
+    1
+  ],
+  "runtime_temperature_stop_c": 90,
+  "sustained_temperature_stop_c": 85,
+  "sustained_temperature_samples": 3,
+  "reason": "thermal_limit",
+  "wrapper_exit": -15,
+  "samples": [
+    {
+      "elapsed_seconds": 0.021,
+      "package_c": 61.0
+    },
+    {
+      "elapsed_seconds": 1.021,
+      "package_c": 76.0
+    },
+    {
+      "elapsed_seconds": 2.022,
+      "package_c": 97.0
+    }
+  ]
+}

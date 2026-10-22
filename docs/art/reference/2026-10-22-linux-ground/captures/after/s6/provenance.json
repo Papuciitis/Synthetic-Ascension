@@ -1,0 +1,46 @@
+{
+  "kind": "selected final survey evidence",
+  "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+  "survey": "survey.json",
+  "world_seed": 16102028,
+  "theme_id": "industrial_cutthrough",
+  "route1_world": [
+    11264.0,
+    1024.0
+  ],
+  "launch_metadata": "../../../runs/final-surveys/ground22-final-s6/run-results.json",
+  "scoped_before": "../../../sources/merged-after-cache.json",
+  "scoped_after": "../../../sources/merged-final-after.json",
+  "import_closure_before": "../../../sources/merged-after-cache-addendum.json",
+  "import_closure_after": "../../../sources/merged-final-after-cache-addendum.json",
+  "produced_pngs_sha256": {
+    "kit1-seg6-play.png": "34a5bd8baa21afb1d66c4754a60b9d356bb373d9f9fb73ef8663185ad5b368b8",
+    "kit2-seg6-play.png": "8ab00eabdf725396c30b82ad508f635247182cc1889f2918376ab7b0d88287b3",
+    "route1-seg6-overview.png": "4d8abd3cf65535622909da665e9fde41f76f295ca3bab96dbef1047d67052d2b",
+    "route1-seg6-play.png": "01bbb8f05eb977f99ae2cb249808e4bc665b877d25953ded7683c42a6436c8da",
+    "route2-seg6-overview.png": "a3e8be2813488912f4f18c588c066ac234de36fd22e7068c86706e8176e548bd",
+    "route2-seg6-play.png": "7183d3453b561d2b0b37138443a7cd450ed97573024f197c3d43d2ab4617d88a",
+    "start-seg6-overview.png": "1bf43d125e27850b1f80311d58c78d7fe11496b825187e9447276acca0124f3c",
+    "start-seg6-play.png": "0b97c762e7a9e8158eab7f0162a5db0a26041cd9b917ae11b896ee62aac7d795"
+  },
+  "selected_pngs": {
+    "route1-seg6-play.png": {
+      "sha256": "01bbb8f05eb977f99ae2cb249808e4bc665b877d25953ded7683c42a6436c8da",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    "route1-seg6-overview.png": {
+      "sha256": "4d8abd3cf65535622909da665e9fde41f76f295ca3bab96dbef1047d67052d2b",
+      "dimensions": [
+        1280,
+        720
+      ]
+    }
+  },
+  "limits": [
+    "Only selected PNGs are packaged; all produced hashes remain recorded.",
+    "Static Game survey, no moving combat/entry/collection claim."
+  ]
+}

@@ -97,7 +97,7 @@ static func _stamp_district_sidewalks(gen: ChunkGenImpl, chunk: Node2D, bounds: 
 		var pad_alpha: float = clampf(a + 0.06, 0.0, 1.0)
 		for r in [nw, ne, sw, se]:
 			if r.size.x > 0 and r.size.y > 0:
-				gen._stamp_floor_rect_cells_patchy(chunk, r, 3, rng, pad_alpha, -93)
+				gen._stamp_floor_rect_cells_patchy(chunk, r, 7, rng, pad_alpha, -93)
 
 
 
@@ -174,7 +174,7 @@ static func _decorate_plaza_floor(gen: ChunkGenImpl, chunk: Node2D, bounds: Rect
 		for r in [top, bot, left, right]:
 			var rr: Rect2i = (r as Rect2i).intersection(bounds)
 			if rr.size.x > 0 and rr.size.y > 0:
-				gen._stamp_floor_rect_cells(chunk, rr, 3, rng, 0.75, -93)
+				gen._stamp_floor_rect_cells(chunk, rr, 7, rng, 0.75, -93)
 
 	# Islands (grass/dirt) to cut the carpet.
 	var islands_max: int = maxi(0, gen.district_plaza_islands_max)
@@ -387,7 +387,9 @@ static func _decorate_plaza_floor_cells(gen: ChunkGenImpl, chunk: Node2D, bounds
 	if plaza_cells.size() < 16:
 		return
 	var lip: Dictionary = ChunkShapeGen.boundary_from_fill(plaza_cells)
-	_stamp_floor_cells(gen, chunk, lip, 3, rng, 0.75, -93)
+	# The lip is carriageway paving (it stamped index 3, now the building
+	# and room floor stone, until the 2026-10-21 role split; same look).
+	_stamp_floor_cells(gen, chunk, lip, 7, rng, 0.75, -93)
 	var inner: Dictionary = plaza_cells.duplicate()
 	ChunkShapeGen.erase_cells(inner, lip)
 	ChunkShapeGen.erase_cells(inner, ChunkShapeGen.boundary_from_fill(inner))
