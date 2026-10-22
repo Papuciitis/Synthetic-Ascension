@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+[Game] ready seg=2 race=human style=ranged seed=16102026
+GROUND_PROBE_VARIANT_BEGIN none point=start round=0
+GROUND_PROBE_VARIANT_DRAWN none
+GROUND_PROBE_VARIANT_BEGIN current point=start round=0
+GROUND_PROBE_VARIANT_DRAWN current
+GROUND_PROBE_VARIANT_BEGIN phase1 point=start round=0
+GROUND_PROBE_VARIANT_DRAWN phase1
+GROUND_PROBE_VARIANT_BEGIN none point=start round=1
+GROUND_PROBE_VARIANT_DRAWN none
+GROUND_PROBE_VARIANT_BEGIN current point=start round=1
+GROUND_PROBE_VARIANT_DRAWN current
+GROUND_PROBE_VARIANT_BEGIN phase1 point=start round=1
+GROUND_PROBE_VARIANT_DRAWN phase1
+GROUND_PROBE_VARIANT_BEGIN none point=start round=2
+GROUND_PROBE_VARIANT_DRAWN none
+GROUND_PROBE_VARIANT_BEGIN current point=start round=2
+GROUND_PROBE_VARIANT_DRAWN current
+GROUND_PROBE_VARIANT_BEGIN phase1 point=start round=2
+GROUND_PROBE_VARIANT_DRAWN phase1
+GROUND_PROBE_POINT {"chunks_loaded":16,"name":"start","quads":16,"results":{"current":{"frame_ms_median":16.665,"frame_ms_rounds":[16.665,16.658,16.665],"gpu_ms_median":5.61349987983704,"gpu_ms_rounds":[5.41699981689453,5.68650007247925,5.61349987983704]},"none":{"frame_ms_median":16.6655,"frame_ms_rounds":[16.663,16.666,16.6655],"gpu_ms_median":0.0109999999403954,"gpu_ms_rounds":[0.0109999999403954,0.0120000001043081,0.0109999999403954]},"phase1":{"frame_ms_median":16.6635,"frame_ms_rounds":[16.6635,16.6535,16.6705],"gpu_ms_median":7.36199998855591,"gpu_ms_rounds":[7.54849982261658,7.36199998855591,7.29550004005432]}},"world":[-1024.0,1024.0]}
+GROUND_PROBE {"cooldown_seconds":2.0,"frames":120,"ground_only":true,"points":[{"chunks_loaded":16,"name":"start","quads":16,"results":{"current":{"frame_ms_median":16.665,"frame_ms_rounds":[16.665,16.658,16.665],"gpu_ms_median":5.61349987983704,"gpu_ms_rounds":[5.41699981689453,5.68650007247925,5.61349987983704]},"none":{"frame_ms_median":16.6655,"frame_ms_rounds":[16.663,16.666,16.6655],"gpu_ms_median":0.0109999999403954,"gpu_ms_rounds":[0.0109999999403954,0.0120000001043081,0.0109999999403954]},"phase1":{"frame_ms_median":16.6635,"frame_ms_rounds":[16.6635,16.6535,16.6705],"gpu_ms_median":7.36199998855591,"gpu_ms_rounds":[7.54849982261658,7.36199998855591,7.29550004005432]}},"world":[-1024.0,1024.0]}],"renderer":"Mesa Intel(R) UHD Graphics 620 (KBL GT2) / 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4","rounds":3,"sampling_fps_cap":60,"segment":2,"setup_fps_cap":30,"theme":"service_courtyards","variants":[{"name":"none","path":"","sha256":"","streetscape":false},{"name":"current","path":"res://core/systems/world/ground/ground_splat.gdshader","sha256":"a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9","streetscape":false},{"name":"phase1","path":"/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux-ground-20261022/variants/phase1.gdshader","sha256":"4382a6428902b64a190f4081d3480a3c1b1466369b80969533aaeec3339ccfd2","streetscape":false}],"warmup":30,"window":[1920,1040],"world_seed":16102026}

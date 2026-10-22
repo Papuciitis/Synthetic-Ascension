@@ -1,0 +1,71 @@
+{
+  "metric": "viewport GPU timestamps; capped wall periods are not throughput cost",
+  "results": [
+    {
+      "name": "ground22-gpu-s2-start-safe",
+      "window": [
+        1920,
+        1040
+      ],
+      "current_gpu_ms": 5.61349987983704,
+      "phase1_gpu_ms": 7.36199998855591,
+      "none_gpu_ms": 0.0109999999403954,
+      "delta_gpu_ms": 1.7485001087188703,
+      "peak_c": 76.0,
+      "rounds": 3,
+      "frames": 120,
+      "sampling_fps_cap": 60
+    },
+    {
+      "name": "ground22-gpu-s2-route1-safe",
+      "window": [
+        1920,
+        1040
+      ],
+      "current_gpu_ms": 5.19050002098083,
+      "phase1_gpu_ms": 7.26599979400635,
+      "none_gpu_ms": 0.0109999999403954,
+      "delta_gpu_ms": 2.0754997730255207,
+      "peak_c": 73.0,
+      "rounds": 3,
+      "frames": 120,
+      "sampling_fps_cap": 60
+    },
+    {
+      "name": "ground22-gpu-s7b-start-safe",
+      "window": [
+        1920,
+        1040
+      ],
+      "current_gpu_ms": 5.36099982261658,
+      "phase1_gpu_ms": 7.55999994277954,
+      "none_gpu_ms": 0.0120000001043081,
+      "delta_gpu_ms": 2.1990001201629603,
+      "peak_c": 73.0,
+      "rounds": 3,
+      "frames": 120,
+      "sampling_fps_cap": 60
+    },
+    {
+      "name": "ground22-gpu-s7b-route1-safe",
+      "window": [
+        1920,
+        1040
+      ],
+      "current_gpu_ms": 5.41950011253357,
+      "phase1_gpu_ms": 7.46050000190735,
+      "none_gpu_ms": 0.0130000002682209,
+      "delta_gpu_ms": 2.04099988937378,
+      "peak_c": 75.0,
+      "rounds": 3,
+      "frames": 120,
+      "sampling_fps_cap": 60
+    }
+  ],
+  "limits": [
+    "Actual1920x1040, isolated ground, frozen simulation, no framebuffer readback.",
+    "Shared final policy/chunk set, shader substitution only; not whole-historical-runtime comparison.",
+    "Two-core affinity, startup25percent duty released before variants, sampling60FPS,3rounds120frames30warmup2sec cooldown.",
+    "No whole-Game, streaming, cross-platform or uncapped FPS conclusion."
+  ]
+}

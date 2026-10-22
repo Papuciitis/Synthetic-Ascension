@@ -2,8 +2,14 @@ extends RefCounted
 ## Presentation weights in chunk-local cells. Final overgrowth ownership may be
 ## supplied by GroundSplatRenderer so the pocket fits the ground left by stamps.
 
+## On the district's hard surface (`paving`) a household plot is a planted bed
+## against the house: only cells whose centre lies within this many cells of
+## the actual footprint may be tended, so the bed always meets the wall and
+## never floats on the paving as a free lawn lozenge (2026-10-21 review).
+const PAVING_BED_DEPTH_CELLS := 1.6
 
-static func plan(coord: Vector2i, spec: Dictionary, cell_px: int, cells_per_chunk: int, eligible: PackedByteArray = PackedByteArray()) -> PackedByteArray:
+
+static func plan(coord: Vector2i, spec: Dictionary, cell_px: int, cells_per_chunk: int, eligible: PackedByteArray = PackedByteArray(), paving: PackedByteArray = PackedByteArray()) -> PackedByteArray:
 	var weights := PackedByteArray()
 	weights.resize(cells_per_chunk*cells_per_chunk)
 	var footprint: PackedVector2Array = spec.get("footprint_px",PackedVector2Array())
@@ -24,6 +30,8 @@ static func plan(coord: Vector2i, spec: Dictionary, cell_px: int, cells_per_chun
 	var origin := coord*cells_per_chunk
 	var doors: Array = spec.get("doors",[])
 	var has_ground := eligible.size() == weights.size()
+	var has_paving := paving.size() == weights.size()
+	var bed_depth := PAVING_BED_DEPTH_CELLS*float(cell_px)
 	var cells: Array[Vector2i] = []
 	var points := PackedVector2Array()
 	var variation := PackedFloat32Array()
@@ -36,6 +44,8 @@ static func plan(coord: Vector2i, spec: Dictionary, cell_px: int, cells_per_chun
 				continue
 			var point := (Vector2(x,y)+Vector2(0.5,0.5))*cell_px
 			if point.distance_to(anchor) >= cell_px*6.0 or Geometry2D.is_point_in_polygon(point,footprint) or _is_access(point,doors,cell_px):
+				continue
+			if has_paving and paving[y*cells_per_chunk+x] != 0 and _wall_distance(point,footprint) > bed_depth:
 				continue
 			cells.append(Vector2i(x,y))
 			points.append(point)
@@ -146,6 +156,16 @@ static func _nearest_edge(footprint: PackedVector2Array, anchor: Vector2, cell_p
 		nearest = distance
 		result = {"contact":contact,"normal":normal,"tangent":tangent}
 	return result
+
+
+## Distance from `point` to the nearest footprint edge.
+static func _wall_distance(point: Vector2, footprint: PackedVector2Array) -> float:
+	var nearest := INF
+	for index in footprint.size():
+		var a := footprint[index]
+		var b := footprint[(index+1)%footprint.size()]
+		nearest = minf(nearest, point.distance_to(Geometry2D.get_closest_point_to_segment(point,a,b)))
+	return nearest
 
 
 static func _is_access(point: Vector2, doors: Array, cell_px: int) -> bool:

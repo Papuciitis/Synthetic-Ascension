@@ -1,0 +1,916 @@
+{
+  "schema": 1,
+  "kind": "scoped-ground-input-snapshot",
+  "label": "merged-final-after",
+  "recorded_utc": "2026-10-22T18:47:11.241913+00:00",
+  "project": "/home/user/Nauris/Synthetic-Ascension",
+  "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+  "git_status_porcelain_tracked": "",
+  "scope_globs": [
+    "core/systems/world/ground/*.gd",
+    "core/systems/world/ground/*.gdshader",
+    "core/systems/world/proc/**/*.gd",
+    "core/systems/world/atmosphere/*.gd",
+    "core/systems/world/atmosphere/*.gdshader",
+    "scenes/world/buildings/*.gd",
+    "scenes/world/buildings/*.gdshader"
+  ],
+  "files": {
+    ".godot/imported/cared_lawn.png-215789e05c928283ff14146ae495104f.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "4f515a9f9e5aa4dfec34ba1400ac339d579d9d4fb43b81c00cd397b90b3dd14e",
+      "bytes": 2707188
+    },
+    ".godot/imported/cared_lawn.png-215789e05c928283ff14146ae495104f.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "b7cc362f46e15bea1a2a83c5b33d370d34a017ef3f0cbba78a3a6b76dba8c7d3",
+      "bytes": 91
+    },
+    ".godot/imported/damp_moss_soil.png-1d18046ea7fddcbcc0589da3557278e4.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "38f2e3e935cb4d0b40204ceafaf088a81eaa34cc5801ad308620ba3b73f8d188",
+      "bytes": 2684962
+    },
+    ".godot/imported/damp_moss_soil.png-1d18046ea7fddcbcc0589da3557278e4.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "eca056a956d88502145a543d28228ba3bd4ee884a946c06f3c93733c34b3e559",
+      "bytes": 91
+    },
+    ".godot/imported/ground_city_base_01.png-8d8b04040db9fbceec7ed6cb356f5b37.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "a6c949da350b2515e8b74c7211e309aaa3484fc5f43a2ac5bfd956a06f72b7e3",
+      "bytes": 724138
+    },
+    ".godot/imported/ground_city_base_01.png-8d8b04040db9fbceec7ed6cb356f5b37.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "613e04b1bb9bb9e4c0ca986e4565127e0be017438fbdb1b33c632e099bf805a3",
+      "bytes": 91
+    },
+    ".godot/imported/ground_civic_brick_01.png-b8cb8517879fb473baa2ec92d89f97b2.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "e76782ac081c665a2f04ede69ecea88b59353e2284797d164ddd25d37e161526",
+      "bytes": 926214
+    },
+    ".godot/imported/ground_civic_brick_01.png-b8cb8517879fb473baa2ec92d89f97b2.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "9ccff6383159fe549bf40c2b523456d7d6fa253953f7e388450a8355dab004f3",
+      "bytes": 91
+    },
+    ".godot/imported/ground_cobble_01.png-292d10a3e376f1c8480f851d384bbb25.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "856745fa125379bc02e09a7176d003ec551cb9374f688510985609ec7d4ac1ed",
+      "bytes": 794430
+    },
+    ".godot/imported/ground_cobble_01.png-292d10a3e376f1c8480f851d384bbb25.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "9658cbea0071924868e025955a3b32734cbe4bb688094f580ed0b14c49e62f99",
+      "bytes": 91
+    },
+    ".godot/imported/ground_dirt_01.png-defbc95e3721ed833c44998acd2c71bc.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "9d5b95f704f1a86505bf01bd78d962bd18b69462bda756b18a31ad4e9a2f64d4",
+      "bytes": 737830
+    },
+    ".godot/imported/ground_dirt_01.png-defbc95e3721ed833c44998acd2c71bc.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "7b9caeab53b8ece53954411f95bd249355f94f02a8dcbce3fa79e1e9407ba63a",
+      "bytes": 91
+    },
+    ".godot/imported/ground_dirt_path_01.png-91cde7ed8784c84f6ffd78dce346e5d1.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "f265566b2601f38c86b1cf78cb49183f3c359855ba7e52d5084fbbac2d398ccc",
+      "bytes": 764762
+    },
+    ".godot/imported/ground_dirt_path_01.png-91cde7ed8784c84f6ffd78dce346e5d1.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "a60a2dcf8521206c72e9c6ba82f1ff2cfbc8ace11eec78f6db26f779a404b90e",
+      "bytes": 91
+    },
+    ".godot/imported/ground_grass_01.png-f3f9e17555373b8239696ceecd522ed7.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "20791e74e2fdc97c1b51d9122128b41783587731868fceac7b79e04ee7fd2175",
+      "bytes": 1155534
+    },
+    ".godot/imported/ground_grass_01.png-f3f9e17555373b8239696ceecd522ed7.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "f21bb3397a461ffcc7a693655910fe07982ce25e3edb9b10fe64ee090e7c81fc",
+      "bytes": 91
+    },
+    ".godot/imported/ground_grass_02.png-e71c15757e22b0d623d4df62fd3bb81f.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "eb6be6c0e7345909de4c2fd14d9d1771f5196e7100994b7a206757852db28a4f",
+      "bytes": 1161692
+    },
+    ".godot/imported/ground_grass_02.png-e71c15757e22b0d623d4df62fd3bb81f.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "e5e98ea57453b2a326bb67e3fe8515ca86712c40db40b2c7ec348c6ab11a2277",
+      "bytes": 91
+    },
+    ".godot/imported/ground_grass_dry_01.png-713617e85abfd82ff387b30850d159c0.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "160387ded6f067e83362ff99fced9566186fa17e229394014e87dc8b5e18058f",
+      "bytes": 1277370
+    },
+    ".godot/imported/ground_grass_dry_01.png-713617e85abfd82ff387b30850d159c0.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "665265cda01c033400a563d97062cae4c03f37cb0005ff020a3b671c85e6632c",
+      "bytes": 91
+    },
+    ".godot/imported/ground_mossy_brick_01.png-ba5203c0baf4cbe9b155bbeb4d16ae08.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "539875185bbffcd9d0b3d30e7de283849cbd79b4fd49104855d7bca1aa5a9693",
+      "bytes": 931734
+    },
+    ".godot/imported/ground_mossy_brick_01.png-ba5203c0baf4cbe9b155bbeb4d16ae08.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "031c2dbcb39bbbf426a79b9fa5cf1b29931a49d78165d9dc19500b4246e07b17",
+      "bytes": 91
+    },
+    ".godot/imported/ground_round_cobble_01.png-bfa19dd76afb57c97efc1ef02069e410.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "bd27c1eb0cbc0131e057ae6b463671a8c2f3daa8ede1a920f6bec7f4d75566bd",
+      "bytes": 1149460
+    },
+    ".godot/imported/ground_round_cobble_01.png-bfa19dd76afb57c97efc1ef02069e410.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "ede8845c1e23985680e23d30c466f9e58b731594262192f89126e61be9e1ff82",
+      "bytes": 91
+    },
+    ".godot/imported/ground_stone_tiles_01.png-adc57671297806edc9c0600c740b89ff.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "7b8804c34447abd45bd69d75170add7c53d4a9898400e503ed11db96840c4587",
+      "bytes": 554882
+    },
+    ".godot/imported/ground_stone_tiles_01.png-adc57671297806edc9c0600c740b89ff.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "ab30a903061d156b9b1ec8fbef004a62b66710c76176235c8744e5bc79d731f5",
+      "bytes": 91
+    },
+    ".godot/imported/paving.png-1544c2e8ed91d9a8fbd44898491e0252.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "8c76356f60ddd03246a6bf67ff6d992624203753f709c835108375f96ad0201e",
+      "bytes": 2123332
+    },
+    ".godot/imported/paving.png-1544c2e8ed91d9a8fbd44898491e0252.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "7bfeb36e79fa2402b43253f8564c6ee6e76be0b965006ef65a04cf2a3bf3dde7",
+      "bytes": 91
+    },
+    ".godot/imported/wet_earth.png-9c7fb203b3e80eb22084c69ab4e83ef4.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "e582d8ac136dabff1bfe843faaba92e8dbc65d276d91e3589422e49a33cf85b1",
+      "bytes": 2071846
+    },
+    ".godot/imported/wet_earth.png-9c7fb203b3e80eb22084c69ab4e83ef4.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "a2a953c1b3066001f22e443263ad91f9f65ac461057e6b8302bd2bfa6dc20ecd",
+      "bytes": 91
+    },
+    ".godot/imported/worn_setts.png-d3eb924254c520800569a6c5a95afe9a.ctex": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "b5d20c5f78a8109c0a41acaf0d64c9352af53abdc8a0b8eddfa7bf644a40eb92",
+      "bytes": 2405996
+    },
+    ".godot/imported/worn_setts.png-d3eb924254c520800569a6c5a95afe9a.md5": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "a85be521c3be1a12fd6f73aebe8e97abfa2d71fa5461caa06b87d953f0ed9169",
+      "bytes": 91
+    },
+    "assets/world/city_block/paving.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "5e0db453ec02930531475eb2e4873bdfe9c04fd1571faabe65807d3f5fc03316",
+      "bytes": 3270327
+    },
+    "assets/world/city_block/paving.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "610265bd315cea5b42131cdce65683e8eab4ec6193cc307ea5bcb820b639e947",
+      "bytes": 946
+    },
+    "assets/world/city_block/worn_setts.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "2261ea102d04bf5fe714842f0209a9fa5540c373b3968fdbac153b2b6d3e045f",
+      "bytes": 3733769
+    },
+    "assets/world/city_block/worn_setts.png.import": {
+      "exists": true,
+      "tracked": false,
+      "sha256": "19c3834d985329f6581710f5b7ea1691582ee760cd12386be87030d116da72a1",
+      "bytes": 958
+    },
+    "assets/world/ground/baked/ground_materials.json": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+      "bytes": 4802
+    },
+    "assets/world/ground/baked/ground_materials.res": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+      "bytes": 10134012
+    },
+    "assets/world/ground/city_care/v1/cared_lawn.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082",
+      "bytes": 4202044
+    },
+    "assets/world/ground/city_care/v1/cared_lawn.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+      "bytes": 967
+    },
+    "assets/world/ground/city_care/v1/damp_moss_soil.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd",
+      "bytes": 4206083
+    },
+    "assets/world/ground/city_care/v1/damp_moss_soil.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+      "bytes": 979
+    },
+    "assets/world/ground/city_care/wet_earth_v1/wet_earth.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d",
+      "bytes": 3313327
+    },
+    "assets/world/ground/city_care/wet_earth_v1/wet_earth.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+      "bytes": 974
+    },
+    "assets/world/ground/ground_city_base_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "893ea215225497930540230083f104d7b8fa6d8a3d13da1480b7656c6d2755e2",
+      "bytes": 879078
+    },
+    "assets/world/ground/ground_city_base_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "7d18b6d564b1c7ac1b67ae087b6fea6b2041173bbc21ab4211998e9aab9075f4",
+      "bytes": 981
+    },
+    "assets/world/ground/ground_civic_brick_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "1acb347d973133061903cc5c8f06597666b2d94f4cd64c1b706abc1e6110ed26",
+      "bytes": 1326092
+    },
+    "assets/world/ground/ground_civic_brick_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "1a725e4a7d4ad226d3a8ac857cb2139f02fa26398c8ac47bd95e185103942100",
+      "bytes": 987
+    },
+    "assets/world/ground/ground_cobble_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "47f6ef64bab73e0bd8abedcc61cdd5d3e3a807eea7e6937844cc8576d5fc2c23",
+      "bytes": 962048
+    },
+    "assets/world/ground/ground_cobble_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "9c886207b5e67e57191933d2ee48c7773d816fd03ed94b1e1b46e970cbace6ea",
+      "bytes": 972
+    },
+    "assets/world/ground/ground_dirt_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "d932cebf6fa8c15494e3bddfc398bb7e1cfd6dbcd623edbb27775645030deb9c",
+      "bytes": 874369
+    },
+    "assets/world/ground/ground_dirt_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "92d12120f805023b9b4e958acba422605bbe36137a636aee613142f9b98f93fc",
+      "bytes": 966
+    },
+    "assets/world/ground/ground_dirt_path_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "3f014e5d248bd868c4d1b5f23c393987b45cee232f75e4b8231bc78a98a9af0c",
+      "bytes": 924878
+    },
+    "assets/world/ground/ground_dirt_path_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "2a71c4f293bac3e22b8d96055f799cd8414c69d538a83b45e958434a88e6c8cc",
+      "bytes": 981
+    },
+    "assets/world/ground/ground_grass_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29",
+      "bytes": 1528042
+    },
+    "assets/world/ground/ground_grass_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+      "bytes": 969
+    },
+    "assets/world/ground/ground_grass_02.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "257e9012e056271f440d9c1b6f855aa35b4c0c8fb2ac779c55769502218ae200",
+      "bytes": 1465070
+    },
+    "assets/world/ground/ground_grass_02.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "499213391f32e3a83aeb608cdfbaa79e1e2acf0ad80547f49e7dac0098e73f53",
+      "bytes": 968
+    },
+    "assets/world/ground/ground_grass_dry_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "54fff2523735dcb97c43ec2237c761ce84b8668858899fef038e08656ac0b404",
+      "bytes": 1729290
+    },
+    "assets/world/ground/ground_grass_dry_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "317a6c62168f62513e17713c8064d580f31d34de546b1acd959352004c2add4c",
+      "bytes": 981
+    },
+    "assets/world/ground/ground_mossy_brick_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "96bd8c377d132baec308122c657a662a634b3a2e9ec0fb5120f8a77016e4fab5",
+      "bytes": 1344126
+    },
+    "assets/world/ground/ground_mossy_brick_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "7e6290b9d7f6f23490e6854522c6b50c916f3cd45298d7b4a1f5b7c5f3b4126b",
+      "bytes": 987
+    },
+    "assets/world/ground/ground_round_cobble_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "df67ab3a8c5bcf21588e437a50fad070d2e00b278f29c3d5360f2b707c4f010d",
+      "bytes": 1716418
+    },
+    "assets/world/ground/ground_round_cobble_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "21a8d183a6278ac174f873f62029e3a05834d607dda3efcb716a6fe4a6a0c692",
+      "bytes": 990
+    },
+    "assets/world/ground/ground_stone_tiles_01.png": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "4154b6470d08ca6c9aa9c489fad9930ff936685cac292108e4f2095556a9fd4c",
+      "bytes": 644943
+    },
+    "assets/world/ground/ground_stone_tiles_01.png.import": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "4c5a2dd7a7e81ed8e9fb16a0af496594b21599a10ac9fdb0a65fc6be45cd871f",
+      "bytes": 987
+    },
+    "core/systems/world/ChunkManager.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15",
+      "bytes": 75178
+    },
+    "core/systems/world/WorldArt.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "bytes": 14411
+    },
+    "core/systems/world/WorldBlockerGeometry.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d",
+      "bytes": 5844
+    },
+    "core/systems/world/WorldDepthStyle.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+      "bytes": 5125
+    },
+    "core/systems/world/atmosphere/GameAtmosphereBinder.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "315b0a13ef6b8c732b3ca28b390597168be361e4ba19a38d2ae54aa32951e39b",
+      "bytes": 1052
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "bytes": 7001
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "bytes": 15086
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "bytes": 4385
+    },
+    "core/systems/world/atmosphere/world_atmosphere.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "2923242a7dc771aafec01fcbc7f2badc2ce2e53886bdc450de7aa9fd8d4c3a95",
+      "bytes": 1544
+    },
+    "core/systems/world/chunks/ChunkBuildData.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf",
+      "bytes": 2430
+    },
+    "core/systems/world/ground/CityGroundCare.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688",
+      "bytes": 9077
+    },
+    "core/systems/world/ground/DistrictGroundPolicy.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+      "bytes": 20888
+    },
+    "core/systems/world/ground/GroundSplatRenderer.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9",
+      "bytes": 38143
+    },
+    "core/systems/world/ground/ground_splat.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9",
+      "bytes": 18668
+    },
+    "core/systems/world/proc/BossArenaSpace.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "2634b2262779b455359a2dc4db8196cf79ba12a863eebe5800fe2e2fbb639b26",
+      "bytes": 1135
+    },
+    "core/systems/world/proc/ChunkGenImpl.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "2f8a2decc34505f12c7cab09fee817f8117685a762ad69e7308b03b2e3c8cfe5",
+      "bytes": 18842
+    },
+    "core/systems/world/proc/DistrictPlan.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "a08d4a1bd2ef2a29c2892c35b7c218d400746d2e37d423b25a8f649f3b80f153",
+      "bytes": 42730
+    },
+    "core/systems/world/proc/DonjonCarver.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "42850a329b0d2ee8250fbe7ee01c6858c271c4f65f80ca9aa6964d03f551e688",
+      "bytes": 11788
+    },
+    "core/systems/world/proc/DungeonLayout.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "cf1ffaf56360e3f11018bac2b29f995b159409c7338e6fd3c8845c17a26a7771",
+      "bytes": 9126
+    },
+    "core/systems/world/proc/RectFacilityCarver.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "19831055637b899d146f9e3b67cf8867ff990fead39663deb30efaf57991f6c5",
+      "bytes": 12298
+    },
+    "core/systems/world/proc/SegmentThemeData.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "73b2559a579188bd5998b990f23f95edcb0ac2509c27547c22173f7482d0360c",
+      "bytes": 9149
+    },
+    "core/systems/world/proc/SegmentThemePicker.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "94faa6cdf7f587cdb5c6ad2317aa9e4b5523ea95bb46b601df254a4c35bbabaa",
+      "bytes": 15536
+    },
+    "core/systems/world/proc/SiteManager.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "5bece1c2ba17e2d914231911225911afb2cc557f78a69bd72a5c17400dd32bf7",
+      "bytes": 1635
+    },
+    "core/systems/world/proc/SiteOverlayImpl.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "e9052fac40cb1a72039984b79937aa2cc684ebfc89160b0e12272979286284a7",
+      "bytes": 17212
+    },
+    "core/systems/world/proc/SiteParcelsImpl.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "cfbfe834d3c70722f65f60e867c3ffce7c55c4e7be6d493e7a49218cffa2db9c",
+      "bytes": 66456
+    },
+    "core/systems/world/proc/chunkgen/ChunkGenArchetypes.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "0908a631eef15f66cf73b1649af7d644e2ce464e8e7e7e0fd75b8ba3ee901469",
+      "bytes": 4381
+    },
+    "core/systems/world/proc/chunkgen/ChunkGenDeco.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "9c5ed19a26954555c404d03bff1540d19dda463e514a7e36b808120d4e2f5714",
+      "bytes": 5977
+    },
+    "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "906fc8d65477bad0715b5e038bec8ebf97c66401be1f6e9ca5c88ce365a0aeeb",
+      "bytes": 45487
+    },
+    "core/systems/world/proc/chunkgen/ChunkGenStamp.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "342e81050c1fee019961dd75f783ac109986c7658ec1518c420f2fb299d7807f",
+      "bytes": 21953
+    },
+    "core/systems/world/proc/chunkgen/ChunkGenStructures.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "4d9c5f34ecc9733e23b9e81f7b223f3083485ce33d320a4b3b6efa68bf47bb20",
+      "bytes": 12892
+    },
+    "core/systems/world/proc/chunkgen/ChunkGenWalls.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "9a768c490a8cb189b02be04a159c37b64d361053d78fe1d25041dbb6d35b1e99",
+      "bytes": 4525
+    },
+    "core/systems/world/proc/chunkgen/ChunkShapeGen.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "51bb3339770cde4781d8edd81be8ac1bbde603686dea9f107cf51b64c648f7a4",
+      "bytes": 12541
+    },
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "b810403898e2349116642d0455f5cfb0d8cf113d6669194a51e8b7b3aba9a31b",
+      "bytes": 37889
+    },
+    "project.godot": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "bytes": 13384
+    },
+    "scenes/world/buildings/CheckpointOfficeForms.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "cef774e85ae381eb1e6f6cf5721f5bc9a0019c61a0e33f89e0c12608b008586b",
+      "bytes": 16858
+    },
+    "scenes/world/buildings/CityBlockFrontages.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "8c4bf6a8bdfb0ef62f4e1180fae4e72959920a972b231a06f1f8e3ce3a1b7af3",
+      "bytes": 22721
+    },
+    "scenes/world/buildings/CityBlockKit.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "f0769fc7c1fab4280df3b863719c17b045d40edb7c1006ae9116c3f27d46a344",
+      "bytes": 45910
+    },
+    "scenes/world/buildings/CityBlockRoofForms.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "cae6029ba6549f5a989ba33d872df81d04dfd9a1b9f31b52f82dcd9e5762c7da",
+      "bytes": 21424
+    },
+    "scenes/world/buildings/CityDomesticInterior.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "eae4b9e7d32f5b5edc61b666e714cfaae7f80daaf38a6358f4373f681efa0855",
+      "bytes": 16892
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "bytes": 23512
+    },
+    "scenes/world/buildings/CityFootprintGeometry.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "70a0c286e68518bd5fef49263181da0a9467b936f3fc9ab55e12b335c599b847",
+      "bytes": 22239
+    },
+    "scenes/world/buildings/CityFrontageDressing.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "c95a3c4d16504619c055eda167b1f4765b60e5871327ef17961f11aeaeed277b",
+      "bytes": 41016
+    },
+    "scenes/world/buildings/CityStreetFrontage.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "5e53f549112f6d852e927ebeb60802c0190819a2252f3f05427858334e02db8d",
+      "bytes": 9869
+    },
+    "scenes/world/buildings/DistrictVisualProfiles.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "9afb60b6e75494aeb5af2949201c6270b721a6524abdbda03d188ec1ba61c491",
+      "bytes": 459
+    },
+    "scenes/world/buildings/DungeonBuilding.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "ac5172006c8c8ed1f180118311660942375d5136651d93f3c203761d0d776c35",
+      "bytes": 18169
+    },
+    "scenes/world/buildings/DungeonRoof.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "df4255f12352d273112f848056fa49a82f525349adae8ba7cc3a583ac2480c03",
+      "bytes": 6073
+    },
+    "scenes/world/buildings/RoofOverlay.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "2588bc8160a10509be960bff8885f78e440909f736991a095df9c8b66b26e03c",
+      "bytes": 21878
+    },
+    "scenes/world/buildings/city_footway.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "11c404e84bbd88b087c9478aa0e1548a8c20f4b49462ec8b88b8a53cebfdbdfa",
+      "bytes": 2332
+    },
+    "scenes/world/buildings/city_ground.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "777041d7501f7bb01d06c391388e2fbf0be6d3a772a7c325c65cb37423654434",
+      "bytes": 5358
+    },
+    "scenes/world/buildings/city_paving.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "931a17f472a3ce71b1692e36aeaff283c7a7e6a300f319c0a5d0c42b7c8f8031",
+      "bytes": 522
+    },
+    "scenes/world/buildings/city_stone.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "101a31607f16d8a840272b5238708c418a6fae7af90cdc725fe07273a8d9945f",
+      "bytes": 1356
+    },
+    "scenes/world/buildings/domestic_plaster.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "b67719d8cf895d2fde2532d7b37e633eecc1a7655098166ca0dc508acfd95f84",
+      "bytes": 2808
+    },
+    "scenes/world/buildings/domestic_stone.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "58e9312726153fdb196c1c63cb6e4fe83b6f2c357e0c7829780d57575ab08af1",
+      "bytes": 748
+    },
+    "scenes/world/buildings/facade_coverage.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "d17a1d0d8d340022f22944c5749733fbf78d8d9b9687c6f4f5cc6d5d85a1a9c1",
+      "bytes": 259
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "bytes": 686
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "bytes": 751
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "bytes": 3056
+    },
+    "tools/dev/BakeGroundMaterials.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "75c9b1914ec222cc5bf44a4c0e8e3326d67616caf8df97229a86d64073a9f337",
+      "bytes": 5562
+    },
+    "tools/dev/CitySegmentSurvey.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb",
+      "bytes": 8942
+    },
+    "tools/dev/CitySegmentSurvey.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18",
+      "bytes": 183
+    },
+    "tools/dev/EliteCrowdFightPreview.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "bytes": 16914
+    },
+    "tools/dev/EliteCrowdFightPreview.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "c3dd97a9053c20c30f8b5b85a924aafa66ba4b436833eeab4a3422dea722158f",
+      "bytes": 195
+    },
+    "tools/dev/GroundShaderCostProbe.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "f73a7a52a3c8fa8a4b161ac62c323c95267b2e86a9c74adbfe204e9753622f8e",
+      "bytes": 13337
+    },
+    "tools/dev/GroundShaderCostProbe.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "9fea2eebf95e6ba7c06f34455c09a8f4d03eb7d39720004686d3357d43d83d02",
+      "bytes": 191
+    },
+    "tools/tests/CityFootwayEdgeRenderTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "9db20c37ba45fdbbd2708b03e25a73686765c76ed6d998bfe88dfbe631e5cd65",
+      "bytes": 6078
+    },
+    "tools/tests/CityFootwayEdgeRenderTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "828def047638214e6e11f459dc2e5943b753877ed09f2a61b91761d8268315d2",
+      "bytes": 205
+    },
+    "tools/tests/CityGenerationMaterialTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "74d33ba9355cc90e17095daa833ef660ec91e95868bcf914dca5c5534e09bcf0",
+      "bytes": 4857
+    },
+    "tools/tests/CityGenerationMaterialTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "8c7c875d2e3bbe99a741de7df4925122374ad14b59632283300945be11f14c07",
+      "bytes": 203
+    },
+    "tools/tests/CityGroundCareNaturalTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "e502546fb9324357d08cf117896d29bf074f5c72155093e971cfa3039b4f30dd",
+      "bytes": 17463
+    },
+    "tools/tests/CityGroundCareNaturalTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "7e9537f7552d9506e8eca57a7b647cd077960f563f8566f613ae6ce8b7be5870",
+      "bytes": 201
+    },
+    "tools/tests/CityGroundCareTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "db8bb2eb03746974790de61a67ee2476c473eb02e6d1b151b4a57b9bb216c644",
+      "bytes": 11969
+    },
+    "tools/tests/CityGroundCareTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+      "bytes": 189
+    },
+    "tools/tests/DistrictGroundPolicyTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "a7872ce8bf992225f8acf5354e5ce285cf5c4131d17525c40e8f9c60f7efd12c",
+      "bytes": 23244
+    },
+    "tools/tests/DistrictGroundPolicyTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "da596a5d74678dd65cef01ad2f7a34ba77e63f52d7815fb520b0e394349efef2",
+      "bytes": 201
+    },
+    "tools/tests/GroundMaterialCacheTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "d04b411c599d3e6376f1fb4517c60872c0368a826d78dd5e8e324aa8f0c9e986",
+      "bytes": 4935
+    },
+    "tools/tests/GroundMaterialCacheTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "fc9632fd7d687b2b3605c5af9a704ad13338e97c57c8cadceec2e0f550f61933",
+      "bytes": 199
+    },
+    "tools/tests/ScriptParseAuditTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+      "bytes": 2269
+    },
+    "tools/tests/ScriptParseAuditTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+      "bytes": 193
+    },
+    "tools/tests/ThemeAtmosphereDryReceiverTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "794ee789343511188d019f68c0ba59b21110992f4e4ddfa4edb108cba85f9714",
+      "bytes": 4843
+    },
+    "tools/tests/ThemeAtmosphereDryReceiverTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "96f491e9cd6bc6eadd167af4ec34aa372a1286aa6b44e208770004110a660731",
+      "bytes": 211
+    },
+    "tools/tests/WorldGroundSplatTest.gd": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "92b2c4826a897e629828fde8d080d2d4de0933e6b2f6f7d3a50dab6f8689d66e",
+      "bytes": 20106
+    },
+    "tools/tests/WorldGroundSplatTest.tscn": {
+      "exists": true,
+      "tracked": true,
+      "sha256": "320cb4a8336896b876777777af415b653e9ed917c1139cdef8e85be5016dc4b2",
+      "bytes": 193
+    }
+  },
+  "limits": [
+    "Original captures are static staged Game surveys at 1280x720, with simulation disabled; they do not prove moving combat/traversal.",
+    "Original per-capture maps bind 13 scoped inputs; added texture/import hashes are retrospective, not recovered launch-time measurements.",
+    "New snapshots bind a scoped ground/generator/architecture/harness/material input set, not every Game dependency.",
+    "Original before/after source refs differ from the final production merge; any retained image must remain labelled by its original source.",
+    "No-readback shader isolation measures ground cost on one fixed chunk set; it does not establish streaming or whole-Game budget acceptance.",
+    "Compiler diagnostics from other shader programs must not be attributed to the ground shader."
+  ]
+}

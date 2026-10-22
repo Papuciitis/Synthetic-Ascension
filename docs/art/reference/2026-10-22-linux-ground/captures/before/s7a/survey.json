@@ -1,0 +1,61 @@
+{
+  "base_terrain": "dirt",
+  "failures": 0,
+  "points": [
+    {
+      "chunk_at": "(1, 0)",
+      "kits_within_2200px": 14,
+      "name": "start",
+      "world": [
+        3072.0,
+        1024.0
+      ]
+    },
+    {
+      "chunk": "(3, 5)",
+      "chunk_at": "(3, 5)",
+      "kits_within_2200px": 21,
+      "name": "route1",
+      "world": [
+        7168.0,
+        11264.0
+      ]
+    },
+    {
+      "chunk": "(3, 9)",
+      "chunk_at": "(3, 9)",
+      "kits_within_2200px": 20,
+      "name": "route2",
+      "world": [
+        7168.0,
+        19456.0
+      ]
+    },
+    {
+      "chunk_at": "(2, 9)",
+      "kit": "5760,20000",
+      "kits_within_2200px": 20,
+      "name": "kit1",
+      "usage": "shop",
+      "world": [
+        5760.0,
+        20312.0
+      ]
+    },
+    {
+      "chunk_at": "(2, 9)",
+      "kit": "5152,18848",
+      "kits_within_2200px": 19,
+      "name": "kit2",
+      "usage": "row_house",
+      "world": [
+        5152.0,
+        19096.0
+      ]
+    }
+  ],
+  "segment": 7,
+  "theme_id": "underpass_veins",
+  "theme_label": "Underpass Veins",
+  "world_seed": 16102026
+}

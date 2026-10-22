@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/ground22-merged-parse-cache-1",
+ "queued_seconds": 5.1,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 62.904,
+ "peak_rss_mb": 599,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/12 lines) ---
+PASS: res://spells resolves and holds scripts to parse
+PASS: the sweep still covers the tree (564 scripts, floor 340)
+ScriptParseAuditTest: 564 passed, 0 failed (checked 564 scripts across 8 roots)

@@ -1,7 +1,125 @@
 # Linux production status
 
-Owner: Linux production worker. Updated 21 October 2026.
+Owner: Linux production worker. Updated 22 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
+
+## 22 October — ground integration and native return
+
+At the user's request, normal-merged `claude/wp2-ground` into production at
+`f127d9496c08d127a2e355dbd769b85f190d11e2`. Original candidate `fb6a9e30`,
+follow-up edge/index fix `6c2021bd`, and paced GPU probe `9c160550` are retained
+in history. The existing domestic masonry fix merged without conflict.
+
+Ground now separates floor/road material roles, joins contact shade across
+loaded chunk boundaries, anchors planting beds to house walls, quiets the main
+carriageway, makes industrial yard wear coherent, and restores damp olive S7
+ground. The additional inward bed feather softens hard plot cuts using existing
+noise, without extra texture fetches or planting eligibility/terrain/RNG changes.
+
+All nine focused merged-source suites complete with exit 0 and zero diagnostics:
+policy 298/0, splat 63/0, household care 141/0, natural care 8 chunks/0 failures,
+material cache 38/0, generation material 0 failures, native pavement 14/0,
+native dry receiver 6/0, and parse audit 564/0. No broad 74-suite rerun was needed.
+The first merged policy attempt had missing generated texture imports and is
+retained as failed evidence despite its 298/0 assertion footer. Forty-eight
+runtime textures were restored from the tested worktree only after matching
+source/import hashes and validating source MD5; generated files are not committed.
+
+Final no-readback GPU timestamp cases use identical camera/chunk/material
+sets within each run: S2 start/route 1 and S7 canal start/route 1. Ground GPU
+medians are 5.6135/5.1905/5.3610/5.4195 ms versus substituted phase-1
+shader 7.3620/7.2660/7.5600/7.4605 ms, a 23.75–29.09% reduction in this fixture.
+Actual native size 1920×1040, 3 rounds × 120 frames, 30 warm-up frames, 60 FPS
+sampling cap and 2-second inter-variant cooling. Capped frame periods are not
+shader-cost or throughput evidence. The ground program compiles SIMD16 with
+1111 instructions / 0 spills; SIMD32 still fails. Separate-program SIMD16 errors
+remain explicitly classified in the raw compilation log.
+
+Four final native surveys (S2, S6 and both S7 themes) complete cleanly. The
+occupied 960×540 route completes 50/50 cells across 3 live chunk activations
+with 1880 process samples, 178 fires, 82 hits and 81 deaths, zero diagnostics,
+failures or save writes. Scripted movement/attack, god mode and helper batching
+settings remain disclosed; the 60 FPS-cap route is functional streaming evidence,
+not a whole-Game cost comparison or entry/collection/combat-visual acceptance.
+See the compact [ground packet](../art/reference/2026-10-22-linux-ground/README.md)
+for exact commands, selected views, checks, source/material/import binding,
+thermal controls and the earlier unsuccessful attempts. All execution remains
+one-engine-only with isolated saves, memory/temperature guards and owned cleanup.
+No hardware/power settings were changed.
+
+The foundation is integrated; full city visual acceptance remains open. Broad
+pale forecourts and some earth transitions still need ground/street refinement.
+Street passage/apron continuity and recurring formal plaza islands belong to
+their parked work. Cover, streets, plazas, mood and weathering are not merged by
+this task. The combined dressed route with passage, physical entry/exit,
+collection and streaming is still required after those branches are qualified.
+Loaded-neighbor AO is checked on activation/rebuild; unloading does not repaint
+a retained edge until the next activation, so unload-invariant AO is not claimed.
+
+
+### Publication attempt
+
+Evidence commit: `750531027fefc47e98a300a5602f4ffdb2e49c2b`. Publishing
+`codex/linux-world-production` on 22 October failed with
+`fatal: could not read Username for 'https://github.com': terminal prompts disabled`.
+The implementation and packet are committed locally. This later status commit
+records the failure; no other branch was pushed and no credentials were changed.
+Publish the latest local tip from an authenticated terminal:
+
+```bash
+git push -u origin codex/linux-world-production
+```
+
+
+## 22 October — Claude handoff audit and continuation queue (before ground integration)
+
+Audited production `d4654ac46da1b698d638ae640175c9153e9a5857` and the parked
+local branches at the user's request. `git fetch origin` succeeded with no new
+remote tips. This is a source/stored-evidence review: no new engine measurement,
+runtime merge or gameplay verification was performed for this acknowledgment.
+
+Keep the integrated façade, roof and shared-light direction. The latest
+production commit supplies the source-bound S2 slate-home cutaway after
+`f0242415` and full diagnostic bodies for the eight affected phase-1 suites.
+It does not integrate the newer ground, cover, street or plaza branches.
+The older local `.superpowers/claude-city-20261021/NEXT_PHASE.md` is partly stale;
+its phase-3 material constraints remain relevant, but its branch/worktree and
+completed-check claims must be read against this audit and the current Git state.
+
+| Candidate branch / tip | Actual state | Next gate |
+| --- | --- | --- |
+| `claude/wp2-ground` / `fb6a9e30` | Five committed fixes: floor/road roles, cross-chunk AO, shader register pressure, wall-adjacent beds and quieter use-based ground/S7 ecology. Four native contexts have final-source-bound captures. Unmerged. | Qualify the final shader's SIMD/no-readback cost and focused suites. Earlier successful GPU timings use a different shader hash; the prepared final `timing-s2.json` is absent. |
+| `claude/wp2-cover` / `4ca8057f` | Descendant invalidation fix plus validation counters. Final stored invalidation 77/0 and reuse 23/0 are clean, with mutation controls. Unmerged. | Resolve/qualify extra streaming validation cost before integration. The heavy S10 synthetic first-stream sample rises about 2.77→7.92ms; this is not a Game budget measurement. |
+| `claude/wp2-streets` / `46d353c2` | Useful S2 dressed traversal passed on an earlier branch revision. Latest passage-search change is explicitly untested; S7 discovery previously failed. Unmerged WIP. | Fix/verify passage discovery across unloaded candidate chunks, then S7 and one industrial route, including passage, real entry/exit, collection and a stream boundary. |
+| `claude/wp2-plazas` / `3d782377` | Maintenance-state presentation and texture-residency changes remain unfinished. Predecessor resource/batch checks failed; latest tip lacks fresh evidence. Unmerged WIP. | Finish texture residency/state transitions and batch contracts, then first-touch and integrated traversal checks. Do not carry incidental Python bytecode into integration. |
+
+**Recommended order:** finish ground qualification first; reconcile cover
+invalidation/cost alongside it; finish the selected street/plaza fixes; then
+return one combined, current-source dressed route and the representative S2,
+S7 and industrial material views requested by the lead. Preserve useful native
+artifacts rather than rerunning every unchanged suite.
+
+Ground's final captures and prepared final timing command are local under
+`/var/tmp/sa-phase2/ground/`; successful earlier compiler/timing runs are under
+`.superpowers/claude-city-20261021/runs/g2-simd-*` and `g2-gpu-*`.
+Cover's correctness packet and streaming review are under `/var/tmp/sa-phase2/cover-invalidation/`,
+`/var/tmp/sa-phase2/cover-review/` and
+`.superpowers/claude-city-20261021/runs/`. They are not yet a committed combined
+return. Ground's final capture maps also need the loaded kit textures/imports
+included when packaging the selected return.
+
+Keep mood/weathering parked until this foundation is qualified. Their older
+fullscreen grade/extra ground sampling conflicts with the newer
+[material and atmosphere brief](../art/2026-10-21-segment-material-atmosphere-direction/README.md).
+District walls still have physical/route blockers. Interior expansion is
+fragmented between preview-only branch files and local handback runtime work;
+it is not a ready runtime package. Current retained domestic furnishings remain
+available for the combined cutaway.
+
+Use **one engine at a time**, including human playtests, with isolated saves,
+owned-process cleanup and the existing memory/temperature guards. Claude's
+older two-slot queue note below does not override HANDOFF's one-engine rule.
+No broad 74-suite rerun or new asset generation is needed for this audit.
 
 ## 21 October — city concept-fidelity pass, phase 1 (Claude)
 
@@ -20,7 +138,11 @@ Phase 1 is integrated on this branch:
 - plaza planter rings and furniture;
 - two integration fixes.
 
-All 74 suites pass on their latest run, re-run after the host restart. Evidence, the checks and the open items are in the
+All 74 latest assertion footers report zero failures after the host restart;
+66 processes completed cleanly and eight retained runtime diagnostics. The
+[diagnostic bodies](../art/reference/2026-10-21-linux-city-concept-pass/checks/diagnostics/README.md)
+qualify this result; no baseline comparison establishes those diagnostics as
+pre-existing. Evidence, checks and open items are in the
 [phase-1 packet](../art/reference/2026-10-21-linux-city-concept-pass/README.md).
 
 Parked on local branches, not merged:
@@ -43,6 +165,19 @@ engines and holds a run while the CPU package is at or above 85 C.
 
 ## Pickup acknowledgment
 
+- Latest received direction: `89bccb68e55c52d6845259676729e1387932738e`
+  ([segment materials, weathering and atmosphere](../art/2026-10-21-segment-material-atmosphere-direction/README.md)
+  and the [material support pack](../../assets/world/material_support/v1/README.md)).
+  On 21 October, `git fetch --all` and a normal `git merge origin/enemy-world-work`
+  brought it onto this branch at `cf9a4e3d` without conflicts.
+  - The running bounded return (cover, ground, streets, plazas) continues
+    unchanged.
+  - The parked mood and weathering branches will be re-checked against
+    this brief before integration. Ground and street fixes come first, and
+    the ground GPU regression is resolved before anything is added.
+  - The first material comparison will use the brief's four contexts:
+    S2 household street, S6A working ground, S7B damp ground and S9A
+    exposed margin.
 - Latest received review: `245e23855c6ba9166cfa460406eaebddb9c5abda`
   ([city phase 1 lead review](../art/reviews/2026-10-21-linux-phase1-lead-review/README.md)).
   On 21 October, `git fetch --all` and a normal

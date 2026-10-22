@@ -159,7 +159,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		road_tex_index = 8
 		road_alpha = 0.74
 	elif role == &"checkpoint" or role == &"exit_approach":
-		road_tex_index = 3
+		# The kerbed main-street paving; index 3 is the stone floor of
+		# buildings and rooms (DistrictGroundPolicy.ROLE_FOOTWAY).
+		road_tex_index = 7
 		road_alpha = 0.92
 	elif role == &"primary_objective":
 		road_tex_index = 9
@@ -247,10 +249,11 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		has_plaza = true
 		plaza_rect = Rect2i(Vector2i(px0, py0), Vector2i(plaza_size, plaza_size))
 
+		# Gate, checkpoint and arena courts are carriageway squares like the
+		# rest (they stamped index 3, the building-floor stone, until
+		# 2026-10-21); the primary objective keeps its own paving.
 		var tex_idx: int = 7
-		if archetype == &"gate" or role == &"checkpoint" or role == &"miniboss_arena" or role == &"boss_arena":
-			tex_idx = 3
-		elif role == &"primary_objective":
+		if role == &"primary_objective":
 			tex_idx = 9
 		if organic:
 			# Authored polygon families instead of the square slab: chamfered
@@ -294,7 +297,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		if pad > 0 and has_h and has_v:
 			var hub_pad: Dictionary = ChunkShapeGen.rasterize_polyline(PackedVector2Array([Vector2(float(lane_x0) + float(lane_w) * 0.5, float(lane_y0) + float(lane_w) * 0.5)]), float(lane_w) * 0.5 + float(pad), bounds)
 			ChunkShapeGen.erase_cells(hub_pad, road_cells)
-			gen._stamp_floor_cells(chunk, hub_pad, 3, rng_sidewalk, clampf(gen.district_sidewalk_alpha + 0.06, 0.0, 1.0), -93)
+			gen._stamp_floor_cells(chunk, hub_pad, 7, rng_sidewalk, clampf(gen.district_sidewalk_alpha + 0.06, 0.0, 1.0), -93)
 		gen._stamp_road_edge_noise_cells(chunk, bounds, road_cells, rng_edge)
 	else:
 		gen._stamp_district_sidewalks(chunk, bounds, lane_rect_h, lane_rect_v, rng_sidewalk)

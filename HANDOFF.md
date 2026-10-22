@@ -4,6 +4,15 @@ Updated 21 October 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
 
+**New segment art packet, 21 October:** the human requested colour, shader,
+weathering and atmosphere direction plus existing and missing usable assets.
+Read the [complete fourteen-theme brief](docs/art/2026-10-21-segment-material-atmosphere-direction/README.md)
+and its asset curation. Windows supplies data-only palettes/profiles and four
+cause-anchored grayscale weathering masks. This is source/design delivery;
+no runtime shader, scene or held Linux implementation is integrated by it.
+Linux should normal-merge the art lane, acknowledge its received hash and judge
+its parked mood/weathering work against this direction and the current review.
+
 **Latest review, 21 October:** Linux `3d1be8b0` is received. KEEP the newer
 façade/roof/connected-frontage direction; REWORK broad grey paving, S7's lost
 damp-green setting, repeated formal squares/planters and weak district identity.

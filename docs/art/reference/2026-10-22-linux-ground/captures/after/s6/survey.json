@@ -1,0 +1,61 @@
+{
+  "base_terrain": "dirt",
+  "failures": 0,
+  "points": [
+    {
+      "chunk_at": "(0, 0)",
+      "kits_within_2200px": 11,
+      "name": "start",
+      "world": [
+        1024.0,
+        1024.0
+      ]
+    },
+    {
+      "chunk": "(5, 0)",
+      "chunk_at": "(5, 0)",
+      "kits_within_2200px": 20,
+      "name": "route1",
+      "world": [
+        11264.0,
+        1024.0
+      ]
+    },
+    {
+      "chunk": "(8, 2)",
+      "chunk_at": "(8, 2)",
+      "kits_within_2200px": 13,
+      "name": "route2",
+      "world": [
+        17408.0,
+        5120.0
+      ]
+    },
+    {
+      "chunk_at": "(9, 3)",
+      "kit": "18880,6592",
+      "kits_within_2200px": 11,
+      "name": "kit1",
+      "usage": "shop",
+      "world": [
+        18880.0,
+        6936.0
+      ]
+    },
+    {
+      "chunk_at": "(0, -1)",
+      "kit": "384,-768",
+      "kits_within_2200px": 11,
+      "name": "kit2",
+      "usage": "workshop",
+      "world": [
+        384.0,
+        -424.0
+      ]
+    }
+  ],
+  "segment": 6,
+  "theme_id": "industrial_cutthrough",
+  "theme_label": "Industrial Cut-through",
+  "world_seed": 16102028
+}

@@ -2939,3 +2939,21 @@ the earlier e4a1a8ba stopped at its strict memory ceiling after cleanup of idle
 tool helpers; no local Game image is claimed. Linux remains the primary heavy
 production host. Status acknowledgments and normal Git merges keep both lanes
 intact; the initial recurring review batch stays paused.
+
+## 2026-10-21 — Segment material, weathering and atmosphere direction
+
+At the human's request, Windows supplies a
+[fourteen-theme art brief and asset curation](art/2026-10-21-segment-material-atmosphere-direction/README.md),
+plus data-only material palettes/profiles and four small grayscale weathering
+masks. District differences come from surface use, maintenance, exposure and
+local sources under one temperate city daylight. Keep uneven medieval growth,
+useful tended household pockets, neglected areas and procedural wilderness;
+restore subdued damp-green S7 material identity before stronger atmosphere.
+
+The packet changes no runtime shader, placement, scene or generator. Incoming
+packs at Linux `3d1be8b0` remain distinguished from integrated/earlier kept assets.
+The four masks have source decode/encoding checks, not native game fit approval.
+S1/Hub retain authored ownership; S11+ remains unresolved beyond the current
+Service Courtyards fallback. Linux should acknowledge the received art hash and
+use the brief to review its parked mood/weathering work, with current-source
+native readability and performance evidence before integration acceptance.

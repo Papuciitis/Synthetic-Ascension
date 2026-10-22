@@ -1,0 +1,55 @@
+{
+  "kind": "selected final survey evidence",
+  "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+  "survey": "survey.json",
+  "world_seed": 16102026,
+  "theme_id": "service_courtyards",
+  "route1_world": [
+    -3072.0,
+    9216.0
+  ],
+  "launch_metadata": "../../../runs/final-surveys/ground22-final-s2/run-results.json",
+  "scoped_before": "../../../sources/merged-after-cache.json",
+  "scoped_after": "../../../sources/merged-final-after.json",
+  "import_closure_before": "../../../sources/merged-after-cache-addendum.json",
+  "import_closure_after": "../../../sources/merged-final-after-cache-addendum.json",
+  "produced_pngs_sha256": {
+    "kit1-seg2-play.png": "52373d30f49d390c4f8539a1858676f0748732dcda5c6c04d11b612a67cb339b",
+    "kit2-seg2-play.png": "6d819d5f4608818caee5b7669777bf37c0d9575b9f5cd8a287ace500443250be",
+    "objective-seg2-overview.png": "5f56078f595fae5857efaf611329e9bf0810a516dd4fb816c091c6ddb0c7e218",
+    "objective-seg2-play.png": "6e8a831ed7076c4632815d704e5e7e46e8c73e4a3097592c883562f0645da13c",
+    "route1-seg2-overview.png": "6bf417bacef22b9f18bf3cba0d6c06cf125b3cd7c1455855292bed3ae9bf0ffc",
+    "route1-seg2-play.png": "6f6082a56fe15048796d0c7326cf8dc88b3189b46c90415ffce3fad569a25c68",
+    "route2-seg2-overview.png": "229fa66bb19c2ea3a7382cc75e72e28ef9daee62874a02da1dba7e247face520",
+    "route2-seg2-play.png": "3a6cf94ee4667452c69b73c2e1d54519c91631725a64483d4fd26d3f6e2ef998",
+    "start-seg2-overview.png": "453583d8896052a99fbb4383e9b23f56efd7840b94057db4e11ecc74e69b9ade",
+    "start-seg2-play.png": "67bcf25e491013608a48dfe13918d3589494224f160770cb29af52daa3d47c64"
+  },
+  "selected_pngs": {
+    "route1-seg2-play.png": {
+      "sha256": "6f6082a56fe15048796d0c7326cf8dc88b3189b46c90415ffce3fad569a25c68",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    "route1-seg2-overview.png": {
+      "sha256": "6bf417bacef22b9f18bf3cba0d6c06cf125b3cd7c1455855292bed3ae9bf0ffc",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    "kit1-seg2-play.png": {
+      "sha256": "52373d30f49d390c4f8539a1858676f0748732dcda5c6c04d11b612a67cb339b",
+      "dimensions": [
+        1280,
+        720
+      ]
+    }
+  },
+  "limits": [
+    "Only selected PNGs are packaged; all produced hashes remain recorded.",
+    "Static Game survey, no moving combat/entry/collection claim."
+  ]
+}

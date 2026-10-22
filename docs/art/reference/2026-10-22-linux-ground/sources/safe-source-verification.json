@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "measurement_source_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+  "all_safe_full_maps_identical": true,
+  "full_map_input_count": 2683,
+  "after_snapshot_scoped_inputs": 148,
+  "overlap_count": 116,
+  "overlap_mismatches": [],
+  "generated_import_inputs_not_in_full_maps": [
+    ".godot/imported/cared_lawn.png-215789e05c928283ff14146ae495104f.ctex",
+    ".godot/imported/cared_lawn.png-215789e05c928283ff14146ae495104f.md5",
+    ".godot/imported/damp_moss_soil.png-1d18046ea7fddcbcc0589da3557278e4.ctex",
+    ".godot/imported/damp_moss_soil.png-1d18046ea7fddcbcc0589da3557278e4.md5",
+    ".godot/imported/ground_city_base_01.png-8d8b04040db9fbceec7ed6cb356f5b37.ctex",
+    ".godot/imported/ground_city_base_01.png-8d8b04040db9fbceec7ed6cb356f5b37.md5",
+    ".godot/imported/ground_civic_brick_01.png-b8cb8517879fb473baa2ec92d89f97b2.ctex",
+    ".godot/imported/ground_civic_brick_01.png-b8cb8517879fb473baa2ec92d89f97b2.md5",
+    ".godot/imported/ground_cobble_01.png-292d10a3e376f1c8480f851d384bbb25.ctex",
+    ".godot/imported/ground_cobble_01.png-292d10a3e376f1c8480f851d384bbb25.md5",
+    ".godot/imported/ground_dirt_01.png-defbc95e3721ed833c44998acd2c71bc.ctex",
+    ".godot/imported/ground_dirt_01.png-defbc95e3721ed833c44998acd2c71bc.md5",
+    ".godot/imported/ground_dirt_path_01.png-91cde7ed8784c84f6ffd78dce346e5d1.ctex",
+    ".godot/imported/ground_dirt_path_01.png-91cde7ed8784c84f6ffd78dce346e5d1.md5",
+    ".godot/imported/ground_grass_01.png-f3f9e17555373b8239696ceecd522ed7.ctex",
+    ".godot/imported/ground_grass_01.png-f3f9e17555373b8239696ceecd522ed7.md5",
+    ".godot/imported/ground_grass_02.png-e71c15757e22b0d623d4df62fd3bb81f.ctex",
+    ".godot/imported/ground_grass_02.png-e71c15757e22b0d623d4df62fd3bb81f.md5",
+    ".godot/imported/ground_grass_dry_01.png-713617e85abfd82ff387b30850d159c0.ctex",
+    ".godot/imported/ground_grass_dry_01.png-713617e85abfd82ff387b30850d159c0.md5",
+    ".godot/imported/ground_mossy_brick_01.png-ba5203c0baf4cbe9b155bbeb4d16ae08.ctex",
+    ".godot/imported/ground_mossy_brick_01.png-ba5203c0baf4cbe9b155bbeb4d16ae08.md5",
+    ".godot/imported/ground_round_cobble_01.png-bfa19dd76afb57c97efc1ef02069e410.ctex",
+    ".godot/imported/ground_round_cobble_01.png-bfa19dd76afb57c97efc1ef02069e410.md5",
+    ".godot/imported/ground_stone_tiles_01.png-adc57671297806edc9c0600c740b89ff.ctex",
+    ".godot/imported/ground_stone_tiles_01.png-adc57671297806edc9c0600c740b89ff.md5",
+    ".godot/imported/paving.png-1544c2e8ed91d9a8fbd44898491e0252.ctex",
+    ".godot/imported/paving.png-1544c2e8ed91d9a8fbd44898491e0252.md5",
+    ".godot/imported/wet_earth.png-9c7fb203b3e80eb22084c69ab4e83ef4.ctex",
+    ".godot/imported/wet_earth.png-9c7fb203b3e80eb22084c69ab4e83ef4.md5",
+    ".godot/imported/worn_setts.png-d3eb924254c520800569a6c5a95afe9a.ctex",
+    ".godot/imported/worn_setts.png-d3eb924254c520800569a6c5a95afe9a.md5"
+  ],
+  "comparisons": {
+    "ground22-gpu-s2-start-safe": {
+      "source_count": 2683,
+      "identical_full_map": true,
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": []
+    },
+    "ground22-gpu-s2-route1-safe": {
+      "source_count": 2683,
+      "identical_full_map": true,
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": []
+    },
+    "ground22-gpu-s7b-start-safe": {
+      "source_count": 2683,
+      "identical_full_map": true,
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": []
+    },
+    "ground22-gpu-s7b-route1-safe": {
+      "source_count": 2683,
+      "identical_full_map": true,
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": []
+    },
+    "candidate-feather-before.json": {
+      "changed_scoped_files_since_snapshot": [
+        "tools/dev/GroundShaderCostProbe.gd"
+      ]
+    },
+    "candidate-feather-after.json": {
+      "changed_scoped_files_since_snapshot": [
+        "tools/dev/GroundShaderCostProbe.gd"
+      ]
+    },
+    "candidate-paced-before.json": {
+      "changed_scoped_files_since_snapshot": [
+        "tools/dev/GroundShaderCostProbe.gd"
+      ]
+    }
+  },
+  "shader_sha256": "a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9",
+  "measured_probe_sha256": "9d06cf0a519e2cc285d3481b43b183b849db0229a8230a4d652cdfacacd94de9",
+  "measured_probe_copy": "measured-source/GroundShaderCostProbe.gd",
+  "limits": [
+    "Compiler and earlier focused runs do not contain full runner maps; compiler has its own bracketed148-input pair.",
+    "Safe GPU maps are full launch maps; generated imported bytes are covered by scoped snapshot comparisons, not by the runner map.",
+    "Only planned subsequent tool difference is a comment correction; preserve measured probe bytes independently."
+  ]
+}

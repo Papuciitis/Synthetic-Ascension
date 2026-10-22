@@ -1,0 +1,351 @@
+{
+  "schema": 1,
+  "production_commit": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+  "paths_are_relative_to_packet": true,
+  "runs": {
+    "ground22-merged-policy-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-policy-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "DistrictGroundPolicyTest: 298 passed, 0 failed"
+      ]
+    },
+    "ground22-merged-splat-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-splat-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "WorldGroundSplatTest: 63 passed, 0 failed"
+      ]
+    },
+    "ground22-merged-care-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-care-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "CityGroundCareTest: 141 passed, 0 failed"
+      ]
+    },
+    "ground22-merged-care-natural-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-care-natural-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "CityGroundCareNaturalTest: chunks=8 failures=0"
+      ]
+    },
+    "ground22-merged-material-cache-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-material-cache-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "GroundMaterialCacheTest: 38 passed, 0 failed"
+      ]
+    },
+    "ground22-merged-generation-material-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-generation-material-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "CityGenerationMaterialTest: failures=0"
+      ]
+    },
+    "ground22-merged-footway-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-footway-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "CityFootwayEdgeRenderTest: 14 passed, 0 failed"
+      ]
+    },
+    "ground22-merged-dry-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-dry-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "ThemeAtmosphereDryReceiverTest: 6 passed, 0 failed"
+      ]
+    },
+    "ground22-merged-parse-cache": {
+      "classification": "final-checks",
+      "metadata": "runs/final-checks/ground22-merged-parse-cache/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "ScriptParseAuditTest: 564 passed, 0 failed (checked 564 scripts across 8 roots)"
+      ]
+    },
+    "ground22-gpu-s2-start-safe": {
+      "classification": "gpu-safe",
+      "metadata": "runs/gpu-safe/ground22-gpu-s2-start-safe/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-gpu-s2-route1-safe": {
+      "classification": "gpu-safe",
+      "metadata": "runs/gpu-safe/ground22-gpu-s2-route1-safe/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-gpu-s7b-start-safe": {
+      "classification": "gpu-safe",
+      "metadata": "runs/gpu-safe/ground22-gpu-s7b-start-safe/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-gpu-s7b-route1-safe": {
+      "classification": "gpu-safe",
+      "metadata": "runs/gpu-safe/ground22-gpu-s7b-route1-safe/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-simd": {
+      "classification": "compiler",
+      "metadata": "runs/compiler/ground22-simd/run-results.json",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 0,
+      "git_head": "fb6a9e30d33d4a1a0e179c135278ed8968ced2be",
+      "assertion_footers": []
+    },
+    "ground22-gpu-s2": {
+      "classification": "thermal-stopped",
+      "metadata": "runs/thermal-stopped/ground22-gpu-s2/run-results.json.gz",
+      "actual_exit": -15,
+      "stop_reason": "interrupted",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-gpu-s2-start": {
+      "classification": "thermal-stopped",
+      "metadata": "runs/thermal-stopped/ground22-gpu-s2-start/run-results.json.gz",
+      "actual_exit": -15,
+      "stop_reason": "interrupted",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-gpu-s2-start-paced": {
+      "classification": "thermal-stopped",
+      "metadata": "runs/thermal-stopped/ground22-gpu-s2-start-paced/run-results.json.gz",
+      "actual_exit": -15,
+      "stop_reason": "interrupted",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-gpu-s2-start-cool": {
+      "classification": "thermal-stopped",
+      "metadata": "runs/thermal-stopped/ground22-gpu-s2-start-cool/run-results.json.gz",
+      "actual_exit": -15,
+      "stop_reason": "interrupted",
+      "diagnostic_count": 0,
+      "source_hash_count": 2683,
+      "git_head": "6c2021bd31ad153fdf33f397d72d3696be9160a9",
+      "assertion_footers": []
+    },
+    "ground22-merged-policy": {
+      "classification": "missing-import-failure",
+      "metadata": "runs/missing-import-failure/ground22-merged-policy/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "runtime_diagnostics",
+      "diagnostic_count": 210,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "DistrictGroundPolicyTest: 298 passed, 0 failed"
+      ]
+    },
+    "ground22-merged-occupied": {
+      "classification": "occupied-functional",
+      "metadata": "runs/occupied-functional/ground22-merged-occupied/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": [
+        "WorldCoverStreamingProfile: samples=1880 route=50/50 activations=3 frame_p95=22.511ms cover_p95=2.551ms failures=0 saves=0"
+      ]
+    },
+    "ground22-final-s2": {
+      "classification": "final-surveys",
+      "metadata": "runs/final-surveys/ground22-final-s2/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": []
+    },
+    "ground22-final-s6": {
+      "classification": "final-surveys",
+      "metadata": "runs/final-surveys/ground22-final-s6/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": []
+    },
+    "ground22-final-s7a": {
+      "classification": "final-surveys",
+      "metadata": "runs/final-surveys/ground22-final-s7a/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": []
+    },
+    "ground22-final-s7b": {
+      "classification": "final-surveys",
+      "metadata": "runs/final-surveys/ground22-final-s7b/run-results.json.gz",
+      "actual_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "source_hash_count": 2696,
+      "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+      "assertion_footers": []
+    }
+  },
+  "captures": [
+    {
+      "context": "s2",
+      "world_seed": 16102026,
+      "theme_id": "service_courtyards",
+      "route1_world": [
+        -3072.0,
+        9216.0
+      ],
+      "before": [
+        "captures/before/s2/route1-seg2-play.png",
+        "captures/before/s2/route1-seg2-overview.png"
+      ],
+      "after": [
+        "captures/after/s2/route1-seg2-play.png",
+        "captures/after/s2/route1-seg2-overview.png",
+        "captures/after/s2/kit1-seg2-play.png"
+      ]
+    },
+    {
+      "context": "s6",
+      "world_seed": 16102028,
+      "theme_id": "industrial_cutthrough",
+      "route1_world": [
+        11264.0,
+        1024.0
+      ],
+      "before": [
+        "captures/before/s6/route1-seg6-play.png",
+        "captures/before/s6/route1-seg6-overview.png"
+      ],
+      "after": [
+        "captures/after/s6/route1-seg6-play.png",
+        "captures/after/s6/route1-seg6-overview.png"
+      ]
+    },
+    {
+      "context": "s7a",
+      "world_seed": 16102026,
+      "theme_id": "underpass_veins",
+      "route1_world": [
+        7168.0,
+        11264.0
+      ],
+      "before": [
+        "captures/before/s7a/route1-seg7-play.png",
+        "captures/before/s7a/route1-seg7-overview.png"
+      ],
+      "after": [
+        "captures/after/s7a/route1-seg7-play.png",
+        "captures/after/s7a/route1-seg7-overview.png",
+        "captures/after/s7a/kit2-seg7-play.png"
+      ]
+    },
+    {
+      "context": "s7b",
+      "world_seed": 16102028,
+      "theme_id": "canal_services",
+      "route1_world": [
+        -9216.0,
+        1024.0
+      ],
+      "before": [
+        "captures/before/s7b/route1-seg7-play.png",
+        "captures/before/s7b/route1-seg7-overview.png"
+      ],
+      "after": [
+        "captures/after/s7b/route1-seg7-play.png",
+        "captures/after/s7b/route1-seg7-overview.png"
+      ]
+    }
+  ],
+  "source_verification": "sources/final-source-verification.json",
+  "gpu_summary": "gpu-summary.json",
+  "compiler_summary": "runs/compiler/ground22-simd/simd-summary.json",
+  "occupied_profile": "occupied/profile-info.json.gz",
+  "limits": [
+    "Run and original-provenance bodies preserve historical absolute command paths; this index uses relative evidence paths.",
+    "No superseded fb6 AFTER PNG is included in this final selection."
+  ],
+  "compression_map": "compression-map.json",
+  "raw_record_path_resolution": "Preserved raw record bodies may name original paths; resolve those aliases through compression-map.json."
+}
