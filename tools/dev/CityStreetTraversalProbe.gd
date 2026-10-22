@@ -13,22 +13,47 @@ extends "res://tools/dev/CityBlockPlayablePreview.gd"
 ## ring item, god mode, modal onboarding bypass, scripted movement and aim/fire
 ## at the nearest live enemy. Nothing is
 ## frozen: no actor freeze, never_cull, pickup override or direct collection.
-## -- --segment=2 [--world-seed=16102026] --out=<fresh absolute directory>
+## -- --segment=2 [--world-seed=16102026] [--passage-chunk=x,y]
+##    --out=<fresh absolute directory>
 
 const ITEM_SCENE := preload("res://scenes/world/pickups/ItemPickup.tscn")
 
 var _events: Array[Dictionary] = []
 var _staging: Array[Dictionary] = []
-var _route_cells: Array[String] = []
+var _route_cells: Array[Vector2i] = []
+var _passage_trace: Array[Dictionary] = []
 var _centers: Array[String] = []
 var _pickup_ref: WeakRef
 var _pickup_instance: ItemInstance
 var _pickup_state: Dictionary = {}
 var _report: Dictionary = {}
 var _route_live := false
+var _discovery: Array[Dictionary] = []
+var _camera_points: Array[Dictionary] = []
+var _has_passage_chunk := false
+var _passage_chunk := Vector2i.ZERO
+var _director_start: Dictionary = {}
+var _director_stayed_live := true
+var _passage_corridor := Rect2i()
+
+
+func _enter_tree() -> void:
+	super._enter_tree()
+	for arg: String in OS.get_cmdline_user_args():
+		if not arg.begins_with("--passage-chunk="):
+			continue
+		var parts := arg.trim_prefix("--passage-chunk=").split(",")
+		if parts.size() != 2 or not parts[0].is_valid_int() or not parts[1].is_valid_int():
+			_fail("Passage replay requires an explicit integer chunk x,y")
+			continue
+		_passage_chunk = Vector2i(int(parts[0]), int(parts[1]))
+		_has_passage_chunk = true
 
 
 func _run() -> void:
+	if _failures > 0:
+		await _shutdown()
+		return
 	if DisplayServer.get_name() == "headless":
 		_fail("The traversal records native stills; run with a renderer")
 		await _shutdown()
@@ -36,6 +61,9 @@ func _run() -> void:
 	_prepare_runtime()
 	Global.attempt_segment = _city_segment
 	Global.attempt_world_seed = _city_world_seed
+	# The inherited isolated fight setup disables authored encounter beats.
+	# Restore production creation before Game's deferred director setup runs.
+	Global.debug_encounter_beats = true
 	get_window().size = Vector2i(1280, 720)
 	get_window().title = "Synthetic Ascension — final-dressed street traversal"
 	if _out.begins_with("res://docs/art/reference/2026-10-18-city-block"):
@@ -52,8 +80,13 @@ func _run() -> void:
 	RunEvents.player_entered_building.connect(_on_entered_building)
 	await _settle()
 	_dismiss_dossiers()
+	_director_start = _director_evidence()
+	if not bool(_director_start.live):
+		_fail("The production EncounterDirector was not created, enabled and bound")
+		await _shutdown()
+		return
 	var start := _player.global_position
-	var passage := _nearest_passage(start)
+	var passage := {} if _has_passage_chunk else _nearest_passage(start)
 	if passage.is_empty() or not bool(passage.narrow_between_buildings):
 		# Staged search: warp to planned chunks nearest the start, one at a
 		# time, until a narrow passage between buildings has streamed in.
@@ -62,23 +95,25 @@ func _run() -> void:
 		var coords: Array = (plan.get("role_by_chunk", {}) as Dictionary).keys()
 		var start_chunk := _chunks._world_to_chunk(start)
 		coords.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return (a - start_chunk).length_squared() < (b - start_chunk).length_squared())
+		if _has_passage_chunk:
+			coords = [_passage_chunk]
 		for coord: Vector2i in coords.slice(0, 40):
-			var warp := _walkable_near((Vector2(coord) + Vector2.ONE * 0.5) * _chunks.chunk_size_px)
+			var warp := await _stream_walkable_near((Vector2(coord) + Vector2.ONE * 0.5) * _chunks.chunk_size_px)
 			if warp == Vector2.INF:
 				continue
 			_player.global_position = warp
 			await _settle()
 			_dismiss_dossiers()
 			var found := _nearest_passage(_player.global_position)
+			_discovery.append({"chunk": str(coord), "world": str(warp), "passage": str(found.get("cells", Rect2i())), "narrow": bool(found.get("narrow_between_buildings", false))})
 			if not found.is_empty() and bool(found.narrow_between_buildings):
 				passage = found
 				_staging.append({"kind": "passage search warp", "chunk": str(coord), "world": str(_player.global_position)})
 				break
-	if passage.is_empty():
-		_fail("No recorded frontage passage streamed near the start")
+	if passage.is_empty() or not bool(passage.narrow_between_buildings):
+		_fail("No narrow recorded frontage passage found after bounded streamed search")
 		await _shutdown()
 		return
-	if not bool(passage.narrow_between_buildings): _fail("No narrow passage between buildings streamed near the start; nearest opening used")
 	var ends: Array = passage.ends
 	_player.global_position = _free_spawn_position(ends[0] + (ends[0] - ends[1]).normalized() * 192.0)
 	_staging.append({"kind": "player initial warp beside a recorded passage", "start": str(start), "warp": str(_player.global_position), "passage_world": str(passage.world)})
@@ -88,16 +123,29 @@ func _run() -> void:
 	_centers.append(str(_chunks._current_center))
 	_route_live = true
 	await _frames(4)
-	# 1. The narrow passage, end to end through its middle.
-	_phase = "passage"
+	# 1. Reach the near mouth freely, then keep every planned step and
+	# physical observation inside the actual passage plus its mouth rows.
+	_phase = "passage_approach"
 	await _walk_to(ends[0])
+	var passage_cells: Rect2i = passage.cells
+	var passage_chunk: Vector2i = passage.chunk
+	passage_cells.position += passage_chunk * _chunks._cells_per_chunk()
+	var along := Vector2i.DOWN if passage_cells.size.y > passage_cells.size.x else Vector2i.RIGHT
+	_passage_corridor = Rect2i(passage_cells.position - along, passage_cells.size + along * 2)
+	_route_cells.clear()
+	_passage_trace.clear()
+	_phase = "passage"
+	_record_passage_cell()
 	await _walk_to(passage.center)
 	var inside_passage := (passage.world as Rect2).has_point(_player.global_position)
 	if not inside_passage: _fail("The player did not stand inside the passage " + str(passage.world))
 	await _still("traversal-1-passage")
 	await _walk_to(ends[1])
-	var through := (_player.global_position - (ends[1] as Vector2)).length() < 48.0
-	if not through: _fail("The player did not come out of the passage's far end")
+	_record_passage_cell()
+	var trace_result := _passage_trace_result(passage_cells, _route_cells)
+	_passage_corridor = Rect2i()
+	var through := (_player.global_position - (ends[1] as Vector2)).length() < 48.0 and bool(trace_result.valid)
+	if not through: _fail("The player did not physically cross the recorded passage within its corridor: " + str(trace_result))
 	# 2. An actual building: entry (roof cutaway) and exit (roof restored).
 	_phase = "building"
 	var original := _entry_target(_player.global_position, false)
@@ -130,21 +178,21 @@ func _run() -> void:
 	var crossed := after_center != before_center and _chunks._world_to_chunk(_player.global_position) == after_center
 	if not crossed: _fail("The streaming centre did not follow the player across the seam")
 	await _still("traversal-5-boundary")
+	var director_end := _director_evidence()
+	if not bool(director_end.live) or not _director_stayed_live:
+		_fail("The production EncounterDirector did not remain live during traversal")
 	_route_live = false
 	_release_inputs()
 	_report = {"capture_scene": "res://tools/dev/CityStreetTraversalProbe.tscn", "scene": "res://scenes/game.tscn", "args": OS.get_cmdline_user_args(),
 		"segment": _city_segment, "world_seed": _city_world_seed, "window": str(get_window().size), "camera_zoom": str(_camera.zoom),
-		"passage": {"world": str(passage.world), "cells": str(passage.cells), "chunk": str(passage.chunk), "narrow_between_buildings": passage.narrow_between_buildings, "flanked_cells": passage.flanked_cells, "inside": inside_passage, "through": through},
+		"passage": {"world": str(passage.world), "cells": str(passage.cells), "chunk": str(passage.chunk), "narrow_between_buildings": passage.narrow_between_buildings, "flanked_cells": passage.flanked_cells, "inside": inside_passage, "through": through, "actual_physics_cell_trace": _passage_trace, "trace_validation": trace_result},
 		"original_entry": entry, "infill_entry": infill_entry, "building_events": _events,
 		"pickup": _pickup_state, "collected": collected,
 		"boundary": {"before": str(before_center), "after": str(after_center), "crossed": crossed, "target": str(crossing)},
-		"chunk_centers": _centers, "route": _route_notes, "staging": _staging, "failures": _failures,
+		"chunk_centers": _centers, "route": _route_notes, "staging": _staging, "discovery": _discovery, "camera_points": _camera_points, "failures": _failures,
 		"decoration": _chunks.deco_enabled, "street_continuity": _chunks.street_continuity_enabled,
-		"limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test."}
-	var output := FileAccess.open(_out.path_join("traversal.json"), FileAccess.WRITE)
-	if output != null:
-		output.store_string(JSON.stringify(_report, "\t"))
-		output.close()
+		"encounter_director": {"requested": Global.debug_encounter_beats, "start": _director_start, "end": director_end, "stayed_live": _director_stayed_live},
+		"limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test."}
 	print("CityStreetTraversalProbe: passage=%s through=%s original_entry=%s infill_entry=%s collected=%s crossed=%s failures=%d" % [str(inside_passage), str(through), str(entry.get("restored", false)), str(infill_entry.get("restored", false)), str(collected), str(crossed), _failures])
 	await _shutdown()
 
@@ -161,10 +209,99 @@ func _process(_delta: float) -> void:
 func _physics_process(_delta: float) -> void:
 	if not _route_live:
 		return
+	_record_passage_cell()
+	if not get_tree().paused:
+		var director := _game.get_node_or_null("EncounterDirector") as EncounterDirector
+		_director_stayed_live = _director_stayed_live and director != null and director.enabled and director.is_physics_processing() and director.can_process() and director._spawner != null and director._spawner == _game.get_node_or_null("Spawner") and director._player == _player
 	var aim := _aim_at_live_enemy()
 	_set_axis(&"aim_left", &"aim_right", aim.x)
 	_set_axis(&"aim_up", &"aim_down", aim.y)
 	Input.action_press(&"attack")
+
+
+## Sample the player's real post-collision location on each physics tick;
+## retain each cell transition (stationary repeats carry no new route fact).
+func _record_passage_cell() -> void:
+	if not _passage_corridor.has_area():
+		return
+	var cell := _chunks.world_to_cell(_player.global_position)
+	if not _route_cells.is_empty() and _route_cells.back() == cell:
+		return
+	_route_cells.append(cell)
+	_passage_trace.append({"physics_frame": Engine.get_physics_frames(), "cell": [cell.x, cell.y], "world": str(_player.global_position)})
+
+
+func _passage_trace_result(passage: Rect2i, cells: Array[Vector2i]) -> Dictionary:
+	var vertical := passage.size.y > passage.size.x
+	var along := Vector2i.DOWN if vertical else Vector2i.RIGHT
+	var length := passage.size.y if vertical else passage.size.x
+	var cross_section := Vector2i(passage.size.x, 1) if vertical else Vector2i(1, passage.size.y)
+	var near := Rect2i(passage.position - along, cross_section)
+	var middle := Rect2i(passage.position + along * int(length / 2.0), cross_section)
+	var far := Rect2i(passage.position + along * length, cross_section)
+	var allowed := Rect2i(passage.position - along, passage.size + along * 2)
+	var near_index := -1
+	var middle_index := -1
+	var far_index := -1
+	var outside: Array[int] = []
+	var jumps: Array[int] = []
+	for index in cells.size():
+		var cell := cells[index]
+		if not allowed.has_point(cell):
+			outside.append(index)
+		if index > 0:
+			var step := cell - cells[index - 1]
+			if maxi(absi(step.x), absi(step.y)) > 1:
+				jumps.append(index)
+		if near_index < 0 and near.has_point(cell):
+			near_index = index
+		if middle_index < 0 and near_index >= 0 and index > near_index and middle.has_point(cell):
+			middle_index = index
+		if far_index < 0 and middle_index >= 0 and index > middle_index and far.has_point(cell):
+			far_index = index
+	var ends_far := not cells.is_empty() and far.has_point(cells.back())
+	var ordered := near_index == 0 and middle_index > near_index and far_index > middle_index and ends_far
+	return {"valid": ordered and outside.is_empty() and jumps.is_empty(), "ordered_mouth_middle_mouth": ordered, "allowed_cells": str(allowed), "near_mouth": str(near), "middle_cross_section": str(middle), "far_mouth": str(far), "near_index": near_index, "middle_index": middle_index, "far_index": far_index, "outside_indices": outside, "jump_indices": jumps, "observed_cell_count": cells.size()}
+
+
+## Observe the real producer and its own counters; no route-forced beat or
+## substitute director is created to satisfy this evidence.
+func _director_evidence() -> Dictionary:
+	var director := _game.get_node_or_null("EncounterDirector") as EncounterDirector
+	if director == null:
+		return {"present": false, "live": false}
+	var spawner_bound := director._spawner != null and director._spawner == _game.get_node_or_null("Spawner")
+	var player_bound := director._player == _player
+	var live := director.enabled and director.is_physics_processing() and director.can_process() and spawner_bound and player_bound
+	return {"present": true, "live": live, "path": str(director.get_path()), "enabled": director.enabled, "physics_processing": director.is_physics_processing(), "can_process": director.can_process(), "spawner_bound": spawner_bound, "player_bound": player_bound, "snapshot": director.balance_snapshot()}
+
+
+## Initial staging only: unloaded cells are correctly unwalkable, so move the
+## streaming centre first, wait for ordinary chunk/blocker activation, then
+## resolve a free position. Recorded traversal starts after this search ends.
+func _stream_walkable_near(desired: Vector2) -> Vector2:
+	_player.global_position = desired
+	_staging.append({"kind": "candidate streaming warp", "world": str(desired), "chunk": str(_chunks._world_to_chunk(desired))})
+	await _settle()
+	if _game != null:
+		_dismiss_dossiers()
+	return _walkable_near(desired)
+
+
+func _still(name: String) -> void:
+	_camera_points.append({"id": name, "phase": _phase, "player_world": str(_player.global_position), "camera_world": str(_camera.global_position), "zoom": str(_camera.zoom), "chunk": str(_chunks._current_center)})
+	await super._still(name)
+
+
+func _shutdown() -> void:
+	# A failed discovery must leave the attempted chunks in its result too.
+	if _report.is_empty():
+		_report = {"capture_scene": "res://tools/dev/CityStreetTraversalProbe.tscn", "args": OS.get_cmdline_user_args(), "segment": _city_segment, "world_seed": _city_world_seed, "discovery": _discovery, "staging": _staging, "encounter_director_start": _director_start, "failures": _failures}
+	var output := FileAccess.open(_out.path_join("traversal.json"), FileAccess.WRITE)
+	if output != null:
+		output.store_string(JSON.stringify(_report, "\t"))
+		output.close()
+	await super._shutdown()
 
 
 ## A walkable cell centre within 12 cells of `desired`, or INF (no failure:
@@ -330,6 +467,9 @@ func _walk_to(desired: Vector2, strict_perimeter: bool = false) -> void:
 	# Route goals are walkable cell centers, not enemy-spawn reservations.
 	# A shooter staged here earlier may already be hundreds of pixels away.
 	var goal := _chunks.world_to_cell(desired)
+	if _passage_corridor.has_area() and (not _passage_corridor.has_point(goal) or not _chunks.is_cell_walkable(goal)):
+		_fail("Mandatory passage destination is blocked or outside its corridor: " + str(goal))
+		return
 	if not _chunks.is_cell_walkable(goal):
 		var found := false
 		for radius in range(1,7):
@@ -395,6 +535,8 @@ func _walk_to(desired: Vector2, strict_perimeter: bool = false) -> void:
 
 
 func _live_path(start: Vector2i, goal: Vector2i, blocked: Dictionary) -> Array[Vector2i]:
+	if _passage_corridor.has_area() and (not _passage_corridor.has_point(start) or not _passage_corridor.has_point(goal)):
+		return []
 	var previous: Dictionary = {start:start}
 	var queue: Array[Vector2i] = [start]
 	var cursor := 0
@@ -403,6 +545,7 @@ func _live_path(start: Vector2i, goal: Vector2i, blocked: Dictionary) -> Array[V
 		cursor += 1
 		for direction: Vector2i in [Vector2i.UP,Vector2i.RIGHT,Vector2i.DOWN,Vector2i.LEFT]:
 			var next := cell + direction
+			if _passage_corridor.has_area() and not _passage_corridor.has_point(next): continue
 			if previous.has(next) or blocked.has(next) or absi(next.x-start.x)>40 or absi(next.y-start.y)>40 or not _chunks.is_cell_walkable(next): continue
 			previous[next] = cell
 			queue.append(next)
@@ -443,6 +586,7 @@ func _live_sidestep(goal: Vector2, blocked: Dictionary) -> bool:
 	var best_score := INF
 	for direction: Vector2i in [Vector2i.DOWN,Vector2i.UP,Vector2i.RIGHT,Vector2i.LEFT,Vector2i(1,1),Vector2i(-1,1),Vector2i(1,-1),Vector2i(-1,-1)]:
 		var cell := current + direction
+		if _passage_corridor.has_area() and not _passage_corridor.has_point(cell): continue
 		if blocked.has(cell) or not _chunks.is_cell_walkable(cell): continue
 		var point := _chunks.cell_to_world_center(cell)
 		if _player.test_move(_player.global_transform,point-_player.global_position): continue
