@@ -37,8 +37,9 @@ const PROP_CASTS: Array[Vector2] = [Vector2(40, 52), Vector2(40, 52), Vector2(34
 ## The prop's footprint centre sits this far above the sprite's bottom tip.
 const PROP_BASE_LIFT := 10.0
 const PROP_CAST_KEY := "#prop_cast"
-## A soft capsule (tools/design/bake_prop_cast_shadow.py): darkest at its base
-## end, feathered; alpha only, the sun material does the shading.
+## A soft tapered capsule (tools/design/bake_prop_cast_shadow.py): a solid core
+## with a feathered penumbra, narrowing toward its tip; alpha only, the sun
+## material does the shading.
 const PROP_CAST_TEXTURE := preload("res://assets/world/props/prop_cast_shadow.png")
 const FACE_OFFSET := Vector2(0.0, 17.0)
 static var depth_faces_enabled := true
@@ -318,11 +319,13 @@ func _add_prop_cast(data: ChunkBuildData, cell: Vector2i, world_center: Vector2,
 	var size: Vector2 = PROP_CASTS[clampi(data.variant_at(cell) & 7, 0, PROP_CASTS.size() - 1)]
 	var length := size.x * DEPTH.BUILDING_SHADOW_K * DEPTH.length_scale
 	var direction := DEPTH.SHADOW_DIRECTION.normalized()
-	# The cast starts half a footprint behind the base (its contact) and runs
-	# its length along the sun direction.
-	var center := world_center - Vector2(0.0, PROP_BASE_LIFT) + direction * (length * 0.5)
+	# The cast's rounded base end sits on the prop's footprint centre and runs
+	# its length (plus half a footprint) along the sun; nothing pokes out on
+	# the lit side.
+	var reach := length + size.y * 0.5
+	var center := world_center - Vector2(0.0, PROP_BASE_LIFT) + direction * (reach * 0.5)
 	var texel := Vector2(texture.get_size())
-	batch.transforms.append(Transform2D(direction.angle(), center).scaled_local(Vector2((length + size.y) / texel.x, size.y / texel.y)))
+	batch.transforms.append(Transform2D(direction.angle(), center).scaled_local(Vector2(reach / texel.x, size.y / texel.y)))
 	batch.shadow_transforms.append(Transform2D())
 	batch.owners.append(data.coord)
 
