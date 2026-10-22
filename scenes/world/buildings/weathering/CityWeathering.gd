@@ -50,22 +50,25 @@ const PLINTH_PX := 22.0
 ## - soot: intent for a future operating flue/vent owner (0 = none operating).
 ## The brief's trial range is a 10-25% local value change at the strongest
 ## deposit; masks peak below 1 (damp 0.87, runoff 0.71, lichen 0.64) and
-## deposits vary, so most stained pixels change much less.
+## deposits vary, so most stained pixels change much less. Strongest deposits
+## sit at about 11-25% (tidy and military districts low, wet and abandoned
+## ones high): at the range's floor the native survey showed no readable
+## stain at gameplay zoom.
 const PROFILES := {
-	&"service_courtyards": {"damp": 0.10, "damp_tint": Color(0.80, 0.82, 0.77), "runoff": 0.28, "runoff_share": 0.14, "runoff_tint": Color(0.36, 0.37, 0.36), "soot": 0.0, "lichen": 0.30},
-	&"checkpoint_lanes": {"damp": 0.08, "damp_tint": Color(0.80, 0.82, 0.80), "runoff": 0.34, "runoff_share": 0.30, "runoff_tint": Color(0.34, 0.36, 0.37), "soot": 0.0, "lichen": 0.18},
-	&"collapsed_ward": {"damp": 0.10, "damp_tint": Color(0.80, 0.80, 0.75), "runoff": 0.40, "runoff_share": 0.36, "runoff_tint": Color(0.38, 0.37, 0.34), "soot": 0.0, "lichen": 0.45},
-	&"civilian_cutthrough": {"damp": 0.10, "damp_tint": Color(0.80, 0.82, 0.77), "runoff": 0.26, "runoff_share": 0.16, "runoff_tint": Color(0.37, 0.37, 0.35), "soot": 0.0, "lichen": 0.32},
-	&"inner_district_gate": {"damp": 0.07, "damp_tint": Color(0.80, 0.82, 0.80), "runoff": 0.38, "runoff_share": 0.32, "runoff_tint": Color(0.33, 0.35, 0.37), "soot": 0.0, "lichen": 0.18},
-	&"industrial_cutthrough": {"damp": 0.09, "damp_tint": Color(0.79, 0.79, 0.76), "runoff": 0.34, "runoff_share": 0.22, "runoff_tint": Color(0.36, 0.36, 0.35), "rust": true, "soot": 0.22, "lichen": 0.20},
-	&"ruined_services": {"damp": 0.14, "damp_tint": Color(0.76, 0.79, 0.72), "runoff": 0.46, "runoff_share": 0.42, "runoff_tint": Color(0.36, 0.35, 0.32), "soot": 0.0, "lichen": 0.50},
-	&"underpass_veins": {"damp": 0.20, "damp_tint": Color(0.74, 0.80, 0.74), "runoff": 0.42, "runoff_share": 0.36, "runoff_tint": Color(0.36, 0.39, 0.38), "soot": 0.0, "lichen": 0.40},
-	&"canal_services": {"damp": 0.22, "damp_tint": Color(0.72, 0.79, 0.73), "runoff": 0.38, "runoff_share": 0.30, "runoff_tint": Color(0.34, 0.38, 0.36), "soot": 0.0, "lichen": 0.45},
-	&"rail_yard": {"damp": 0.06, "damp_tint": Color(0.80, 0.79, 0.76), "runoff": 0.32, "runoff_share": 0.20, "runoff_tint": Color(0.36, 0.36, 0.35), "rust": true, "soot": 0.14, "lichen": 0.15},
-	&"military_staging": {"damp": 0.07, "damp_tint": Color(0.80, 0.79, 0.75), "runoff": 0.22, "runoff_share": 0.12, "runoff_tint": Color(0.37, 0.37, 0.36), "soot": 0.0, "lichen": 0.18},
-	&"outer_wall": {"damp": 0.10, "damp_tint": Color(0.79, 0.81, 0.77), "runoff": 0.30, "runoff_share": 0.22, "runoff_tint": Color(0.36, 0.37, 0.36), "soot": 0.0, "lichen": 0.38},
-	&"siege_services": {"damp": 0.07, "damp_tint": Color(0.80, 0.79, 0.76), "runoff": 0.34, "runoff_share": 0.26, "runoff_tint": Color(0.36, 0.36, 0.35), "rust": true, "soot": 0.05, "lichen": 0.22},
-	&"gate_district": {"damp": 0.07, "damp_tint": Color(0.80, 0.82, 0.80), "runoff": 0.32, "runoff_share": 0.26, "runoff_tint": Color(0.34, 0.35, 0.36), "soot": 0.0, "lichen": 0.18},
+	&"service_courtyards": {"damp": 0.15, "damp_tint": Color(0.80, 0.82, 0.77), "runoff": 0.40, "runoff_share": 0.22, "runoff_tint": Color(0.36, 0.37, 0.36), "soot": 0.0, "lichen": 0.30},
+	&"checkpoint_lanes": {"damp": 0.12, "damp_tint": Color(0.80, 0.82, 0.80), "runoff": 0.44, "runoff_share": 0.34, "runoff_tint": Color(0.34, 0.36, 0.37), "soot": 0.0, "lichen": 0.18},
+	&"collapsed_ward": {"damp": 0.16, "damp_tint": Color(0.80, 0.80, 0.75), "runoff": 0.52, "runoff_share": 0.42, "runoff_tint": Color(0.38, 0.37, 0.34), "soot": 0.0, "lichen": 0.45},
+	&"civilian_cutthrough": {"damp": 0.15, "damp_tint": Color(0.80, 0.82, 0.77), "runoff": 0.40, "runoff_share": 0.24, "runoff_tint": Color(0.37, 0.37, 0.35), "soot": 0.0, "lichen": 0.32},
+	&"inner_district_gate": {"damp": 0.11, "damp_tint": Color(0.80, 0.82, 0.80), "runoff": 0.46, "runoff_share": 0.36, "runoff_tint": Color(0.33, 0.35, 0.37), "soot": 0.0, "lichen": 0.18},
+	&"industrial_cutthrough": {"damp": 0.14, "damp_tint": Color(0.79, 0.79, 0.76), "runoff": 0.48, "runoff_share": 0.30, "runoff_tint": Color(0.36, 0.36, 0.35), "rust": true, "soot": 0.22, "lichen": 0.20},
+	&"ruined_services": {"damp": 0.20, "damp_tint": Color(0.76, 0.79, 0.72), "runoff": 0.58, "runoff_share": 0.48, "runoff_tint": Color(0.36, 0.35, 0.32), "soot": 0.0, "lichen": 0.50},
+	&"underpass_veins": {"damp": 0.22, "damp_tint": Color(0.74, 0.80, 0.74), "runoff": 0.56, "runoff_share": 0.44, "runoff_tint": Color(0.36, 0.39, 0.38), "soot": 0.0, "lichen": 0.40},
+	&"canal_services": {"damp": 0.22, "damp_tint": Color(0.72, 0.79, 0.73), "runoff": 0.54, "runoff_share": 0.40, "runoff_tint": Color(0.34, 0.38, 0.36), "soot": 0.0, "lichen": 0.45},
+	&"rail_yard": {"damp": 0.10, "damp_tint": Color(0.80, 0.79, 0.76), "runoff": 0.46, "runoff_share": 0.28, "runoff_tint": Color(0.36, 0.36, 0.35), "rust": true, "soot": 0.14, "lichen": 0.15},
+	&"military_staging": {"damp": 0.11, "damp_tint": Color(0.80, 0.79, 0.75), "runoff": 0.34, "runoff_share": 0.18, "runoff_tint": Color(0.37, 0.37, 0.36), "soot": 0.0, "lichen": 0.18},
+	&"outer_wall": {"damp": 0.16, "damp_tint": Color(0.79, 0.81, 0.77), "runoff": 0.46, "runoff_share": 0.30, "runoff_tint": Color(0.36, 0.37, 0.36), "soot": 0.0, "lichen": 0.38},
+	&"siege_services": {"damp": 0.11, "damp_tint": Color(0.80, 0.79, 0.76), "runoff": 0.48, "runoff_share": 0.32, "runoff_tint": Color(0.36, 0.36, 0.35), "rust": true, "soot": 0.05, "lichen": 0.22},
+	&"gate_district": {"damp": 0.11, "damp_tint": Color(0.80, 0.82, 0.80), "runoff": 0.44, "runoff_share": 0.32, "runoff_tint": Color(0.34, 0.35, 0.36), "soot": 0.0, "lichen": 0.18},
 }
 const LICHEN_TINT := Color(0.52, 0.56, 0.40)
 const RUST_TINT := Color(0.42, 0.29, 0.18)
