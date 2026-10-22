@@ -4,10 +4,11 @@ extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ## district, simulation frozen; then every canvas item except the ground splat
 ## is hidden and the ground's shared material is switched between shader
 ## variants at the same camera and the same streamed chunk set. Each variant
-## is warmed up (first-use compile excluded), then timed as frame throughput
-## with vsync off and no frame cap: nothing is read back (no get_image), so
-## the GPU-bound frame period is the ground's cost plus a constant floor,
-## which the "none" variant (ground hidden) measures. Variants are
+## is warmed up (first-use compile excluded), then sampled with vsync off.
+## The default has no frame cap; --sample-fps adds a cap and makes frame
+## periods cadence measurements, not shader cost. Use valid viewport GPU
+## timestamps for capped comparisons. Nothing is read back (no get_image).
+## The "none" variant (ground hidden) measures the render floor. Variants are
 ## interleaved in rounds so drift and heat spread over all of them; the
 ## median of the per-round medians is reported. Where the driver supports it,
 ## Godot's own viewport GPU timer is reported beside the frame period.
@@ -18,6 +19,8 @@ extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ##   [--rounds=5] [--frames=180] [--warmup=45] [--size=1920x1080] [--points=start,route1]
 ##   [--full] (keep the whole scene visible; only the ground variant changes)
 ##   [--compile-only] (draw each variant a few frames, print markers, no timing)
+##   [--cooldown-seconds=3] (cap setup at30FPS, cool at10FPS between variants)
+##   [--sample-fps=60] (use GPU timestamp results; frame periods include this cap)
 ##   [--json=/abs/out.json]
 ## A variant path is any ground_splat.gdshader revision; uniforms it shares with
 ## the production material keep the production values (ShaderMaterial keeps its
@@ -38,6 +41,8 @@ var _point_names: Array[String] = ["start", "route1"]
 var _full := false
 var _compile_only := false
 var _json_path := ""
+var _cooldown_seconds := 0.0
+var _sample_fps := 0
 
 
 func _enter_tree() -> void:
@@ -50,6 +55,8 @@ func _enter_tree() -> void:
 		elif arg.begins_with("--frames="): _frame_count = clampi(int(arg.trim_prefix("--frames=")), 10, 2000)
 		elif arg.begins_with("--warmup="): _warmup = clampi(int(arg.trim_prefix("--warmup=")), 2, 600)
 		elif arg.begins_with("--json="): _json_path = arg.trim_prefix("--json=")
+		elif arg.begins_with("--cooldown-seconds="): _cooldown_seconds = clampf(float(arg.trim_prefix("--cooldown-seconds=")), 0.0, 30.0)
+		elif arg.begins_with("--sample-fps="): _sample_fps = clampi(int(arg.trim_prefix("--sample-fps=")), 0, 240)
 		elif arg == "--full": _full = true
 		elif arg == "--compile-only": _compile_only = true
 		elif arg.begins_with("--points="):
@@ -62,6 +69,9 @@ func _enter_tree() -> void:
 			for item: String in arg.trim_prefix("--variants=").split(",", false):
 				var eq := item.find("=")
 				_variant_specs.append({"name": item if eq < 0 else item.substr(0, eq), "path": "" if eq < 0 else item.substr(eq + 1)})
+	# Limit setup load; sampling uses the requested cap (0 stays uncapped).
+	if _cooldown_seconds > 0.0:
+		Engine.max_fps = 30
 	if _variant_specs.is_empty():
 		_variant_specs = [{"name": "none", "path": ""}, {"name": "current", "path": ""}]
 
@@ -83,6 +93,8 @@ func _run() -> void:
 			get_tree().quit(1)
 			return
 	_prepare_runtime()
+	if _cooldown_seconds > 0.0:
+		Engine.max_fps = 30
 	Global.attempt_segment = _segment
 	Global.attempt_world_seed = _seed
 	get_window().size = _size
@@ -95,6 +107,8 @@ func _run() -> void:
 	_camera = _player.get_node("Camera2D") as Camera2D
 	_camera.top_level = true
 	_chunks = _game.get_node("ChunkManager") as ChunkManager
+	if _cooldown_seconds > 0.0:
+		Engine.max_fps = 30
 	await _settle()
 	_dismiss_dossiers()
 	var builder := get_tree().get_first_node_in_group(&"segment_proc_builder")
@@ -139,12 +153,13 @@ func _run() -> void:
 				var at := clampi(int(round(float(route.size() - 1) * float(index) / 3.0)), 0, route.size() - 1)
 				cameras.append({"name": name, "world": (Vector2(route[at]) + Vector2.ONE * 0.5) * _chunks.chunk_size_px, "chunk": str(route[at])})
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
-	Engine.max_fps = 0
+	Engine.max_fps = 30 if _cooldown_seconds > 0.0 else 0
 	var viewport_rid := get_viewport().get_viewport_rid()
 	RenderingServer.viewport_set_measure_render_time(viewport_rid, true)
 	var report := {
 		"segment": _segment, "world_seed": _seed, "theme": _theme, "window": [get_window().size.x, get_window().size.y],
 		"ground_only": not _full, "rounds": _rounds, "frames": _frame_count, "warmup": _warmup,
+		"cooldown_seconds": _cooldown_seconds, "sampling_fps_cap": _sample_fps, "setup_fps_cap": 30 if _cooldown_seconds > 0.0 else 0,
 		"renderer": "%s / %s" % [RenderingServer.get_video_adapter_name(), RenderingServer.get_video_adapter_api_version()],
 		"variants": [], "points": [],
 	}
@@ -169,6 +184,10 @@ func _run() -> void:
 			gpu_samples[variant.name] = []
 		for round_index in (1 if _compile_only else _rounds):
 			for variant: Dictionary in variants:
+				if _cooldown_seconds > 0.0:
+					Engine.max_fps = 10
+					await get_tree().create_timer(_cooldown_seconds, true, false, true).timeout
+				Engine.max_fps = _sample_fps
 				_apply_variant(splat, material, production_shader, variant)
 				# Markers also go to stderr, in order with the driver's own compile
 				# diagnostics (Mesa INTEL_DEBUG=perf writes there).
@@ -188,6 +207,7 @@ func _run() -> void:
 					gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(viewport_rid))
 				(samples[variant.name] as Array).append(_median(periods))
 				(gpu_samples[variant.name] as Array).append(_median(gpu))
+		Engine.max_fps = 30 if _cooldown_seconds > 0.0 else 0
 		_apply_variant(splat, material, production_shader, {"name": "current", "shader": production_shader, "streetscape": false})
 		for item: CanvasItem in hidden:
 			if is_instance_valid(item): item.visible = true
