@@ -1,7 +1,40 @@
 # Linux production status
 
-Owner: Linux production worker. Updated 22 October 2026.
+Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
+
+## 23 October — cover integration; remaining city stages in progress
+
+Normal-merged `claude/wp2-cover` at `6357cc10`, preserving the integrated
+ground and domestic masonry. Cover now validates changed descendants,
+geometry and ancestor transforms against current scene state while retaining
+snapshot/upload reuse. Repeated rescans keep one roof-subtree connection.
+Focused current-source checks are clean: watch lifecycle 52/0, invalidation
+77/0, core 25/0, reuse 23/0, faces 43/0; native enemy 38/0, pickup 33/0,
+cue 67/0 and player foreground 95/0. All finish with exit 0 and no diagnostics.
+
+The actual-Game home capture also completes cleanly: moving body coverage,
+equipment/health icons, physical entry, cutaway and roof restoration, with live
+AI/physics and no save writes. This is staged visual evidence. The separate
+tree capture remains pending: its first fixture failed to find covered item
+positions and both covered/exposed producer controls; it also stopped at the
+thermal limit. Its new tool is not included in this merge. Collection and a
+mandatory stream crossing remain gates for the later occupied street route.
+
+Cover cost is qualified rather than presented as a speedup. Static refresh
+probes retain the additional current-state validation cost. Native baseline
+and candidate profiles have unequal actual crowds and distances, so their
+timings do not isolate this change or establish a whole-Game frame budget.
+
+Street candidate `b2982024` and plaza candidate `858f35b3` remain unmerged.
+Door-core/reward-ground and focused plaza warm-up/residency checks are clean;
+dressed continuity, feature-bound plaza views and occupied traversal continue.
+The plaza worktree's full parse audit has shutdown diagnostics also reproduced
+with the seven original runtime files restored in that same checkout; its
+assertion footer is not a clean audit verdict. Claude's weathering and prop
+shadow branches are under separate review through the coordination board.
+The [approved continuation](../superpowers/plans/2026-10-22-city-continuation.md)
+remains active. Publication has not been retried at this checkpoint.
 
 ## 22 October — ground integration and native return
 
