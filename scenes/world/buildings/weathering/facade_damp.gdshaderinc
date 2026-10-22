@@ -22,11 +22,20 @@ float facade_street_variation(vec2 world_pos) {
 
 // `above_foot` in world px over the wall foot.
 vec3 facade_damp(vec3 col, vec2 world_pos, float above_foot) {
+	// Mask gradients come before the band's early return: implicit ones inside
+	// it are undefined where a pixel quad straddles DAMP_MASK_PX, and a wrong
+	// mip there draws a faint damp line along every wall.
+	vec2 uv = vec2(world_pos.x / (DAMP_MASK_PX * 4.0), 1.0 - above_foot / DAMP_MASK_PX);
+	vec2 uv_dx = dFdx(uv);
+	vec2 uv_dy = dFdy(uv);
 	if (sa_weather_damp <= 0.0 || above_foot >= DAMP_MASK_PX) {
 		return col;
 	}
-	float v = 1.0 - clamp(above_foot / DAMP_MASK_PX, 0.0, 1.0);
-	float coverage = texture(sa_weather_damp_mask, vec2(world_pos.x / (DAMP_MASK_PX * 4.0), min(v, 0.995))).r;
+	// The mask repeats along the wall, so keep v off both edges: filtering
+	// would otherwise wrap the wet foot row onto the dry top. The mask's upper
+	// quarter is empty.
+	uv.y = clamp(uv.y, 0.25, 0.98);
+	float coverage = textureGrad(sa_weather_damp_mask, uv, uv_dx, uv_dy).r;
 	float amount = clamp(coverage * facade_street_variation(world_pos), 0.0, 1.0);
 	vec3 hue = sa_weather_damp_tint.rgb / max(dot(sa_weather_damp_tint.rgb, vec3(0.299, 0.587, 0.114)), 0.001);
 	return mix(col, col * (1.0 - sa_weather_damp) * hue, amount);

@@ -80,11 +80,15 @@ void fragment() {
 	float drip = max(smoothstep(drip_px, 0.0, size.y - local.y), smoothstep(drip_px * 0.75, 0.0, local.x));
 	shade *= 1.0 + rim_light * edge * lit_rim;
 	shade *= mix(1.0, drip_shade, drip * edge);
+	// Mask gradients come before the band test: implicit ones inside it are
+	// undefined where a pixel quad straddles the band's top edge.
+	float above_eave = size.y - local.y;
+	vec2 lichen_uv = vec2(local.x / 512.0 + plane_seed * 5.0, 1.0 - above_eave / LICHEN_BAND_PX);
+	vec2 lichen_dx = dFdx(lichen_uv);
+	vec2 lichen_dy = dFdy(lichen_uv);
 	if (sa_weather_lichen > 0.0) {
-		float above_eave = size.y - local.y;
 		if (above_eave < LICHEN_BAND_PX) {
-			vec2 lichen_uv = vec2(local.x / 512.0 + plane_seed * 5.0, 1.0 - above_eave / LICHEN_BAND_PX);
-			float coverage = texture(sa_weather_lichen_mask, vec2(lichen_uv.x, min(lichen_uv.y, 0.995))).r;
+			float coverage = textureGrad(sa_weather_lichen_mask, vec2(lichen_uv.x, clamp(lichen_uv.y, 0.0, 0.995)), lichen_dx, lichen_dy).r;
 			// Shaded slopes and older (high-seed) roofs carry more growth.
 			float shaded = shade < 1.0 ? 1.0 : 0.55;
 			// sa_weather_lichen: share of the way to the lichen hue at full
