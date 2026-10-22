@@ -3,7 +3,7 @@
 Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
-## 23 October — cover integration; remaining city stages in progress
+## 23 October — cover and prop shadows integrated; city continuation active
 
 Normal-merged `claude/wp2-cover` at `6357cc10`, preserving the integrated
 ground and domestic masonry. Cover now validates changed descendants,
@@ -16,23 +16,46 @@ cue 67/0 and player foreground 95/0. All finish with exit 0 and no diagnostics.
 The actual-Game home capture also completes cleanly: moving body coverage,
 equipment/health icons, physical entry, cutaway and roof restoration, with live
 AI/physics and no save writes. This is staged visual evidence. The separate
-tree capture remains pending: its first fixture failed to find covered item
-positions and both covered/exposed producer controls; it also stopped at the
-thermal limit. Its new tool is not included in this merge. Collection and a
-mandatory stream crossing remain gates for the later occupied street route.
+tree transport capture now completes with exit 0, zero diagnostics and no
+failed assertions: one live body moves 150.6 pixels from mostly covered to
+fully exposed samples; equipment, health, windups and projectiles exercise
+both states. Appearance review remains open: the locked ring is difficult to
+identify against real leaves despite correct coverage and drawing order. A
+separate same-position comparison with ordinary eligible equipment is queued.
+Its new tool is not committed. Earlier fixture/thermal failures are retained.
+Collection and a mandatory stream crossing remain later occupied-route gates.
 
 Cover cost is qualified rather than presented as a speedup. Static refresh
 probes retain the additional current-state validation cost. Native baseline
 and candidate profiles have unequal actual crowds and distances, so their
 timings do not isolate this change or establish a whole-Game frame budget.
 
-Street candidate `b2982024` and plaza candidate `858f35b3` remain unmerged.
-Door-core/reward-ground and focused plaza warm-up/residency checks are clean;
-dressed continuity, feature-bound plaza views and occupied traversal continue.
+Normal-merged Claude's prop branch `9b7e0e4c` at `e726623e`. Small city props
+now cast from their bases along the shared sun, and upright objectives retain
+their contact shade plus a projected cast. Root accepted the selected native
+before/after views. Owner renderer 33/0 and objective 30/0 are clean. The
+independent unchanged 48-check fixture passes 48/0 with zero diagnostics in
+actual OpenGL: atlas/legacy placement, uploaded transforms, two-chunk cleanup,
+S1 controls and all four objective ground forms. Its first headless run failed
+25/15 because dummy rendering returns identity transforms; that failed run is
+retained. This is functional/visual evidence, not a performance measurement.
+
+Street candidate `b2982024` and plaza candidate `0c92f28f` remain unmerged.
+Nine of fourteen dressed street themes are checked; partial results do not
+satisfy the full continuity gate. The batch is held between parts while short
+visual checks finish. Door-core/reward-ground and focused plaza warm-up and
+residency checks are clean. The worn-bed correction reproduces urban garden
+ground under industrial soil, then removes that cared underlay: exact eight
+intended RED failures followed by 39/0 GREEN with zero diagnostics. Tended beds,
+physics and outside-island ground remain checked. Fresh terrain-bound discovery
+and helper parsing are clean; three actual-Game district views are queued.
 The plaza worktree's full parse audit has shutdown diagnostics also reproduced
 with the seven original runtime files restored in that same checkout; its
-assertion footer is not a clean audit verdict. Claude's weathering and prop
-shadow branches are under separate review through the coordination board.
+assertion footer is not a clean audit verdict. A separate sorted scan of the
+same 564 scripts is clean on its retained source. Claude's weathering snap and
+shader seam correction has native 145/0 GREEN and behavioral RED evidence;
+final tuning, city views and comparative cost checks remain pending. Compact
+evidence packets and combined-production verification are still in progress.
 The [approved continuation](../superpowers/plans/2026-10-22-city-continuation.md)
 remains active. Publication has not been retried at this checkpoint.
 
