@@ -26,6 +26,20 @@ const PROP_SHADE := 0.85
 ## edge hangs a stone face under the cap band (the art occupies the middle
 ## ~24 px of the cell, so the face sits at the band's foot, inside the cell).
 const CAP_LIFT := Vector2(0.0, -6.0)
+## Small half-cover props (crates, rubble, tables, pillars, statues) cast one
+## soft footprint shadow from their base along the shared sun direction, as
+## long as the prop stands tall (BUILDING_SHADOW_K x height x the theme's cast
+## length, the buildings' rule), multiplied by the shared sun shade on the
+## ground shade layer. Their painted sprites use a diagonal three-quarter
+## view, so projecting the sprite silhouette made a detached, oversized block.
+## Height and footprint width in px for each HALF_TEXTURES prop (variant & 7).
+const PROP_CASTS: Array[Vector2] = [Vector2(40, 52), Vector2(40, 52), Vector2(34, 58), Vector2(22, 44), Vector2(30, 58), Vector2(28, 44), Vector2(80, 38), Vector2(100, 40)]
+## The prop's footprint centre sits this far above the sprite's bottom tip.
+const PROP_BASE_LIFT := 10.0
+const PROP_CAST_KEY := "#prop_cast"
+## A soft capsule (tools/design/bake_prop_cast_shadow.py): darkest at its base
+## end, feathered; alpha only, the sun material does the shading.
+const PROP_CAST_TEXTURE := preload("res://assets/world/props/prop_cast_shadow.png")
 const FACE_OFFSET := Vector2(0.0, 17.0)
 static var depth_faces_enabled := true
 
@@ -139,7 +153,12 @@ func add_chunk(data: ChunkBuildData) -> void:
 			var at := world_center - Vector2(0, float(texture.get_height()) * scale.y * 0.5)
 			var prop_transform := Transform2D(0.0, at).scaled_local(Vector2(scale.x, -scale.y))
 			batch.transforms.append(prop_transform)
-			batch.shadow_transforms.append(DEPTH.project_transform(prop_transform, world_center))
+			if city_light:
+				batch.shadow_transforms.append(Transform2D(0.0, at).scaled_local(Vector2.ZERO))
+				_add_prop_cast(data, cell, world_center, touched)
+			else:
+				# The authored Institution keeps its reviewed silhouette shadows.
+				batch.shadow_transforms.append(DEPTH.project_transform(prop_transform, world_center))
 			batch.owners.append(data.coord)
 			continue
 		if kit:
@@ -165,9 +184,12 @@ func add_chunk(data: ChunkBuildData) -> void:
 			lift = CAP_LIFT
 		var transform := Transform2D(rotation, world_center + lift).scaled_local(scale)
 		var shadow_transform := Transform2D(rotation, world_center + SHADOW_OFFSET).scaled_local(scale)
+		var half_cover := kind == WorldBlockerGeometry.Kind.HALF_COVER
 		batch.transforms.append(transform)
-		batch.shadow_transforms.append(shadow_transform)
+		batch.shadow_transforms.append(shadow_transform.scaled_local(Vector2.ZERO) if half_cover and city_light else shadow_transform)
 		batch.owners.append(data.coord)
+		if half_cover and city_light:
+			_add_prop_cast(data, cell, world_center, touched)
 		if depth_faces_enabled:
 			var face := ChunkBlockVisualCatalog.face_texture(kind, data.mask_at(cell))
 			if face != null:
@@ -280,6 +302,29 @@ func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vecto
 		batch.transforms.append(Transform2D(0.0, at).scaled_local(Vector2(fill_scale.x, -fill_scale.y)))
 		batch.shadow_transforms.append(Transform2D())
 		batch.owners.append(data.coord)
+
+
+## One soft footprint cast for the half-cover prop on `cell` (PROP_CASTS).
+func _add_prop_cast(data: ChunkBuildData, cell: Vector2i, world_center: Vector2, touched: Dictionary) -> void:
+	var texture: Texture2D = PROP_CAST_TEXTURE
+	var batch := _get_or_create_batch(PROP_CAST_KEY, texture, true)
+	if batch.visual.material != DEPTH.SUN_SHADOW_MATERIAL:
+		# Full sun shade, as deep as a building's or an actor's cast in the same
+		# light; the capsule's own alpha softens its edge and tip.
+		batch.visual.material = DEPTH.SUN_SHADOW_MATERIAL
+		DEPTH.place_ground_shade(batch.visual)
+	if not touched.has(PROP_CAST_KEY):
+		touched[PROP_CAST_KEY] = batch.transforms.size()
+	var size: Vector2 = PROP_CASTS[clampi(data.variant_at(cell) & 7, 0, PROP_CASTS.size() - 1)]
+	var length := size.x * DEPTH.BUILDING_SHADOW_K * DEPTH.length_scale
+	var direction := DEPTH.SHADOW_DIRECTION.normalized()
+	# The cast starts half a footprint behind the base (its contact) and runs
+	# its length along the sun direction.
+	var center := world_center - Vector2(0.0, PROP_BASE_LIFT) + direction * (length * 0.5)
+	var texel := Vector2(texture.get_size())
+	batch.transforms.append(Transform2D(direction.angle(), center).scaled_local(Vector2((length + size.y) / texel.x, size.y / texel.y)))
+	batch.shadow_transforms.append(Transform2D())
+	batch.owners.append(data.coord)
 
 
 ## Plaza edge blocks (two arms and the diagonal are edge cells of the same
