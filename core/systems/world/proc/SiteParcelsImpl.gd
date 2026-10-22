@@ -1662,7 +1662,13 @@ func _spawn_building_footprint(
 		chunk_manager._stamp_floor_rect_cells(chunk, wing, floor_tex, stamp_rng, float(cfg.get("indoor_floor_alpha", 0.95)), int(cfg.get("indoor_floor_z", -94)))
 	chunk_manager._spawn_wall_cells(chunk, wall_cells, window_cells)
 	_mark_building_walls(chunk_manager,wall_cells,bool(cfg.get("city_block_style",false)))
-	_stamp_door_apron(chunk_manager, chunk, coord, build_rect, door_pos, door_dir, apron_len + (1 if recess else 0), cfg, chunk_rect)
+	# This carver opens even-width doors along positive `across`; normalize
+	# the north/east anchor for the city's signed doorway-core stamp, just
+	# as the visual door record below does. Physical cells stay unchanged.
+	var apron_door_pos := door_pos
+	if bool(cfg.get("city_block_style", false)) and door_w % 2 == 0 and (door_dir == Vector2i.UP or door_dir == Vector2i.RIGHT):
+		apron_door_pos += across
+	_stamp_door_apron(chunk_manager, chunk, coord, build_rect, apron_door_pos, door_dir, apron_len + (1 if recess else 0), cfg, chunk_rect)
 	var door_socket := Marker2D.new()
 	door_socket.name = "DoorSpawnSocket"
 	door_socket.position = (Vector2(door_pos + door_dir) + Vector2(0.5, 0.5)) * float(cell_px)
@@ -1837,7 +1843,17 @@ func _edge_span_px(rect: Rect2i, door_dir: Vector2i, cell_px: int) -> Array:
 
 func _stamp_door_apron(chunk_manager: Node, chunk: Node2D, coord: Vector2i, build_rect: Rect2i, door_pos: Vector2i, door_dir: Vector2i, apron_len: int, cfg: Dictionary, chunk_rect: Rect2i) -> void:
 	var apron := Rect2i()
-	if door_dir == Vector2i(0, -1):
+	if bool(cfg.get("city_block_style", false)):
+		# Only the actual doorway core owns opaque lane material. The fitted
+		# footway and shared ground supply its shoulders; a five-cell stamp
+		# underneath them would leave a visible rectangular paved yard.
+		# Start at the real opening, including a recessed L-home threshold.
+		var width := maxi(2, int(cfg.get("parcel_door_width", 2)))
+		var perpendicular := Vector2i(-door_dir.y, door_dir.x)
+		var first := door_pos + door_dir - perpendicular * (width >> 1)
+		var last := first + perpendicular * (width - 1) + door_dir * (apron_len - 1)
+		apron = Rect2i(first, Vector2i.ONE).merge(Rect2i(last, Vector2i.ONE))
+	elif door_dir == Vector2i(0, -1):
 		apron = Rect2i(Vector2i(door_pos.x - 2, build_rect.position.y - apron_len), Vector2i(5, apron_len))
 	elif door_dir == Vector2i(0, 1):
 		apron = Rect2i(Vector2i(door_pos.x - 2, build_rect.position.y + build_rect.size.y), Vector2i(5, apron_len))
