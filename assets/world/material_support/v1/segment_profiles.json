@@ -1,0 +1,138 @@
+{
+  "format": "synthetic-ascension-art-intent-v1",
+  "date": "2026-10-21",
+  "status": "source-only proposed starting points; no runtime adapter or native acceptance",
+  "reviewed_integration_base": "245e23855c6ba9166cfa460406eaebddb9c5abda",
+  "reviewed_incoming_runtime": "3d1be8b0039ce96e65959958b0da10a799f8fcfb",
+  "palette_encoding": "sRGB hexadecimal authored material midtone targets; not shader multipliers",
+  "atmosphere_encoding": "proposed numeric values for existing atmosphere field names; match runtime colour handling when adapting; do not convert these multipliers as palette swatches",
+  "shared": {
+    "roof_slate": "#3A4650",
+    "roof_clay": "#8D5846",
+    "sun": "existing top-right source and shared cast direction",
+    "care": "local maintained household cores; some untended homes; irregular procedural wilderness beyond care",
+    "weathering": "surface-local and cause-anchored; strongest local value-change trial 0.10 to 0.25",
+    "mist_tint": [0.70, 0.75, 0.71],
+    "default_air": "clear; particles require real source and implementation owner"
+  },
+  "authored_contexts": [
+    {"id": "institution", "segment": "S1", "procedural_override": false, "direction": "Preserve authored institutional material, light and room visibility owners"},
+    {"id": "hub", "segment": "Hub", "procedural_override": false, "direction": "Preserve authored sheltered market dusk, warmth and practical lamps"}
+  ],
+  "cross_cutting": {"donjon": "Open courts inherit district daylight; enclosed rooms preserve authored visibility/cutaway owners"},
+  "unresolved": {"S11+": "Current Service Courtyards fallback; Beyond-the-Wall plate18 is exploration, not accepted new biome"},
+  "themes": [
+    {
+      "segment": "S2", "id": "service_courtyards", "label": "Service Courtyards",
+      "palette": {"stone": "#B7B7A5", "ground": "#737973", "metal": "#59635B", "vegetation": "#66744E", "accent": "#9B7851"},
+      "materials": {"route": "warm grey worn setts", "open_land": "olive lawn core near cared homes; irregular soil and rough grass beyond", "wall": "warm lime plaster above rough masonry", "accent": "faded green shutters; muted household timber"},
+      "weathering": ["swept thresholds", "walking wear", "restrained damp at actual wall feet"],
+      "air": "clear neutral-warm daylight; cool eave shade",
+      "proposed_atmosphere_uniforms": {"environment_tint": [1.0, 0.997, 0.988], "ambient_fill": [0.98, 0.99, 1.0], "direct_light": 0.96, "cloud_opacity": 0.035, "cloud_scale_px": 900, "cloud_velocity": [-4.0, 1.0], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S3", "id": "checkpoint_lanes", "label": "Checkpoint Lanes",
+      "palette": {"stone": "#A4AFAD", "ground": "#626D6C", "metal": "#424D4F", "vegetation": "#526245", "accent": "#8E8460"},
+      "materials": {"route": "cooler stone inspection paths", "open_land": "compacted earth margins", "wall": "pale limestone", "accent": "dark green iron; dull brass"},
+      "weathering": ["polished inspection wear", "boot scuffs", "runoff below real ledges"],
+      "air": "cool neutral fill; broad slow cloud shade; no routine mist",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.988, 0.995, 1.0], "ambient_fill": [0.97, 0.985, 1.0], "direct_light": 0.78, "cloud_opacity": 0.075, "cloud_scale_px": 860, "cloud_velocity": [-6.0, 1.5], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S4A", "id": "collapsed_ward", "label": "Collapsed Ward",
+      "palette": {"stone": "#A79B8A", "ground": "#76786A", "metal": "#5A554C", "vegetation": "#6E7854", "accent": "#926D50"},
+      "materials": {"route": "broken paving and warm soil", "open_land": "dry scrub at abandoned edges", "wall": "chalky exposed stone and old brick", "accent": "dark broken timber; muted clay fragments"},
+      "weathering": ["fresh pale fractures", "older dirty faces", "rubble and growth at idle edges"],
+      "air": "open daylight; local mineral dust only beside disturbed rubble",
+      "proposed_atmosphere_uniforms": {"environment_tint": [1.0, 0.993, 0.982], "ambient_fill": [0.98, 0.99, 1.0], "direct_light": 0.92, "cloud_opacity": 0.055, "cloud_scale_px": 920, "cloud_velocity": [-8.0, 2.0], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S4B", "id": "civilian_cutthrough", "label": "Civilian Cut-through",
+      "palette": {"stone": "#C2B9A6", "ground": "#7E8478", "metal": "#58665D", "vegetation": "#6F8150", "accent": "#A58552"},
+      "materials": {"route": "warm worn setts", "open_land": "small irregular tended plots", "wall": "patched cream plaster", "accent": "faded shutters; undyed cloth; muted clay"},
+      "weathering": ["repairs of different ages", "rubbed doorsteps", "splash at washhouse or fountain"],
+      "air": "warm reflected daylight; sheltered clear lanes",
+      "proposed_atmosphere_uniforms": {"environment_tint": [1.0, 0.995, 0.983], "ambient_fill": [0.985, 0.99, 1.0], "direct_light": 0.97, "cloud_opacity": 0.03, "cloud_scale_px": 960, "cloud_velocity": [-3.0, 0.8], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S5", "id": "inner_district_gate", "label": "Inner District Gate",
+      "palette": {"stone": "#AEB3AE", "ground": "#6D7573", "metal": "#414A49", "vegetation": "#5B6851", "accent": "#887750"},
+      "materials": {"route": "larger worn cool flags", "open_land": "unequal older stone/soil edges", "wall": "substantial pale limestone", "accent": "dark iron; dull bronze; small muted plum cloth"},
+      "weathering": ["rain below parapets", "worn gate approaches", "cleaner upper stone and strong portal contact"],
+      "air": "pale diffuse sky; readable structural shade; clear encounter court",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.992, 0.995, 1.0], "ambient_fill": [0.975, 0.985, 1.0], "direct_light": 0.82, "cloud_opacity": 0.06, "cloud_scale_px": 1000, "cloud_velocity": [-5.0, 1.25], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S6A", "id": "industrial_cutthrough", "label": "Industrial Cut-through",
+      "palette": {"stone": "#948D80", "ground": "#66665C", "metal": "#444844", "vegetation": "#59654A", "accent": "#8B6449"},
+      "materials": {"route": "brown-grey packed working earth; limited loading setts", "open_land": "neglected soil and sparse grass", "wall": "weathered lime/stone with restrained red brick", "accent": "iron and dull copper"},
+      "weathering": ["soot above operating stacks/vents", "oil at machine feet", "rust below metal and handling wear on routes"],
+      "air": "soft neutral daylight; small smoke/steam attached to operating equipment",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.998, 0.993, 0.982], "ambient_fill": [0.98, 0.99, 1.0], "direct_light": 0.80, "cloud_opacity": 0.06, "cloud_scale_px": 820, "cloud_velocity": [-6.0, 1.5], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S6B", "id": "ruined_services", "label": "Ruined Service District",
+      "palette": {"stone": "#9B9485", "ground": "#727165", "metal": "#595549", "vegetation": "#66714F", "accent": "#8B6F50"},
+      "materials": {"route": "broken routes and brown soil", "open_land": "neglected encroaching grass", "wall": "damaged plaster and exposed brick", "accent": "grey timber and oxidized iron"},
+      "weathering": ["abandoned runoff and leaks", "settled debris", "weeds around idle equipment"],
+      "air": "open slightly cooler windy daylight; abandoned stacks have no smoke",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.997, 0.995, 0.990], "ambient_fill": [0.97, 0.985, 1.0], "direct_light": 0.84, "cloud_opacity": 0.07, "cloud_scale_px": 900, "cloud_velocity": [-9.0, 2.25], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S7A", "id": "underpass_veins", "label": "Underpass Veins",
+      "palette": {"stone": "#969F9C", "ground": "#68736B", "metal": "#4C5B55", "vegetation": "#52664D", "accent": "#867550"},
+      "materials": {"route": "quiet stone with damp margins", "open_land": "olive damp earth and moss", "wall": "cool neutral pier stone", "accent": "matte iron and muted foliage"},
+      "weathering": ["damp pier feet", "mineral runoff beneath arch joints", "moss in persistent sheltered seams"],
+      "air": "daylight outside; cooler pockets beneath actual overhead structure; rare local droplets",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.985, 0.995, 0.995], "ambient_fill": [0.96, 0.985, 1.0], "direct_light": 0.62, "cloud_opacity": 0.055, "cloud_scale_px": 1040, "cloud_velocity": [-3.0, 0.75], "mist_opacity": 0.015}
+    },
+    {
+      "segment": "S7B", "id": "canal_services", "label": "Canal Service Routes",
+      "palette": {"stone": "#A6B3A7", "ground": "#647460", "metal": "#4D6258", "vegetation": "#60794C", "accent": "#8B7651", "water": "#526D66"},
+      "materials": {"route": "worn quay stone", "open_land": "olive wet banks and damp soil", "wall": "water-stained limestone; drier upper faces", "accent": "aged copper and dark desaturated green water"},
+      "weathering": ["waterlines and drain silt", "algae at persistently wet edges", "dry upper masonry remains distinct"],
+      "air": "bright diffuse daylight; tiny mist patches over actual water/drains; quiet ripples",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.985, 0.998, 0.990], "ambient_fill": [0.965, 0.985, 1.0], "direct_light": 0.70, "cloud_opacity": 0.075, "cloud_scale_px": 1100, "cloud_velocity": [-4.0, 1.0], "mist_opacity": 0.025}
+    },
+    {
+      "segment": "S8A", "id": "rail_yard", "label": "Rail Yard Expanse",
+      "palette": {"stone": "#A49783", "ground": "#777165", "metal": "#4C4F4A", "vegetation": "#737A52", "accent": "#8B6045"},
+      "materials": {"route": "dry grey-brown loading ground and ballast", "open_land": "rough sparse grass beyond working routes", "wall": "dusty stone and brick", "accent": "rust umber rails and old timber"},
+      "weathering": ["wheel and handling wear", "coal near storage", "oil near real equipment"],
+      "air": "open sun and wind; sparse dry surface dust; steam requires equipment",
+      "proposed_atmosphere_uniforms": {"environment_tint": [1.0, 0.995, 0.985], "ambient_fill": [0.98, 0.99, 1.0], "direct_light": 1.0, "cloud_opacity": 0.025, "cloud_scale_px": 1160, "cloud_velocity": [-12.0, 3.0], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S8B", "id": "military_staging", "label": "Military Staging Ground",
+      "palette": {"stone": "#A7AEA0", "ground": "#6D7368", "metal": "#4D574D", "vegetation": "#626E4B", "accent": "#8F8E6C"},
+      "materials": {"route": "packed earth and worn muster routes", "open_land": "rough grass beyond maintained supplies", "wall": "cool stone barracks", "accent": "faded sage canvas and dark iron"},
+      "weathering": ["boot lanes", "maintained supply grouping", "faded canvas tops and local muddy entrances"],
+      "air": "bright broken overcast; wind through actual cloth; no routine haze",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.992, 0.998, 0.990], "ambient_fill": [0.975, 0.99, 1.0], "direct_light": 0.80, "cloud_opacity": 0.075, "cloud_scale_px": 940, "cloud_velocity": [-8.0, 2.0], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S9A", "id": "outer_wall", "label": "Outer Wall Approaches",
+      "palette": {"stone": "#B2B5A7", "ground": "#7D8171", "metal": "#5C6357", "vegetation": "#6F7E52", "accent": "#928266"},
+      "materials": {"route": "worn approaches", "open_land": "rough grass, scrub and procedural wilderness", "wall": "exposed limestone", "accent": "weathered timber and subdued green"},
+      "weathering": ["wind-exposed bleached upper stone", "darker protected feet", "irregular vegetation beyond traffic"],
+      "air": "bright exposed daylight; stronger wind; clear air and broad wall casts",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.998, 0.998, 0.990], "ambient_fill": [0.98, 0.99, 1.0], "direct_light": 1.0, "cloud_opacity": 0.025, "cloud_scale_px": 1280, "cloud_velocity": [-14.0, 3.5], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S9B", "id": "siege_services", "label": "Siege Service District",
+      "palette": {"stone": "#A79E8B", "ground": "#777365", "metal": "#565B52", "vegetation": "#63724C", "accent": "#917252"},
+      "materials": {"route": "stone grit and compacted logistics earth", "open_land": "rough neglected margins", "wall": "patched masonry", "accent": "worked timber and oxidized metal"},
+      "weathering": ["pale repair dust at stone handling", "loading abrasion", "rust below hoists; local justified old burn marks"],
+      "air": "neutral daylight and local repair dust; no automatic battle fog or fire",
+      "proposed_atmosphere_uniforms": {"environment_tint": [1.0, 0.993, 0.982], "ambient_fill": [0.98, 0.99, 1.0], "direct_light": 0.86, "cloud_opacity": 0.07, "cloud_scale_px": 940, "cloud_velocity": [-10.0, 2.5], "mist_opacity": 0.0}
+    },
+    {
+      "segment": "S10", "id": "gate_district", "label": "Gate District",
+      "palette": {"stone": "#B7BCB5", "ground": "#747C78", "metal": "#444E4D", "vegetation": "#5D6F52", "accent": "#8C805F"},
+      "materials": {"route": "worn civic flags and clear approach", "open_land": "limited older irregular stone/soil edges", "wall": "pale monumental limestone", "accent": "deep green cloth and restrained brass"},
+      "weathering": ["maintained central axis", "older stained gate edges", "mechanism wear"],
+      "air": "calm imposing daylight; readable portal depth; clear boss court; Exit Rite owns its effects",
+      "proposed_atmosphere_uniforms": {"environment_tint": [0.992, 0.996, 1.0], "ambient_fill": [0.975, 0.99, 1.0], "direct_light": 0.88, "cloud_opacity": 0.055, "cloud_scale_px": 1120, "cloud_velocity": [-6.0, 1.5], "mist_opacity": 0.0}
+    }
+  ]
+}

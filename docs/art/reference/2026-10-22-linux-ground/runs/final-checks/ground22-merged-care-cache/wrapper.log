@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/ground22-merged-care-cache-1",
+ "queued_seconds": 0.0,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 30.852,
+ "peak_rss_mb": 633,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/146 lines) ---
+PASS: the actual garden has at least three substantial lawn cells beyond paving id=2128236757 actual=11
+Production care fixture: id=2128236757 positive=20 strong=11 materials={ 0: 251, 2: 158, 4: 365, 3: 247, 7: 3 }
+CityGroundCareTest: 141 passed, 0 failed

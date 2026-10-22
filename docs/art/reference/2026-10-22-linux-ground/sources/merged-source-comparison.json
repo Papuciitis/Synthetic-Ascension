@@ -1,0 +1,13 @@
+{
+  "candidate_snapshot": "candidate-safe-after.json",
+  "merged_snapshot": "merged-before.json",
+  "same_input_count": 146,
+  "total_scoped_input_count": 148,
+  "changes": [
+    "scenes/world/buildings/CityDomesticInterior.gd",
+    "tools/dev/GroundShaderCostProbe.gd"
+  ],
+  "probe_delta": "Comments only, verified by diff; measured-source/GroundShaderCostProbe.gd retains actual measured bytes.",
+  "shader_unchanged": true,
+  "generated_imports_unchanged": 32
+}

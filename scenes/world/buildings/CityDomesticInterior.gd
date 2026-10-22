@@ -24,11 +24,15 @@ static func _eligible(context: Dictionary) -> bool:
 	return int(context.get("segment",0)) >= 2 and StringName(context.get("usage",&"")) == &"row_house" and not bool(context.get("civic",true))
 
 
-## Warm rubble cutaway walls follow the warm (clay-roofed) plaster frontage of
-## any non-civic building, so a house reads as one construction inside and
-## out; slate-roofed (pale ashlar) houses and civic halls keep city stone.
+## Warm rubble cutaway walls: every ordinary home in every city segment (the
+## reviewed S2 households keep the lived-in rubble behind either frontage
+## family, so slate-roofed homes never fall back to the pale relief), and any
+## other clay-roofed (warm plaster) non-civic building. Slate-roofed working
+## buildings and civic halls keep city stone.
 static func _stone_eligible(context: Dictionary) -> bool:
-	return int(context.get("segment",0)) >= 2 and not bool(context.get("civic",true)) and StringName(context.get("roof_material",&"")) == &"clay"
+	if int(context.get("segment",0)) < 2 or bool(context.get("civic",true)):
+		return false
+	return StringName(context.get("usage",&"")) == &"row_house" or StringName(context.get("roof_material",&"")) == &"clay"
 
 
 ## Whether the context context_for(kit, ...) would build passes _eligible

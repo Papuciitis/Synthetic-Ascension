@@ -1,0 +1,32 @@
+{
+  "run": "ground22-simd-1",
+  "identification": "Ground NIR includes policy_enabled, yard_patch_place, cared_lawn_layer and materials sampler2DArray; other programs excluded.",
+  "source_sha256": "a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9",
+  "stderr_sha256": "647568dc62d757ba996fb255344b51bde3a37c1054659fbc49fc5cc8b981e732",
+  "ground_programs": [
+    {
+      "program": "GLSL61",
+      "native_stats": [
+        {
+          "program": "GLSL61",
+          "src_hash": "0x36dc6ae8",
+          "stats": "SIMD8 shader: 960 instructions. 0 loops. 20992 cycles. 0:0 spills:fills, 36 sends, scheduled with mode top-down. Promoted 31 constants. Non-SSA regs (after NIR): 202. Compacted 15360 to 11488 bytes (25%)"
+        },
+        {
+          "program": "GLSL61",
+          "src_hash": "0x36dc6ae8",
+          "stats": "SIMD16 shader: 1111 instructions. 0 loops. 22904 cycles. 0:0 spills:fills, 45 sends, scheduled with mode top-down. Promoted 31 constants. Non-SSA regs (after NIR): 216. Compacted 17776 to 12768 bytes (28%)"
+        }
+      ],
+      "failures": [
+        "SIMD32 shader failed to compile: SIMD32 FS compile failed: Failure to register allocate.  Reduce number of live scalar values to avoid this."
+      ]
+    }
+  ],
+  "all_simd16_failures": [
+    "SIMD16 FS compile failed: Failure to register allocate.  Reduce number of live scalar values to avoid this.",
+    "SIMD16 shader failed to compile: SIMD16 FS compile failed: Failure to register allocate.  Reduce number of live scalar values to avoid this.",
+    "SIMD16 FS compile failed: Failure to register allocate.  Reduce number of live scalar values to avoid this.",
+    "SIMD16 shader failed to compile: SIMD16 FS compile failed: Failure to register allocate.  Reduce number of live scalar values to avoid this."
+  ]
+}
