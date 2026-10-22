@@ -23,9 +23,8 @@ const KIT := preload("res://core/systems/world/chunks/PlazaEdgeKit.gd")
 ## (stacked goods, supplies, rubble, weeds, debris) in a second small atlas
 ## (tools/design/build_plaza_wear_kit.py). None is registered for actor
 ## cover, so WorldCover's shared alpha array never sees this texture.
-const WORN_ATLAS := preload("res://assets/world/plazas_v1/kit/plaza_props_worn.png")
-const WEEDS_GROUND := preload("res://assets/world/plazas_v1/kit/plaza_weeds.png")
-const MOSS_SOIL := preload("res://assets/world/plazas_v1/kit/plaza_moss_soil.png")
+# State textures come from PlazaEdgeKit. Instance refs keep an old visible
+# chunk valid while the shared warm cache advances to the next segment.
 const WORN_REGIONS := {
 	&"barrels_group": Rect2(228, 8, 69, 67),
 	&"crates_stack": Rect2(130, 8, 90, 71),
@@ -91,16 +90,24 @@ const GRASS_LIKE := [0, 10, 11, 12, 13]
 
 var _cell := 64
 var _state := 0
+var _worn_atlas: Texture2D
+var _worn_fill: Texture2D
 
 
 func compose(plan: Dictionary, cell_px: int) -> void:
 	_cell = cell_px
 	_state = int(plan.get("state", KIT.STATE_TENDED))
+	if _state != KIT.STATE_TENDED:
+		_worn_atlas = KIT.dressing_texture(_state, &"worn_atlas")
+	if _state == KIT.STATE_RUINED or _state == KIT.STATE_DAMP:
+		_worn_fill = KIT.dressing_texture(_state, &"weeds_ground" if _state == KIT.STATE_RUINED else &"moss_soil")
 	for island: Dictionary in plan.get("islands", []):
 		if _state == KIT.STATE_TENDED:
 			_bed(island)
 		else:
 			_worn_bed(island)
+	for item: Dictionary in plan.get("edge_wear", []):
+		_edge_wear(item)
 	for item: Dictionary in plan.get("edge_goods", []):
 		# Working clutter / supplies where a tended square would seat people:
 		# the bench's own place, visual only, the same footprint.
@@ -331,7 +338,7 @@ func _world_uv(points: PackedVector2Array, texels_per_px: Vector2) -> PackedVect
 func _worn_sprite(id: StringName, at: Vector2, size: float) -> Sprite2D:
 	var sprite := Sprite2D.new()
 	sprite.name = "%s_%d" % [id, get_child_count()]
-	sprite.texture = WORN_ATLAS
+	sprite.texture = _worn_atlas
 	sprite.region_enabled = true
 	sprite.region_rect = WORN_REGIONS[id]
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -350,7 +357,7 @@ func _worn_prop(id: StringName, foot: Vector2) -> Sprite2D:
 	sprite.modulate = RUBBLE_TINT if String(id).begins_with("rubble") else WORN_TINT
 	sprite.set_meta(&"plaza_piece", id)
 	sprite.set_meta(&"plaza_ground_contact", foot)
-	var shade := _shadow_for(sprite, foot, WORN_ATLAS)
+	var shade := _shadow_for(sprite, foot, sprite.texture)
 	shade.color = Color(SHADOW_COLOR.r, SHADOW_COLOR.g, SHADOW_COLOR.b, SHADOW_COLOR.a * 0.8)
 	return sprite
 
@@ -377,8 +384,8 @@ func _shadow_for(sprite: Sprite2D, foot: Vector2, texture: Texture2D) -> Polygon
 
 
 ## An island in a working, ruined, damp or military square: no clipped bed.
-## Working and military ground is bare packed earth inside a plain or worn
-## kerb; ruined beds are weedy, their kerb broken; damp beds wet and mossy
+## Working and military ground is bare packed earth without a garden rim;
+## ruined beds keep sparse broken kerbstones; damp pockets are wet and mossy
 ## with unclipped weeds. The island's existing half-cover cell carries the
 ## state's prop (goods, supplies, a rubble heap, or the damp planter tree).
 func _worn_bed(island: Dictionary) -> void:
@@ -398,7 +405,7 @@ func _worn_bed(island: Dictionary) -> void:
 	var area := Rect2(Vector2(rect.position) * _cell, Vector2(rect.size) * _cell).grow_individual(
 		BED_ROUTE_GROW if sides & 8 else BED_GROW, BED_ROUTE_GROW if sides & 1 else BED_GROW,
 		BED_ROUTE_GROW if sides & 2 else BED_GROW, BED_ROUTE_GROW if sides & 4 else BED_GROW)
-	var inner := _chamfered(area, 12.0)
+	var inner := _chamfered(area, 12.0) if _state == KIT.STATE_RUINED else _rough_patch(area, seed_value)
 	var fill := Polygon2D.new()
 	fill.name = "Bed_%d" % get_child_count()
 	fill.polygon = inner
@@ -410,25 +417,23 @@ func _worn_bed(island: Dictionary) -> void:
 		KIT.STATE_WORKING:
 			fill.texture = SOIL
 			fill.color = Color(0.56, 0.54, 0.50)
-			kerb_tint = Color(0.66, 0.66, 0.64)
-			gap_share = 0.18
 		KIT.STATE_MILITARY:
 			fill.texture = SOIL
 			fill.color = Color(0.66, 0.63, 0.57)
-			kerb_tint = Color(0.76, 0.76, 0.74)
 		KIT.STATE_RUINED:
-			fill.texture = WEEDS_GROUND
+			fill.texture = _worn_fill
 			fill.color = Color(0.70, 0.70, 0.64)
 			kerb_tint = Color(0.80, 0.80, 0.77)
-			gap_share = 0.34
+			gap_share = 0.68
 		_:
-			fill.texture = MOSS_SOIL
+			fill.texture = _worn_fill
 			fill.color = Color(0.78, 0.82, 0.76)
-			kerb_tint = Color(0.70, 0.75, 0.66)
 	fill.z_index = BED_Z
 	fill.set_meta(&"plaza_piece", &"bed")
+	_feather_ground(fill, inner, 14.0)
 	add_child(fill)
-	_worn_kerb(area, inner, kerb_tint, gap_share, seed_value)
+	if _state == KIT.STATE_RUINED:
+		_worn_kerb(area, inner, kerb_tint, gap_share, seed_value)
 	# Unclipped weeds scattered through neglected beds (none on bare ground).
 	if _state == KIT.STATE_RUINED or _state == KIT.STATE_DAMP:
 		var count := clampi(int(area.get_area() / 9000.0), 2, 5)
@@ -488,6 +493,74 @@ func _worn_kerb(area: Rect2, inner: PackedVector2Array, tint: Color, gap_share: 
 	kerb.z_index = KERB_Z
 	kerb.set_meta(&"plaza_piece", &"kerb")
 	add_child(kerb)
+
+
+## Low ground dressing only: use/exposure marks remain within their selected
+## off-route cell and under actors. No oil is inferred without machinery.
+func _edge_wear(item: Dictionary) -> void:
+	var cell: Vector2i = item.cell
+	var kind := StringName(item.kind)
+	var seed_value := int(item.seed)
+	var outward := Vector2(item.outward).limit_length(1.0)
+	var at := (Vector2(cell) + Vector2.ONE * 0.5) * _cell + outward * 5.0
+	if kind == &"rubble" or kind == &"weeds":
+		var id := StringName(WEEDS[posmod(seed_value, WEEDS.size())]) if kind == &"weeds" else &"floor_debris"
+		var sprite := _worn_sprite(id, at, 0.8 if kind == &"weeds" else 0.65)
+		sprite.z_index = DRAIN_Z
+		sprite.modulate = Color(0.77, 0.81, 0.71, 0.75) if kind == &"weeds" else Color(0.67, 0.68, 0.64, 0.58)
+		sprite.set_meta(&"plaza_edge_wear", cell)
+		sprite.set_meta(&"plaza_piece", &"edge_weeds" if kind == &"weeds" else &"edge_rubble")
+		return
+	var size := Vector2(48.0, 36.0) if absf(outward.y) > 0.0 else Vector2(36.0, 48.0)
+	var patch := Polygon2D.new()
+	patch.name = "EdgeWear_%d" % get_child_count()
+	patch.texture = _worn_fill if kind == &"moss" or kind == &"weedy" else SOIL
+	patch.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	patch.color = Color(0.72, 0.77, 0.66, 0.42) if kind == &"moss" else Color(0.69, 0.66, 0.57, 0.32)
+	_feather_ground(patch, _rough_patch(Rect2(at - size * 0.5, size), seed_value), 9.0)
+	patch.z_index = DRAIN_Z
+	patch.set_meta(&"plaza_edge_wear", cell)
+	patch.set_meta(&"plaza_piece", &"edge_ground")
+	add_child(patch)
+
+
+## Unequal open ground edges, kept within the existing island/edge area.
+## These replace the repeated chamfered garden loop on useful or damp ground.
+func _rough_patch(area: Rect2, seed_value: int) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	var points := [Vector2(0.10, 0.04), Vector2(0.42, 0.0), Vector2(0.82, 0.06), Vector2(1.0, 0.22), Vector2(0.94, 0.58), Vector2(1.0, 0.86), Vector2(0.76, 0.98), Vector2(0.44, 0.94), Vector2(0.12, 1.0), Vector2(0.0, 0.76), Vector2(0.05, 0.43), Vector2(0.0, 0.18)]
+	for i in points.size():
+		var inward := float(_mix(seed_value, i + 31) % 60) / 1000.0
+		var point: Vector2 = points[i]
+		out.append(area.position + point.lerp(Vector2.ONE * 0.5, inward) * area.size)
+	return out
+
+
+## A narrow alpha feather softens source changes without another texture,
+## shader, runtime image or sampling pass. Both rings stay inside the area.
+func _feather_ground(fill: Polygon2D, outline: PackedVector2Array, inset: float) -> void:
+	var centre := Vector2.ZERO
+	for point: Vector2 in outline:
+		centre += point
+	centre /= float(outline.size())
+	var points := outline.duplicate()
+	var colors := PackedColorArray()
+	for point: Vector2 in outline:
+		colors.append(Color(1, 1, 1, 0))
+		points.append(point.move_toward(centre, inset))
+	for i in outline.size() + 1:
+		colors.append(Color.WHITE)
+	points.append(centre)
+	var count := outline.size()
+	var quads: Array = []
+	for i in count:
+		var j := (i + 1) % count
+		quads.append(PackedInt32Array([i, j, count + j, count + i]))
+		quads.append(PackedInt32Array([count + i, count + j, count * 2]))
+	fill.polygon = points
+	fill.polygons = quads
+	fill.vertex_colors = colors
+	fill.uv = _world_uv(points, Vector2.ONE)
 
 
 static func _mix(seed_value: int, k: int) -> int:

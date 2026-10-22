@@ -1,3 +1,4 @@
+@static_unload
 extends RefCounted
 ## Low plaza edges (2026-10-21 plaza pass). The perimeter ring of a plaza,
 ## arena or gate chunk keeps its physical WALL cells (kind, connection mask,
@@ -263,11 +264,61 @@ static func warm_state(state: int) -> void:
 	var style := style_for_state(state)
 	if WORN_STEMS.has(style):
 		_load_style(style)
+	else:
+		_release_style()
 	_load_dressing(state)
 
 
 static func warm_family(family: StringName) -> void:
 	warm_state(state_for_family(family))
+
+
+## Paths requiring first touch for a state. The common planter/parapet and
+## civic atlas are script dependencies; this list is only the worn additions.
+static func state_texture_paths(state: int) -> PackedStringArray:
+	var paths := PackedStringArray()
+	var style := style_for_state(state)
+	if WORN_STEMS.has(style):
+		for variants: Array in piece_paths(style):
+			for path: String in variants:
+				paths.append(path)
+		paths.append(KIT_DIR + String(WORN_STEMS[style]) + "_fill.png")
+	if state != STATE_TENDED:
+		paths.append(WORN_ATLAS_PATH)
+	if state == STATE_RUINED:
+		paths.append(WEEDS_GROUND_PATH)
+	elif state == STATE_DAMP:
+		paths.append(MOSS_SOIL_PATH)
+	return paths
+
+
+## The loading scrim advances between first-touch uploads. Keep a local
+## reference to each loaded texture until warm_state takes ownership; without
+## it ResourceLoader's weak cache can reload a texture on the very next call.
+static func prepare_state_for_transition(tree: SceneTree, state: int) -> void:
+	var prepared: Array[Texture2D] = []
+	for path: String in state_texture_paths(state):
+		if ResourceLoader.has_cached(path):
+			prepared.append(load(path) as Texture2D)
+			continue
+		prepared.append(load(path) as Texture2D)
+		if DisplayServer.get_name() != "headless":
+			await RenderingServer.frame_post_draw
+		await tree.process_frame
+	warm_state(state)
+
+
+static func _release_style() -> void:
+	_loaded_pieces = []
+	_loaded_fill = null
+	_loaded_style = -1
+
+
+## Explicit test/shutdown lifecycle; nodes and batches retain their own refs.
+static func release_static_caches() -> void:
+	_release_style()
+	_dressing.clear()
+	_dressing_state = -1
 
 
 ## The style whose edge set is resident, or -1 (planter and parapet only).

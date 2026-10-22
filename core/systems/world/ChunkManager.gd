@@ -275,6 +275,10 @@ static func prepare_transition_resources(tree: SceneTree) -> void:
 	GroundSplatRenderer.noise_texture()
 	_trace_transition_resource_step(started)
 	await _finish_transition_resource_frame(tree)
+	if Global.attempt_segment >= 2:
+		_transition_resource_stage = &"plaza"
+		var theme := SegmentThemePicker.get_theme(Global.attempt_segment, Global.attempt_world_seed)
+		await _PLAZA_EDGE_KIT.prepare_state_for_transition(tree, _PLAZA_EDGE_KIT.state_for_family(theme.district_family))
 	_transition_resource_stage = &"ready"
 
 

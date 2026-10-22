@@ -25,7 +25,7 @@ extends RefCounted
 ## and plan inputs: goods and rubble stand on ring WALL cells, island props on
 ## the island's existing half-cover cell, and the centrepiece footprint is
 ## unchanged. Large squares with few ring cells still show their state along
-## their own edges: flat wear patches (packed earth, oil, moss, weedy ground)
+## their own edges: flat wear patches (packed earth, moss, weedy ground)
 ## and low rubble and weeds on non-route edge paving, all walkable clutter
 ## drawn under the actors, never an object that looks solid.
 ##
@@ -99,7 +99,7 @@ const RING_PROPS := {
 ## Edge wear per state: [kind, cells of square edge per item, min, max].
 ## Flat patches lie at ground level; rubble and weeds are low clutter.
 const EDGE_WEAR := {
-	KIT.STATE_WORKING: [[&"earth", 10, 2, 5], [&"oil", 18, 1, 2]],
+	KIT.STATE_WORKING: [[&"earth", 10, 2, 5]],
 	KIT.STATE_RUINED: [[&"weedy", 12, 2, 4], [&"rubble", 14, 1, 3], [&"weeds", 9, 2, 5]],
 	KIT.STATE_DAMP: [[&"moss", 10, 2, 5], [&"weeds", 12, 1, 4]],
 	KIT.STATE_MILITARY: [[&"earth", 9, 2, 5]],
@@ -437,7 +437,7 @@ static func _plan_debris(plaza: Dictionary, data: ChunkBuildData, clear: Diction
 
 ## Wear along the square's own edge band (plaza cells beside non-plaza
 ## ground) where its state would otherwise not show: flat patches (packed
-## earth, oil, moss, weedy ground) and low rubble and weeds, scaled to the
+## earth, moss, weedy ground) and low rubble and weeds, scaled to the
 ## length of the edge. Off protected route cells, beds, the centrepiece and
 ## anchors (avoid), lamps, drains and debris, the boss court and the chunk's
 ## outer cells; spaced so no two of one kind crowd. Presentation only.

@@ -41,9 +41,12 @@ const TARGETS := [
 	{"segment": 5, "theme": &"inner_district_gate"},
 	{"segment": 6, "theme": &"industrial_cutthrough"},
 	{"segment": 6, "theme": &"ruined_services"},
+	{"segment": 7, "theme": &"underpass_veins"},
 	{"segment": 7, "theme": &"canal_services"},
 	{"segment": 8, "theme": &"rail_yard"},
 	{"segment": 8, "theme": &"military_staging"},
+	{"segment": 9, "theme": &"outer_wall"},
+	{"segment": 9, "theme": &"siege_services"},
 	{"segment": 10, "theme": &"gate_district"},
 ]
 ## Maintenance state per family, written out independently of the code
@@ -344,7 +347,7 @@ func _check_plaza(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, se
 	for lamp: Dictionary in plaza_plan.get("lamps", []):
 		_stats.lamps += 1
 		_check(not clear.has(lamp.cell), tag + " lamps flank the road mouth, never stand in it")
-	for group: String in ["lamps", "benches", "drains", "stalls", "accents", "pots", "ring_props", "debris", "edge_goods"]:
+	for group: String in ["lamps", "benches", "drains", "stalls", "accents", "pots", "ring_props", "debris", "edge_goods", "edge_wear"]:
 		for item: Dictionary in plaza_plan.get(group, []):
 			_check(not anchor_box.has_area() or not anchor_box.grow(1).has_point(item.cell), tag + " %s keep off the objective anchor box" % group)
 	_stats.benches += (plaza_plan.get("benches", []) as Array).size()
@@ -389,7 +392,7 @@ func _check_state(tag: String, state: int, info: Dictionary, plaza_plan: Diction
 		_stats.ring_props += 1
 		var cell: Vector2i = item.cell
 		_check(ring.has(cell) and s.kind_at(cell) == WorldBlockerGeometry.Kind.WALL and not clear.has(cell), tag + " ring prop %s stands on a ring WALL cell (blocked support)" % item.id)
-		var allowed: Array = {1: [&"crates_stack", &"barrels_group", &"sacks_pile"], 2: [&"rubble_pile", &"scaffold_crates"], 3: [&"barrels_group"], 4: [&"crates_stack", &"sacks_pile"]}.get(state, [])
+		var allowed: Array = {1: [&"crates_stack", &"handcart", &"barrels_group", &"sacks_pile"], 2: [&"rubble_pile", &"scaffold_crates"], 3: [&"barrels_group"], 4: [&"crates_stack", &"sacks_pile"]}.get(state, [])
 		_check(StringName(item.id) in allowed, tag + " ring prop %s belongs to state %d" % [item.id, state])
 	var edge_goods: Array = plaza_plan.get("edge_goods", [])
 	_check(edge_goods.size() <= 1 and (edge_goods.is_empty() or (state in [1, 4] and not arena)), tag + " edge goods (handcart / supplies) only in working and military squares, once")
@@ -399,18 +402,28 @@ func _check_state(tag: String, state: int, info: Dictionary, plaza_plan: Diction
 	for item: Dictionary in debris:
 		_stats.debris += 1
 		_check(plaza.has(item.cell) and s.kind_at(item.cell) < 0 and not clear.has(item.cell), tag + " debris lies flat on open plaza paving off the route")
+	for item: Dictionary in plaza_plan.get("edge_wear", []):
+		_check(state != 0 and plaza.has(item.cell) and s.kind_at(item.cell) < 0 and not clear.has(item.cell), tag + " flat edge wear stays on off-route open paving")
+		_check(StringName(item.kind) != &"oil", tag + " oil needs an actual machinery owner")
 	var node := chunk.get_node_or_null("PlazaDressing")
 	if node == null:
 		return
+	var drawn_wear := 0
 	var pieces: Dictionary = {}
 	var contacts: Dictionary = {}
 	for child: Node in node.get_children():
+		if child.has_meta(&"plaza_edge_wear"):
+			drawn_wear += 1
+			_check(not child.is_in_group(FOREGROUND.GROUP) and (child as CanvasItem).z_index < -80, tag + " edge wear stays flat beneath actors")
 		var piece := StringName(child.get_meta(&"plaza_piece", &""))
 		pieces[piece] = int(pieces.get(piece, 0)) + 1
 		if child.has_meta(&"plaza_ground_contact"):
 			contacts[Vector2i((child.get_meta(&"plaza_ground_contact") as Vector2 / CELL).floor())] = piece
-		if child is Sprite2D and (child as Sprite2D).texture == DRESSING.WORN_ATLAS:
+		if child is Sprite2D and (child as Sprite2D).texture.resource_path == KIT.WORN_ATLAS_PATH:
 			_check(not child.is_in_group(FOREGROUND.GROUP), tag + " worn props are never registered as actor cover")
+	_check(drawn_wear == (plaza_plan.get("edge_wear", []) as Array).size(), tag + " each planned edge patch has one drawn ground owner")
+	if state in [1, 3, 4]:
+		_check(int(pieces.get(&"kerb", 0)) == 0, tag + " working, damp and military islands have no ornamental closed kerb")
 	if state != 0:
 		var clipped := 0
 		for piece: StringName in CLIPPED_PLANTING:
@@ -468,9 +481,10 @@ func _check_assets() -> void:
 				_check(texture != null and texture.resource_path.begins_with("res://assets/world/plazas_v1/kit/" + expected), "plaza edge piece mask=%d state=%d draws %s*" % [mask, state, expected])
 	for style in 5:
 		_check(KIT.fill_texture(style) != null and KIT.fill_texture(style).get_width() > 0, "plaza edge fill loads style=%d" % style)
-	_check(DRESSING.WORN_ATLAS != null and DRESSING.WEEDS_GROUND != null and DRESSING.MOSS_SOIL != null, "worn atlas and bed fills load")
+	var worn_atlas := KIT.dressing_texture(KIT.STATE_RUINED, &"worn_atlas")
+	_check(worn_atlas != null and KIT.dressing_texture(KIT.STATE_RUINED, &"weeds_ground") != null and KIT.dressing_texture(KIT.STATE_DAMP, &"moss_soil") != null, "worn atlas and state-selected bed fills load")
 	for id: StringName in DRESSING.WORN_REGIONS:
-		_check(Rect2(Vector2.ZERO, DRESSING.WORN_ATLAS.get_size()).encloses(DRESSING.WORN_REGIONS[id]), "worn atlas region %s inside the atlas" % id)
+		_check(Rect2(Vector2.ZERO, worn_atlas.get_size()).encloses(DRESSING.WORN_REGIONS[id]), "worn atlas region %s inside the atlas" % id)
 	_check(DRESSING.ATLAS != null and DRESSING.STONE != null, "plaza atlas and stone tile load")
 	for id: StringName in DRESSING.REGIONS:
 		var region: Rect2 = DRESSING.REGIONS[id]
@@ -558,6 +572,7 @@ func _run() -> void:
 		_stats["post_pass_usec_max"] = _costs[-1]
 		for key: String in _step_costs:
 			_stats["post_pass_usec_mean_" + key] = int(_step_costs[key]) / _costs.size()
+	KIT.release_static_caches()
 	print("PlazaPresentation stats: ", JSON.stringify(_stats))
 	print("PlazaPresentationTest: %d passed, %d failed; elapsed %dms" % [_passes, _failures, Time.get_ticks_msec() - started])
 	get_tree().quit(1 if _failures > 0 else 0)

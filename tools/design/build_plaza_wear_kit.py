@@ -35,19 +35,24 @@ not untouched generation originals):
   assets/world/ground/city_care/v1/damp_moss_soil.png   wet soil and moss
   assets/world/ground/ground_grass_dry_01.png           neglected bed fill
 
-Run:  python3 tools/design/build_plaza_wear_kit.py
+Run:  python3 -B tools/design/build_plaza_wear_kit.py
+Check existing outputs without writing: python3 -B tools/design/build_plaza_wear_kit.py --check
 It writes only the files listed above (kerb34_*, ruin34_*, moss34_*,
 plaza_props_worn.png/.json, plaza_moss_soil.png, plaza_weeds.png); the
 phase-1 kit written by build_plaza_kit.py is not touched.
 """
 
 from pathlib import Path
+import argparse
 import json
+import re
 import sys
 
 import numpy as np
 from PIL import Image, ImageFilter
 
+# This is source tooling; running it must not add bytecode to the asset lane.
+sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_plaza_kit as K  # noqa: E402  (loads the shared sources once)
 
@@ -677,7 +682,47 @@ def build_worn_atlas():
     return atlas, regions
 
 
+def check_outputs() -> None:
+    """Check the exact runtime file/atlas contract without regenerating art."""
+    for style in ("kerb", "ruin", "moss"):
+        paths = []
+        for mask in range(16):
+            if style == "kerb":
+                paths.append(OUT / f"kerb34_{mask:02d}.png")
+                if mask in (E | W, N | S):
+                    paths.append(OUT / ("kerb34_h_b.png" if mask == E | W else "kerb34_v_b.png"))
+            else:
+                paths.extend(OUT / f"{style}34_{mask:02d}_{v}.png" for v in range(variant_count(mask)))
+        for path in paths:
+            with Image.open(path) as image:
+                assert image.size == (CELL * K.SCALE, (CELL + K.HEADROOM) * K.SCALE), (path, image.size)
+        with Image.open(OUT / f"{style}34_fill.png") as fill:
+            assert fill.width > 0 and fill.height > 0
+        print(f"{style}: {len(paths) + 1} runtime pieces/fill present")
+    script = (ROOT / "scenes/world/plazas/PlazaDressing.gd").read_text()
+    for atlas_name in ("plaza_props", "plaza_props_worn"):
+        manifest = json.loads((OUT / f"{atlas_name}.json").read_text())
+        assert manifest["texels_per_world_px"] == PROP_TEXELS
+        with Image.open(OUT / f"{atlas_name}.png") as atlas:
+            for name, (x, y, width, height) in manifest["regions"].items():
+                assert x >= 0 and y >= 0 and width > 0 and height > 0
+                assert x + width <= atlas.width and y + height <= atlas.height, name
+                declared = re.search(r'&"' + re.escape(name) + r'": Rect2\(([^)]+)\)', script)
+                assert declared is not None, name
+                assert tuple(float(v.strip()) for v in declared[1].split(",")) == (x, y, width, height), name
+        print(f"{atlas_name}: {len(manifest['regions'])} regions match runtime")
+    for name in ("plaza_weeds.png", "plaza_moss_soil.png"):
+        with Image.open(OUT / name) as image:
+            assert image.size == (320, 320), (name, image.size)
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="validate existing runtime outputs without writing")
+    args = parser.parse_args()
+    if args.check:
+        check_outputs()
+        return
     OUT.mkdir(parents=True, exist_ok=True)
     for mask in range(16):
         build_kerb(mask).save(OUT / f"kerb34_{mask:02d}.png")
