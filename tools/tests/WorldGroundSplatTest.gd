@@ -38,6 +38,7 @@ func _run() -> void:
 	_test_district_policy_presentation()
 	_test_district_care_eligibility()
 	_test_ground_occlusion()
+	_test_occlusion_seams()
 	_test_planting()
 	_test_base_margin_rects()
 	await _test_chunk_manager_path()
@@ -275,6 +276,69 @@ func _test_ground_occlusion() -> void:
 	splat.set_chunk_base(Vector2i.ZERO, 6)
 	_check(splat.openness_at(Vector2i(12, 11)) == 1.0, "replacing the chunk base clears its old occlusion")
 	splat.queue_free()
+
+
+## Occlusion near a chunk line (2026-10-21 review: AO ramps were cut at chunk
+## lines, 6-9% steps). With its loaded neighbours supplied, a wall standing
+## two cells inside one chunk shades the next chunk exactly as it would shade
+## the same ground inside one chunk, in either streaming order; without them
+## the pass stays chunk-local.
+func _test_occlusion_seams() -> void:
+	var wall := func(data: ChunkBuildData, x: int) -> void:
+		for y in range(8, 24):
+			data.add_blocker(Vector2i(x, y), WorldBlockerGeometry.Kind.WALL)
+	var west := ChunkBuildData.new(Vector2i.ZERO, 32)
+	wall.call(west, 30)
+	var east := ChunkBuildData.new(Vector2i(1, 0), 32)
+	east.add_blocker(Vector2i(6, 4), WorldBlockerGeometry.Kind.HALF_COVER)
+	var datas := {Vector2i.ZERO: west, Vector2i(1, 0): east}
+	var paint := func(order: Array, linked: bool) -> GroundSplatRenderer:
+		var splat := _splat()
+		var loaded: Dictionary = {}
+		if linked:
+			splat.occlusion_neighbours = func(coord: Vector2i) -> Dictionary:
+				var result: Dictionary = {}
+				for other: Vector2i in loaded:
+					if other != coord and absi(other.x - coord.x) <= 1 and absi(other.y - coord.y) <= 1:
+						result[other - coord] = loaded[other]
+				return result
+		for coord: Vector2i in order:
+			splat.set_chunk_base(coord, 6)
+			splat.paint_occlusion(coord, datas[coord])
+			loaded[coord] = datas[coord]
+		return splat
+	var west_first: GroundSplatRenderer = paint.call([Vector2i.ZERO, Vector2i(1, 0)], true)
+	var east_first: GroundSplatRenderer = paint.call([Vector2i(1, 0), Vector2i.ZERO], true)
+	var local: GroundSplatRenderer = paint.call([Vector2i.ZERO, Vector2i(1, 0)], false)
+	# Reference: the same wall two cells inside one chunk.
+	var single := _splat()
+	single.set_chunk_base(Vector2i.ZERO, 6)
+	var inner := ChunkBuildData.new(Vector2i.ZERO, 32)
+	wall.call(inner, 10)
+	single.paint_occlusion(Vector2i.ZERO, inner)
+	var continuous := true
+	var ordered := true
+	for y in range(4, 28):
+		for dx in range(-3, 4):
+			var seam := Vector2i(30 + dx, y)
+			if dx == 0:
+				continue
+			if absf(west_first.openness_at(seam) - single.openness_at(Vector2i(10 + dx, y))) > 0.0001:
+				continuous = false
+		for x in range(26, 40):
+			if west_first.openness_at(Vector2i(x, y)) != east_first.openness_at(Vector2i(x, y)):
+				ordered = false
+	_check(continuous, "a wall beside a chunk line shades the next chunk exactly as inside one chunk (no seam step)")
+	_check(ordered, "seam occlusion is the same whichever chunk streams first")
+	var across := west_first.openness_at(Vector2i(32, 16))
+	_check(across < 0.95 and local.openness_at(Vector2i(32, 16)) == 1.0, "the ramp now crosses the line (%.3f) where the chunk-local pass cut it to 1.0" % across)
+	_check(west_first.openness_at(Vector2i(37, 5)) < 1.0 and west_first.openness_at(Vector2i(37, 5)) == local.openness_at(Vector2i(37, 5)), "a neighbour's own props still shade its interior as before")
+	var light := _bytes(west_first, "_light")
+	west_first.paint_occlusion(Vector2i(1, 0), east)
+	west_first.paint_occlusion(Vector2i.ZERO, west)
+	_check(light == _bytes(west_first, "_light"), "repainting either chunk reproduces the exact seam bytes")
+	for splat: GroundSplatRenderer in [west_first, east_first, local, single]:
+		splat.queue_free()
 
 
 func _test_planting() -> void:
