@@ -10,6 +10,7 @@ const SHADER := preload("res://core/systems/world/atmosphere/world_atmosphere.gd
 const MIST_SHADER := preload("res://core/systems/world/atmosphere/ground_air.gdshader")
 const ROOF_SHADER := preload("res://scenes/world/buildings/roof.gdshader")
 const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
+const WEATHERING := preload("res://scenes/world/buildings/weathering/CityWeathering.gd")
 const Z := 1400
 const AIR_Z := -8
 const ROOM_POLL_SECONDS := 0.5
@@ -112,6 +113,9 @@ func apply_theme(theme_id: StringName, context: StringName = &"procedural", redu
 		material.set_shader_parameter("weather_motion_enabled", not reduced_motion)
 		material.set_shader_parameter("frozen_weather_time", _frozen_phase)
 	_mist.visible = visible and float(_profile.mist_opacity) > 0.0
+	# The district's wall-foot damp and roof lichen (shader globals); authored
+	# S1/Hub contexts stay clean.
+	WEATHERING.apply_theme(theme_id if bool(_profile.enabled) else &"")
 	_rooms_dirty = true
 	_mask_revision = -1
 	refresh_environment(true)

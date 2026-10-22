@@ -19,6 +19,8 @@ const SOLID_GROUP := &"foreground_solid_occluders"
 const GROUND_META := &"foreground_ground_contact"
 const WALL_SHADER := preload("res://scenes/world/buildings/facade_wall.gdshader")
 const MODULE_SHADER := preload("res://scenes/world/buildings/facade_module.gdshader")
+const PLINTH_SHADER := preload("res://scenes/world/buildings/weathering/facade_plinth.gdshader")
+const WEATHERING := preload("res://scenes/world/buildings/weathering/CityWeathering.gd")
 const COVERAGE_SHADER := preload("res://scenes/world/buildings/facade_coverage.gdshader")
 const BASE_FRACTION := 0.18
 const BASE_STRENGTH := 0.14
@@ -121,10 +123,13 @@ static func compose_run(group: Node2D, kit: Node2D, run: Vector2, bottom: float,
 			blocked.append(Vector2(at - 8.0, at + ivy_w + 8.0))
 			spans = _free_spans(run, blocked)
 	# Window rhythm across each free span, chosen by use.
+	var modules: Array[Dictionary] = []
 	for span: Vector2 in spans:
-		cuts.append_array(_fill_span(group, family, usage, span, bottom, height, rng))
+		cuts.append_array(_fill_span(group, family, usage, span, bottom, height, rng, modules))
 	_wall_field(group, family, Rect2(run.x, top, run.y - run.x, height), cuts)
 	_plinth(group, Rect2(run.x, bottom - PLINTH_PX, run.y - run.x, PLINTH_PX), cuts)
+	# Runoff below real sills and soot above a working vent (own salts).
+	WEATHERING.decorate_run(group, kit, modules, cuts, bottom, height)
 	# Cover the wall's height over its run, widened to any doorway frame that
 	# reaches into a corner zone; never below the wall base (the street).
 	var cover_span := run
@@ -262,11 +267,12 @@ static func _wall_field(group: Node2D, family: StringName, rect: Rect2, cuts: Ar
 		if field == null: continue
 		field.name = "FacadeWallField"
 		field.material = _family_material(family, false)
-		# A 1x1 texture keeps polygon UVs unnormalised: UV.y is the 0..1 height.
+		# A 1x1 texture keeps polygon UVs unnormalised: UV.y is the 0..1 height
+		# and UV.x the field's height in px (for the wall-foot damp).
 		field.texture = _white_texture()
 		var uv := PackedVector2Array()
 		for point: Vector2 in field.polygon:
-			uv.append(Vector2((point.x - rect.position.x) / rect.size.x, (point.y - rect.position.y) / (rect.size.y - PLINTH_PX)))
+			uv.append(Vector2(rect.size.y - PLINTH_PX, (point.y - rect.position.y) / (rect.size.y - PLINTH_PX)))
 		field.uv = uv
 		field.set_meta(&"facade_wall_field", rect)
 		# Modules were placed first to find their cut-outs; the wall draws beneath.
@@ -287,6 +293,7 @@ static func _plinth(group: Node2D, rect: Rect2, cuts: Array[Rect2]) -> void:
 		plinth.texture = texture
 		plinth.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 		plinth.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		plinth.material = _plinth_material()
 		var texels := float(texture.get_height()) / rect.size.y
 		var uv := PackedVector2Array()
 		for point: Vector2 in plinth.polygon:
@@ -295,7 +302,7 @@ static func _plinth(group: Node2D, rect: Rect2, cuts: Array[Rect2]) -> void:
 		plinth.set_meta(&"facade_plinth", rect)
 		group.move_child(plinth, 0)
 
-static func _fill_span(group: Node2D, family: StringName, usage: StringName, span: Vector2, bottom: float, height: float, rng: RandomNumberGenerator) -> Array[Rect2]:
+static func _fill_span(group: Node2D, family: StringName, usage: StringName, span: Vector2, bottom: float, height: float, rng: RandomNumberGenerator, modules: Array[Dictionary] = []) -> Array[Rect2]:
 	var cuts: Array[Rect2] = []
 	var width := span.y - span.x
 	var kinds: Array[StringName] = []
@@ -337,6 +344,7 @@ static func _fill_span(group: Node2D, family: StringName, usage: StringName, spa
 		if item.kind == &"service": center_y = bottom - PLINTH_PX - 8.0 - size.y * 0.5
 		var rect := Rect2(Vector2(float(item.x) + shift, center_y - size.y * 0.5), size)
 		cuts.append(_module(group, family, spec.file, rect, item.kind == &"service" and rng.randf() < 0.5, item.kind, Rect2(), bottom, height))
+		modules.append({"kind": item.kind, "rect": rect})
 	return cuts
 
 static func _eave_shade(group: Node2D, rect: Rect2) -> void:
@@ -387,6 +395,14 @@ static func _family_material(family: StringName, module: bool) -> ShaderMaterial
 	material.set_shader_parameter("tint", Vector3(spec.tint.r, spec.tint.g, spec.tint.b))
 	material.set_shader_parameter("contrast", spec.contrast)
 	_materials[key] = material
+	return material
+
+## One shared plinth material: the plinth tile plus the wall-foot damp.
+static func _plinth_material() -> ShaderMaterial:
+	if _materials.has("plinth"): return _materials["plinth"]
+	var material := ShaderMaterial.new()
+	material.shader = PLINTH_SHADER
+	_materials["plinth"] = material
 	return material
 
 static func _white_texture() -> ImageTexture:
