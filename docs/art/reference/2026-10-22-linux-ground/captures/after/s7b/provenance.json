@@ -1,0 +1,48 @@
+{
+  "kind": "selected final survey evidence",
+  "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+  "survey": "survey.json",
+  "world_seed": 16102028,
+  "theme_id": "canal_services",
+  "route1_world": [
+    -9216.0,
+    1024.0
+  ],
+  "launch_metadata": "../../../runs/final-surveys/ground22-final-s7b/run-results.json",
+  "scoped_before": "../../../sources/merged-after-cache.json",
+  "scoped_after": "../../../sources/merged-final-after.json",
+  "import_closure_before": "../../../sources/merged-after-cache-addendum.json",
+  "import_closure_after": "../../../sources/merged-final-after-cache-addendum.json",
+  "produced_pngs_sha256": {
+    "kit1-seg7-play.png": "4ba04ffef61246b7e207d851aa405a4112b163b539a8ace017ece307769d41f9",
+    "kit2-seg7-play.png": "7db45fa371aef4a9eeb4035bd360b6ca42413ae1f35273017a996c47506623d5",
+    "objective-seg7-overview.png": "48ee7d5f0ab9fb9e2e1dc2db04979a8e0ef3191740ea2cfe7799608da5a5ced4",
+    "objective-seg7-play.png": "20dcea0c2f9ae448495e9fc3b8a6281856117c8e64286df368db085ed11c5d28",
+    "route1-seg7-overview.png": "f30bff165ffdf8bbd875af45eb18c893999219e15ed4e94581177c01a64299f7",
+    "route1-seg7-play.png": "04b3af596d7c966ad24ab2aab3afac6a6d2dfae1ec34216ec08aefe189b65597",
+    "route2-seg7-overview.png": "0bedd7b0a425e54d41499de8994e2c681bb2d5e964d831ce0634c4cd55a19252",
+    "route2-seg7-play.png": "79effd76454794f4d86b58cc3f0fe7fcc680ad7e3c064eed7aa41fc9bd92f5ad",
+    "start-seg7-overview.png": "e709ae2c2db874f0047475def57a448bb7555fd265b0f45ce2b88a0dd1685481",
+    "start-seg7-play.png": "822b0dd683049eb41832f1b2da1a02046176095d2a97dfab762f0bc0a18f0cdb"
+  },
+  "selected_pngs": {
+    "route1-seg7-play.png": {
+      "sha256": "04b3af596d7c966ad24ab2aab3afac6a6d2dfae1ec34216ec08aefe189b65597",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    "route1-seg7-overview.png": {
+      "sha256": "f30bff165ffdf8bbd875af45eb18c893999219e15ed4e94581177c01a64299f7",
+      "dimensions": [
+        1280,
+        720
+      ]
+    }
+  },
+  "limits": [
+    "Only selected PNGs are packaged; all produced hashes remain recorded.",
+    "Static Game survey, no moving combat/entry/collection claim."
+  ]
+}

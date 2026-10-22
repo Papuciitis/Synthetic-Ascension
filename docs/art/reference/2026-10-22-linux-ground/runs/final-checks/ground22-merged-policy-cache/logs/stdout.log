@@ -1,0 +1,302 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: service_courtyards resolves its own enabled ground policy
+PASS: service_courtyards builds its district on the hard urban surface
+PASS: service_courtyards defines every presentation role with a valid source
+PASS: service_courtyards paving mid tones stay in the bright daylight band
+PASS: service_courtyards paving stays cool-neutral (no desert drift)
+PASS: service_courtyards draws kerbs and a bounded ground occlusion
+PASS: service_courtyards has its own physical ground look (not a copy of )
+PASS: checkpoint_lanes resolves its own enabled ground policy
+PASS: checkpoint_lanes builds its district on the hard urban surface
+PASS: checkpoint_lanes defines every presentation role with a valid source
+PASS: checkpoint_lanes paving mid tones stay in the bright daylight band
+PASS: checkpoint_lanes paving stays cool-neutral (no desert drift)
+PASS: checkpoint_lanes draws kerbs and a bounded ground occlusion
+PASS: checkpoint_lanes has its own physical ground look (not a copy of )
+PASS: collapsed_ward resolves its own enabled ground policy
+PASS: collapsed_ward builds its district on the hard urban surface
+PASS: collapsed_ward defines every presentation role with a valid source
+PASS: collapsed_ward paving mid tones stay in the bright daylight band
+PASS: collapsed_ward paving stays cool-neutral (no desert drift)
+PASS: collapsed_ward draws kerbs and a bounded ground occlusion
+PASS: collapsed_ward has its own physical ground look (not a copy of )
+PASS: civilian_cutthrough resolves its own enabled ground policy
+PASS: civilian_cutthrough builds its district on the hard urban surface
+PASS: civilian_cutthrough defines every presentation role with a valid source
+PASS: civilian_cutthrough paving mid tones stay in the bright daylight band
+PASS: civilian_cutthrough paving stays cool-neutral (no desert drift)
+PASS: civilian_cutthrough draws kerbs and a bounded ground occlusion
+PASS: civilian_cutthrough has its own physical ground look (not a copy of )
+PASS: inner_district_gate resolves its own enabled ground policy
+PASS: inner_district_gate builds its district on the hard urban surface
+PASS: inner_district_gate defines every presentation role with a valid source
+PASS: inner_district_gate paving mid tones stay in the bright daylight band
+PASS: inner_district_gate paving stays cool-neutral (no desert drift)
+PASS: inner_district_gate draws kerbs and a bounded ground occlusion
+PASS: inner_district_gate has its own physical ground look (not a copy of )
+PASS: industrial_cutthrough resolves its own enabled ground policy
+PASS: industrial_cutthrough builds its district on the hard urban surface
+PASS: industrial_cutthrough defines every presentation role with a valid source
+PASS: industrial_cutthrough paving mid tones stay in the bright daylight band
+PASS: industrial_cutthrough paving stays cool-neutral (no desert drift)
+PASS: industrial_cutthrough draws kerbs and a bounded ground occlusion
+PASS: industrial_cutthrough has its own physical ground look (not a copy of )
+PASS: ruined_services resolves its own enabled ground policy
+PASS: ruined_services builds its district on the hard urban surface
+PASS: ruined_services defines every presentation role with a valid source
+PASS: ruined_services paving mid tones stay in the bright daylight band
+PASS: ruined_services paving stays cool-neutral (no desert drift)
+PASS: ruined_services draws kerbs and a bounded ground occlusion
+PASS: ruined_services has its own physical ground look (not a copy of )
+PASS: underpass_veins resolves its own enabled ground policy
+PASS: underpass_veins builds its district on the hard urban surface
+PASS: underpass_veins defines every presentation role with a valid source
+PASS: underpass_veins paving mid tones stay in the bright daylight band
+PASS: underpass_veins paving stays cool-neutral (no desert drift)
+PASS: underpass_veins draws kerbs and a bounded ground occlusion
+PASS: underpass_veins has its own physical ground look (not a copy of )
+PASS: canal_services resolves its own enabled ground policy
+PASS: canal_services builds its district on the hard urban surface
+PASS: canal_services defines every presentation role with a valid source
+PASS: canal_services paving mid tones stay in the bright daylight band
+PASS: canal_services paving stays cool-neutral (no desert drift)
+PASS: canal_services draws kerbs and a bounded ground occlusion
+PASS: canal_services has its own physical ground look (not a copy of )
+PASS: rail_yard resolves its own enabled ground policy
+PASS: rail_yard builds its district on the hard urban surface
+PASS: rail_yard defines every presentation role with a valid source
+PASS: rail_yard paving mid tones stay in the bright daylight band
+PASS: rail_yard paving stays cool-neutral (no desert drift)
+PASS: rail_yard draws kerbs and a bounded ground occlusion
+PASS: rail_yard has its own physical ground look (not a copy of )
+PASS: military_staging resolves its own enabled ground policy
+PASS: military_staging builds its district on the hard urban surface
+PASS: military_staging defines every presentation role with a valid source
+PASS: military_staging paving mid tones stay in the bright daylight band
+PASS: military_staging paving stays cool-neutral (no desert drift)
+PASS: military_staging draws kerbs and a bounded ground occlusion
+PASS: military_staging has its own physical ground look (not a copy of )
+PASS: outer_wall resolves its own enabled ground policy
+PASS: outer_wall builds its district on the hard urban surface
+PASS: outer_wall defines every presentation role with a valid source
+PASS: outer_wall paving mid tones stay in the bright daylight band
+PASS: outer_wall paving stays cool-neutral (no desert drift)
+PASS: outer_wall draws kerbs and a bounded ground occlusion
+PASS: outer_wall has its own physical ground look (not a copy of )
+PASS: siege_services resolves its own enabled ground policy
+PASS: siege_services builds its district on the hard urban surface
+PASS: siege_services defines every presentation role with a valid source
+PASS: siege_services paving mid tones stay in the bright daylight band
+PASS: siege_services paving stays cool-neutral (no desert drift)
+PASS: siege_services draws kerbs and a bounded ground occlusion
+PASS: siege_services has its own physical ground look (not a copy of )
+PASS: gate_district resolves its own enabled ground policy
+PASS: gate_district builds its district on the hard urban surface
+PASS: gate_district defines every presentation role with a valid source
+PASS: gate_district paving mid tones stay in the bright daylight band
+PASS: gate_district paving stays cool-neutral (no desert drift)
+PASS: gate_district draws kerbs and a bounded ground occlusion
+PASS: gate_district has its own physical ground look (not a copy of )
+PASS: an unknown procedural family falls back to Service Courtyards
+PASS: no district family (S1, Hub) keeps the raw palette
+PASS: resolved policies are independent copies
+PASS: service_courtyards keeps its carriageway and lanes quiet (texture weight 0.60 / 0.54)
+PASS: industrial_cutthrough keeps its carriageway and lanes quiet (texture weight 0.68 / 0.60)
+PASS: underpass_veins keeps its carriageway and lanes quiet (texture weight 0.62 / 0.56)
+PASS: canal_services keeps its carriageway and lanes quiet (texture weight 0.60 / 0.55)
+PASS: service_courtyards household approaches sit between the carriageway and the yard (0.501 < 0.545 < 0.591)
+PASS: industrial_cutthrough household approaches sit between the carriageway and the yard (0.442 < 0.477 < 0.564)
+PASS: industrial_cutthrough wears its yards into edged use-areas in the open, not free blotches
+PASS: rail_yard wears its yards into edged use-areas in the open, not free blotches
+PASS: underpass_veins settles damp moss at its wall feet and banks
+PASS: underpass_veins yard stone is smaller and quieter than the actor-sized pale tiles (240 px, 0.48)
+PASS: canal_services settles damp moss at its wall feet and banks
+PASS: canal_services yard stone is smaller and quieter than the actor-sized pale tiles (224 px, 0.40)
+PASS: a free-noise patch keeps the phase-1 field, edge and mid tone
+PASS: the renderer passes a placed patch's use bias, rim and noise to the shader
+PASS: semantic materials map to their presentation roles
+PASS: a natural seed selects service_courtyards for segment 2
+PASS: service_courtyards: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: service_courtyards fits the eight splat slots without borrowing ([6, 7, 4, 2, 0, 3, 8])
+PASS: service_courtyards presents its own family policy
+PASS: service_courtyards district chunks show their continuous hard surface (2353 cells)
+PASS: service_courtyards exploration chunks stay wild (828 wild, 0 urban cells)
+PASS: service_courtyards walls and props shade the ground around them (818 cells)
+PASS: service_courtyards ground presentation consumes no RNG
+PASS: service_courtyards repeated presentation reproduces exact bytes
+PASS: service_courtyards occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 779 shaded seam cells)
+PASS: service_courtyards seam occlusion is identical whatever order the chunks stream in
+PASS: service_courtyards household beds on paving all meet their house wall (58 bed cells, 0 free)
+PASS: service_courtyards approach, gate and court carriageways stamp the main-street paving, never the floor index (403 road cells, 0 floor cells)
+PASS: a natural seed selects checkpoint_lanes for segment 3
+PASS: checkpoint_lanes: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: checkpoint_lanes fits the eight splat slots without borrowing ([6, 0, 7, 2, 4, 3, 8])
+PASS: checkpoint_lanes presents its own family policy
+PASS: checkpoint_lanes district chunks show their continuous hard surface (2724 cells)
+PASS: checkpoint_lanes exploration chunks stay wild (922 wild, 0 urban cells)
+PASS: checkpoint_lanes walls and props shade the ground around them (756 cells)
+PASS: checkpoint_lanes ground presentation consumes no RNG
+PASS: checkpoint_lanes repeated presentation reproduces exact bytes
+PASS: checkpoint_lanes occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 540 shaded seam cells)
+PASS: checkpoint_lanes household beds on paving all meet their house wall (68 bed cells, 0 free)
+PASS: checkpoint_lanes approach, gate and court carriageways stamp the main-street paving, never the floor index (389 road cells, 0 floor cells)
+PASS: a natural seed selects collapsed_ward for segment 4
+PASS: collapsed_ward: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: collapsed_ward fits the eight splat slots without borrowing ([6, 7, 4, 2, 3, 0, 8])
+PASS: collapsed_ward presents its own family policy
+PASS: collapsed_ward district chunks show their continuous hard surface (2565 cells)
+PASS: collapsed_ward exploration chunks stay wild (588 wild, 0 urban cells)
+PASS: collapsed_ward walls and props shade the ground around them (739 cells)
+PASS: collapsed_ward ground presentation consumes no RNG
+PASS: collapsed_ward repeated presentation reproduces exact bytes
+PASS: collapsed_ward occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 540 shaded seam cells)
+PASS: collapsed_ward household beds on paving all meet their house wall (49 bed cells, 0 free)
+PASS: collapsed_ward approach, gate and court carriageways stamp the main-street paving, never the floor index (733 road cells, 0 floor cells)
+PASS: a natural seed selects civilian_cutthrough for segment 4
+PASS: civilian_cutthrough: district chunks stand on the urban surface, the exploration web keeps meadow
+PASS: civilian_cutthrough fits the eight splat slots without borrowing ([6, 7, 4, 2, 3, 10, 8])
+PASS: civilian_cutthrough presents its own family policy
+PASS: civilian_cutthrough district chunks show their continuous hard surface (2752 cells)
+PASS: civilian_cutthrough exploration chunks stay wild (851 wild, 0 urban cells)
+PASS: civilian_cutthrough walls and props shade the ground around them (782 cells)
+PASS: civilian_cutthrough ground presentation consumes no RNG
+PASS: civilian_cutthrough repeated presentation reproduces exact bytes
+PASS: civilian_cutthrough occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 544 shaded seam cells)
+PASS: civilian_cutthrough household beds on paving all meet their house wall (81 bed cells, 0 free)
+PASS: civilian_cutthrough approach, gate and court carriageways stamp the main-street paving, never the floor index (586 road cells, 0 floor cells)
+PASS: a natural seed selects inner_district_gate for segment 5
+PASS: inner_district_gate: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: inner_district_gate fits the eight splat slots without borrowing ([6, 7, 4, 2, 0, 3, 8])
+PASS: inner_district_gate presents its own family policy
+PASS: inner_district_gate district chunks show their continuous hard surface (2952 cells)
+PASS: inner_district_gate exploration chunks stay wild (1127 wild, 0 urban cells)
+PASS: inner_district_gate walls and props shade the ground around them (774 cells)
+PASS: inner_district_gate ground presentation consumes no RNG
+PASS: inner_district_gate repeated presentation reproduces exact bytes
+PASS: inner_district_gate occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 585 shaded seam cells)
+PASS: inner_district_gate household beds on paving all meet their house wall (44 bed cells, 0 free)
+PASS: inner_district_gate approach, gate and court carriageways stamp the main-street paving, never the floor index (740 road cells, 0 floor cells)
+PASS: a natural seed selects industrial_cutthrough for segment 6
+PASS: industrial_cutthrough: district chunks stand on the urban surface, the exploration web keeps dirt
+PASS: industrial_cutthrough fits the eight splat slots without borrowing ([6, 7, 4, 2, 3, 1, 8])
+PASS: industrial_cutthrough presents its own family policy
+PASS: industrial_cutthrough district chunks show their continuous hard surface (2897 cells)
+PASS: industrial_cutthrough exploration chunks stay wild (756 wild, 0 urban cells)
+PASS: industrial_cutthrough walls and props shade the ground around them (791 cells)
+PASS: industrial_cutthrough ground presentation consumes no RNG
+PASS: industrial_cutthrough repeated presentation reproduces exact bytes
+PASS: industrial_cutthrough occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 408 shaded seam cells)
+PASS: industrial_cutthrough household beds on paving all meet their house wall (66 bed cells, 0 free)
+PASS: industrial_cutthrough approach, gate and court carriageways stamp the main-street paving, never the floor index (420 road cells, 0 floor cells)
+PASS: a natural seed selects ruined_services for segment 6
+PASS: ruined_services: district chunks stand on the urban surface, the exploration web keeps dirt
+PASS: ruined_services fits the eight splat slots without borrowing ([6, 1, 7, 2, 4, 3, 8])
+PASS: ruined_services presents its own family policy
+PASS: ruined_services district chunks show their continuous hard surface (2342 cells)
+PASS: ruined_services exploration chunks stay wild (987 wild, 0 urban cells)
+PASS: ruined_services walls and props shade the ground around them (839 cells)
+PASS: ruined_services ground presentation consumes no RNG
+PASS: ruined_services repeated presentation reproduces exact bytes
+PASS: ruined_services occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 912 shaded seam cells)
+PASS: ruined_services household beds on paving all meet their house wall (21 bed cells, 0 free)
+PASS: ruined_services approach, gate and court carriageways stamp the main-street paving, never the floor index (530 road cells, 0 floor cells)
+PASS: a natural seed selects underpass_veins for segment 7
+PASS: underpass_veins: district chunks stand on the urban surface, the exploration web keeps moss
+PASS: underpass_veins fits the eight splat slots without borrowing ([6, 7, 4, 2, 3, 12, 8])
+PASS: underpass_veins presents its own family policy
+PASS: underpass_veins district chunks show their continuous hard surface (3070 cells)
+PASS: underpass_veins exploration chunks stay wild (1023 wild, 0 urban cells)
+PASS: underpass_veins walls and props shade the ground around them (800 cells)
+PASS: underpass_veins ground presentation consumes no RNG
+PASS: underpass_veins repeated presentation reproduces exact bytes
+PASS: underpass_veins occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 500 shaded seam cells)
+PASS: underpass_veins household beds on paving all meet their house wall (79 bed cells, 0 free)
+PASS: underpass_veins approach, gate and court carriageways stamp the main-street paving, never the floor index (569 road cells, 0 floor cells)
+PASS: a natural seed selects canal_services for segment 7
+PASS: canal_services: district chunks stand on the urban surface, the exploration web keeps mud
+PASS: canal_services fits the eight splat slots without borrowing ([6, 7, 4, 2, 5, 3, 8])
+PASS: canal_services presents its own family policy
+PASS: canal_services district chunks show their continuous hard surface (2414 cells)
+PASS: canal_services exploration chunks stay wild (785 wild, 0 urban cells)
+PASS: canal_services walls and props shade the ground around them (796 cells)
+PASS: canal_services ground presentation consumes no RNG
+PASS: canal_services repeated presentation reproduces exact bytes
+PASS: canal_services occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 864 shaded seam cells)
+PASS: canal_services seam occlusion is identical whatever order the chunks stream in
+PASS: canal_services household beds on paving all meet their house wall (65 bed cells, 0 free)
+PASS: canal_services approach, gate and court carriageways stamp the main-street paving, never the floor index (366 road cells, 0 floor cells)
+PASS: a natural seed selects rail_yard for segment 8
+PASS: rail_yard: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: rail_yard fits the eight splat slots without borrowing ([6, 7, 4, 2, 0, 3, 8])
+PASS: rail_yard presents its own family policy
+PASS: rail_yard district chunks show their continuous hard surface (2213 cells)
+PASS: rail_yard exploration chunks stay wild (655 wild, 0 urban cells)
+PASS: rail_yard walls and props shade the ground around them (802 cells)
+PASS: rail_yard ground presentation consumes no RNG
+PASS: rail_yard repeated presentation reproduces exact bytes
+PASS: rail_yard occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 843 shaded seam cells)
+PASS: rail_yard household beds on paving all meet their house wall (51 bed cells, 0 free)
+PASS: rail_yard approach, gate and court carriageways stamp the main-street paving, never the floor index (478 road cells, 0 floor cells)
+PASS: a natural seed selects military_staging for segment 8
+PASS: military_staging: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: military_staging fits the eight splat slots without borrowing ([6, 0, 7, 4, 2, 3, 8])
+PASS: military_staging presents its own family policy
+PASS: military_staging district chunks show their continuous hard surface (2891 cells)
+PASS: military_staging exploration chunks stay wild (900 wild, 0 urban cells)
+PASS: military_staging walls and props shade the ground around them (791 cells)
+PASS: military_staging ground presentation consumes no RNG
+PASS: military_staging repeated presentation reproduces exact bytes
+PASS: military_staging occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 612 shaded seam cells)
+PASS: military_staging household beds on paving all meet their house wall (71 bed cells, 0 free)
+PASS: military_staging approach, gate and court carriageways stamp the main-street paving, never the floor index (805 road cells, 0 floor cells)
+PASS: a natural seed selects outer_wall for segment 9
+PASS: outer_wall: district chunks stand on the urban surface, the exploration web keeps scrub
+PASS: outer_wall fits the eight splat slots without borrowing ([6, 7, 4, 2, 11, 3, 8])
+PASS: outer_wall presents its own family policy
+PASS: outer_wall district chunks show their continuous hard surface (2539 cells)
+PASS: outer_wall exploration chunks stay wild (833 wild, 0 urban cells)
+PASS: outer_wall walls and props shade the ground around them (733 cells)
+PASS: outer_wall ground presentation consumes no RNG
+PASS: outer_wall repeated presentation reproduces exact bytes
+PASS: outer_wall occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 634 shaded seam cells)
+PASS: outer_wall household beds on paving all meet their house wall (37 bed cells, 0 free)
+PASS: outer_wall approach, gate and court carriageways stamp the main-street paving, never the floor index (644 road cells, 0 floor cells)
+PASS: a natural seed selects siege_services for segment 9
+PASS: siege_services: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: siege_services fits the eight splat slots without borrowing ([6, 7, 4, 2, 3, 0, 8])
+PASS: siege_services presents its own family policy
+PASS: siege_services district chunks show their continuous hard surface (2790 cells)
+PASS: siege_services exploration chunks stay wild (846 wild, 0 urban cells)
+PASS: siege_services walls and props shade the ground around them (682 cells)
+PASS: siege_services ground presentation consumes no RNG
+PASS: siege_services repeated presentation reproduces exact bytes
+PASS: siege_services occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 586 shaded seam cells)
+PASS: siege_services household beds on paving all meet their house wall (26 bed cells, 0 free)
+PASS: siege_services approach, gate and court carriageways stamp the main-street paving, never the floor index (855 road cells, 0 floor cells)
+PASS: a natural seed selects gate_district for segment 10
+PASS: gate_district: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: gate_district fits the eight splat slots without borrowing ([6, 0, 7, 4, 2, 3, 8])
+PASS: gate_district presents its own family policy
+PASS: gate_district district chunks show their continuous hard surface (1986 cells)
+PASS: gate_district exploration chunks stay wild (472 wild, 0 urban cells)
+PASS: gate_district walls and props shade the ground around them (780 cells)
+PASS: gate_district ground presentation consumes no RNG
+PASS: gate_district repeated presentation reproduces exact bytes
+PASS: gate_district occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 984 shaded seam cells)
+PASS: gate_district household beds on paving all meet their house wall (49 bed cells, 0 free)
+PASS: gate_district approach, gate and court carriageways stamp the main-street paving, never the floor index (1258 road cells, 0 floor cells)
+PASS: a natural seed selects service_courtyards for segment 11
+PASS: service_courtyards: district chunks stand on the urban surface, the exploration web keeps grass
+PASS: service_courtyards fits the eight splat slots without borrowing ([6, 0, 7, 4, 2, 3, 8])
+PASS: service_courtyards presents its own family policy
+PASS: service_courtyards district chunks show their continuous hard surface (2521 cells)
+PASS: service_courtyards exploration chunks stay wild (1454 wild, 0 urban cells)
+PASS: service_courtyards walls and props shade the ground around them (790 cells)
+PASS: service_courtyards ground presentation consumes no RNG
+PASS: service_courtyards repeated presentation reproduces exact bytes
+PASS: service_courtyards occlusion equals the whole-district reference on every loaded cell, seams included (0 of 10240 cells off, 722 shaded seam cells)
+PASS: service_courtyards household beds on paving all meet their house wall (50 bed cells, 0 free)
+PASS: service_courtyards approach, gate and court carriageways stamp the main-street paving, never the floor index (434 road cells, 0 floor cells)
+DistrictGroundPolicy samples: [{"blockers":243,"chunks":10,"district_cells":2353,"flush_ms":0.307,"occlusion_ms":0.808,"presentation_ms":2.239,"seed":1,"segment":2,"slots":[6,7,4,2,0,3,8],"theme":"service_courtyards","wild_cells":828,"wild_margin_cells_in_district":361},{"blockers":227,"chunks":10,"district_cells":2724,"flush_ms":0.52,"occlusion_ms":1.05,"presentation_ms":3.455,"seed":1,"segment":3,"slots":[6,0,7,2,4,3,8],"theme":"checkpoint_lanes","wild_cells":922,"wild_margin_cells_in_district":463},{"blockers":214,"chunks":10,"district_cells":2565,"flush_ms":0.276,"occlusion_ms":2.069,"presentation_ms":8.043,"seed":2,"segment":4,"slots":[6,7,4,2,3,0,8],"theme":"collapsed_ward","wild_cells":588,"wild_margin_cells_in_district":333},{"blockers":210,"chunks":10,"district_cells":2752,"flush_ms":1.693,"occlusion_ms":0.955,"presentation_ms":2.591,"seed":1,"segment":4,"slots":[6,7,4,2,3,10,8],"theme":"civilian_cutthrough","wild_cells":851,"wild_margin_cells_in_district":204},{"blockers":227,"chunks":10,"district_cells":2952,"flush_ms":0.262,"occlusion_ms":0.989,"presentation_ms":1.981,"seed":1,"segment":5,"slots":[6,7,4,2,0,3,8],"theme":"inner_district_gate","wild_cells":1127,"wild_margin_cells_in_district":226},{"blockers":231,"chunks":10,"district_cells":2897,"flush_ms":0.331,"occlusion_ms":2.475,"presentation_ms":1.62,"seed":1,"segment":6,"slots":[6,7,4,2,3,1,8],"theme":"industrial_cutthrough","wild_cells":756,"wild_margin_cells_in_district":306},{"blockers":218,"chunks":10,"district_cells":2342,"flush_ms":0.266,"occlusion_ms":1.422,"presentation_ms":2.288,"seed":2,"segment":6,"slots":[6,1,7,2,4,3,8],"theme":"ruined_services","wild_cells":987,"wild_margin_cells_in_district":467},{"blockers":249,"chunks":10,"district_cells":3070,"flush_ms":0.252,"occlusion_ms":0.747,"presentation_ms":1.927,"seed":2,"segment":7,"slots":[6,7,4,2,3,12,8],"theme":"underpass_veins","wild_cells":1023,"wild_margin_cells_in_district":237},{"blockers":226,"chunks":10,"district_cells":2414,"flush_ms":0.571,"occlusion_ms":0.93,"presentation_ms":1.452,"seed":1,"segment":7,"slots":[6,7,4,2,5,3,8],"theme":"canal_services","wild_cells":785,"wild_margin_cells_in_district":279},{"blockers":245,"chunks":10,"district_cells":2213,"flush_ms":1.515,"occlusion_ms":0.697,"presentation_ms":1.229,"seed":5,"segment":8,"slots":[6,7,4,2,0,3,8],"theme":"rail_yard","wild_cells":655,"wild_margin_cells_in_district":475},{"blockers":203,"chunks":10,"district_cells":2891,"flush_ms":0.254,"occlusion_ms":1.402,"presentation_ms":1.905,"seed":1,"segment":8,"slots":[6,0,7,4,2,3,8],"theme":"military_staging","wild_cells":900,"wild_margin_cells_in_district":356},{"blockers":231,"chunks":10,"district_cells":2539,"flush_ms":0.274,"occlusion_ms":0.849,"presentation_ms":2.27,"seed":1,"segment":9,"slots":[6,7,4,2,11,3,8],"theme":"outer_wall","wild_cells":833,"wild_margin_cells_in_district":402},{"blockers":203,"chunks":10,"district_cells":2790,"flush_ms":150.483,"occlusion_ms":2.18,"presentation_ms":2.267,"seed":3,"segment":9,"slots":[6,7,4,2,3,0,8],"theme":"siege_services","wild_cells":846,"wild_margin_cells_in_district":361},{"blockers":239,"chunks":10,"district_cells":1986,"flush_ms":0.256,"occlusion_ms":0.87,"presentation_ms":2.181,"seed":1,"segment":10,"slots":[6,0,7,4,2,3,8],"theme":"gate_district","wild_cells":472,"wild_margin_cells_in_district":437},{"blockers":214,"chunks":10,"district_cells":2521,"flush_ms":0.289,"occlusion_ms":1.182,"presentation_ms":2.698,"seed":1,"segment":11,"slots":[6,0,7,4,2,3,8],"theme":"service_courtyards","wild_cells":1454,"wild_margin_cells_in_district":333}]
+DistrictGroundPolicyTest: 298 passed, 0 failed

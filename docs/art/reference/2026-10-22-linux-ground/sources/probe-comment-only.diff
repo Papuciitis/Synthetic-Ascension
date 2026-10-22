@@ -1,0 +1,27 @@
+--- measured-probe
++++ merged-probe
+@@ -4,10 +4,11 @@
+ ## district, simulation frozen; then every canvas item except the ground splat
+ ## is hidden and the ground's shared material is switched between shader
+ ## variants at the same camera and the same streamed chunk set. Each variant
+-## is warmed up (first-use compile excluded), then timed as frame throughput
+-## with vsync off and no frame cap: nothing is read back (no get_image), so
+-## the GPU-bound frame period is the ground's cost plus a constant floor,
+-## which the "none" variant (ground hidden) measures. Variants are
++## is warmed up (first-use compile excluded), then sampled with vsync off.
++## The default has no frame cap; --sample-fps adds a cap and makes frame
++## periods cadence measurements, not shader cost. Use valid viewport GPU
++## timestamps for capped comparisons. Nothing is read back (no get_image).
++## The "none" variant (ground hidden) measures the render floor. Variants are
+ ## interleaved in rounds so drift and heat spread over all of them; the
+ ## median of the per-round medians is reported. Where the driver supports it,
+ ## Godot's own viewport GPU timer is reported beside the frame period.
+@@ -68,7 +69,7 @@
+ 			for item: String in arg.trim_prefix("--variants=").split(",", false):
+ 				var eq := item.find("=")
+ 				_variant_specs.append({"name": item if eq < 0 else item.substr(0, eq), "path": "" if eq < 0 else item.substr(eq + 1)})
+-	# Limit setup/streaming load on the laptop; sampling stays uncapped.
++	# Limit setup load; sampling uses the requested cap (0 stays uncapped).
+ 	if _cooldown_seconds > 0.0:
+ 		Engine.max_fps = 30
+ 	if _variant_specs.is_empty():

@@ -1,0 +1,53 @@
+{
+  "kind": "selected final survey evidence",
+  "git_head": "f127d9496c08d127a2e355dbd769b85f190d11e2",
+  "survey": "survey.json",
+  "world_seed": 16102026,
+  "theme_id": "underpass_veins",
+  "route1_world": [
+    7168.0,
+    11264.0
+  ],
+  "launch_metadata": "../../../runs/final-surveys/ground22-final-s7a/run-results.json",
+  "scoped_before": "../../../sources/merged-after-cache.json",
+  "scoped_after": "../../../sources/merged-final-after.json",
+  "import_closure_before": "../../../sources/merged-after-cache-addendum.json",
+  "import_closure_after": "../../../sources/merged-final-after-cache-addendum.json",
+  "produced_pngs_sha256": {
+    "kit1-seg7-play.png": "edc79efae5e57cf9567ee9f204a2de71dfe92605133fc9c48fba25b10b80abd8",
+    "kit2-seg7-play.png": "5f18bfd57f913e907e3c831a1a552e8fd12a2e0a5bbf37e95047fbbd4410c522",
+    "route1-seg7-overview.png": "63890997628d043009b596f600ac7a91f05bdf000fa3b054be4c647def63a568",
+    "route1-seg7-play.png": "b89d1dd5ae505ac47ff7be13be96d33fab1bf35823ee971c152931923e3d2d07",
+    "route2-seg7-overview.png": "05ecffb99de54dbdd1b4424d884fca3a9ed31be2f58a2d2af13b43e25f9a9b14",
+    "route2-seg7-play.png": "762bc231859e13e984d59247d66882c370801e114e12e7a35db189a3ff414de7",
+    "start-seg7-overview.png": "5198481057252e6f57e21809806bbcc2d4da3f34827fa826c430c6fe36aa7c9a",
+    "start-seg7-play.png": "b0799132b30d8fd4bc18db19c279b90e81517f106da8601a37febfb0c61799b1"
+  },
+  "selected_pngs": {
+    "route1-seg7-play.png": {
+      "sha256": "b89d1dd5ae505ac47ff7be13be96d33fab1bf35823ee971c152931923e3d2d07",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    "route1-seg7-overview.png": {
+      "sha256": "63890997628d043009b596f600ac7a91f05bdf000fa3b054be4c647def63a568",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    "kit2-seg7-play.png": {
+      "sha256": "5f18bfd57f913e907e3c831a1a552e8fd12a2e0a5bbf37e95047fbbd4410c522",
+      "dimensions": [
+        1280,
+        720
+      ]
+    }
+  },
+  "limits": [
+    "Only selected PNGs are packaged; all produced hashes remain recorded.",
+    "Static Game survey, no moving combat/entry/collection claim."
+  ]
+}
