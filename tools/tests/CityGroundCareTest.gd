@@ -5,12 +5,12 @@ extends Node
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const CELL := 64
-## Whole-chunk material histogram of the bed home's chunk with the street
-## continuity pass on (pass off keeps the native-trial {0:716,2:125,4:177,7:6}).
-## Measured 2026-10-21 with the bounded infill (24-cell walls, 2+1 open seam
-## cells, 4-deep door aprons) and its setback steps; the home's own care
-## (15 cared cells, 9 strong) is identical with the pass on and off.
-const BED_CONTINUITY_HISTOGRAM := {0:546,2:114,3:151,4:207,7:6}
+## Whole-chunk material histogram measured 22 October 2026 after city aprons
+## were fitted to their actual doorway cores and recessed thresholds. With
+## continuity off the measured pin is {0:719,2:130,4:169,7:6}; bounded infill
+## and setback steps produce the continuity-on pin below. Both modes retain
+## six road-index-7 cells and the home's own 15 cared cells / 9 strong cells.
+const BED_CONTINUITY_HISTOGRAM := {0:562,2:124,3:151,4:181,7:6}
 var _passed := 0
 var _failed := 0
 
@@ -222,7 +222,7 @@ func _test_production_footway_pockets() -> void:
 				if care >= 0.7: strong += 1
 		if int(sample.id) == 944996572:
 			if not bool(sample.continuity):
-				_check(counts == {0:716,2:125,4:177,7:6},"the bed fixture retains road index 7 with street continuity disabled")
+				_check(counts == {0:719,2:130,4:169,7:6},"the bed fixture retains road index 7 with street continuity disabled")
 			else:
 				# Infill/aprons change ownership; keep the street fixture pinned.
 				print("Production care fixture (street continuity) histogram: ", counts)

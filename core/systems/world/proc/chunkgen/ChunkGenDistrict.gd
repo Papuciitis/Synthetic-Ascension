@@ -335,9 +335,10 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				"district_family": gen.district_family,
 				"district_common_base_preview": gen.district_common_base_preview,
 				"city_block_style": preload("res://scenes/world/buildings/CityBlockKit.gd").enabled_for(role, Global.attempt_segment),
-				# Composed paving belongs only to the accepted S2 prototype block.
-				# Later districts retain their terrain and semantic route materials.
-				"city_shared_ground": role != &"secondary_reward_building" or Global.attempt_segment != 2,
+				# Generated reward streets share the same semantic ground and
+				# fitted door approaches as other streets; the standalone kit's
+				# parcel surround must not replace their yards and carriageway.
+				"city_shared_ground": true,
 				"complete_service_frontage": Global.attempt_segment == 2 and role == &"service_lane",
 				"force_parcel": forced_reward_building,
 				"frontage_target": (0.92 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.84),
