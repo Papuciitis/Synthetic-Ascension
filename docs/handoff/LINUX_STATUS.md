@@ -57,6 +57,20 @@ Loaded-neighbor AO is checked on activation/rebuild; unloading does not repaint
 a retained edge until the next activation, so unload-invariant AO is not claimed.
 
 
+### Publication attempt
+
+Evidence commit: `750531027fefc47e98a300a5602f4ffdb2e49c2b`. Publishing
+`codex/linux-world-production` on 22 October failed with
+`fatal: could not read Username for 'https://github.com': terminal prompts disabled`.
+The implementation and packet are committed locally. This later status commit
+records the failure; no other branch was pushed and no credentials were changed.
+Publish the latest local tip from an authenticated terminal:
+
+```bash
+git push -u origin codex/linux-world-production
+```
+
+
 ## 22 October — Claude handoff audit and continuation queue (before ground integration)
 
 Audited production `d4654ac46da1b698d638ae640175c9153e9a5857` and the parked
