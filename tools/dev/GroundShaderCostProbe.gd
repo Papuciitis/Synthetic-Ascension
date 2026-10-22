@@ -136,7 +136,7 @@ func _run() -> void:
 			var route: Array = plan.get("main_route", [])
 			var index := clampi(int(name.trim_prefix("route")), 1, 8)
 			if route.size() >= 2:
-				var at := int(round(float(route.size() - 1) * float(index) / float(3)))
+				var at := clampi(int(round(float(route.size() - 1) * float(index) / 3.0)), 0, route.size() - 1)
 				cameras.append({"name": name, "world": (Vector2(route[at]) + Vector2.ONE * 0.5) * _chunks.chunk_size_px, "chunk": str(route[at])})
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	Engine.max_fps = 0

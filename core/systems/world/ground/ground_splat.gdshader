@@ -313,9 +313,9 @@ void fragment() {
 					if (light.b > 0.001) {
 						// A tended bed on the district paving. CityGroundCare lays
 						// it as a strip of cells against the house wall; here it is
-						// cut exactly on those cells (no soft lozenge), planted
-						// inside a margin of dug soil that meets the stone flush,
-						// without a pale rim.
+						// kept within those cells, planted inside a margin of dug
+						// soil. Feather only inward so the bed meets the stone
+						// without a dark rectangular cut or a pale outer rim.
 						ivec2 cell = ivec2(mod(floor(p), map_size));
 						int last = int(map_size) - 1;
 						if (texelFetch(light_map, cell, 0).b > 0.5) {
@@ -328,7 +328,9 @@ void fragment() {
 							vec3 plant = textureGrad(materials, vec3(world_pos / cared_lawn_repeat_px, cared_lawn_layer), ddx / cared_lawn_repeat_px, ddy / cared_lawn_repeat_px).rgb;
 							plant = mix(vec3(0.38, 0.45, 0.28), plant * vec3(1.14, 1.20, 1.02), 0.85);
 							vec3 soil = role_mid[6].rgb * (0.88 + (n.b - 0.5) * 0.10);
-							col = mix(soil, plant, smoothstep(0.11, 0.18, side + (n.a - 0.5) * 0.05));
+							vec3 bed = mix(soil, plant, smoothstep(0.11, 0.18, side + (n.a - 0.5) * 0.05));
+							float feather = smoothstep(0.0, 0.18 + (n.a - 0.5) * 0.08, side);
+							col = mix(col, bed, feather);
 						}
 					}
 				}
