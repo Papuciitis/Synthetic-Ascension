@@ -8,6 +8,7 @@ const VIGIL := preload("res://core/systems/world/objectives/WardVigilObjective.g
 const BREACH := preload("res://core/systems/world/objectives/BreachSealObjective.gd")
 const WAGER := preload("res://core/systems/world/objectives/WagerShrineObjective.gd")
 const VAULT := preload("res://core/systems/world/CursedVault.gd")
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 var _passes := 0
 var _failures := 0
 
@@ -32,6 +33,7 @@ func _run() -> void:
 	_check(is_equal_approx(ward.get_node("CaptureZone/CollisionShape2D").shape.radius, ward.capture_zone_radius), "Wardstone capture geometry remains exact")
 	ward.restore_active()
 	_check(ward.get_node("Obelisk").get("_state") == "complete", "restored Wardstone immediately shows its anchored identity")
+	_check(_casts_with_sun(ward.get_node("Obelisk") as Sprite2D), "Wardstone casts its silhouette southwest from its contact point, as actors do")
 	_check(is_equal_approx(ward.get_node("StabilityField/CollisionShape2D").shape.radius, ward.get_stability_radius()), "sanctuary form retains the real modified field geometry")
 	var rite := RITE.instantiate()
 	add_child(rite)
@@ -56,6 +58,8 @@ func _run() -> void:
 			_check(sprite != null and sprite.texture != null, "objective identity has a texture")
 			if sprite != null and sprite.texture != null:
 				identities[sprite.texture.resource_path] = true
+				var ground := bool(sprite.get("_ground"))
+				_check(_casts_with_sun(sprite) != ground and (sprite.get_node_or_null("CastShadow") == null) == ground, "%s: an upright form casts with the sun, a ground form casts nothing" % script.resource_path.get_file())
 				if objective.has_method("finish"):
 					if script == BREACH:
 						objective.set("_sealed", PackedByteArray([1, 1, 1]))
@@ -83,3 +87,10 @@ func _run() -> void:
 	await get_tree().process_frame
 	print("ObjectivePresentationTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures else 0)
+
+## Upright forms share the actors' sun cast: the same texture and anchor,
+## projected from the contact point, on the actor shadow layer.
+func _casts_with_sun(sprite: Sprite2D) -> bool:
+	var cast := sprite.get_node_or_null("CastShadow") as Sprite2D
+	return cast != null and cast.texture == sprite.texture and cast.offset == sprite.offset \
+		and cast.transform.is_equal_approx(DEPTH.projection_at(Vector2.ZERO)) and not cast.z_as_relative and cast.z_index == DEPTH.SHADOW_Z
