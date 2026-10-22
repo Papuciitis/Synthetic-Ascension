@@ -144,18 +144,26 @@ static func draw_run(group: Node2D, wall: ShaderMaterial, stains: Array[Dictiona
 		var area: Rect2 = spec.area
 		var piece := Polygon2D.new()
 		piece.name = "FacadeWeathering"
-		# A unit square scaled to its area: VERTEX is the mask coordinate.
-		piece.polygon = PackedVector2Array([Vector2.ZERO, Vector2.RIGHT, Vector2.ONE, Vector2.DOWN])
-		piece.position = area.position
-		piece.scale = area.size
+		# Keep the wall cut and its replacement in the same transform domain.
+		# Fractional sill positions belong in polygon vertices: a separate item
+		# origin would be rounded independently by 2D transform snapping.
+		var corners := PackedVector2Array([Vector2.ZERO, Vector2.RIGHT, Vector2.ONE, Vector2.DOWN])
+		var polygon := PackedVector2Array()
+		for corner: Vector2 in corners:
+			polygon.append(area.position + corner * area.size)
+		piece.polygon = polygon
 		piece.color = light
 		# A 1x1 texture keeps polygon UVs unnormalised (as the wall field).
 		piece.texture = _white_texture()
 		var strength := clampf(float(spec.strength), 0.0, 0.99)
 		var uv := PackedVector2Array()
-		for corner: Vector2 in piece.polygon:
-			var y := area.position.y + corner.y * area.size.y
-			uv.append(Vector2(field_h + strength, (y - field.position.y) / field_h))
+		# Encode mask corners alongside the existing wall-height/strength UVs.
+		# The shader decodes these at vertices, before interpolation. This keeps
+		# one shared material per wall/tint rather than a bounds uniform per piece.
+		for index: int in corners.size():
+			var corner: Vector2 = corners[index]
+			var wall_y := (polygon[index].y - field.position.y) / field_h
+			uv.append(Vector2(2.0 * field_h + corner.x + strength, wall_y + 2.0 * corner.y))
 		piece.uv = uv
 		piece.material = _stain_material(wall, spec.tint as Color)
 		piece.set_meta(META, spec.kind)

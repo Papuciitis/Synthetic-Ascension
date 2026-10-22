@@ -141,6 +141,10 @@ func _check_kit(kit: Node2D, family: StringName, usage: StringName) -> Array:
 		# group's cutaway alpha is the only translucency, as for the field and modules.
 		_check(is_equal_approx(stain.color.a, 1.0) and is_equal_approx(stain.modulate.a, 1.0) and is_equal_approx(stain.self_modulate.a, 1.0) and stain.material is ShaderMaterial and (stain.material as ShaderMaterial).shader == WEATHERING.STAIN_SHADER, "%s %s: a stain is an opaque wall piece drawn through the stain wall shader" % [family, usage])
 		_check(area.is_equal_approx(stain.get_meta(&"facade_weathering_rect")), "%s %s: the stain piece covers exactly its planned area" % [family, usage])
+		# Same transform domain as the field's cut: a separate fractional item
+		# origin would snap to the pixel on its own and open a seam in the fade.
+		_check(stain.transform == Transform2D.IDENTITY, "%s %s: a stain keeps its vertices in the field's own transform domain" % [family, usage])
+		_check(_decodes(stain, area, fields), "%s %s: the stain's packed UVs decode to mask corners, field height and field Y" % [family, usage])
 		var strength := fmod(stain.uv[0].x, 1.0)
 		_check(strength > 0.0 and strength <= float(profile.runoff) + 0.001, "%s %s: the stain's strength stays within its district's runoff" % [family, usage])
 		for field: Polygon2D in fields:
@@ -157,6 +161,22 @@ func _check_kit(kit: Node2D, family: StringName, usage: StringName) -> Array:
 			if blocker.is_equal_approx(source): continue
 			_check(blocker.intersection(area).get_area() <= 0.5, "%s %s: a stain never covers another module" % [family, usage])
 	return signature
+
+
+## Decodes facade_stain.gdshader's vertex packing: UV.x = 2 * field height +
+## mask corner x + strength, UV.y = field Y + 2 * mask corner y.
+func _decodes(stain: Polygon2D, area: Rect2, fields: Array[Polygon2D]) -> bool:
+	if fields.is_empty() or stain.polygon.size() != 4 or stain.uv.size() != 4: return false
+	var field: Rect2 = fields[0].get_meta(&"facade_wall_field")
+	var height := roundf(field.size.y - COMPOSER.PLINTH_PX)
+	for index in 4:
+		var packed: Vector2 = stain.uv[index]
+		var point: Vector2 = stain.polygon[index]
+		var corner := Vector2(fposmod(floorf(packed.x), 2.0), floorf(packed.y * 0.5))
+		if not corner.is_equal_approx((point - area.position) / area.size): return false
+		if not is_equal_approx(floorf(floorf(packed.x) * 0.5), height): return false
+		if absf(fposmod(packed.y, 2.0) - (point.y - field.position.y) / height) > 0.00001: return false
+	return true
 
 
 func _module_kind(modules: Array[Polygon2D], source: Rect2) -> StringName:
