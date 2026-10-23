@@ -45,6 +45,8 @@ const FONT_SIZE := 15.0
 ## Shaped line box. Wide enough that a long callout ("THE DISTRICT SHIFTS -
 ## ...") stays centred and whole: at 200 px TextLine's default ellipsis cut it.
 const LINE_WIDTH := 480.0
+## Popups stay this far inside the visible screen edge.
+const SCREEN_MARGIN := 8.0
 
 ## Callouts sit this far above the point they were raised at.
 const CALLOUT_RAISE := Vector2(0.0, -34.0)
@@ -648,6 +650,7 @@ func _draw() -> void:
 		RenderingServer.canvas_item_set_material(entry, _cover_material.get_rid())
 		RenderingServer.canvas_item_set_default_texture_filter(entry, RenderingServer.CANVAS_ITEM_TEXTURE_FILTER_LINEAR)
 		_entry_canvases.append(entry)
+	var view := _visible_rect()
 	for i in range(_count):
 		var canvas := _entry_canvases[i]
 		var origin := Vector2(_positions[i].x, _feet_y[i])
@@ -673,16 +676,22 @@ func _draw() -> void:
 			# In a column the pop grows DOWN from the line's top edge rather
 			# than up into the line it just pushed, which is still easing away.
 			rise -= (float(font_size) - FONT_SIZE * _scales[i]) * LINE_ASCENT_EM
-		var draw_pos := _positions[i] - origin + Vector2(-LINE_WIDTH * 0.5, -rise)
 		var color := _colors[i]
 		color.a = alpha
 		var outline := Color(0.05, 0.05, 0.08, alpha * 0.9)
 		var line := _shaped_line(i, font_size)
+		var draw_pos := _positions[i] - origin + Vector2(-line.width * 0.5, -rise)
 		var icon_count := _icon_count(i)
+		var row_width := 0.0
+		if icon_count > 0:
+			row_width = ICON_SIZE * _scales[i] * icon_count + ICON_SEPARATION * (icon_count - 1)
+		# Popups follow world positions (the player's callout column can sit
+		# near an edge under camera smoothing): shift the whole line on screen.
+		var shift := _on_screen_shift(_positions[i].x, line.get_line_width() + (row_width + ICON_TEXT_GAP if icon_count > 0 else 0.0), view)
+		draw_pos.x += shift
 		if icon_count > 0:
 			var icon_size := ICON_SIZE * _scales[i]
-			var row_width := icon_size * icon_count + ICON_SEPARATION * (icon_count - 1)
-			var badge_x := _positions[i].x - origin.x - (line.get_line_width() + ICON_TEXT_GAP + row_width) * 0.5
+			var badge_x := _positions[i].x - origin.x + shift - (line.get_line_width() + ICON_TEXT_GAP + row_width) * 0.5
 			var badge_y := badge_baseline.y - FONT_SIZE * _scales[i] * 0.28 - icon_size * 0.5
 			for id: StringName in _icon_ids[i]:
 				var art := StatusIcons.texture(id)
@@ -698,7 +707,7 @@ func _draw() -> void:
 		if _modifier_ids[i].is_empty():
 			line.draw(canvas, line_pos, color)
 		else:
-			var segment_pos := line_pos + Vector2((LINE_WIDTH - line.get_line_width()) * 0.5, 0.0)
+			var segment_pos := line_pos + Vector2((line.width - line.get_line_width()) * 0.5, 0.0)
 			var segments := _shaped_modifier_lines(i, font_size)
 			for segment in range(_modifier_ids[i].size() * 2 - 1):
 				var segment_line: TextLine = segments[segment]
@@ -722,10 +731,33 @@ func _shaped_line(slot: int, font_size: int) -> TextLine:
 	else:
 		line.clear()
 	line.add_string(_texts[slot], _font if face == 0 else _callout_font, font_size)
+	# A line longer than the box keeps its centre: the box grows to fit it.
+	line.width = maxf(LINE_WIDTH, line.get_line_width())
 	_line_texts[slot] = _texts[slot]
 	_line_sizes[slot] = font_size
 	_line_faces[slot] = face
 	return line
+
+
+## The camera's view in this node's space, for keeping popups on screen.
+func _visible_rect() -> Rect2:
+	var viewport := get_viewport()
+	if viewport == null:
+		return Rect2(-1e9, -1e9, 2e9, 2e9)
+	var to_local := (viewport.get_canvas_transform() * get_global_transform()).affine_inverse()
+	var screen := viewport.get_visible_rect()
+	return Rect2(to_local * screen.position, Vector2.ZERO).expand(to_local * screen.end)
+
+
+## How far a line `width` wide centred on `center_x` must move to sit inside
+## `view` with a small margin (left-aligned when it is wider than the view).
+static func _on_screen_shift(center_x: float, width: float, view: Rect2) -> float:
+	var left := view.position.x + SCREEN_MARGIN
+	var right := view.end.x - SCREEN_MARGIN
+	var start := center_x - width * 0.5
+	if width >= right - left:
+		return left - start
+	return clampf(start, left, right - width) - start
 
 
 func _shaped_modifier_lines(slot: int, font_size: int) -> Array:
