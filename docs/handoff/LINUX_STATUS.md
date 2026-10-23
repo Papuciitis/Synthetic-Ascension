@@ -3,7 +3,7 @@
 Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
-## 23 October — plaza upkeep integrated; remaining checks continue
+## 23 October — plaza upkeep and district weathering integrated
 
 Normal-merged plaza candidate `0c92f28f` at `715439be`. Combined renderer
 `3f9d6ff4` retains the checked prop casts and resolves plaza fills through their
@@ -41,7 +41,10 @@ review agree this is a bounded improvement: the tiny ring still blends into
 foliage, so equipment discoverability remains open. Potions and actors read
 more readily. The new moving probe and its staging limits are committed.
 
-Claude's final weathering candidate `ecb568f2` has a matching current 32,203/0
+Normal-merged Claude's final weathering candidate `ecb568f2` at `815fdaa9`.
+It adds local damp/runoff/lichen support and restrained district receiver light;
+the selected household, industrial, canal and outer-wall views retain their
+masonry and roof forms. It has a matching current 32,203/0
 owner check and eight clean before/after survey receipts. Selected frontage
 views are accepted; S2/S6/S7 after captures contain final tuned bytes at a dirty
 precommit HEAD, while S9 is clean at the final commit. Actual S6/S7 seeds are
@@ -51,15 +54,27 @@ visibility gate. Source-backed observation fixes subsequently passed both
 parsers and the native smoke. Full S2/S6 pairs are checked; the full queue
 stopped at S7 because a hidden, disabled player's settled position differed by
 0.42 pixels while all visible geometry, opacity, camera and dimensions matched.
-The strict failed queue is preserved. A narrowly scoped comparison and resume
-of only the ten missing native cases is under review; no complete cost verdict
-or whole-Game performance claim is available. Four candidate-only untracked source-SVG
+The strict failed queue is preserved. The separately reviewed continuation
+completed only the ten missing native cases, all exit 0 with no diagnostics
+and 360 positive GPU samples each. All eight static pairs are checked; only
+S7-960 uses the source-backed hidden-player comparison correction. Round GPU
+median deltas vary in sign, with S9-960 consistently 0.708–1.041 ms higher.
+These mixed-window, capped static observations establish neither an isolated
+added cost nor a live-Game frame budget. Four candidate-only untracked source-SVG
 import sidecars are preserved outside that checkout for matching test inputs.
 The timing window is closed. The [cover evidence packet](../art/reference/2026-10-22-linux-cover/README.md)
 preserves the accepted bounded home/tree results, exact remaining readability
 limits, qualified cost observations and original failed attempts. Combined
 production import, route and settings checks, remaining evidence and branch
 publication are pending.
+
+Fresh street collection verification observes ordinary duplicate feeding into
+a retained matching item, in addition to direct inventory ownership. The first
+S2 failure stays failed; the new helper changes observation only. Its source
+review and 26 receipt fixtures are clean. A fresh parser plus S2/S7/S6 physical
+routes are now queued, with all original movement, AI, entry/exit and stream
+gates retained. Broad ground/plaza topology and tiny equipment discoverability
+remain open.
 
 ## 23 October — cover and prop shadows integrated; city continuation active
 
