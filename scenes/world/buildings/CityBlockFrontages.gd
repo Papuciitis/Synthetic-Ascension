@@ -22,6 +22,10 @@ const PIPE_SHARE := 0.6
 const PIPE_IRON := Color(0.17, 0.20, 0.21)
 const PIPE_LIT := Color(0.52, 0.57, 0.56)
 const SALT_PIPE := 0x91FE
+## A composed house's side and rear doorways: masonry jambs, a paved
+## landing and a dark soffit instead of flat sage panels.
+const DOOR_SOFFIT := Color(0.16, 0.17, 0.18)
+const LANDING_TINT := Color(0.78, 0.76, 0.72)
 
 static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVector2Array, lantern_texture: Texture2D = null, portal_masonry: Texture2D = null) -> void:
 	var group := Node2D.new()
@@ -147,20 +151,22 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 		_panel(entry,gap.grow(-6),Color(0.12,0.19,0.20,0.38))
 		if dir.x != 0:
 			var x := gap.end.x-12 if dir.x > 0 else gap.position.x+12
-			_panel(entry,Rect2(x-9,gap.position.y+4,18,12),Color("9ca28f"))
-			_panel(entry,Rect2(x-9,gap.end.y-16,18,12),Color("768174"))
+			_jamb(entry,kit,composed,Rect2(x-9,gap.position.y+4,18,12),Color("9ca28f"),RETURN_LIT)
+			_jamb(entry,kit,composed,Rect2(x-9,gap.end.y-16,18,12),Color("768174"),RETURN_SHADE)
 			_panel(entry,Rect2(gap.position.x+8,gap.position.y+16,6,gap.size.y-32),Color(0.15,0.22,0.23,0.5))
 			if finish != null:
 				for y: float in [gap.position.y-18,gap.end.y-8]:
 					var pier := _panel(entry,Rect2(x-15,y,30,26),Color.WHITE)
 					_masonry(pier,finish,Rect2(finish.get_size()*Vector2(0.391,0.29),finish.get_size()*Vector2(0.034,0.18)))
-				var landing := _panel(entry,Rect2(gap.position.x+5,gap.position.y+8,gap.size.x-10,gap.size.y-16),Color("8f9989"))
+				var landing_rect := Rect2(gap.position.x+5,gap.position.y+8,gap.size.x-10,gap.size.y-16)
+				var landing := _panel(entry,landing_rect,Color("8f9989"))
+				if composed: _paving(landing,landing_rect)
 				landing.z_index = -1
 		else:
 			var y := gap.position.y+12 if dir.y < 0 else gap.end.y-16
-			_panel(entry,Rect2(gap.position.x+4,y,12,20),Color("818c7d"))
-			_panel(entry,Rect2(gap.end.x-16,y,12,20),Color("a3a692"))
-			_panel(entry,Rect2(gap.position.x+16,y-4,gap.size.x-32,7),Color("53625d"))
+			_jamb(entry,kit,composed,Rect2(gap.position.x+4,y,12,20),Color("818c7d"),RETURN_SHADE)
+			_jamb(entry,kit,composed,Rect2(gap.end.x-16,y,12,20),Color("a3a692"),RETURN_LIT)
+			_panel(entry,Rect2(gap.position.x+16,y-4,gap.size.x-32,7),DOOR_SOFFIT if composed else Color("53625d"))
 		if bool(kit.get("civic")) and lantern_texture != null:
 			var lantern := Sprite2D.new()
 			lantern.name = "CardinalEntryLantern"
@@ -412,19 +418,9 @@ static func _masonry_return(group: Node2D, kit: Node2D, rect: Rect2, west: bool,
 		var top := maxf(rect.position.y, pipe_from)
 		pipe = Rect2(rect.position.x + 1.0 if west else rect.end.x - 1.0 - PIPE_PX, top, PIPE_PX, rect.end.y - top)
 		pieces = COMPOSER.subtract_rect(rect, pipe)
-	var material := COMPOSER._family_material(COMPOSER.family_for(kit), false)
 	for piece: Rect2 in pieces:
-		var face := _panel(group, piece, RETURN_SHADE if west else RETURN_LIT)
-		if face == null: continue
-		face.name = "WallReturn"
-		face.material = material
-		# A 1x1 texture keeps the UVs unnormalised, as the composer's field:
-		# UV.y the 0..1 height, UV.x the height in px (for the foot damp).
-		face.texture = COMPOSER._white_texture()
-		var uv := PackedVector2Array()
-		for point: Vector2 in face.polygon:
-			uv.append(Vector2(rect.size.y, (point.y - rect.position.y) / rect.size.y))
-		face.uv = uv
+		var face := _masonry_face(group, kit, piece, RETURN_SHADE if west else RETURN_LIT, rect)
+		if face != null: face.name = "WallReturn"
 	if pipe.has_area():
 		# Iron, lit along its east edge by the top-right sun.
 		var lit := 1.5
@@ -434,6 +430,34 @@ static func _masonry_return(group: Node2D, kit: Node2D, rect: Rect2, west: bool,
 			if part != null:
 				part.name = "WallDownpipe"
 				part.set_meta(&"city_downpipe", true)
+
+## A wall-family masonry face (the composer's wall shader, world-anchored,
+## base shade and foot damp over `field`'s height) under `light`.
+static func _masonry_face(parent: Node2D, kit: Node2D, rect: Rect2, light: Color, field: Rect2 = Rect2()) -> Polygon2D:
+	var face := _panel(parent, rect, light)
+	if face == null: return null
+	if not field.has_area(): field = rect
+	face.material = COMPOSER._family_material(COMPOSER.family_for(kit), false)
+	# A 1x1 texture keeps the UVs unnormalised, as the composer's field:
+	# UV.y the 0..1 height, UV.x the height in px (for the foot damp).
+	face.texture = COMPOSER._white_texture()
+	var uv := PackedVector2Array()
+	for point: Vector2 in face.polygon:
+		uv.append(Vector2(field.size.y, (point.y - field.position.y) / field.size.y))
+	face.uv = uv
+	return face
+
+## A doorway jamb: masonry on a composed house, the old flat panel otherwise.
+static func _jamb(parent: Node2D, kit: Node2D, composed: bool, rect: Rect2, flat: Color, light: Color) -> Polygon2D:
+	return _masonry_face(parent, kit, rect, light) if composed else _panel(parent, rect, flat)
+
+## A doorway landing in the city's flag paving.
+static func _paving(shape: Polygon2D, rect: Rect2) -> void:
+	var paving := load("res://assets/world/city_block/paving.png") as Texture2D
+	if paving == null: return
+	_masonry(shape, paving, Rect2(rect.position * 2.0, rect.size * 2.0))
+	shape.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	shape.color = LANDING_TINT
 
 static func _panel(parent: Node2D, rect: Rect2, color: Color) -> Polygon2D:
 	if not rect.has_area(): return null
