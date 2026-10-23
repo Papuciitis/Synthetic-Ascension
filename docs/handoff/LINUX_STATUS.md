@@ -16,16 +16,27 @@ exit 0 and zero diagnostics. Root visually accepted their original images.
 These views do not establish live combat, performance or a redesign of broad
 formal plaza paving; that larger visual issue remains open.
 
-Street continuity remains held at nine of fourteen themes, pending the full
-matrix and physical traversal/entry/collection checks. The pickup-only covered
-alpha candidate passes the unchanged native 33/0 predicates after a clean
-three-script parse; its new live tree capture and readability review are still
-pending. Claude's final weathering candidate `ecb568f2` has a matching current
-32,203/0 owner check and four completed before/after surveys. Root has viewed
-the selected frontage pairs; independent receipt review and matched scenery
-cost checks precede integration. The timing window remains closed until the
-remaining root native capture finishes. Combined-production import, route and
-settings checks, compact evidence and publication remain pending.
+Street continuity has checked ten of fourteen themes; remaining parts are
+running before the original aggregate conditions and physical routes. Normal
+merged pickup density candidate `67d6b259` at `8e779847`: covered icons keep
+their authored texture/lock/fade factors with denser alpha. The unchanged native
+33/0 checks, scoped parser and actual live tree capture finish cleanly. Matched
+camera/owner comparison now passes, with live AI and physics. Root and independent
+review agree this is a bounded improvement: the tiny ring still blends into
+foliage, so equipment discoverability remains open. Potions and actors read
+more readily. The new moving probe and its staging limits are committed.
+
+Claude's final weathering candidate `ecb568f2` has a matching current 32,203/0
+owner check and eight clean before/after survey receipts. Selected frontage
+views are accepted; S2/S6/S7 after captures contain final tuned bytes at a dirty
+precommit HEAD, while S9 is clean at the final commit. Actual S6/S7 seeds are
+16102028. The first comparative-cost smoke stopped on baseline helper errors
+before sampling: an editor-only global renderer query and failed full exterior
+visibility gate. No performance conclusion is available; helper diagnosis is
+separate from the unmerged runtime. Four candidate-only untracked source-SVG
+import sidecars are preserved outside that checkout for matching test inputs.
+The timing window is closed. Combined-production import, route and settings
+checks, compact evidence and publication remain pending.
 
 ## 23 October — cover and prop shadows integrated; city continuation active
 
