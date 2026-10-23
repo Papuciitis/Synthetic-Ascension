@@ -465,6 +465,7 @@ static func _plan_edge_wear(plaza: Dictionary, data: ChunkBuildData, clear: Dict
 	for k in spec.size():
 		var entry: Array = spec[k]
 		var kind: StringName = entry[0]
+		@warning_ignore("integer_division")
 		var wanted := clampi(edge.size() / int(entry[1]), int(entry[2]), int(entry[3]))
 		var placed := 0
 		for cell: Vector2i in _shuffled(edge, base_seed, SALT_EDGE_WEAR + k):

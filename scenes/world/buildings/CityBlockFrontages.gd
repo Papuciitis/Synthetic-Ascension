@@ -220,13 +220,13 @@ static func _upright_irregular_portal(parent: Node2D, gap: Rect2, height: float,
 static func _domestic_entry_depth(parent: Node2D, gap: Rect2, opening_top: float, bottom: float, facade: Texture2D, left_jamb: Polygon2D, right_jamb: Polygon2D) -> void:
 	# A shallow lit floor return breaks the tall black rectangle. It remains
 	# floor presentation across the whole carver span, with no new collider.
-	var floor := _panel(parent,Rect2(gap.position.x,bottom-44,gap.size.x,34),Color.WHITE)
-	floor.name = "DomesticEntryFloor"
+	var entry_floor := _panel(parent,Rect2(gap.position.x,bottom-44,gap.size.x,34),Color.WHITE)
+	entry_floor.name = "DomesticEntryFloor"
 	var paving := load("res://assets/world/city_block/paving.png") as Texture2D
 	if paving != null:
-		_masonry(floor,paving,Rect2(Vector2(gap.position.x,bottom-44)*2.0,Vector2(gap.size.x,34)*2.0))
-		floor.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-		floor.color = Color("aab29d")
+		_masonry(entry_floor,paving,Rect2(Vector2(gap.position.x,bottom-44)*2.0,Vector2(gap.size.x,34)*2.0))
+		entry_floor.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+		entry_floor.color = Color("aab29d")
 	if facade == null: return
 	var wing_top := opening_top+8.0
 	var wing_height := bottom-12.0-wing_top
