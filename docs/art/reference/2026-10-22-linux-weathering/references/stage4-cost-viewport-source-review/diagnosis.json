@@ -1,0 +1,82 @@
+{
+  "created_utc": "2026-10-23T00:42:44.760830+00:00",
+  "scope": "Independent source-only diagnosis; no engines/Git/runtime/helper edits",
+  "actual_diagnostic": {
+    "path": "/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json",
+    "sha256": "eac1b40b67e5e2c76f7f028e492d205a22d6cd5c11c16c7fe0a99236f5a4d104",
+    "pre_post_state_equal": true,
+    "sole_issue": [
+      {
+        "classification": "non_drawable_or_degenerate_plane",
+        "color_alpha": 1.0,
+        "form": "",
+        "inherited_alpha": 1.0,
+        "parent_kind": "DungeonServiceCap",
+        "partition": "",
+        "polygon_vertices": 0,
+        "reason": "roof_shader_plane_has_fewer_than_three_vertices",
+        "roof": "roof:e62ac42de7f5892c4ae69f9dc82878672b0e6c1d69ce632827b1241e5e86457a",
+        "visible": true
+      }
+    ],
+    "roof_count": 54,
+    "drawable_roof_planes": 149,
+    "facades": 45,
+    "in_view": [
+      9,
+      3
+    ],
+    "scenery_visibility_equal": true,
+    "actual_window": "(960, 540)",
+    "reported_texture_size": "(480.0, 270.0)",
+    "world_bounds": "[P: (-544.0, -644.0), S: (1920.0, 1080.0)]",
+    "sampling_started": false,
+    "rounds": [],
+    "failures": 1
+  },
+  "project_source_hashes": {
+    "/tmp/sa-wp2-evidence/scenes/world/buildings/DungeonBuilding.gd": "ac5172006c8c8ed1f180118311660942375d5136651d93f3c203761d0d776c35",
+    "/tmp/sa-wp2-evidence/scenes/world/buildings/DungeonRoof.gd": "df4255f12352d273112f848056fa49a82f525349adae8ba7cc3a583ac2480c03",
+    "/tmp/sa-wp2-evidence/tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+    ".superpowers/continuation-20261022/FinalCombinedCityPreview.gd": "bc4c6f43a581f720356abb8407133ec7dd6a8a3a3756c6bdfe84203eb02e5ee0"
+  },
+  "cap_cause": "DungeonBuilding.attach unconditionally creates a DungeonServiceCap for each region slice when region height >=24. DungeonRoof.configure_slice intersects the visible roof with the current shifted chunk clip and portal holes, assigning an empty authoritative host when no pieces remain. It still assigns material and keeps the full-wing occupancy/fade owner. The failed e62ac full-wing key has two roof owners, including another opaque four-vertex drawable slice. This is neither a hidden/faded drawable nor the hypothesized CityRoofComposition empty cap.",
+  "bounded_cap_policy": "Exclude only polygon.is_empty() on the authoritative RoofPoly host of exact DungeonRoof.gd script and dungeon_wing metadata, retaining the geometry-keyed excluded record. Preserve each owner occupancy/alpha/tween gates and every actual drawable opacity/visibility/in-view gate. One/two vertices and unrelated empty hosts/children remain failures. FinalCombined needs the same narrow classification if root approves; no edits made.",
+  "viewport_cause": "The existing viewport_texture_size label represented ViewportTexture.get_size, which for a Window is internal viewport size times stretch scale. Exact engine source has CANVAS_ITEMS allocate screen_size, preserve a logical override, and send unscaled internal size to RenderingServer. Requested960 and logical1920 produce .5 stretch and getter480; this does not establish an undersized native render target. Earlier reviewer warning is refined to a getter-measurement admission bug, not a stage resolution mutation.",
+  "official_sources": {
+    "viewport.cpp": {
+      "url": "https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/scene/main/viewport.cpp",
+      "sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+      "bytes": 200690
+    },
+    "window.cpp": {
+      "url": "https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/scene/main/window.cpp",
+      "sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+      "bytes": 135562
+    }
+  },
+  "official_disk_line_ranges": {
+    "viewport.cpp": [
+      "173-182 getter",
+      "1133-1175 native allocation and stretch",
+      "5160 exposed get_stretch_transform"
+    ],
+    "window.cpp": [
+      "1407-1412 CANVAS_ITEMS",
+      "1428-1433 allocation/screen attachment"
+    ]
+  },
+  "minimal_dimension_contract": [
+    "Preserve camera zoom and logical1920x1080 framing, parent CANVAS_ITEMS and content factor1.0; do not mutate resolution merely to force getter.",
+    "Record native Window.size, DisplayServer.window_get_size(window_id), native/nonembedded identity and all content scale settings. Require both actual window observations equal requested960x540 or1920x1080.",
+    "Record visible logical rectangle and all stretch transform components; require positive pure scale and logical_visible_size * stretch_scale == requested native size, with no skew/rotation/translation.",
+    "Retain raw getter diagnostic; require getter == ceil(requested native size * stretch scale) using exact source semantics. 960 produces480; true1080 produces1920.",
+    "Compare dimension contract observations initial/final and baseline/candidate; retain true1080 fullscreen mode check.",
+    "This is source-backed allocation evidence without framebuffer readback; do not claim direct GPU texture readback."
+  ],
+  "limits": [
+    "Actual diagnostic failed1 with no sampling, so no cost acceptance or performance conclusion.",
+    "No new helper/parser/native execution by this reviewer.",
+    "R3 source proposal still pending independent review at artifact creation."
+  ]
+}

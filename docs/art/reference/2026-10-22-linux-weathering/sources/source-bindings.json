@@ -1,0 +1,1427 @@
+{
+  "final-candidate": {
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "snapshot": "sources/blobs/b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "snapshot": "sources/blobs/ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    }
+  },
+  "seam-green": {
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+      "snapshot": "sources/blobs/d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "snapshot": "sources/blobs/ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "seam-red": {
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+      "snapshot": "sources/blobs/b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41",
+      "snapshot": "sources/blobs/03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "helper-green": {
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "snapshot": "sources/blobs/b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "snapshot": "sources/blobs/ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "helper-red": {
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+      "snapshot": "sources/blobs/b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41",
+      "snapshot": "sources/blobs/03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s2-before": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "snapshot": "sources/blobs/0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "snapshot": "sources/blobs/95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "snapshot": "sources/blobs/4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "snapshot": "sources/blobs/46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "snapshot": "sources/blobs/55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "snapshot": "sources/blobs/4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s2-after": {
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "snapshot": "sources/blobs/b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "snapshot": "sources/blobs/ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s6a-before": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "snapshot": "sources/blobs/0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "snapshot": "sources/blobs/95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "snapshot": "sources/blobs/4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "snapshot": "sources/blobs/46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "snapshot": "sources/blobs/55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "snapshot": "sources/blobs/4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s6a-after": {
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "snapshot": "sources/blobs/b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "snapshot": "sources/blobs/ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s7b-before": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "snapshot": "sources/blobs/0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "snapshot": "sources/blobs/95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "snapshot": "sources/blobs/4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "snapshot": "sources/blobs/46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "snapshot": "sources/blobs/55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "snapshot": "sources/blobs/4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s7b-after": {
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "snapshot": "sources/blobs/b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "snapshot": "sources/blobs/ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s9a-before": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "snapshot": "sources/blobs/0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "snapshot": "sources/blobs/95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "snapshot": "sources/blobs/4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "snapshot": "sources/blobs/46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "snapshot": "sources/blobs/55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "snapshot": "sources/blobs/4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "status": "exact bytes included"
+    }
+  },
+  "view-s9a-after": {
+    "assets/world/weathering/v1/roof_lichen.png": {
+      "recorded_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "snapshot": "sources/blobs/0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/roof_lichen.png.import": {
+      "recorded_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "snapshot": "sources/blobs/6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png": {
+      "recorded_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "snapshot": "sources/blobs/179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/runoff_streaks.png.import": {
+      "recorded_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "snapshot": "sources/blobs/786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png": {
+      "recorded_sha256": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "snapshot": "sources/blobs/b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/vent_soot.png.import": {
+      "recorded_sha256": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "snapshot": "sources/blobs/cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png": {
+      "recorded_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "snapshot": "sources/blobs/f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "status": "exact bytes included"
+    },
+    "assets/world/weathering/v1/wall_base_damp.png.import": {
+      "recorded_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "snapshot": "sources/blobs/829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "snapshot": "sources/blobs/3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "snapshot": "sources/blobs/d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "snapshot": "sources/blobs/46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "snapshot": "sources/blobs/fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "snapshot": "sources/blobs/235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "snapshot": "sources/blobs/b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/CityWeathering.gd": {
+      "recorded_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "snapshot": "sources/blobs/b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": {
+      "recorded_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "snapshot": "sources/blobs/4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": {
+      "recorded_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "snapshot": "sources/blobs/ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/weathering/facade_stain.gdshader": {
+      "recorded_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "snapshot": "sources/blobs/ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.gd": {
+      "recorded_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "snapshot": "sources/blobs/65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": {
+      "recorded_sha256": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "snapshot": "sources/blobs/418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.gd": {
+      "recorded_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "snapshot": "sources/blobs/735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "status": "exact bytes included"
+    },
+    "tools/tests/CityWeatheringTest.tscn": {
+      "recorded_sha256": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "snapshot": "sources/blobs/db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+      "status": "exact bytes included"
+    }
+  },
+  "city22-stage4-cost-r2-source-parse-baseline": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "snapshot": "sources/blobs/0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "snapshot": "sources/blobs/95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "snapshot": "sources/blobs/4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "snapshot": "sources/blobs/46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "snapshot": "sources/blobs/55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "snapshot": "sources/blobs/4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "status": "exact bytes included"
+    }
+  },
+  "city22-stage4-cost-r2-diagnostic-s2-960-baseline": {
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": {
+      "recorded_sha256": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "snapshot": "sources/blobs/0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": {
+      "recorded_sha256": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "snapshot": "sources/blobs/95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+      "status": "exact bytes included"
+    },
+    "core/systems/world/atmosphere/ground_air.gdshader": {
+      "recorded_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "snapshot": "sources/blobs/775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "status": "exact bytes included"
+    },
+    "project.godot": {
+      "recorded_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "snapshot": "sources/blobs/4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/CityFacadeComposer.gd": {
+      "recorded_sha256": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "snapshot": "sources/blobs/46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_module.gdshader": {
+      "recorded_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "snapshot": "sources/blobs/e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshader": {
+      "recorded_sha256": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "snapshot": "sources/blobs/55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/facade_wall.gdshaderinc": {
+      "recorded_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "snapshot": "sources/blobs/f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "status": "exact bytes included"
+    },
+    "scenes/world/buildings/roof.gdshader": {
+      "recorded_sha256": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "snapshot": "sources/blobs/4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+      "status": "exact bytes included"
+    }
+  }
+}

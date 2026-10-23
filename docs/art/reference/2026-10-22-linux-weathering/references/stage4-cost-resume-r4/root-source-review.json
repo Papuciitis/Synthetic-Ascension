@@ -1,0 +1,30 @@
+{
+  "verdict": "SOURCE_REVIEW_NO_BLOCKER",
+  "root_read": [
+    "resume.py",
+    "protocol.json",
+    "protocol-fixture-result.json"
+  ],
+  "bindings": {
+    "resume.py": "74a80dc8f84b53681e65ddf63f854df35e80c9e1ccd7c73621a6a137f3b78291",
+    "protocol.json": "1939eb80399153253515ab1597f23fe9174cf86e2b0f59599c9061fcea819c32",
+    "protocol-fixture-result.json": "66e81047ae3fb41571631a90dd32f89074778bff103195abeb02b2d07f477170"
+  },
+  "actual_dry_plan": {
+    "status": "prepared",
+    "reused_cases": 8,
+    "remaining_native_cases": 10,
+    "pairs": [
+      "s2-960 strict",
+      "s6-960 strict",
+      "s7-960 hidden-player conditional"
+    ]
+  },
+  "findings": [
+    "Exact original validators, actual run/guard/source inventory and immutable source snapshots remain mandatory.",
+    "Original stopped queue and strict mismatch persist; original R3 sources are unchanged.",
+    "Conditional crosspair omits only bounded/stable hidden Player coordinates and derived state digest; all other scenery/protocol fields remain exact.",
+    "Only ten missing native cases retain original order/arguments with separate fresh paths/labels and separately pinned resume program provenance."
+  ],
+  "native_execution": "PENDING fresh quiet window and final independent source hash confirmation"
+}

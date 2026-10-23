@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-s2-960-candidate-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 148.16,
+ "peak_rss_mb": 448,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/6 lines) ---
+[Game] ready seg=2 race=human style=ranged seed=16102026
+TOOL_COST_READY
+Stage4StaticCostProbe: rounds=3 frames=120 failures=0 -> /var/tmp/sa-city22/stage4/static-ecb-full-r3/s2-960-candidate.json

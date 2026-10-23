@@ -1,0 +1,30 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-red-020457-1",
+ "queued_seconds": 433.4,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 75.878,
+ "peak_rss_mb": 359,
+ "diagnostic_count": 84,
+ "diagnostics_head": [
+  "ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))",
+  "ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 50)",
+  "ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))",
+  "ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))",
+  "ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 38)",
+  "ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 102)",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 51)",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 204)",
+  "ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))"
+ ]
+}
+--- stdout tail (3/5 lines) ---
+
+renderer: Mesa Intel(R) UHD Graphics 620 (KBL GT2) gl_compatibility
+CityWeatheringSeamRenderTest: 61 passed, 84 failed

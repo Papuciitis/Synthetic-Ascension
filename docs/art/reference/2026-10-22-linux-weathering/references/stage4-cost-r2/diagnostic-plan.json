@@ -1,0 +1,193 @@
+{
+  "status": "SOURCE_ONLY_PREPARED_PENDING_INDEPENDENT_REVIEW_AND_ROOT_EXECUTION",
+  "protocol": "Stage4 setup-only R2 diagnosis; no timing-window attestation and no cost comparison accepted",
+  "project": "/tmp/sa-wp2-evidence",
+  "baseline_expected_git_head": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+  "expected_source_map_from_immutable_r1": {
+    "path": "/var/tmp/sa-city22/stage4/static-ecb-smoke-r1/queue.json",
+    "key": [
+      "source_maps_initial",
+      "baseline"
+    ],
+    "sha256": "9693d17a14e3de105c13bbb7db05943cbd5a5fd88ae1cfff24d24c2882a2343a"
+  },
+  "external_bindings": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/Stage4StaticCostProbe.gd": {
+      "sha256": "501a3eb8645fc1a246cce1c9dc60eada053ab1c755a5b39d46bb894b21c1c1d7",
+      "bytes": 34382
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/Stage4StaticCostProbe.tscn": {
+      "sha256": "f9a371075b24ee3224859ee84d18af922fd4a138e78fbf3bbbf5f449b8cca2c6",
+      "bytes": 263
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-cost-source-parse.gd": {
+      "sha256": "2f5ec673baed6606f4dcc82774b47dacbda98f1efcc5e592abc2ee4c4c0d86d6",
+      "bytes": 476
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-cost-source-parse.tscn": {
+      "sha256": "f411cc13fe24c649118ac494172607638e3afd57fc325f6d2967cc7f56ccd5ee",
+      "bytes": 268
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-static-cost-queue.py": {
+      "sha256": "44bc27f7ee727382bd02e6f80d79bf81bd9205ba9a9e8b3a8897a62d11865a3e",
+      "bytes": 29699
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources.json": {
+      "sha256": "6d5541c4fb7419e8871fd91dfd1c0821479311b05b001e1a3214c20879135c71",
+      "bytes": 14057
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+      "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "bytes": 8176
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py": {
+      "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+      "bytes": 8660
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py": {
+      "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+      "bytes": 13817
+    }
+  },
+  "cases": [
+    {
+      "kind": "scoped_source_parse",
+      "label": "city22-stage4-cost-r2-source-parse-baseline",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-stage4-cost-r2-source-parse-baseline",
+        "--project",
+        "/tmp/sa-wp2-evidence",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "300",
+        "--",
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-cost-source-parse.tscn"
+      ],
+      "expected_actual_assertions": {
+        "checked": 1,
+        "failures": 0
+      },
+      "must_finish_clean_before_next": true
+    },
+    {
+      "kind": "setup_diagnostic_only",
+      "label": "city22-stage4-cost-r2-diagnostic-s2-960-baseline",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-stage4-cost-r2-diagnostic-s2-960-baseline",
+        "--project",
+        "/tmp/sa-wp2-evidence",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/Stage4StaticCostProbe.tscn",
+        "--",
+        "--visible",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--expect-theme=service_courtyards",
+        "--camera=416,-104",
+        "--size=960x540",
+        "--diagnose-only",
+        "--json=/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json"
+      ],
+      "output": "/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json",
+      "expected_failure_is_not_acceptance": "If original full-state gate remains false, actual exit1 and diagnostic failure state are retained as failure; do not require wrapper0 or relabel it pass. No thermal/source/parse/engine error may be confused with the intended exterior diagnostic.",
+      "no_release_marker": true,
+      "setup_duty": 0.25,
+      "limits": "Stops before TOOL_COST_READY, cooldown/warmup/timer reads/samples. A true state produces diagnostic_complete/0; false state produces failed_before_or_during_sampling/1. Neither produces paired performance evidence."
+    }
+  ],
+  "r1_original_sources": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/r1-basis/stage4-cost-source-parse.gd": {
+      "sha256": "e7a4531ea43b330c006bdd745a3bbad89b24c52aa6ea7f342689b98986bcff19",
+      "bytes": 461
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/r1-basis/FinalCombinedCityPreview.gd": {
+      "sha256": "bc4c6f43a581f720356abb8407133ec7dd6a8a3a3756c6bdfe84203eb02e5ee0",
+      "bytes": 9521
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/r1-basis/stage4-static-cost-queue.py": {
+      "sha256": "7c28c626c36c8c35b0fa53c906c31cfeb445770f1d31154338bfde76b3028b9c",
+      "bytes": 29680
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/r1-basis/Stage4StaticCostProbe.tscn": {
+      "sha256": "26d58a9dc2cc3b60d4ab5e115edcad41ec60324603a5be1c647d270ee07e713d",
+      "bytes": 248
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/r1-basis/stage4-cost-source-parse.tscn": {
+      "sha256": "426d332cad24147a686cd96b2719767a566e13c944e67ba9c4d019fd7326d29e",
+      "bytes": 253
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/r1-basis/Stage4StaticCostProbe.gd": {
+      "sha256": "1dd5bd3c27aed11ef41bc90d26d963147fb4751a5091285f416ae23b7af91783",
+      "bytes": 28423
+    }
+  },
+  "r1_failed_raw_evidence": {
+    "/var/tmp/sa-city22/stage4/static-ecb-smoke-r1/queue.json": {
+      "sha256": "9693d17a14e3de105c13bbb7db05943cbd5a5fd88ae1cfff24d24c2882a2343a",
+      "bytes": 723739
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r1-s2-960-baseline-1/run-results.json": {
+      "sha256": "3f8f86ba2d799da53f37eb5d0ae4ee5047b012d89f16a5f9310e8858b71ac72b",
+      "bytes": 376830
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r1-s2-960-baseline-1/logs/stderr.log": {
+      "sha256": "b8edbe282a7d07cc67fb7c89794764a7475227f5a1c2a1c3ece037279341183e",
+      "bytes": 896
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r1-s2-960-baseline-1/logs/stdout.log": {
+      "sha256": "3426aa58428e73e9cb45c930e1888cae7a71960e5d125a63215c255cfebf0755",
+      "bytes": 270
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-stage4-cost-ecb-smoke-r1-s2-960-baseline-thermal.json": {
+      "sha256": "8342898202a5fa1f91ffbb2e8da6fe4c40dda92102bffc53ecee4b2146debccd",
+      "bytes": 29362
+    }
+  },
+  "causality": {
+    "proven": "R1 actual native stderr identifies editor-only RenderingServer.global_shader_parameter_get_list at263; both list/get removed from R2 in favor of explicitly declared ProjectSettings defaults.",
+    "unproven": "R1 did not save exterior state, so the exact readiness-to-full-state mismatch is unknown. Empty compound caps after native _notch_doors(...,true) are a source-backed candidate, not an accepted exemption.",
+    "shared_final_combined": "FinalCombinedCityPreview.gd shares the polygon-cardinality/visibility predicate, uses the full predicate during ordinary settle, and has no cost hide/freeze/global-get calls. Original bc4 source remains unchanged."
+  },
+  "no_engine_or_runtime_changes_by_preparer": true,
+  "source_only_checks": {
+    "unchanged_helper_functions": [
+      "_cost_outside_bounds",
+      "_cost_find_exterior_parking",
+      "_cost_collect_exterior_owners",
+      "_cost_exterior_ready",
+      "_cost_inherited_alpha",
+      "_cost_world_points",
+      "_cost_rect_points",
+      "_cost_settle",
+      "_cost_wait_frames",
+      "_cost_distribution"
+    ],
+    "all_original_fail_calls_preserved": true,
+    "all_9_driver_admission_validation_functions_ast_identical": true,
+    "editor_global_getter_calls_absent": true,
+    "diagnostic_return_precedes_ready": true,
+    "empty_caps_still_fail": true
+  }
+}

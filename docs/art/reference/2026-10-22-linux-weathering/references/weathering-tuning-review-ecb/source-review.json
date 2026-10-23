@@ -1,0 +1,402 @@
+{
+  "scope": "Read-only profile/source review plus external review artifacts only; no Git, engine, cost, claimed file edits, new tests or framework. ecb568f2 is root-reported and not Git-verified here. Four final owner surveys and quiet ACK remain pending.",
+  "changed_source": "scenes/world/buildings/weathering/CityWeathering.gd",
+  "before_sha256": "d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+  "current_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+  "current_hunk_lines": [
+    50,
+    72
+  ],
+  "only_changed_profile_fields": [
+    "damp",
+    "runoff",
+    "runoff_share"
+  ],
+  "theme_ids_match_art_support": true,
+  "profiles": [
+    {
+      "family": "service_courtyards",
+      "before": {
+        "damp": 0.1,
+        "runoff": 0.28,
+        "runoff_share": 0.14
+      },
+      "current": {
+        "damp": 0.15,
+        "runoff": 0.4,
+        "runoff_share": 0.22
+      },
+      "existing_test_damp_bound_estimate": 0.16312500000000002,
+      "existing_test_runoff_bound_estimate": 0.1278,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "checkpoint_lanes",
+      "before": {
+        "damp": 0.08,
+        "runoff": 0.34,
+        "runoff_share": 0.3
+      },
+      "current": {
+        "damp": 0.12,
+        "runoff": 0.44,
+        "runoff_share": 0.34
+      },
+      "existing_test_damp_bound_estimate": 0.1305,
+      "existing_test_runoff_bound_estimate": 0.14058,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "collapsed_ward",
+      "before": {
+        "damp": 0.1,
+        "runoff": 0.4,
+        "runoff_share": 0.36
+      },
+      "current": {
+        "damp": 0.16,
+        "runoff": 0.52,
+        "runoff_share": 0.42
+      },
+      "existing_test_damp_bound_estimate": 0.174,
+      "existing_test_runoff_bound_estimate": 0.16613999999999998,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "civilian_cutthrough",
+      "before": {
+        "damp": 0.1,
+        "runoff": 0.26,
+        "runoff_share": 0.16
+      },
+      "current": {
+        "damp": 0.15,
+        "runoff": 0.4,
+        "runoff_share": 0.24
+      },
+      "existing_test_damp_bound_estimate": 0.16312500000000002,
+      "existing_test_runoff_bound_estimate": 0.1278,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "inner_district_gate",
+      "before": {
+        "damp": 0.07,
+        "runoff": 0.38,
+        "runoff_share": 0.32
+      },
+      "current": {
+        "damp": 0.11,
+        "runoff": 0.46,
+        "runoff_share": 0.36
+      },
+      "existing_test_damp_bound_estimate": 0.119625,
+      "existing_test_runoff_bound_estimate": 0.14697000000000002,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "industrial_cutthrough",
+      "before": {
+        "damp": 0.09,
+        "runoff": 0.34,
+        "runoff_share": 0.22
+      },
+      "current": {
+        "damp": 0.14,
+        "runoff": 0.48,
+        "runoff_share": 0.3
+      },
+      "existing_test_damp_bound_estimate": 0.15225,
+      "existing_test_runoff_bound_estimate": 0.15336,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "ruined_services",
+      "before": {
+        "damp": 0.14,
+        "runoff": 0.46,
+        "runoff_share": 0.42
+      },
+      "current": {
+        "damp": 0.2,
+        "runoff": 0.58,
+        "runoff_share": 0.48
+      },
+      "existing_test_damp_bound_estimate": 0.21750000000000003,
+      "existing_test_runoff_bound_estimate": 0.18530999999999997,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "underpass_veins",
+      "before": {
+        "damp": 0.2,
+        "runoff": 0.42,
+        "runoff_share": 0.36
+      },
+      "current": {
+        "damp": 0.22,
+        "runoff": 0.56,
+        "runoff_share": 0.44
+      },
+      "existing_test_damp_bound_estimate": 0.23925,
+      "existing_test_runoff_bound_estimate": 0.17892,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "canal_services",
+      "before": {
+        "damp": 0.22,
+        "runoff": 0.38,
+        "runoff_share": 0.3
+      },
+      "current": {
+        "damp": 0.22,
+        "runoff": 0.54,
+        "runoff_share": 0.4
+      },
+      "existing_test_damp_bound_estimate": 0.23925,
+      "existing_test_runoff_bound_estimate": 0.17253000000000002,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "rail_yard",
+      "before": {
+        "damp": 0.06,
+        "runoff": 0.32,
+        "runoff_share": 0.2
+      },
+      "current": {
+        "damp": 0.1,
+        "runoff": 0.46,
+        "runoff_share": 0.28
+      },
+      "existing_test_damp_bound_estimate": 0.10875000000000001,
+      "existing_test_runoff_bound_estimate": 0.14697000000000002,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "military_staging",
+      "before": {
+        "damp": 0.07,
+        "runoff": 0.22,
+        "runoff_share": 0.12
+      },
+      "current": {
+        "damp": 0.11,
+        "runoff": 0.34,
+        "runoff_share": 0.18
+      },
+      "existing_test_damp_bound_estimate": 0.119625,
+      "existing_test_runoff_bound_estimate": 0.10863,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "outer_wall",
+      "before": {
+        "damp": 0.1,
+        "runoff": 0.3,
+        "runoff_share": 0.22
+      },
+      "current": {
+        "damp": 0.16,
+        "runoff": 0.46,
+        "runoff_share": 0.3
+      },
+      "existing_test_damp_bound_estimate": 0.174,
+      "existing_test_runoff_bound_estimate": 0.14697000000000002,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "siege_services",
+      "before": {
+        "damp": 0.07,
+        "runoff": 0.34,
+        "runoff_share": 0.26
+      },
+      "current": {
+        "damp": 0.11,
+        "runoff": 0.48,
+        "runoff_share": 0.32
+      },
+      "existing_test_damp_bound_estimate": 0.119625,
+      "existing_test_runoff_bound_estimate": 0.15336,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    },
+    {
+      "family": "gate_district",
+      "before": {
+        "damp": 0.07,
+        "runoff": 0.32,
+        "runoff_share": 0.26
+      },
+      "current": {
+        "damp": 0.11,
+        "runoff": 0.44,
+        "runoff_share": 0.32
+      },
+      "existing_test_damp_bound_estimate": 0.119625,
+      "existing_test_runoff_bound_estimate": 0.14058,
+      "within_existing_independent_025_bounds": true,
+      "runoff_selection_share_within_half": true
+    }
+  ],
+  "scoped_source_bindings": [
+    {
+      "path": "project.godot",
+      "reviewed_before_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "current_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/weathering/CityWeathering.gd",
+      "reviewed_before_sha256": "d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+      "current_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "changed": true
+    },
+    {
+      "path": "scenes/world/buildings/weathering/facade_stain.gdshader",
+      "reviewed_before_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "current_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/weathering/facade_damp.gdshaderinc",
+      "reviewed_before_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "current_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/roof.gdshader",
+      "reviewed_before_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "current_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/CityFacadeComposer.gd",
+      "reviewed_before_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "current_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/facade_wall.gdshader",
+      "reviewed_before_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "current_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/facade_wall.gdshaderinc",
+      "reviewed_before_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "current_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/facade_module.gdshader",
+      "reviewed_before_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "current_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "changed": false
+    },
+    {
+      "path": "scenes/world/buildings/weathering/facade_plinth.gdshader",
+      "reviewed_before_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "current_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "changed": false
+    },
+    {
+      "path": "tools/tests/CityWeatheringTest.gd",
+      "reviewed_before_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "current_sha256": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+      "changed": false
+    },
+    {
+      "path": "tools/tests/CityWeatheringSeamRenderTest.gd",
+      "reviewed_before_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "current_sha256": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+      "changed": false
+    },
+    {
+      "path": "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+      "reviewed_before_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "current_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "changed": false
+    },
+    {
+      "path": "assets/world/weathering/v1/wall_base_damp.png",
+      "reviewed_before_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "current_sha256": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "changed": false
+    },
+    {
+      "path": "assets/world/weathering/v1/wall_base_damp.png.import",
+      "reviewed_before_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "current_sha256": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "changed": false
+    },
+    {
+      "path": "assets/world/weathering/v1/roof_lichen.png",
+      "reviewed_before_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "current_sha256": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "changed": false
+    },
+    {
+      "path": "assets/world/weathering/v1/roof_lichen.png.import",
+      "reviewed_before_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "current_sha256": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "changed": false
+    },
+    {
+      "path": "assets/world/weathering/v1/runoff_streaks.png",
+      "reviewed_before_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "current_sha256": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "changed": false
+    },
+    {
+      "path": "assets/world/weathering/v1/runoff_streaks.png.import",
+      "reviewed_before_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "current_sha256": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "changed": false
+    }
+  ],
+  "prepared_external_bindings_unchanged": {
+    "Stage4StaticCostProbe.gd": "1dd5bd3c27aed11ef41bc90d26d963147fb4751a5091285f416ae23b7af91783",
+    "Stage4StaticCostProbe.tscn": "26d58a9dc2cc3b60d4ab5e115edcad41ec60324603a5be1c647d270ee07e713d",
+    "stage4-static-cost-queue.py": "7c28c626c36c8c35b0fa53c906c31cfeb445770f1d31154338bfde76b3028b9c",
+    "stage4-cost-camera-sources.json": "6d5541c4fb7419e8871fd91dfd1c0821479311b05b001e1a3214c20879135c71",
+    "FinalCombinedCityPreview.gd": "bc4c6f43a581f720356abb8407133ec7dd6a8a3a3756c6bdfe84203eb02e5ee0",
+    "FinalCombinedCityPreview.tscn": "59ba3b4e6ef794d0dcc070c072a5b803d74a266c652d9fe29032b7c1df5f438b"
+  },
+  "owner_actual_current_source_test": {
+    "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-tuned-022527-1/run-results.json",
+    "raw_sha256": "2e4f1a12982ac3f21962bd4b4e8df268cdf7c99ff6b5f9a170fe9d2094b2d4b2",
+    "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/c22w-test-weathering-tuned-022527-thermal.json",
+    "guard_sha256": "663a9d1a38bdb5345a22cffb97b039006cc507fad650123939116e5377e5136a",
+    "recorded_head": "d81cce4d832921e271100a239b9de26d58122fd9",
+    "actual_exit": 0,
+    "runner_exit": 0,
+    "stop_reason": "completed",
+    "diagnostics": [],
+    "footer": "CityWeatheringTest: 32203 passed, 0 failed",
+    "guard_reason": "completed",
+    "wrapper_exit": 0,
+    "received_signal": null,
+    "all_19_scoped_current_inputs_match_launch": true
+  },
+  "limits": [
+    "Existing independent damp/runoff profile estimates are not a measured guarantee about every composite framebuffer pixel; the brief itself defines an artistic trial range.",
+    "Profile runoff_share increases can add presentation stain polygons/wall cuts and change draw cost; no physical footprint, collision, generation RNG, shader source, texture/import or camera change is introduced by this exact profile delta.",
+    "Old camera-source metadata remains frozen and geometrically applicable; new owner surveys still require separate current-tuning source/opacity/appearance review.",
+    "No helper/camera rebind is needed for this profile-only delta. The root cost driver must receive the eventual final full40-character clean candidate SHA after final owner declaration, current visual review and explicit quiet-window ACK."
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "status": "FROZEN_SOURCE_ONLY_READY_FOR_INDEPENDENT_REVIEW",
+  "files": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.gd": "4c9d5696082bf46a96960cbe82ddb2b500d350c8bcbc53002af04366fb566724",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.tscn": "e8e55092a329bdf194e029f7cb347c9c50895d6d9ea2a0819afa3db5596558a3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-static-cost-queue.py": "a8ea1573fea86c4f6a01bd202a5821e64238c1b8d1facc479ae46df0dc424af2",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.gd": "05afd4764d810b1c653e5a95070acb908ca1e8993e0cbc2b2a00d80e272fd67c",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.tscn": "29266a4005788e3be6abf75ae27854d15d5ee80d78c1d5c559e1148abf88247e",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.gd": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.tscn": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/source-fixtures.py": "7fb9eb8b1b26bba27104063675c9970ebb205b3090f37dc8910df4986dd2c0c8"
+  },
+  "runtime_cause_sources": {
+    "/tmp/sa-wp2-evidence": {
+      "scenes/world/buildings/DungeonRoof.gd": "df4255f12352d273112f848056fa49a82f525349adae8ba7cc3a583ac2480c03",
+      "scenes/world/buildings/DungeonBuilding.gd": "ac5172006c8c8ed1f180118311660942375d5136651d93f3c203761d0d776c35"
+    },
+    "/tmp/sa-c22-weathering": {
+      "scenes/world/buildings/DungeonRoof.gd": "df4255f12352d273112f848056fa49a82f525349adae8ba7cc3a583ac2480c03",
+      "scenes/world/buildings/DungeonBuilding.gd": "ac5172006c8c8ed1f180118311660942375d5136651d93f3c203761d0d776c35"
+    }
+  },
+  "r2_diagnostic": {
+    "path": "/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json",
+    "sha256": "eac1b40b67e5e2c76f7f028e492d205a22d6cd5c11c16c7fe0a99236f5a4d104",
+    "actual": "exit1, sole empty DungeonServiceCap host; pre/post state and ancestor visibility identical, no ready/samples/save writes; editor-only error gone"
+  },
+  "cause": "DungeonBuilding emits service cap for every chunk slice without area-intersection guard; DungeonRoof.configure_slice assigns empty authoritative host when intersection/portal subtraction produces no pieces. It is a legitimate streamed non-drawing owner, not malformed drawable geometry or runtime rendering failure.",
+  "dimension_source_proof": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/official-source.json",
+  "unchanged_staging": "No content/window/camera/world geometry/fade changes. Native CANVAS_ITEMS target derived from observed Window/DisplayServer/logical/stretch contract; getter retained as explicit diagnostic.",
+  "final_combined_limits": "Same narrow empty-DungeonRoof host classification. Its inherited ordinary1280x720 still path/logical1920x1080 view and actual get_image readback stay unchanged; new dimension record explains getter semantics and is not cost evidence.",
+  "engines_run": false,
+  "runtime_or_git_mutations": false,
+  "scoped_parse_helpers": 2,
+  "offline_source_fixtures": {
+    "checks": 51,
+    "failures": 0,
+    "earlier_fixture_authoring_failure": "An assignment-detection assertion initially matched the == comparison; corrected to match only assignments. No helper/driver source changed for this fixture correction."
+  },
+  "engine_primary_sources": {
+    "viewport.cpp": {
+      "url": "https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/scene/main/viewport.cpp",
+      "sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+      "bytes": 200690
+    },
+    "window.cpp": {
+      "url": "https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/scene/main/window.cpp",
+      "sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+      "bytes": 135562
+    }
+  },
+  "root_smoke_command": [
+    "/usr/bin/python3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-static-cost-queue.py",
+    "--candidate-sha",
+    "ecb568f2c32acb8c0fcb8c8cfd53b89ab0f4736f",
+    "--smoke",
+    "--contexts",
+    "s2",
+    "--sizes",
+    "960",
+    "--suffix",
+    "ecb-smoke-r3",
+    "--execute",
+    "--timing-window-open"
+  ],
+  "required_before_actual": "Root announces fresh quiet OPEN/Claude ACK, all other native/CPU queues quiescent; original four source-sidecar quarantine still preserved. No timing execution by preparer."
+}

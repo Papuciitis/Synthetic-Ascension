@@ -1,0 +1,61 @@
+{
+  "base_terrain": "grass",
+  "failures": 0,
+  "points": [
+    {
+      "chunk_at": "(-1, 0)",
+      "kits_within_2200px": 13,
+      "name": "start",
+      "world": [
+        -1024.0,
+        1024.0
+      ]
+    },
+    {
+      "chunk": "(-2, 6)",
+      "chunk_at": "(-2, 6)",
+      "kits_within_2200px": 12,
+      "name": "route1",
+      "world": [
+        -3072.0,
+        13312.0
+      ]
+    },
+    {
+      "chunk_at": "(1, 9)",
+      "kits_within_2200px": 20,
+      "name": "objective",
+      "type": "dangerous_alley_cache",
+      "world": [
+        3072.0,
+        19456.0
+      ]
+    },
+    {
+      "chunk_at": "(0, -1)",
+      "kit": "416,-416",
+      "kits_within_2200px": 11,
+      "name": "kit1",
+      "usage": "row_house",
+      "world": [
+        416.0,
+        -104.0
+      ]
+    },
+    {
+      "chunk_at": "(-2, 7)",
+      "kit": "-3648,14720",
+      "kits_within_2200px": 14,
+      "name": "kit2",
+      "usage": "workshop",
+      "world": [
+        -3648.0,
+        15000.0
+      ]
+    }
+  ],
+  "segment": 2,
+  "theme_id": "service_courtyards",
+  "theme_label": "Service Courtyards",
+  "world_seed": 16102026
+}

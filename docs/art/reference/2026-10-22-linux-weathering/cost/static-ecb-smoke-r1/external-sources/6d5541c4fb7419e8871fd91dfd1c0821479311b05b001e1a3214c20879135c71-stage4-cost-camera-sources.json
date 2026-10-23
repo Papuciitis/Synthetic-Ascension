@@ -1,0 +1,334 @@
+{
+  "prepared_utc": "2026-10-22T21:12:55.185440+00:00",
+  "context_definitions": {
+    "s2": {
+      "segment": 2,
+      "seed": 16102026,
+      "theme": "service_courtyards",
+      "camera": [
+        416,
+        -104
+      ],
+      "survey": "s2",
+      "point": "kit1",
+      "survey_sides": [
+        "before",
+        "after"
+      ],
+      "camera_note": "Clean baseline/candidate survey manifests agree exactly; inspected actual row-house frontage play image."
+    },
+    "s6": {
+      "segment": 6,
+      "seed": 16102028,
+      "theme": "industrial_cutthrough",
+      "camera": [
+        384,
+        -424
+      ],
+      "survey": "s6a",
+      "point": "kit1",
+      "survey_sides": [
+        "before",
+        "after"
+      ],
+      "camera_note": "Clean baseline/candidate survey manifests agree exactly; inspected actual workshop frontage play image."
+    },
+    "s7": {
+      "segment": 7,
+      "seed": 16102028,
+      "theme": "canal_services",
+      "camera": [
+        -1632,
+        1304
+      ],
+      "survey": "s7b",
+      "point": "kit1",
+      "survey_sides": [
+        "before"
+      ],
+      "camera_note": "Only the clean baseline survey is available. Candidate survey.json was absent during preparation; pairing must be established by these new timed fixture hashes."
+    },
+    "s9": {
+      "segment": 9,
+      "seed": 16102026,
+      "theme": "outer_wall",
+      "camera": [
+        -3104,
+        -1384
+      ],
+      "survey": "s9a",
+      "point": "kit1",
+      "survey_sides": [
+        "after"
+      ],
+      "camera_note": "Clean candidate survey establishes seed16102026 and workshop frontage. Baseline survey was interrupted and absent; pairing must be established by these new timed fixture hashes."
+    }
+  },
+  "camera_sources": {
+    "s2": [
+      {
+        "side": "before",
+        "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-before-234127-1/run-results.json",
+        "run_sha256": "3478e9f231dc4b1ae59e791b81165987871180047ab370e89b85eaa680031002",
+        "run_git_head": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+        "command": [
+          "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+          "--path",
+          "/tmp/sa-wp2-evidence",
+          "--log-file",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-before-234127-1/logs/engine.log",
+          "--flush-output",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "res://tools/dev/CitySegmentSurvey.tscn",
+          "--",
+          "--segment=2",
+          "--world-seed=16102026",
+          "--route-points=1",
+          "--kit-points=2",
+          "--out=/var/tmp/sa-c22/compare/s2/before"
+        ],
+        "survey": "/var/tmp/sa-c22/compare/s2/before/survey.json",
+        "survey_sha256": "9b6db0d22634b5690133ebb0448d68b030a8416c37ddf00ec8edf0e72bc3d64f",
+        "point": {
+          "chunk_at": "(0, -1)",
+          "kit": "416,-416",
+          "kits_within_2200px": 11,
+          "name": "kit1",
+          "usage": "row_house",
+          "world": [
+            416.0,
+            -104.0
+          ]
+        },
+        "inspected_play_image": "/var/tmp/sa-c22/compare/s2/before/kit1-seg2-play.png",
+        "image_sha256": "db7e34c61406242f6d038217be85d0642c6c76a23d4999ce72e90360be91ebaf",
+        "frozen_inspected_play_image": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s2-before-kit1-seg2-play.png",
+        "frozen_survey": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s2-before-survey.json"
+      },
+      {
+        "side": "after",
+        "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-after-234418-1/run-results.json",
+        "run_sha256": "16f75c6edd7b9b7efebeb8eafe68a7bf31b579192dc504321296d00afd11811c",
+        "run_git_head": "3b90f4c0613b4561138825320f2b4312f2a4643d",
+        "command": [
+          "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+          "--path",
+          "/tmp/sa-c22-weathering",
+          "--log-file",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-after-234418-1/logs/engine.log",
+          "--flush-output",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "res://tools/dev/CitySegmentSurvey.tscn",
+          "--",
+          "--segment=2",
+          "--world-seed=16102026",
+          "--route-points=1",
+          "--kit-points=2",
+          "--out=/var/tmp/sa-c22/compare/s2/after"
+        ],
+        "survey": "/var/tmp/sa-c22/compare/s2/after/survey.json",
+        "survey_sha256": "9b6db0d22634b5690133ebb0448d68b030a8416c37ddf00ec8edf0e72bc3d64f",
+        "point": {
+          "chunk_at": "(0, -1)",
+          "kit": "416,-416",
+          "kits_within_2200px": 11,
+          "name": "kit1",
+          "usage": "row_house",
+          "world": [
+            416.0,
+            -104.0
+          ]
+        },
+        "inspected_play_image": "/var/tmp/sa-c22/compare/s2/after/kit1-seg2-play.png",
+        "image_sha256": "08b00578ca62ecc7bef97314cbada32803d583529f2a1125c3536d83e2c639f6",
+        "frozen_inspected_play_image": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s2-after-kit1-seg2-play.png",
+        "frozen_survey": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s2-after-survey.json"
+      }
+    ],
+    "s6": [
+      {
+        "side": "before",
+        "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-before-234659-1/run-results.json",
+        "run_sha256": "170c625d7cdee52405a1362036682fd38f5e07f069e9b9c88de0882a4505a478",
+        "run_git_head": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+        "command": [
+          "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+          "--path",
+          "/tmp/sa-wp2-evidence",
+          "--log-file",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-before-234659-1/logs/engine.log",
+          "--flush-output",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "res://tools/dev/CitySegmentSurvey.tscn",
+          "--",
+          "--segment=6",
+          "--world-seed=16102026",
+          "--route-points=1",
+          "--kit-points=2",
+          "--out=/var/tmp/sa-c22/compare/s6a/before",
+          "--theme=industrial_cutthrough"
+        ],
+        "survey": "/var/tmp/sa-c22/compare/s6a/before/survey.json",
+        "survey_sha256": "33857b81aef3e654db241b0414327bf49328a04b832fd161eeffff00635754a6",
+        "point": {
+          "chunk_at": "(0, -1)",
+          "kit": "384,-768",
+          "kits_within_2200px": 11,
+          "name": "kit1",
+          "usage": "workshop",
+          "world": [
+            384.0,
+            -424.0
+          ]
+        },
+        "inspected_play_image": "/var/tmp/sa-c22/compare/s6a/before/kit1-seg6-play.png",
+        "image_sha256": "b32e84cbdc4aa522819023b5433853b766e442bc346a3b9b561400cdaabfd508",
+        "frozen_inspected_play_image": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s6-before-kit1-seg6-play.png",
+        "frozen_survey": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s6-before-survey.json"
+      },
+      {
+        "side": "after",
+        "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-after-235028-1/run-results.json",
+        "run_sha256": "2600a4edc19c0e89cf873b94dcb8e4180caae7b49a829f51462d64bd89bc5f97",
+        "run_git_head": "3b90f4c0613b4561138825320f2b4312f2a4643d",
+        "command": [
+          "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+          "--path",
+          "/tmp/sa-c22-weathering",
+          "--log-file",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-after-235028-1/logs/engine.log",
+          "--flush-output",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "res://tools/dev/CitySegmentSurvey.tscn",
+          "--",
+          "--segment=6",
+          "--world-seed=16102026",
+          "--route-points=1",
+          "--kit-points=2",
+          "--out=/var/tmp/sa-c22/compare/s6a/after",
+          "--theme=industrial_cutthrough"
+        ],
+        "survey": "/var/tmp/sa-c22/compare/s6a/after/survey.json",
+        "survey_sha256": "33857b81aef3e654db241b0414327bf49328a04b832fd161eeffff00635754a6",
+        "point": {
+          "chunk_at": "(0, -1)",
+          "kit": "384,-768",
+          "kits_within_2200px": 11,
+          "name": "kit1",
+          "usage": "workshop",
+          "world": [
+            384.0,
+            -424.0
+          ]
+        },
+        "inspected_play_image": "/var/tmp/sa-c22/compare/s6a/after/kit1-seg6-play.png",
+        "image_sha256": "b6910daa065e7fa38219f4af01cc26642aa80a7e56f3b39e6fb691e6ff6e4af7",
+        "frozen_inspected_play_image": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s6-after-kit1-seg6-play.png",
+        "frozen_survey": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s6-after-survey.json"
+      }
+    ],
+    "s7": [
+      {
+        "side": "before",
+        "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s7b-before-235421-1/run-results.json",
+        "run_sha256": "36b57fb14c9878fe081ddb7b58f7bdadc9ca55490a830de5a3342d0b0c47266f",
+        "run_git_head": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+        "command": [
+          "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+          "--path",
+          "/tmp/sa-wp2-evidence",
+          "--log-file",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s7b-before-235421-1/logs/engine.log",
+          "--flush-output",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "res://tools/dev/CitySegmentSurvey.tscn",
+          "--",
+          "--segment=7",
+          "--world-seed=16102026",
+          "--route-points=1",
+          "--kit-points=2",
+          "--out=/var/tmp/sa-c22/compare/s7b/before",
+          "--theme=canal_services"
+        ],
+        "survey": "/var/tmp/sa-c22/compare/s7b/before/survey.json",
+        "survey_sha256": "b3c203ffcb35f8cffa521a63da938fa258479bb676bf8cfea6b49f192c7b9d3b",
+        "point": {
+          "chunk_at": "(-1, 0)",
+          "kit": "-1632,992",
+          "kits_within_2200px": 14,
+          "name": "kit1",
+          "usage": "passage",
+          "world": [
+            -1632.0,
+            1304.0
+          ]
+        },
+        "inspected_play_image": "/var/tmp/sa-c22/compare/s7b/before/kit1-seg7-play.png",
+        "image_sha256": "db180164156eb7c67d224cb8594b3e448e56183781b2cee6ff6a836e6350d92f",
+        "frozen_inspected_play_image": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s7-before-kit1-seg7-play.png",
+        "frozen_survey": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s7-before-survey.json"
+      }
+    ],
+    "s9": [
+      {
+        "side": "after",
+        "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s9a-after-000012-1/run-results.json",
+        "run_sha256": "eff403c47939a34d17457eba064b4ba40cfeeed6df9184da17e0b5816c8598d0",
+        "run_git_head": "3b90f4c0613b4561138825320f2b4312f2a4643d",
+        "command": [
+          "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+          "--path",
+          "/tmp/sa-c22-weathering",
+          "--log-file",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s9a-after-000012-1/logs/engine.log",
+          "--flush-output",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "res://tools/dev/CitySegmentSurvey.tscn",
+          "--",
+          "--segment=9",
+          "--world-seed=16102026",
+          "--route-points=1",
+          "--kit-points=2",
+          "--out=/var/tmp/sa-c22/compare/s9a/after",
+          "--theme=outer_wall"
+        ],
+        "survey": "/var/tmp/sa-c22/compare/s9a/after/survey.json",
+        "survey_sha256": "df44b78c83e9b250bdb986ef930c8465fae1c6df4b436e270232f16e6851daef",
+        "point": {
+          "chunk_at": "(-2, -1)",
+          "kit": "-3104,-1664",
+          "kits_within_2200px": 11,
+          "name": "kit1",
+          "usage": "workshop",
+          "world": [
+            -3104.0,
+            -1384.0
+          ]
+        },
+        "inspected_play_image": "/var/tmp/sa-c22/compare/s9a/after/kit1-seg9-play.png",
+        "image_sha256": "cf494bcfb6a6a3d8a55d9a5c61732aa2e10ef4cc641f73999517d581bbc81f13",
+        "frozen_inspected_play_image": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s9-after-kit1-seg9-play.png",
+        "frozen_survey": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources/s9-after-survey.json"
+      }
+    ]
+  },
+  "limits": "Frozen copies of actually inspected frontage play images and exact survey manifests. S2/S6 have paired completed original surveys. S7 only baseline and S9 only candidate were complete during preparation; new timed fixture equality is required to establish comparison. Original immutable run-result files and hashes/commands remain referenced; no missing survey is reconstructed."
+}

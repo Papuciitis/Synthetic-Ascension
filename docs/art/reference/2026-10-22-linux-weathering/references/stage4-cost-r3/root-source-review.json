@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-23T00:49:39.290485+00:00",
+  "source_metadata_sha256": "6f04e216a658d7af97aed406cc4e30dfa321c7cdf83fa1c388c089a12b8c694a",
+  "reviewed": [
+    "R2-to-R3 cost helper",
+    "R2-to-R3 cost driver",
+    "original-to-R3 FinalCombined",
+    "independent source/cause/viewport review"
+  ],
+  "finding": "No remaining concrete source blocker found. Narrow exact empty DungeonRoof host exemption retains other geometry/opacity/visibility checks; true size validation uses pinned engine-source observed Window/DisplayServer/stretch contract without staging changes.",
+  "actual_parser_native_cost_pending": true,
+  "dry_plan": ".superpowers/continuation-20261022/stage4-cost-r3/root-dry-plan.json"
+}

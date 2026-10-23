@@ -1,0 +1,56 @@
+{
+ "started_utc": "2026-10-22T23:47:41Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-c22-weathering",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/dev/CitySegmentSurvey.tscn",
+  "--",
+  "--segment=9",
+  "--world-seed=16102026",
+  "--route-points=1",
+  "--kit-points=2",
+  "--out=/var/tmp/sa-c22/compare/s9a/after",
+  "--theme=outer_wall"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "ecb568f2c32acb8c0fcb8c8cfd53b89ab0f4736f",
+ "dirty_inputs": [],
+ "scoped_sha256": {
+  "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+  "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+  "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+  "scenes/world/buildings/weathering/CityWeathering.gd": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+  "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+  "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+  "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+  "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+  "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+  "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s9a-after-024741-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 209.919,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22w-cmp-s9a-after-024741 completed peak 84.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "kit1-seg9-play.png": "a9a702f70ac578739bdd872fdef5cd9ee9dcdeecc303422f41866384109a2421",
+  "kit2-seg9-play.png": "da7295445eb2f8a628c9895ba080ab5a4ca2823581ec86c55a3dab289206bf71",
+  "objective-seg9-overview.png": "f61a12822029de02660db487c876daca5549abb94a5885051f0d7dcf77962ec9",
+  "objective-seg9-play.png": "f3b6ef97a905e772204d397157d31b28529b36d558649485b2698df9c0a09bd4",
+  "route1-seg9-overview.png": "d766f6b1da31fa94a539ffdf7bb3de458bfcb03235e2eeb9a1aaf4f16d8dbda9",
+  "route1-seg9-play.png": "74f432e58bcd5b6044a88f2b7822635e1a5d6b86e2b6bb5947e4fcfe08f6e16e",
+  "start-seg9-overview.png": "3298cea6ad1b4a863f4526003b4142183ac4644cfe1305dc18c18bb1ea5f8325",
+  "start-seg9-play.png": "76f770673fab72dfede21f7f95ef7baef14c7f21fdfecf5d3f6a746b2f9d8b5f"
+ }
+}

@@ -1,0 +1,68 @@
+{
+  "plan_sha256": "a90122db51c1cdf5f3f579ac1af4778a89d4dac47bfbd779b23a76838f86014d",
+  "started_utc": "2026-10-23T00:31:07.498310+00:00",
+  "cases": [
+    {
+      "label": "city22-stage4-cost-r2-source-parse-baseline",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-stage4-cost-r2-source-parse-baseline",
+        "--project",
+        "/tmp/sa-wp2-evidence",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "300",
+        "--",
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-cost-source-parse.tscn"
+      ],
+      "started_utc": "2026-10-23T00:31:07.499091+00:00",
+      "wrapper_exit": 0,
+      "ended_utc": "2026-10-23T00:35:33.855473+00:00"
+    },
+    {
+      "label": "city22-stage4-cost-r2-diagnostic-s2-960-baseline",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-stage4-cost-r2-diagnostic-s2-960-baseline",
+        "--project",
+        "/tmp/sa-wp2-evidence",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/Stage4StaticCostProbe.tscn",
+        "--",
+        "--visible",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--expect-theme=service_courtyards",
+        "--camera=416,-104",
+        "--size=960x540",
+        "--diagnose-only",
+        "--json=/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json"
+      ],
+      "started_utc": "2026-10-23T00:35:33.857541+00:00",
+      "wrapper_exit": 1,
+      "ended_utc": "2026-10-23T00:37:45.389379+00:00"
+    }
+  ],
+  "scope": "Functional diagnostic only, no timing window, ready marker or sampling. False original state remains actual failure.",
+  "ended_utc": "2026-10-23T00:37:45.389783+00:00"
+}

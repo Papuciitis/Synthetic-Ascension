@@ -1,0 +1,10 @@
+ERROR: This function should never be used outside the editor, it can severely damage performance.
+   at: global_shader_parameter_get_list (drivers/gles3/storage/material_storage.cpp:1918)
+   GDScript backtrace (most recent call first):
+       [0] _cost_fixture (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/Stage4StaticCostProbe.gd:263)
+       [1] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/Stage4StaticCostProbe.gd:147)
+ERROR: EliteCrowdFightPreview: Exterior fixture has no in-view opaque roof/facade owners or failed normal outside state
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail (res://tools/dev/EliteCrowdFightPreview.gd:394)
+       [1] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/Stage4StaticCostProbe.gd:149)

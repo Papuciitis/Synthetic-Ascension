@@ -1,0 +1,30 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-red-021347-1",
+ "queued_seconds": 574.4,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 74.181,
+ "peak_rss_mb": 605,
+ "diagnostic_count": 104,
+ "diagnostics_head": [
+  "ERROR: FAIL: service_courtyards shop: a stain keeps its vertices in the field's own transform domain",
+  "ERROR: FAIL: service_courtyards shop: the stain's packed UVs decode to mask corners, field height and field Y",
+  "ERROR: FAIL: service_courtyards workshop: a stain keeps its vertices in the field's own transform domain",
+  "ERROR: FAIL: service_courtyards workshop: the stain's packed UVs decode to mask corners, field height and field Y",
+  "ERROR: FAIL: service_courtyards passage: a stain keeps its vertices in the field's own transform domain",
+  "ERROR: FAIL: service_courtyards passage: the stain's packed UVs decode to mask corners, field height and field Y",
+  "ERROR: FAIL: checkpoint_lanes row_house: a stain keeps its vertices in the field's own transform domain",
+  "ERROR: FAIL: checkpoint_lanes row_house: the stain's packed UVs decode to mask corners, field height and field Y",
+  "ERROR: FAIL: checkpoint_lanes shop: a stain keeps its vertices in the field's own transform domain",
+  "ERROR: FAIL: checkpoint_lanes shop: the stain's packed UVs decode to mask corners, field height and field Y",
+  "ERROR: FAIL: checkpoint_lanes workshop: a stain keeps its vertices in the field's own transform domain",
+  "ERROR: FAIL: checkpoint_lanes workshop: the stain's packed UVs decode to mask corners, field height and field Y",
+  "ERROR: FAIL: checkpoint_lanes passage: a stain keeps its vertices in the field's own transform domain",
+  "ERROR: FAIL: checkpoint_lanes passage: the stain's packed UVs decode to mask corners, field height and field Y",
+  "ERROR: FAIL: collapsed_ward row_house: a stain keeps its vertices in the field's own transform domain"
+ ]
+}
+--- stdout tail (3/3 lines) ---
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CityWeatheringTest: 25095 passed, 812 failed

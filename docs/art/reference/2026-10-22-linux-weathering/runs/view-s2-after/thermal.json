@@ -1,0 +1,1900 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "0,1",
+    "python3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+    "--name",
+    "c22w-cmp-s2-after-023225",
+    "--project",
+    "/tmp/sa-c22-weathering",
+    "--exclusive",
+    "--timeout",
+    "600",
+    "--max-wait",
+    "900",
+    "--tail",
+    "3",
+    "--",
+    "--rendering-driver",
+    "opengl3",
+    "--audio-driver",
+    "Dummy",
+    "res://tools/dev/CitySegmentSurvey.tscn",
+    "--",
+    "--segment=2",
+    "--world-seed=16102026",
+    "--route-points=1",
+    "--kit-points=2",
+    "--out=/var/tmp/sa-c22/compare/s2/after"
+  ],
+  "environment_overrides": {
+    "SA_ENGINE_SLOTS": "1",
+    "SA_ENGINE_THERMAL_LIMIT_C": "70.0",
+    "SA_FULL_PROVENANCE": "1"
+  },
+  "cpu_affinity": [
+    0,
+    1
+  ],
+  "start_temperature_c": 70.0,
+  "runtime_temperature_stop_c": 90,
+  "sustained_temperature_stop_c": 85,
+  "sustained_temperature_samples": 3,
+  "reason": "completed",
+  "received_signal": null,
+  "duty_cycle": 0.25,
+  "duty_run_seconds": 0.05,
+  "duty_pause_seconds": 0.15000000000000002,
+  "release_marker": null,
+  "duty_released": false,
+  "throttle_cycles": 1011,
+  "owned_pids": [
+    607342
+  ],
+  "wrapper_exit": 0,
+  "samples": [
+    {
+      "elapsed_seconds": 0.001,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": false,
+      "live_owned_pids": []
+    },
+    {
+      "elapsed_seconds": 1.003,
+      "package_c": 73.0,
+      "duty_released": false,
+      "owned_engine_live": false,
+      "live_owned_pids": []
+    },
+    {
+      "elapsed_seconds": 2.004,
+      "package_c": 71.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 3.02,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 4.039,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 5.059,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 6.072,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 7.093,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 8.113,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 9.128,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 10.144,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 11.163,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 12.172,
+      "package_c": 62.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 13.183,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 14.202,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 15.225,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 16.242,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 17.26,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 18.28,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 19.295,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 20.313,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 21.326,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 22.345,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 23.365,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 24.384,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 25.403,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 26.42,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 27.442,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 28.462,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 29.483,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 30.501,
+      "package_c": 67.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 31.512,
+      "package_c": 64.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 32.524,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 33.544,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 34.568,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 35.585,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 36.599,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 37.61,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 38.629,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 39.645,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 40.667,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 41.696,
+      "package_c": 63.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 42.71,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 43.725,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 44.742,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 45.76,
+      "package_c": 67.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 46.769,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 47.788,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 48.804,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 49.819,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 50.833,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 51.845,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 52.86,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 53.874,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 54.892,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 55.913,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 56.931,
+      "package_c": 73.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 57.948,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 58.963,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 59.98,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 60.999,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 62.015,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 63.033,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 64.053,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 65.071,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 66.084,
+      "package_c": 64.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 67.111,
+      "package_c": 70.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 68.123,
+      "package_c": 67.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 69.136,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 70.152,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 71.168,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 72.181,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 73.206,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 74.221,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 75.235,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 76.256,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 77.266,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 78.277,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 79.291,
+      "package_c": 68.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 80.311,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 81.329,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 82.35,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 83.364,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 84.379,
+      "package_c": 66.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 85.386,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 86.394,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 87.404,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 88.414,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 89.424,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 90.445,
+      "package_c": 64.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 91.453,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 92.462,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 93.473,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 94.488,
+      "package_c": 69.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 95.506,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 96.522,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 97.533,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 98.552,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 99.57,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 100.588,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 101.605,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 102.625,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 103.639,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 104.647,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 105.657,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 106.666,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 107.674,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 108.693,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 109.707,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 110.729,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 111.742,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 112.762,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 113.794,
+      "package_c": 53.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 114.814,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 115.827,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 116.838,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 117.861,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 118.874,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 119.892,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 120.91,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 121.927,
+      "package_c": 53.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 122.946,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 123.96,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 124.974,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 125.994,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 127.015,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 128.026,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 129.045,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 130.06,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 131.08,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 132.093,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 133.112,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 134.128,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 135.141,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 136.162,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 137.177,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 138.19,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 139.208,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 140.229,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 141.243,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 142.26,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 143.276,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 144.293,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 145.317,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 146.331,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 147.345,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 148.357,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 149.374,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 150.393,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 151.408,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 152.426,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 153.449,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 154.47,
+      "package_c": 69.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 155.481,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 156.498,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 157.517,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 158.532,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 159.551,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 160.583,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 161.603,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 162.622,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 163.647,
+      "package_c": 65.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 164.66,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 165.677,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 166.695,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 167.71,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 168.721,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 169.744,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 170.773,
+      "package_c": 53.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 171.788,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 172.801,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 173.819,
+      "package_c": 53.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 174.833,
+      "package_c": 63.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 175.842,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 176.857,
+      "package_c": 53.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 177.876,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 178.902,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 179.915,
+      "package_c": 65.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 180.93,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 181.95,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 182.989,
+      "package_c": 53.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 184.002,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 185.017,
+      "package_c": 61.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 186.028,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 187.041,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 188.055,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 189.066,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 190.076,
+      "package_c": 58.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 191.088,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 192.099,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 193.113,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 194.122,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 195.134,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 196.152,
+      "package_c": 63.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 197.169,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 198.191,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 199.214,
+      "package_c": 60.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 200.226,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 201.247,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 202.257,
+      "package_c": 55.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 203.278,
+      "package_c": 53.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 204.297,
+      "package_c": 54.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 205.316,
+      "package_c": 56.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 206.331,
+      "package_c": 57.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    },
+    {
+      "elapsed_seconds": 207.347,
+      "package_c": 59.0,
+      "duty_released": false,
+      "owned_engine_live": true,
+      "live_owned_pids": [
+        607342
+      ]
+    }
+  ]
+}

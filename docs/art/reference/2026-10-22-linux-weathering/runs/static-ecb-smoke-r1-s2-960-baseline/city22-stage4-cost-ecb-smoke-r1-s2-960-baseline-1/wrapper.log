@@ -1,0 +1,17 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r1-s2-960-baseline-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 149.291,
+ "peak_rss_mb": 443,
+ "diagnostic_count": 2,
+ "diagnostics_head": [
+  "ERROR: This function should never be used outside the editor, it can severely damage performance.",
+  "ERROR: EliteCrowdFightPreview: Exterior fixture has no in-view opaque roof/facade owners or failed normal outside state"
+ ]
+}
+--- stdout tail (3/4 lines) ---
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+[Game] ready seg=2 race=human style=ranged seed=16102026

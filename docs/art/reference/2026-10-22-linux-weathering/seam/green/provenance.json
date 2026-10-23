@@ -1,0 +1,60 @@
+{
+ "started_utc": "2026-10-22T22:39:45Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-c22-weathering",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/tests/CityWeatheringSeamRenderTest.tscn",
+  "--",
+  "--out=/var/tmp/sa-c22/seam/green3"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "3b90f4c0613b4561138825320f2b4312f2a4643d",
+ "dirty_inputs": [
+  "M scenes/world/buildings/roof.gdshader",
+  " M scenes/world/buildings/weathering/CityWeathering.gd",
+  " M scenes/world/buildings/weathering/facade_damp.gdshaderinc",
+  " M scenes/world/buildings/weathering/facade_stain.gdshader",
+  " M tools/tests/CityWeatheringTest.gd"
+ ],
+ "scoped_sha256": {
+  "scenes/world/buildings/weathering/CityWeathering.gd": "d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+  "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+  "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+  "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+  "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-green3-013945-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 75.585,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22w-seam-green3-013945 completed peak 84.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "0002522c9b04a699f13ac806789fb316b029cc8c727138c41ecb52aaaebff94d",
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.0-reference.png": "7a039fbc53c634f776848dd968efafc71545d2fb2d211aafd870e2f1ac35c227",
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "55b709cc6c471b88aaf44bf2a367281d43d07ba13487ce8a52f20a6ebf8e889f",
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.3-reference.png": "7a039fbc53c634f776848dd968efafc71545d2fb2d211aafd870e2f1ac35c227",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "8fedd69e2b0df0a765f77a6898710cc8d2f6316afb687592818538e4aa502c80",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.0-reference.png": "73f7dcd2016ca5135fefb7186042599d29a00045c4e2d813a191f31b0efdbc42",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "f7e2c0d08eda58fb49a66544a9090e67dc4bb9db236b6ae804f2a6786da0d833",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.3-reference.png": "73f7dcd2016ca5135fefb7186042599d29a00045c4e2d813a191f31b0efdbc42",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "90d28fcaf400fe7f40d498896ca5a5a712435b67596bd7cc51ef66d01e873db9",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.0-reference.png": "a0eb651cd7043555220f7d6f99a11d3c0198e12a8b1e41d573591e5d6a97785f",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "71eaf5e8f40f9b1517d449e6c86ed0755a20b0f3cd8ca0ab5a8eca13e6ff4a19",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.3-reference.png": "a0eb651cd7043555220f7d6f99a11d3c0198e12a8b1e41d573591e5d6a97785f",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "c024818fa32c0c4a31d6d62986f178bb86794240fb50b8703d228a3ec7dc0a01",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.0-reference.png": "4a934d734d8c05030a9d4c13dd3205137150dc7a5285791ccb74b5a9fe811b5c",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "62d83d98dc476b822388549a04288f0d1c125f0c73d3ee464df61ede4501a76b",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.3-reference.png": "4a934d734d8c05030a9d4c13dd3205137150dc7a5285791ccb74b5a9fe811b5c"
+ }
+}

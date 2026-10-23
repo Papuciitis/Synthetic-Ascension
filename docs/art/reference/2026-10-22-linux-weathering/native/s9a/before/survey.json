@@ -1,0 +1,61 @@
+{
+  "base_terrain": "grass",
+  "failures": 0,
+  "points": [
+    {
+      "chunk_at": "(-1, -1)",
+      "kits_within_2200px": 9,
+      "name": "start",
+      "world": [
+        -1024.0,
+        -1024.0
+      ]
+    },
+    {
+      "chunk": "(-11, 0)",
+      "chunk_at": "(-11, 0)",
+      "kits_within_2200px": 15,
+      "name": "route1",
+      "world": [
+        -21504.0,
+        1024.0
+      ]
+    },
+    {
+      "chunk_at": "(-13, 6)",
+      "kits_within_2200px": 14,
+      "name": "objective",
+      "type": "dangerous_alley_cache",
+      "world": [
+        -25600.0,
+        13312.0
+      ]
+    },
+    {
+      "chunk_at": "(-2, -1)",
+      "kit": "-3104,-1664",
+      "kits_within_2200px": 11,
+      "name": "kit1",
+      "usage": "workshop",
+      "world": [
+        -3104.0,
+        -1384.0
+      ]
+    },
+    {
+      "chunk_at": "(-11, -1)",
+      "kit": "-22176,-1024",
+      "kits_within_2200px": 17,
+      "name": "kit2",
+      "usage": "workshop",
+      "world": [
+        -22176.0,
+        -680.0
+      ]
+    }
+  ],
+  "segment": 9,
+  "theme_id": "outer_wall",
+  "theme_label": "Outer Wall Approaches",
+  "world_seed": 16102026
+}

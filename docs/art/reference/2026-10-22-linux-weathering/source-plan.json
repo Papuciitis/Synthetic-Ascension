@@ -1,0 +1,483 @@
+{
+  "candidate": "ecb568f2c32acb8c0fcb8c8cfd53b89ab0f4736f",
+  "baseline": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+  "preparation": "Source-only; no packet build/engine/Git. Historical1dd5/7c28 smoke failed before measurement; future R2 helper/protocol binding remains pending independent review.",
+  "final_sources": {
+    "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+    "scenes/world/buildings/weathering/CityWeathering.gd": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+    "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+    "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+    "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+    "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+    "scenes/world/buildings/facade_wall.gdshaderinc": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+    "scenes/world/buildings/facade_module.gdshader": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+    "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+    "tools/tests/CityWeatheringTest.gd": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+    "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+    "assets/world/weathering/v1/wall_base_damp.png": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+    "assets/world/weathering/v1/wall_base_damp.png.import": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+    "assets/world/weathering/v1/roof_lichen.png": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+    "assets/world/weathering/v1/roof_lichen.png.import": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+    "assets/world/weathering/v1/runoff_streaks.png": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+    "assets/world/weathering/v1/runoff_streaks.png.import": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+    "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+    "core/systems/world/atmosphere/ground_air.gdshader": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+    "tools/tests/CityWeatheringTest.tscn": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf",
+    "tools/tests/CityWeatheringSeamRenderTest.tscn": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+    "assets/world/weathering/v1/vent_soot.png": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+    "assets/world/weathering/v1/vent_soot.png.import": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a"
+  },
+  "cases": {
+    "seam-green": {
+      "label": "c22w-seam-green3-013945",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-green3-013945-1/run-results.json",
+      "expected_exit": 0,
+      "footer": "CityWeatheringSeamRenderTest: 145 passed, 0 failed",
+      "source_bindings": {
+        "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+        "tools/tests/CityWeatheringSeamRenderTest.tscn": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+        "assets/world/weathering/v1/roof_lichen.png": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+        "assets/world/weathering/v1/roof_lichen.png.import": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+        "assets/world/weathering/v1/runoff_streaks.png": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+        "assets/world/weathering/v1/runoff_streaks.png.import": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+        "assets/world/weathering/v1/vent_soot.png": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+        "assets/world/weathering/v1/vent_soot.png.import": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+        "assets/world/weathering/v1/wall_base_damp.png": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+        "assets/world/weathering/v1/wall_base_damp.png.import": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+        "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+        "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+        "core/systems/world/atmosphere/ground_air.gdshader": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+        "scenes/world/buildings/facade_module.gdshader": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+        "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+        "scenes/world/buildings/facade_wall.gdshaderinc": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+        "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+        "scenes/world/buildings/weathering/CityWeathering.gd": "d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+        "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+        "tools/tests/CityWeatheringTest.gd": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+        "tools/tests/CityWeatheringTest.tscn": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf"
+      },
+      "raw_sha256": "25f4ded078a49d2e687c5f80a73b8bd4d32ec806393749db53e35e869443f506",
+      "guard_sha256": "2b99df3e29d390a295d977ed5d759a0753fd9203155a861b4609ba5ddd80fc3e",
+      "stdout_sha256": "ed87711723e63d3b4cf47a11a030d71e2668666d28186f0794c9537acc715098"
+    },
+    "seam-red": {
+      "label": "c22w-seam-red-020457",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-red-020457-1/run-results.json",
+      "expected_exit": 1,
+      "footer": "CityWeatheringSeamRenderTest: 61 passed, 84 failed",
+      "source_bindings": {
+        "assets/world/weathering/v1/roof_lichen.png": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+        "assets/world/weathering/v1/roof_lichen.png.import": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+        "assets/world/weathering/v1/runoff_streaks.png": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+        "assets/world/weathering/v1/runoff_streaks.png.import": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+        "assets/world/weathering/v1/vent_soot.png": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+        "assets/world/weathering/v1/vent_soot.png.import": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+        "assets/world/weathering/v1/wall_base_damp.png": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+        "assets/world/weathering/v1/wall_base_damp.png.import": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+        "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+        "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+        "core/systems/world/atmosphere/ground_air.gdshader": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+        "scenes/world/buildings/facade_module.gdshader": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+        "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+        "scenes/world/buildings/facade_wall.gdshaderinc": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+        "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+        "scenes/world/buildings/weathering/CityWeathering.gd": "b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+        "scenes/world/buildings/weathering/facade_stain.gdshader": "03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41",
+        "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+        "tools/tests/CityWeatheringSeamRenderTest.tscn": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+        "tools/tests/CityWeatheringTest.gd": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+        "tools/tests/CityWeatheringTest.tscn": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf"
+      },
+      "raw_sha256": "73213c7e956861d601a34c8c2bc38e2101873879d778c3e4a34e52a2f7191d14",
+      "guard_sha256": "6d2360436a892908bdb41f9af6f50609e82734b9bd49879acd5fd63299b9deb4",
+      "stdout_sha256": "cb2b7c0444b955a5fabf7de2fc702688978d98a69f5fbf4cf8ee80c8dbb70bfe"
+    },
+    "helper-green": {
+      "label": "c22w-test-weathering-tuned-022527",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-tuned-022527-1/run-results.json",
+      "expected_exit": 0,
+      "footer": "CityWeatheringTest: 32203 passed, 0 failed",
+      "source_bindings": {
+        "assets/world/weathering/v1/roof_lichen.png": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+        "assets/world/weathering/v1/roof_lichen.png.import": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+        "assets/world/weathering/v1/runoff_streaks.png": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+        "assets/world/weathering/v1/runoff_streaks.png.import": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+        "assets/world/weathering/v1/vent_soot.png": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+        "assets/world/weathering/v1/vent_soot.png.import": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+        "assets/world/weathering/v1/wall_base_damp.png": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+        "assets/world/weathering/v1/wall_base_damp.png.import": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+        "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+        "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+        "core/systems/world/atmosphere/ground_air.gdshader": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+        "scenes/world/buildings/facade_module.gdshader": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+        "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+        "scenes/world/buildings/facade_wall.gdshaderinc": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+        "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+        "scenes/world/buildings/weathering/CityWeathering.gd": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+        "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+        "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+        "tools/tests/CityWeatheringSeamRenderTest.tscn": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+        "tools/tests/CityWeatheringTest.gd": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+        "tools/tests/CityWeatheringTest.tscn": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf"
+      },
+      "raw_sha256": "2e4f1a12982ac3f21962bd4b4e8df268cdf7c99ff6b5f9a170fe9d2094b2d4b2",
+      "guard_sha256": "663a9d1a38bdb5345a22cffb97b039006cc507fad650123939116e5377e5136a",
+      "stdout_sha256": "c009ddd03608c1d9a96bd30f314867cb760d0707111840365324ec40fd8bb07a"
+    },
+    "helper-red": {
+      "label": "c22w-test-weathering-red-021347",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-red-021347-1/run-results.json",
+      "expected_exit": 1,
+      "footer": "CityWeatheringTest: 25095 passed, 812 failed",
+      "source_bindings": {
+        "assets/world/weathering/v1/roof_lichen.png": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+        "assets/world/weathering/v1/roof_lichen.png.import": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+        "assets/world/weathering/v1/runoff_streaks.png": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+        "assets/world/weathering/v1/runoff_streaks.png.import": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+        "assets/world/weathering/v1/vent_soot.png": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+        "assets/world/weathering/v1/vent_soot.png.import": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a",
+        "assets/world/weathering/v1/wall_base_damp.png": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+        "assets/world/weathering/v1/wall_base_damp.png.import": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+        "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+        "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+        "core/systems/world/atmosphere/ground_air.gdshader": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+        "scenes/world/buildings/facade_module.gdshader": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+        "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+        "scenes/world/buildings/facade_wall.gdshaderinc": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+        "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+        "scenes/world/buildings/weathering/CityWeathering.gd": "b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+        "scenes/world/buildings/weathering/facade_stain.gdshader": "03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41",
+        "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+        "tools/tests/CityWeatheringSeamRenderTest.tscn": "418765c888081d227d6b7b66cb2b87eaedbc373218b890e13e71d625137b3018",
+        "tools/tests/CityWeatheringTest.gd": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175",
+        "tools/tests/CityWeatheringTest.tscn": "db57b9c8aa1b7dd201934749102967d4551184bc0ccf347eba28ba133aeaefaf"
+      },
+      "raw_sha256": "1bb27de3e841db9e6b9b7b2b343db1cef25ebc7e6d4156aa96ef08782af9a1d6",
+      "guard_sha256": "4200b4a25d2734183fd924d7419c5d3b3a599a9a97fc5b6d14b2ae8d4fa5e9a4",
+      "stdout_sha256": "4490e85e5667792069d23ca25e602328e360d046b5f7b56ef3a2f4bbbf7b90d0"
+    }
+  },
+  "contexts": {
+    "s2": {
+      "segment": 2,
+      "seed": 16102026,
+      "theme": "service_courtyards",
+      "camera": [
+        416,
+        -104
+      ]
+    },
+    "s6a": {
+      "segment": 6,
+      "seed": 16102028,
+      "theme": "industrial_cutthrough",
+      "camera": [
+        384,
+        -424
+      ]
+    },
+    "s7b": {
+      "segment": 7,
+      "seed": 16102028,
+      "theme": "canal_services",
+      "camera": [
+        -1632,
+        1304
+      ]
+    },
+    "s9a": {
+      "segment": 9,
+      "seed": 16102026,
+      "theme": "outer_wall",
+      "camera": [
+        -3104,
+        -1384
+      ]
+    }
+  },
+  "views": {
+    "s2/before": {
+      "directory": "/var/tmp/sa-c22/compare/s2/before",
+      "provenance_sha256": "a7a269bf6be06003552764e2b0682b89a31f1c8d2d339880744d34d36b6769e7",
+      "survey_sha256": "9b6db0d22634b5690133ebb0448d68b030a8416c37ddf00ec8edf0e72bc3d64f",
+      "selected_image": "kit1-seg2-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-before-234127-1/run-results.json",
+      "raw_sha256": "3478e9f231dc4b1ae59e791b81165987871180047ab370e89b85eaa680031002",
+      "guard_sha256": "c1100c5624078111ed37f09971520e59515fa94dfc421edb87436d6d697688b7"
+    },
+    "s2/after": {
+      "directory": "/var/tmp/sa-c22/compare/s2/after",
+      "provenance_sha256": "2f220ed95c643c23990fbff02bdf4dfe5abef764789957f40d9fdc3ae33bd562",
+      "survey_sha256": "9b6db0d22634b5690133ebb0448d68b030a8416c37ddf00ec8edf0e72bc3d64f",
+      "selected_image": "kit1-seg2-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-after-023225-1/run-results.json",
+      "raw_sha256": "023b955142ef2064f349bb8723729716318ede1b479658803c529b1764b869ee",
+      "guard_sha256": "f02b2d67e78334ccfa5e539eacfbb0ea2fe26af8403a11786d3e63aac8206289"
+    },
+    "s6a/before": {
+      "directory": "/var/tmp/sa-c22/compare/s6a/before",
+      "provenance_sha256": "c41838219ec13751e08165bd706150d523a2237d662d87fba54f26a9b909c42a",
+      "survey_sha256": "33857b81aef3e654db241b0414327bf49328a04b832fd161eeffff00635754a6",
+      "selected_image": "kit1-seg6-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-before-234659-1/run-results.json",
+      "raw_sha256": "170c625d7cdee52405a1362036682fd38f5e07f069e9b9c88de0882a4505a478",
+      "guard_sha256": "4a655605e11e421ed529a6d0db8e26794009bf574ab6df60c108d30aea8651eb"
+    },
+    "s6a/after": {
+      "directory": "/var/tmp/sa-c22/compare/s6a/after",
+      "provenance_sha256": "a7181297ba76080eb71720f2483f5a25e150b6146e9bd142bba5f9a6deaeb51a",
+      "survey_sha256": "33857b81aef3e654db241b0414327bf49328a04b832fd161eeffff00635754a6",
+      "selected_image": "kit1-seg6-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-after-023613-1/run-results.json",
+      "raw_sha256": "7d447c9cceaf2af17e2cda119f3e278e27702c4445bd1a0886fbb7f19f921bc4",
+      "guard_sha256": "a8d2a750701558c7c076db7bb3d6813dcee2e8907a799a80d54375f92f31d0bd"
+    },
+    "s7b/before": {
+      "directory": "/var/tmp/sa-c22/compare/s7b/before",
+      "provenance_sha256": "badbe1fe70bfb921bae3c1860d43edef352208897f385805126439ad377d37dc",
+      "survey_sha256": "b3c203ffcb35f8cffa521a63da938fa258479bb676bf8cfea6b49f192c7b9d3b",
+      "selected_image": "kit1-seg7-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s7b-before-235421-1/run-results.json",
+      "raw_sha256": "36b57fb14c9878fe081ddb7b58f7bdadc9ca55490a830de5a3342d0b0c47266f",
+      "guard_sha256": "7d14583c093d6667f673b87b0bcd4d37a9323a6d407ed7346238201d1e4a2860"
+    },
+    "s7b/after": {
+      "directory": "/var/tmp/sa-c22/compare/s7b/after",
+      "provenance_sha256": "fcc0806de8793247796676a1019e13b9df3358ca699588693836dfba1a0b22e9",
+      "survey_sha256": "b3c203ffcb35f8cffa521a63da938fa258479bb676bf8cfea6b49f192c7b9d3b",
+      "selected_image": "kit1-seg7-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s7b-after-024047-1/run-results.json",
+      "raw_sha256": "4d398702d14f14ef933d509804a9f9ee94bfdd5609f3cb3adcf40c3a62c44971",
+      "guard_sha256": "7f8d4974a1c7c519adec85f38cc716275dffb5d120cb0871311221b843734d2b"
+    },
+    "s9a/before": {
+      "directory": "/var/tmp/sa-c22/compare/s9a/before",
+      "provenance_sha256": "435236d9cc6a96add5ee2f5b79afc8cc290923e2fd0f1b749e3039f6b694d921",
+      "survey_sha256": "df44b78c83e9b250bdb986ef930c8465fae1c6df4b436e270232f16e6851daef",
+      "selected_image": "kit1-seg9-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s9a-before-025558-1/run-results.json",
+      "raw_sha256": "2a3b8071da8ab9e1e1ec46b1d76f408dff472bb6f7937e52cda6e5e37ab4819d",
+      "guard_sha256": "4d77a19f00a5dc5499281650b0977a9ddebae43234b23fcd9b1d6155b94a851f"
+    },
+    "s9a/after": {
+      "directory": "/var/tmp/sa-c22/compare/s9a/after",
+      "provenance_sha256": "4e812983aa312ae9fd1df4418e95d37ba4c2eba2e9848d80966e969b7b88a0bd",
+      "survey_sha256": "df44b78c83e9b250bdb986ef930c8465fae1c6df4b436e270232f16e6851daef",
+      "selected_image": "kit1-seg9-play.png",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s9a-after-024741-1/run-results.json",
+      "raw_sha256": "cfe558d7ca82a053993fda076a6ab768e6e506c760d7191388f8c50067d59a69",
+      "guard_sha256": "14360cd4082683d5e2fe519d23a0a397a0dcada90065fd501e75df144758a7c4"
+    }
+  },
+  "external_inputs": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-final-c22/README.md": "91722566b4e50f3e562cc1104d422325959ed03d5b2f68d226a912ad2379d60d",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-root-native-appearance-review.json": "260b18a2aad8b6af1e9ef44caa616000a288d5f7cb86107ffa1414558d0bccb0",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-tuning-review-ecb/source-review.json": "61370e3410f3bb26c25fa226de8877965834212432c36ff8413a479a53035439",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-green-root-record-check.json": "ce84cd25530c487b7908354292551c7ce8c7209bf4423a57e9f6480ee1d0c804",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-red-root-record-check.json": "b5bb8bf3f381e059361062186e562414ee6d72e23974a83a07dbd5f346c707b4",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-static-cost-queue.py": "7c28c626c36c8c35b0fa53c906c31cfeb445770f1d31154338bfde76b3028b9c",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/Stage4StaticCostProbe.gd": "1dd5bd3c27aed11ef41bc90d26d963147fb4751a5091285f416ae23b7af91783",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/Stage4StaticCostProbe.tscn": "26d58a9dc2cc3b60d4ab5e115edcad41ec60324603a5be1c647d270ee07e713d",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources.json": "6d5541c4fb7419e8871fd91dfd1c0821479311b05b001e1a3214c20879135c71",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-source-parse.gd": "e7a4531ea43b330c006bdd745a3bbad89b24c52aa6ea7f342689b98986bcff19",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-source-parse.tscn": "426d332cad24147a686cd96b2719767a566e13c944e67ba9c4d019fd7326d29e",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.gd": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.tscn": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.gd": "4c9d5696082bf46a96960cbe82ddb2b500d350c8bcbc53002af04366fb566724",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.tscn": "e8e55092a329bdf194e029f7cb347c9c50895d6d9ea2a0819afa3db5596558a3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.gd": "05afd4764d810b1c653e5a95070acb908ca1e8993e0cbc2b2a00d80e272fd67c",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.tscn": "29266a4005788e3be6abf75ae27854d15d5ee80d78c1d5c559e1148abf88247e",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-static-cost-queue.py": "a8ea1573fea86c4f6a01bd202a5821e64238c1b8d1facc479ae46df0dc424af2",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/viewport.cpp": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/window.cpp": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/official-source.json": "910056699a8bfef4f0d99806b53dd837d2ae6a4ed8d384035421ee541f90eee3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/source-bindings.json": "6f04e216a658d7af97aed406cc4e30dfa321c7cdf83fa1c388c089a12b8c694a",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/root-source-review.json": "c37faee59fecd75ed9eb37e1707803cf21fb49433f7bc332f08535e44e71d8c0",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3-independent-review.json": "1e8f2fc36e30da5a485b46098f63cbb6efe6e903355de7ae24d955995c3f7026",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/README.md": "0b71310381ed08a5d2e3995e8773473534c320e19dc7b802933cda776d8a440a",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/diagnosis.json": "148f183574eaf25b5fb05ef034a624b40586ae02adf38f9a9d136508e939fc2d",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/root-diagnostic-execution.json": "394c5619efb5f4d4f67906aaa13de51d3a5fb78e15630da45204ab585aae93a9",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/diagnostic-plan.json": "a90122db51c1cdf5f3f579ac1af4778a89d4dac47bfbd779b23a76838f86014d",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/Stage4StaticCostProbe.gd": "501a3eb8645fc1a246cce1c9dc60eada053ab1c755a5b39d46bb894b21c1c1d7",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/Stage4StaticCostProbe.tscn": "f9a371075b24ee3224859ee84d18af922fd4a138e78fbf3bbbf5f449b8cca2c6",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-cost-source-parse.gd": "2f5ec673baed6606f4dcc82774b47dacbda98f1efcc5e592abc2ee4c4c0d86d6",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-cost-source-parse.tscn": "f411cc13fe24c649118ac494172607638e3afd57fc325f6d2967cc7f56ccd5ee",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-static-cost-queue.py": "44bc27f7ee727382bd02e6f80d79bf81bd9205ba9a9e8b3a8897a62d11865a3e"
+  },
+  "source_candidates": [
+    "/tmp/sa-c22-weathering",
+    "/tmp/sa-wp2-evidence",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-snap-gradient-review-23/source"
+  ],
+  "historical_stain_sources": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-snap-proposal-23/CityWeathering.gd.before": "b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/weathering-snap-proposal-23/facade_stain.gdshader.before": "03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41"
+  },
+  "scope": "Four source-bound tests, eight root-selected kit1 originals with full manifests, finite seam PNGs, later actual static GPU/CPU timing receipts; no other archive copy.",
+  "seam_artifacts": {
+    "green": {
+      "directory": "/var/tmp/sa-c22/seam/green3",
+      "provenance_sha256": "93f02681050fefd5d1dea9359bcc220b58af123e19209844c5b2b5a0d654a5aa"
+    },
+    "red": {
+      "directory": "/var/tmp/sa-c22/seam/red",
+      "provenance_sha256": "766e0c5796b8cec08235f87c77b0c60b1ccc9785e4affc03eb2ef24e394dda45"
+    }
+  },
+  "cost_protocol": {
+    "revision": "R3",
+    "driver": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-static-cost-queue.py",
+    "scoped_parser_helpers": 2,
+    "external_bindings": {
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.gd": {
+        "sha256": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+        "bytes": 12188
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.tscn": {
+        "sha256": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+        "bytes": 269
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.gd": {
+        "sha256": "4c9d5696082bf46a96960cbe82ddb2b500d350c8bcbc53002af04366fb566724",
+        "bytes": 37427
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.tscn": {
+        "sha256": "e8e55092a329bdf194e029f7cb347c9c50895d6d9ea2a0819afa3db5596558a3",
+        "bytes": 263
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.gd": {
+        "sha256": "05afd4764d810b1c653e5a95070acb908ca1e8993e0cbc2b2a00d80e272fd67c",
+        "bytes": 685
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.tscn": {
+        "sha256": "29266a4005788e3be6abf75ae27854d15d5ee80d78c1d5c559e1148abf88247e",
+        "bytes": 268
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-static-cost-queue.py": {
+        "sha256": "a8ea1573fea86c4f6a01bd202a5821e64238c1b8d1facc479ae46df0dc424af2",
+        "bytes": 32146
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/viewport.cpp": {
+        "sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+        "bytes": 200690
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/window.cpp": {
+        "sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+        "bytes": 135562
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/official-source.json": {
+        "sha256": "910056699a8bfef4f0d99806b53dd837d2ae6a4ed8d384035421ee541f90eee3",
+        "bytes": 453
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources.json": {
+        "sha256": "6d5541c4fb7419e8871fd91dfd1c0821479311b05b001e1a3214c20879135c71",
+        "bytes": 14057
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+        "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+        "bytes": 8176
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py": {
+        "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+        "bytes": 8660
+      },
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py": {
+        "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+        "bytes": 13817
+      }
+    },
+    "dimension_contract": "Godot ed1daf0bf native CANVAS_ITEMS source contract; Window/DisplayServer/content/stretch validated; ViewportTexture getter retained diagnostic only",
+    "historical_limits": "R1 failed before READY; R2 is failed setup-only diagnosis with no samples. Future smoke is functional timer evidence only; full pairs remain unrun until actual terminal receipts validate."
+  },
+  "setup_diagnostic_r2": {
+    "execution": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/root-diagnostic-execution.json",
+    "plan": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/diagnostic-plan.json",
+    "report": "/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json",
+    "report_sha256": "eac1b40b67e5e2c76f7f028e492d205a22d6cd5c11c16c7fe0a99236f5a4d104",
+    "records": [
+      {
+        "name": "city22-stage4-cost-r2-source-parse-baseline",
+        "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-r2-source-parse-baseline-1/run-results.json",
+        "raw_sha256": "d1a4f355a01d4e84f69b326a1ac61eec4be4e327e4adaf80db83c2236e39c70c",
+        "guard_sha256": "86e67ba027fdd357ac697d04457f0c9c1ff7f91d7b2b79c566d726091ffe1f1b",
+        "expected_exit": 0,
+        "command": [
+          "/usr/bin/python3",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "--label",
+          "city22-stage4-cost-r2-source-parse-baseline",
+          "--project",
+          "/tmp/sa-wp2-evidence",
+          "--start-temperature",
+          "65",
+          "--max-wait",
+          "900",
+          "--timeout",
+          "300",
+          "--",
+          "--headless",
+          "--audio-driver",
+          "Dummy",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/stage4-cost-source-parse.tscn"
+        ]
+      },
+      {
+        "name": "city22-stage4-cost-r2-diagnostic-s2-960-baseline",
+        "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-r2-diagnostic-s2-960-baseline-1/run-results.json",
+        "raw_sha256": "2a08bd59d1db9734d9a8ba7c8486368b8b91870425caf3cdda169a74a87a2d3b",
+        "guard_sha256": "8573c807b27e311decb8efa50ca576ae631e3027202d81e70bdf48b13889561c",
+        "expected_exit": 1,
+        "command": [
+          "/usr/bin/python3",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "--label",
+          "city22-stage4-cost-r2-diagnostic-s2-960-baseline",
+          "--project",
+          "/tmp/sa-wp2-evidence",
+          "--start-temperature",
+          "65",
+          "--max-wait",
+          "900",
+          "--timeout",
+          "600",
+          "--",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r2/Stage4StaticCostProbe.tscn",
+          "--",
+          "--visible",
+          "--segment=2",
+          "--world-seed=16102026",
+          "--expect-theme=service_courtyards",
+          "--camera=416,-104",
+          "--size=960x540",
+          "--diagnose-only",
+          "--json=/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json"
+        ]
+      }
+    ]
+  }
+}

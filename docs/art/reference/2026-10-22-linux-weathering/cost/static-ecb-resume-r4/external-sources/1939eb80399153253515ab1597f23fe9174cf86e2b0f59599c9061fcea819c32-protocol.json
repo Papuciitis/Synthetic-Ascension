@@ -1,0 +1,97 @@
+{
+  "revision": "R3-helper-read-only-hidden-parking-comparison-R4",
+  "origin_queue": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/queue.json",
+  "origin_queue_sha256": "e97bf615bf22e4ca9d159612922c7219d19a5010bb4cf957f5d419c02c3a641a",
+  "origin_expected_status": "stopped",
+  "origin_expected_error": "RuntimeError('s7-960: geometry/bounds/terrain/protocol mismatch, no comparative cost result')",
+  "reused_case_ids": [
+    "parse-baseline",
+    "parse-candidate",
+    "s2-960-baseline",
+    "s2-960-candidate",
+    "s6-960-candidate",
+    "s6-960-baseline",
+    "s7-960-baseline",
+    "s7-960-candidate"
+  ],
+  "remaining_case_ids": [
+    "s9-960-candidate",
+    "s9-960-baseline",
+    "s6-1080-baseline",
+    "s6-1080-candidate",
+    "s7-1080-candidate",
+    "s7-1080-baseline",
+    "s9-1080-baseline",
+    "s9-1080-candidate",
+    "s2-1080-candidate",
+    "s2-1080-baseline"
+  ],
+  "original_fourteen_bindings": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.gd": {
+      "sha256": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+      "bytes": 12188
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.tscn": {
+      "sha256": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+      "bytes": 269
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/viewport.cpp": {
+      "sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+      "bytes": 200690
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/window.cpp": {
+      "sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+      "bytes": 135562
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/official-source.json": {
+      "sha256": "910056699a8bfef4f0d99806b53dd837d2ae6a4ed8d384035421ee541f90eee3",
+      "bytes": 453
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.gd": {
+      "sha256": "4c9d5696082bf46a96960cbe82ddb2b500d350c8bcbc53002af04366fb566724",
+      "bytes": 37427
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/Stage4StaticCostProbe.tscn": {
+      "sha256": "e8e55092a329bdf194e029f7cb347c9c50895d6d9ea2a0819afa3db5596558a3",
+      "bytes": 263
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-camera-sources.json": {
+      "sha256": "6d5541c4fb7419e8871fd91dfd1c0821479311b05b001e1a3214c20879135c71",
+      "bytes": 14057
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.gd": {
+      "sha256": "05afd4764d810b1c653e5a95070acb908ca1e8993e0cbc2b2a00d80e272fd67c",
+      "bytes": 685
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-cost-source-parse.tscn": {
+      "sha256": "29266a4005788e3be6abf75ae27854d15d5ee80d78c1d5c559e1148abf88247e",
+      "bytes": 268
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/stage4-static-cost-queue.py": {
+      "sha256": "a8ea1573fea86c4f6a01bd202a5821e64238c1b8d1facc479ae46df0dc424af2",
+      "bytes": 32146
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+      "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "bytes": 8176
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py": {
+      "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+      "bytes": 8660
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py": {
+      "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+      "bytes": 13817
+    }
+  },
+  "baseline": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+  "candidate": "ecb568f2c32acb8c0fcb8c8cfd53b89ab0f4736f",
+  "comparison_policy": [
+    "Every original per-run validator and within-run exterior state/SHA equality remains mandatory.",
+    "Crosspair ignores only exterior_state.player_world, its derived raw stateSHA, and player_parking.after_settle_world when BOTHactual Player owners are recorded hidden/disabled by exact helper4c9, actual positions are stable within each run, same selectedpoint/cell, each and crosspoint drift<=existing1pixel and same64pixel cell.",
+    "Every other exterior/visible geometry/opacity/clearance/room/owner flag/dimension/camera/terrain field remains exact acrosspair.",
+    "Original strict result and original Godot state hashes remain unmodified; any Python normalized comparison hash is named separately.",
+    "No actor movement, fade/material/source/runtime changes; no rerun of completed2parsers/6native. New10actualnativecases use original14inputs with separate resume driver/protocol bindings."
+  ],
+  "mixed_origin_limit": "Original failed R3 queue remains failed. Reused actual cases and new cases keep separate labels/raw/guard/report paths and exact program origins; interruption/quiet-window boundaries and weather/CPU scheduling noise prevent a statistical/whole-Game performance claim."
+}

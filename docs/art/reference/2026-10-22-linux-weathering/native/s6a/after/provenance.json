@@ -1,0 +1,56 @@
+{
+ "started_utc": "2026-10-22T23:36:13Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-c22-weathering",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/dev/CitySegmentSurvey.tscn",
+  "--",
+  "--segment=6",
+  "--world-seed=16102026",
+  "--route-points=1",
+  "--kit-points=2",
+  "--out=/var/tmp/sa-c22/compare/s6a/after",
+  "--theme=industrial_cutthrough"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "d81cce4d832921e271100a239b9de26d58122fd9",
+ "dirty_inputs": [
+  "M scenes/world/buildings/weathering/CityWeathering.gd"
+ ],
+ "scoped_sha256": {
+  "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+  "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+  "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+  "scenes/world/buildings/weathering/CityWeathering.gd": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+  "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+  "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+  "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+  "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+  "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+  "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-after-023613-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 169.475,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22w-cmp-s6a-after-023613 completed peak 75.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "kit1-seg6-play.png": "95a8867d6771c7cca960d8c0a404bb3cbc2daf2949f51377631f62dcfc4a41fb",
+  "kit2-seg6-play.png": "45bec01024ba7b66b4ceed9bbfef2d548a5e01c2e2822a4015413576a59aaba2",
+  "route1-seg6-overview.png": "c8795cf0cc0c087c5e9f574af9e619caf7d70f429d71c29ba86739e8e222bc3f",
+  "route1-seg6-play.png": "ae7fbf11269b3d524d8e8cda44cf9731bbebc22bd90e33acf031b5f9dcf625a6",
+  "start-seg6-overview.png": "70be8d00f3b503469d46631eb618be2df9a47cb82db5b86e93906ad912ef56fa",
+  "start-seg6-play.png": "f7716a3721b58d3d4279aa4262fc068e5f77e6915a2e8193c3f9d964c85e2dc7"
+ }
+}

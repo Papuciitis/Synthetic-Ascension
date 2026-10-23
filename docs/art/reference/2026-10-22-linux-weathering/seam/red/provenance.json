@@ -1,0 +1,72 @@
+{
+ "started_utc": "2026-10-22T23:04:57Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-c22-weathering",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/tests/CityWeatheringSeamRenderTest.tscn",
+  "--",
+  "--out=/var/tmp/sa-c22/seam/red"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "d81cce4d832921e271100a239b9de26d58122fd9",
+ "dirty_inputs": [
+  "M  scenes/world/buildings/weathering/CityWeathering.gd",
+  "M  scenes/world/buildings/weathering/facade_stain.gdshader"
+ ],
+ "scoped_sha256": {
+  "scenes/world/buildings/weathering/CityWeathering.gd": "b05682ec85cecbeb818a517c6ffbc2e9d8fc3aa5368a52820934d7e8ed8474ad",
+  "scenes/world/buildings/weathering/facade_stain.gdshader": "03785b6572b1aa729e9d3614845ce590294690ed5c76da2bacc62e059f89ad41",
+  "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+  "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-red-020457-1",
+  "stop_reason": "nonzero_exit",
+  "actual_exit": 1,
+  "elapsed_seconds": 75.878,
+  "diagnostic_count": 84,
+  "diagnostics_head": [
+   "ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))",
+   "ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 50)",
+   "ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))",
+   "ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))",
+   "ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 38)",
+   "ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 102)",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 51)",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 204)",
+   "ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))"
+  ],
+  "thermal": "THERMAL c22w-seam-red-020457 completed peak 82.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "20c17c491ac8d42ccd8a2ee234a5735435ea9838a99fb18a6e88f358f11e4814",
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.0-reference.png": "7a039fbc53c634f776848dd968efafc71545d2fb2d211aafd870e2f1ac35c227",
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "9c528a6f7837cb12a0ce28e19e458c427583dfff1585cbd6587458d40d1bc47c",
+  "canal_services_pale_zoom_1.25_fade_0.50_strength_0.3-reference.png": "7a039fbc53c634f776848dd968efafc71545d2fb2d211aafd870e2f1ac35c227",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "117717e96b39647ff5808836a4a6c289768e5dbddb45a62c80a332d0fd3e7be1",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.0-reference.png": "73f7dcd2016ca5135fefb7186042599d29a00045c4e2d813a191f31b0efdbc42",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "f70738d43bf6d0a21b61ede6884350fa4564ddaa9ee1dbeb0a2505ce05fafe22",
+  "canal_services_warm_zoom_1.25_fade_0.50_strength_0.3-reference.png": "73f7dcd2016ca5135fefb7186042599d29a00045c4e2d813a191f31b0efdbc42",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "b6b38cf56b2d7f117d795ef2fdcd80a74f0db7520886c338d463a11273b1bcf8",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.0-reference.png": "a0eb651cd7043555220f7d6f99a11d3c0198e12a8b1e41d573591e5d6a97785f",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "85ca5b1fad7ad538c816bef7512993be3447ffd3c28ce93ccd80901d8e6b9c28",
+  "dry_pale_zoom_1.25_fade_0.50_strength_0.3-reference.png": "a0eb651cd7043555220f7d6f99a11d3c0198e12a8b1e41d573591e5d6a97785f",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.0-candidate.png": "b59f3876c9935595474dcb5061600d1951bb4889b10e8100e85f281c123cc4ae",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.0-reference.png": "4a934d734d8c05030a9d4c13dd3205137150dc7a5285791ccb74b5a9fe811b5c",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.3-candidate.png": "5c5b68aff7a49b432db0bb107084e83ef9fc2a6ec1941dab002943a83c5ed799",
+  "dry_warm_zoom_1.25_fade_0.50_strength_0.3-reference.png": "4a934d734d8c05030a9d4c13dd3205137150dc7a5285791ccb74b5a9fe811b5c"
+ }
+}

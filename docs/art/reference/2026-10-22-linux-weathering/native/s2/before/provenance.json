@@ -1,0 +1,51 @@
+{
+ "started_utc": "2026-10-22T20:41:27Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-wp2-evidence",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/dev/CitySegmentSurvey.tscn",
+  "--",
+  "--segment=2",
+  "--world-seed=16102026",
+  "--route-points=1",
+  "--kit-points=2",
+  "--out=/var/tmp/sa-c22/compare/s2/before"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+ "dirty_inputs": [],
+ "scoped_sha256": {
+  "scenes/world/buildings/CityFacadeComposer.gd": "46ad212ca4308cd9b9eb438205f70c6eabdd1e7f95fa38bc973089bd08cc5412",
+  "scenes/world/buildings/facade_wall.gdshader": "55b0eb012bd8d6f8568948f0985af4339a8ae054c19a6f40a8b9888c757048a3",
+  "scenes/world/buildings/roof.gdshader": "4ce435769d00374b22565c702eb86171de08b2f268167111f3e85e3844aa89da",
+  "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "0c2e645f910a0d6ea7f4ae71f4d4cafbf10915b2d9a3ce054e7c5e6d5a771826",
+  "core/systems/world/atmosphere/WorldAtmosphere.gd": "95cb7c05977716c11de19d8289ddecf3511ca719a45965a50194b8e9c00c4c3f",
+  "project.godot": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-before-234127-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 150.721,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22w-cmp-s2-before-234127 completed peak 77.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <65 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "kit1-seg2-play.png": "db7e34c61406242f6d038217be85d0642c6c76a23d4999ce72e90360be91ebaf",
+  "kit2-seg2-play.png": "336ec3441d1463bbddfe1e79cd35d3c828ae3fadbe5a8ea77fe8cd246187453f",
+  "objective-seg2-overview.png": "7ad4f64ba42e3881b39e9fcb3fda73fccca4861e1545739704b44b055be956e6",
+  "objective-seg2-play.png": "b567fdd30346967637f0102c80262dee9d31954e57b1998a167b7fed90e132dc",
+  "route1-seg2-overview.png": "f1aec5ccc0b1b79a2aeef8bc9c14a7a2ae604787dcb3a4e578161fde8283d2a5",
+  "route1-seg2-play.png": "f3bf461b8accfb18adad572ef7e4d49d7f06210bc93b768db0380b3f12d02626",
+  "start-seg2-overview.png": "8286f62278538ed27cc0b25e72af26d6495dd4955718df9d2cb0cb1930f0f340",
+  "start-seg2-play.png": "e70c25ba1b6c263190d004b45e7d17f365bb9a40693b3bd1e3df24641e10a103"
+ }
+}

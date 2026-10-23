@@ -1,0 +1,663 @@
+{
+  "threshold_bytes": 131072,
+  "format": "gzip6 mtime0",
+  "entries": [
+    {
+      "path": "runs/seam-green/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-green3-013945-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "25f4ded078a49d2e687c5f80a73b8bd4d32ec806393749db53e35e869443f506",
+      "raw_bytes": 357768,
+      "delivered_sha256": "7421b920ade7d43655a25b61e8ecdbaed1915e396903207b29be12fc0996d459",
+      "delivered_bytes": 136978
+    },
+    {
+      "path": "runs/seam-red/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-red-020457-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "73213c7e956861d601a34c8c2bc38e2101873879d778c3e4a34e52a2f7191d14",
+      "raw_bytes": 369948,
+      "delivered_sha256": "c3a203ff6a5ce6b6968fe8e9f0ed64ebe3c4589bbae72f0bddeab25ce67055d1",
+      "delivered_bytes": 137660
+    },
+    {
+      "path": "runs/helper-green/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-tuned-022527-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "2e4f1a12982ac3f21962bd4b4e8df268cdf7c99ff6b5f9a170fe9d2094b2d4b2",
+      "raw_bytes": 355273,
+      "delivered_sha256": "f1017f8233bec135c960b71d65eeb689faf2afc228bb13c2b140d5ef5af1b8da",
+      "delivered_bytes": 136757
+    },
+    {
+      "path": "runs/helper-red/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-red-021347-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "1bb27de3e841db9e6b9b7b2b343db1cef25ebc7e6d4156aa96ef08782af9a1d6",
+      "raw_bytes": 368582,
+      "delivered_sha256": "2ec9214c0c22a3059b238b4406a17f09379405ab7ceadd26e2423d7a331620b3",
+      "delivered_bytes": 137596
+    },
+    {
+      "path": "runs/helper-red/logs/stderr.log.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-red-021347-1/logs/stderr.log",
+      "role": "original completed-run log",
+      "raw_sha256": "181c7d2c629a871afc1a03657b343bb2ac5e456405979e7109d064db3e386df4",
+      "raw_bytes": 327826,
+      "delivered_sha256": "b4611efaa1da27ee049727ef4ff84fd71c3f85a23e0ef014a1416156d8ddb30d",
+      "delivered_bytes": 3732
+    },
+    {
+      "path": "runs/helper-red/logs/engine.log.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-red-021347-1/logs/engine.log",
+      "role": "original completed-run log",
+      "raw_sha256": "ce103fdf4f6d2536a47aca1bb9589671ad2bab8f13acb2907e14efdb6bda360e",
+      "raw_bytes": 327944,
+      "delivered_sha256": "5c420814655ac1886b3120b1c51b1861cf388da7baa5e3d9c3e787926e7b9070",
+      "delivered_bytes": 3834
+    },
+    {
+      "path": "runs/view-s2-before/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-before-234127-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "3478e9f231dc4b1ae59e791b81165987871180047ab370e89b85eaa680031002",
+      "raw_bytes": 379550,
+      "delivered_sha256": "882c0b530fc9de29a97379f08fda8119a20a3dd1209a8dd99d4c0410762137ac",
+      "delivered_bytes": 138233
+    },
+    {
+      "path": "runs/view-s2-after/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s2-after-023225-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "023b955142ef2064f349bb8723729716318ede1b479658803c529b1764b869ee",
+      "raw_bytes": 396757,
+      "delivered_sha256": "52167825b7cb7d66880e5b85e1d024b77df14fdf0efc1465674e75d16e3f02b4",
+      "delivered_bytes": 140839
+    },
+    {
+      "path": "runs/view-s6a-before/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-before-234659-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "170c625d7cdee52405a1362036682fd38f5e07f069e9b9c88de0882a4505a478",
+      "raw_bytes": 375165,
+      "delivered_sha256": "a3ee424aa447e1ef67a809da9056688cf96e5f1235f3cb1308ea2ff2edf8594b",
+      "delivered_bytes": 137865
+    },
+    {
+      "path": "runs/view-s6a-after/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s6a-after-023613-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "7d447c9cceaf2af17e2cda119f3e278e27702c4445bd1a0886fbb7f19f921bc4",
+      "raw_bytes": 385086,
+      "delivered_sha256": "6f0bbded8640046508e4d41a148824a3aea426c91365983807dc60c622359f0e",
+      "delivered_bytes": 139736
+    },
+    {
+      "path": "runs/view-s7b-before/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s7b-before-235421-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "36b57fb14c9878fe081ddb7b58f7bdadc9ca55490a830de5a3342d0b0c47266f",
+      "raw_bytes": 372345,
+      "delivered_sha256": "76e68647b6c239c7ccc67b32aee88190161d40e6dda77007a61cd601f89e9dad",
+      "delivered_bytes": 137546
+    },
+    {
+      "path": "runs/view-s7b-after/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s7b-after-024047-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "4d398702d14f14ef933d509804a9f9ee94bfdd5609f3cb3adcf40c3a62c44971",
+      "raw_bytes": 392351,
+      "delivered_sha256": "25107f16f5b8b484fa0ad270cff24030e0749b34868182382016f1380b604b7a",
+      "delivered_bytes": 140302
+    },
+    {
+      "path": "runs/view-s9a-before/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s9a-before-025558-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "2a3b8071da8ab9e1e1ec46b1d76f408dff472bb6f7937e52cda6e5e37ab4819d",
+      "raw_bytes": 394799,
+      "delivered_sha256": "8a16ea50bb39faa7f5adacf7239c5259107fb4faf07a636dfe7bef5d368c6a04",
+      "delivered_bytes": 139632
+    },
+    {
+      "path": "runs/view-s9a-after/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-cmp-s9a-after-024741-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "cfe558d7ca82a053993fda076a6ab768e6e506c760d7191388f8c50067d59a69",
+      "raw_bytes": 396843,
+      "delivered_sha256": "cd78bfd1aa0eac71eecca1ccd304a15464079cbc7fda9ae7e3383050a1dd7fbe",
+      "delivered_bytes": 140701
+    },
+    {
+      "path": "runs/city22-stage4-cost-r2-source-parse-baseline/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-r2-source-parse-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "d1a4f355a01d4e84f69b326a1ac61eec4be4e327e4adaf80db83c2236e39c70c",
+      "raw_bytes": 357701,
+      "delivered_sha256": "59be514da6b4806a5548b0fdde344f835538f1a4bf1024e45513af7b78e98e9e",
+      "delivered_bytes": 136048
+    },
+    {
+      "path": "runs/city22-stage4-cost-r2-diagnostic-s2-960-baseline/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-r2-diagnostic-s2-960-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "2a08bd59d1db9734d9a8ba7c8486368b8b91870425caf3cdda169a74a87a2d3b",
+      "raw_bytes": 371512,
+      "delivered_sha256": "705e7ec26f543f66cc072f643eb2b94f197cbc5aded59ccd6cafe4545b467345",
+      "delivered_bytes": 137750
+    },
+    {
+      "path": "references/stage4-cost-viewport-source-review/viewport.cpp.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/viewport.cpp",
+      "role": "pinned handoff/review/helper/protocol source; not retrofitted to older launches",
+      "raw_sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+      "raw_bytes": 200690,
+      "delivered_sha256": "c4140fc6b1b7d453cbffe1d6b565502bbcd0f0394bad90f32601596e1a378466",
+      "delivered_bytes": 39798
+    },
+    {
+      "path": "references/stage4-cost-viewport-source-review/window.cpp.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-viewport-source-review/window.cpp",
+      "role": "pinned handoff/review/helper/protocol source; not retrofitted to older launches",
+      "raw_sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+      "raw_bytes": 135562,
+      "delivered_sha256": "a77aae8ef4a09acb9e75ea810a9006e9f31a5fbcdab6defe26a77878712624cd",
+      "delivered_bytes": 23192
+    },
+    {
+      "path": "setup-diagnostics/r2/report.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/diagnostic-ecb-r2/s2-960-baseline.json",
+      "role": "exact failed setup-only R2 diagnostic; no timing samples",
+      "raw_sha256": "eac1b40b67e5e2c76f7f028e492d205a22d6cd5c11c16c7fe0a99236f5a4d104",
+      "raw_bytes": 491957,
+      "delivered_sha256": "aee0067cc35bda63d20ee66133e56382862ee59efc30c17b5f283b3ecafc66e4",
+      "delivered_bytes": 56994
+    },
+    {
+      "path": "cost/static-ecb-full-r3/queue.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/queue.json",
+      "role": "original ended cost queue including failures/finite mask samples",
+      "raw_sha256": "e97bf615bf22e4ca9d159612922c7219d19a5010bb4cf957f5d419c02c3a641a",
+      "raw_bytes": 5158030,
+      "delivered_sha256": "e5019e25cd621feb5f2174b11a85c378833259cdfa8666677c4031689195263f",
+      "delivered_bytes": 711568
+    },
+    {
+      "path": "cost/static-ecb-full-r3/external-sources/db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652-viewport.cpp.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/external-sources/db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652-viewport.cpp",
+      "role": "actual advertised prelaunch external snapshot; exact hashes remain in queue",
+      "raw_sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+      "raw_bytes": 200690,
+      "delivered_sha256": "c4140fc6b1b7d453cbffe1d6b565502bbcd0f0394bad90f32601596e1a378466",
+      "delivered_bytes": 39798
+    },
+    {
+      "path": "cost/static-ecb-full-r3/external-sources/1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb-window.cpp.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/external-sources/1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb-window.cpp",
+      "role": "actual advertised prelaunch external snapshot; exact hashes remain in queue",
+      "raw_sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+      "raw_bytes": 135562,
+      "delivered_sha256": "a77aae8ef4a09acb9e75ea810a9006e9f31a5fbcdab6defe26a77878712624cd",
+      "delivered_bytes": 23192
+    },
+    {
+      "path": "runs/static-ecb-full-r3-parse-baseline/city22-stage4-cost-ecb-full-r3-parse-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-parse-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "d89a268d310a5d076eeec196f5a3955a9f25501a90939e1a46464cb771b346e7",
+      "raw_bytes": 360222,
+      "delivered_sha256": "42ad12b51640fd661d62049cbeedab90f897537c756bd650f2b8aa98c81f0216",
+      "delivered_bytes": 136216
+    },
+    {
+      "path": "runs/static-ecb-full-r3-parse-candidate/city22-stage4-cost-ecb-full-r3-parse-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-parse-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "f949d8223a60ab5ca5ab084ceb7134088a1370ad520dae48ae69ae4943dc4c8e",
+      "raw_bytes": 360243,
+      "delivered_sha256": "9f1c9e9fbc5923cfd97f5bc6dd5ce1d7db8aa055ec6f02c389569cac3bc47d3c",
+      "delivered_bytes": 136899
+    },
+    {
+      "path": "runs/static-ecb-full-r3-s2-960-baseline/city22-stage4-cost-ecb-full-r3-s2-960-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-s2-960-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "3b693c537fa39b776ac78d782c3ba9db4f08bbc18c7f9acc9ff325da408afcd1",
+      "raw_bytes": 376377,
+      "delivered_sha256": "a6dfdd63fd5b3f5e149fb21f4f4908fc2b1a7674e94798ac5086a6e129166627",
+      "delivered_bytes": 137999
+    },
+    {
+      "path": "cost/static-ecb-full-r3/s2-960-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/s2-960-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "cd154952bca2f33e9a6e632d756ca419f6b47babf781e679a298ad1ae07f3371",
+      "raw_bytes": 638193,
+      "delivered_sha256": "0dca6d7ec97f79c1ff4a8f14df69b4e63c0bb73f52c3be1ee40b7d31acb31ac5",
+      "delivered_bytes": 73180
+    },
+    {
+      "path": "runs/static-ecb-full-r3-s2-960-candidate/city22-stage4-cost-ecb-full-r3-s2-960-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-s2-960-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "1f06b8abfe8076504b1391ff3f31f1cbbff2b9b0a64869242c22ee5e59109e7c",
+      "raw_bytes": 378812,
+      "delivered_sha256": "7532620c60226b0a23ef478c80c2e944da8ccfa0fd105eaf71799ce955bd43d0",
+      "delivered_bytes": 138931
+    },
+    {
+      "path": "cost/static-ecb-full-r3/s2-960-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/s2-960-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "7842611090164076a0b531e3e7332bae52c00920e6500ec3070f9b92ecadd1d8",
+      "raw_bytes": 641805,
+      "delivered_sha256": "c35732a396c2079e6f38a906c5d6f9f56651ea119808858fc445811837696253",
+      "delivered_bytes": 74078
+    },
+    {
+      "path": "runs/static-ecb-full-r3-s6-960-candidate/city22-stage4-cost-ecb-full-r3-s6-960-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-s6-960-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "db040e2464e84152098ced1e7fcc3048f73755a264a41111a84c7c22f8d0c951",
+      "raw_bytes": 377162,
+      "delivered_sha256": "d833378bf569364f66bb4d725dece18aad2caea01b7e8e0230bd78b206cd6c35",
+      "delivered_bytes": 138803
+    },
+    {
+      "path": "cost/static-ecb-full-r3/s6-960-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/s6-960-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "ec00dbcbbd06eebdaff204b179dd7723cb6de4a3b4ead21a4bf63804991e388a",
+      "raw_bytes": 464594,
+      "delivered_sha256": "7b4a232ab9ef1dd25bde1bc724ce95f99a13551ea6986b72a7e0d48b0b8fd7a3",
+      "delivered_bytes": 52984
+    },
+    {
+      "path": "runs/static-ecb-full-r3-s6-960-baseline/city22-stage4-cost-ecb-full-r3-s6-960-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-s6-960-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "28971c093a290696a29269f947f3a02b2362f0e9f45deb40193eb84c26901deb",
+      "raw_bytes": 378052,
+      "delivered_sha256": "692d6f807fe2067e513d8aa88ae0309ccb097b917c59114386e0265ba0a9f809",
+      "delivered_bytes": 138178
+    },
+    {
+      "path": "cost/static-ecb-full-r3/s6-960-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/s6-960-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "71cda9df86db3b6113de5dc802e2394ea2d8b8896fc65624ac3fcb875e2b0ee9",
+      "raw_bytes": 460909,
+      "delivered_sha256": "6356f935ba97754628d41db23ba59b08600720bf99b0f226ccb58f67d8834c4e",
+      "delivered_bytes": 52323
+    },
+    {
+      "path": "runs/static-ecb-full-r3-s7-960-baseline/city22-stage4-cost-ecb-full-r3-s7-960-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-s7-960-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "049c97b86b182466ad01cfa8ebce3f605b06aee86c9e3c9bf18b8287d7633b7f",
+      "raw_bytes": 375752,
+      "delivered_sha256": "a842c551ef197e425e591f54ed4a42c5261e84a2567a3d22e1b2ec0ea180d22b",
+      "delivered_bytes": 137954
+    },
+    {
+      "path": "cost/static-ecb-full-r3/s7-960-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/s7-960-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "35351d3fd32922b646178c3925a2ef6e48d8fdb4e06e5e74f2678169d94da064",
+      "raw_bytes": 527367,
+      "delivered_sha256": "9b89b254e26b0e9f26b15b4ca0313c9e0c439c58ae5fb84af5b3957164802e62",
+      "delivered_bytes": 60552
+    },
+    {
+      "path": "runs/static-ecb-full-r3-s7-960-candidate/city22-stage4-cost-ecb-full-r3-s7-960-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-full-r3-s7-960-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "8e4e798ab7b54ef068d8703c328e340ac716f9c7237513a07ee7ae5c9341bfc3",
+      "raw_bytes": 377850,
+      "delivered_sha256": "81f247e8fe82597a986bf66ff88d86e52d41083f97ab7bd95da83ebf8496b126",
+      "delivered_bytes": 138861
+    },
+    {
+      "path": "cost/static-ecb-full-r3/s7-960-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/s7-960-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "ecb4d2a3d72dee58f9bd4862d01ca2ca578d1a73bea3aa4997e78102b34241d5",
+      "raw_bytes": 530933,
+      "delivered_sha256": "cd683bfb0d8699b4cb7ddb1dd379099ffd5562166bc76a650290db704c2321d2",
+      "delivered_bytes": 61356
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/queue.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/queue.json",
+      "role": "original ended cost queue including failures/finite mask samples",
+      "raw_sha256": "80258f5db829abacfac8b4712561bda74c4ed7757192ad9eaadeb2d29cdb93b6",
+      "raw_bytes": 6637293,
+      "delivered_sha256": "ee2a0c5b215280bb665ac046419e19c06559ceda956738f4e5e935f90b05bbd0",
+      "delivered_bytes": 635417
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/external-sources/db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652-viewport.cpp.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/external-sources/db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652-viewport.cpp",
+      "role": "actual advertised prelaunch external snapshot; exact hashes remain in queue",
+      "raw_sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+      "raw_bytes": 200690,
+      "delivered_sha256": "c4140fc6b1b7d453cbffe1d6b565502bbcd0f0394bad90f32601596e1a378466",
+      "delivered_bytes": 39798
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/external-sources/1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb-window.cpp.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/external-sources/1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb-window.cpp",
+      "role": "actual advertised prelaunch external snapshot; exact hashes remain in queue",
+      "raw_sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+      "raw_bytes": 135562,
+      "delivered_sha256": "a77aae8ef4a09acb9e75ea810a9006e9f31a5fbcdab6defe26a77878712624cd",
+      "delivered_bytes": 23192
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s9-960-candidate/city22-stage4-cost-ecb-resume-r4-s9-960-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s9-960-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "3cd88c3c5347b5a3914cc8df1b7e8ed7a0d2f193c5eb8108fbccae15ee29a5fe",
+      "raw_bytes": 378686,
+      "delivered_sha256": "38c3b1f4ac52933ac8964b33d21ea60de14cd09b3bb9ca378ed84b8685d643f0",
+      "delivered_bytes": 138881
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s9-960-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s9-960-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "bf933c48d2689fa57c758d1fa06fe0e92613f46e8cbfdcd9960c2d7c4fcda154",
+      "raw_bytes": 345056,
+      "delivered_sha256": "7adec79a3bf9ca5e83fe21e7b470efe5f5c782b93e45f755752f9601569c6e76",
+      "delivered_bytes": 39653
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s9-960-baseline/city22-stage4-cost-ecb-resume-r4-s9-960-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s9-960-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "ca38da2c26225a8a393cd42917a7189e3ca8f5f734c8aff06206b1f7a747f214",
+      "raw_bytes": 376388,
+      "delivered_sha256": "d3b18ad5b66cd6fb68bb72469f2cb81792df5d8e1ffdc2591b7e6dbe95560594",
+      "delivered_bytes": 138088
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s9-960-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s9-960-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "b392162374387e59227b05a3857b2ca3566d7205df16956bd2523cfbc062bf84",
+      "raw_bytes": 341290,
+      "delivered_sha256": "40eb097631374e3f584b1900db739e372703bf290523f2cfac364378276bc6b4",
+      "delivered_bytes": 38742
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s6-1080-baseline/city22-stage4-cost-ecb-resume-r4-s6-1080-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s6-1080-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "b3d7677dc4c167622d8728e57fc9573dc95e15b4e9ff8cf09ce91787ccce9de7",
+      "raw_bytes": 375100,
+      "delivered_sha256": "cbe4a2410fb4f5957773dca5a5b49d8c0939dfa50f6091652fa391448183953b",
+      "delivered_bytes": 137969
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s6-1080-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s6-1080-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "92e68a62d4d24373635cd0a0d5a4e94fa9df515dfb4d4ef57d4023d2f4c06a08",
+      "raw_bytes": 460912,
+      "delivered_sha256": "3f556b28c89b8653348a3b9046de94a84709414a5e957ba2af8dcb68a84a2ea0",
+      "delivered_bytes": 52245
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s6-1080-candidate/city22-stage4-cost-ecb-resume-r4-s6-1080-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s6-1080-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "ff2f4def2c7373720283d57c7ebdb5cdd6e140f7fd779f8af005a6571063280a",
+      "raw_bytes": 380270,
+      "delivered_sha256": "d3b3abe6ba7449d0a9f4aadc06f3beeec7da12da363e40594b8be7b162ce8ca0",
+      "delivered_bytes": 139078
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s6-1080-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s6-1080-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "628f72c2f19f85fb587df552a9e4a6278af195b3674573adb470da33c47d7424",
+      "raw_bytes": 464616,
+      "delivered_sha256": "f932443c46ba1232975ea41f39745cb9e2785a1535b364d5cfd653e7ecab614a",
+      "delivered_bytes": 53159
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s7-1080-candidate/city22-stage4-cost-ecb-resume-r4-s7-1080-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s7-1080-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "6541a7c27438469b886d86ebc2c54e1d2bf9c0055176f93988bbf7bfb4a23c06",
+      "raw_bytes": 378190,
+      "delivered_sha256": "0dc88fa6c3aa50f4b13858379dd2df1385dc4377d94df849e2374a3e117bce8c",
+      "delivered_bytes": 138859
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s7-1080-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s7-1080-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "95cb59293c8b6bf6500f67e800ec7896d587e85e43ac1a5b056b5a31cc3f47d5",
+      "raw_bytes": 530831,
+      "delivered_sha256": "860416ba26436e7496c77f02671676b17d7478be5344bcef793c548021fae7ac",
+      "delivered_bytes": 61311
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s7-1080-baseline/city22-stage4-cost-ecb-resume-r4-s7-1080-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s7-1080-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "8384a4250c52e148fc26c61d48184a9ca121f8b5b9901e6bb49bb1bfdb275717",
+      "raw_bytes": 377679,
+      "delivered_sha256": "c31ea35e718a6e922acf4c5ffd482f08bf1b2b0dbdb5c1841314c22ace99a3d6",
+      "delivered_bytes": 138192
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s7-1080-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s7-1080-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "48aceb2240540a75e0df828cae1b80b4d71725f97f878ba1dfc698d7e0d3da57",
+      "raw_bytes": 527214,
+      "delivered_sha256": "9f561cd0e203bf0fe37f840a695bf63628d62a8643606b64a1a10e0a16ffe864",
+      "delivered_bytes": 60117
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s9-1080-baseline/city22-stage4-cost-ecb-resume-r4-s9-1080-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s9-1080-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "ec1a9b2f931fef990816a3c0b02164c42e64fa77db4ee1e93b416b9befe85ae9",
+      "raw_bytes": 378349,
+      "delivered_sha256": "e6899c1290f7d1155bfa4021a427ec843c483f0f72a2acde2f2eb055c467f455",
+      "delivered_bytes": 138206
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s9-1080-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s9-1080-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "e643e3e2279a875c21a41891ea8b36e9726d25e6d1308463e3b563d9b3a664fb",
+      "raw_bytes": 341316,
+      "delivered_sha256": "ab88971ba56c733e2556e386222e8a989fc82b25e56593b8e508cab42ce6701b",
+      "delivered_bytes": 38750
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s9-1080-candidate/city22-stage4-cost-ecb-resume-r4-s9-1080-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s9-1080-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "2ce3d33c8a043c573b517b2bcc57835cffb8e2ed6ff239d79be2e0b1c74aada2",
+      "raw_bytes": 380514,
+      "delivered_sha256": "da00867e253110061331ae0d1d42d1c95508b0bfd5753f4ea4a5b2ded7282657",
+      "delivered_bytes": 139057
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s9-1080-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s9-1080-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "ddd139c7bb7f744c35c09de539403ccb19966d688310f6df559e55eda7a5b288",
+      "raw_bytes": 345095,
+      "delivered_sha256": "03288b914f4d3ddaad32384a74d40838aadbd86ba80346104bdd36680dca3d5b",
+      "delivered_bytes": 39654
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s2-1080-candidate/city22-stage4-cost-ecb-resume-r4-s2-1080-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s2-1080-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "d3968af7e724f21f1c0f8e00e6d883fedf8507f417d7ca3aa5dbf5986cb0056c",
+      "raw_bytes": 380724,
+      "delivered_sha256": "ee3f987d993335756535d95516c38d71f3a12e6bc3616d6f1b457da469e9bc9f",
+      "delivered_bytes": 139070
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s2-1080-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s2-1080-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "01c4462721122e4ce0379b5a9632e939d4508f6b6532bb659797c484956c803b",
+      "raw_bytes": 641816,
+      "delivered_sha256": "6c12c828779fe150cf6d8413acca21778b30ec5d228d472c2d97e0f9c85c04b2",
+      "delivered_bytes": 74295
+    },
+    {
+      "path": "runs/static-ecb-resume-r4-s2-1080-baseline/city22-stage4-cost-ecb-resume-r4-s2-1080-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-resume-r4-s2-1080-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "b31d773e74e521358c921dc409693de623e2039bb6463adbdeda3fe283345424",
+      "raw_bytes": 377636,
+      "delivered_sha256": "ccf27e3431941314dac2e304f4a38f36eac4140862d18b9b3edb29e010a871c2",
+      "delivered_bytes": 138175
+    },
+    {
+      "path": "cost/static-ecb-resume-r4/s2-1080-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-resume-r4/s2-1080-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "25b13ab5e85f703470f60bdb3cff3c5b97b8a1afd9b53899ad2251f3fab973ab",
+      "raw_bytes": 638227,
+      "delivered_sha256": "77d885b6596d0e9ce8275ba84604630c4fd8abdf597fbe5c1af3302d43ed51a0",
+      "delivered_bytes": 73201
+    },
+    {
+      "path": "cost/static-ecb-smoke-r1/queue.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-smoke-r1/queue.json",
+      "role": "original ended cost queue including failures/finite mask samples",
+      "raw_sha256": "9693d17a14e3de105c13bbb7db05943cbd5a5fd88ae1cfff24d24c2882a2343a",
+      "raw_bytes": 723739,
+      "delivered_sha256": "697e62d5f846061a95f804d182fe0481d59c584b41532cc3c78dc212f31d51ae",
+      "delivered_bytes": 293444
+    },
+    {
+      "path": "runs/static-ecb-smoke-r1-parse-baseline/city22-stage4-cost-ecb-smoke-r1-parse-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r1-parse-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "50e8b9916d87460a8da5755522059a50d61198c3a96ca8c3f631eacc2e49f39d",
+      "raw_bytes": 357000,
+      "delivered_sha256": "d07b163c9d318fa3339bcbefa1699dc10f50f5ff3998962ded30b7adad904e85",
+      "delivered_bytes": 135924
+    },
+    {
+      "path": "runs/static-ecb-smoke-r1-parse-candidate/city22-stage4-cost-ecb-smoke-r1-parse-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r1-parse-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "d5f39f486dfec04961ba7e69453f73d591d6d73ed15ea593205bbfd1be9020a2",
+      "raw_bytes": 362709,
+      "delivered_sha256": "667cfec57756cffa7996f2ead5c57c2e6116e027984144009c3c560f874ff420",
+      "delivered_bytes": 137109
+    },
+    {
+      "path": "runs/static-ecb-smoke-r1-s2-960-baseline/city22-stage4-cost-ecb-smoke-r1-s2-960-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r1-s2-960-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "3f8f86ba2d799da53f37eb5d0ae4ee5047b012d89f16a5f9310e8858b71ac72b",
+      "raw_bytes": 376830,
+      "delivered_sha256": "9559a53cf21a1f2aa189a7be12beee2b255367777c475596d81e0b8003811450",
+      "delivered_bytes": 138277
+    },
+    {
+      "path": "cost/static-ecb-smoke-r3/queue.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-smoke-r3/queue.json",
+      "role": "original ended cost queue including failures/finite mask samples",
+      "raw_sha256": "f08553a7094fafc10301e1bab7ac2de1e875a75a047ac6b87f333227df6ba54f",
+      "raw_bytes": 2190075,
+      "delivered_sha256": "b5e3f856dfc507db6b4ba03cb2b643af419a06ce29b1810b63fd18ab7a68d656",
+      "delivered_bytes": 436609
+    },
+    {
+      "path": "cost/static-ecb-smoke-r3/external-sources/db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652-viewport.cpp.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-smoke-r3/external-sources/db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652-viewport.cpp",
+      "role": "actual advertised prelaunch external snapshot; exact hashes remain in queue",
+      "raw_sha256": "db949779da96c93cbbdd3d97976efe00211fe900ca2e1283d67ce44671c4a652",
+      "raw_bytes": 200690,
+      "delivered_sha256": "c4140fc6b1b7d453cbffe1d6b565502bbcd0f0394bad90f32601596e1a378466",
+      "delivered_bytes": 39798
+    },
+    {
+      "path": "cost/static-ecb-smoke-r3/external-sources/1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb-window.cpp.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-smoke-r3/external-sources/1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb-window.cpp",
+      "role": "actual advertised prelaunch external snapshot; exact hashes remain in queue",
+      "raw_sha256": "1e94ba6ccef7fea34b00aab4e40d06730e796471f232d21ced7255d06d45f9fb",
+      "raw_bytes": 135562,
+      "delivered_sha256": "a77aae8ef4a09acb9e75ea810a9006e9f31a5fbcdab6defe26a77878712624cd",
+      "delivered_bytes": 23192
+    },
+    {
+      "path": "runs/static-ecb-smoke-r3-parse-baseline/city22-stage4-cost-ecb-smoke-r3-parse-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r3-parse-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "1590064c56a069834eba6928d39b59f28ef90762516876274c096be2d0b68074",
+      "raw_bytes": 359496,
+      "delivered_sha256": "65f4a676d33c2ab4ed1696ec93fb6b9900b61155914f3b030d210b7131569af5",
+      "delivered_bytes": 136209
+    },
+    {
+      "path": "runs/static-ecb-smoke-r3-parse-candidate/city22-stage4-cost-ecb-smoke-r3-parse-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r3-parse-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "eddec7838503fa85e9e69955608d8ebdd93527621da0841d4e3a5b87634eb193",
+      "raw_bytes": 360566,
+      "delivered_sha256": "29fb3a773e8b9db4967b1a9a962adad8931f3e84fcc056cb876dc9987c7e5491",
+      "delivered_bytes": 136888
+    },
+    {
+      "path": "runs/static-ecb-smoke-r3-s2-960-baseline/city22-stage4-cost-ecb-smoke-r3-s2-960-baseline-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r3-s2-960-baseline-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "122b4878e4ed69541d5ec7ffe0f75aa9db0593b4360f1b0ae9c3ed126e7a96ac",
+      "raw_bytes": 377527,
+      "delivered_sha256": "0a55e2ad99e36d02d81e3e2b6b3c09f2e353dc2d4a205bc410077c7d45834fb9",
+      "delivered_bytes": 138234
+    },
+    {
+      "path": "cost/static-ecb-smoke-r3/s2-960-baseline.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-smoke-r3/s2-960-baseline.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "8b9e95e88d3a814283a71faaf4b98039ef18cb8347a4ad0fd3c17c01f174c868",
+      "raw_bytes": 538906,
+      "delivered_sha256": "9531df7cd7c3ccaacdfa8238c487c50216caaec7abca1516d6ba77c2bbf2e412",
+      "delivered_bytes": 63257
+    },
+    {
+      "path": "runs/static-ecb-smoke-r3-s2-960-candidate/city22-stage4-cost-ecb-smoke-r3-s2-960-candidate-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-stage4-cost-ecb-smoke-r3-s2-960-candidate-1/run-results.json",
+      "role": "original launch/source/diagnostic record",
+      "raw_sha256": "30a56076e53e1ad454aa78b5d838940c895585e7c85baee27c06f93af92cb706",
+      "raw_bytes": 379173,
+      "delivered_sha256": "9a5c66bf59c0515c932bda15180d647edf7f66b15d405ff34f9b142eaec77385",
+      "delivered_bytes": 139008
+    },
+    {
+      "path": "cost/static-ecb-smoke-r3/s2-960-candidate.json.gz",
+      "source_path": "/var/tmp/sa-city22/stage4/static-ecb-smoke-r3/s2-960-candidate.json",
+      "role": "original completed-case cost report; acceptance is separate",
+      "raw_sha256": "21ef0d9313144eb3225888b131e65c777fa3608a4eb6863e27a18abb10838064",
+      "raw_bytes": 542645,
+      "delivered_sha256": "f474928accc0ff21a4fbb3c07caf1ec42024f8a18c53458559a69228a036343d",
+      "delivered_bytes": 64110
+    },
+    {
+      "path": "evidence-index.json.gz",
+      "source_path": "derived from explicit recorded inputs",
+      "role": "derived evidence index",
+      "raw_sha256": "6f4ba71061eb37c95a68af06b3b0bb123d25804f4acd4b7832767bc11517d70e",
+      "raw_bytes": 764331,
+      "delivered_sha256": "28bc46d85800cbc9adc16049339c1077f0ecbeb9ca66ed76119835ccd57c7ee6",
+      "delivered_bytes": 88727
+    }
+  ]
+}

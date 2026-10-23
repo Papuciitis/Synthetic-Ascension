@@ -1,0 +1,61 @@
+{
+  "base_terrain": "moss",
+  "failures": 0,
+  "points": [
+    {
+      "chunk_at": "(-1, -1)",
+      "kits_within_2200px": 14,
+      "name": "start",
+      "world": [
+        -1024.0,
+        -1024.0
+      ]
+    },
+    {
+      "chunk": "(-5, 3)",
+      "chunk_at": "(-5, 3)",
+      "kits_within_2200px": 13,
+      "name": "route1",
+      "world": [
+        -9216.0,
+        7168.0
+      ]
+    },
+    {
+      "chunk_at": "(-9, -4)",
+      "kits_within_2200px": 17,
+      "name": "objective",
+      "type": "dangerous_alley_cache",
+      "world": [
+        -17408.0,
+        -7168.0
+      ]
+    },
+    {
+      "chunk_at": "(-1, 0)",
+      "kit": "-1632,992",
+      "kits_within_2200px": 14,
+      "name": "kit1",
+      "usage": "passage",
+      "world": [
+        -1632.0,
+        1304.0
+      ]
+    },
+    {
+      "chunk_at": "(-9, -5)",
+      "kit": "-18016,-9088",
+      "kits_within_2200px": 12,
+      "name": "kit2",
+      "usage": "shop",
+      "world": [
+        -18016.0,
+        -8808.0
+      ]
+    }
+  ],
+  "segment": 7,
+  "theme_id": "canal_services",
+  "theme_label": "Canal Service Routes",
+  "world_seed": 16102028
+}

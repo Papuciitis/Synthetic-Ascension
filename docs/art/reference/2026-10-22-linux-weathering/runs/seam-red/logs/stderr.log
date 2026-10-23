@@ -1,0 +1,420 @@
+ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 50)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry warm zoom 0.75 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 38)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry warm zoom 0.75 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 102)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry warm zoom 1.25 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 51)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry warm zoom 1.25 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 204)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry warm zoom 1.25 fade 1.00 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 2.00 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 2.00 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 51)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry warm zoom 2.00 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 2.00 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry warm zoom 2.00 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 38)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry warm zoom 2.00 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 0.75 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 0.75 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 46)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry pale zoom 0.75 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 0.75 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 0.75 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 34)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry pale zoom 0.75 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 1.25 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 1.25 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 94)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry pale zoom 1.25 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 1.25 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 1.25 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 47)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry pale zoom 1.25 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 1.25 fade 1.00 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 1.25 fade 1.00 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 188)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry pale zoom 1.25 fade 1.00 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 2.00 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 2.00 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 47)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry pale zoom 2.00 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 2.00 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: dry pale zoom 2.00 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 35)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: dry pale zoom 2.00 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 0.75 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 0.75 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 50)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services warm zoom 0.75 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 0.75 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 0.75 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 38)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services warm zoom 0.75 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 102)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 51)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 1.00 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 1.00 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 204)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services warm zoom 1.25 fade 1.00 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 2.00 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 2.00 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 51)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services warm zoom 2.00 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 2.00 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services warm zoom 2.00 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 38)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services warm zoom 2.00 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 0.75 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 0.75 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 46)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services pale zoom 0.75 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 0.75 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 0.75 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 34)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services pale zoom 0.75 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (54, 87))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 94)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 128 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 47)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 64 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 1.00 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 1.00 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 188)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services pale zoom 1.25 fade 1.00 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 255 at (25, 168))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 2.00 fade 0.50 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 2.00 fade 0.50 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 47)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services pale zoom 2.00 fade 0.50 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 63 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 2.00 fade 0.25 strength 0.0: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)
+ERROR: FAIL: canal_services pale zoom 2.00 fade 0.25 strength 0.0: a zero-strength stain draws the plain wall, damp and light included (worst step 35)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:94)
+ERROR: FAIL: canal_services pale zoom 2.00 fade 0.25 strength 0.3: each stain edge has exactly one opaque owner (worst alpha step 48 at (0, 71))
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityWeatheringSeamRenderTest.gd:35)
+       [1] _compare (res://tools/tests/CityWeatheringSeamRenderTest.gd:92)

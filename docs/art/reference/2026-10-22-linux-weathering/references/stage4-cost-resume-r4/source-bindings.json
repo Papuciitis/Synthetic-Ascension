@@ -1,0 +1,47 @@
+{
+  "status": "FROZEN_READY_FOR_INDEPENDENT_REVIEW_BINDING_AND_ROOT_EXECUTION",
+  "files": {
+    "resume.py": {
+      "sha256": "74a80dc8f84b53681e65ddf63f854df35e80c9e1ccd7c73621a6a137f3b78291",
+      "bytes": 18348
+    },
+    "protocol.json": {
+      "sha256": "1939eb80399153253515ab1597f23fe9174cf86e2b0f59599c9061fcea819c32",
+      "bytes": 5512
+    },
+    "protocol_fixtures.py": {
+      "sha256": "af82dd36bd6e18472f7d8103b9573848518c386a9fce62b654b176ad282a74d9",
+      "bytes": 7257
+    },
+    "protocol-fixture-result.json": {
+      "sha256": "66e81047ae3fb41571631a90dd32f89074778bff103195abeb02b2d07f477170",
+      "bytes": 2649
+    },
+    "README.md": {
+      "sha256": "82c808ff0615eb2527324304aba891c0705a9f8858eb67c3b064d228bcbb3d3b",
+      "bytes": 3310
+    },
+    "dry-run.stdout.json": {
+      "sha256": "16ebe1433ccfe4d6135c42777926f597a6402cc17ec7b7c41e4f328077028856",
+      "bytes": 208037
+    },
+    "dry-run.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "original_failed_queue": {
+    "path": "/var/tmp/sa-city22/stage4/static-ecb-full-r3/queue.json",
+    "sha256": "e97bf615bf22e4ca9d159612922c7219d19a5010bb4cf957f5d419c02c3a641a",
+    "preserved_status": "stopped"
+  },
+  "original_r3_driver_sha256": "a8ea1573fea86c4f6a01bd202a5821e64238c1b8d1facc479ae46df0dc424af2",
+  "original_r3_helper_sha256": "4c9d5696082bf46a96960cbe82ddb2b500d350c8bcbc53002af04366fb566724",
+  "actual_prior_cases_revalidated": 8,
+  "actual_prior_pairs_comparable_under_new_policy": 3,
+  "future_native_cases_unrun": 10,
+  "offline_checks": 43,
+  "offline_failures": 0,
+  "raw_r3_runtime_engine_git_mutations": false,
+  "heavy_packet_build": false
+}

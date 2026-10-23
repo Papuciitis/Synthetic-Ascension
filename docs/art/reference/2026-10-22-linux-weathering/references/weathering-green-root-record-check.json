@@ -1,0 +1,63 @@
+{
+  "runs": [
+    {
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-seam-green3-013945-1/run-results.json",
+      "raw_sha256": "25f4ded078a49d2e687c5f80a73b8bd4d32ec806393749db53e35e869443f506",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "footers": [
+        "CityWeatheringSeamRenderTest: 145 passed, 0 failed"
+      ],
+      "selected_source_hashes": {
+        "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+        "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+        "scenes/world/buildings/weathering/CityWeathering.gd": "d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+        "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+        "tools/tests/CityWeatheringTest.gd": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175"
+      },
+      "current_matches": {
+        "tools/tests/CityWeatheringSeamRenderTest.gd": true,
+        "scenes/world/buildings/roof.gdshader": true,
+        "scenes/world/buildings/weathering/CityWeathering.gd": true,
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": true,
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": true,
+        "scenes/world/buildings/weathering/facade_stain.gdshader": true,
+        "tools/tests/CityWeatheringTest.gd": true
+      }
+    },
+    {
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22w-test-weathering-003943-1/run-results.json",
+      "raw_sha256": "f4dfb84b96b0cefe75fe455d3ff026ab5b12927972a8a3010518ecbbcd08be2e",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "footers": [
+        "CityWeatheringTest: 25907 passed, 0 failed"
+      ],
+      "selected_source_hashes": {
+        "tools/tests/CityWeatheringSeamRenderTest.gd": "65cb904a521bb2415a750ce694126db60c6147b0efaf8df4d490524892ec7303",
+        "scenes/world/buildings/roof.gdshader": "af9e5b99d5dd9d054ec494ef2b828d340db4da2e14fd0e14ad104ea2d6987186",
+        "scenes/world/buildings/weathering/CityWeathering.gd": "d25aa67907185407967abe7c524f3a6408b9ff858bb6a65dd153bdeae98ebd54",
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "943fa37b09d1553c3804748a1d29b5e926b7816f620a4ee11c33536cacc78d55",
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+        "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+        "tools/tests/CityWeatheringTest.gd": "735d0cdfcaf9f70cd2e1bffa369f7e7ff19aead7f268b6492351bbeb2471e175"
+      },
+      "current_matches": {
+        "tools/tests/CityWeatheringSeamRenderTest.gd": true,
+        "scenes/world/buildings/roof.gdshader": false,
+        "scenes/world/buildings/weathering/CityWeathering.gd": true,
+        "scenes/world/buildings/weathering/facade_damp.gdshaderinc": false,
+        "scenes/world/buildings/weathering/facade_plinth.gdshader": true,
+        "scenes/world/buildings/weathering/facade_stain.gdshader": true,
+        "tools/tests/CityWeatheringTest.gd": true
+      }
+    }
+  ],
+  "qualification": "25907 helper assertions preceded later damp/roof shader edits; same CityWeathering/stain/test bytes. Native145 covers current snap and gradient shader bytes. Final owner tuning/RED/current surveys not yet accepted."
+}
