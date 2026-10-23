@@ -1,0 +1,25 @@
+{
+  "status": "SOURCE_ONLY_REBOUND_NOT_ENGINE_EXECUTED",
+  "previous_reported_revision": "f0fe86b5 (Claude coordination-board declaration; exact reviewed file bytes are authoritative below)",
+  "final_reported_revision": "9b7e0e4c (Claude final coordination-board declaration; exact reviewed file bytes are authoritative below)",
+  "fixture_changed": false,
+  "driver_changed": false,
+  "project_binding_count": 52,
+  "external_binding_count": 5,
+  "metadata_sha256": "34a1c6af13108bcf63f10aefb1d5f96197dda7b9b48bbe24ce9a651b6f1b3561",
+  "fixture_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+  "driver_sha256": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+  "root_command": [
+    "python3",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-acceptance-queue.py",
+    "--suffix",
+    "9b7-r1",
+    "--timeout",
+    "300",
+    "--duty-percent",
+    "25",
+    "--start-temperature",
+    "65",
+    "--execute"
+  ]
+}

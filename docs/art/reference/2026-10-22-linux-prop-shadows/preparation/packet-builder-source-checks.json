@@ -1,0 +1,52 @@
+{
+  "scope": "Only AST, actualsmallsourceSHAreads and tiny temporaryJSON byte fixtures. main/build/Godot/Git not invoked; no packet rebuilt.",
+  "builder_sha256": "a386b06f19b5705ef9de5ababafc3a99ff5d03990cfb1635715652641f56f9d0",
+  "passed": 11,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "metadata exactly matches reviewed34a1",
+      "ok": true
+    },
+    {
+      "label": "all52currentprojectinputs match",
+      "ok": true
+    },
+    {
+      "label": "all5externalinputs still frozen",
+      "ok": true
+    },
+    {
+      "label": "unchanged fixture matches preservedf0fe",
+      "ok": true
+    },
+    {
+      "label": "bind accepts exactscopedhashes",
+      "ok": true
+    },
+    {
+      "label": "bind rejects changedhashes",
+      "ok": true
+    },
+    {
+      "label": "bind rejects missinghashes",
+      "ok": true
+    },
+    {
+      "label": "clean admits completedrawandguard",
+      "ok": true
+    },
+    {
+      "label": "clean rejects diagnostics",
+      "ok": true
+    },
+    {
+      "label": "clean rejects nonzeroengineexit",
+      "ok": true
+    },
+    {
+      "label": "clean rejects cancelledguard",
+      "ok": true
+    }
+  ]
+}

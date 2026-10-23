@@ -1,0 +1,47 @@
+{
+ "started_utc": "2026-10-22T21:52:51Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-wp2-evidence",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/dev/PropShadowSurvey.tscn",
+  "--",
+  "--segment=6",
+  "--world-seed=16102026",
+  "--out=/var/tmp/sa-c22/props/s6a/before",
+  "--theme=industrial_cutthrough"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+ "dirty_inputs": [],
+ "scoped_sha256": {
+  "core/systems/world/chunks/ChunkBlockRenderer.gd": "f30f0240c40c9bc740341ed67bf6ac6bcb0846257c652fd121f1dfcaa8425fdb",
+  "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+  "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+  "tools/dev/PropShadowSurvey.gd": "3e473b888c9505d7bbe4d8e4a53501a82c906c73c666dcfe071320e013e262d1"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 169.478,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22p-cmp-s6a-before-005251 completed peak 85.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "objective_art-seg6-play.png": "a109ad1b7a242c507be3d9b148d0c17c83591e7679645b8cd53287c80f9ac834",
+  "prop0-seg6-play.png": "33503999dca5863cf4ee476cc3ad448672175064891a5ced8c65d4df6c2e51b0",
+  "prop1-seg6-play.png": "b98c2aa19ef1271680ae03b8aaf84910795f5523c66349d087fb431e5583ddb0",
+  "prop4-seg6-play.png": "b7923a37556041ea79e346c9ea2ad82741b912e21bf26d4a508efcfc86c6bc29",
+  "prop5-seg6-play.png": "e7291cbb70d935321cdbb09f95f68d049e0cc320b0e81888bc036b7ac8a1daa0",
+  "prop6-seg6-play.png": "0d40fee06a22bf75a0c71e03e631ae70c43336b26c140ba8e505532b9fb028d6",
+  "prop7-seg6-play.png": "5eece8da3865c7a45d9e33c481b0532e589fdf5bfde2a649c5af0b40c22bea26"
+ }
+}

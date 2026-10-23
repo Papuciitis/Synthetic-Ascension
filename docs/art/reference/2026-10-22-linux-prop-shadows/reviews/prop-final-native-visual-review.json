@@ -1,0 +1,111 @@
+{
+  "status": "ROOT_VISUAL_ACCEPTED_SELECTED_PROP_AND_OBJECTIVE_SHADOWS",
+  "runtime_binding": [
+    {
+      "path": "core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "sha256": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea"
+    },
+    {
+      "path": "core/systems/world/WorldDepthStyle.gd",
+      "sha256": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d"
+    },
+    {
+      "path": "core/systems/world/objectives/ObjectiveWorldArt.gd",
+      "sha256": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd"
+    },
+    {
+      "path": "assets/world/props/prop_cast_shadow.png",
+      "sha256": "65b8c7a2e8c649b6b4f7cbf22054ec42a754e7b5cf20888b04070ce655c23b13"
+    },
+    {
+      "path": "assets/world/props/prop_cast_shadow.png.import",
+      "sha256": "9011423eb35b8c92e689459338cc70b6265cb0f967aad3a33baaa62b55088422"
+    }
+  ],
+  "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/run-results.json",
+  "raw_sha256": "5b348d02c9d6d1ff7258b72f729a44ac668163033091f8c5003e13612461544c",
+  "provenance_path": "/var/tmp/sa-c22/props/s6a/after/provenance.json",
+  "provenance_sha256": "98f6cd3c3a7a0c2160b97a116940ae84f346ead582e5198c74a5c0e9107b5cc6",
+  "images": [
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/before/objective_art-seg6-play.png",
+      "sha256": "a109ad1b7a242c507be3d9b148d0c17c83591e7679645b8cd53287c80f9ac834"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/before/prop0-seg6-play.png",
+      "sha256": "33503999dca5863cf4ee476cc3ad448672175064891a5ced8c65d4df6c2e51b0"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/before/prop1-seg6-play.png",
+      "sha256": "b98c2aa19ef1271680ae03b8aaf84910795f5523c66349d087fb431e5583ddb0"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/before/prop4-seg6-play.png",
+      "sha256": "b7923a37556041ea79e346c9ea2ad82741b912e21bf26d4a508efcfc86c6bc29"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/before/prop5-seg6-play.png",
+      "sha256": "e7291cbb70d935321cdbb09f95f68d049e0cc320b0e81888bc036b7ac8a1daa0"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/before/prop6-seg6-play.png",
+      "sha256": "0d40fee06a22bf75a0c71e03e631ae70c43336b26c140ba8e505532b9fb028d6"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/before/prop7-seg6-play.png",
+      "sha256": "5eece8da3865c7a45d9e33c481b0532e589fdf5bfde2a649c5af0b40c22bea26"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/after/objective_art-seg6-play.png",
+      "sha256": "35f8c51bddb876b3915a63fa18c1066aac8bf06c7185760b8c7cd6bbc653aa03"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/after/prop0-seg6-play.png",
+      "sha256": "789b29bd1f35fcceffe0282fb28c781c2f33efd9929aadde0d2a47398a2b7b34"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/after/prop1-seg6-play.png",
+      "sha256": "334118f979b46cef705e9965ea04dbba65b5bfad848feb428b9c35bd99a9b36e"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/after/prop4-seg6-play.png",
+      "sha256": "18d62ffc9e6674a96c2ecd5b44eb8e58ab2240d6ade137b0c1622fe6b2a44e2f"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/after/prop5-seg6-play.png",
+      "sha256": "70b622d57a920bb1327a2392fbd2b3c72d1f3a241aa89c79e28cef02eb3a192b"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/after/prop6-seg6-play.png",
+      "sha256": "aa814c4932b407f320d70dac1d05b638981d3ac52875793d5eb3c3aed3ea0065"
+    },
+    {
+      "path": "/var/tmp/sa-c22/props/s6a/after/prop7-seg6-play.png",
+      "sha256": "fff95528311c0ebfd58c6c2fb52b0c32c261e1f83217284bda9ab4b16c2ec6a0"
+    }
+  ],
+  "root_inspected": [
+    "before/prop0",
+    "before/prop4",
+    "before/prop7",
+    "after/prop0",
+    "after/prop1",
+    "after/prop4",
+    "after/prop5",
+    "after/prop6",
+    "after/prop7",
+    "after/objective_art"
+  ],
+  "observations": [
+    "Crate detached angular offset shade replaced by attached compact southwest cast.",
+    "Statue and pillar casts meet their base and follow the same sun direction as player.",
+    "Small legacy table no longer has a cast cap extending to its lit side; low rack cast remains suitably small.",
+    "Wardstone projected form meets the existing contact shade; objective text and boundary remain readable."
+  ],
+  "limits": [
+    "Still/frozen native survey with staged player, not moving combat/performance evidence.",
+    "Speech/banner variation exists between some images; no claim of pixel identity outside casts.",
+    "Native provenance names earlier dirty HEAD f0fe; exact runtime/PNG/import bytes match committed9b7e0e4c.",
+    "Independent lifecycle/ground-form fixture still pending final source binding/execution."
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "status": "SOURCE_ONLY_ALL_FOUR_FINAL_GEOMETRIES_SATISFY_UNCHANGED_BOUNDS",
+  "fixture_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+  "preserved_fixture_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+  "fixture_delta": "NONE; original48 checks and retirement/S1/ground-form control bodies are byte-identical.",
+  "runtime_sha256": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea",
+  "depth_sha256": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+  "sources": "Final _add_prop_cast starts at world_center-(0,10), reaches height*.85+width/2 along normalized(-.72,.50); fixture near/far are measured relative to actual physical feet, not that lifted base.",
+  "rows": [
+    {
+      "role": "crate",
+      "near_end_relative_to_physical_feet": -5.703958094953442,
+      "far_end_relative_to_physical_feet": 54.29604190504656,
+      "width": 52,
+      "lateral_feet_distance": 8.213699656732956,
+      "contact_inside_quad": true,
+      "existing_near_far_width_lateral_predicate": true
+    },
+    {
+      "role": "long table",
+      "near_end_relative_to_physical_feet": -5.703958094953442,
+      "far_end_relative_to_physical_feet": 48.79604190504656,
+      "width": 58,
+      "lateral_feet_distance": 8.213699656732956,
+      "contact_inside_quad": true,
+      "existing_near_far_width_lateral_predicate": true
+    },
+    {
+      "role": "statue",
+      "near_end_relative_to_physical_feet": -5.703958094953442,
+      "far_end_relative_to_physical_feet": 99.29604190504656,
+      "width": 40,
+      "lateral_feet_distance": 8.213699656732956,
+      "contact_inside_quad": true,
+      "existing_near_far_width_lateral_predicate": true
+    },
+    {
+      "role": "small table",
+      "near_end_relative_to_physical_feet": -5.703958094953442,
+      "far_end_relative_to_physical_feet": 40.096041905046555,
+      "width": 44,
+      "lateral_feet_distance": 8.213699656732956,
+      "contact_inside_quad": true,
+      "existing_near_far_width_lateral_predicate": true
+    }
+  ],
+  "limits": [
+    "Source arithmetic does not claim real Godot parser/fixture success.",
+    "Geometry bounds do not prove alpha-pixel contact or visual quality; separate root native review records those."
+  ]
+}

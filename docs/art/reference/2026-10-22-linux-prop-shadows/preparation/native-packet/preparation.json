@@ -1,0 +1,32 @@
+{
+  "status": "SOURCE_ONLY_READY_INDEPENDENT_REVIEW_NO_CONCRETE_BLOCKER",
+  "builder_path": "/var/tmp/sa-city22/packets/props/build_packet.py",
+  "builder_sha256": "7c15c985309b4c1ad26d918fd4b71ea093ffa92f5a56e8fa48b6ce0e0c33b118",
+  "preserved_builder_sha256": "c545d4f78b8319dd97d3c60866187e498f6e3d766665b919b3250d2b4167a4d0",
+  "native_driver_sha256": "917c62cdadd94e5469a901075e4f1a7ae971cd74ed124b0dde150fa845e81878",
+  "native_metadata_sha256": "2696f6a53f5fe7cdfc5e38cece5bd584bf70aba8c4eed11313a46f7da5a81760",
+  "original_fixture_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+  "original_metadata_sha256": "34a1c6af13108bcf63f10aefb1d5f96197dda7b9b48bbe24ce9a651b6f1b3561",
+  "native_admission_fixture_checks": 19,
+  "objective_control_fixture_checks": 13,
+  "packet_rebuilt": false,
+  "engines_started": 0,
+  "runtime_or_variant_source_edits": false,
+  "old_headless_outcome": {
+    "passes": 25,
+    "failures": 15,
+    "executed_checks": 40,
+    "deduplicated_diagnostics": 14,
+    "classification": "actual_failed_inapplicable_dummy_uploaded_transform_readback_backend; never relabelled a pass"
+  },
+  "future_root_build": [
+    "nice",
+    "-n",
+    "19",
+    "python3",
+    "/var/tmp/sa-city22/packets/props/build_packet.py",
+    "--suffix",
+    "9b7-native-r2"
+  ],
+  "independent_review": "Street helper reviewed final7c15; AST, exact current native_fixture_evidence and source/image-bound objective control validator pass. No main/build/engine/Git invoked by reviewer."
+}

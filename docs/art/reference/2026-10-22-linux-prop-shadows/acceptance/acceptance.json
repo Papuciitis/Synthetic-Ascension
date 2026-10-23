@@ -1,0 +1,199 @@
+{
+  "checks": [
+    {
+      "label": "S2 props share one ground-sun cast batch",
+      "ok": true
+    },
+    {
+      "label": "cast has one full-strength ground layer and no recursive shadow",
+      "ok": true
+    },
+    {
+      "label": "four HALF cells have exactly four owned visible ground casts",
+      "ok": true
+    },
+    {
+      "label": "crate exercises its requested Atlas or legacy path",
+      "ok": true
+    },
+    {
+      "label": "crate has its real catalog visual batch",
+      "ok": true
+    },
+    {
+      "label": "crate visual retains its chunk owner",
+      "ok": true
+    },
+    {
+      "label": "crate still stands on the actual blocked half-cell anchor",
+      "ok": true
+    },
+    {
+      "label": "crate suppresses the old silhouette in the uploaded MultiMesh",
+      "ok": true
+    },
+    {
+      "label": "crate contact lies inside exactly its own ground cast",
+      "ok": true
+    },
+    {
+      "label": "crate cast follows the shared sun with an orthogonal footprint",
+      "ok": true
+    },
+    {
+      "label": "crate has a contacting footprint and a bounded southwest reach",
+      "ok": true
+    },
+    {
+      "label": "long table exercises its requested Atlas or legacy path",
+      "ok": true
+    },
+    {
+      "label": "long table has its real catalog visual batch",
+      "ok": true
+    },
+    {
+      "label": "long table visual retains its chunk owner",
+      "ok": true
+    },
+    {
+      "label": "long table still stands on the actual blocked half-cell anchor",
+      "ok": true
+    },
+    {
+      "label": "long table suppresses the old silhouette in the uploaded MultiMesh",
+      "ok": true
+    },
+    {
+      "label": "long table contact lies inside exactly its own ground cast",
+      "ok": true
+    },
+    {
+      "label": "long table cast follows the shared sun with an orthogonal footprint",
+      "ok": true
+    },
+    {
+      "label": "long table has a contacting footprint and a bounded southwest reach",
+      "ok": true
+    },
+    {
+      "label": "statue exercises its requested Atlas or legacy path",
+      "ok": true
+    },
+    {
+      "label": "statue has its real catalog visual batch",
+      "ok": true
+    },
+    {
+      "label": "statue visual retains its chunk owner",
+      "ok": true
+    },
+    {
+      "label": "statue still stands on the actual blocked half-cell anchor",
+      "ok": true
+    },
+    {
+      "label": "statue suppresses the old silhouette in the uploaded MultiMesh",
+      "ok": true
+    },
+    {
+      "label": "statue contact lies inside exactly its own ground cast",
+      "ok": true
+    },
+    {
+      "label": "statue cast follows the shared sun with an orthogonal footprint",
+      "ok": true
+    },
+    {
+      "label": "statue has a contacting footprint and a bounded southwest reach",
+      "ok": true
+    },
+    {
+      "label": "small table exercises its requested Atlas or legacy path",
+      "ok": true
+    },
+    {
+      "label": "small table has its real catalog visual batch",
+      "ok": true
+    },
+    {
+      "label": "small table visual retains its chunk owner",
+      "ok": true
+    },
+    {
+      "label": "small table still stands on the actual blocked half-cell anchor",
+      "ok": true
+    },
+    {
+      "label": "small table suppresses the old silhouette in the uploaded MultiMesh",
+      "ok": true
+    },
+    {
+      "label": "small table contact lies inside exactly its own ground cast",
+      "ok": true
+    },
+    {
+      "label": "small table cast follows the shared sun with an orthogonal footprint",
+      "ok": true
+    },
+    {
+      "label": "small table has a contacting footprint and a bounded southwest reach",
+      "ok": true
+    },
+    {
+      "label": "the tall statue projects farther than the low crate",
+      "ok": true
+    },
+    {
+      "label": "retiring the first chunk leaves both other-owned casts and visuals unchanged",
+      "ok": true
+    },
+    {
+      "label": "retiring the final chunk releases every visual and cast node",
+      "ok": true
+    },
+    {
+      "label": "S1 control does not acquire the city footprint cast",
+      "ok": true
+    },
+    {
+      "label": "S1 control retains its catalog visual",
+      "ok": true
+    },
+    {
+      "label": "S1 control preserves its reviewed Atlas projection or legacy offset",
+      "ok": true
+    },
+    {
+      "label": "S1 control retains its catalog visual",
+      "ok": true
+    },
+    {
+      "label": "S1 control preserves its reviewed Atlas projection or legacy offset",
+      "ok": true
+    },
+    {
+      "label": "S1 clear removes its batch nodes",
+      "ok": true
+    },
+    {
+      "label": "exit_rite remains a ground form below shadows with no upright cast",
+      "ok": true
+    },
+    {
+      "label": "vigil remains a ground form below shadows with no upright cast",
+      "ok": true
+    },
+    {
+      "label": "breach remains a ground form below shadows with no upright cast",
+      "ok": true
+    },
+    {
+      "label": "vault remains a ground form below shadows with no upright cast",
+      "ok": true
+    }
+  ],
+  "failures": 0,
+  "passes": 48,
+  "suite": "CityPropShadowAcceptance"
+}

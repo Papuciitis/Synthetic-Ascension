@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "checks": 10,
+  "cases": [
+    "canonical native receipt admitted",
+    "headless fixture rejected",
+    "wrong cap rejected",
+    "wrong physics rejected",
+    "wrong window rejected",
+    "dummy display rejected",
+    "wrong guard duty rejected",
+    "software renderer rejected",
+    "changed parent fixture rejected",
+    "missing backend flag rejected"
+  ],
+  "scope": "Tiny temporary JSON and strings only; no engine, Git, project writes or actual native acceptance"
+}

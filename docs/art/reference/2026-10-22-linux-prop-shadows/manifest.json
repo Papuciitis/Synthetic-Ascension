@@ -1,0 +1,2631 @@
+{
+  "status": "INDEPENDENT48_CLEAN_AND_SELECTED_NATIVE_VISUAL_ACCEPTED",
+  "reported_revision": "9b7e0e4c (Claude final coordination-board declaration; exact reviewed file bytes are authoritative below)",
+  "metadata_sha256": "34a1c6af13108bcf63f10aefb1d5f96197dda7b9b48bbe24ce9a651b6f1b3561",
+  "independent_fixture": {
+    "passes": 48,
+    "failures": 0,
+    "parser_sources_reused": 6,
+    "execution": "native OpenGL gl_compatibility,20FPS/windowed640x360/physics60; predicates unchanged"
+  },
+  "owner_fixture": {
+    "passes": 33,
+    "failures": 0
+  },
+  "earlier_attempts": [
+    {
+      "label": "city22-prop-shadow-fixture-9b7-r1",
+      "classification": "actual_failed25passed15failed_40executed_dummy_GPU_readback_backend_inapplicable_no_pass",
+      "official_engine_commit": "ed1daf0bf",
+      "proof": "native-execution/preparation/README.md"
+    },
+    {
+      "label": "city22-prop-shadow-parse-f0fe-r1",
+      "classification": "parser_timeout_no_logical_verdict"
+    },
+    {
+      "label": "city22-prop-shadow-parse-f0fe-r2",
+      "classification": "queued_cancelled_after_owner_source_revision_no_logical_verdict"
+    }
+  ],
+  "limits": [
+    "Still/frozen native survey with staged player, not moving combat/performance evidence.",
+    "Speech/banner variation exists between some images; no claim of pixel identity outside casts.",
+    "Native provenance names earlier dirty HEAD f0fe; exact runtime/PNG/import bytes match committed9b7e0e4c.",
+    "Independent lifecycle/ground-form fixture still pending final source binding/execution.",
+    "Still/frozen native props and objective forms; not moving combat or added-cost evidence.",
+    "Other city continuation stages and main integration are outside this packet."
+  ],
+  "files": [
+    {
+      "path": "source-binding.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-acceptance-source.json",
+      "role": "reviewed final source inventory",
+      "raw_sha256": "34a1c6af13108bcf63f10aefb1d5f96197dda7b9b48bbe24ce9a651b6f1b3561",
+      "raw_bytes": 10912,
+      "delivered_sha256": "34a1c6af13108bcf63f10aefb1d5f96197dda7b9b48bbe24ce9a651b6f1b3561",
+      "delivered_bytes": 10912,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/source.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/source.json",
+      "role": "reviewed native-only execution/source binding",
+      "raw_sha256": "2696f6a53f5fe7cdfc5e38cece5bd584bf70aba8c4eed11313a46f7da5a81760",
+      "raw_bytes": 14776,
+      "delivered_sha256": "2696f6a53f5fe7cdfc5e38cece5bd584bf70aba8c4eed11313a46f7da5a81760",
+      "delivered_bytes": 14776,
+      "gzip": false
+    },
+    {
+      "path": "sources/helpers/build_packet.py",
+      "source_path": "/var/tmp/sa-city22/packets/props/build_packet.py",
+      "role": "exact packet builder source",
+      "raw_sha256": "7c15c985309b4c1ad26d918fd4b71ea093ffa92f5a56e8fa48b6ce0e0c33b118",
+      "raw_bytes": 17661,
+      "delivered_sha256": "7c15c985309b4c1ad26d918fd4b71ea093ffa92f5a56e8fa48b6ce0e0c33b118",
+      "delivered_bytes": 17661,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/NativePropShadowAcceptance.gd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/NativePropShadowAcceptance.gd",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "e5c00886912cbe0deedd8b7af204298b5f9ea8ca4e10bc873397c61030efd209",
+      "raw_bytes": 2196,
+      "delivered_sha256": "e5c00886912cbe0deedd8b7af204298b5f9ea8ca4e10bc873397c61030efd209",
+      "delivered_bytes": 2196,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/NativePropShadowAcceptance.tscn",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/NativePropShadowAcceptance.tscn",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "be7a8ce1baf18f1eec98dfddfbe3fbd7849aed67a7b3ad70842e62783ac1caec",
+      "raw_bytes": 282,
+      "delivered_sha256": "be7a8ce1baf18f1eec98dfddfbe3fbd7849aed67a7b3ad70842e62783ac1caec",
+      "delivered_bytes": 282,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/README.md",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/README.md",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "5fb708becc0b5c878efb7b75fb8946109ea9b0ef6e6f594e93d59fc49d49a566",
+      "raw_bytes": 3831,
+      "delivered_sha256": "5fb708becc0b5c878efb7b75fb8946109ea9b0ef6e6f594e93d59fc49d49a566",
+      "delivered_bytes": 3831,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/driver-vs-original.diff",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/driver-vs-original.diff",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "11f4fc0fe44345653328dcd8471659a9ad7beb97aa7093ce490b274957767150",
+      "raw_bytes": 15177,
+      "delivered_sha256": "11f4fc0fe44345653328dcd8471659a9ad7beb97aa7093ce490b274957767150",
+      "delivered_bytes": 15177,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/failed-headless-acceptance.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/failed-headless-acceptance.json",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "af148532bf3a6a7f7351579b230e718eb15176994f4ba16279b72583fcab73aa",
+      "raw_bytes": 4219,
+      "delivered_sha256": "af148532bf3a6a7f7351579b230e718eb15176994f4ba16279b72583fcab73aa",
+      "delivered_bytes": 4219,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/failed-headless-queue.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/failed-headless-queue.json",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "e61fcf812378fce11b1a7dcbd369cd0725dd997ed4634e9a19235bf4ede8f136",
+      "raw_bytes": 18768,
+      "delivered_sha256": "e61fcf812378fce11b1a7dcbd369cd0725dd997ed4634e9a19235bf4ede8f136",
+      "delivered_bytes": 18768,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/manifest.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/manifest.json",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "94ba1eb5876f2954d3ab1311be6bcf81f088a8bff7aa3cfa664295c8f83af205",
+      "raw_bytes": 2111,
+      "delivered_sha256": "94ba1eb5876f2954d3ab1311be6bcf81f088a8bff7aa3cfa664295c8f83af205",
+      "delivered_bytes": 2111,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/original-fixture.gd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/original-fixture.gd",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+      "raw_bytes": 9153,
+      "delivered_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+      "delivered_bytes": 9153,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/original-fixture.tscn",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/original-fixture.tscn",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "61c33d4533edae6d428142832feeb326638e98a3ac6cf219ace65885c8ed50ef",
+      "raw_bytes": 256,
+      "delivered_sha256": "61c33d4533edae6d428142832feeb326638e98a3ac6cf219ace65885c8ed50ef",
+      "delivered_bytes": 256,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/original-queue.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/original-queue.py",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+      "raw_bytes": 5820,
+      "delivered_sha256": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+      "delivered_bytes": 5820,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/original-source.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/original-source.json",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "34a1c6af13108bcf63f10aefb1d5f96197dda7b9b48bbe24ce9a651b6f1b3561",
+      "raw_bytes": 10912,
+      "delivered_sha256": "34a1c6af13108bcf63f10aefb1d5f96197dda7b9b48bbe24ce9a651b6f1b3561",
+      "delivered_bytes": 10912,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/queue.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/queue.py",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "917c62cdadd94e5469a901075e4f1a7ae971cd74ed124b0dde150fa845e81878",
+      "raw_bytes": 10335,
+      "delivered_sha256": "917c62cdadd94e5469a901075e4f1a7ae971cd74ed124b0dde150fa845e81878",
+      "delivered_bytes": 10335,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/source.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/source.json",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "2696f6a53f5fe7cdfc5e38cece5bd584bf70aba8c4eed11313a46f7da5a81760",
+      "raw_bytes": 14776,
+      "delivered_sha256": "2696f6a53f5fe7cdfc5e38cece5bd584bf70aba8c4eed11313a46f7da5a81760",
+      "delivered_bytes": 14776,
+      "gzip": false
+    },
+    {
+      "path": "native-execution/preparation/tiny-validation.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/tiny-validation.json",
+      "role": "frozen native envelope, original failed headless source/evidence and official backend proof",
+      "raw_sha256": "b56fb9ad56dafc3e1c1f673b874249c43674ab536e1d29f8dead228368435910",
+      "raw_bytes": 501,
+      "delivered_sha256": "b56fb9ad56dafc3e1c1f673b874249c43674ab536e1d29f8dead228368435910",
+      "delivered_bytes": 501,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/queue.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/queue.py",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "917c62cdadd94e5469a901075e4f1a7ae971cd74ed124b0dde150fa845e81878",
+      "raw_bytes": 10335,
+      "delivered_sha256": "917c62cdadd94e5469a901075e4f1a7ae971cd74ed124b0dde150fa845e81878",
+      "delivered_bytes": 10335,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/guarded_engine.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "raw_bytes": 8176,
+      "delivered_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "delivered_bytes": 8176,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/NativePropShadowAcceptance.gd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/NativePropShadowAcceptance.gd",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "e5c00886912cbe0deedd8b7af204298b5f9ea8ca4e10bc873397c61030efd209",
+      "raw_bytes": 2196,
+      "delivered_sha256": "e5c00886912cbe0deedd8b7af204298b5f9ea8ca4e10bc873397c61030efd209",
+      "delivered_bytes": 2196,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/NativePropShadowAcceptance.tscn",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-native-r2/NativePropShadowAcceptance.tscn",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "be7a8ce1baf18f1eec98dfddfbe3fbd7849aed67a7b3ad70842e62783ac1caec",
+      "raw_bytes": 282,
+      "delivered_sha256": "be7a8ce1baf18f1eec98dfddfbe3fbd7849aed67a7b3ad70842e62783ac1caec",
+      "delivered_bytes": 282,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/SettingsManager.gd",
+      "source_path": "/tmp/sa-c22-props/autoload/SettingsManager.gd",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "5ef33189969c59edb2c2027179d294adf2e89da33e2c4afcf79b37fe1a6649e8",
+      "raw_bytes": 8499,
+      "delivered_sha256": "5ef33189969c59edb2c2027179d294adf2e89da33e2c4afcf79b37fe1a6649e8",
+      "delivered_bytes": 8499,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/SettingsRuntimeApplier.gd",
+      "source_path": "/tmp/sa-c22-props/core/settings/SettingsRuntimeApplier.gd",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "be625c2bbbbe8577bd2f0ecf6b709b046ad983348601f6a9473b216fd0f410f3",
+      "raw_bytes": 2836,
+      "delivered_sha256": "be625c2bbbbe8577bd2f0ecf6b709b046ad983348601f6a9473b216fd0f410f3",
+      "delivered_bytes": 2836,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/DisplaySettingsAdapter.gd",
+      "source_path": "/tmp/sa-c22-props/core/settings/DisplaySettingsAdapter.gd",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "0f07b5bb2fa4934f0cd59e12de150831cc69b53396be8dfae9a8cc6996451aaf",
+      "raw_bytes": 4055,
+      "delivered_sha256": "0f07b5bb2fa4934f0cd59e12de150831cc69b53396be8dfae9a8cc6996451aaf",
+      "delivered_bytes": 4055,
+      "gzip": false
+    },
+    {
+      "path": "sources/native-execution/SettingsSchema.gd",
+      "source_path": "/tmp/sa-c22-props/core/settings/SettingsSchema.gd",
+      "role": "exact native execution/guard/post-autoload settings source",
+      "raw_sha256": "89816d1bdc86882cef44e5506a214fe8b1b35aae3cd53087f39187d029e3614c",
+      "raw_bytes": 4808,
+      "delivered_sha256": "89816d1bdc86882cef44e5506a214fe8b1b35aae3cd53087f39187d029e3614c",
+      "delivered_bytes": 4808,
+      "gzip": false
+    },
+    {
+      "path": "preparation/native-packet/build_packet-c545.py.before",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-packet-native-r2-prep/build_packet-c545.py.before",
+      "role": "preserved builder adaptation/review source evidence",
+      "raw_sha256": "c545d4f78b8319dd97d3c60866187e498f6e3d766665b919b3250d2b4167a4d0",
+      "raw_bytes": 12674,
+      "delivered_sha256": "c545d4f78b8319dd97d3c60866187e498f6e3d766665b919b3250d2b4167a4d0",
+      "delivered_bytes": 12674,
+      "gzip": false
+    },
+    {
+      "path": "preparation/native-packet/builder-native-r2.diff",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-packet-native-r2-prep/builder-native-r2.diff",
+      "role": "preserved builder adaptation/review source evidence",
+      "raw_sha256": "a1152be0b1400b3193d93e707f8b6211b9a65b8fd3c761658a4a71c2a4a11c63",
+      "raw_bytes": 13373,
+      "delivered_sha256": "a1152be0b1400b3193d93e707f8b6211b9a65b8fd3c761658a4a71c2a4a11c63",
+      "delivered_bytes": 13373,
+      "gzip": false
+    },
+    {
+      "path": "preparation/native-packet/fixture-result.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-packet-native-r2-prep/fixture-result.json",
+      "role": "preserved builder adaptation/review source evidence",
+      "raw_sha256": "f8ff34502d09fde48d89ec279158154e8ddf29da481b55dcb820c0abdf7904da",
+      "raw_bytes": 1998,
+      "delivered_sha256": "f8ff34502d09fde48d89ec279158154e8ddf29da481b55dcb820c0abdf7904da",
+      "delivered_bytes": 1998,
+      "gzip": false
+    },
+    {
+      "path": "preparation/native-packet/fixture-test.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-packet-native-r2-prep/fixture-test.py",
+      "role": "preserved builder adaptation/review source evidence",
+      "raw_sha256": "f4ad812174a93ed5b8e05488baab9c27137ec324ec0c1d507decce5bd3320b2d",
+      "raw_bytes": 5734,
+      "delivered_sha256": "f4ad812174a93ed5b8e05488baab9c27137ec324ec0c1d507decce5bd3320b2d",
+      "delivered_bytes": 5734,
+      "gzip": false
+    },
+    {
+      "path": "preparation/native-packet/objective-gate-result.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-packet-native-r2-prep/objective-gate-result.json",
+      "role": "preserved builder adaptation/review source evidence",
+      "raw_sha256": "9cbb5db230dd2be30c81cf62416a197f46f9cbaf91ae816f9ce4ffc968d12391",
+      "raw_bytes": 1412,
+      "delivered_sha256": "9cbb5db230dd2be30c81cf62416a197f46f9cbaf91ae816f9ce4ffc968d12391",
+      "delivered_bytes": 1412,
+      "gzip": false
+    },
+    {
+      "path": "preparation/native-packet/objective-gate-test.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-packet-native-r2-prep/objective-gate-test.py",
+      "role": "preserved builder adaptation/review source evidence",
+      "raw_sha256": "0975421b71f92d216f6f8cd976dfdd30216857851b68239611c83b8885737f8e",
+      "raw_bytes": 3119,
+      "delivered_sha256": "0975421b71f92d216f6f8cd976dfdd30216857851b68239611c83b8885737f8e",
+      "delivered_bytes": 3119,
+      "gzip": false
+    },
+    {
+      "path": "preparation/native-packet/preparation.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-packet-native-r2-prep/preparation.json",
+      "role": "preserved builder adaptation/review source evidence",
+      "raw_sha256": "b6f0347b312d805fcd8edee383a33630241529b36767048e9bfd07c571aef4d5",
+      "raw_bytes": 1522,
+      "delivered_sha256": "b6f0347b312d805fcd8edee383a33630241529b36767048e9bfd07c571aef4d5",
+      "delivered_bytes": 1522,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/dressing/generated/crate.tres",
+      "source_path": "/tmp/sa-c22-props/assets/world/dressing/generated/crate.tres",
+      "role": "exact final project source",
+      "raw_sha256": "f0a0620b9c4fbadf88af40bde7a2f1c384a5d8641e733806e11787b4c0bb1b82",
+      "raw_bytes": 251,
+      "delivered_sha256": "f0a0620b9c4fbadf88af40bde7a2f1c384a5d8641e733806e11787b4c0bb1b82",
+      "delivered_bytes": 251,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/dressing/generated/dressing_set_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/dressing/generated/dressing_set_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "78dc5e917b3c0eac0903baa2a40816c84a90c069ccc8f405772ca9b7e5b5e9b3",
+      "raw_bytes": 2471460,
+      "delivered_sha256": "78dc5e917b3c0eac0903baa2a40816c84a90c069ccc8f405772ca9b7e5b5e9b3",
+      "delivered_bytes": 2471460,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/dressing/generated/dressing_set_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/dressing/generated/dressing_set_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "2dd738a64376bf65670225400b8eb1372bfa9f067d24f4186794860daccfe0bb",
+      "raw_bytes": 981,
+      "delivered_sha256": "2dd738a64376bf65670225400b8eb1372bfa9f067d24f4186794860daccfe0bb",
+      "delivered_bytes": 981,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/dressing/generated/hooded_statue.tres",
+      "source_path": "/tmp/sa-c22-props/assets/world/dressing/generated/hooded_statue.tres",
+      "role": "exact final project source",
+      "raw_sha256": "7bf63d2226a5931b84267d18aa72f9471f5d0cff34b70f7f2bd2633e7ac3ec75",
+      "raw_bytes": 253,
+      "delivered_sha256": "7bf63d2226a5931b84267d18aa72f9471f5d0cff34b70f7f2bd2633e7ac3ec75",
+      "delivered_bytes": 253,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/breach_open_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/breach_open_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "500394331759a3de003afa2630b76d88dc75987aa67ee0cc02417dce9440cf5d",
+      "raw_bytes": 1477990,
+      "delivered_sha256": "500394331759a3de003afa2630b76d88dc75987aa67ee0cc02417dce9440cf5d",
+      "delivered_bytes": 1477990,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/breach_open_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/breach_open_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "d7aaeb842f5270356a7913a41cbb88d0472cee6a890be2d09545d0d8387e7d90",
+      "raw_bytes": 979,
+      "delivered_sha256": "d7aaeb842f5270356a7913a41cbb88d0472cee6a890be2d09545d0d8387e7d90",
+      "delivered_bytes": 979,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/breach_sealed_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/breach_sealed_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "2789c8f239421c35322c7a88659f63de767742fc6e6f8c38b9d8bb2febe40270",
+      "raw_bytes": 1574729,
+      "delivered_sha256": "2789c8f239421c35322c7a88659f63de767742fc6e6f8c38b9d8bb2febe40270",
+      "delivered_bytes": 1574729,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/breach_sealed_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/breach_sealed_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "f7f28d6f6ad41f423424dfc0bd347b1ea5ff889bd32398fc20aa041f26f67f61",
+      "raw_bytes": 984,
+      "delivered_sha256": "f7f28d6f6ad41f423424dfc0bd347b1ea5ff889bd32398fc20aa041f26f67f61",
+      "delivered_bytes": 984,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/exit_rite_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/exit_rite_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "85869e467e0d4a65750e9767814ee53001bdcdab430f84aed2de024d0a8a3fb2",
+      "raw_bytes": 1675393,
+      "delivered_sha256": "85869e467e0d4a65750e9767814ee53001bdcdab430f84aed2de024d0a8a3fb2",
+      "delivered_bytes": 1675393,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/exit_rite_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/exit_rite_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "c1ca5d6ea2917cf06cf28044e90fc54aad24d006dbe3d9f1e6fecbe6e9399162",
+      "raw_bytes": 973,
+      "delivered_sha256": "c1ca5d6ea2917cf06cf28044e90fc54aad24d006dbe3d9f1e6fecbe6e9399162",
+      "delivered_bytes": 973,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/relay_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/relay_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "61dc31d9b615445fe6af26be021cb87926fbae7257fd573f2585e67e912c5cc8",
+      "raw_bytes": 1457669,
+      "delivered_sha256": "61dc31d9b615445fe6af26be021cb87926fbae7257fd573f2585e67e912c5cc8",
+      "delivered_bytes": 1457669,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/relay_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/relay_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "16320c0b8a10468b73335b1042c8980ec10f98799444147337b989e850971d0b",
+      "raw_bytes": 961,
+      "delivered_sha256": "16320c0b8a10468b73335b1042c8980ec10f98799444147337b989e850971d0b",
+      "delivered_bytes": 961,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/vault_closed_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/vault_closed_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "20c21d4e0595849b571c6f75b56a82af9a627470c19873bce21ced6c7a6cc45a",
+      "raw_bytes": 2206782,
+      "delivered_sha256": "20c21d4e0595849b571c6f75b56a82af9a627470c19873bce21ced6c7a6cc45a",
+      "delivered_bytes": 2206782,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/vault_closed_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/vault_closed_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "d3dc314b11b4a6043e0f108bebbb9c1e52851be8680dd097c51c0921942d1a5f",
+      "raw_bytes": 982,
+      "delivered_sha256": "d3dc314b11b4a6043e0f108bebbb9c1e52851be8680dd097c51c0921942d1a5f",
+      "delivered_bytes": 982,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/vault_open_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/vault_open_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "a5d41a746be5e70b486b1cd31df7115914593fb562c47917cc0020f7f665fca9",
+      "raw_bytes": 2189879,
+      "delivered_sha256": "a5d41a746be5e70b486b1cd31df7115914593fb562c47917cc0020f7f665fca9",
+      "delivered_bytes": 2189879,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/vault_open_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/vault_open_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "c3af4feda1ac6d256e7d4852fff371c519bed81decd9623d6a4277cba4bdc08d",
+      "raw_bytes": 976,
+      "delivered_sha256": "c3af4feda1ac6d256e7d4852fff371c519bed81decd9623d6a4277cba4bdc08d",
+      "delivered_bytes": 976,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/vigil_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/vigil_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "aa6eca67b97819bf41fcf885064ccceb35b217278bc98dbd8d74dddc262864a8",
+      "raw_bytes": 1764300,
+      "delivered_sha256": "aa6eca67b97819bf41fcf885064ccceb35b217278bc98dbd8d74dddc262864a8",
+      "delivered_bytes": 1764300,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/vigil_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/vigil_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "d0e1c9552fbfb9b87fcc63b587e125cad59d7c8d3cdd2bd129b2ae478b707ef0",
+      "raw_bytes": 961,
+      "delivered_sha256": "d0e1c9552fbfb9b87fcc63b587e125cad59d7c8d3cdd2bd129b2ae478b707ef0",
+      "delivered_bytes": 961,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/wager_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/wager_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "e4ee73ac9bc5cf2c7eabe2aa805c001f8a79f0b18b8e52d5eae289e08cbc613a",
+      "raw_bytes": 1388213,
+      "delivered_sha256": "e4ee73ac9bc5cf2c7eabe2aa805c001f8a79f0b18b8e52d5eae289e08cbc613a",
+      "delivered_bytes": 1388213,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/wager_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/wager_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "67b93c6c2332d1da0b01ebea7710fb1cdec02664820abfb5cdc03d610e3e2e11",
+      "raw_bytes": 960,
+      "delivered_sha256": "67b93c6c2332d1da0b01ebea7710fb1cdec02664820abfb5cdc03d610e3e2e11",
+      "delivered_bytes": 960,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/wardstone_v2.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/wardstone_v2.png",
+      "role": "exact final project source",
+      "raw_sha256": "76b64c408ae7ec0f4b6c61b0082fbffe56345b9fc0d61654d8cbedf781a23bb5",
+      "raw_bytes": 1780089,
+      "delivered_sha256": "76b64c408ae7ec0f4b6c61b0082fbffe56345b9fc0d61654d8cbedf781a23bb5",
+      "delivered_bytes": 1780089,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/objectives/painted/wardstone_v2.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/objectives/painted/wardstone_v2.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "cf09c12adc173b4f60038d62cdf8f30877b53628c249c0d597824aed8190e5ea",
+      "raw_bytes": 973,
+      "delivered_sha256": "cf09c12adc173b4f60038d62cdf8f30877b53628c249c0d597824aed8190e5ea",
+      "delivered_bytes": 973,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/props/prop_cast_shadow.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/props/prop_cast_shadow.png",
+      "role": "exact final project source",
+      "raw_sha256": "65b8c7a2e8c649b6b4f7cbf22054ec42a754e7b5cf20888b04070ce655c23b13",
+      "raw_bytes": 1432,
+      "delivered_sha256": "65b8c7a2e8c649b6b4f7cbf22054ec42a754e7b5cf20888b04070ce655c23b13",
+      "delivered_bytes": 1432,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/props/prop_cast_shadow.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/props/prop_cast_shadow.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "9011423eb35b8c92e689459338cc70b6265cb0f967aad3a33baaa62b55088422",
+      "raw_bytes": 970,
+      "delivered_sha256": "9011423eb35b8c92e689459338cc70b6265cb0f967aad3a33baaa62b55088422",
+      "delivered_bytes": 970,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/props/prop_table_long_01.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/props/prop_table_long_01.png",
+      "role": "exact final project source",
+      "raw_sha256": "446a3108058efd858db604a855477e42fd8689fdcad16f46f3cb43553ce6806f",
+      "raw_bytes": 390874,
+      "delivered_sha256": "446a3108058efd858db604a855477e42fd8689fdcad16f46f3cb43553ce6806f",
+      "delivered_bytes": 390874,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/props/prop_table_long_01.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/props/prop_table_long_01.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "707ac0831f5ebc3a38030ef850d1140eb9ff7d8f3bea11caba4d921dca2748ab",
+      "raw_bytes": 977,
+      "delivered_sha256": "707ac0831f5ebc3a38030ef850d1140eb9ff7d8f3bea11caba4d921dca2748ab",
+      "delivered_bytes": 977,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/props/prop_table_small_01.png",
+      "source_path": "/tmp/sa-c22-props/assets/world/props/prop_table_small_01.png",
+      "role": "exact final project source",
+      "raw_sha256": "61b668a60495ae87f6a68c03ed10682c5188431ba221bbe306436b82688f5c0e",
+      "raw_bytes": 597527,
+      "delivered_sha256": "61b668a60495ae87f6a68c03ed10682c5188431ba221bbe306436b82688f5c0e",
+      "delivered_bytes": 597527,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/assets/world/props/prop_table_small_01.png.import",
+      "source_path": "/tmp/sa-c22-props/assets/world/props/prop_table_small_01.png.import",
+      "role": "exact final project source",
+      "raw_sha256": "2b2bb0dd0b23be10ca5c00e0be09daaa1ed7c4d173dd5d1e71717347344f1ba4",
+      "raw_bytes": 980,
+      "delivered_sha256": "2b2bb0dd0b23be10ca5c00e0be09daaa1ed7c4d173dd5d1e71717347344f1ba4",
+      "delivered_bytes": 980,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/autoload/global.gd.gz",
+      "source_path": "/tmp/sa-c22-props/autoload/global.gd",
+      "role": "exact final project source",
+      "raw_sha256": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+      "raw_bytes": 173523,
+      "delivered_sha256": "7825bde79993798f840286717c8739e4432036bf016711a86eec0efb25867d67",
+      "delivered_bytes": 46820,
+      "gzip": true
+    },
+    {
+      "path": "sources/current/core/systems/world/WorldArt.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/WorldArt.gd",
+      "role": "exact final project source",
+      "raw_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "raw_bytes": 14411,
+      "delivered_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "delivered_bytes": 14411,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/WorldBlockerGeometry.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/WorldBlockerGeometry.gd",
+      "role": "exact final project source",
+      "raw_sha256": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d",
+      "raw_bytes": 5844,
+      "delivered_sha256": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d",
+      "delivered_bytes": 5844,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/WorldDepthStyle.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/WorldDepthStyle.gd",
+      "role": "exact final project source",
+      "raw_sha256": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+      "raw_bytes": 5125,
+      "delivered_sha256": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+      "delivered_bytes": 5125,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/WorldDressingMaterials.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/WorldDressingMaterials.gd",
+      "role": "exact final project source",
+      "raw_sha256": "6104b79987dac2b5f85a2a3352893331e0899aed5c1afdca0fa806103dbbee70",
+      "raw_bytes": 2207,
+      "delivered_sha256": "6104b79987dac2b5f85a2a3352893331e0899aed5c1afdca0fa806103dbbee70",
+      "delivered_bytes": 2207,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/actor_cast_shadow.gdshader",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/actor_cast_shadow.gdshader",
+      "role": "exact final project source",
+      "raw_sha256": "8a0c172a8e3bfcec87089384298bd40716891c6c60d3d794e81712b11773cf30",
+      "raw_bytes": 652,
+      "delivered_sha256": "8a0c172a8e3bfcec87089384298bd40716891c6c60d3d794e81712b11773cf30",
+      "delivered_bytes": 652,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "role": "exact final project source",
+      "raw_sha256": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea",
+      "raw_bytes": 24271,
+      "delivered_sha256": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea",
+      "delivered_bytes": 24271,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "role": "exact final project source",
+      "raw_sha256": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+      "raw_bytes": 11355,
+      "delivered_sha256": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+      "delivered_bytes": 11355,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/chunks/ChunkBuildData.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/chunks/ChunkBuildData.gd",
+      "role": "exact final project source",
+      "raw_sha256": "e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf",
+      "raw_bytes": 2430,
+      "delivered_sha256": "e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf",
+      "delivered_bytes": 2430,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/objectives/ObjectiveWorldArt.gd",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/objectives/ObjectiveWorldArt.gd",
+      "role": "exact final project source",
+      "raw_sha256": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd",
+      "raw_bytes": 8684,
+      "delivered_sha256": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd",
+      "delivered_bytes": 8684,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/objectives/objective_world_art.gdshader",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/objectives/objective_world_art.gdshader",
+      "role": "exact final project source",
+      "raw_sha256": "f2ae8879746321fb59492ee935079eae8d7401c0bcd3cae14f2ce5606445fcdb",
+      "raw_bytes": 1613,
+      "delivered_sha256": "f2ae8879746321fb59492ee935079eae8d7401c0bcd3cae14f2ce5606445fcdb",
+      "delivered_bytes": 1613,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/sun_shadow.gdshader",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/sun_shadow.gdshader",
+      "role": "exact final project source",
+      "raw_sha256": "4079e426fb287a2fdcd2719065f2ddecaba3484c0250c7ba50c21ac2aee6732b",
+      "raw_bytes": 535,
+      "delivered_sha256": "4079e426fb287a2fdcd2719065f2ddecaba3484c0250c7ba50c21ac2aee6732b",
+      "delivered_bytes": 535,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/sun_shadow_material.tres",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/sun_shadow_material.tres",
+      "role": "exact final project source",
+      "raw_sha256": "2f7898d4f3b554dc91fa0b2dd54a26af8c11dbad98d90b2169c40f8cf55abcb2",
+      "raw_bytes": 250,
+      "delivered_sha256": "2f7898d4f3b554dc91fa0b2dd54a26af8c11dbad98d90b2169c40f8cf55abcb2",
+      "delivered_bytes": 250,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/core/systems/world/world_dressing_region.gdshader",
+      "source_path": "/tmp/sa-c22-props/core/systems/world/world_dressing_region.gdshader",
+      "role": "exact final project source",
+      "raw_sha256": "acae035e117b1f4eb06a86c6931f8ea0ed741e5d8cddcecdef8d63d3a4f2c273",
+      "raw_bytes": 151,
+      "delivered_sha256": "acae035e117b1f4eb06a86c6931f8ea0ed741e5d8cddcecdef8d63d3a4f2c273",
+      "delivered_bytes": 151,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/project.godot",
+      "source_path": "/tmp/sa-c22-props/project.godot",
+      "role": "exact final project source",
+      "raw_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "raw_bytes": 13384,
+      "delivered_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "delivered_bytes": 13384,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/design/bake_prop_cast_shadow.py",
+      "source_path": "/tmp/sa-c22-props/tools/design/bake_prop_cast_shadow.py",
+      "role": "exact final project source",
+      "raw_sha256": "8fa6db94109348e0845180a2dc0520ca70bfc341dc06e446187476687e8e3a85",
+      "raw_bytes": 1680,
+      "delivered_sha256": "8fa6db94109348e0845180a2dc0520ca70bfc341dc06e446187476687e8e3a85",
+      "delivered_bytes": 1680,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/dev/CitySegmentSurvey.gd",
+      "source_path": "/tmp/sa-c22-props/tools/dev/CitySegmentSurvey.gd",
+      "role": "exact final project source",
+      "raw_sha256": "57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb",
+      "raw_bytes": 8942,
+      "delivered_sha256": "57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb",
+      "delivered_bytes": 8942,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/dev/CitySegmentSurvey.tscn",
+      "source_path": "/tmp/sa-c22-props/tools/dev/CitySegmentSurvey.tscn",
+      "role": "exact final project source",
+      "raw_sha256": "e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18",
+      "raw_bytes": 183,
+      "delivered_sha256": "e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18",
+      "delivered_bytes": 183,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/dev/ObjectiveShadowPreview.gd",
+      "source_path": "/tmp/sa-c22-props/tools/dev/ObjectiveShadowPreview.gd",
+      "role": "exact final project source",
+      "raw_sha256": "25f7c89ce2edea57298017a3751261841f10175c7b8670c062cd6354e578a1eb",
+      "raw_bytes": 2389,
+      "delivered_sha256": "25f7c89ce2edea57298017a3751261841f10175c7b8670c062cd6354e578a1eb",
+      "delivered_bytes": 2389,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/dev/ObjectiveShadowPreview.tscn",
+      "source_path": "/tmp/sa-c22-props/tools/dev/ObjectiveShadowPreview.tscn",
+      "role": "exact final project source",
+      "raw_sha256": "f386615d036227b2a229894f4e2a3c2e0430c4ac35da21b64114b7ab5f6689c5",
+      "raw_bytes": 197,
+      "delivered_sha256": "f386615d036227b2a229894f4e2a3c2e0430c4ac35da21b64114b7ab5f6689c5",
+      "delivered_bytes": 197,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/dev/PropShadowSurvey.gd",
+      "source_path": "/tmp/sa-c22-props/tools/dev/PropShadowSurvey.gd",
+      "role": "exact final project source",
+      "raw_sha256": "3e473b888c9505d7bbe4d8e4a53501a82c906c73c666dcfe071320e013e262d1",
+      "raw_bytes": 3671,
+      "delivered_sha256": "3e473b888c9505d7bbe4d8e4a53501a82c906c73c666dcfe071320e013e262d1",
+      "delivered_bytes": 3671,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/dev/PropShadowSurvey.tscn",
+      "source_path": "/tmp/sa-c22-props/tools/dev/PropShadowSurvey.tscn",
+      "role": "exact final project source",
+      "raw_sha256": "3ef5270937e71c82b408319f2a97aa4a49e912ad8cc341dff5e2462417ea816d",
+      "raw_bytes": 181,
+      "delivered_sha256": "3ef5270937e71c82b408319f2a97aa4a49e912ad8cc341dff5e2462417ea816d",
+      "delivered_bytes": 181,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/tests/ChunkBlockRendererTest.gd",
+      "source_path": "/tmp/sa-c22-props/tools/tests/ChunkBlockRendererTest.gd",
+      "role": "exact final project source",
+      "raw_sha256": "ce730bcb9fbb266632ebf36f3539d8079e0403a8f6a3463da5b0f9da86fcf2d2",
+      "raw_bytes": 5941,
+      "delivered_sha256": "ce730bcb9fbb266632ebf36f3539d8079e0403a8f6a3463da5b0f9da86fcf2d2",
+      "delivered_bytes": 5941,
+      "gzip": false
+    },
+    {
+      "path": "sources/current/tools/tests/ChunkBlockRendererTest.tscn",
+      "source_path": "/tmp/sa-c22-props/tools/tests/ChunkBlockRendererTest.tscn",
+      "role": "exact final project source",
+      "raw_sha256": "46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3",
+      "raw_bytes": 207,
+      "delivered_sha256": "46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3",
+      "delivered_bytes": 207,
+      "gzip": false
+    },
+    {
+      "path": "sources/helpers/CityPropShadowAcceptance.gd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd",
+      "role": "exact external helper",
+      "raw_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+      "raw_bytes": 9153,
+      "delivered_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+      "delivered_bytes": 9153,
+      "gzip": false
+    },
+    {
+      "path": "sources/helpers/CityPropShadowAcceptance.tscn",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.tscn",
+      "role": "exact external helper",
+      "raw_sha256": "61c33d4533edae6d428142832feeb326638e98a3ac6cf219ace65885c8ed50ef",
+      "raw_bytes": 256,
+      "delivered_sha256": "61c33d4533edae6d428142832feeb326638e98a3ac6cf219ace65885c8ed50ef",
+      "delivered_bytes": 256,
+      "gzip": false
+    },
+    {
+      "path": "sources/helpers/prop-shadow-acceptance-queue.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-acceptance-queue.py",
+      "role": "exact external helper",
+      "raw_sha256": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+      "raw_bytes": 5820,
+      "delivered_sha256": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+      "delivered_bytes": 5820,
+      "gzip": false
+    },
+    {
+      "path": "sources/helpers/street-native-source-parse.gd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.gd",
+      "role": "exact external helper",
+      "raw_sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca",
+      "raw_bytes": 568,
+      "delivered_sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca",
+      "delivered_bytes": 568,
+      "gzip": false
+    },
+    {
+      "path": "sources/helpers/street-native-source-parse.tscn",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn",
+      "role": "exact external helper",
+      "raw_sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126",
+      "raw_bytes": 257,
+      "delivered_sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126",
+      "delivered_bytes": 257,
+      "gzip": false
+    },
+    {
+      "path": "preparation/builder-a386.py.before",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/builder-a386.py.before",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "a386b06f19b5705ef9de5ababafc3a99ff5d03990cfb1635715652641f56f9d0",
+      "raw_bytes": 11626,
+      "delivered_sha256": "a386b06f19b5705ef9de5ababafc3a99ff5d03990cfb1635715652641f56f9d0",
+      "delivered_bytes": 11626,
+      "gzip": false
+    },
+    {
+      "path": "preparation/builder-objective-review-gate.diff",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/builder-objective-review-gate.diff",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "f85b797c9e8b0c9dc85287e7fc8f4ee85852e58ffc295663f17d8acdc02f9c1f",
+      "raw_bytes": 2627,
+      "delivered_sha256": "f85b797c9e8b0c9dc85287e7fc8f4ee85852e58ffc295663f17d8acdc02f9c1f",
+      "delivered_bytes": 2627,
+      "gzip": false
+    },
+    {
+      "path": "preparation/fixture-geometry.diff",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/fixture-geometry.diff",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "preparation/geometry-source-review.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/geometry-source-review.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "4ce6c69c790e82b6f7176939fc0ea9d8284d5e2e7d8802a3c0890ea43d96ea2a",
+      "raw_bytes": 2289,
+      "delivered_sha256": "4ce6c69c790e82b6f7176939fc0ea9d8284d5e2e7d8802a3c0890ea43d96ea2a",
+      "delivered_bytes": 2289,
+      "gzip": false
+    },
+    {
+      "path": "preparation/packet-builder-objective-gate-checks.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/packet-builder-objective-gate-checks.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "fc0090d3beb8d3ceb89190de3825927d91ef72dd57ac200a2073db61d4418ebc",
+      "raw_bytes": 1412,
+      "delivered_sha256": "fc0090d3beb8d3ceb89190de3825927d91ef72dd57ac200a2073db61d4418ebc",
+      "delivered_bytes": 1412,
+      "gzip": false
+    },
+    {
+      "path": "preparation/packet-builder-objective-gate-fixture-test.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/packet-builder-objective-gate-fixture-test.py",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "64909faf9b676f55e14a068595ce1a3fe02033bcf55a2a85f0ca3c4f9d304245",
+      "raw_bytes": 3134,
+      "delivered_sha256": "64909faf9b676f55e14a068595ce1a3fe02033bcf55a2a85f0ca3c4f9d304245",
+      "delivered_bytes": 3134,
+      "gzip": false
+    },
+    {
+      "path": "preparation/packet-builder-original-fixture-test.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/packet-builder-original-fixture-test.py",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "435977b0e96b794aa73cd0d56f970df997504325276d87bbb3839df76f45510d",
+      "raw_bytes": 3233,
+      "delivered_sha256": "435977b0e96b794aa73cd0d56f970df997504325276d87bbb3839df76f45510d",
+      "delivered_bytes": 3233,
+      "gzip": false
+    },
+    {
+      "path": "preparation/packet-builder-source-checks.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/packet-builder-source-checks.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "c84fa23b1e618e5d65f9fc0e941b39e3c936432e0b2d18890f8582bfd6f1c365",
+      "raw_bytes": 1157,
+      "delivered_sha256": "c84fa23b1e618e5d65f9fc0e941b39e3c936432e0b2d18890f8582bfd6f1c365",
+      "delivered_bytes": 1157,
+      "gzip": false
+    },
+    {
+      "path": "preparation/packet-builder-source-preparation.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/packet-builder-source-preparation.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "f8dafc13c228e8507a0f3802c47e93468f0eff08ac784d662b125e70b00f2a86",
+      "raw_bytes": 1163,
+      "delivered_sha256": "f8dafc13c228e8507a0f3802c47e93468f0eff08ac784d662b125e70b00f2a86",
+      "delivered_bytes": 1163,
+      "gzip": false
+    },
+    {
+      "path": "preparation/prep.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/prep.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "62fb5d6dffddf3b869a651635ad2ff0639c696d46e3610f18e156a05be279f00",
+      "raw_bytes": 1007,
+      "delivered_sha256": "62fb5d6dffddf3b869a651635ad2ff0639c696d46e3610f18e156a05be279f00",
+      "delivered_bytes": 1007,
+      "gzip": false
+    },
+    {
+      "path": "preparation/preserved-external-bytes.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/preserved-external-bytes.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "371a337384f740f677be552d77789537616910a714ab1e0335a7362b532c8284",
+      "raw_bytes": 2937,
+      "delivered_sha256": "371a337384f740f677be552d77789537616910a714ab1e0335a7362b532c8284",
+      "delivered_bytes": 2937,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/CityPropShadowAcceptance.gd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/CityPropShadowAcceptance.gd",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+      "raw_bytes": 9153,
+      "delivered_sha256": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+      "delivered_bytes": 9153,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/CityPropShadowAcceptance.md",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/CityPropShadowAcceptance.md",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "cd8c4c9ae934d25cdaf1f71e225df3ed65670a710f91b375f303f2cb11c0d25b",
+      "raw_bytes": 3082,
+      "delivered_sha256": "cd8c4c9ae934d25cdaf1f71e225df3ed65670a710f91b375f303f2cb11c0d25b",
+      "delivered_bytes": 3082,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/CityPropShadowAcceptance.tscn",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/CityPropShadowAcceptance.tscn",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "61c33d4533edae6d428142832feeb326638e98a3ac6cf219ace65885c8ed50ef",
+      "raw_bytes": 256,
+      "delivered_sha256": "61c33d4533edae6d428142832feeb326638e98a3ac6cf219ace65885c8ed50ef",
+      "delivered_bytes": 256,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/prop-shadow-acceptance-queue.py",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/prop-shadow-acceptance-queue.py",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+      "raw_bytes": 5820,
+      "delivered_sha256": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+      "delivered_bytes": 5820,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/prop-shadow-acceptance-source.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/prop-shadow-acceptance-source.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "a7a637c01684f05026dc84d73f35ab30387228b0bb5847e528db7733b392c294",
+      "raw_bytes": 7663,
+      "delivered_sha256": "a7a637c01684f05026dc84d73f35ab30387228b0bb5847e528db7733b392c294",
+      "delivered_bytes": 7663,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/prop-shadow-frozen-source-cancellation.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/prop-shadow-frozen-source-cancellation.json",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "f06d49231c577aa8dd7bf6718d9e5cdfe5da4e3209107617e1ab12acb399accb",
+      "raw_bytes": 327,
+      "delivered_sha256": "f06d49231c577aa8dd7bf6718d9e5cdfe5da4e3209107617e1ab12acb399accb",
+      "delivered_bytes": 327,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/street-native-source-parse.gd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/street-native-source-parse.gd",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca",
+      "raw_bytes": 568,
+      "delivered_sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca",
+      "delivered_bytes": 568,
+      "gzip": false
+    },
+    {
+      "path": "preparation/previous-binding/street-native-source-parse.tscn",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/previous-binding/street-native-source-parse.tscn",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126",
+      "raw_bytes": 257,
+      "delivered_sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126",
+      "delivered_bytes": 257,
+      "gzip": false
+    },
+    {
+      "path": "preparation/source-rebind.diff",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-final-9b7-prep/source-rebind.diff",
+      "role": "preserved former binding/source-only rebind proof",
+      "raw_sha256": "eeb736b23747450acddaa073eb86c91d7bc5d507d6d1a48bc08fe3c61db78d54",
+      "raw_bytes": 6927,
+      "delivered_sha256": "eeb736b23747450acddaa073eb86c91d7bc5d507d6d1a48bc08fe3c61db78d54",
+      "delivered_bytes": 6927,
+      "gzip": false
+    },
+    {
+      "path": "reviews/prop-final-native-visual-review.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-final-native-visual-review.json",
+      "role": "root selected native visual review",
+      "raw_sha256": "5f98f98bb4244cbd3b03d459e1c41e4e2f5e0a3c154c1fd5fdfd13a8528955ce",
+      "raw_bytes": 4706,
+      "delivered_sha256": "5f98f98bb4244cbd3b03d459e1c41e4e2f5e0a3c154c1fd5fdfd13a8528955ce",
+      "delivered_bytes": 4706,
+      "gzip": false
+    },
+    {
+      "path": "reviews/prop-objective-visual-review.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-objective-visual-review.json",
+      "role": "root source/image-bound positive objective ground-strip control",
+      "raw_sha256": "43563baf857cd761476d19d53570f156d95be4feec452196230939c600c3dbc8",
+      "raw_bytes": 1003,
+      "delivered_sha256": "43563baf857cd761476d19d53570f156d95be4feec452196230939c600c3dbc8",
+      "delivered_bytes": 1003,
+      "gzip": false
+    },
+    {
+      "path": "acceptance/native-state.json",
+      "source_path": "/var/tmp/sa-city22/prop-shadow-acceptance/9b7-native-r2/native-state.json",
+      "role": "actual independent48 queue/manifest",
+      "raw_sha256": "ffa5cc57310b79f0336dea323ab5454ab2b9f05d7ff765295333b40506daca4e",
+      "raw_bytes": 584,
+      "delivered_sha256": "ffa5cc57310b79f0336dea323ab5454ab2b9f05d7ff765295333b40506daca4e",
+      "delivered_bytes": 584,
+      "gzip": false
+    },
+    {
+      "path": "acceptance/acceptance.json",
+      "source_path": "/var/tmp/sa-city22/prop-shadow-acceptance/9b7-native-r2/acceptance.json",
+      "role": "actual independent48 queue/manifest",
+      "raw_sha256": "d16d47278e2e00f01b371a9811b802e2c16b2a444e0fa47422742ef4996f1f9c",
+      "raw_bytes": 5115,
+      "delivered_sha256": "d16d47278e2e00f01b371a9811b802e2c16b2a444e0fa47422742ef4996f1f9c",
+      "delivered_bytes": 5115,
+      "gzip": false
+    },
+    {
+      "path": "acceptance/queue.json",
+      "source_path": "/var/tmp/sa-city22/prop-shadow-acceptance/9b7-native-r2/queue.json",
+      "role": "actual independent48 queue/manifest",
+      "raw_sha256": "6be15a817bbc397902883b0105af9ad853f9ade41ed5b71d3996ef63737f5d8a",
+      "raw_bytes": 21895,
+      "delivered_sha256": "6be15a817bbc397902883b0105af9ad853f9ade41ed5b71d3996ef63737f5d8a",
+      "delivered_bytes": 21895,
+      "gzip": false
+    },
+    {
+      "path": "runs/parse-reused/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-prop-shadow-parse-9b7-r1-thermal.json",
+      "role": "original completed outer guard record",
+      "raw_sha256": "b0a72d1378b1a1094d8d654cbb8fc1630df43b3e6a30339f0e7694a4d2c8b39e",
+      "raw_bytes": 74400,
+      "delivered_sha256": "b0a72d1378b1a1094d8d654cbb8fc1630df43b3e6a30339f0e7694a4d2c8b39e",
+      "delivered_bytes": 74400,
+      "gzip": false
+    },
+    {
+      "path": "runs/parse-reused/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-9b7-r1-1/logs/engine.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e742deaa9271bb0d5fd99f8d935a58b5d874851b9fbc5cace52c5ae7f92fc400",
+      "raw_bytes": 119,
+      "delivered_sha256": "e742deaa9271bb0d5fd99f8d935a58b5d874851b9fbc5cace52c5ae7f92fc400",
+      "delivered_bytes": 119,
+      "gzip": false
+    },
+    {
+      "path": "runs/parse-reused/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-9b7-r1-1/logs/stderr.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "runs/parse-reused/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-9b7-r1-1/logs/stdout.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e742deaa9271bb0d5fd99f8d935a58b5d874851b9fbc5cace52c5ae7f92fc400",
+      "raw_bytes": 119,
+      "delivered_sha256": "e742deaa9271bb0d5fd99f8d935a58b5d874851b9fbc5cace52c5ae7f92fc400",
+      "delivered_bytes": 119,
+      "gzip": false
+    },
+    {
+      "path": "runs/parse-reused/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-9b7-r1-1/run-results.json",
+      "role": "original completed engine evidence",
+      "raw_sha256": "13e84938e855bd285a5ca53e3ba86dc5187b58f89fb32e2346844323bfec9a04",
+      "raw_bytes": 352121,
+      "delivered_sha256": "707136a96f30585ddc88cfe75bb51c3a1e87aa4a5877162e8b55c39e12a78ff1",
+      "delivered_bytes": 133874,
+      "gzip": true
+    },
+    {
+      "path": "runs/fixture-native/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-prop-shadow-fixture-9b7-native-r2-thermal.json",
+      "role": "original completed outer guard record",
+      "raw_sha256": "ac801cd9b0a8456eeb09d7386c199976d91731e2032d1ef6437ae5b0ccfe7d97",
+      "raw_bytes": 35790,
+      "delivered_sha256": "ac801cd9b0a8456eeb09d7386c199976d91731e2032d1ef6437ae5b0ccfe7d97",
+      "delivered_bytes": 35790,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "raw_bytes": 55986,
+      "delivered_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "delivered_bytes": 55986,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "raw_bytes": 52738,
+      "delivered_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "delivered_bytes": 52738,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "raw_bytes": 52522,
+      "delivered_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "delivered_bytes": 52522,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "raw_bytes": 71423,
+      "delivered_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "delivered_bytes": 71423,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "raw_bytes": 4613,
+      "delivered_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "delivered_bytes": 4613,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "raw_bytes": 10285,
+      "delivered_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "delivered_bytes": 10285,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "1f412510e39d85d7cf5e8406960eb03257944bcdce15f95b27d8156d2c69c5dd",
+      "raw_bytes": 857840,
+      "delivered_sha256": "6cb03e3a8ae0609bf95fd621cf44abf3c79558839c709000282dad31804ae588",
+      "delivered_bytes": 130596,
+      "gzip": true
+    },
+    {
+      "path": "runs/fixture-native/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/logs/engine.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "3c94b2022611bc4c61d0c0bd6734eee3971c53d9f57bdce12998644e9dbc4831",
+      "raw_bytes": 3265,
+      "delivered_sha256": "3c94b2022611bc4c61d0c0bd6734eee3971c53d9f57bdce12998644e9dbc4831",
+      "delivered_bytes": 3265,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/logs/stderr.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/logs/stdout.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "3c94b2022611bc4c61d0c0bd6734eee3971c53d9f57bdce12998644e9dbc4831",
+      "raw_bytes": 3265,
+      "delivered_sha256": "3c94b2022611bc4c61d0c0bd6734eee3971c53d9f57bdce12998644e9dbc4831",
+      "delivered_bytes": 3265,
+      "gzip": false
+    },
+    {
+      "path": "runs/fixture-native/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-native-r2-1/run-results.json",
+      "role": "original completed engine evidence",
+      "raw_sha256": "0f35e6e9aa73c78b9483699d13942b83c30465695ba25c7dd6ef553d66166302",
+      "raw_bytes": 351184,
+      "delivered_sha256": "82a2871abf068f006c56724a8341fd5535e22de567d8b02d6f1c5e33b2ecf69b",
+      "delivered_bytes": 133774,
+      "gzip": true
+    },
+    {
+      "path": "runs/owner33/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/c22p-test-ChunkBlockRendererTest-013213-thermal.json",
+      "role": "original completed outer guard record",
+      "raw_sha256": "0a35298d3606e63de48b487eeef7748c4afaacdd4f0a780892aa1e0d53c3e275",
+      "raw_bytes": 71227,
+      "delivered_sha256": "0a35298d3606e63de48b487eeef7748c4afaacdd4f0a780892aa1e0d53c3e275",
+      "delivered_bytes": 71227,
+      "gzip": false
+    },
+    {
+      "path": "runs/owner33/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-test-ChunkBlockRendererTest-013213-1/logs/engine.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7812ba565a37c927b0cf8e7ac6fa58e3fd572c903cc6a04f5562ec5a4ac18737",
+      "raw_bytes": 2299,
+      "delivered_sha256": "7812ba565a37c927b0cf8e7ac6fa58e3fd572c903cc6a04f5562ec5a4ac18737",
+      "delivered_bytes": 2299,
+      "gzip": false
+    },
+    {
+      "path": "runs/owner33/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-test-ChunkBlockRendererTest-013213-1/logs/stderr.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "runs/owner33/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-test-ChunkBlockRendererTest-013213-1/logs/stdout.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7812ba565a37c927b0cf8e7ac6fa58e3fd572c903cc6a04f5562ec5a4ac18737",
+      "raw_bytes": 2299,
+      "delivered_sha256": "7812ba565a37c927b0cf8e7ac6fa58e3fd572c903cc6a04f5562ec5a4ac18737",
+      "delivered_bytes": 2299,
+      "gzip": false
+    },
+    {
+      "path": "runs/owner33/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-test-ChunkBlockRendererTest-013213-1/run-results.json",
+      "role": "original completed engine evidence",
+      "raw_sha256": "b980d7021685a381b3370460985366c13b7cae397f18aceda3caab4d2d2f421d",
+      "raw_bytes": 350192,
+      "delivered_sha256": "7b2dbf9f598dbbff42668e208d2e73d8e4388cb8b6ec94a3db2b87c589339493",
+      "delivered_bytes": 133639,
+      "gzip": true
+    },
+    {
+      "path": "runs/props-before/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/c22p-cmp-s6a-before-005251-thermal.json",
+      "role": "original completed outer guard record",
+      "raw_sha256": "2b5358e4e9a690e3e86c69f28fab61e53a11901afad4c02c5a35753186c6c351",
+      "raw_bytes": 123589,
+      "delivered_sha256": "2b5358e4e9a690e3e86c69f28fab61e53a11901afad4c02c5a35753186c6c351",
+      "delivered_bytes": 123589,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "raw_bytes": 55986,
+      "delivered_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "delivered_bytes": 55986,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "raw_bytes": 20325,
+      "delivered_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "delivered_bytes": 20325,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0bef04216f9fb8511cf5890803877090972190f1.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0bef04216f9fb8511cf5890803877090972190f1.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7ac01725878a75968a3ac0d4b6cb4895e85d6a550a08545f1a78ef312a18b27d",
+      "raw_bytes": 40674,
+      "delivered_sha256": "7ac01725878a75968a3ac0d4b6cb4895e85d6a550a08545f1a78ef312a18b27d",
+      "delivered_bytes": 40674,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0d08d8b433b11658b64805328ef2a7b276941ed6.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0d08d8b433b11658b64805328ef2a7b276941ed6.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7eb3a0dce4e2cfd4c069b932d8f6a4f12e5e6af7dabf8e8336fdcfa10e9238a0",
+      "raw_bytes": 38918,
+      "delivered_sha256": "7eb3a0dce4e2cfd4c069b932d8f6a4f12e5e6af7dabf8e8336fdcfa10e9238a0",
+      "delivered_bytes": 38918,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/17a3c1d2a46e5974c07f9575c8c1c553d1659916.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/17a3c1d2a46e5974c07f9575c8c1c553d1659916.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "48a1b99425e7399699b32130db2c7656d39c1b45a8b85e8d515ba6271205651c",
+      "raw_bytes": 38338,
+      "delivered_sha256": "48a1b99425e7399699b32130db2c7656d39c1b45a8b85e8d515ba6271205651c",
+      "delivered_bytes": 38338,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "raw_bytes": 52738,
+      "delivered_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "delivered_bytes": 52738,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/25c090bd55cbf4614f70700233b46c7310cb0f89.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/25c090bd55cbf4614f70700233b46c7310cb0f89.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "c465c071d0a19c38996c275c0eff26c754fd2d158603acd5c22520031f199083",
+      "raw_bytes": 55817,
+      "delivered_sha256": "c465c071d0a19c38996c275c0eff26c754fd2d158603acd5c22520031f199083",
+      "delivered_bytes": 55817,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/309fd4bcf39562939bf77402b68041cb97f35cc3.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/309fd4bcf39562939bf77402b68041cb97f35cc3.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "735a181ab2241ac6900db9bb41ef3a5d78e3b6d97fa08217830420426dc33e54",
+      "raw_bytes": 38498,
+      "delivered_sha256": "735a181ab2241ac6900db9bb41ef3a5d78e3b6d97fa08217830420426dc33e54",
+      "delivered_bytes": 38498,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/37db30eaa74368aca9ff854404d4c3f6c2ad3c82.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/37db30eaa74368aca9ff854404d4c3f6c2ad3c82.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "ec392201004a68ffe2403a38da49e3e4634833bf4a168a28ebbfcdd382eadbeb",
+      "raw_bytes": 49470,
+      "delivered_sha256": "ec392201004a68ffe2403a38da49e3e4634833bf4a168a28ebbfcdd382eadbeb",
+      "delivered_bytes": 49470,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e2721b2913e3e5acdd55f069f6cdd79e9459927b76f030f21a5e3e1a731239ae",
+      "raw_bytes": 72376,
+      "delivered_sha256": "e2721b2913e3e5acdd55f069f6cdd79e9459927b76f030f21a5e3e1a731239ae",
+      "delivered_bytes": 72376,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/85e12ca955133e5679746ea4dc523082918f0634.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/85e12ca955133e5679746ea4dc523082918f0634.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "ae81c07c5f8b0539413d57887f332601258a74680cfca34022689714fd5bf9be",
+      "raw_bytes": 37806,
+      "delivered_sha256": "ae81c07c5f8b0539413d57887f332601258a74680cfca34022689714fd5bf9be",
+      "delivered_bytes": 37806,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/87fafd179c8ed4ede285bed2d0cf45d30c1d6c49.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/87fafd179c8ed4ede285bed2d0cf45d30c1d6c49.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "3547cc19949d700cd27a684746706d7f0f3a10472466c807bb5b771682a3d200",
+      "raw_bytes": 18045,
+      "delivered_sha256": "3547cc19949d700cd27a684746706d7f0f3a10472466c807bb5b771682a3d200",
+      "delivered_bytes": 18045,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8ae7d9845c8fa1d584a329595d82d0ef13675532.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8ae7d9845c8fa1d584a329595d82d0ef13675532.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "f7b3fb275375dd2ad3edad8d54c9d4cfda00a7a66761ab52d6598a7dc5b28dc9",
+      "raw_bytes": 26081,
+      "delivered_sha256": "f7b3fb275375dd2ad3edad8d54c9d4cfda00a7a66761ab52d6598a7dc5b28dc9",
+      "delivered_bytes": 26081,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8c3e422dfe5f229a2aafd782b9250cb6bd3bedfc.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8c3e422dfe5f229a2aafd782b9250cb6bd3bedfc.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "16de7dd72062f0d51f8ddb381149199c8ffb499c460ee666d12b9ca8846db921",
+      "raw_bytes": 17781,
+      "delivered_sha256": "16de7dd72062f0d51f8ddb381149199c8ffb499c460ee666d12b9ca8846db921",
+      "delivered_bytes": 17781,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8f3b1bd5ec2d320e66bf632a1a8640b85ff73438.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8f3b1bd5ec2d320e66bf632a1a8640b85ff73438.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "773d06b70b4dedad469c48327cdae272d750a0a7ffbff747b3968acf86979017",
+      "raw_bytes": 41498,
+      "delivered_sha256": "773d06b70b4dedad469c48327cdae272d750a0a7ffbff747b3968acf86979017",
+      "delivered_bytes": 41498,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/985b3b39345615bbdef3fd96db367f09dec9a059.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/985b3b39345615bbdef3fd96db367f09dec9a059.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "08fe9a2942c640066d6460f645d056b89f3d7cfad7e04742f7eefd1218474a42",
+      "raw_bytes": 34254,
+      "delivered_sha256": "08fe9a2942c640066d6460f645d056b89f3d7cfad7e04742f7eefd1218474a42",
+      "delivered_bytes": 34254,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "raw_bytes": 52522,
+      "delivered_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "delivered_bytes": 52522,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/c1794cfc30306ffb6940e9bdbdffae2aed563ac8.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/c1794cfc30306ffb6940e9bdbdffae2aed563ac8.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "bb5cfcf590e01f355ebd3f3edc746fc436224eb143c848555cc25647ebff708e",
+      "raw_bytes": 52543,
+      "delivered_sha256": "bb5cfcf590e01f355ebd3f3edc746fc436224eb143c848555cc25647ebff708e",
+      "delivered_bytes": 52543,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d357ede7faa8004c6646f8611cfb4384c6f62377.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d357ede7faa8004c6646f8611cfb4384c6f62377.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7d09ba449a4ed61d4d404ed008742e62056298343dad8e4a02b901ffb28b000f",
+      "raw_bytes": 18469,
+      "delivered_sha256": "7d09ba449a4ed61d4d404ed008742e62056298343dad8e4a02b901ffb28b000f",
+      "delivered_bytes": 18469,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d6791420c77775916bf3b3be4c6889278275f6f1.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d6791420c77775916bf3b3be4c6889278275f6f1.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "c8c4de4b8cd27bf3ffd99e86b005da759d67811921f99bdb74a3d59adaf225d5",
+      "raw_bytes": 39062,
+      "delivered_sha256": "c8c4de4b8cd27bf3ffd99e86b005da759d67811921f99bdb74a3d59adaf225d5",
+      "delivered_bytes": 39062,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/e39c2d1754b4a3a909935bef66f010284cfdb4dd.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/e39c2d1754b4a3a909935bef66f010284cfdb4dd.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "23efddd10b870ecf9dea8948345d3f64c40a4c5aa81c3c789dd66c7e2d87bd9d",
+      "raw_bytes": 20981,
+      "delivered_sha256": "23efddd10b870ecf9dea8948345d3f64c40a4c5aa81c3c789dd66c7e2d87bd9d",
+      "delivered_bytes": 20981,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "raw_bytes": 71423,
+      "delivered_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "delivered_bytes": 71423,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "raw_bytes": 4613,
+      "delivered_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "delivered_bytes": 4613,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "raw_bytes": 10285,
+      "delivered_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "delivered_bytes": 10285,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "1f412510e39d85d7cf5e8406960eb03257944bcdce15f95b27d8156d2c69c5dd",
+      "raw_bytes": 857840,
+      "delivered_sha256": "6cb03e3a8ae0609bf95fd621cf44abf3c79558839c709000282dad31804ae588",
+      "delivered_bytes": 130596,
+      "gzip": true
+    },
+    {
+      "path": "runs/props-before/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/logs/engine.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "raw_bytes": 270,
+      "delivered_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "delivered_bytes": 270,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/logs/stderr.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/logs/stdout.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "raw_bytes": 270,
+      "delivered_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "delivered_bytes": 270,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-before/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-before-005251-1/run-results.json",
+      "role": "original completed engine evidence",
+      "raw_sha256": "5841e17308ff6407c192b7d89e24afc0e9d1b0c05f9df17a992ea2123dc36d72",
+      "raw_bytes": 383367,
+      "delivered_sha256": "25639ed63c1985197f0d08c0b14d5b7e0cafe077f79c84ae98118ba186b01c13",
+      "delivered_bytes": 136391,
+      "gzip": true
+    },
+    {
+      "path": "runs/props-after/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/c22p-cmp-s6a-after-015704-thermal.json",
+      "role": "original completed outer guard record",
+      "raw_sha256": "2dc564ab72410a9106feb2227aabdb49aa954a41f371d8a27a30271567d44f9e",
+      "raw_bytes": 76781,
+      "delivered_sha256": "2dc564ab72410a9106feb2227aabdb49aa954a41f371d8a27a30271567d44f9e",
+      "delivered_bytes": 76781,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "raw_bytes": 55986,
+      "delivered_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "delivered_bytes": 55986,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "raw_bytes": 20325,
+      "delivered_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "delivered_bytes": 20325,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0bef04216f9fb8511cf5890803877090972190f1.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0bef04216f9fb8511cf5890803877090972190f1.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7ac01725878a75968a3ac0d4b6cb4895e85d6a550a08545f1a78ef312a18b27d",
+      "raw_bytes": 40674,
+      "delivered_sha256": "7ac01725878a75968a3ac0d4b6cb4895e85d6a550a08545f1a78ef312a18b27d",
+      "delivered_bytes": 40674,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0d08d8b433b11658b64805328ef2a7b276941ed6.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0d08d8b433b11658b64805328ef2a7b276941ed6.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7eb3a0dce4e2cfd4c069b932d8f6a4f12e5e6af7dabf8e8336fdcfa10e9238a0",
+      "raw_bytes": 38918,
+      "delivered_sha256": "7eb3a0dce4e2cfd4c069b932d8f6a4f12e5e6af7dabf8e8336fdcfa10e9238a0",
+      "delivered_bytes": 38918,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/17a3c1d2a46e5974c07f9575c8c1c553d1659916.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/17a3c1d2a46e5974c07f9575c8c1c553d1659916.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "48a1b99425e7399699b32130db2c7656d39c1b45a8b85e8d515ba6271205651c",
+      "raw_bytes": 38338,
+      "delivered_sha256": "48a1b99425e7399699b32130db2c7656d39c1b45a8b85e8d515ba6271205651c",
+      "delivered_bytes": 38338,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "raw_bytes": 52738,
+      "delivered_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "delivered_bytes": 52738,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/25c090bd55cbf4614f70700233b46c7310cb0f89.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/25c090bd55cbf4614f70700233b46c7310cb0f89.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "c465c071d0a19c38996c275c0eff26c754fd2d158603acd5c22520031f199083",
+      "raw_bytes": 55817,
+      "delivered_sha256": "c465c071d0a19c38996c275c0eff26c754fd2d158603acd5c22520031f199083",
+      "delivered_bytes": 55817,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/309fd4bcf39562939bf77402b68041cb97f35cc3.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/309fd4bcf39562939bf77402b68041cb97f35cc3.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "735a181ab2241ac6900db9bb41ef3a5d78e3b6d97fa08217830420426dc33e54",
+      "raw_bytes": 38498,
+      "delivered_sha256": "735a181ab2241ac6900db9bb41ef3a5d78e3b6d97fa08217830420426dc33e54",
+      "delivered_bytes": 38498,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/37db30eaa74368aca9ff854404d4c3f6c2ad3c82.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/37db30eaa74368aca9ff854404d4c3f6c2ad3c82.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "ec392201004a68ffe2403a38da49e3e4634833bf4a168a28ebbfcdd382eadbeb",
+      "raw_bytes": 49470,
+      "delivered_sha256": "ec392201004a68ffe2403a38da49e3e4634833bf4a168a28ebbfcdd382eadbeb",
+      "delivered_bytes": 49470,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e2721b2913e3e5acdd55f069f6cdd79e9459927b76f030f21a5e3e1a731239ae",
+      "raw_bytes": 72376,
+      "delivered_sha256": "e2721b2913e3e5acdd55f069f6cdd79e9459927b76f030f21a5e3e1a731239ae",
+      "delivered_bytes": 72376,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/85e12ca955133e5679746ea4dc523082918f0634.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/85e12ca955133e5679746ea4dc523082918f0634.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "ae81c07c5f8b0539413d57887f332601258a74680cfca34022689714fd5bf9be",
+      "raw_bytes": 37806,
+      "delivered_sha256": "ae81c07c5f8b0539413d57887f332601258a74680cfca34022689714fd5bf9be",
+      "delivered_bytes": 37806,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/87fafd179c8ed4ede285bed2d0cf45d30c1d6c49.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/87fafd179c8ed4ede285bed2d0cf45d30c1d6c49.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "3547cc19949d700cd27a684746706d7f0f3a10472466c807bb5b771682a3d200",
+      "raw_bytes": 18045,
+      "delivered_sha256": "3547cc19949d700cd27a684746706d7f0f3a10472466c807bb5b771682a3d200",
+      "delivered_bytes": 18045,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8ae7d9845c8fa1d584a329595d82d0ef13675532.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8ae7d9845c8fa1d584a329595d82d0ef13675532.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "f7b3fb275375dd2ad3edad8d54c9d4cfda00a7a66761ab52d6598a7dc5b28dc9",
+      "raw_bytes": 26081,
+      "delivered_sha256": "f7b3fb275375dd2ad3edad8d54c9d4cfda00a7a66761ab52d6598a7dc5b28dc9",
+      "delivered_bytes": 26081,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8c3e422dfe5f229a2aafd782b9250cb6bd3bedfc.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8c3e422dfe5f229a2aafd782b9250cb6bd3bedfc.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "16de7dd72062f0d51f8ddb381149199c8ffb499c460ee666d12b9ca8846db921",
+      "raw_bytes": 17781,
+      "delivered_sha256": "16de7dd72062f0d51f8ddb381149199c8ffb499c460ee666d12b9ca8846db921",
+      "delivered_bytes": 17781,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8f3b1bd5ec2d320e66bf632a1a8640b85ff73438.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/8f3b1bd5ec2d320e66bf632a1a8640b85ff73438.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "773d06b70b4dedad469c48327cdae272d750a0a7ffbff747b3968acf86979017",
+      "raw_bytes": 41498,
+      "delivered_sha256": "773d06b70b4dedad469c48327cdae272d750a0a7ffbff747b3968acf86979017",
+      "delivered_bytes": 41498,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/985b3b39345615bbdef3fd96db367f09dec9a059.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/985b3b39345615bbdef3fd96db367f09dec9a059.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "08fe9a2942c640066d6460f645d056b89f3d7cfad7e04742f7eefd1218474a42",
+      "raw_bytes": 34254,
+      "delivered_sha256": "08fe9a2942c640066d6460f645d056b89f3d7cfad7e04742f7eefd1218474a42",
+      "delivered_bytes": 34254,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "raw_bytes": 52522,
+      "delivered_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "delivered_bytes": 52522,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/c1794cfc30306ffb6940e9bdbdffae2aed563ac8.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/c1794cfc30306ffb6940e9bdbdffae2aed563ac8.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "bb5cfcf590e01f355ebd3f3edc746fc436224eb143c848555cc25647ebff708e",
+      "raw_bytes": 52543,
+      "delivered_sha256": "bb5cfcf590e01f355ebd3f3edc746fc436224eb143c848555cc25647ebff708e",
+      "delivered_bytes": 52543,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d357ede7faa8004c6646f8611cfb4384c6f62377.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d357ede7faa8004c6646f8611cfb4384c6f62377.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7d09ba449a4ed61d4d404ed008742e62056298343dad8e4a02b901ffb28b000f",
+      "raw_bytes": 18469,
+      "delivered_sha256": "7d09ba449a4ed61d4d404ed008742e62056298343dad8e4a02b901ffb28b000f",
+      "delivered_bytes": 18469,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d6791420c77775916bf3b3be4c6889278275f6f1.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/d6791420c77775916bf3b3be4c6889278275f6f1.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "c8c4de4b8cd27bf3ffd99e86b005da759d67811921f99bdb74a3d59adaf225d5",
+      "raw_bytes": 39062,
+      "delivered_sha256": "c8c4de4b8cd27bf3ffd99e86b005da759d67811921f99bdb74a3d59adaf225d5",
+      "delivered_bytes": 39062,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/e39c2d1754b4a3a909935bef66f010284cfdb4dd.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/e39c2d1754b4a3a909935bef66f010284cfdb4dd.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "23efddd10b870ecf9dea8948345d3f64c40a4c5aa81c3c789dd66c7e2d87bd9d",
+      "raw_bytes": 20981,
+      "delivered_sha256": "23efddd10b870ecf9dea8948345d3f64c40a4c5aa81c3c789dd66c7e2d87bd9d",
+      "delivered_bytes": 20981,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "raw_bytes": 71423,
+      "delivered_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "delivered_bytes": 71423,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "raw_bytes": 4613,
+      "delivered_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "delivered_bytes": 4613,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "raw_bytes": 10285,
+      "delivered_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "delivered_bytes": 10285,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "1f412510e39d85d7cf5e8406960eb03257944bcdce15f95b27d8156d2c69c5dd",
+      "raw_bytes": 857840,
+      "delivered_sha256": "6cb03e3a8ae0609bf95fd621cf44abf3c79558839c709000282dad31804ae588",
+      "delivered_bytes": 130596,
+      "gzip": true
+    },
+    {
+      "path": "runs/props-after/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/logs/engine.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "raw_bytes": 270,
+      "delivered_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "delivered_bytes": 270,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/logs/stderr.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/logs/stdout.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "raw_bytes": 270,
+      "delivered_sha256": "04a5daa977e3cba843bd17ccb7258c1b5d55bfc1d049ed02239d5f7a1c5e520d",
+      "delivered_bytes": 270,
+      "gzip": false
+    },
+    {
+      "path": "runs/props-after/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1/run-results.json",
+      "role": "original completed engine evidence",
+      "raw_sha256": "5b348d02c9d6d1ff7258b72f729a44ac668163033091f8c5003e13612461544c",
+      "raw_bytes": 389859,
+      "delivered_sha256": "19fd83e9cc632270e75a7dd6e34f3619d0020bb8bb9bf3e92d4009ad6fe145c4",
+      "delivered_bytes": 137478,
+      "gzip": true
+    },
+    {
+      "path": "runs/objectives-before/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/c22p-obj-before-004215-thermal.json",
+      "role": "original completed outer guard record",
+      "raw_sha256": "02c843b47422a833c439310f7d81003263c864bd8600fb298a316bddfc8a4ff6",
+      "raw_bytes": 8239,
+      "delivered_sha256": "02c843b47422a833c439310f7d81003263c864bd8600fb298a316bddfc8a4ff6",
+      "delivered_bytes": 8239,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "raw_bytes": 55986,
+      "delivered_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "delivered_bytes": 55986,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "raw_bytes": 20325,
+      "delivered_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "delivered_bytes": 20325,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "raw_bytes": 52738,
+      "delivered_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "delivered_bytes": 52738,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "aab2bbc15be4daf09a4c414a32f257cdcb9c8446ffcf73dd154d79811be7b464",
+      "raw_bytes": 53595,
+      "delivered_sha256": "aab2bbc15be4daf09a4c414a32f257cdcb9c8446ffcf73dd154d79811be7b464",
+      "delivered_bytes": 53595,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "raw_bytes": 52522,
+      "delivered_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "delivered_bytes": 52522,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "raw_bytes": 71423,
+      "delivered_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "delivered_bytes": 71423,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "raw_bytes": 4613,
+      "delivered_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "delivered_bytes": 4613,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "raw_bytes": 10285,
+      "delivered_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "delivered_bytes": 10285,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "1f412510e39d85d7cf5e8406960eb03257944bcdce15f95b27d8156d2c69c5dd",
+      "raw_bytes": 857840,
+      "delivered_sha256": "6cb03e3a8ae0609bf95fd621cf44abf3c79558839c709000282dad31804ae588",
+      "delivered_bytes": 130596,
+      "gzip": true
+    },
+    {
+      "path": "runs/objectives-before/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/logs/engine.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "bb61bd56cbdac55975085ce092370d90ae761ab021423b0d880fb2229fc1ef8c",
+      "raw_bytes": 291,
+      "delivered_sha256": "bb61bd56cbdac55975085ce092370d90ae761ab021423b0d880fb2229fc1ef8c",
+      "delivered_bytes": 291,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/logs/stderr.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/logs/stdout.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "bb61bd56cbdac55975085ce092370d90ae761ab021423b0d880fb2229fc1ef8c",
+      "raw_bytes": 291,
+      "delivered_sha256": "bb61bd56cbdac55975085ce092370d90ae761ab021423b0d880fb2229fc1ef8c",
+      "delivered_bytes": 291,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-before/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1/run-results.json",
+      "role": "original completed engine evidence",
+      "raw_sha256": "2f43554097af46f1b431d2b289591be57773d17bc7a9735bf74cd509f644d152",
+      "raw_bytes": 353832,
+      "delivered_sha256": "ff797387f9acd9a017617aa5847e93817d0b9278689eb6a03a7b750fd308e00d",
+      "delivered_bytes": 133639,
+      "gzip": true
+    },
+    {
+      "path": "runs/objectives-after/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/c22p-obj-after-004348-thermal.json",
+      "role": "original completed outer guard record",
+      "raw_sha256": "cb3244af8a93770ce7bae8c9f5100b31e525fc50bb9d8aad0dc4673248751aff",
+      "raw_bytes": 8236,
+      "delivered_sha256": "cb3244af8a93770ce7bae8c9f5100b31e525fc50bb9d8aad0dc4673248751aff",
+      "delivered_bytes": 8236,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/04ae11aea94c526c8925f5395fc4b37e0fdfdeef.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "raw_bytes": 55986,
+      "delivered_sha256": "af1540632ab2ae4edee3f80f772aee05e280ac79a14b556a65b4bb31bca8a8a9",
+      "delivered_bytes": 55986,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0a50f1a62b480024e9aba947c2c0c7cabdd2b731.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "raw_bytes": 20325,
+      "delivered_sha256": "8692315af7482770ecfd0c6d6154baf269e9ad5818dfaf5d52917f70fe567e9b",
+      "delivered_bytes": 20325,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0bef04216f9fb8511cf5890803877090972190f1.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/0bef04216f9fb8511cf5890803877090972190f1.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "17605982fa9a2e42fcbd4eb645c198b87015207c846ee78f5055cd1975b4974a",
+      "raw_bytes": 19645,
+      "delivered_sha256": "17605982fa9a2e42fcbd4eb645c198b87015207c846ee78f5055cd1975b4974a",
+      "delivered_bytes": 19645,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/1dc1921dcf17cd072534fa6f39e633d127740167.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "raw_bytes": 52738,
+      "delivered_sha256": "15915f3baa6c3770db8b7997c331a1202fc30fb505817ce2d4c15e5320f2bde1",
+      "delivered_bytes": 52738,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "aab2bbc15be4daf09a4c414a32f257cdcb9c8446ffcf73dd154d79811be7b464",
+      "raw_bytes": 53595,
+      "delivered_sha256": "aab2bbc15be4daf09a4c414a32f257cdcb9c8446ffcf73dd154d79811be7b464",
+      "delivered_bytes": 53595,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CanvasShaderGLES3/e3da0f9fa165811b7810ec29f934d1d76b34c00d96a3d966d9f6dac09634f6c3/b47ede90b3f2eb19021404fbbc0e54100ee32c96.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "raw_bytes": 52522,
+      "delivered_sha256": "32b5185d4581a10ba41f618d393a653ff7817ad36c42bdeccc6e1caff1de533b",
+      "delivered_bytes": 52522,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/CopyShaderGLES3/a012bf322e835f8ca0c71f278feaaf41c4bdeebe98faedaf48c8a0ae02785e0a/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "raw_bytes": 71423,
+      "delivered_sha256": "596c4ba7125111b65c056e24d5d64600b9d5f21a709c77385001a7ed5f10f9d0",
+      "delivered_bytes": 71423,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/FeedShaderGLES3/ecf73c91ac3ff8e499727e41214fe61d64b183c78d583f8b91efe5d4c2ecd37e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "raw_bytes": 4613,
+      "delivered_sha256": "e51bafd9e7f0ae86dc6cb569d72db28d832988a0b1ac2cccf5424d0214efdbfa",
+      "delivered_bytes": 4613,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/PostShaderGLES3/4129446307b7b51859f87278e60bf9e8623473fc979a9a6c1c26f40e7d63a473/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "raw_bytes": 10285,
+      "delivered_sha256": "69a02a2d64f3fc19748816925cbb570eaaf5b16313622e4adc4be0e03fe5fa13",
+      "delivered_bytes": 10285,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/data/godot/app_userdata/Synthetic Ascension/shader_cache/SceneShaderGLES3/b5d143471c50e8ffbd798428c25fa37b4b8ffc95b945069d3ad799d76430159f/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache",
+      "role": "original completed engine evidence",
+      "raw_sha256": "1f412510e39d85d7cf5e8406960eb03257944bcdce15f95b27d8156d2c69c5dd",
+      "raw_bytes": 857840,
+      "delivered_sha256": "6cb03e3a8ae0609bf95fd621cf44abf3c79558839c709000282dad31804ae588",
+      "delivered_bytes": 130596,
+      "gzip": true
+    },
+    {
+      "path": "runs/objectives-after/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/logs/engine.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "048bb48d3fd3d59710fa6084fc08bd823f65e574dc21799f59a4331fc748909d",
+      "raw_bytes": 290,
+      "delivered_sha256": "048bb48d3fd3d59710fa6084fc08bd823f65e574dc21799f59a4331fc748909d",
+      "delivered_bytes": 290,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/logs/stderr.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/logs/stdout.log",
+      "role": "original completed engine evidence",
+      "raw_sha256": "048bb48d3fd3d59710fa6084fc08bd823f65e574dc21799f59a4331fc748909d",
+      "raw_bytes": 290,
+      "delivered_sha256": "048bb48d3fd3d59710fa6084fc08bd823f65e574dc21799f59a4331fc748909d",
+      "delivered_bytes": 290,
+      "gzip": false
+    },
+    {
+      "path": "runs/objectives-after/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1/run-results.json",
+      "role": "original completed engine evidence",
+      "raw_sha256": "7db2cb48fe1b9203c95eb1b87c37e7f95c69ee89f3a366447db18c2b43ed0fdf",
+      "raw_bytes": 352887,
+      "delivered_sha256": "21ab53187cff6dd7a508d35db1267c3ec1a1de30120ef2ff081c1b29b85cd0d0",
+      "delivered_bytes": 134120,
+      "gzip": true
+    },
+    {
+      "path": "native/props/before/provenance.json",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/provenance.json",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "f04f6f99862652f0ecb3cde4e0c7a164a0cce7fd68585fa8a61d48d1eba8d422",
+      "raw_bytes": 2206,
+      "delivered_sha256": "f04f6f99862652f0ecb3cde4e0c7a164a0cce7fd68585fa8a61d48d1eba8d422",
+      "delivered_bytes": 2206,
+      "gzip": false
+    },
+    {
+      "path": "native/props/before/objective_art-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/objective_art-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "a109ad1b7a242c507be3d9b148d0c17c83591e7679645b8cd53287c80f9ac834",
+      "raw_bytes": 1873834,
+      "delivered_sha256": "a109ad1b7a242c507be3d9b148d0c17c83591e7679645b8cd53287c80f9ac834",
+      "delivered_bytes": 1873834,
+      "gzip": false
+    },
+    {
+      "path": "native/props/before/prop0-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/prop0-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "33503999dca5863cf4ee476cc3ad448672175064891a5ced8c65d4df6c2e51b0",
+      "raw_bytes": 1523138,
+      "delivered_sha256": "33503999dca5863cf4ee476cc3ad448672175064891a5ced8c65d4df6c2e51b0",
+      "delivered_bytes": 1523138,
+      "gzip": false
+    },
+    {
+      "path": "native/props/before/prop1-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/prop1-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "b98c2aa19ef1271680ae03b8aaf84910795f5523c66349d087fb431e5583ddb0",
+      "raw_bytes": 1531571,
+      "delivered_sha256": "b98c2aa19ef1271680ae03b8aaf84910795f5523c66349d087fb431e5583ddb0",
+      "delivered_bytes": 1531571,
+      "gzip": false
+    },
+    {
+      "path": "native/props/before/prop4-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/prop4-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "b7923a37556041ea79e346c9ea2ad82741b912e21bf26d4a508efcfc86c6bc29",
+      "raw_bytes": 1619707,
+      "delivered_sha256": "b7923a37556041ea79e346c9ea2ad82741b912e21bf26d4a508efcfc86c6bc29",
+      "delivered_bytes": 1619707,
+      "gzip": false
+    },
+    {
+      "path": "native/props/before/prop5-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/prop5-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "e7291cbb70d935321cdbb09f95f68d049e0cc320b0e81888bc036b7ac8a1daa0",
+      "raw_bytes": 1569471,
+      "delivered_sha256": "e7291cbb70d935321cdbb09f95f68d049e0cc320b0e81888bc036b7ac8a1daa0",
+      "delivered_bytes": 1569471,
+      "gzip": false
+    },
+    {
+      "path": "native/props/before/prop6-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/prop6-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "0d40fee06a22bf75a0c71e03e631ae70c43336b26c140ba8e505532b9fb028d6",
+      "raw_bytes": 1623141,
+      "delivered_sha256": "0d40fee06a22bf75a0c71e03e631ae70c43336b26c140ba8e505532b9fb028d6",
+      "delivered_bytes": 1623141,
+      "gzip": false
+    },
+    {
+      "path": "native/props/before/prop7-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/before/prop7-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "5eece8da3865c7a45d9e33c481b0532e589fdf5bfde2a649c5af0b40c22bea26",
+      "raw_bytes": 1546767,
+      "delivered_sha256": "5eece8da3865c7a45d9e33c481b0532e589fdf5bfde2a649c5af0b40c22bea26",
+      "delivered_bytes": 1546767,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/provenance.json",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/provenance.json",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "98f6cd3c3a7a0c2160b97a116940ae84f346ead582e5198c74a5c0e9107b5cc6",
+      "raw_bytes": 2509,
+      "delivered_sha256": "98f6cd3c3a7a0c2160b97a116940ae84f346ead582e5198c74a5c0e9107b5cc6",
+      "delivered_bytes": 2509,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/objective_art-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/objective_art-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "35f8c51bddb876b3915a63fa18c1066aac8bf06c7185760b8c7cd6bbc653aa03",
+      "raw_bytes": 1873570,
+      "delivered_sha256": "35f8c51bddb876b3915a63fa18c1066aac8bf06c7185760b8c7cd6bbc653aa03",
+      "delivered_bytes": 1873570,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/prop0-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/prop0-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "789b29bd1f35fcceffe0282fb28c781c2f33efd9929aadde0d2a47398a2b7b34",
+      "raw_bytes": 1522963,
+      "delivered_sha256": "789b29bd1f35fcceffe0282fb28c781c2f33efd9929aadde0d2a47398a2b7b34",
+      "delivered_bytes": 1522963,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/prop1-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/prop1-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "334118f979b46cef705e9965ea04dbba65b5bfad848feb428b9c35bd99a9b36e",
+      "raw_bytes": 1531401,
+      "delivered_sha256": "334118f979b46cef705e9965ea04dbba65b5bfad848feb428b9c35bd99a9b36e",
+      "delivered_bytes": 1531401,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/prop4-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/prop4-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "18d62ffc9e6674a96c2ecd5b44eb8e58ab2240d6ade137b0c1622fe6b2a44e2f",
+      "raw_bytes": 1619125,
+      "delivered_sha256": "18d62ffc9e6674a96c2ecd5b44eb8e58ab2240d6ade137b0c1622fe6b2a44e2f",
+      "delivered_bytes": 1619125,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/prop5-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/prop5-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "70b622d57a920bb1327a2392fbd2b3c72d1f3a241aa89c79e28cef02eb3a192b",
+      "raw_bytes": 1569276,
+      "delivered_sha256": "70b622d57a920bb1327a2392fbd2b3c72d1f3a241aa89c79e28cef02eb3a192b",
+      "delivered_bytes": 1569276,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/prop6-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/prop6-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "aa814c4932b407f320d70dac1d05b638981d3ac52875793d5eb3c3aed3ea0065",
+      "raw_bytes": 1623195,
+      "delivered_sha256": "aa814c4932b407f320d70dac1d05b638981d3ac52875793d5eb3c3aed3ea0065",
+      "delivered_bytes": 1623195,
+      "gzip": false
+    },
+    {
+      "path": "native/props/after/prop7-seg6-play.png",
+      "source_path": "/var/tmp/sa-c22/props/s6a/after/prop7-seg6-play.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "fff95528311c0ebfd58c6c2fb52b0c32c261e1f83217284bda9ab4b16c2ec6a0",
+      "raw_bytes": 1546381,
+      "delivered_sha256": "fff95528311c0ebfd58c6c2fb52b0c32c261e1f83217284bda9ab4b16c2ec6a0",
+      "delivered_bytes": 1546381,
+      "gzip": false
+    },
+    {
+      "path": "native/objectives/before/provenance.json",
+      "source_path": "/var/tmp/sa-c22/objectives/before/provenance.json",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "b8b64eb1d6722dbf8589510f62548198bba82b21c07ee37bb57cfb852ba1e9a8",
+      "raw_bytes": 1437,
+      "delivered_sha256": "b8b64eb1d6722dbf8589510f62548198bba82b21c07ee37bb57cfb852ba1e9a8",
+      "delivered_bytes": 1437,
+      "gzip": false
+    },
+    {
+      "path": "native/objectives/before/objectives.png",
+      "source_path": "/var/tmp/sa-c22/objectives/before/objectives.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "48af99f3ad55fff43aee9ba18be1fc8ebbb3f670bf290a24a54a7e8093c7272a",
+      "raw_bytes": 1438536,
+      "delivered_sha256": "48af99f3ad55fff43aee9ba18be1fc8ebbb3f670bf290a24a54a7e8093c7272a",
+      "delivered_bytes": 1438536,
+      "gzip": false
+    },
+    {
+      "path": "native/objectives/after/provenance.json",
+      "source_path": "/var/tmp/sa-c22/objectives/after/provenance.json",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "93d3869eead06be4faaa76d2eb7e7c0e020b58a1d0ffa26c0082f6734f93b10d",
+      "raw_bytes": 1595,
+      "delivered_sha256": "93d3869eead06be4faaa76d2eb7e7c0e020b58a1d0ffa26c0082f6734f93b10d",
+      "delivered_bytes": 1595,
+      "gzip": false
+    },
+    {
+      "path": "native/objectives/after/objectives.png",
+      "source_path": "/var/tmp/sa-c22/objectives/after/objectives.png",
+      "role": "original source-bound native image/record",
+      "raw_sha256": "9cb78f993b70f318003cd375820396287d7e5a69bacf8ab7178302ede23a7b6f",
+      "raw_bytes": 1442286,
+      "delivered_sha256": "9cb78f993b70f318003cd375820396287d7e5a69bacf8ab7178302ede23a7b6f",
+      "delivered_bytes": 1442286,
+      "gzip": false
+    },
+    {
+      "path": "earlier/headless-9b7-r1/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-r1-1/logs/engine.log",
+      "role": "actual failed25/15 headless result; dummy uploaded-transform getter backend is inapplicable, not a pass",
+      "raw_sha256": "559c70cdca1490541045a29061b4c418412054e8d4d6257d23e957e6c841cf0f",
+      "raw_bytes": 9878,
+      "delivered_sha256": "559c70cdca1490541045a29061b4c418412054e8d4d6257d23e957e6c841cf0f",
+      "delivered_bytes": 9878,
+      "gzip": false
+    },
+    {
+      "path": "earlier/headless-9b7-r1/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-r1-1/logs/stderr.log",
+      "role": "actual failed25/15 headless result; dummy uploaded-transform getter backend is inapplicable, not a pass",
+      "raw_sha256": "62ebfdd56cc74e18e74fc17828440082b7bf9d3729010d4ad04027f2102bd08c",
+      "raw_bytes": 8338,
+      "delivered_sha256": "62ebfdd56cc74e18e74fc17828440082b7bf9d3729010d4ad04027f2102bd08c",
+      "delivered_bytes": 8338,
+      "gzip": false
+    },
+    {
+      "path": "earlier/headless-9b7-r1/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-r1-1/logs/stdout.log",
+      "role": "actual failed25/15 headless result; dummy uploaded-transform getter backend is inapplicable, not a pass",
+      "raw_sha256": "6e4a86c7db0dbb19bbfc509b6db2e2be30aeb34f9bd82f98f37d0bb2e07dc05e",
+      "raw_bytes": 1540,
+      "delivered_sha256": "6e4a86c7db0dbb19bbfc509b6db2e2be30aeb34f9bd82f98f37d0bb2e07dc05e",
+      "delivered_bytes": 1540,
+      "gzip": false
+    },
+    {
+      "path": "earlier/headless-9b7-r1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-fixture-9b7-r1-1/run-results.json",
+      "role": "actual failed25/15 headless result; dummy uploaded-transform getter backend is inapplicable, not a pass",
+      "raw_sha256": "ffa52ea6ae41c0be03ed90f0712cb91a8d234515c931c345f61f76f5a4d4336a",
+      "raw_bytes": 350880,
+      "delivered_sha256": "d34045b3c104f682cb7a17552f0b4e33283df8328cb424cc5b5605f209a1bc5c",
+      "delivered_bytes": 133905,
+      "gzip": true
+    },
+    {
+      "path": "earlier/headless-9b7-r1/thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-prop-shadow-fixture-9b7-r1-thermal.json",
+      "role": "original failed headless guard",
+      "raw_sha256": "b4fa6e0b7e96c731780bc6d25595bf65600681b6793bc7e4809e38461e93314c",
+      "raw_bytes": 76267,
+      "delivered_sha256": "b4fa6e0b7e96c731780bc6d25595bf65600681b6793bc7e4809e38461e93314c",
+      "delivered_bytes": 76267,
+      "gzip": false
+    },
+    {
+      "path": "earlier/headless-9b7-r1/acceptance.json",
+      "source_path": "/var/tmp/sa-city22/prop-shadow-acceptance/9b7-r1/acceptance.json",
+      "role": "original failed headless fixture receipt, retained unchanged",
+      "raw_sha256": "af148532bf3a6a7f7351579b230e718eb15176994f4ba16279b72583fcab73aa",
+      "raw_bytes": 4219,
+      "delivered_sha256": "af148532bf3a6a7f7351579b230e718eb15176994f4ba16279b72583fcab73aa",
+      "delivered_bytes": 4219,
+      "gzip": false
+    },
+    {
+      "path": "earlier/headless-9b7-r1/queue.json",
+      "source_path": "/var/tmp/sa-city22/prop-shadow-acceptance/9b7-r1/queue.json",
+      "role": "original failed headless fixture receipt, retained unchanged",
+      "raw_sha256": "e61fcf812378fce11b1a7dcbd369cd0725dd997ed4634e9a19235bf4ede8f136",
+      "raw_bytes": 18768,
+      "delivered_sha256": "e61fcf812378fce11b1a7dcbd369cd0725dd997ed4634e9a19235bf4ede8f136",
+      "delivered_bytes": 18768,
+      "gzip": false
+    },
+    {
+      "path": "earlier/city22-prop-shadow-parse-f0fe-r1-thermal.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-prop-shadow-parse-f0fe-r1-thermal.json",
+      "role": "parser_timeout_no_logical_verdict",
+      "raw_sha256": "aded3cd09a1bb10e0b9a983c9ef946b463e58aa871079b6c6e7769618bd68c3b",
+      "raw_bytes": 141912,
+      "delivered_sha256": "ae867d22bb2ded532958b1194c0ad1cb2737493b3051766c09a15e4af3170202",
+      "delivered_bytes": 6149,
+      "gzip": true
+    },
+    {
+      "path": "earlier/city22-prop-shadow-parse-f0fe-r1-1/logs/engine.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-f0fe-r1-1/logs/engine.log",
+      "role": "parser_timeout_no_logical_verdict",
+      "raw_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_bytes": 73,
+      "delivered_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "delivered_bytes": 73,
+      "gzip": false
+    },
+    {
+      "path": "earlier/city22-prop-shadow-parse-f0fe-r1-1/logs/stderr.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-f0fe-r1-1/logs/stderr.log",
+      "role": "parser_timeout_no_logical_verdict",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "delivered_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivered_bytes": 0,
+      "gzip": false
+    },
+    {
+      "path": "earlier/city22-prop-shadow-parse-f0fe-r1-1/logs/stdout.log",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-f0fe-r1-1/logs/stdout.log",
+      "role": "parser_timeout_no_logical_verdict",
+      "raw_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_bytes": 73,
+      "delivered_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "delivered_bytes": 73,
+      "gzip": false
+    },
+    {
+      "path": "earlier/city22-prop-shadow-parse-f0fe-r1-1/run-results.json.gz",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-prop-shadow-parse-f0fe-r1-1/run-results.json",
+      "role": "parser_timeout_no_logical_verdict",
+      "raw_sha256": "ff2bbf060ae36b83bc15ab3ff5c6deaf97af58e93fee089d9818ce4c8160a988",
+      "raw_bytes": 369728,
+      "delivered_sha256": "dac2480800c68cd2c37531f30bd155f7604eb850ef96493f8df35daa9a44e1ed",
+      "delivered_bytes": 135292,
+      "gzip": true
+    },
+    {
+      "path": "earlier/city22-prop-shadow-parse-f0fe-r2-thermal.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-prop-shadow-parse-f0fe-r2-thermal.json",
+      "role": "queued_cancelled_after_owner_source_revision_no_logical_verdict",
+      "raw_sha256": "5807d05cdc83528e4bd964b39359564f2ded29550892561bb75ad241091bb0bf",
+      "raw_bytes": 97781,
+      "delivered_sha256": "5807d05cdc83528e4bd964b39359564f2ded29550892561bb75ad241091bb0bf",
+      "delivered_bytes": 97781,
+      "gzip": false
+    },
+    {
+      "path": "earlier/prop-shadow-frozen-source-cancellation.json",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-frozen-source-cancellation.json",
+      "role": "original cancellation reason",
+      "raw_sha256": "f06d49231c577aa8dd7bf6718d9e5cdfe5da4e3209107617e1ab12acb399accb",
+      "raw_bytes": 327,
+      "delivered_sha256": "f06d49231c577aa8dd7bf6718d9e5cdfe5da4e3209107617e1ab12acb399accb",
+      "delivered_bytes": 327,
+      "gzip": false
+    }
+  ]
+}

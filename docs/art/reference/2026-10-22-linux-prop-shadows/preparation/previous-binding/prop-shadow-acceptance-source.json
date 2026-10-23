@@ -1,0 +1,101 @@
+{
+  "reported_revision": "f0fe86b5 (Claude coordination-board declaration; exact reviewed file bytes are authoritative below)",
+  "project": "/tmp/sa-c22-props",
+  "scope": "External focused city prop renderer acceptance; no runtime/source edits. This scoped binding is not a complete project dependency inventory. sa_engine full provenance remains required.",
+  "expected_fixture_checks": 48,
+  "project_bindings": {
+    "assets/world/dressing/generated/crate.tres": "f0a0620b9c4fbadf88af40bde7a2f1c384a5d8641e733806e11787b4c0bb1b82",
+    "assets/world/dressing/generated/dressing_set_v2.png": "78dc5e917b3c0eac0903baa2a40816c84a90c069ccc8f405772ca9b7e5b5e9b3",
+    "assets/world/dressing/generated/dressing_set_v2.png.import": "2dd738a64376bf65670225400b8eb1372bfa9f067d24f4186794860daccfe0bb",
+    "assets/world/dressing/generated/hooded_statue.tres": "7bf63d2226a5931b84267d18aa72f9471f5d0cff34b70f7f2bd2633e7ac3ec75",
+    "assets/world/objectives/painted/breach_open_v2.png": "500394331759a3de003afa2630b76d88dc75987aa67ee0cc02417dce9440cf5d",
+    "assets/world/objectives/painted/breach_open_v2.png.import": "d7aaeb842f5270356a7913a41cbb88d0472cee6a890be2d09545d0d8387e7d90",
+    "assets/world/objectives/painted/breach_sealed_v2.png": "2789c8f239421c35322c7a88659f63de767742fc6e6f8c38b9d8bb2febe40270",
+    "assets/world/objectives/painted/breach_sealed_v2.png.import": "f7f28d6f6ad41f423424dfc0bd347b1ea5ff889bd32398fc20aa041f26f67f61",
+    "assets/world/objectives/painted/exit_rite_v2.png": "85869e467e0d4a65750e9767814ee53001bdcdab430f84aed2de024d0a8a3fb2",
+    "assets/world/objectives/painted/exit_rite_v2.png.import": "c1ca5d6ea2917cf06cf28044e90fc54aad24d006dbe3d9f1e6fecbe6e9399162",
+    "assets/world/objectives/painted/relay_v2.png": "61dc31d9b615445fe6af26be021cb87926fbae7257fd573f2585e67e912c5cc8",
+    "assets/world/objectives/painted/relay_v2.png.import": "16320c0b8a10468b73335b1042c8980ec10f98799444147337b989e850971d0b",
+    "assets/world/objectives/painted/vault_closed_v2.png": "20c21d4e0595849b571c6f75b56a82af9a627470c19873bce21ced6c7a6cc45a",
+    "assets/world/objectives/painted/vault_closed_v2.png.import": "d3dc314b11b4a6043e0f108bebbb9c1e52851be8680dd097c51c0921942d1a5f",
+    "assets/world/objectives/painted/vault_open_v2.png": "a5d41a746be5e70b486b1cd31df7115914593fb562c47917cc0020f7f665fca9",
+    "assets/world/objectives/painted/vault_open_v2.png.import": "c3af4feda1ac6d256e7d4852fff371c519bed81decd9623d6a4277cba4bdc08d",
+    "assets/world/objectives/painted/vigil_v2.png": "aa6eca67b97819bf41fcf885064ccceb35b217278bc98dbd8d74dddc262864a8",
+    "assets/world/objectives/painted/vigil_v2.png.import": "d0e1c9552fbfb9b87fcc63b587e125cad59d7c8d3cdd2bd129b2ae478b707ef0",
+    "assets/world/objectives/painted/wager_v2.png": "e4ee73ac9bc5cf2c7eabe2aa805c001f8a79f0b18b8e52d5eae289e08cbc613a",
+    "assets/world/objectives/painted/wager_v2.png.import": "67b93c6c2332d1da0b01ebea7710fb1cdec02664820abfb5cdc03d610e3e2e11",
+    "assets/world/objectives/painted/wardstone_v2.png": "76b64c408ae7ec0f4b6c61b0082fbffe56345b9fc0d61654d8cbedf781a23bb5",
+    "assets/world/objectives/painted/wardstone_v2.png.import": "cf09c12adc173b4f60038d62cdf8f30877b53628c249c0d597824aed8190e5ea",
+    "assets/world/props/prop_cast_shadow.png": "c4972eff4061208f484447babd2e0e2ce60e90b19c84dd567554907b8dbe1a3e",
+    "assets/world/props/prop_cast_shadow.png.import": "9011423eb35b8c92e689459338cc70b6265cb0f967aad3a33baaa62b55088422",
+    "assets/world/props/prop_table_long_01.png": "446a3108058efd858db604a855477e42fd8689fdcad16f46f3cb43553ce6806f",
+    "assets/world/props/prop_table_long_01.png.import": "707ac0831f5ebc3a38030ef850d1140eb9ff7d8f3bea11caba4d921dca2748ab",
+    "assets/world/props/prop_table_small_01.png": "61b668a60495ae87f6a68c03ed10682c5188431ba221bbe306436b82688f5c0e",
+    "assets/world/props/prop_table_small_01.png.import": "2b2bb0dd0b23be10ca5c00e0be09daaa1ed7c4d173dd5d1e71717347344f1ba4",
+    "autoload/global.gd": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+    "core/systems/world/WorldArt.gd": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+    "core/systems/world/WorldBlockerGeometry.gd": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d",
+    "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+    "core/systems/world/WorldDressingMaterials.gd": "6104b79987dac2b5f85a2a3352893331e0899aed5c1afdca0fa806103dbbee70",
+    "core/systems/world/actor_cast_shadow.gdshader": "8a0c172a8e3bfcec87089384298bd40716891c6c60d3d794e81712b11773cf30",
+    "core/systems/world/chunks/ChunkBlockRenderer.gd": "c0d916b8b8d22d8cc641ac0e8fb8860ebc243f4bfaf9791f882fe5ed1f2033b9",
+    "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+    "core/systems/world/chunks/ChunkBuildData.gd": "e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf",
+    "core/systems/world/objectives/ObjectiveWorldArt.gd": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd",
+    "core/systems/world/objectives/objective_world_art.gdshader": "f2ae8879746321fb59492ee935079eae8d7401c0bcd3cae14f2ce5606445fcdb",
+    "core/systems/world/sun_shadow.gdshader": "4079e426fb287a2fdcd2719065f2ddecaba3484c0250c7ba50c21ac2aee6732b",
+    "core/systems/world/sun_shadow_material.tres": "2f7898d4f3b554dc91fa0b2dd54a26af8c11dbad98d90b2169c40f8cf55abcb2",
+    "core/systems/world/world_dressing_region.gdshader": "acae035e117b1f4eb06a86c6931f8ea0ed741e5d8cddcecdef8d63d3a4f2c273",
+    "project.godot": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5"
+  },
+  "external_bindings": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.tscn": "61c33d4533edae6d428142832feeb326638e98a3ac6cf219ace65885c8ed50ef",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-acceptance-queue.py": "c6bed6ce75d6be924b971ab430c32a71d110e6e4066981045e27caa9bd6a931a",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.gd": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126"
+  },
+  "scoped_parser_paths": [
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd",
+    "res://core/systems/world/chunks/ChunkBlockRenderer.gd",
+    "res://core/systems/world/chunks/ChunkBuildData.gd",
+    "res://core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+    "res://core/systems/world/WorldDepthStyle.gd",
+    "res://core/systems/world/objectives/ObjectiveWorldArt.gd"
+  ],
+  "controls": {
+    "city": {
+      "segment": 2,
+      "chunks": [
+        [
+          -1,
+          2
+        ],
+        [
+          2,
+          -1
+        ]
+      ],
+      "atlas_variants": [
+        0,
+        7
+      ],
+      "legacy_rotated_variants": [
+        12,
+        21
+      ]
+    },
+    "authored": {
+      "segment": 1,
+      "atlas_variant": 0,
+      "legacy_rotated_variant": 12
+    },
+    "ground_forms": [
+      "exit_rite",
+      "vigil",
+      "breach",
+      "vault"
+    ]
+  },
+  "native_status": "NOT RUN: root must run scoped parser and real fixture through guard before any pass claim."
+}

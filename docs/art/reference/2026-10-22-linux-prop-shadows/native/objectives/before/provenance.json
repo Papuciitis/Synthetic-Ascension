@@ -1,0 +1,37 @@
+{
+ "started_utc": "2026-10-22T21:42:15Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-wp2-evidence",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/dev/ObjectiveShadowPreview.tscn",
+  "--",
+  "--out=/var/tmp/sa-c22/objectives/before"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+ "dirty_inputs": [],
+ "scoped_sha256": {
+  "core/systems/world/objectives/ObjectiveWorldArt.gd": "f54792d18bfef32ce2fd377b9aaca577f4c0023ca7d8dff31701c24c5aae7be2",
+  "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+  "tools/dev/ObjectiveShadowPreview.gd": "25f7c89ce2edea57298017a3751261841f10175c7b8670c062cd6354e578a1eb"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-before-004215-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 71.841,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22p-obj-before-004215 completed peak 79.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "objectives.png": "48af99f3ad55fff43aee9ba18be1fc8ebbb3f670bf290a24a54a7e8093c7272a"
+ }
+}

@@ -1,0 +1,3 @@
+# Prop shadows evidence
+
+Final9b7 source-bound independent48/0 plus six-source parser and owner33/0; selected native prop/objective views accepted by root. The exact clean six-source parser is reused. Original9b7-r1 headless failed25/15 (40 executed) is preserved as a failed/inapplicable dummy uploaded-transform readback backend, with exacted1d engine-source proof; it is never relabelled as a pass. Earlier f0fe parser timeout and queued cancellation remain without a logical verdict. Exact sources, raw runs, guard records and native PNGs are indexed in manifest.json; larger text records use lossless gzip. This packet does not establish moving combat or performance, other city stages, or main integration.

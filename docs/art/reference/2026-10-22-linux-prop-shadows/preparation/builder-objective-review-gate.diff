@@ -1,0 +1,41 @@
+--- preserved-a386-build_packet.py
++++ objective-review-gated-build_packet.py
+@@ -50,6 +50,18 @@
+ def bind(raw, expected):
+     require(all(raw['source_hashes'].get(path) == digest for path, digest in expected.items()),
+             'Raw source mismatch in ' + str(raw.get('run_root')))
++
++
++def validate_objective_ground_review(review, expected_source, before, after):
++    require(review.get('current_objective_source_sha256') == expected_source,
++            'Objective ground-control review source changed')
++    require(review.get('ground_control_bytes_identical') is True,
++            'Objective ground-control review is missing a positive identity verdict')
++    for side, directory in [('before', before), ('after', after)]:
++        recorded = review.get('sources', {}).get(side, {})
++        for name in ['objectives.png', 'provenance.json']:
++            require(recorded.get(name) == sha((directory / name).read_bytes()),
++                    'Objective ground-control review is stale: ' + side + '/' + name)
+ 
+ 
+ def main():
+@@ -121,6 +133,10 @@
+                     key: meta['project_bindings'][key] for key in provenance['scoped_sha256']})
+             natives.append((family, side, directory, provenance))
+             records.append((family + '-' + side, raw_path, thermal_path, raw))
++    objective_review_path = CONTROL / 'prop-objective-visual-review.json'
++    validate_objective_ground_review(load(objective_review_path),
++        meta['project_bindings']['core/systems/world/objectives/ObjectiveWorldArt.gd'],
++        Path('/var/tmp/sa-c22/objectives/before'), Path('/var/tmp/sa-c22/objectives/after'))
+     # No writes until every completed acceptance/native/owner input passes above.
+     out = args.out.resolve()
+     require(out != ROOT and ROOT not in out.parents and out != PROJECT and PROJECT not in out.parents,
+@@ -151,7 +167,7 @@
+         if path.is_file() and path.suffix != '.pyc':
+             copy(path, 'preparation/' + str(path.relative_to(PREP)), 'preserved former binding/source-only rebind proof')
+     copy(visual_path, 'reviews/prop-final-native-visual-review.json', 'root selected native visual review')
+-    copy(CONTROL / 'prop-objective-visual-review.json', 'reviews/prop-objective-visual-review.json', 'root objective ground-strip control')
++    copy(objective_review_path, 'reviews/prop-objective-visual-review.json', 'root source/image-bound positive objective ground-strip control')
+     for path in acceptance_dir.glob('*.json'):
+         copy(path, 'acceptance/' + path.name, 'actual independent48 queue/manifest')
+     for role, raw_path, thermal_path, raw in records:

@@ -1,0 +1,84 @@
+{
+  "builder_sha256": "7c15c985309b4c1ad26d918fd4b71ea093ffa92f5a56e8fa48b6ce0e0c33b118",
+  "passed": 19,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "original48 clean predicates accepted",
+      "ok": true
+    },
+    {
+      "label": "fewer checks rejected",
+      "ok": true
+    },
+    {
+      "label": "failed predicate rejected",
+      "ok": true
+    },
+    {
+      "label": "wrong pass count rejected",
+      "ok": true
+    },
+    {
+      "label": "nonzero failures rejected",
+      "ok": true
+    },
+    {
+      "label": "new native receipt delegates frozen source/parser/raw/backend validation and retains real old25/15",
+      "ok": true
+    },
+    {
+      "label": "pending passedfalse rejected",
+      "ok": true
+    },
+    {
+      "label": "stale original source map rejected",
+      "ok": true
+    },
+    {
+      "label": "stale native source metadata rejected",
+      "ok": true
+    },
+    {
+      "label": "stale native execution bindings rejected",
+      "ok": true
+    },
+    {
+      "label": "changed execution protocol rejected",
+      "ok": true
+    },
+    {
+      "label": "wrong reused parser rejected",
+      "ok": true
+    },
+    {
+      "label": "new duplicate parser case rejected",
+      "ok": true
+    },
+    {
+      "label": "failed native guard rejected",
+      "ok": true
+    },
+    {
+      "label": "wrong actual raw receipt rejected",
+      "ok": true
+    },
+    {
+      "label": "wrong hardware banner receipt rejected",
+      "ok": true
+    },
+    {
+      "label": "wrong actual boot state hash rejected",
+      "ok": true
+    },
+    {
+      "label": "native predicate failure rejected",
+      "ok": true
+    },
+    {
+      "label": "frozen native backend validator refusal blocks packet",
+      "ok": true
+    }
+  ],
+  "scope": "AST/functions only; tiny temporary receipt/byte fixtures; frozen native driver mocked only for delegation checks. Actual old25/15 immutable hashes and records read. No packet build, Godot, Git or project/native-source edits."
+}

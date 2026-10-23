@@ -1,0 +1,53 @@
+{
+ "started_utc": "2026-10-22T22:57:04Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-c22-props",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/dev/PropShadowSurvey.tscn",
+  "--",
+  "--segment=6",
+  "--world-seed=16102026",
+  "--out=/var/tmp/sa-c22/props/s6a/after",
+  "--theme=industrial_cutthrough"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "f0fe86b5a35f70a9d97848febb99f116c6c535be",
+ "dirty_inputs": [
+  "M assets/world/props/prop_cast_shadow.png",
+  " M core/systems/world/chunks/ChunkBlockRenderer.gd",
+  " M tools/design/bake_prop_cast_shadow.py",
+  " M tools/tests/ChunkBlockRendererTest.gd"
+ ],
+ "scoped_sha256": {
+  "core/systems/world/chunks/ChunkBlockRenderer.gd": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea",
+  "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+  "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+  "assets/world/props/prop_cast_shadow.png": "65b8c7a2e8c649b6b4f7cbf22054ec42a754e7b5cf20888b04070ce655c23b13",
+  "tools/dev/PropShadowSurvey.gd": "3e473b888c9505d7bbe4d8e4a53501a82c906c73c666dcfe071320e013e262d1"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-cmp-s6a-after-015704-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 188.807,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22p-cmp-s6a-after-015704 completed peak 76.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "objective_art-seg6-play.png": "35f8c51bddb876b3915a63fa18c1066aac8bf06c7185760b8c7cd6bbc653aa03",
+  "prop0-seg6-play.png": "789b29bd1f35fcceffe0282fb28c781c2f33efd9929aadde0d2a47398a2b7b34",
+  "prop1-seg6-play.png": "334118f979b46cef705e9965ea04dbba65b5bfad848feb428b9c35bd99a9b36e",
+  "prop4-seg6-play.png": "18d62ffc9e6674a96c2ecd5b44eb8e58ab2240d6ade137b0c1622fe6b2a44e2f",
+  "prop5-seg6-play.png": "70b622d57a920bb1327a2392fbd2b3c72d1f3a241aa89c79e28cef02eb3a192b",
+  "prop6-seg6-play.png": "aa814c4932b407f320d70dac1d05b638981d3ac52875793d5eb3c3aed3ea0065",
+  "prop7-seg6-play.png": "fff95528311c0ebfd58c6c2fb52b0c32c261e1f83217284bda9ab4b16c2ec6a0"
+ }
+}

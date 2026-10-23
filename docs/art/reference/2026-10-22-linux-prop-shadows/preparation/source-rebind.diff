@@ -1,0 +1,79 @@
+--- preserved-f0fe-source.json
++++ final9b7-source.json
+@@ -1,5 +1,5 @@
+ {
+-  "reported_revision": "f0fe86b5 (Claude coordination-board declaration; exact reviewed file bytes are authoritative below)",
++  "reported_revision": "9b7e0e4c (Claude final coordination-board declaration; exact reviewed file bytes are authoritative below)",
+   "project": "/tmp/sa-c22-props",
+   "scope": "External focused city prop renderer acceptance; no runtime/source edits. This scoped binding is not a complete project dependency inventory. sa_engine full provenance remains required.",
+   "expected_fixture_checks": 48,
+@@ -26,7 +26,7 @@
+     "assets/world/objectives/painted/wager_v2.png.import": "67b93c6c2332d1da0b01ebea7710fb1cdec02664820abfb5cdc03d610e3e2e11",
+     "assets/world/objectives/painted/wardstone_v2.png": "76b64c408ae7ec0f4b6c61b0082fbffe56345b9fc0d61654d8cbedf781a23bb5",
+     "assets/world/objectives/painted/wardstone_v2.png.import": "cf09c12adc173b4f60038d62cdf8f30877b53628c249c0d597824aed8190e5ea",
+-    "assets/world/props/prop_cast_shadow.png": "c4972eff4061208f484447babd2e0e2ce60e90b19c84dd567554907b8dbe1a3e",
++    "assets/world/props/prop_cast_shadow.png": "65b8c7a2e8c649b6b4f7cbf22054ec42a754e7b5cf20888b04070ce655c23b13",
+     "assets/world/props/prop_cast_shadow.png.import": "9011423eb35b8c92e689459338cc70b6265cb0f967aad3a33baaa62b55088422",
+     "assets/world/props/prop_table_long_01.png": "446a3108058efd858db604a855477e42fd8689fdcad16f46f3cb43553ce6806f",
+     "assets/world/props/prop_table_long_01.png.import": "707ac0831f5ebc3a38030ef850d1140eb9ff7d8f3bea11caba4d921dca2748ab",
+@@ -38,7 +38,7 @@
+     "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+     "core/systems/world/WorldDressingMaterials.gd": "6104b79987dac2b5f85a2a3352893331e0899aed5c1afdca0fa806103dbbee70",
+     "core/systems/world/actor_cast_shadow.gdshader": "8a0c172a8e3bfcec87089384298bd40716891c6c60d3d794e81712b11773cf30",
+-    "core/systems/world/chunks/ChunkBlockRenderer.gd": "c0d916b8b8d22d8cc641ac0e8fb8860ebc243f4bfaf9791f882fe5ed1f2033b9",
++    "core/systems/world/chunks/ChunkBlockRenderer.gd": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea",
+     "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+     "core/systems/world/chunks/ChunkBuildData.gd": "e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf",
+     "core/systems/world/objectives/ObjectiveWorldArt.gd": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd",
+@@ -46,7 +46,16 @@
+     "core/systems/world/sun_shadow.gdshader": "4079e426fb287a2fdcd2719065f2ddecaba3484c0250c7ba50c21ac2aee6732b",
+     "core/systems/world/sun_shadow_material.tres": "2f7898d4f3b554dc91fa0b2dd54a26af8c11dbad98d90b2169c40f8cf55abcb2",
+     "core/systems/world/world_dressing_region.gdshader": "acae035e117b1f4eb06a86c6931f8ea0ed741e5d8cddcecdef8d63d3a4f2c273",
+-    "project.godot": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5"
++    "project.godot": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
++    "tools/design/bake_prop_cast_shadow.py": "8fa6db94109348e0845180a2dc0520ca70bfc341dc06e446187476687e8e3a85",
++    "tools/dev/CitySegmentSurvey.gd": "57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb",
++    "tools/dev/CitySegmentSurvey.tscn": "e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18",
++    "tools/dev/ObjectiveShadowPreview.gd": "25f7c89ce2edea57298017a3751261841f10175c7b8670c062cd6354e578a1eb",
++    "tools/dev/ObjectiveShadowPreview.tscn": "f386615d036227b2a229894f4e2a3c2e0430c4ac35da21b64114b7ab5f6689c5",
++    "tools/dev/PropShadowSurvey.gd": "3e473b888c9505d7bbe4d8e4a53501a82c906c73c666dcfe071320e013e262d1",
++    "tools/dev/PropShadowSurvey.tscn": "3ef5270937e71c82b408319f2a97aa4a49e912ad8cc341dff5e2462417ea816d",
++    "tools/tests/ChunkBlockRendererTest.gd": "ce730bcb9fbb266632ebf36f3539d8079e0403a8f6a3463da5b0f9da86fcf2d2",
++    "tools/tests/ChunkBlockRendererTest.tscn": "46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3"
+   },
+   "external_bindings": {
+     "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd": "1c22d005cb33475250e53e91b21854e206cd5bb3c6461ab2aad9f632c8a9cb41",
+@@ -97,5 +106,32 @@
+       "vault"
+     ]
+   },
+-  "native_status": "NOT RUN: root must run scoped parser and real fixture through guard before any pass claim."
++  "native_status": "Root accepted selected final native images with exact final bytes; independent six-source parser and48-check lifecycle/ground-controls fixture remain PENDING fresh9b7-r1 root execution.",
++  "required_root_options": {
++    "suffix": "9b7-r1",
++    "timeout": 300,
++    "duty_percent": 25,
++    "start_temperature": 65,
++    "max_wait": 900,
++    "parser_sources": 6
++  },
++  "geometry_fixture_status": "UNCHANGED: original48 checks and external GDScript bytes retained. The existing near-end/contact bounds accommodate the final footprint-centre anchor; see geometry-source-review.json. Calculations are source evidence, not an engine verdict.",
++  "existing_owner_33_check": {
++    "status": "ACTUAL33/0_clean_on_final_exact_scoped_sources",
++    "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-test-ChunkBlockRendererTest-013213-1/run-results.json",
++    "raw_sha256": "b980d7021685a381b3370460985366c13b7cae397f18aceda3caab4d2d2f421d",
++    "stdout_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-test-ChunkBlockRendererTest-013213-1/logs/stdout.log",
++    "stdout_sha256": "7812ba565a37c927b0cf8e7ac6fa58e3fd572c903cc6a04f5562ec5a4ac18737",
++    "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/c22p-test-ChunkBlockRendererTest-013213-thermal.json",
++    "thermal_sha256": "0a35298d3606e63de48b487eeef7748c4afaacdd4f0a780892aa1e0d53c3e275",
++    "source_bindings": {
++      "core/systems/world/chunks/ChunkBlockRenderer.gd": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea",
++      "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
++      "assets/world/props/prop_cast_shadow.png": "65b8c7a2e8c649b6b4f7cbf22054ec42a754e7b5cf20888b04070ce655c23b13",
++      "assets/world/props/prop_cast_shadow.png.import": "9011423eb35b8c92e689459338cc70b6265cb0f967aad3a33baaa62b55088422",
++      "tools/tests/ChunkBlockRendererTest.gd": "ce730bcb9fbb266632ebf36f3539d8079e0403a8f6a3463da5b0f9da86fcf2d2",
++      "tools/tests/ChunkBlockRendererTest.tscn": "46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3"
++    },
++    "limit": "Owner transform/geometry checks; not a replacement for independent48-check lifecycle/ground-form fixture or visual review."
++  }
+ }

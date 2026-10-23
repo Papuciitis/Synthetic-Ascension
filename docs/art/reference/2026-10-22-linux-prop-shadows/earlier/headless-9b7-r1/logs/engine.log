@@ -1,0 +1,118 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: S2 props share one ground-sun cast batch
+PASS: cast has one full-strength ground layer and no recursive shadow
+PASS: four HALF cells have exactly four owned visible ground casts
+PASS: crate exercises its requested Atlas or legacy path
+PASS: crate has its real catalog visual batch
+PASS: crate visual retains its chunk owner
+ERROR: FAIL: crate still stands on the actual blocked half-cell anchor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:121)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: crate suppresses the old silhouette in the uploaded MultiMesh
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:123)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: crate contact lies inside exactly its own ground cast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:132)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+PASS: long table exercises its requested Atlas or legacy path
+PASS: long table has its real catalog visual batch
+PASS: long table visual retains its chunk owner
+ERROR: FAIL: long table still stands on the actual blocked half-cell anchor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:121)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: long table suppresses the old silhouette in the uploaded MultiMesh
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:123)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: long table contact lies inside exactly its own ground cast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:132)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+PASS: statue exercises its requested Atlas or legacy path
+PASS: statue has its real catalog visual batch
+PASS: statue visual retains its chunk owner
+ERROR: FAIL: statue still stands on the actual blocked half-cell anchor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:121)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: statue suppresses the old silhouette in the uploaded MultiMesh
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:123)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: statue contact lies inside exactly its own ground cast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:132)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+PASS: small table exercises its requested Atlas or legacy path
+PASS: small table has its real catalog visual batch
+PASS: small table visual retains its chunk owner
+ERROR: FAIL: small table still stands on the actual blocked half-cell anchor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:121)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: small table suppresses the old silhouette in the uploaded MultiMesh
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:123)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: small table contact lies inside exactly its own ground cast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:132)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+ERROR: FAIL: the tall statue projects farther than the low crate
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_city (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:144)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:61)
+PASS: retiring the first chunk leaves both other-owned casts and visuals unchanged
+PASS: retiring the final chunk releases every visual and cast node
+PASS: S1 control does not acquire the city footprint cast
+PASS: S1 control retains its catalog visual
+ERROR: FAIL: S1 control preserves its reviewed Atlas projection or legacy offset
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_authored (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:182)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:62)
+PASS: S1 control retains its catalog visual
+ERROR: FAIL: S1 control preserves its reviewed Atlas projection or legacy offset
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:26)
+       [1] _test_authored (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:182)
+       [2] _run (/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPropShadowAcceptance.gd:62)
+PASS: S1 clear removes its batch nodes
+PASS: exit_rite remains a ground form below shadows with no upright cast
+PASS: vigil remains a ground form below shadows with no upright cast
+PASS: breach remains a ground form below shadows with no upright cast
+PASS: vault remains a ground form below shadows with no upright cast
+CityPropShadowAcceptance: 25 passed, 15 failed

@@ -1,0 +1,60 @@
+{
+  "scope": "Only isolated function and temporary byte/JSON fixtures plus existing small review hashes. No main/build/Godot/Git execution or source mutation.",
+  "builder_sha256": "7c15c985309b4c1ad26d918fd4b71ea093ffa92f5a56e8fa48b6ce0e0c33b118",
+  "passed": 13,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "positive exact four input hashes/source/true flag accepted",
+      "ok": true
+    },
+    {
+      "label": "stale before/objectives.png rejected",
+      "ok": true
+    },
+    {
+      "label": "stale before/provenance.json rejected",
+      "ok": true
+    },
+    {
+      "label": "stale after/objectives.png rejected",
+      "ok": true
+    },
+    {
+      "label": "stale after/provenance.json rejected",
+      "ok": true
+    },
+    {
+      "label": "stale runtime source rejected",
+      "ok": true
+    },
+    {
+      "label": "non-True identity False rejected",
+      "ok": true
+    },
+    {
+      "label": "non-True identity None rejected",
+      "ok": true
+    },
+    {
+      "label": "non-True identity 'true' rejected",
+      "ok": true
+    },
+    {
+      "label": "non-True identity 1 rejected",
+      "ok": true
+    },
+    {
+      "label": "missing identity flag rejected",
+      "ok": true
+    },
+    {
+      "label": "missing provenance hash rejected",
+      "ok": true
+    },
+    {
+      "label": "actual current objective review passes without native rerun",
+      "ok": true
+    }
+  ]
+}

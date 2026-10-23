@@ -1,0 +1,52 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: S2 props share one ground-sun cast batch
+PASS: cast has one full-strength ground layer and no recursive shadow
+PASS: four HALF cells have exactly four owned visible ground casts
+PASS: crate exercises its requested Atlas or legacy path
+PASS: crate has its real catalog visual batch
+PASS: crate visual retains its chunk owner
+PASS: crate still stands on the actual blocked half-cell anchor
+PASS: crate suppresses the old silhouette in the uploaded MultiMesh
+PASS: crate contact lies inside exactly its own ground cast
+PASS: crate cast follows the shared sun with an orthogonal footprint
+PASS: crate has a contacting footprint and a bounded southwest reach
+PASS: long table exercises its requested Atlas or legacy path
+PASS: long table has its real catalog visual batch
+PASS: long table visual retains its chunk owner
+PASS: long table still stands on the actual blocked half-cell anchor
+PASS: long table suppresses the old silhouette in the uploaded MultiMesh
+PASS: long table contact lies inside exactly its own ground cast
+PASS: long table cast follows the shared sun with an orthogonal footprint
+PASS: long table has a contacting footprint and a bounded southwest reach
+PASS: statue exercises its requested Atlas or legacy path
+PASS: statue has its real catalog visual batch
+PASS: statue visual retains its chunk owner
+PASS: statue still stands on the actual blocked half-cell anchor
+PASS: statue suppresses the old silhouette in the uploaded MultiMesh
+PASS: statue contact lies inside exactly its own ground cast
+PASS: statue cast follows the shared sun with an orthogonal footprint
+PASS: statue has a contacting footprint and a bounded southwest reach
+PASS: small table exercises its requested Atlas or legacy path
+PASS: small table has its real catalog visual batch
+PASS: small table visual retains its chunk owner
+PASS: small table still stands on the actual blocked half-cell anchor
+PASS: small table suppresses the old silhouette in the uploaded MultiMesh
+PASS: small table contact lies inside exactly its own ground cast
+PASS: small table cast follows the shared sun with an orthogonal footprint
+PASS: small table has a contacting footprint and a bounded southwest reach
+PASS: the tall statue projects farther than the low crate
+PASS: retiring the first chunk leaves both other-owned casts and visuals unchanged
+PASS: retiring the final chunk releases every visual and cast node
+PASS: S1 control does not acquire the city footprint cast
+PASS: S1 control retains its catalog visual
+PASS: S1 control preserves its reviewed Atlas projection or legacy offset
+PASS: S1 control retains its catalog visual
+PASS: S1 control preserves its reviewed Atlas projection or legacy offset
+PASS: S1 clear removes its batch nodes
+PASS: exit_rite remains a ground form below shadows with no upright cast
+PASS: vigil remains a ground form below shadows with no upright cast
+PASS: breach remains a ground form below shadows with no upright cast
+PASS: vault remains a ground form below shadows with no upright cast
+CityPropShadowAcceptance: 48 passed, 0 failed

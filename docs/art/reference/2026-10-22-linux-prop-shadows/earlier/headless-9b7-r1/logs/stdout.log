@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: S2 props share one ground-sun cast batch
+PASS: cast has one full-strength ground layer and no recursive shadow
+PASS: four HALF cells have exactly four owned visible ground casts
+PASS: crate exercises its requested Atlas or legacy path
+PASS: crate has its real catalog visual batch
+PASS: crate visual retains its chunk owner
+PASS: long table exercises its requested Atlas or legacy path
+PASS: long table has its real catalog visual batch
+PASS: long table visual retains its chunk owner
+PASS: statue exercises its requested Atlas or legacy path
+PASS: statue has its real catalog visual batch
+PASS: statue visual retains its chunk owner
+PASS: small table exercises its requested Atlas or legacy path
+PASS: small table has its real catalog visual batch
+PASS: small table visual retains its chunk owner
+PASS: retiring the first chunk leaves both other-owned casts and visuals unchanged
+PASS: retiring the final chunk releases every visual and cast node
+PASS: S1 control does not acquire the city footprint cast
+PASS: S1 control retains its catalog visual
+PASS: S1 control retains its catalog visual
+PASS: S1 clear removes its batch nodes
+PASS: exit_rite remains a ground form below shadows with no upright cast
+PASS: vigil remains a ground form below shadows with no upright cast
+PASS: breach remains a ground form below shadows with no upright cast
+PASS: vault remains a ground form below shadows with no upright cast
+CityPropShadowAcceptance: 25 passed, 15 failed

@@ -1,0 +1,41 @@
+{
+ "started_utc": "2026-10-22T21:43:48Z",
+ "godot": "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64 (4.7.2.stable.official.ed1daf0bf)",
+ "command": [
+  "Godot",
+  "--path",
+  "/tmp/sa-c22-props",
+  "--rendering-driver",
+  "opengl3",
+  "--audio-driver",
+  "Dummy",
+  "res://tools/dev/ObjectiveShadowPreview.tscn",
+  "--",
+  "--out=/var/tmp/sa-c22/objectives/after"
+ ],
+ "renderer": "opengl3 (GL Compatibility), Mesa Intel UHD 620",
+ "commit": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+ "dirty_inputs": [
+  "M core/systems/world/chunks/ChunkBlockRenderer.gd",
+  " M core/systems/world/objectives/ObjectiveWorldArt.gd",
+  " M tools/tests/ObjectivePresentationTest.gd"
+ ],
+ "scoped_sha256": {
+  "core/systems/world/objectives/ObjectiveWorldArt.gd": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd",
+  "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+  "tools/dev/ObjectiveShadowPreview.gd": "25f7c89ce2edea57298017a3751261841f10175c7b8670c062cd6354e578a1eb"
+ },
+ "run_result": {
+  "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c22p-obj-after-004348-1",
+  "stop_reason": "completed",
+  "actual_exit": 0,
+  "elapsed_seconds": 61.916,
+  "diagnostic_count": 0,
+  "diagnostics_head": [],
+  "thermal": "THERMAL c22p-obj-after-004348 completed peak 81.0"
+ },
+ "guard": "guarded_engine.py (taskset 2 cores, 25% duty, start <70 C, stop at 90 C or 85 C sustained)",
+ "outputs_sha256": {
+  "objectives.png": "9cb78f993b70f318003cd375820396287d7e5a69bacf8ab7178302ede23a7b6f"
+ }
+}
