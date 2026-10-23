@@ -26,8 +26,13 @@ retains exact sources, native 48/0 and owner checks, original selected images,
 and the actual failed headless attempt. Its manifest hashes and lossless
 compressed records were verified before publication into this checkout.
 
-Street continuity has checked thirteen of fourteen themes; remaining parts are
-running before the original aggregate conditions and physical routes. Normal
+Street continuity now passes all fourteen themes and the original aggregate
+conditions: 92,621 checks with clean actual run records. Seventeen excluded
+original unreachable cases remain baseline limitations. The first fresh S2
+physical route reached the passage, both building interiors and the stream
+boundary, but failed staged item collection. Its exit 1 and diagnostic are
+retained; the street candidate remains unmerged pending diagnosis and the
+remaining occupied routes. Normal
 merged pickup density candidate `67d6b259` at `8e779847`: covered icons keep
 their authored texture/lock/fade factors with denser alpha. The unchanged native
 33/0 checks, scoped parser and actual live tree capture finish cleanly. Matched
@@ -42,8 +47,13 @@ views are accepted; S2/S6/S7 after captures contain final tuned bytes at a dirty
 precommit HEAD, while S9 is clean at the final commit. Actual S6/S7 seeds are
 16102028. The first comparative-cost smoke stopped on baseline helper errors
 before sampling: an editor-only global renderer query and failed full exterior
-visibility gate. No performance conclusion is available; helper diagnosis is
-separate from the unmerged runtime. Four candidate-only untracked source-SVG
+visibility gate. Source-backed observation fixes subsequently passed both
+parsers and the native smoke. Full S2/S6 pairs are checked; the full queue
+stopped at S7 because a hidden, disabled player's settled position differed by
+0.42 pixels while all visible geometry, opacity, camera and dimensions matched.
+The strict failed queue is preserved. A narrowly scoped comparison and resume
+of only the ten missing native cases is under review; no complete cost verdict
+or whole-Game performance claim is available. Four candidate-only untracked source-SVG
 import sidecars are preserved outside that checkout for matching test inputs.
 The timing window is closed. The [cover evidence packet](../art/reference/2026-10-22-linux-cover/README.md)
 preserves the accepted bounded home/tree results, exact remaining readability
