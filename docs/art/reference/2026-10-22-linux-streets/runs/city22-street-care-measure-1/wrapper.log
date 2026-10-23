@@ -1,0 +1,17 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-care-measure-1",
+ "queued_seconds": 36.1,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 52.934,
+ "peak_rss_mb": 630,
+ "diagnostic_count": 2,
+ "diagnostics_head": [
+  "ERROR: FAIL: the bed fixture retains road index 7 with street continuity disabled",
+  "ERROR: FAIL: with street continuity the bed chunk keeps its pinned floor ownership"
+ ]
+}
+--- stdout tail (3/156 lines) ---
+PASS: the actual garden has at least three substantial lawn cells beyond paving id=2128236757 actual=11
+Production care fixture: id=2128236757 continuity=true positive=20 strong=11 materials={ 0: 304, 2: 179, 4: 322, 3: 216, 7: 3 }
+CityGroundCareTest: 148 passed, 2 failed

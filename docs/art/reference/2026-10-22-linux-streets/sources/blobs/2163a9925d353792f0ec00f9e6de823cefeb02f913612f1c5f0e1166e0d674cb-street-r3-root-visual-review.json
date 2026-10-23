@@ -1,0 +1,202 @@
+{
+  "status": "ROOT_VISUAL_ACCEPTED_SELECTED_STREET_ROUTES_AND_REWARD_PAVING",
+  "broader_ground_topology": "OPEN",
+  "cases": {
+    "s2": {
+      "status": "ACCEPTED_SELECTED_VIEW",
+      "label": "city22-street-native-routes-r2-s2",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r2-s2-1/run-results.json",
+      "raw_sha256": "764d1a4601d6e707a93c669144addd89d54117471dd471579ffe96dea5365d00",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r2-s2-thermal.json",
+      "thermal_sha256": "8c356cd8f5926bc3f20373a0797c5dea05b06ca3c8629d2a4b8d1788494db5d9",
+      "manifest_path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal.json",
+      "manifest_sha256": "c35fdeffa5cf1a43245583661eed805b4be1e5216b042b007303555642a5a5ae",
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-1-passage.png",
+          "bytes": 1476761,
+          "sha256": "79bc3f74ad454baf31a8cc8911ae69abfe1aac81cc25f03feb5f3ea828bc1338"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-2-inside.png",
+          "bytes": 1754742,
+          "sha256": "a1baf3755dc5774f3e4b8504fdda9610382e65efb0bc5029cfe7acd0e55b84e3"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-3-inside-infill.png",
+          "bytes": 1615552,
+          "sha256": "c6f6d7b41dfd03a1df310b2e92baee34b6fbdf6aa72eb7768cc5ab6d0a7a7716"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-4-collected.png",
+          "bytes": 1705739,
+          "sha256": "f2d352ad1a9fd2d6e6c6d3a214198da225dbd70725595b8bab5a1efd40741c6f"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-5-boundary.png",
+          "bytes": 1294970,
+          "sha256": "e4b927c50d4de0e2c200aece8b55fe7881ec33126425124bf3616a191c8ced38"
+        }
+      ],
+      "observations": [
+        "Physical passage retains legible shared paving between original and infill households.",
+        "Both interiors are visibly open while player is inside, with readable walls/floors and live enemies/projectiles outside.",
+        "Ordinary equipped ring is present in collection HUD; native exact-serial telemetry proves destination ownership and identity.",
+        "Boundary original retains restored opaque roofs and attached building/actor casts."
+      ],
+      "limits": [
+        "Broader forecourt/paving topology remains OPEN.",
+        "Isolated street branch images do not establish final integrated atmosphere/cover/props/plazas.",
+        "Python5e queue remains stopped solely signed-resource-ID predicate; actual engine exit0/diag0/all15 route gates true."
+      ]
+    },
+    "s7": {
+      "status": "ACCEPTED_SELECTED_VIEW",
+      "label": "city22-street-native-routes-r3-s7",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r3-s7-1/run-results.json",
+      "raw_sha256": "4591316b6d3b9adcfe487d78e4440fdad9d0f4a94b94621b8491d839cfa2a50a",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r3-s7-thermal.json",
+      "thermal_sha256": "722ccdc8ea6cea383432fcebefea3c2012764aae4f551f613d161b406c47a9dd",
+      "manifest_path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal.json",
+      "manifest_sha256": "1ba9efea8aeb1c3e744fe39a610c344e51c4242da5b68d1e4edc338904d1417a",
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-1-passage.png",
+          "bytes": 1634745,
+          "sha256": "3a0787186a2b17dca22d62db793d0bad642de0c02811595e0d2ba8071dd712b8"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-2-inside.png",
+          "bytes": 1640157,
+          "sha256": "f68f3ba37cf9fb6c4c689379688726dd28a733e4ec29ad84bc46429ae169cea8"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-3-inside-infill.png",
+          "bytes": 1671915,
+          "sha256": "2ab29c640e9e6c80755dfbf8290a0a098e1043eaf00711cd8e9d3962dc2f96c6"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-4-collected.png",
+          "bytes": 1680010,
+          "sha256": "b15e81936ee30e907b049b54967a559a964b7e76adb2e436bcda6aed5d4f2e4a"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-5-boundary.png",
+          "bytes": 1505470,
+          "sha256": "b415d50e72dd49128ea6559d4e5ba1f48bad149701424bbf2ce51a75e1b712c3"
+        }
+      ],
+      "observations": [
+        "The selected three-cell passage remains physically open and visually readable between original and infill households.",
+        "Both recorded interior entries show normal roof cutaway and live occupied surroundings; the collection plate shows the retained ordinary ring.",
+        "The crossing reaches the next centre and preserves the roof/actor scene response."
+      ],
+      "limits": [
+        "Visible rectangular grass/property patches and broad formal paving topology remain OPEN.",
+        "This isolated street branch does not include final combined cover/props/plazas/weathering."
+      ]
+    },
+    "s6": {
+      "status": "ACCEPTED_SELECTED_VIEW",
+      "label": "city22-street-native-routes-r3-s6",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r3-s6-1/run-results.json",
+      "raw_sha256": "fc4f658ce5de71320a0751afa3e72f3c9baea9ef0acf28e3466bc48080631078",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r3-s6-thermal.json",
+      "thermal_sha256": "f74e074e3570ce27622f3f1038b0845e54076e032c4921e608d305dc86c4123c",
+      "manifest_path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal.json",
+      "manifest_sha256": "1696704a5aa71352ae315df27457dc7b96faf060b9b0239a1f4f55782ace9610",
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-1-passage.png",
+          "bytes": 1503348,
+          "sha256": "447dfffacfd29306a3bccb91c7471263bca1373ec4d2b438538159c104b495b6"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-2-inside.png",
+          "bytes": 1706978,
+          "sha256": "765fb77e53fdca81e16729150985d4d3049a8f0d9646852a47a37e3bce4a90bd"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-3-inside-infill.png",
+          "bytes": 1619487,
+          "sha256": "9a07090335afafb277439b8ed79db1e29112dea5dcdc31a34e99b30b780e248a"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-4-collected.png",
+          "bytes": 1636112,
+          "sha256": "9a6593fd5f8633d47e4668a4dbe60c5a5ad9174703cf32ca4fd78bb020f8c175"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-5-boundary.png",
+          "bytes": 1495848,
+          "sha256": "f59c0f69849d37fd2d33f7a408375b0da8d2a4c4c82a7f9fee25856ca5d1cdcc"
+        }
+      ],
+      "observations": [
+        "The industrial frontage keeps a physically open shared-stone passage and attached building casts.",
+        "Original and infill interiors show physical entry/cutaway; the collection plate retains the ordinary ring and a live encounter.",
+        "Boundary plate reaches the next centre with restored roofs and a coherent worn yard edge."
+      ],
+      "limits": [
+        "Broad paving topology remains OPEN.",
+        "These isolated street images precede final combined production atmosphere/cover/props/plazas."
+      ]
+    },
+    "reward-before": {
+      "status": "ACCEPTED_SELECTED_VIEW",
+      "label": "city22-street-native-reward-r1-reward-before",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-reward-r1-reward-before-1/run-results.json",
+      "raw_sha256": "07212322c7ea75cc50de853e83b0b725be5deb9d9ef8063d86a16df33bb1f02e",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-reward-r1-reward-before-thermal.json",
+      "thermal_sha256": "a8695b9463dbb6204eb0cfb3b79d18a6f3357bf698d03e5caee09fe99a898ba8",
+      "manifest_path": "/var/tmp/sa-city22/streets/native-reward-r1/reward-before/capture-info.json",
+      "manifest_sha256": "cd10a6c1572de3fccfeb83ef77ed6dd989667f834624eaf88cb64def83610e56",
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-reward-r1/reward-before/ground-before.png",
+          "bytes": 992368,
+          "sha256": "e96353475a6c808c473d740633634f847ec09aa425c65b1d866e1bfff1e9413d"
+        }
+      ],
+      "observations": [
+        "Same actual building/camera and open doorway; approach remains continuous with the surrounding paved route."
+      ],
+      "limits": [
+        "Restrained apron-only comparison; broader ground topology remains OPEN.",
+        "shared_ground is true in both images; separate configuration fix is not isolated."
+      ]
+    },
+    "reward-after": {
+      "status": "ACCEPTED_SELECTED_VIEW",
+      "label": "city22-street-native-reward-r1-reward-after",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-reward-r1-reward-after-1/run-results.json",
+      "raw_sha256": "b5850882aa65a925d67d54fdcc9e5c9053f781d6d5fc1c3bc6130841cb9bb74c",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-reward-r1-reward-after-thermal.json",
+      "thermal_sha256": "f5ff818185c62d62ba899cd3e4b98920ec388d7dd377dfbc00321ceaca7f9a0a",
+      "manifest_path": "/var/tmp/sa-city22/streets/native-reward-r1/reward-after/capture-info.json",
+      "manifest_sha256": "db0c2feae180661c454e919a38f3517a6026542170af4c6b70b224034b16b533",
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-reward-r1/reward-after/ground-before.png",
+          "bytes": 990410,
+          "sha256": "93bbdfec095ebac75681b0b8a2e7d4fee860151983bfaad083a8d80f0e5c6b8d"
+        }
+      ],
+      "observations": [
+        "Same actual building/camera and open doorway; approach remains continuous with the surrounding paved route."
+      ],
+      "limits": [
+        "Restrained apron-only comparison; broader ground topology remains OPEN.",
+        "shared_ground is true in both images; separate configuration fix is not isolated."
+      ]
+    }
+  },
+  "scope": "Root inspected all17 original PNGs: three actual routes and both unchanged reward sides. Acceptance is bounded to selected physical routes and apron treatment; larger grass/property rectangles and formal paving remain OPEN.",
+  "source_reviews": [
+    "street-s2-r2-root-visual-review.json",
+    "street-s7-r3-root-visual-review.json",
+    "street-s6-r3-root-visual-review.json",
+    "street-reward-r1-root-visual-review.json"
+  ],
+  "historical_limit": "Original R1 failure and stopped R2 Python signed-ID verdict remain unchanged. Later source-corrected R3 receipt validates actual collection; parser/S2 retain original5e execution origin."
+}

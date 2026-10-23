@@ -1,0 +1,162 @@
+{
+  "closure_limit": "No complete historical Game or generated cache byte closure is supplied. Dynamic resources and absent launch cache hashes stay missing.",
+  "git_head": "b298202447a5b3a0cf2b0e8c55c46bf507a7f1c9",
+  "recorded_asset_import_inventory": "sources/recorded-maps/106d8b54d7b381ca64fcfdaaf2cf082442b28f7578cf5f32d6d7117ac5c9806f.json",
+  "recorded_generated_import_count": 0,
+  "run": "city22-street-native-reward-r1-parse-1",
+  "scoped": {
+    "core/systems/world/ChunkManager.gd": {
+      "launch_sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15",
+      "snapshot": "sources/blobs/354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15-ChunkManager.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/ground/DistrictGroundPolicy.gd": {
+      "launch_sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+      "snapshot": "sources/blobs/cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36-DistrictGroundPolicy.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/ground/GroundSplatRenderer.gd": {
+      "launch_sha256": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9",
+      "snapshot": "sources/blobs/d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9-GroundSplatRenderer.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/proc/SiteParcelsImpl.gd": {
+      "launch_sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+      "snapshot": "sources/blobs/fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503-SiteParcelsImpl.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": {
+      "launch_sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66",
+      "snapshot": "sources/blobs/b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66-ChunkGenDistrict.gd",
+      "status": "preserved exact content"
+    },
+    "project.godot": {
+      "launch_sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "snapshot": "sources/blobs/4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5-project.godot",
+      "status": "preserved exact content"
+    },
+    "scenes/world/buildings/CityBlockKit.gd": {
+      "launch_sha256": "8c1d11fd92266e62f994a3e8043e72c5e112a641aedbcedb74b82b3437af8ffd",
+      "snapshot": "sources/blobs/8c1d11fd92266e62f994a3e8043e72c5e112a641aedbcedb74b82b3437af8ffd-CityBlockKit.gd",
+      "status": "preserved exact content"
+    },
+    "scenes/world/buildings/RoofOverlay.gd": {
+      "launch_sha256": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07",
+      "snapshot": "sources/blobs/8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07-RoofOverlay.gd",
+      "status": "preserved exact content"
+    },
+    "scenes/world/volumes/IndoorVolume.gd": {
+      "launch_sha256": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a",
+      "snapshot": "sources/blobs/95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a-IndoorVolume.gd",
+      "status": "preserved exact content"
+    },
+    "tools/dev/CityBlockPlayablePreview.gd": {
+      "launch_sha256": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+      "snapshot": "sources/blobs/7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83-CityBlockPlayablePreview.gd",
+      "status": "preserved exact content"
+    },
+    "tools/dev/CityStreetTraversalProbe.gd": {
+      "launch_sha256": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755",
+      "snapshot": "sources/blobs/0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755-CityStreetTraversalProbe.gd",
+      "status": "preserved exact content"
+    },
+    "tools/dev/CityStreetTraversalProbe.tscn": {
+      "launch_sha256": "d8badcec45ebe7e7d6bd405b9c791d35ed50d9ee1927829bdb060cbb8f50f1d3",
+      "snapshot": "sources/blobs/d8badcec45ebe7e7d6bd405b9c791d35ed50d9ee1927829bdb060cbb8f50f1d3-CityStreetTraversalProbe.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/dev/EliteCrowdFightPreview.gd": {
+      "launch_sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "snapshot": "sources/blobs/ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec-EliteCrowdFightPreview.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityDoorApproachGroundTest.gd": {
+      "launch_sha256": "bfc564636ebe76d59b57e3dd83023e66a960f12df4f68d22cfb3d1c889944922",
+      "snapshot": "sources/blobs/bfc564636ebe76d59b57e3dd83023e66a960f12df4f68d22cfb3d1c889944922-CityDoorApproachGroundTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityDoorApproachGroundTest.tscn": {
+      "launch_sha256": "42edfe6da8adc2fd5aafe4578a0234d338bb586a43c2261c48d023046feb090a",
+      "snapshot": "sources/blobs/42edfe6da8adc2fd5aafe4578a0234d338bb586a43c2261c48d023046feb090a-CityDoorApproachGroundTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityGroundCareTest.gd": {
+      "launch_sha256": "7ae5c8c1b583cda864a71f80e8d847c70acc4fd2d34632c0c954b48320edaafe",
+      "snapshot": "sources/blobs/7ae5c8c1b583cda864a71f80e8d847c70acc4fd2d34632c0c954b48320edaafe-CityGroundCareTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityGroundCareTest.tscn": {
+      "launch_sha256": "5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404",
+      "snapshot": "sources/blobs/5376b4ea1efddabe6088e33f5c95b3bb7cc519eec604a7f07db6c57f81da9404-CityGroundCareTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetContinuityTest.gd": {
+      "launch_sha256": "4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209",
+      "snapshot": "sources/blobs/4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209-CityStreetContinuityTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetContinuityTest.tscn": {
+      "launch_sha256": "50fbc1ea2c6caa4f1a00e92f2246bc9ae946bc608c48199113d1e34e3dede7a1",
+      "snapshot": "sources/blobs/50fbc1ea2c6caa4f1a00e92f2246bc9ae946bc608c48199113d1e34e3dede7a1-CityStreetContinuityTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetFrontageTest.gd": {
+      "launch_sha256": "c8127c6ae579e80d27f0c314d23cbf23b8736df270ff061913b9d3912a844ea0",
+      "snapshot": "sources/blobs/c8127c6ae579e80d27f0c314d23cbf23b8736df270ff061913b9d3912a844ea0-CityStreetFrontageTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetGroundAllocationTest.gd": {
+      "launch_sha256": "1a587d5a9ddd37340a91d71af97629e332535b086f5d5e490fe61599e9afe89c",
+      "snapshot": "sources/blobs/1a587d5a9ddd37340a91d71af97629e332535b086f5d5e490fe61599e9afe89c-CityStreetGroundAllocationTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetGroundAllocationTest.tscn": {
+      "launch_sha256": "62316c79190c301b593ebc8302b24b7ea0dc7cd6bd212de0c06bed405826b984",
+      "snapshot": "sources/blobs/62316c79190c301b593ebc8302b24b7ea0dc7cd6bd212de0c06bed405826b984-CityStreetGroundAllocationTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetTraversalCorridorTest.gd": {
+      "launch_sha256": "ac4a2de068076797db27cfe3228ebcfb8b775482117dde656ee57d37ed189d57",
+      "snapshot": "sources/blobs/ac4a2de068076797db27cfe3228ebcfb8b775482117dde656ee57d37ed189d57-CityStreetTraversalCorridorTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetTraversalCorridorTest.tscn": {
+      "launch_sha256": "2c87a959fbf1228719570b33f214960fd0b7196d00c0e09b6a91e6f8d93369a4",
+      "snapshot": "sources/blobs/2c87a959fbf1228719570b33f214960fd0b7196d00c0e09b6a91e6f8d93369a4-CityStreetTraversalCorridorTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetTraversalDiscoveryTest.gd": {
+      "launch_sha256": "fdcef7dc77264b596d700ee69c4044b5ecae7e005b77766cea21a70fe934e1dc",
+      "snapshot": "sources/blobs/fdcef7dc77264b596d700ee69c4044b5ecae7e005b77766cea21a70fe934e1dc-CityStreetTraversalDiscoveryTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/CityStreetTraversalDiscoveryTest.tscn": {
+      "launch_sha256": "cb99364d6b5ffd684f82f4ee5e2989052cb766433b3642c2959251e65d258cd0",
+      "snapshot": "sources/blobs/cb99364d6b5ffd684f82f4ee5e2989052cb766433b3642c2959251e65d258cd0-CityStreetTraversalDiscoveryTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ProcChunkReachabilityTest.gd": {
+      "launch_sha256": "ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258",
+      "snapshot": "sources/blobs/ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258-ProcChunkReachabilityTest.gd",
+      "status": "preserved exact content"
+    }
+  },
+  "source_untracked": [
+    "assets/world/city_block/domestic_awning.png.import",
+    "assets/world/city_block/donjon_cell_grille.png.import",
+    "assets/world/city_block/donjon_gate_arch.png.import",
+    "assets/world/city_block/donjon_masonry_bay.png.import",
+    "assets/world/city_block/planted_corner.png.import",
+    "assets/world/city_block/planted_stone_trough.png.import",
+    "assets/world/city_block/street_setts.png.import",
+    "assets/world/city_block/temperate_tree.png.import",
+    "assets/world/city_block/wall_lantern.png.import",
+    "assets/world/city_block/worn_setts.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import"
+  ],
+  "tracked_git_status": ""
+}

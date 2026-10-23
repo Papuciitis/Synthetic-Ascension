@@ -1,0 +1,1314 @@
+{
+  "status": "checked_corrected_object_id_contract",
+  "source_bindings": {
+    "protocol": "street-signed-object-id-r3-later-pure-verdict",
+    "sources": {
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py": "853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/continuation.py": "e0c42df3a5587314edd028f2bf17e1790dcdd64499ec8adced3767ad2b537784",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/test_signed_ids.py": "29657d4794b858b04fec6999d9075ab0c0441feb424e8dc92f1e6c5d60d891ab",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/object_id-ed1daf0bf.h": "ef39c28e4f36d3f9f0362e7751eb1a34321f52946eb3faf8290dd16c426a6167",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/object-id-source.json": "17b84a0c6e60a8882d9c817603f1a475a87e8109e065b7b2b053f4c302e1d4a6",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/command-plan.json": "7936c9172b52a5e9662c75c8bea9c95606af2a526cd1ef2b1c16a466ed4d7875",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/source-bindings.json": "0abd1ed17bd9f9597cb91d20f5c5a1bd3698e0d739aac0a2c3b593f407660559",
+      "/var/tmp/sa-city22/streets/native-routes-r2/queue.json": "af1bef99ec2fcd0d4f8c0299fcb9bbe31a3a860723092224eb65e2ff6798cb14",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r2-parse-1/run-results.json": "8573c754cef73d0001b0d4721a676aeb38c2e739b34ccb19f1d854deed01cc3b",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r2-parse-thermal.json": "84bda2c3eb8be1bf4d9d10ce7d8e09a23892837701681e11a42169dd9ccca738",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r2-s2-1/run-results.json": "764d1a4601d6e707a93c669144addd89d54117471dd471579ffe96dea5365d00",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r2-s2-thermal.json": "8c356cd8f5926bc3f20373a0797c5dea05b06ca3c8629d2a4b8d1788494db5d9",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/expected-project-state.json": "9228a90cf97bf0acc6bc0a110acf8701c2ea2f098bb68fce477df6e629fe59d8",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/test_continuation.py": "d5f14d1ab2b41e3409b9e10572fa6c5df0a9a9257445a8dbf3d89a00fefb9ef8"
+    },
+    "original_R2_runtime_source_manifest_sha256": "0abd1ed17bd9f9597cb91d20f5c5a1bd3698e0d739aac0a2c3b593f407660559",
+    "historical_strict_queue_status": "stopped",
+    "actual_regression_checks": 26,
+    "engine_rerun_required_for_S2": false,
+    "runtime_changed": false,
+    "reference_source": "https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/core/object/object_id.h"
+  },
+  "original_r2_source_bindings": {
+    "protocol": "street-collection-observation-r2",
+    "engine_executed_by_helper": false,
+    "sources": {
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd": "30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn": "ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.gd": "cdb18f3cb96c08a2d1934ffcbba855872debed0882fe971275e88f8c9f59d993",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.tscn": "0a0ddadfe880c090d9e36e59f4eaf37b0845dc891fe656ec0fc5849fa60d9bad",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.gd": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.gd": "b4b608161d02fb0cf1c50698e796210b95ce481993df8517a45f6b448f202597",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn": "cfae337dfdc7820dfbeb10444ee4235b84989432140ff24c68937f07f2c73e65",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py": "5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/test_collection_receipt.py": "0ed0fd41a230b3e6fbb59d697f626b1e63d6deb1f3a371b530d6c50b10220cce",
+      "/tmp/sa-wp2-streets/autoload/RunEvents.gd": "46e88be1220e8f6d9bc4fcf17e9661b77cdd8e9ddb4138d38b116b778faa4ea3",
+      "/tmp/sa-wp2-streets/autoload/global.gd": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+      "/tmp/sa-wp2-streets/core/systems/telemetry/BalanceItemContext.gd": "a13f73fb2ed1fe4890688828669db228639aaa072a0c72d1fa6cc2707f26f345",
+      "/tmp/sa-wp2-streets/core/systems/world/ChunkManager.gd": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15",
+      "/tmp/sa-wp2-streets/core/systems/world/ground/DistrictGroundPolicy.gd": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+      "/tmp/sa-wp2-streets/core/systems/world/ground/GroundSplatRenderer.gd": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9",
+      "/tmp/sa-wp2-streets/core/systems/world/proc/SiteParcelsImpl.gd": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+      "/tmp/sa-wp2-streets/core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66",
+      "/tmp/sa-wp2-streets/data/items/BagInventory.gd": "4b0b79d58ef1ef392cebc7ac7c7a1123423635d2f7fc00c712cca15a6cdb2ca8",
+      "/tmp/sa-wp2-streets/data/items/Inventory.gd": "dc68983802103e323536e9d7003cdd42406bd7f3a02f4543200eacb89dcf9967",
+      "/tmp/sa-wp2-streets/data/items/ItemData.gd": "c4c2c90ab54bb713d6226559164575adac97b7608427b8262b1bf3dcdb0cf70e",
+      "/tmp/sa-wp2-streets/data/items/ItemInstance.gd": "6c6be7310050998e8b0618c833a552fa78ccbd2155602b3e2ca3b8e81f9d2f54",
+      "/tmp/sa-wp2-streets/data/items/defs/accessories/ring_crusher.tres": "cf37ba39ca419c6382f902981bfd175c121875a6cb3b2d052cfa359092a3b975",
+      "/tmp/sa-wp2-streets/project.godot": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "/tmp/sa-wp2-streets/scenes/world/buildings/RoofOverlay.gd": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07",
+      "/tmp/sa-wp2-streets/scenes/world/pickups/GroundLootCap.gd": "e151779f6095485fdd74ecaa841af571af9a5baccc5e546971d862aa858fa29e",
+      "/tmp/sa-wp2-streets/scenes/world/pickups/ItemPickup.gd": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+      "/tmp/sa-wp2-streets/scenes/world/pickups/ItemPickup.tscn": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+      "/tmp/sa-wp2-streets/scenes/world/volumes/IndoorVolume.gd": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a",
+      "/tmp/sa-wp2-streets/tools/dev/CityBlockPlayablePreview.gd": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+      "/tmp/sa-wp2-streets/tools/dev/CityStreetTraversalProbe.gd": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755",
+      "/tmp/sa-wp2-streets/tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "/tmp/sa-wp2-streets/ui/components/InventorySlotView.gd": "69b63fae0c3f35ef9b94bcdb4e93a1e9536aa957aab86ba269b2758c46944bea"
+    },
+    "historical_failed_run": {
+      "raw": "/var/tmp/sa-city22/streets/native-s2-r1/s2/traversal.json",
+      "sha256": "baba22889bd794528e598376ebcb8e4866dca8ce0ad8e9c25d76895153ffcd8d",
+      "classification": "FAILED; not retroactively accepted"
+    },
+    "scope": "Only new external inheritance and independent receipt validation; all original route, gameplay and guard sources are immutable."
+  },
+  "original_r2_queue": {
+    "path": "/var/tmp/sa-city22/streets/native-routes-r2/queue.json",
+    "sha256": "af1bef99ec2fcd0d4f8c0299fcb9bbe31a3a860723092224eb65e2ff6798cb14",
+    "status": "stopped",
+    "error": "Route/collection receipt acceptance failed: city22-street-native-routes-r2-s2"
+  },
+  "complete_matrix_prerequisite": {
+    "path": "/var/tmp/sa-city22/streets/continuity-matrix/aggregate.json",
+    "sha256": "d5a68a511e9bdc55ac14f74d06d80014654e0510db9d582e1a322755c62560dd",
+    "status": "passed",
+    "checked_themes": 14,
+    "original_global_assertions": 5,
+    "runtime_source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+    "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+    "totals": {
+      "checks_local": 92616,
+      "court_doors": 4150,
+      "cross_seam_aprons": 273,
+      "framed": 35,
+      "framed_open_sides": 21,
+      "infill": 346,
+      "originals": 493,
+      "plan_chunks": 2522,
+      "plan_doors": 6343,
+      "preexisting_unreachable": 17,
+      "sample_chunks": 197,
+      "steps": {
+        "-1": 99,
+        "0": 898,
+        "1": 274
+      },
+      "checks_including_original_five": 92621
+    },
+    "harness": {
+      "metadata_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json",
+      "metadata_sha256": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+      "original_sha256": "4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209",
+      "parent_sha256": "ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258",
+      "copy_sha256": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+      "scene_sha256": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+      "diff_sha256": "c37f577a77e7aeaabccfbaa17f0d4e0618e35c7e72b5875dcd12a08a5a9814af",
+      "driver_sha256": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+      "manifest": {
+        "themes": [
+          [
+            2,
+            ""
+          ],
+          [
+            3,
+            ""
+          ],
+          [
+            4,
+            "collapsed_ward"
+          ],
+          [
+            4,
+            "civilian_cutthrough"
+          ],
+          [
+            5,
+            ""
+          ],
+          [
+            6,
+            "industrial_cutthrough"
+          ],
+          [
+            6,
+            "ruined_services"
+          ],
+          [
+            7,
+            "underpass_veins"
+          ],
+          [
+            7,
+            "canal_services"
+          ],
+          [
+            8,
+            "rail_yard"
+          ],
+          [
+            8,
+            "military_staging"
+          ],
+          [
+            9,
+            "outer_wall"
+          ],
+          [
+            9,
+            "siege_services"
+          ],
+          [
+            10,
+            ""
+          ]
+        ],
+        "roles": [
+          "main_street",
+          "secondary_route",
+          "service_lane",
+          "exit_approach",
+          "dangerous_alley",
+          "secondary_alley_cache",
+          "secondary_reward_building",
+          "optional_interior",
+          "district_fill",
+          "landmark_plaza"
+        ],
+        "PER_ROLE": 2,
+        "BASE_SEED": 16102026,
+        "WALL_LIMIT": 24,
+        "WALL_NEVER": 32,
+        "DOOR_APRON": 4
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "parse",
+      "label": "city22-street-native-routes-r2-parse",
+      "origin": {
+        "role": "reused_actual_R2_case",
+        "program": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py",
+        "sha256": "5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a",
+        "original_verdict": "Original stopped queue and strict collection false are immutable; later R3 verdict is separate."
+      },
+      "run": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r2-parse-1/run-results.json",
+        "sha256": "8573c754cef73d0001b0d4721a676aeb38c2e739b34ccb19f1d854deed01cc3b",
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "diagnostics": [],
+        "elapsed_seconds": 89.161,
+        "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r2-parse-thermal.json",
+        "thermal_sha256": "84bda2c3eb8be1bf4d9d10ce7d8e09a23892837701681e11a42169dd9ccca738",
+        "thermal_peak_c": 87.0,
+        "duty_released": false
+      },
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-routes-r2-parse",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "240",
+        "--",
+        "--headless",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn",
+        "--",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd",
+        "res://tools/dev/CityStreetTraversalProbe.gd"
+      ],
+      "godot_args": [
+        "--headless",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn",
+        "--",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd",
+        "res://tools/dev/CityStreetTraversalProbe.gd"
+      ],
+      "project_state": {
+        "git_head": "b298202447a5b3a0cf2b0e8c55c46bf507a7f1c9",
+        "tracked_status": "",
+        "source_untracked": [
+          "assets/world/city_block/domestic_awning.png.import",
+          "assets/world/city_block/donjon_cell_grille.png.import",
+          "assets/world/city_block/donjon_gate_arch.png.import",
+          "assets/world/city_block/donjon_masonry_bay.png.import",
+          "assets/world/city_block/planted_corner.png.import",
+          "assets/world/city_block/planted_stone_trough.png.import",
+          "assets/world/city_block/street_setts.png.import",
+          "assets/world/city_block/temperate_tree.png.import",
+          "assets/world/city_block/wall_lantern.png.import",
+          "assets/world/city_block/worn_setts.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import"
+        ],
+        "qualification": "Exact b298 commit and clean tracked state. Each actual raw untracked source list is recorded independently; the reused parser/S2 had fifteen PNG.import sidecars, which is historical metadata rather than a future equality gate. No entirely-clean-filesystem claim. The36critical runtime/tool source pins and actual full raw inventories remain bound."
+      }
+    },
+    {
+      "id": "s2",
+      "label": "city22-street-native-routes-r2-s2",
+      "origin": {
+        "role": "reused_actual_R2_case",
+        "program": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py",
+        "sha256": "5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a",
+        "original_verdict": "Original stopped queue and strict collection false are immutable; later R3 verdict is separate."
+      },
+      "run": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r2-s2-1/run-results.json",
+        "sha256": "764d1a4601d6e707a93c669144addd89d54117471dd471579ffe96dea5365d00",
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "diagnostics": [],
+        "elapsed_seconds": 167.474,
+        "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r2-s2-thermal.json",
+        "thermal_sha256": "8c356cd8f5926bc3f20373a0797c5dea05b06ca3c8629d2a4b8d1788494db5d9",
+        "thermal_peak_c": 84.0,
+        "duty_released": true
+      },
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-routes-r2-s2",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--passage-chunk=0,2",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r2/s2"
+      ],
+      "godot_args": [
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--passage-chunk=0,2",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r2/s2"
+      ],
+      "project_state": {
+        "git_head": "b298202447a5b3a0cf2b0e8c55c46bf507a7f1c9",
+        "tracked_status": "",
+        "source_untracked": [
+          "assets/world/city_block/domestic_awning.png.import",
+          "assets/world/city_block/donjon_cell_grille.png.import",
+          "assets/world/city_block/donjon_gate_arch.png.import",
+          "assets/world/city_block/donjon_masonry_bay.png.import",
+          "assets/world/city_block/planted_corner.png.import",
+          "assets/world/city_block/planted_stone_trough.png.import",
+          "assets/world/city_block/street_setts.png.import",
+          "assets/world/city_block/temperate_tree.png.import",
+          "assets/world/city_block/wall_lantern.png.import",
+          "assets/world/city_block/worn_setts.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import"
+        ],
+        "qualification": "Exact b298 commit and clean tracked state. Each actual raw untracked source list is recorded independently; the reused parser/S2 had fifteen PNG.import sidecars, which is historical metadata rather than a future equality gate. No entirely-clean-filesystem claim. The36critical runtime/tool source pins and actual full raw inventories remain bound."
+      },
+      "out": "/var/tmp/sa-city22/streets/native-routes-r2/s2",
+      "manifest": {
+        "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal.json",
+        "sha256": "c35fdeffa5cf1a43245583661eed805b4be1e5216b042b007303555642a5a5ae",
+        "checks": {
+          "failures_zero": true,
+          "segment_seed": true,
+          "requested_passage_chunk": true,
+          "dressed_continuity": true,
+          "narrow_inside_through": true,
+          "strict_physics_trace": true,
+          "original_entry_exit": true,
+          "infill_entry_exit": true,
+          "real_collection": true,
+          "chunk_crossing": true,
+          "director_stayed_live": true,
+          "walks_arrived": true,
+          "save_writes_observed_zero": true,
+          "requested_render_cap_unchanged_physics": true,
+          "expected_stills": true
+        },
+        "valid": true,
+        "window": "(1280, 720)",
+        "camera_zoom": "(1.0, 1.0)",
+        "trace": {
+          "allowed_cells": "[P: (20, 87), S: (3, 9)]",
+          "far_index": 8,
+          "far_mouth": "[P: (20, 95), S: (3, 1)]",
+          "jump_indices": [],
+          "middle_cross_section": "[P: (20, 91), S: (3, 1)]",
+          "middle_index": 4,
+          "near_index": 0,
+          "near_mouth": "[P: (20, 87), S: (3, 1)]",
+          "observed_cell_count": 9,
+          "ordered_mouth_middle_mouth": true,
+          "outside_indices": [],
+          "valid": true
+        },
+        "original_entry": {
+          "building_id": 948691614,
+          "door": "(608.0, 5504.0)",
+          "events": [
+            {
+              "building_id": 948691614,
+              "first_visit": true,
+              "infill": false,
+              "phase": "building"
+            }
+          ],
+          "infill": false,
+          "opened": true,
+          "restored": true
+        },
+        "infill_entry": {
+          "building_id": 934370235,
+          "door": "(960.0, 5664.0)",
+          "events": [
+            {
+              "building_id": 934370235,
+              "first_visit": false,
+              "infill": true,
+              "phase": "building"
+            }
+          ],
+          "infill": true,
+          "opened": true,
+          "restored": true
+        },
+        "boundary": {
+          "after": "(0, 3)",
+          "before": "(0, 2)",
+          "crossed": true,
+          "target": "(1248.0, 6304.0)"
+        },
+        "director": {
+          "end": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {
+                "hunter": 1
+              },
+              "counters": {
+                "aborted": 0,
+                "announced": 1,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 1,
+                "scheduled": 1,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 61.3301076253257,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 107.549999999984,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "requested": true,
+          "start": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {},
+              "counters": {
+                "aborted": 0,
+                "announced": 0,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 0,
+                "scheduled": 0,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 39.1833333333334,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 149.183333333333,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "stayed_live": true
+        },
+        "limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test.",
+        "save_observation": {
+          "acceptance_end_api_counter": 0,
+          "autosave_disabled": true,
+          "baseline_api_counter": 0,
+          "current_profile_is_null": true,
+          "scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+          "writes_during_acceptance": 0
+        },
+        "runtime_fixture": {
+          "actual_window": "(1280, 720)",
+          "engine_max_fps": 20,
+          "game_was_instantiated": true,
+          "physics_ticks_per_second": 60
+        }
+      },
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-1-passage.png",
+          "bytes": 1476761,
+          "sha256": "79bc3f74ad454baf31a8cc8911ae69abfe1aac81cc25f03feb5f3ea828bc1338"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-2-inside.png",
+          "bytes": 1754742,
+          "sha256": "a1baf3755dc5774f3e4b8504fdda9610382e65efb0bc5029cfe7acd0e55b84e3"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-3-inside-infill.png",
+          "bytes": 1615552,
+          "sha256": "c6f6d7b41dfd03a1df310b2e92baee34b6fbdf6aa72eb7768cc5ab6d0a7a7716"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-4-collected.png",
+          "bytes": 1705739,
+          "sha256": "f2d352ad1a9fd2d6e6c6d3a214198da225dbd70725595b8bab5a1efd40741c6f"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-5-boundary.png",
+          "bytes": 1294970,
+          "sha256": "e4b927c50d4de0e2c200aece8b55fe7881ec33126425124bf3616a191c8ced38"
+        }
+      ],
+      "original_r2_collection_verdict": {
+        "valid": false,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": false,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true
+        },
+        "kind": "equipped",
+        "ground_serial": 9
+      },
+      "corrected_r3_collection_verdict": {
+        "valid": true,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": true,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true,
+          "incoming_signed_int64_nonzero": true
+        },
+        "kind": "equipped",
+        "ground_serial": 9
+      }
+    },
+    {
+      "id": "s7",
+      "label": "city22-street-native-routes-r3-s7",
+      "origin": {
+        "role": "root_manual_guard_command_only_remaining_case",
+        "program": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/command-plan.json",
+        "scope": "Frozen new manual invocation plan; not execution of original5e queue. Runtime GDScript b4/scene unchanged. Execute only after original reward pair restores source."
+      },
+      "run": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r3-s7-1/run-results.json",
+        "sha256": "4591316b6d3b9adcfe487d78e4440fdad9d0f4a94b94621b8491d839cfa2a50a",
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "diagnostics": [],
+        "elapsed_seconds": 225.484,
+        "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r3-s7-thermal.json",
+        "thermal_sha256": "722ccdc8ea6cea383432fcebefea3c2012764aae4f551f613d161b406c47a9dd",
+        "thermal_peak_c": 79.0,
+        "duty_released": true
+      },
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-routes-r3-s7",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--passage-chunk=-4,3",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s7"
+      ],
+      "godot_args": [
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--passage-chunk=-4,3",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s7"
+      ],
+      "project_state": {
+        "git_head": "b298202447a5b3a0cf2b0e8c55c46bf507a7f1c9",
+        "tracked_status": "",
+        "source_untracked": [
+          "assets/world/city_block/domestic_awning.png.import",
+          "assets/world/city_block/donjon_cell_grille.png.import",
+          "assets/world/city_block/donjon_gate_arch.png.import",
+          "assets/world/city_block/donjon_masonry_bay.png.import",
+          "assets/world/city_block/planted_corner.png.import",
+          "assets/world/city_block/planted_stone_trough.png.import",
+          "assets/world/city_block/street_setts.png.import",
+          "assets/world/city_block/temperate_tree.png.import",
+          "assets/world/city_block/wall_lantern.png.import",
+          "assets/world/city_block/worn_setts.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import"
+        ],
+        "qualification": "Exact b298 commit and clean tracked state. Each actual raw untracked source list is recorded independently; the reused parser/S2 had fifteen PNG.import sidecars, which is historical metadata rather than a future equality gate. No entirely-clean-filesystem claim. The36critical runtime/tool source pins and actual full raw inventories remain bound."
+      },
+      "out": "/var/tmp/sa-city22/streets/native-routes-r3/s7",
+      "manifest": {
+        "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal.json",
+        "sha256": "1ba9efea8aeb1c3e744fe39a610c344e51c4242da5b68d1e4edc338904d1417a",
+        "checks": {
+          "failures_zero": true,
+          "segment_seed": true,
+          "requested_passage_chunk": true,
+          "dressed_continuity": true,
+          "narrow_inside_through": true,
+          "strict_physics_trace": true,
+          "original_entry_exit": true,
+          "infill_entry_exit": true,
+          "real_collection": true,
+          "chunk_crossing": true,
+          "director_stayed_live": true,
+          "walks_arrived": true,
+          "save_writes_observed_zero": true,
+          "requested_render_cap_unchanged_physics": true,
+          "expected_stills": true
+        },
+        "valid": true,
+        "window": "(1280, 720)",
+        "camera_zoom": "(1.0, 1.0)",
+        "trace": {
+          "allowed_cells": "[P: (-114, 96), S: (3, 8)]",
+          "far_index": 7,
+          "far_mouth": "[P: (-114, 103), S: (3, 1)]",
+          "jump_indices": [],
+          "middle_cross_section": "[P: (-114, 100), S: (3, 1)]",
+          "middle_index": 4,
+          "near_index": 0,
+          "near_mouth": "[P: (-114, 96), S: (3, 1)]",
+          "observed_cell_count": 8,
+          "ordered_mouth_middle_mouth": true,
+          "outside_indices": [],
+          "valid": true
+        },
+        "original_entry": {
+          "building_id": 1361326454,
+          "door": "(-7680.0, 7200.0)",
+          "events": [
+            {
+              "building_id": 1361326454,
+              "first_visit": true,
+              "infill": false,
+              "phase": "building"
+            }
+          ],
+          "infill": false,
+          "opened": true,
+          "restored": true
+        },
+        "infill_entry": {
+          "building_id": 2127116577,
+          "door": "(-7616.0, 6560.0)",
+          "events": [
+            {
+              "building_id": 2127116577,
+              "first_visit": false,
+              "infill": true,
+              "phase": "building"
+            }
+          ],
+          "infill": true,
+          "opened": true,
+          "restored": true
+        },
+        "boundary": {
+          "after": "(-4, 2)",
+          "before": "(-4, 3)",
+          "crossed": true,
+          "target": "(-7392.0, 5984.0)"
+        },
+        "director": {
+          "end": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {},
+              "counters": {
+                "aborted": 0,
+                "announced": 1,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 1,
+                "scheduled": 1,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 26.2113433837915,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 67.8416666666526,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "requested": true,
+          "start": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {},
+              "counters": {
+                "aborted": 0,
+                "announced": 0,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 0,
+                "scheduled": 0,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 39.2,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 149.199999999999,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "stayed_live": true
+        },
+        "limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test.",
+        "save_observation": {
+          "acceptance_end_api_counter": 0,
+          "autosave_disabled": true,
+          "baseline_api_counter": 0,
+          "current_profile_is_null": true,
+          "scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+          "writes_during_acceptance": 0
+        },
+        "runtime_fixture": {
+          "actual_window": "(1280, 720)",
+          "engine_max_fps": 20,
+          "game_was_instantiated": true,
+          "physics_ticks_per_second": 60
+        }
+      },
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-1-passage.png",
+          "bytes": 1634745,
+          "sha256": "3a0787186a2b17dca22d62db793d0bad642de0c02811595e0d2ba8071dd712b8"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-2-inside.png",
+          "bytes": 1640157,
+          "sha256": "f68f3ba37cf9fb6c4c689379688726dd28a733e4ec29ad84bc46429ae169cea8"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-3-inside-infill.png",
+          "bytes": 1671915,
+          "sha256": "2ab29c640e9e6c80755dfbf8290a0a098e1043eaf00711cd8e9d3962dc2f96c6"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-4-collected.png",
+          "bytes": 1680010,
+          "sha256": "b15e81936ee30e907b049b54967a559a964b7e76adb2e436bcda6aed5d4f2e4a"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s7/traversal-5-boundary.png",
+          "bytes": 1505470,
+          "sha256": "b415d50e72dd49128ea6559d4e5ba1f48bad149701424bbf2ce51a75e1b712c3"
+        }
+      ],
+      "original_r2_collection_verdict": {
+        "valid": false,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": false,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true
+        },
+        "kind": "equipped",
+        "ground_serial": 7
+      },
+      "corrected_r3_collection_verdict": {
+        "valid": true,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": true,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true,
+          "incoming_signed_int64_nonzero": true
+        },
+        "kind": "equipped",
+        "ground_serial": 7
+      }
+    },
+    {
+      "id": "s6",
+      "label": "city22-street-native-routes-r3-s6",
+      "origin": {
+        "role": "root_manual_guard_command_only_remaining_case",
+        "program": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/command-plan.json",
+        "scope": "Frozen new manual invocation plan; not execution of original5e queue. Runtime GDScript b4/scene unchanged. Execute only after original reward pair restores source."
+      },
+      "run": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r3-s6-1/run-results.json",
+        "sha256": "fc4f658ce5de71320a0751afa3e72f3c9baea9ef0acf28e3466bc48080631078",
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "diagnostics": [],
+        "elapsed_seconds": 175.049,
+        "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r3-s6-thermal.json",
+        "thermal_sha256": "f74e074e3570ce27622f3f1038b0845e54076e032c4921e608d305dc86c4123c",
+        "thermal_peak_c": 78.0,
+        "duty_released": true
+      },
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-routes-r3-s6",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=6",
+        "--world-seed=16102028",
+        "--passage-chunk=1,-1",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s6"
+      ],
+      "godot_args": [
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=6",
+        "--world-seed=16102028",
+        "--passage-chunk=1,-1",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s6"
+      ],
+      "project_state": {
+        "git_head": "b298202447a5b3a0cf2b0e8c55c46bf507a7f1c9",
+        "tracked_status": "",
+        "source_untracked": [
+          "assets/world/city_block/domestic_awning.png.import",
+          "assets/world/city_block/donjon_cell_grille.png.import",
+          "assets/world/city_block/donjon_gate_arch.png.import",
+          "assets/world/city_block/donjon_masonry_bay.png.import",
+          "assets/world/city_block/planted_corner.png.import",
+          "assets/world/city_block/planted_stone_trough.png.import",
+          "assets/world/city_block/street_setts.png.import",
+          "assets/world/city_block/temperate_tree.png.import",
+          "assets/world/city_block/wall_lantern.png.import",
+          "assets/world/city_block/worn_setts.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+          "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+          "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import"
+        ],
+        "qualification": "Exact b298 commit and clean tracked state. Each actual raw untracked source list is recorded independently; the reused parser/S2 had fifteen PNG.import sidecars, which is historical metadata rather than a future equality gate. No entirely-clean-filesystem claim. The36critical runtime/tool source pins and actual full raw inventories remain bound."
+      },
+      "out": "/var/tmp/sa-city22/streets/native-routes-r3/s6",
+      "manifest": {
+        "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal.json",
+        "sha256": "1696704a5aa71352ae315df27457dc7b96faf060b9b0239a1f4f55782ace9610",
+        "checks": {
+          "failures_zero": true,
+          "segment_seed": true,
+          "requested_passage_chunk": true,
+          "dressed_continuity": true,
+          "narrow_inside_through": true,
+          "strict_physics_trace": true,
+          "original_entry_exit": true,
+          "infill_entry_exit": true,
+          "real_collection": true,
+          "chunk_crossing": true,
+          "director_stayed_live": true,
+          "walks_arrived": true,
+          "save_writes_observed_zero": true,
+          "requested_render_cap_unchanged_physics": true,
+          "expected_stills": true
+        },
+        "valid": true,
+        "window": "(1280, 720)",
+        "camera_zoom": "(1.0, 1.0)",
+        "trace": {
+          "allowed_cells": "[P: (50, -9), S: (3, 9)]",
+          "far_index": 8,
+          "far_mouth": "[P: (50, -1), S: (3, 1)]",
+          "jump_indices": [],
+          "middle_cross_section": "[P: (50, -5), S: (3, 1)]",
+          "middle_index": 4,
+          "near_index": 0,
+          "near_mouth": "[P: (50, -9), S: (3, 1)]",
+          "observed_cell_count": 9,
+          "ordered_mouth_middle_mouth": true,
+          "outside_indices": [],
+          "valid": true
+        },
+        "original_entry": {
+          "building_id": 1223627408,
+          "door": "(2656.0, -768.0)",
+          "events": [
+            {
+              "building_id": 1223627408,
+              "first_visit": true,
+              "infill": false,
+              "phase": "building"
+            }
+          ],
+          "infill": false,
+          "opened": true,
+          "restored": true
+        },
+        "infill_entry": {
+          "building_id": 1442467167,
+          "door": "(2944.0, -416.0)",
+          "events": [
+            {
+              "building_id": 1442467167,
+              "first_visit": false,
+              "infill": true,
+              "phase": "building"
+            }
+          ],
+          "infill": true,
+          "opened": true,
+          "restored": true
+        },
+        "boundary": {
+          "after": "(1, 0)",
+          "before": "(1, -1)",
+          "crossed": true,
+          "target": "(3232.0, 160.0)"
+        },
+        "director": {
+          "end": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {
+                "hunter": 1
+              },
+              "counters": {
+                "aborted": 0,
+                "announced": 1,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 1,
+                "scheduled": 1,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 51.0742899576826,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 105.408333333317,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "requested": true,
+          "start": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {},
+              "counters": {
+                "aborted": 0,
+                "announced": 0,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 0,
+                "scheduled": 0,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 39.1833333333334,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 149.183333333333,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "stayed_live": true
+        },
+        "limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test.",
+        "save_observation": {
+          "acceptance_end_api_counter": 0,
+          "autosave_disabled": true,
+          "baseline_api_counter": 0,
+          "current_profile_is_null": true,
+          "scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+          "writes_during_acceptance": 0
+        },
+        "runtime_fixture": {
+          "actual_window": "(1280, 720)",
+          "engine_max_fps": 20,
+          "game_was_instantiated": true,
+          "physics_ticks_per_second": 60
+        }
+      },
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-1-passage.png",
+          "bytes": 1503348,
+          "sha256": "447dfffacfd29306a3bccb91c7471263bca1373ec4d2b438538159c104b495b6"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-2-inside.png",
+          "bytes": 1706978,
+          "sha256": "765fb77e53fdca81e16729150985d4d3049a8f0d9646852a47a37e3bce4a90bd"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-3-inside-infill.png",
+          "bytes": 1619487,
+          "sha256": "9a07090335afafb277439b8ed79db1e29112dea5dcdc31a34e99b30b780e248a"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-4-collected.png",
+          "bytes": 1636112,
+          "sha256": "9a6593fd5f8633d47e4668a4dbe60c5a5ad9174703cf32ca4fd78bb020f8c175"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r3/s6/traversal-5-boundary.png",
+          "bytes": 1495848,
+          "sha256": "f59c0f69849d37fd2d33f7a408375b0da8d2a4c4c82a7f9fee25856ca5d1cdcc"
+        }
+      ],
+      "original_r2_collection_verdict": {
+        "valid": false,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": false,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true
+        },
+        "kind": "equipped",
+        "ground_serial": 8
+      },
+      "corrected_r3_collection_verdict": {
+        "valid": true,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": true,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true,
+          "incoming_signed_int64_nonzero": true
+        },
+        "kind": "equipped",
+        "ground_serial": 8
+      }
+    }
+  ],
+  "remaining_manual_commands": [
+    {
+      "id": "s7",
+      "label": "city22-street-native-routes-r3-s7",
+      "out": "/var/tmp/sa-city22/streets/native-routes-r3/s7",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-routes-r3-s7",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--passage-chunk=-4,3",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s7"
+      ],
+      "godot_args": [
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--passage-chunk=-4,3",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s7"
+      ],
+      "origin": {
+        "role": "root_manual_guard_command_only_remaining_case",
+        "program": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/command-plan.json",
+        "scope": "Frozen new manual invocation plan; not execution of original5e queue. Runtime GDScript b4/scene unchanged. Execute only after original reward pair restores source."
+      }
+    },
+    {
+      "id": "s6",
+      "label": "city22-street-native-routes-r3-s6",
+      "out": "/var/tmp/sa-city22/streets/native-routes-r3/s6",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-routes-r3-s6",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=6",
+        "--world-seed=16102028",
+        "--passage-chunk=1,-1",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s6"
+      ],
+      "godot_args": [
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=6",
+        "--world-seed=16102028",
+        "--passage-chunk=1,-1",
+        "--out=/var/tmp/sa-city22/streets/native-routes-r3/s6"
+      ],
+      "origin": {
+        "role": "root_manual_guard_command_only_remaining_case",
+        "program": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/command-plan.json",
+        "scope": "Frozen new manual invocation plan; not execution of original5e queue. Runtime GDScript b4/scene unchanged. Execute only after original reward pair restores source."
+      }
+    }
+  ],
+  "limits": "No engine launched by this validator. Actual completed R2 parser/S2 retain original5e program origin and old stopped verdict. Only S7/S6 use new separately frozen root manual command plan, unchanged b4 GDScript/scene/runtime/physics/route. Corrected signed ObjectID check is a later pure source-based verdict, not a rewritten original queue."
+}

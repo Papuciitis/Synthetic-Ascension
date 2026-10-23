@@ -1,0 +1,17 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-frontage-r3-1",
+ "queued_seconds": 300.2,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 35.581,
+ "peak_rss_mb": 450,
+ "diagnostic_count": 3,
+ "diagnostics_head": [
+  "ERROR: Cannot open file 'res://tools/tests/CityStreetFrontageTest.tscn'.",
+  "ERROR: Failed loading resource: res://tools/tests/CityStreetFrontageTest.tscn.",
+  "ERROR: Failed loading scene: res://tools/tests/CityStreetFrontageTest.tscn."
+ ]
+}
+--- stdout tail (2/2 lines) ---
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+

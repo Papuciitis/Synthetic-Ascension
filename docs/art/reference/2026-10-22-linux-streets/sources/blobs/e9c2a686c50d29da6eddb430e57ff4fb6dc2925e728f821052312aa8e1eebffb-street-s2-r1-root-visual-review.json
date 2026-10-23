@@ -1,0 +1,36 @@
+{
+  "actual_run": "city22-street-native-s2-r1-s2",
+  "verdict": "FAILED_COLLECTION_GATE_NOT_ACCEPTED",
+  "root_viewed_originals": [
+    {
+      "path": "/var/tmp/sa-city22/streets/native-s2-r1/s2/traversal-1-passage.png",
+      "sha256": "b0a66934acc51d12a310e4fcb2d0cb83b4892a57f7369ee81074d0a040722de1"
+    },
+    {
+      "path": "/var/tmp/sa-city22/streets/native-s2-r1/s2/traversal-2-inside.png",
+      "sha256": "227e88fbdf869f12a46aa79985f8b8a5bbb8630661953b4cc56385a8a9c0d6a4"
+    },
+    {
+      "path": "/var/tmp/sa-city22/streets/native-s2-r1/s2/traversal-3-inside-infill.png",
+      "sha256": "c777590a0fac898954393fe2fd812edc364771fe0b376619323bda90ef99f447"
+    },
+    {
+      "path": "/var/tmp/sa-city22/streets/native-s2-r1/s2/traversal-4-collected.png",
+      "sha256": "d7f724e7a8801a13f203b257e649cb562a24eb8bbf17a2ecc50ec891c91dace0"
+    },
+    {
+      "path": "/var/tmp/sa-city22/streets/native-s2-r1/s2/traversal-5-boundary.png",
+      "sha256": "8e25bce6b09da81593cb209b18e82ed09e9919f807020b56b6e5b03743f9a5a8"
+    }
+  ],
+  "observations": [
+    "Passage original image shows physically open lane between existing and infill buildings, consistent shared stone paving and readable roof shadows.",
+    "Original interior and infill interior plates show cutaway and physical player presence; broad forecourt topology is not accepted as solved.",
+    "Collection plate HUD visibly has an ordinary ring feed stack; this does not retroactively prove the failed resource-identity assertion. Source-backed fresh telemetry is required.",
+    "Boundary plate retains live enemies/projectiles and restored roofs."
+  ],
+  "limits": [
+    "Raw route exits1 with one collection diagnostic; all images remain failed-run evidence, not accepted route completion.",
+    "Selected street branch is isolated from final integrated cover/prop/plaza/weathering changes."
+  ]
+}

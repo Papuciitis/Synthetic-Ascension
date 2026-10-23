@@ -1,0 +1,26 @@
+{
+  "created_utc": "2026-10-23T01:50:52.403565+00:00",
+  "scope": "Independent source-only GDScript/runtime-cause/Python acceptance and command-plan review during OPEN quiet timing window. No engine, fixture tests, broad hashing, build, Git, runtime or owner-file changes.",
+  "owner_frozen_sources_reviewed": {
+    "StreetNativeAcceptanceProbeR2.gd": "b4b608161d02fb0cf1c50698e796210b95ce481993df8517a45f6b448f202597",
+    "street-pickup-r2.py": "5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a",
+    "source-bindings.json": "0abd1ed17bd9f9597cb91d20f5c5a1bd3698e0d739aac0a2c3b593f407660559"
+  },
+  "hash_note": "Owner-frozen hashes are identified explicitly; no runtime/source inventory hash pass or fixture test was run during the quiet timing window. Root execution must revalidate exact pins.",
+  "verdict": "No concrete source/type/causal/acceptance blocker found. Root parser and fresh native collection proof remain required; original failed R1 is not accepted.",
+  "findings": [
+    "GroundLootCap monotonic ground_serial is assigned synchronously when ordinary staged pickup enters the tree; observer connects after staging and before the next physics/process collection. ItemPickup opens a telemetry operation scoped to exact serial/source pickup/kind drop before container mutation.",
+    "Runtime intentionally consumes incoming Resource identity during equipped/bag duplicate feeding. Destination identity survives, and ItemInstance emits dest_before/dest_after/exact incoming/mass synchronously after successful progression. The original identity-only additional assertion is too narrow for this legitimate runtime path.",
+    "R2 keeps original picked flag, original collected conjunction and every real-physics/trace/entry/director/AI/streaming/pickup/save/deadline gate through unchanged inheritance. It changes only stage telemetry observation, ownership acceptance and shutdown metadata.",
+    "Helper validates exact incoming snapshot, exact event-time destination state, same id/polarity, no rank-swap for this rarity0 staged item, positive finite mass and expected progress increase, with destination still actually present in equipment/bag at route acceptance. Identity-retaining equip/bag events still require exact incoming Resource. Duplicate successful scoped acquisitions reject.",
+    "Independent serialized validator requires original picked/collected, exactserial/source/op, one scoped successful live destination and independent quantitative progression/mass/current ownership-state checks; unrelated pickups and unsupported/failed/stale events cannot satisfy the reviewed runtime observer.",
+    "Original wrapper save API observation and original route validator remain mandatory. Source36pin/focused-source/full14theme aggregate/fresh-label/guard/manifest/image gates remain in candidate queue; no reward apron substitution added.",
+    "For final merged main, reuse only pure validate_collection and validate_route. Candidate queue main deliberately targets /tmp/sa-wp2-streets and its old preparation pins; actual main helper/runtime/launcher/cache/source receipts must be bound anew."
+  ],
+  "limits": [
+    "Failed R1 pickup.picked=true and HUD stack change support the cause but do not retrospectively identify a destination Resource; R1 stays failed.",
+    "Owner26 offline fixtures were read as evidence only and not rerun here; no native/parser success claim for new helper.",
+    "Observer activates existing telemetry reporting and retains Resource references, with no gameplay consumer or inventory writes. This is functional collection evidence, not performance or general inventory balance acceptance.",
+    "Native execution only after root timing window CLOSED; retain all unique failed or interrupted raw results."
+  ]
+}

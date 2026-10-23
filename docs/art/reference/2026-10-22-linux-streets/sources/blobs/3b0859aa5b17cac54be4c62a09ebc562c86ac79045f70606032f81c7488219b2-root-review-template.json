@@ -1,0 +1,73 @@
+{
+  "status": "PENDING_ACTUAL_ROOT_REVIEW",
+  "broader_ground_topology": "OPEN",
+  "instructions": "Root-owned full review destination: continuation/street-r3-root-visual-review.json. Top status stays pending until all three actual routes and both actual reward originals are reviewed and exact bound. S2 fields are copied from its immutable actual record, with status pending root transfer from the separately retained accepted-images review; no automatic final acceptance. Use fresh raw/guard/manifest/complete PNG bindings for S7/S6 and rewards. Broader topology stays OPEN.",
+  "accepted_status_required": "ROOT_VISUAL_ACCEPTED_SELECTED_STREET_ROUTES_AND_REWARD_PAVING",
+  "case_schema": {
+    "status": "ACCEPTED_SELECTED_VIEW",
+    "label": null,
+    "raw_path": null,
+    "raw_sha256": null,
+    "thermal_path": null,
+    "thermal_sha256": null,
+    "manifest_path": null,
+    "manifest_sha256": null,
+    "images": [
+      {
+        "path": null,
+        "bytes": null,
+        "sha256": null
+      }
+    ],
+    "observations": [],
+    "limits": []
+  },
+  "cases": {
+    "s2": {
+      "status": "PENDING_ROOT_TRANSFER_FROM_REVIEWED_ORIGINALS",
+      "label": "city22-street-native-routes-r2-s2",
+      "raw_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-routes-r2-s2-1/run-results.json",
+      "raw_sha256": "764d1a4601d6e707a93c669144addd89d54117471dd471579ffe96dea5365d00",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-routes-r2-s2-thermal.json",
+      "thermal_sha256": "8c356cd8f5926bc3f20373a0797c5dea05b06ca3c8629d2a4b8d1788494db5d9",
+      "manifest_path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal.json",
+      "manifest_sha256": "c35fdeffa5cf1a43245583661eed805b4be1e5216b042b007303555642a5a5ae",
+      "images": [
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-1-passage.png",
+          "bytes": 1476761,
+          "sha256": "79bc3f74ad454baf31a8cc8911ae69abfe1aac81cc25f03feb5f3ea828bc1338"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-2-inside.png",
+          "bytes": 1754742,
+          "sha256": "a1baf3755dc5774f3e4b8504fdda9610382e65efb0bc5029cfe7acd0e55b84e3"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-3-inside-infill.png",
+          "bytes": 1615552,
+          "sha256": "c6f6d7b41dfd03a1df310b2e92baee34b6fbdf6aa72eb7768cc5ab6d0a7a7716"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-4-collected.png",
+          "bytes": 1705739,
+          "sha256": "f2d352ad1a9fd2d6e6c6d3a214198da225dbd70725595b8bab5a1efd40741c6f"
+        },
+        {
+          "path": "/var/tmp/sa-city22/streets/native-routes-r2/s2/traversal-5-boundary.png",
+          "bytes": 1294970,
+          "sha256": "e4b927c50d4de0e2c200aece8b55fe7881ec33126425124bf3616a191c8ced38"
+        }
+      ],
+      "source_review": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-s2-r2-root-visual-review.json",
+      "limits": [
+        "Root must confirm later corrected ObjectID proof and transfer the already reviewed original images into this full five-case review. Original5e queue remains stopped."
+      ]
+    },
+    "s7": null,
+    "s6": null,
+    "reward-before": null,
+    "reward-after": null
+  },
+  "supporting_s2_original_image_review": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-s2-r2-root-visual-review.json"
+}

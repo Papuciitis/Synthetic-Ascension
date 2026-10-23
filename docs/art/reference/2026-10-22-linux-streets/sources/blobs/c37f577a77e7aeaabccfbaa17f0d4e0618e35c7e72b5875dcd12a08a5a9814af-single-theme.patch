@@ -1,0 +1,88 @@
+--- original/CityStreetContinuityTest.gd
++++ external/CityStreetContinuityThemePart.gd
+@@ -60,6 +60,16 @@
+ var _court_doors := 0
+ var _framed := 0
+ var _framed_open_sides := 0
++
++# External single-theme execution of the unchanged original suite. Only the
++# outer theme selection, five deferred global assertions and JSON observations
++# differ. Every fixture/per-chunk/whole-plan assertion below remains active.
++var _matrix_theme_index: int = -1
++var _matrix_theme: Dictionary = {}
++var _matrix_expected_samples: Array[Dictionary] = []
++var _matrix_plan_paths: Array[Dictionary] = []
++var _matrix_plan_visits: Array[Dictionary] = []
++
+ 
+ 
+ func _theme_seed(segment: int, theme_id: String) -> int:
+@@ -373,6 +383,7 @@
+ 			cm._unregister_chunk_cells(coord)
+ 			chunk.free()
+ 			_plan_chunks += 1
++			_matrix_plan_visits.append({"coord": [coord.x, coord.y], "enabled": enabled})
+ 		cm.free()
+ 		layouts.append(layout)
+ 	var off: Dictionary = layouts[0]
+@@ -512,11 +523,23 @@
+ func _run() -> void:
+ 	for arg: String in OS.get_cmdline_user_args():
+ 		if arg.begins_with("--deco="): _deco = arg.trim_prefix("--deco=") != "0"
++	var index_args: int = 0
++	var matrix_output: String = ""
++	for arg: String in OS.get_cmdline_user_args():
++		if arg.begins_with("--theme-index="):
++			index_args += 1
++			var value: String = arg.trim_prefix("--theme-index=")
++			if value.is_valid_int(): _matrix_theme_index = int(value)
++		if arg.begins_with("--out="): matrix_output = arg.trim_prefix("--out=")
++	if index_args != 1 or _matrix_theme_index < 0 or _matrix_theme_index >= THEMES.size() or not _deco or not matrix_output.is_absolute_path():
++		push_error("Street continuity part requires exactly one --theme-index=0..13, --deco=1 and absolute --out JSON")
++		get_tree().quit(1)
++		return
+ 	var dummy := Node2D.new()
+ 	dummy.add_to_group(&"player")
+ 	add_child(dummy)
+ 	var previous_segment: int = Global.attempt_segment
+-	for entry: Array in THEMES:
++	for entry: Array in [THEMES[_matrix_theme_index]]:
+ 		var segment: int = entry[0]
+ 		var seed_value := _theme_seed(segment, entry[1])
+ 		if seed_value < 0:
+@@ -525,6 +548,10 @@
+ 		Global.attempt_segment = segment
+ 		var theme := SegmentThemePicker.get_theme(segment, seed_value)
+ 		var plan := DistrictPlan.generate(segment, seed_value, 2048, theme)
++		_matrix_theme = {"segment": segment, "seed": seed_value, "plan_seed": int(plan.seed), "generation_attempt": int(plan.get("generation_attempt", 1)), "id": String(theme.id)}
++		for matrix_coord: Vector2i in plan.role_by_chunk:
++			_matrix_plan_paths.append({"coord": [matrix_coord.x, matrix_coord.y], "role": String(plan.role_by_chunk[matrix_coord])})
++		_matrix_plan_paths.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.coord[0] < b.coord[0] or (a.coord[0] == b.coord[0] and a.coord[1] < b.coord[1]))
+ 		for role: StringName in ROLES:
+ 			var coords: Array[Vector2i] = []
+ 			for coord: Vector2i in plan.role_by_chunk:
+@@ -532,21 +559,19 @@
+ 					coords.append(coord)
+ 			coords.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.x < b.x or (a.x == b.x and a.y < b.y))
+ 			for coord: Vector2i in coords.slice(0, PER_ROLE):
++				_matrix_expected_samples.append({"segment": segment, "theme": String(theme.id), "plan_seed": int(plan.seed), "coord": [coord.x, coord.y], "role": String(role)})
+ 				_check_chunk(theme, plan, coord, role, segment)
+ 				chunks += 1
+ 		_check_plan(theme, plan, segment)
+ 	Global.attempt_segment = previous_segment
+-	_check(_infill_total > 0, "The pass built no infill at all")
+-	for step: int in [-1, 0, 1]:
+-		_check(int(_steps[step]) > 0, "No infill segment stands on setback step %d" % step)
+-	_check(_framed > 0 and _framed_open_sides > 0 and _framed_open_sides < _framed, "framed squares: %d, with open sides %d (want some of each)" % [_framed, _framed_open_sides])
++	# Exactly these five global assertions are evaluated by the strict14-part aggregator.
+ 	var output := ""
+ 	for arg: String in OS.get_cmdline_user_args():
+ 		if arg.begins_with("--out="): output = arg.trim_prefix("--out=")
+ 	if not output.is_empty():
+ 		var file := FileAccess.open(output, FileAccess.WRITE)
+ 		if file != null:
+-			file.store_string(JSON.stringify({"samples": _samples, "failures": failures}, "\t"))
++			file.store_string(JSON.stringify({"samples": _samples, "failures": failures, "theme_index": _matrix_theme_index, "theme_entry": THEMES[_matrix_theme_index], "themes": THEMES, "roles": ROLES, "per_role": PER_ROLE, "base_seed": BASE_SEED, "deco": _deco, "theme": _matrix_theme, "expected_sample_paths": _matrix_expected_samples, "expected_plan_paths": _matrix_plan_paths, "actual_plan_visits": _matrix_plan_visits, "counts": {"sample_chunks": chunks, "originals": _original_total, "infill": _infill_total, "checks_local": _checks, "preexisting_unreachable": _preexisting, "plan_chunks": _plan_chunks, "plan_doors": _plan_doors, "cross_seam_aprons": _cross_seam_aprons, "court_doors": _court_doors, "framed": _framed, "framed_open_sides": _framed_open_sides, "steps": _steps}, "walls": _walls, "infill_walls": _infill_walls, "original_suite": "res://tools/tests/CityStreetContinuityTest.gd", "original_suite_sha256": FileAccess.get_sha256("res://tools/tests/CityStreetContinuityTest.gd"), "parent_suite_sha256": FileAccess.get_sha256("res://tools/tests/ProcChunkReachabilityTest.gd"), "external_copy_sha256": FileAccess.get_sha256(get_script().resource_path), "deferred_global_assertions": 5, "wall_limit": WALL_LIMIT, "wall_never": WALL_NEVER, "door_apron": DOOR_APRON}, "\t"))
+ 			file.close()
+ 	for failure: String in failures.slice(0, 30):
+ 		push_error(failure)

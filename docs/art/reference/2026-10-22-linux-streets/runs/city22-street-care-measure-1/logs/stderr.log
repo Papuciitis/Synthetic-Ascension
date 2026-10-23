@@ -1,0 +1,12 @@
+ERROR: FAIL: the bed fixture retains road index 7 with street continuity disabled
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareTest.gd:28)
+       [1] _test_production_footway_pockets (res://tools/tests/CityGroundCareTest.gd:225)
+       [2] _run (res://tools/tests/CityGroundCareTest.gd:249)
+ERROR: FAIL: with street continuity the bed chunk keeps its pinned floor ownership
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareTest.gd:28)
+       [1] _test_production_footway_pockets (res://tools/tests/CityGroundCareTest.gd:229)
+       [2] _run (res://tools/tests/CityGroundCareTest.gd:249)

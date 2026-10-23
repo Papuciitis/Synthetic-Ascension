@@ -1,0 +1,648 @@
+{
+  "created_utc": "2026-10-23T01:33:05.948073+00:00",
+  "project": "/tmp/sa-wp2-streets",
+  "mode": "s2",
+  "output": "/var/tmp/sa-city22/streets/native-s2-r1",
+  "required_clean_cases": [
+    "city22-street-frontage-r4"
+  ],
+  "continuity_matrix_gate": "/var/tmp/sa-city22/streets/continuity-matrix/aggregate.json",
+  "runtime_render_fps_cap": 20,
+  "route_window": [
+    1280,
+    720
+  ],
+  "reward_window": [
+    960,
+    540
+  ],
+  "source_substitution": {
+    "path": "/tmp/sa-wp2-streets/core/systems/world/proc/SiteParcelsImpl.gd",
+    "before_sha256": "689545138ea4ffd47eac1f1a74475be4372ebcaee75f453106741d155825afee",
+    "after_sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+    "scope": "Only actual apron implementation differs; reward city_shared_ground remains the candidate true value in both. This pair does not isolate the separate reward shared-ground config fix."
+  },
+  "commands": [
+    {
+      "id": "parse",
+      "label": "city22-street-native-s2-r1-parse",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-s2-r1-parse",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "240",
+        "--",
+        "--headless",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn",
+        "--",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd",
+        "res://tools/dev/CityStreetTraversalProbe.gd"
+      ]
+    },
+    {
+      "id": "s2",
+      "label": "city22-street-native-s2-r1-s2",
+      "out": "/var/tmp/sa-city22/streets/native-s2-r1/s2",
+      "segment": 2,
+      "seed": 16102026,
+      "coord": [
+        0,
+        2
+      ],
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-s2-r1-s2",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--passage-chunk=0,2",
+        "--out=/var/tmp/sa-city22/streets/native-s2-r1/s2"
+      ]
+    }
+  ],
+  "sources_before": {
+    "/tmp/sa-wp2-streets/core/systems/world/proc/SiteParcelsImpl.gd": {
+      "exists": true,
+      "sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503"
+    },
+    "/tmp/sa-wp2-streets/tools/dev/CityStreetTraversalProbe.gd": {
+      "exists": true,
+      "sha256": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755"
+    },
+    "/tmp/sa-wp2-streets/tools/dev/CityBlockPlayablePreview.gd": {
+      "exists": true,
+      "sha256": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83"
+    },
+    "/tmp/sa-wp2-streets/tools/dev/EliteCrowdFightPreview.gd": {
+      "exists": true,
+      "sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": {
+      "exists": true,
+      "sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/ChunkManager.gd": {
+      "exists": true,
+      "sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/ground/GroundSplatRenderer.gd": {
+      "exists": true,
+      "sha256": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/ground/DistrictGroundPolicy.gd": {
+      "exists": true,
+      "sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36"
+    },
+    "/tmp/sa-wp2-streets/scenes/world/volumes/IndoorVolume.gd": {
+      "exists": true,
+      "sha256": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a"
+    },
+    "/tmp/sa-wp2-streets/scenes/world/buildings/RoofOverlay.gd": {
+      "exists": true,
+      "sha256": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07"
+    },
+    "/tmp/sa-wp2-streets/project.godot": {
+      "exists": true,
+      "sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.gd": {
+      "exists": true,
+      "sha256": "cdb18f3cb96c08a2d1934ffcbba855872debed0882fe971275e88f8c9f59d993"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.tscn": {
+      "exists": true,
+      "sha256": "0a0ddadfe880c090d9e36e59f4eaf37b0845dc891fe656ec0fc5849fa60d9bad"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd": {
+      "exists": true,
+      "sha256": "30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn": {
+      "exists": true,
+      "sha256": "ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.gd": {
+      "exists": true,
+      "sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn": {
+      "exists": true,
+      "sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py": {
+      "exists": true,
+      "sha256": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+      "exists": true,
+      "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": {
+      "exists": true,
+      "sha256": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7"
+    }
+  },
+  "limits": "Functional checks with explicit 70 C start and unchanged90 C/85 C sustained runtime limits. Continuity requires either the clean full dressed suite or strict complete14-theme matrix plus identical original5global assertions; partials never satisfy the gate. External duty released on [Game] ready; external subclasses set and record the explicit render cap, preserving physics ticks and physical acceptance, no performance claim. Route traces use actual physics; initial discovery/placement, god mode, one staged item and scripted combat remain disclosed. The original route probe itself does not consume --runtime-fps. Reward images inherit frozen streaming and disabled ambient combat.",
+  "started_utc": "2026-10-23T01:33:07.684791+00:00",
+  "prerequisites": {
+    "city22-street-frontage-r4": {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-frontage-r4-1/run-results.json",
+      "sha256": "2e38b38a8d2e40e042b6091412279e6a7ac7421c1d4cad0b4a361cd78f722f10",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "diagnostics": [],
+      "elapsed_seconds": 40.103,
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-frontage-r4-thermal.json",
+      "thermal_sha256": "dd9ddf2de485ed71745bd45f3ee6905117c9bfc1737e63e9a6e65e4cb6f9d24f",
+      "thermal_peak_c": 86.0,
+      "duty_released": false
+    },
+    "complete_dressed_continuity_matrix": {
+      "path": "/var/tmp/sa-city22/streets/continuity-matrix/aggregate.json",
+      "sha256": "d5a68a511e9bdc55ac14f74d06d80014654e0510db9d582e1a322755c62560dd",
+      "status": "passed",
+      "checked_themes": 14,
+      "original_global_assertions": 5,
+      "runtime_source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "totals": {
+        "checks_local": 92616,
+        "court_doors": 4150,
+        "cross_seam_aprons": 273,
+        "framed": 35,
+        "framed_open_sides": 21,
+        "infill": 346,
+        "originals": 493,
+        "plan_chunks": 2522,
+        "plan_doors": 6343,
+        "preexisting_unreachable": 17,
+        "sample_chunks": 197,
+        "steps": {
+          "-1": 99,
+          "0": 898,
+          "1": 274
+        },
+        "checks_including_original_five": 92621
+      },
+      "harness": {
+        "metadata_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json",
+        "metadata_sha256": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "original_sha256": "4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209",
+        "parent_sha256": "ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258",
+        "copy_sha256": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "scene_sha256": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "diff_sha256": "c37f577a77e7aeaabccfbaa17f0d4e0618e35c7e72b5875dcd12a08a5a9814af",
+        "driver_sha256": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "manifest": {
+          "themes": [
+            [
+              2,
+              ""
+            ],
+            [
+              3,
+              ""
+            ],
+            [
+              4,
+              "collapsed_ward"
+            ],
+            [
+              4,
+              "civilian_cutthrough"
+            ],
+            [
+              5,
+              ""
+            ],
+            [
+              6,
+              "industrial_cutthrough"
+            ],
+            [
+              6,
+              "ruined_services"
+            ],
+            [
+              7,
+              "underpass_veins"
+            ],
+            [
+              7,
+              "canal_services"
+            ],
+            [
+              8,
+              "rail_yard"
+            ],
+            [
+              8,
+              "military_staging"
+            ],
+            [
+              9,
+              "outer_wall"
+            ],
+            [
+              9,
+              "siege_services"
+            ],
+            [
+              10,
+              ""
+            ]
+          ],
+          "roles": [
+            "main_street",
+            "secondary_route",
+            "service_lane",
+            "exit_approach",
+            "dangerous_alley",
+            "secondary_alley_cache",
+            "secondary_reward_building",
+            "optional_interior",
+            "district_fill",
+            "landmark_plaza"
+          ],
+          "PER_ROLE": 2,
+          "BASE_SEED": 16102026,
+          "WALL_LIMIT": 24,
+          "WALL_NEVER": 32,
+          "DOOR_APRON": 4
+        }
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "parse",
+      "label": "city22-street-native-s2-r1-parse",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-s2-r1-parse",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "240",
+        "--",
+        "--headless",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn",
+        "--",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd",
+        "res://tools/dev/CityStreetTraversalProbe.gd"
+      ],
+      "started_utc": "2026-10-23T01:33:07.686585+00:00",
+      "sources_before": {
+        "/tmp/sa-wp2-streets/core/systems/world/proc/SiteParcelsImpl.gd": {
+          "exists": true,
+          "sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503"
+        },
+        "/tmp/sa-wp2-streets/tools/dev/CityStreetTraversalProbe.gd": {
+          "exists": true,
+          "sha256": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755"
+        },
+        "/tmp/sa-wp2-streets/tools/dev/CityBlockPlayablePreview.gd": {
+          "exists": true,
+          "sha256": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83"
+        },
+        "/tmp/sa-wp2-streets/tools/dev/EliteCrowdFightPreview.gd": {
+          "exists": true,
+          "sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": {
+          "exists": true,
+          "sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/ChunkManager.gd": {
+          "exists": true,
+          "sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/ground/GroundSplatRenderer.gd": {
+          "exists": true,
+          "sha256": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/ground/DistrictGroundPolicy.gd": {
+          "exists": true,
+          "sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36"
+        },
+        "/tmp/sa-wp2-streets/scenes/world/volumes/IndoorVolume.gd": {
+          "exists": true,
+          "sha256": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a"
+        },
+        "/tmp/sa-wp2-streets/scenes/world/buildings/RoofOverlay.gd": {
+          "exists": true,
+          "sha256": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07"
+        },
+        "/tmp/sa-wp2-streets/project.godot": {
+          "exists": true,
+          "sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.gd": {
+          "exists": true,
+          "sha256": "cdb18f3cb96c08a2d1934ffcbba855872debed0882fe971275e88f8c9f59d993"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.tscn": {
+          "exists": true,
+          "sha256": "0a0ddadfe880c090d9e36e59f4eaf37b0845dc891fe656ec0fc5849fa60d9bad"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd": {
+          "exists": true,
+          "sha256": "30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn": {
+          "exists": true,
+          "sha256": "ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.gd": {
+          "exists": true,
+          "sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn": {
+          "exists": true,
+          "sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py": {
+          "exists": true,
+          "sha256": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+          "exists": true,
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": {
+          "exists": true,
+          "sha256": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7"
+        }
+      },
+      "wrapper_exit": 0,
+      "ended_utc": "2026-10-23T01:34:41.272684+00:00",
+      "source_restored_sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+      "run": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-native-s2-r1-parse-1/run-results.json",
+        "sha256": "ebc3b9c1f29d2472212ab80cc6b53e3eff7938655d6b4170d2e14dfa91e0e6ea",
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "diagnostics": [],
+        "elapsed_seconds": 92.976,
+        "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-native-s2-r1-parse-thermal.json",
+        "thermal_sha256": "6546fae8850e03fa6cde87b9d46c5d0961b865a1a8c1c584e386174c0b81b4ce",
+        "thermal_peak_c": 75.0,
+        "duty_released": false
+      }
+    },
+    {
+      "id": "s2",
+      "label": "city22-street-native-s2-r1-s2",
+      "out": "/var/tmp/sa-city22/streets/native-s2-r1/s2",
+      "segment": 2,
+      "seed": 16102026,
+      "coord": [
+        0,
+        2
+      ],
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-street-native-s2-r1-s2",
+        "--project",
+        "/tmp/sa-wp2-streets",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--passage-chunk=0,2",
+        "--out=/var/tmp/sa-city22/streets/native-s2-r1/s2"
+      ],
+      "started_utc": "2026-10-23T01:34:44.353652+00:00",
+      "sources_before": {
+        "/tmp/sa-wp2-streets/core/systems/world/proc/SiteParcelsImpl.gd": {
+          "exists": true,
+          "sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503"
+        },
+        "/tmp/sa-wp2-streets/tools/dev/CityStreetTraversalProbe.gd": {
+          "exists": true,
+          "sha256": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755"
+        },
+        "/tmp/sa-wp2-streets/tools/dev/CityBlockPlayablePreview.gd": {
+          "exists": true,
+          "sha256": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83"
+        },
+        "/tmp/sa-wp2-streets/tools/dev/EliteCrowdFightPreview.gd": {
+          "exists": true,
+          "sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": {
+          "exists": true,
+          "sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/ChunkManager.gd": {
+          "exists": true,
+          "sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/ground/GroundSplatRenderer.gd": {
+          "exists": true,
+          "sha256": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9"
+        },
+        "/tmp/sa-wp2-streets/core/systems/world/ground/DistrictGroundPolicy.gd": {
+          "exists": true,
+          "sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36"
+        },
+        "/tmp/sa-wp2-streets/scenes/world/volumes/IndoorVolume.gd": {
+          "exists": true,
+          "sha256": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a"
+        },
+        "/tmp/sa-wp2-streets/scenes/world/buildings/RoofOverlay.gd": {
+          "exists": true,
+          "sha256": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07"
+        },
+        "/tmp/sa-wp2-streets/project.godot": {
+          "exists": true,
+          "sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.gd": {
+          "exists": true,
+          "sha256": "cdb18f3cb96c08a2d1934ffcbba855872debed0882fe971275e88f8c9f59d993"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.tscn": {
+          "exists": true,
+          "sha256": "0a0ddadfe880c090d9e36e59f4eaf37b0845dc891fe656ec0fc5849fa60d9bad"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd": {
+          "exists": true,
+          "sha256": "30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn": {
+          "exists": true,
+          "sha256": "ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.gd": {
+          "exists": true,
+          "sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn": {
+          "exists": true,
+          "sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py": {
+          "exists": true,
+          "sha256": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+          "exists": true,
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+        },
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": {
+          "exists": true,
+          "sha256": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7"
+        }
+      },
+      "wrapper_exit": 1,
+      "ended_utc": "2026-10-23T01:37:39.729339+00:00",
+      "source_restored_sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503"
+    }
+  ],
+  "status": "stopped",
+  "restore_backup": {
+    "path": "/var/tmp/sa-city22/streets/native-s2-r1/restore-SiteParcelsImpl.gd.data",
+    "sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503"
+  },
+  "error": "RuntimeError('city22-street-native-s2-r1-s2: guard failed; preserve raw run and inspect it')",
+  "ended_utc": "2026-10-23T01:37:39.791744+00:00",
+  "restored_source_sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+  "sources_after": {
+    "/tmp/sa-wp2-streets/core/systems/world/proc/SiteParcelsImpl.gd": {
+      "exists": true,
+      "sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503"
+    },
+    "/tmp/sa-wp2-streets/tools/dev/CityStreetTraversalProbe.gd": {
+      "exists": true,
+      "sha256": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755"
+    },
+    "/tmp/sa-wp2-streets/tools/dev/CityBlockPlayablePreview.gd": {
+      "exists": true,
+      "sha256": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83"
+    },
+    "/tmp/sa-wp2-streets/tools/dev/EliteCrowdFightPreview.gd": {
+      "exists": true,
+      "sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": {
+      "exists": true,
+      "sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/ChunkManager.gd": {
+      "exists": true,
+      "sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/ground/GroundSplatRenderer.gd": {
+      "exists": true,
+      "sha256": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9"
+    },
+    "/tmp/sa-wp2-streets/core/systems/world/ground/DistrictGroundPolicy.gd": {
+      "exists": true,
+      "sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36"
+    },
+    "/tmp/sa-wp2-streets/scenes/world/volumes/IndoorVolume.gd": {
+      "exists": true,
+      "sha256": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a"
+    },
+    "/tmp/sa-wp2-streets/scenes/world/buildings/RoofOverlay.gd": {
+      "exists": true,
+      "sha256": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07"
+    },
+    "/tmp/sa-wp2-streets/project.godot": {
+      "exists": true,
+      "sha256": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.gd": {
+      "exists": true,
+      "sha256": "cdb18f3cb96c08a2d1934ffcbba855872debed0882fe971275e88f8c9f59d993"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetRewardCameraProbe.tscn": {
+      "exists": true,
+      "sha256": "0a0ddadfe880c090d9e36e59f4eaf37b0845dc891fe656ec0fc5849fa60d9bad"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd": {
+      "exists": true,
+      "sha256": "30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn": {
+      "exists": true,
+      "sha256": "ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.gd": {
+      "exists": true,
+      "sha256": "1f3db53fa1cf888464670c9dea0cdfcf2a7c875919483e83ef513e14d5f77eca"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-source-parse.tscn": {
+      "exists": true,
+      "sha256": "aecf19481458932f80a5da177f719db32782003b932e8b407eb521a21d79c126"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py": {
+      "exists": true,
+      "sha256": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+      "exists": true,
+      "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": {
+      "exists": true,
+      "sha256": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7"
+    }
+  }
+}

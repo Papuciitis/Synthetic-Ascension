@@ -1,0 +1,18 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-corridor-red2-1",
+ "queued_seconds": 77.1,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 67.846,
+ "peak_rss_mb": 586,
+ "diagnostic_count": 3,
+ "diagnostics_head": [
+  "ERROR: blocked passage escaped its corridor through the outside detour",
+  "ERROR: blocked passage sidestepped outside its allowed cells",
+  "ERROR: passage proof has no actual-cell trace validation"
+ ]
+}
+--- stdout tail (3/3 lines) ---
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CityStreetTraversalCorridorTest: failures=3

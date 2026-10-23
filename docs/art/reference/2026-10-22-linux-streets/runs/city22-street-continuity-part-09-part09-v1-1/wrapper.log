@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-09-part09-v1-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 308.351,
+ "peak_rss_mb": 585,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/5 lines) ---
+CityStreetContinuityTest: plan chunks=174 doors=430 (aprons across a seam 14) lane walls=125 (longest 26) infill walls=67 (longest 18)
+CityStreetContinuityTest: deco=true setback steps (lots) { -1: 12, 0: 64, 1: 21 } courtyard doors=268 framed squares=3 (open sides 1)
+CityStreetContinuityTest: chunks=15 originals=43 infill=20 checks=6480 preexisting_unreachable=0 failures=0

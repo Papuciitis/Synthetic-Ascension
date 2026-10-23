@@ -3,7 +3,7 @@
 Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
-## 23 October — plaza upkeep and district weathering integrated
+## 23 October — bounded city continuation integrated; combined checks next
 
 Normal-merged plaza candidate `0c92f28f` at `715439be`. Combined renderer
 `3f9d6ff4` retains the checked prop casts and resolves plaza fills through their
@@ -28,11 +28,15 @@ compressed records were verified before publication into this checkout.
 
 Street continuity now passes all fourteen themes and the original aggregate
 conditions: 92,621 checks with clean actual run records. Seventeen excluded
-original unreachable cases remain baseline limitations. The first fresh S2
-physical route reached the passage, both building interiors and the stream
-boundary, but failed staged item collection. Its exit 1 and diagnostic are
-retained; the street candidate remains unmerged pending diagnosis and the
-remaining occupied routes. Normal
+original unreachable cases remain baseline limitations. Normal-merged street
+candidate `b2982024` at `84f19582`. All three occupied S2/S7/S6 routes now pass:
+actual passage, original and infill entry/exit, ordinary collection and a stream
+crossing, with live AI, director and physics. Each native run exits 0 with no
+diagnostics. The reward pair also passes, and root accepted all 17 original
+images within the selected apron/route scope. The
+[street evidence packet](../art/reference/2026-10-22-linux-streets/README.md)
+retains the original R1 failure and stopped R2 verifier result separately.
+Normal
 merged pickup density candidate `67d6b259` at `8e779847`: covered icons keep
 their authored texture/lock/fade factors with denser alpha. The unchanged native
 33/0 checks, scoped parser and actual live tree capture finish cleanly. Matched
@@ -60,21 +64,30 @@ and 360 positive GPU samples each. All eight static pairs are checked; only
 S7-960 uses the source-backed hidden-player comparison correction. Round GPU
 median deltas vary in sign, with S9-960 consistently 0.708–1.041 ms higher.
 These mixed-window, capped static observations establish neither an isolated
-added cost nor a live-Game frame budget. Four candidate-only untracked source-SVG
-import sidecars are preserved outside that checkout for matching test inputs.
+added cost nor a live-Game frame budget. The four candidate-only source-SVG
+import sidecars were restored byte-for-byte after timing and publication;
+their quarantine copies and original isolated-input records remain preserved.
+The [weathering evidence packet](../art/reference/2026-10-22-linux-weathering/README.md)
+contains the checked views, all eight comparisons and their limits.
 The timing window is closed. The [cover evidence packet](../art/reference/2026-10-22-linux-cover/README.md)
 preserves the accepted bounded home/tree results, exact remaining readability
 limits, qualified cost observations and original failed attempts. Combined
-production import, route and settings checks, remaining evidence and branch
-publication are pending.
+production route/settings checks and branch publication are pending. The
+bounded texture-cache copier has verified and supplied only matching tracked
+world textures (101 entries, about 2 MB); no broad editor import or global
+class-cache copying was needed.
 
 Fresh street collection verification observes ordinary duplicate feeding into
 a retained matching item, in addition to direct inventory ownership. The first
-S2 failure stays failed; the new helper changes observation only. Its source
-review and 26 receipt fixtures are clean. A fresh parser plus S2/S7/S6 physical
-routes are now queued, with all original movement, AI, entry/exit and stream
-gates retained. Broad ground/plaza topology and tiny equipment discoverability
-remain open.
+S2 failure stays failed; the new helper changes observation only. A later
+independent verifier's positive-only resource-ID assumption also stays recorded
+as a stopped result. Source-corrected signed-ID validation reuses the completed
+parser/S2 and adds only the two remaining native routes, preserving their
+distinct execution origins. Source reviews and focused receipt regressions
+are clean. Broad ground/plaza topology, visible rectangular grass/property
+patches and tiny equipment discoverability remain open. The final main check
+will parse all 53 changed owners/dependencies, then review four normal district
+views, reduced-motion S7 and the occupied S7 route on this combined source.
 
 ## 23 October — cover and prop shadows integrated; city continuation active
 

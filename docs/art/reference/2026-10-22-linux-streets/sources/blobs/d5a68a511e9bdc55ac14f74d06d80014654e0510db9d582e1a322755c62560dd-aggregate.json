@@ -1,0 +1,1024 @@
+{
+  "kind": "street-continuity-dressed-fourteen-theme-aggregate",
+  "created_utc": "2026-10-23T00:57:14.816928+00:00",
+  "status": "passed",
+  "matrix_path": "/var/tmp/sa-city22/streets/continuity-matrix/matrix.json",
+  "matrix_sha256": "484c878b91929bb973b23f281fd3fcc3be627a728a44e944678f0e21eca15ab1",
+  "harness": {
+    "metadata_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json",
+    "metadata_sha256": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+    "original_sha256": "4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209",
+    "parent_sha256": "ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258",
+    "copy_sha256": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+    "scene_sha256": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+    "diff_sha256": "c37f577a77e7aeaabccfbaa17f0d4e0618e35c7e72b5875dcd12a08a5a9814af",
+    "driver_sha256": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+    "manifest": {
+      "themes": [
+        [
+          2,
+          ""
+        ],
+        [
+          3,
+          ""
+        ],
+        [
+          4,
+          "collapsed_ward"
+        ],
+        [
+          4,
+          "civilian_cutthrough"
+        ],
+        [
+          5,
+          ""
+        ],
+        [
+          6,
+          "industrial_cutthrough"
+        ],
+        [
+          6,
+          "ruined_services"
+        ],
+        [
+          7,
+          "underpass_veins"
+        ],
+        [
+          7,
+          "canal_services"
+        ],
+        [
+          8,
+          "rail_yard"
+        ],
+        [
+          8,
+          "military_staging"
+        ],
+        [
+          9,
+          "outer_wall"
+        ],
+        [
+          9,
+          "siege_services"
+        ],
+        [
+          10,
+          ""
+        ]
+      ],
+      "roles": [
+        "main_street",
+        "secondary_route",
+        "service_lane",
+        "exit_approach",
+        "dangerous_alley",
+        "secondary_alley_cache",
+        "secondary_reward_building",
+        "optional_interior",
+        "district_fill",
+        "landmark_plaza"
+      ],
+      "PER_ROLE": 2,
+      "BASE_SEED": 16102026,
+      "WALL_LIMIT": 24,
+      "WALL_NEVER": 32,
+      "DOOR_APRON": 4
+    }
+  },
+  "selected_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "parts": [
+    {
+      "theme_index": 0,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "service_courtyards",
+        "plan_seed": 436524753,
+        "seed": 16102026,
+        "segment": 2
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-00-part00-v1.json",
+      "data_sha256": "bee48925b398a20ea5a73ab0a1612581f00733fbcecd41086cc095fd2ff6bec2",
+      "label": "city22-street-continuity-part-00-part00-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-00-part00-v1-1/run-results.json",
+      "run_sha256": "a6a08fddfcf53ac345eebad36a511d0a9342a2f4194a07f53326f53257e35cee",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-00-part00-v1-thermal.json",
+      "thermal_sha256": "3410e00319c6426d063c97cd277f47fe5308ea6f658226046023ef803fe0da42",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 4931,
+        "court_doors": 222,
+        "cross_seam_aprons": 12,
+        "framed": 2,
+        "framed_open_sides": 1,
+        "infill": 31,
+        "originals": 37,
+        "plan_chunks": 132,
+        "plan_doors": 329,
+        "preexisting_unreachable": 0,
+        "sample_chunks": 15,
+        "steps": {
+          "-1": 4,
+          "0": 55,
+          "1": 12
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "e73c2f5a49bd66cd2dab5f1f12a072e7e36d7187d939d9b99d4b69ec08487cf8",
+      "guard_duty_cycle": 0.1,
+      "guard_peak_c": 89.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 1,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "checkpoint_lanes",
+        "plan_seed": 1532982726,
+        "seed": 16102026,
+        "segment": 3
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-01-part01-v2.json",
+      "data_sha256": "a5bb7fe42efe48a4f8322cb4909a9f0612964c2a8ae5dbcbcf7798d2ba482c0f",
+      "label": "city22-street-continuity-part-01-part01-v2",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-01-part01-v2-1/run-results.json",
+      "run_sha256": "7ebae10769dfd9a38e91c706415807bdec349332dbdcc4f0f20b2c31463de021",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-01-part01-v2-thermal.json",
+      "thermal_sha256": "bf5488f9e43f377c25bae36f8cf44b6d6a864c4acfd527dcf9fe9e41cf8f49d2",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 4041,
+        "court_doors": 193,
+        "cross_seam_aprons": 12,
+        "framed": 2,
+        "framed_open_sides": 0,
+        "infill": 24,
+        "originals": 29,
+        "plan_chunks": 104,
+        "plan_doors": 270,
+        "preexisting_unreachable": 2,
+        "sample_chunks": 12,
+        "steps": {
+          "-1": 2,
+          "0": 29,
+          "1": 15
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "e412d51e314295668ae0d81ec0ffb01addd590ee05a0d6afbdd4416cf5295a61",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 80.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 2,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "collapsed_ward",
+        "plan_seed": 771335951,
+        "seed": 16102026,
+        "segment": 4
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-02-part02-v1.json",
+      "data_sha256": "f4d529baee456e61215b5760a225638498f163eabfa7b8bd3495310d778cb05c",
+      "label": "city22-street-continuity-part-02-part02-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-02-part02-v1-1/run-results.json",
+      "run_sha256": "23051666c6ac3988ad6fa379de055ee73ca5077821aa450b04eceb3bb0007fda",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-02-part02-v1-thermal.json",
+      "thermal_sha256": "41eecd1aac9ee4d0acaf8b3c23d9e52dd5178c277516f4a39a76355888b7ec02",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 6399,
+        "court_doors": 279,
+        "cross_seam_aprons": 21,
+        "framed": 3,
+        "framed_open_sides": 3,
+        "infill": 35,
+        "originals": 28,
+        "plan_chunks": 168,
+        "plan_doors": 437,
+        "preexisting_unreachable": 2,
+        "sample_chunks": 14,
+        "steps": {
+          "-1": 5,
+          "0": 69,
+          "1": 17
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "2a7dbac1ed8499843515f04268f452ef971329ee677d482f5f559cdf2dae9992",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 84.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 3,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "civilian_cutthrough",
+        "plan_seed": 592695425,
+        "seed": 16102028,
+        "segment": 4
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-03-part03-v1.json",
+      "data_sha256": "c8fbabbf7924af6685fce98d93357b9f49be51d69593fc1a314dab3efeefcdb5",
+      "label": "city22-street-continuity-part-03-part03-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-03-part03-v1-1/run-results.json",
+      "run_sha256": "a083677051cd720ffd5b3b2e1cd5ddd9e4554f276692561f74e9d2add92147d6",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-03-part03-v1-thermal.json",
+      "thermal_sha256": "8839fc517606d461f0d6e66f2d9158c22fdaf35d0322066dae3f5efbd63a2915",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 6647,
+        "court_doors": 309,
+        "cross_seam_aprons": 25,
+        "framed": 2,
+        "framed_open_sides": 1,
+        "infill": 27,
+        "originals": 33,
+        "plan_chunks": 182,
+        "plan_doors": 457,
+        "preexisting_unreachable": 0,
+        "sample_chunks": 15,
+        "steps": {
+          "-1": 5,
+          "0": 62,
+          "1": 14
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "2dddb6f3636ce12efd1940fabae4fbd0f547ba7088cc3d6919ef5ca65bc8cc9c",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 80.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 4,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "inner_district_gate",
+        "plan_seed": 2139530756,
+        "seed": 16102026,
+        "segment": 5
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-04-part04-v1.json",
+      "data_sha256": "23c64d36ce8daeee55ce1c9b55e3d813d96569a24fb3ed34cfdfc4049e0090a3",
+      "label": "city22-street-continuity-part-04-part04-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-04-part04-v1-1/run-results.json",
+      "run_sha256": "52a3f01c8df4b7f8e338da5856c95e926acb17e22fabf65ec99c8dfee364acac",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-04-part04-v1-thermal.json",
+      "thermal_sha256": "b7c391dadd010822966867e87474e5d0fd3ac0f1c4efdb6fe3c498f92cbc2d94",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 5282,
+        "court_doors": 242,
+        "cross_seam_aprons": 13,
+        "framed": 2,
+        "framed_open_sides": 1,
+        "infill": 25,
+        "originals": 41,
+        "plan_chunks": 142,
+        "plan_doors": 355,
+        "preexisting_unreachable": 2,
+        "sample_chunks": 13,
+        "steps": {
+          "-1": 4,
+          "0": 52,
+          "1": 19
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "bcb97989247e396c31d40f8c8af5c4613fb3bb797889eeaea1ae4181d2bc216e",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 84.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 5,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "industrial_cutthrough",
+        "plan_seed": 1350582539,
+        "seed": 16102028,
+        "segment": 6
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-05-part05-v1.json",
+      "data_sha256": "39a3b24915f0d27809c0085212b3ec9edee130f83f4b5976c252a33642e2e2c4",
+      "label": "city22-street-continuity-part-05-part05-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-05-part05-v1-1/run-results.json",
+      "run_sha256": "701381c9c49bd592595f3d65e34234f1c4f4abb37a9011f650bcc29f49b8f225",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-05-part05-v1-thermal.json",
+      "thermal_sha256": "09b9126942c71d110804ea3fd2cd7ae217e3c637f8b2e89184689dbe96d8639e",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 6354,
+        "court_doors": 294,
+        "cross_seam_aprons": 26,
+        "framed": 3,
+        "framed_open_sides": 0,
+        "infill": 21,
+        "originals": 21,
+        "plan_chunks": 172,
+        "plan_doors": 445,
+        "preexisting_unreachable": 0,
+        "sample_chunks": 11,
+        "steps": {
+          "-1": 8,
+          "0": 65,
+          "1": 21
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "ea251e721bbbf0372e0447384a9b87f0762bc346be2e083be48d274b6d64f113",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 76.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 6,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "ruined_services",
+        "plan_seed": 1410129381,
+        "seed": 16102026,
+        "segment": 6
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-06-part06-v1.json",
+      "data_sha256": "f6679fb88ab55b410cf50de0ac7da2f83a0856e080dc3705b8936db1bfcd677e",
+      "label": "city22-street-continuity-part-06-part06-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-06-part06-v1-1/run-results.json",
+      "run_sha256": "253cf0c7419062d8b6222a268f9cc79b96a6f829590ef4830f1421ca85cb4871",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-06-part06-v1-thermal.json",
+      "thermal_sha256": "bedbaa28b4dc24b6ff8b0580dc9749b1605eff5c8c4293de31645dfb20954335",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 6407,
+        "court_doors": 282,
+        "cross_seam_aprons": 15,
+        "framed": 3,
+        "framed_open_sides": 1,
+        "infill": 27,
+        "originals": 39,
+        "plan_chunks": 168,
+        "plan_doors": 428,
+        "preexisting_unreachable": 5,
+        "sample_chunks": 14,
+        "steps": {
+          "-1": 6,
+          "0": 66,
+          "1": 17
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "0833899dda26431a14ce844e64e838952b0050396c304983de2d328fe6ae1ee5",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 82.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 7,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "underpass_veins",
+        "plan_seed": 1268374746,
+        "seed": 16102026,
+        "segment": 7
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-07-part07-v1.json",
+      "data_sha256": "0645b28a24b475bc9a419147bcdd0a52b5639a7ce67377da711f0d8316e47c70",
+      "label": "city22-street-continuity-part-07-part07-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-07-part07-v1-1/run-results.json",
+      "run_sha256": "78f476ec6ce56cd3c528494ea27a6f880ce740ebd3e2731da306aba28de007fa",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-07-part07-v1-thermal.json",
+      "thermal_sha256": "bbb28bd2b83967e066d3543a24af6cc078deebc69b868aa667419e1d15638f96",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 8136,
+        "court_doors": 367,
+        "cross_seam_aprons": 24,
+        "framed": 2,
+        "framed_open_sides": 2,
+        "infill": 23,
+        "originals": 36,
+        "plan_chunks": 212,
+        "plan_doors": 557,
+        "preexisting_unreachable": 2,
+        "sample_chunks": 13,
+        "steps": {
+          "-1": 9,
+          "0": 68,
+          "1": 29
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "d9615feb862e8fadb3eb3afe99a9d3fc14a203a9a1e30c664c60aae519b03100",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 84.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 8,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "canal_services",
+        "plan_seed": 1208827904,
+        "seed": 16102028,
+        "segment": 7
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-08-part08-v1.json",
+      "data_sha256": "43938c18fa45cbc8ca3248d4bdbcf3bf22922c23789e5bcd10ff5a193c60390b",
+      "label": "city22-street-continuity-part-08-part08-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-08-part08-v1-1/run-results.json",
+      "run_sha256": "430de34e64b2bacb3918dd2339af54da50b8dc5ac4efec7e1006fb5a198f76cc",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-08-part08-v1-thermal.json",
+      "thermal_sha256": "a4e1ebf9306da8e8e73f3f4d83796474ddf0de8293e9050dc40c28b06589b206",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 7266,
+        "court_doors": 323,
+        "cross_seam_aprons": 28,
+        "framed": 2,
+        "framed_open_sides": 2,
+        "infill": 26,
+        "originals": 30,
+        "plan_chunks": 206,
+        "plan_doors": 514,
+        "preexisting_unreachable": 0,
+        "sample_chunks": 15,
+        "steps": {
+          "-1": 9,
+          "0": 71,
+          "1": 22
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "c0a46b57c818f17b9bf5451d8793e73f93af4889f29ff072a11a4776d164b1b5",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 77.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 9,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "rail_yard",
+        "plan_seed": 436521408,
+        "seed": 16102027,
+        "segment": 8
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-09-part09-v1.json",
+      "data_sha256": "1eee6d4b5bd97f27fdcb321682ed3a6730e0d9b1b5c7b81d802ced227d4b39a9",
+      "label": "city22-street-continuity-part-09-part09-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-09-part09-v1-1/run-results.json",
+      "run_sha256": "4bad68cc82897903ea9da30cd879847b29f95401d61a8f9eaf3635db61f859dd",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-09-part09-v1-thermal.json",
+      "thermal_sha256": "a4654049ee0d2790e40c58591b9fb175495c32356dc03c012f50df106d8fcc6b",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 6480,
+        "court_doors": 268,
+        "cross_seam_aprons": 14,
+        "framed": 3,
+        "framed_open_sides": 1,
+        "infill": 20,
+        "originals": 43,
+        "plan_chunks": 174,
+        "plan_doors": 430,
+        "preexisting_unreachable": 0,
+        "sample_chunks": 15,
+        "steps": {
+          "-1": 12,
+          "0": 64,
+          "1": 21
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "21afd06bfc77088d1eb60db07ae56d34513617f6e52ad0e022df696150908c58",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 80.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 10,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "military_staging",
+        "plan_seed": 1480489811,
+        "seed": 16102026,
+        "segment": 8
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-10-part10-v1.json",
+      "data_sha256": "e6062f7400479ce3ea11bad78cac7a0193dd7bec932cdaee311cbfdaac183b0b",
+      "label": "city22-street-continuity-part-10-part10-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-10-part10-v1-1/run-results.json",
+      "run_sha256": "2f6652b73225e482156ef12a6d7ff10bbae6316345ac355ddfde68eaba676812",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-10-part10-v1-thermal.json",
+      "thermal_sha256": "df443e3c9b40fd57e8e5c4c5769563b56948153828d750121b433dd14b69299c",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 7301,
+        "court_doors": 343,
+        "cross_seam_aprons": 15,
+        "framed": 3,
+        "framed_open_sides": 2,
+        "infill": 21,
+        "originals": 40,
+        "plan_chunks": 210,
+        "plan_doors": 498,
+        "preexisting_unreachable": 2,
+        "sample_chunks": 15,
+        "steps": {
+          "-1": 8,
+          "0": 71,
+          "1": 17
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "3b77d3d6651032da677e9bc4d42c4fa234971b6061030b30db4e808ef8c22abb",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 75.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 11,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "outer_wall",
+        "plan_seed": 1445060584,
+        "seed": 16102026,
+        "segment": 9
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-11-part11-v1.json",
+      "data_sha256": "722a265361a94b69fc216df7b6c0bca4ea5f7ea675390da2f38a668566822725",
+      "label": "city22-street-continuity-part-11-part11-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-11-part11-v1-1/run-results.json",
+      "run_sha256": "822948b45acc080e8e524d1eca142a3626abe4cbef28d2cd238a368bc9d4b1c7",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-11-part11-v1-thermal.json",
+      "thermal_sha256": "12d5d697edd901cc69857a79aa5465ae44f1d30e3ba808c9d602e527e77a8477",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 6230,
+        "court_doors": 230,
+        "cross_seam_aprons": 15,
+        "framed": 3,
+        "framed_open_sides": 3,
+        "infill": 24,
+        "originals": 43,
+        "plan_chunks": 182,
+        "plan_doors": 424,
+        "preexisting_unreachable": 2,
+        "sample_chunks": 16,
+        "steps": {
+          "-1": 6,
+          "0": 67,
+          "1": 20
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "443fa02bea659b9b8795edbc0872deb1a351c28d469e4538ce5a89bf484537f1",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 82.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 12,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "siege_services",
+        "plan_seed": 341545339,
+        "seed": 16102027,
+        "segment": 9
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-12-part12-v1.json",
+      "data_sha256": "4f921fe1d5b468c7b196d428ee0936a395dfb72f3af4fe2d7cdd6c1d5b7163ce",
+      "label": "city22-street-continuity-part-12-part12-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-12-part12-v1-1/run-results.json",
+      "run_sha256": "d3fcfe9d61f7c85de701bbeff19a10561e086cb7f86fadddd98ae25c796f9dcc",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-12-part12-v1-thermal.json",
+      "thermal_sha256": "08d67458c1a811cc1cf6d6f2cb4b4f21148fa52f08cb7063f5f0ab23680e083b",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 7559,
+        "court_doors": 330,
+        "cross_seam_aprons": 23,
+        "framed": 3,
+        "framed_open_sides": 2,
+        "infill": 19,
+        "originals": 41,
+        "plan_chunks": 214,
+        "plan_doors": 522,
+        "preexisting_unreachable": 0,
+        "sample_chunks": 16,
+        "steps": {
+          "-1": 11,
+          "0": 71,
+          "1": 21
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "3bbadfa73d50972055d1dbf06a8cf69bc2126ab9891207be02072174af365fd7",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 78.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    },
+    {
+      "theme_index": 13,
+      "theme": {
+        "generation_attempt": 1,
+        "id": "gate_district",
+        "plan_seed": 881070633,
+        "seed": 16102026,
+        "segment": 10
+      },
+      "data_path": "/var/tmp/sa-city22/streets/continuity-matrix/parts/city22-street-continuity-part-13-part13-v1.json",
+      "data_sha256": "13232fe1b4826639581618a23fc0f1521d4d00671dc4d35801d3c9f7e16467bc",
+      "label": "city22-street-continuity-part-13-part13-v1",
+      "run_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-continuity-part-13-part13-v1-1/run-results.json",
+      "run_sha256": "2509e07241a3f33401ccad03425503acc6c5571b6fad31324cd4ba5e92184260",
+      "thermal_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-street-continuity-part-13-part13-v1-thermal.json",
+      "thermal_sha256": "8d2bd9114bb3ea6b6a958bfe37c4fdee1781d7348f2334d19ba2138d8478dca2",
+      "checks": {
+        "index_and_original_theme_set": true,
+        "selected_actual_theme": true,
+        "dressed_no_local_failure": true,
+        "original_parent_copy_binding": true,
+        "same_strict_constants": true,
+        "nonempty_exact_plan_set": true,
+        "every_plan_chunk_off_and_on": true,
+        "every_original_role_sample": true,
+        "counter_shapes": true,
+        "strict_wall_observations": true,
+        "raw_source_original_binding": true,
+        "actual_guarded_arguments": true
+      },
+      "counts": {
+        "checks_local": 9583,
+        "court_doors": 468,
+        "cross_seam_aprons": 30,
+        "framed": 2,
+        "framed_open_sides": 2,
+        "infill": 23,
+        "originals": 32,
+        "plan_chunks": 256,
+        "plan_doors": 677,
+        "preexisting_unreachable": 0,
+        "sample_chunks": 13,
+        "steps": {
+          "-1": 10,
+          "0": 88,
+          "1": 29
+        }
+      },
+      "source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+      "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+      "coverage_paths_sha256": "837e3cc46d68632c309e80e506b581387f76eb98eddcf692228b43de0ebb3f4f",
+      "guard_duty_cycle": 0.25,
+      "guard_peak_c": 82.0,
+      "external_bindings": {
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/meta.json": "066c93a2142d69422ff430b73ea91206bd4ef2e26af499b7f40811055ab766c5",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix.py": "45edca1f443763cb7ab7c155a47c85cc08e2b059c2551002b1746edff45a42a7",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+      }
+    }
+  ],
+  "runtime_source_map_sha256": "bb4429b5352968b296318f33999aa76523bb609675a8aacc63dfffd7bd1c516d",
+  "source_pathset_sha256": "60dc2d50a69875bab36276e2b5238623934a3d17f64f47aecdb930daf6572147",
+  "totals": {
+    "checks_local": 92616,
+    "court_doors": 4150,
+    "cross_seam_aprons": 273,
+    "framed": 35,
+    "framed_open_sides": 21,
+    "infill": 346,
+    "originals": 493,
+    "plan_chunks": 2522,
+    "plan_doors": 6343,
+    "preexisting_unreachable": 17,
+    "sample_chunks": 197,
+    "steps": {
+      "-1": 99,
+      "0": 898,
+      "1": 274
+    },
+    "checks_including_original_five": 92621
+  },
+  "walls": {
+    "count": 1037,
+    "longest": 26
+  },
+  "infill_walls": {
+    "count": 520,
+    "longest": 24
+  },
+  "original_five_aggregate_assertions": [
+    {
+      "expression": "_infill_total > 0",
+      "message": "The pass built no infill at all",
+      "passed": true
+    },
+    {
+      "expression": "int(_steps[-1]) > 0",
+      "message": "No infill segment stands on setback step -1",
+      "passed": true
+    },
+    {
+      "expression": "int(_steps[0]) > 0",
+      "message": "No infill segment stands on setback step 0",
+      "passed": true
+    },
+    {
+      "expression": "int(_steps[1]) > 0",
+      "message": "No infill segment stands on setback step 1",
+      "passed": true
+    },
+    {
+      "expression": "_framed > 0 and _framed_open_sides > 0 and _framed_open_sides < _framed",
+      "message": "framed squares: 35, with open sides 21 (want some of each)",
+      "passed": true
+    }
+  ],
+  "global_assertions_evaluated": 5,
+  "limits": "All original sampled-chunk and whole-plan assertions execute in14 separate cold engines with decoration enabled. Counts are combined only after14 clean distinct source-identical runs and the exact original five final assertions. Cold per-theme execution does not test cross-theme residency in one engine; dedicated resource-transition tests cover that separately. Functional correctness only, no timing/performance claim."
+}

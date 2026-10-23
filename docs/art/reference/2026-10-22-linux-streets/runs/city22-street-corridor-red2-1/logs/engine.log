@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: blocked passage escaped its corridor through the outside detour
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tools/tests/CityStreetTraversalCorridorTest.gd:57)
+ERROR: blocked passage sidestepped outside its allowed cells
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tools/tests/CityStreetTraversalCorridorTest.gd:57)
+ERROR: passage proof has no actual-cell trace validation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tools/tests/CityStreetTraversalCorridorTest.gd:57)
+CityStreetTraversalCorridorTest: failures=3

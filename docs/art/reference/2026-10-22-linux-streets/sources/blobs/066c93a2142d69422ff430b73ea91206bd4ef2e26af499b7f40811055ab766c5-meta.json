@@ -1,0 +1,24 @@
+{
+  "created_for": "External exact-copy single-theme matrix; original files unchanged",
+  "original_path": "/tmp/sa-wp2-streets/tools/tests/CityStreetContinuityTest.gd",
+  "original_sha256": "4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209",
+  "original_snapshot": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/CityStreetContinuityTest.original.gd",
+  "copy_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.gd",
+  "copy_sha256": "db2aa1113a8d1372c3032c3bd62d4a6c138d43743d89d333913b1bf28dd3973c",
+  "scene_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityStreetContinuityThemePart.tscn",
+  "scene_sha256": "ca96e9db3db4d234811d98964cac805759bbf3db065488fa1046df5637fc8557",
+  "parent_path": "/tmp/sa-wp2-streets/tools/tests/ProcChunkReachabilityTest.gd",
+  "parent_sha256": "ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258",
+  "diff_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-continuity-matrix-source/single-theme.patch",
+  "diff_sha256": "c37f577a77e7aeaabccfbaa17f0d4e0618e35c7e72b5875dcd12a08a5a9814af",
+  "deferred_assertion_source": "\t_check(_infill_total > 0, \"The pass built no infill at all\")\n\tfor step: int in [-1, 0, 1]:\n\t\t_check(int(_steps[step]) > 0, \"No infill segment stands on setback step %d\" % step)\n\t_check(_framed > 0 and _framed_open_sides > 0 and _framed_open_sides < _framed, \"framed squares: %d, with open sides %d (want some of each)\" % [_framed, _framed_open_sides])\n",
+  "deferred_assertions_count": 5,
+  "changes": [
+    "one requiredtheme index with dresseddeco/output validation",
+    "outer THEMES loop filters to the selected original entry only",
+    "one read-only actual plan-visit append",
+    "read-only expected sample/plan paths and metadata",
+    "defer only exact5original globalaggregate assertions",
+    "extend originalJSON with observations/counts/sourcehashes"
+  ]
+}

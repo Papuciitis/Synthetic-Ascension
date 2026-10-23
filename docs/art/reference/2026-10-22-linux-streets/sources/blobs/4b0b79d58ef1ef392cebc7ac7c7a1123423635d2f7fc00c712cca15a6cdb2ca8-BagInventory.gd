@@ -1,0 +1,479 @@
+extends Resource
+class_name BagInventory
+
+signal stack_added(slot: int, inst: ItemInstance)
+signal stack_fed(slot: int, inst: ItemInstance, roll_pct: float, upgraded: bool, old_rarity: int)
+signal stack_merged(from_slot: int, to_slot: int, src: ItemInstance)
+
+const SLOT_COUNT: int = 16
+
+# Fixed-size slots. Each slot holds one "stack project" (ItemInstance) or null.
+@export var slots: Array[ItemInstance] = []
+@export var debug_bag: bool = false
+# K6 duplicate consolidation/feeding is a PLAYER-bag behavior. Merchant-style
+# containers (the Hub vendor stock) must hold items inertly: selling an item
+# the vendor also stocks used to FEED the vendor's copy and rank it up.
+@export var auto_consolidate: bool = true
+# Extra slots granted by attempt modifiers / upgrades (persists in SaveData attempt snapshot)
+@export var extra_slots: int = 0
+
+# key -> slot index (rebuilt as needed; keep internal)
+var _index: Dictionary = {} # String -> int
+
+# --- UI origin for VFX (set by gameplay, consumed by BagUI) ---
+enum UIOriginType {
+	NONE   = 0,
+	SCREEN = 1, # screen/canvas coordinates (UI space)
+	WORLD  = 2, # world coordinates (Node2D global_position)
+	UI     = 3, # global UI coords (Control.get_global_rect center, etc.)
+}
+
+var _pending_ui_origin_type: int = UIOriginType.NONE
+var _pending_ui_origin_pos: Vector2 = Vector2.ZERO
+
+# ----------------------------
+# UI origin (for BagUI VFX)
+# Stored as: {"type": int, "screen_pos": Vector2}
+# ----------------------------
+
+func set_pending_ui_origin(origin: Variant) -> void:
+	# Accept Dictionary {"type": int, "pos": Vector2}
+	if origin is Dictionary:
+		var d: Dictionary = origin
+		var pv: Variant = d.get("pos", null)
+		if pv is Vector2:
+			_pending_ui_origin_type = int(d.get("type", int(UIOriginType.SCREEN)))
+			_pending_ui_origin_pos = pv as Vector2
+			return
+
+	# Accept plain Vector2 (treat as SCREEN pos)
+	if origin is Vector2:
+		_pending_ui_origin_type = int(UIOriginType.SCREEN)
+		_pending_ui_origin_pos = origin as Vector2
+		return
+
+	# Otherwise: clear
+	_pending_ui_origin_type = int(UIOriginType.NONE)
+	_pending_ui_origin_pos = Vector2.ZERO
+
+
+# Backward compatible wrappers (so ItemPickup calling these won’t break)
+func set_pending_ui_origin_world(screen_pos: Vector2) -> void:
+	_pending_ui_origin_type = int(UIOriginType.SCREEN)
+	_pending_ui_origin_pos = screen_pos
+
+func set_pending_ui_origin_ui(screen_pos: Vector2) -> void:
+	_pending_ui_origin_type = int(UIOriginType.SCREEN)
+	_pending_ui_origin_pos = screen_pos
+
+
+func consume_pending_ui_origin() -> Dictionary:
+	var d: Dictionary = {
+		"type": _pending_ui_origin_type,
+		"pos": _pending_ui_origin_pos,
+	}
+	_pending_ui_origin_type = int(UIOriginType.NONE)
+	_pending_ui_origin_pos = Vector2.ZERO
+	return d
+
+
+func _dbg_dump(tag: String) -> void:
+	if not debug_bag:
+		return
+	print("[BAG]", tag)
+	for i in range(slots.size()):
+		var s: ItemInstance = slots[i]
+		if s == null or s.data == null:
+			continue
+		var meter := 0.0
+		var mv: Variant = s.get("upgrade_meter")
+		if mv is float or mv is int:
+			meter = float(mv)
+		print("  slot", i, " key=", _key(s.data.id, s.rarity, s.polarity),
+			" inst_id=", s.get_instance_id(),
+			" r=", s.rarity, " prog=", s.progress, " meter=", String.num(meter, 3))
+
+
+func _init() -> void:
+	_ensure_size()
+	_rebuild_index()
+
+
+func _ensure_size() -> void:
+	var want: int = SLOT_COUNT + maxi(0, extra_slots)
+	if slots.size() != want:
+		slots.resize(want)
+
+
+func get_slot_count() -> int:
+	_ensure_size()
+	return slots.size()
+
+
+func clear() -> void:
+	_ensure_size()
+	for i in range(slots.size()):
+		slots[i] = null
+	_index.clear()
+	emit_changed()
+
+
+func first_empty_slot() -> int:
+	_ensure_size()
+	for i in range(slots.size()):
+		if slots[i] == null:
+			return i
+	return -1
+
+
+func get_at(slot: int) -> ItemInstance:
+	_ensure_size()
+	if slot < 0 or slot >= slots.size():
+		return null
+	return slots[slot]
+
+func clear_pending_ui_origin() -> void:
+	_pending_ui_origin_type = int(UIOriginType.NONE)
+	_pending_ui_origin_pos = Vector2.ZERO
+
+
+# Optional but makes routing more universal (Inventory has set_item)
+func set_item(slot: int, inst: ItemInstance, _origin: Variant = null) -> ItemInstance:
+	_ensure_size()
+	if slot < 0 or slot >= slots.size():
+		return null
+	var prev: ItemInstance = slots[slot]
+	slots[slot] = inst
+	_after_stack_changed()
+	if prev != null and prev != inst:
+		BalanceItemContext.report(&"unbagged", prev, {"container": "bag", "slot": slot, "replaced": inst != null})
+	if inst != null and inst != prev:
+		BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": slot, "path": "set_item"})
+	return prev
+
+
+func remove_at(slot: int) -> void:
+	_ensure_size()
+	if slot < 0 or slot >= slots.size():
+		return
+	var prev: ItemInstance = slots[slot]
+	slots[slot] = null
+	_after_stack_changed()
+	if prev != null:
+		BalanceItemContext.report(&"unbagged", prev, {"container": "bag", "slot": slot, "replaced": false})
+
+
+func add_pickup(item_data: ItemData, copies: int = 1, rarity: int = 0) -> bool:
+	# Compatibility wrapper for old callers.
+	# Rolls per copy -> polarity comes from roll sign -> routes into add_roll().
+	if item_data == null:
+		return false
+
+	copies = maxi(1, copies)
+
+	for i in range(copies):
+		var roll_pct: float = Global.roll_percent(Global.run_luck, item_data.pct_min, item_data.pct_max)
+		var pol: int = (ItemInstance.Polarity.POS if roll_pct >= 0.0 else ItemInstance.Polarity.NEG)
+
+		if not add_roll(item_data, rarity, pol, roll_pct):
+			return false
+		if debug_bag:
+			print("[BAG ROLL] ", item_data.id, " r=", rarity, " roll=", String.num(roll_pct, 3), " pol=", pol)
+
+	return true
+
+
+func set_at(slot: int, inst: ItemInstance) -> void:
+	_ensure_size()
+	if slot < 0 or slot >= slots.size():
+		return
+	var prev: ItemInstance = slots[slot]
+	slots[slot] = inst
+	_after_stack_changed()
+	if prev != null and prev != inst:
+		BalanceItemContext.report(&"unbagged", prev, {"container": "bag", "slot": slot, "replaced": inst != null})
+	if inst != null and inst != prev:
+		BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": slot, "path": "set_at"})
+
+
+func get_best(n: int) -> Array[ItemInstance]:
+	_ensure_size()
+	var arr: Array[ItemInstance] = []
+	for s in slots:
+		if s != null and s.data != null:
+			arr.append(s)
+
+	arr.sort_custom(func(a: ItemInstance, b: ItemInstance) -> bool:
+		return _score(a) > _score(b)
+	)
+
+	if arr.size() > n:
+		arr.resize(n)
+	return arr
+
+
+func _after_stack_changed() -> void:
+	# Merge any same-key stacks (eg r0 upgrading into existing r1)
+	if auto_consolidate:
+		_consolidate_duplicates()
+	_rebuild_index()
+	emit_changed()
+	_dbg_dump("after _after_stack_changed")
+
+
+func _rebuild_index() -> void:
+	_index.clear()
+	_ensure_size()
+
+	for i in range(slots.size()):
+		var s: ItemInstance = slots[i]
+		if s == null or s.data == null or s.locked:
+			continue
+		var k := _key(s.data.id, s.rarity, s.polarity)
+		if not _index.has(k):
+			_index[k] = i
+
+
+func _consolidate_duplicates() -> void:
+	# Because merges/upgrades can change rarity (thus key), we repeat until stable.
+	var did_merge := true
+	while did_merge:
+		did_merge = false
+
+		var seen: Dictionary = {} # key -> slot index
+
+		for i in range(slots.size()):
+			var s: ItemInstance = slots[i]
+			# Locked stacks remain physically independent. Neither a locked source
+			# nor a locked destination participates in automatic consolidation.
+			if s == null or s.data == null or s.locked:
+				continue
+
+			var k := _key(s.data.id, s.rarity, s.polarity)
+
+			# One key can legitimately own SEVERAL stacks, because two stacks of
+			# the same item can carry different Manifestations and consolidation
+			# must never destroy one of the rules. Track every candidate: with a
+			# single remembered slot, a rival-ruled stack sitting first would
+			# stop same-ruled stacks from ever finding each other, and that ring
+			# could never rank up from its own duplicates.
+			if not seen.has(k):
+				seen[k] = ([] as Array[int])
+			var candidates: Array[int] = seen[k]
+
+			var keep_i: int = -1
+			for candidate in candidates:
+				var candidate_stack: ItemInstance = slots[candidate]
+				if candidate_stack == null or candidate_stack == s:
+					continue
+				keep_i = candidate
+				break
+			if keep_i < 0:
+				candidates.append(i)
+				continue
+
+			var keep: ItemInstance = slots[keep_i]
+
+			# Safety
+			if keep == null or keep == s:
+				continue
+
+			if debug_bag:
+				print("[BAG] CONSOLIDATE key=", k, " merge slot", i, " -> ", keep_i)
+
+			if debug_bag:
+				print("[BagInventory] EMIT stack_merged ", i, " -> ", keep_i, " bag_id=", get_instance_id())
+			stack_merged.emit(i, keep_i, s) # UI ghost feedback
+
+			BalanceItemContext.container = {"kind": "bag", "slot": keep_i, "consolidated_from": i}
+			if not _merge_into(keep, s):
+				BalanceItemContext.container = {}
+				continue
+			slots[i] = null
+
+			did_merge = true
+			break # restart pass (key/rarity might have changed)
+
+
+func _key(item_id: String, _rarity: int, polarity: int) -> String:
+	# NOTE: We intentionally IGNORE rarity in the key.
+	# This makes stacks continue feeding even after they upgrade rarity.
+	# Polarity stays part of the key so POS/NEG remain separate.
+	var p := ("pos" if polarity >= 0 else "neg")
+	return "%s|%s" % [item_id, p]
+
+func _score(s: ItemInstance) -> float:
+	if s == null:
+		return -INF
+
+	var meter: float = float(s.upgrade_meter)
+	var best: float = absf(float(s.best_pct)) # strength regardless of polarity
+	return float(s.rarity) * 100000.0 + meter * 1000.0 + best * 10.0
+
+
+func add_instance(inst: ItemInstance) -> bool:
+	if inst == null or inst.data == null:
+		return false
+
+	_ensure_size()
+	_rebuild_index()
+
+	# If this exact instance is already in slots, do nothing (prevents self-merge bugs)
+	for i in range(slots.size()):
+		if slots[i] == inst:
+			_dbg_dump("after add_instance (already in slots)")
+			return true
+
+	var key: String = _key(inst.data.id, inst.rarity, inst.polarity)
+
+	# Locked incoming items are protected from duplicate feeding/cleanup and
+	# therefore always need their own slot. Unlocked items may only merge into
+	# unlocked destinations because _rebuild_index excludes locked stacks.
+	if not inst.locked and auto_consolidate and _index.has(key):
+		# _index remembers one representative per key; scan for a destination
+		# that can actually take this item's rule, or a rival-ruled stack in the
+		# first slot sends every same-ruled duplicate to a fresh slot instead.
+		var idx: int = _find_absorbing_slot(key, inst)
+		var dest: ItemInstance = slots[idx] if idx >= 0 else null
+
+		if dest == inst:
+			_dbg_dump("after add_instance (dest==inst)")
+			return true
+
+		if dest != null:
+			var old_rarity: int = int(dest.rarity)
+
+			BalanceItemContext.container = {"kind": "bag", "slot": idx}
+			if not _merge_into(dest, inst): # consumes inst into dest
+				BalanceItemContext.container = {}
+				return _place_in_empty_slot(inst)
+			_after_stack_changed()
+
+			var upgraded: bool = (int(dest.rarity) != old_rarity)
+
+			# This is just a hint value for UI/debug (not a real single roll)
+			var roll_hint: float = float(inst.active_pct() if inst != null else 0.0)
+
+			if debug_bag:
+				print("[BagInventory] stack_fed slot=", idx, " id=", dest.data.id, " upgraded=", upgraded)
+			stack_fed.emit(idx, dest, roll_hint, upgraded, old_rarity)
+
+			_dbg_dump("after add_instance (merged into existing)")
+			return true
+
+	# Need new slot
+	return _place_in_empty_slot(inst)
+
+
+func _place_in_empty_slot(inst: ItemInstance) -> bool:
+	var empty: int = first_empty_slot()
+	if empty == -1:
+		return false
+
+	slots[empty] = inst
+	_after_stack_changed()
+
+	if debug_bag:
+		print("[BagInventory] stack_added slot=", empty, " id=", inst.data.id)
+	stack_added.emit(empty, inst)
+	BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": empty, "path": "add_instance"})
+
+	_dbg_dump("after add_instance (placed in empty)")
+	return true
+
+
+func _find_absorbing_slot(key: String, incoming: ItemInstance) -> int:
+	for i in range(slots.size()):
+		var candidate: ItemInstance = slots[i]
+		if candidate == null or candidate.data == null or candidate.locked:
+			continue
+		if candidate == incoming:
+			return i
+		if _key(candidate.data.id, candidate.rarity, candidate.polarity) != key:
+			continue
+		# Any same-key stack takes the duplicate: a differing rule becomes an
+		# imprint in merge_from instead of a rival stack.
+		return i
+	return -1
+
+
+func _merge_into(dest: ItemInstance, src: ItemInstance) -> bool:
+	if dest == null:
+		return false
+	return dest.merge_from(src)
+
+
+func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) -> bool:
+	if item_data == null:
+		return false
+
+	_ensure_size()
+	_rebuild_index()
+
+	var key := _key(item_data.id, rarity, polarity)
+
+	# Existing stack? -> FEED through the one real merge path. A
+	# higher-rarity incoming becomes the mathematical destination via
+	# merge_from's auto-swap (the old code overwrote stack.rarity for
+	# free — a zero-mass rank promotion).
+	if auto_consolidate and _index.has(key):
+		var idx: int = int(_index[key])
+		var stack: ItemInstance = slots[idx]
+		if stack != null:
+			var old_r: int = int(stack.rarity)
+
+			if debug_bag:
+				print("[BagInventory] FEED roll into slot=", idx, " id=", item_data.id, " r=", rarity, " pol=", polarity, " roll=", roll_pct)
+
+			# Fabricated merge material: never rolls a Manifestation of its
+			# own, so it always feeds whatever rule the stack already has.
+			var incoming := ItemInstance.from_roll(item_data, rarity, polarity, roll_pct, false)
+			BalanceItemContext.container = {"kind": "bag", "slot": idx}
+			stack.merge_from(incoming)
+			BalanceItemContext.container = {}
+			var upgraded: bool = int(stack.rarity) > old_r
+
+			_after_stack_changed()
+
+			# Tell UI to play “feed” VFX
+			stack_fed.emit(idx, stack, roll_pct, upgraded, old_r)
+			return true
+
+	# Need new slot -> ADD
+	var empty: int = first_empty_slot()
+	if empty == -1:
+		return false
+
+	var inst: ItemInstance = ItemInstance.from_roll(item_data, rarity, polarity, roll_pct)
+	slots[empty] = inst
+
+	_after_stack_changed()
+
+	if debug_bag:
+		print("[BagInventory] ADD new stack slot=", empty, " id=", item_data.id, " r=", rarity, " pol=", polarity)
+
+	# Tell UI to play “added” VFX
+	stack_added.emit(empty, inst)
+	BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": empty, "path": "add_roll"})
+	return true
+
+
+func find_best_slot_for_equip_slot(equip_slot: int) -> int:
+	_ensure_size()
+
+	var best_i := -1
+	var best_score := -INF
+
+	for i in range(slots.size()):
+		var s: ItemInstance = slots[i]
+		if s == null or s.data == null:
+			continue
+		if s.data.equip_slot != equip_slot:
+			continue
+
+		var sc := _score(s)
+		if sc > best_score:
+			best_score = sc
+			best_i = i
+
+	return best_i

@@ -1,0 +1,462 @@
+{
+	"acceptance_entrypoint": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn",
+	"args": [
+		"--visible",
+		"--runtime-fps=20",
+		"--review=small",
+		"--segment=2",
+		"--world-seed=16102026",
+		"--passage-chunk=0,2",
+		"--out=/var/tmp/sa-city22/streets/native-s2-r1/s2"
+	],
+	"boundary": {
+		"after": "(0, 3)",
+		"before": "(0, 2)",
+		"crossed": true,
+		"target": "(1248.0, 6304.0)"
+	},
+	"building_events": [
+		{
+			"building_id": 948691614,
+			"first_visit": true,
+			"infill": false,
+			"phase": "building"
+		},
+		{
+			"building_id": 934370235,
+			"first_visit": false,
+			"infill": true,
+			"phase": "building"
+		}
+	],
+	"camera_points": [
+		{
+			"camera_world": "(1376.0, 5846.879)",
+			"chunk": "(0, 2)",
+			"id": "traversal-1-passage",
+			"phase": "passage",
+			"player_world": "(1376.0, 5848.796)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera_world": "(551.6853, 5535.999)",
+			"chunk": "(0, 2)",
+			"id": "traversal-2-inside",
+			"phase": "building",
+			"player_world": "(551.6853, 5535.999)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera_world": "(991.9935, 5721.225)",
+			"chunk": "(0, 2)",
+			"id": "traversal-3-inside-infill",
+			"phase": "building",
+			"player_world": "(991.9935, 5721.225)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera_world": "(1242.161, 5536.0)",
+			"chunk": "(0, 2)",
+			"id": "traversal-4-collected",
+			"phase": "collection",
+			"player_world": "(1242.161, 5536.0)",
+			"zoom": "(1.0, 1.0)"
+		},
+		{
+			"camera_world": "(1252.9, 6303.409)",
+			"chunk": "(0, 3)",
+			"id": "traversal-5-boundary",
+			"phase": "boundary",
+			"player_world": "(1252.9, 6303.409)",
+			"zoom": "(1.0, 1.0)"
+		}
+	],
+	"camera_zoom": "(1.0, 1.0)",
+	"capture_scene": "res://tools/dev/CityStreetTraversalProbe.tscn",
+	"chunk_centers": [
+		"(0, 2)",
+		"(0, 3)"
+	],
+	"collected": false,
+	"decoration": true,
+	"discovery": [
+		{
+			"chunk": "(0, 2)",
+			"narrow": true,
+			"passage": "[P: (20, 24), S: (3, 7)]",
+			"world": "(1056.0, 5152.0)"
+		}
+	],
+	"encounter_director": {
+		"end": {
+			"can_process": true,
+			"enabled": true,
+			"live": true,
+			"path": "/root/Game/EncounterDirector",
+			"physics_processing": true,
+			"player_bound": true,
+			"present": true,
+			"snapshot": {
+				"active_beats": {},
+				"counters": {
+					"aborted": 0,
+					"announced": 1,
+					"escalations": 0,
+					"members_skipped": 0,
+					"members_spawned": 1,
+					"scheduled": 1,
+					"specialist_responses": 0
+				},
+				"next_beat_in": 57.415021769206,
+				"rite_channel_active": false,
+				"rite_response_left": 0.0,
+				"rite_wave_cursor": 0,
+				"swarm_in": 105.483333333317,
+				"swarm_state": 0
+			},
+			"spawner_bound": true
+		},
+		"requested": true,
+		"start": {
+			"can_process": true,
+			"enabled": true,
+			"live": true,
+			"path": "/root/Game/EncounterDirector",
+			"physics_processing": true,
+			"player_bound": true,
+			"present": true,
+			"snapshot": {
+				"active_beats": {},
+				"counters": {
+					"aborted": 0,
+					"announced": 0,
+					"escalations": 0,
+					"members_skipped": 0,
+					"members_spawned": 0,
+					"scheduled": 0,
+					"specialist_responses": 0
+				},
+				"next_beat_in": 39.15,
+				"rite_channel_active": false,
+				"rite_response_left": 0.0,
+				"rite_wave_cursor": 0,
+				"swarm_in": 149.149999999999,
+				"swarm_state": 0
+			},
+			"spawner_bound": true
+		},
+		"stayed_live": true
+	},
+	"failures": 1,
+	"infill_entry": {
+		"building_id": 934370235,
+		"door": "(960.0, 5664.0)",
+		"events": [
+			{
+				"building_id": 934370235,
+				"first_visit": false,
+				"infill": true,
+				"phase": "building"
+			}
+		],
+		"infill": true,
+		"opened": true,
+		"restored": true
+	},
+	"limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test.",
+	"original_entry": {
+		"building_id": 948691614,
+		"door": "(608.0, 5504.0)",
+		"events": [
+			{
+				"building_id": 948691614,
+				"first_visit": true,
+				"infill": false,
+				"phase": "building"
+			}
+		],
+		"infill": false,
+		"opened": true,
+		"restored": true
+	},
+	"passage": {
+		"actual_physics_cell_trace": [
+			{
+				"cell": [
+					21,
+					87
+				],
+				"physics_frame": 314,
+				"world": "(1376.0, 5593.901)"
+			},
+			{
+				"cell": [
+					21,
+					88
+				],
+				"physics_frame": 334,
+				"world": "(1376.0, 5632.231)"
+			},
+			{
+				"cell": [
+					21,
+					89
+				],
+				"physics_frame": 368,
+				"world": "(1376.0, 5697.392)"
+			},
+			{
+				"cell": [
+					21,
+					90
+				],
+				"physics_frame": 401,
+				"world": "(1376.0, 5760.637)"
+			},
+			{
+				"cell": [
+					21,
+					91
+				],
+				"physics_frame": 435,
+				"world": "(1376.0, 5825.798)"
+			},
+			{
+				"cell": [
+					21,
+					92
+				],
+				"physics_frame": 469,
+				"world": "(1376.0, 5889.042)"
+			},
+			{
+				"cell": [
+					21,
+					93
+				],
+				"physics_frame": 502,
+				"world": "(1376.0, 5952.287)"
+			},
+			{
+				"cell": [
+					21,
+					94
+				],
+				"physics_frame": 536,
+				"world": "(1376.0, 6017.448)"
+			},
+			{
+				"cell": [
+					21,
+					95
+				],
+				"physics_frame": 569,
+				"world": "(1376.0, 6080.693)"
+			}
+		],
+		"cells": "[P: (20, 24), S: (3, 7)]",
+		"chunk": "(0, 2)",
+		"flanked_cells": 6,
+		"inside": true,
+		"narrow_between_buildings": true,
+		"through": true,
+		"trace_validation": {
+			"allowed_cells": "[P: (20, 87), S: (3, 9)]",
+			"far_index": 8,
+			"far_mouth": "[P: (20, 95), S: (3, 1)]",
+			"jump_indices": [],
+			"middle_cross_section": "[P: (20, 91), S: (3, 1)]",
+			"middle_index": 4,
+			"near_index": 0,
+			"near_mouth": "[P: (20, 87), S: (3, 1)]",
+			"observed_cell_count": 9,
+			"ordered_mouth_middle_mouth": true,
+			"outside_indices": [],
+			"valid": true
+		},
+		"world": "[P: (1280.0, 5632.0), S: (192.0, 448.0)]"
+	},
+	"pickup": {
+		"armed_before_walk": true,
+		"collection_distance": 19.9375,
+		"delay": 1.0,
+		"item_id": "ring_crusher",
+		"picked": true,
+		"world": "(1248.0, 5536.0)"
+	},
+	"route": [
+		{
+			"arrival_distance": 6.09912109375,
+			"arrived": "(1376.0, 5593.901)",
+			"desired": "(1376.0, 5600.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 3,
+			"phase": "passage_approach",
+			"replans": [],
+			"resolution_distance": 0.0,
+			"resolved": "(1376.0, 5600.0)"
+		},
+		{
+			"arrival_distance": 7.2041015625,
+			"arrived": "(1376.0, 5848.796)",
+			"desired": "(1376.0, 5856.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 4,
+			"phase": "passage",
+			"replans": [],
+			"resolution_distance": 0.0,
+			"resolved": "(1376.0, 5856.0)"
+		},
+		{
+			"arrival_distance": 6.392578125,
+			"arrived": "(1376.0, 6105.607)",
+			"desired": "(1376.0, 6112.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 4,
+			"phase": "passage",
+			"replans": [],
+			"resolution_distance": 0.0,
+			"resolved": "(1376.0, 6112.0)"
+		},
+		{
+			"arrival_distance": 6.435302734375,
+			"arrived": "(742.4353, 5535.999)",
+			"desired": "(704.0, 5504.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 19,
+			"phase": "building",
+			"replans": [],
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(736.0, 5536.0)"
+		},
+		{
+			"arrival_distance": 7.685302734375,
+			"arrived": "(551.6853, 5535.999)",
+			"desired": "(544.0, 5504.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 3,
+			"phase": "building",
+			"replans": [],
+			"resolution_distance": 32.0,
+			"resolved": "(544.0, 5536.0)"
+		},
+		{
+			"arrival_distance": 6.814697265625,
+			"arrived": "(793.1853, 5535.999)",
+			"desired": "(768.0, 5504.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 4,
+			"phase": "building",
+			"replans": [],
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(800.0, 5536.0)"
+		},
+		{
+			"arrival_distance": 6.55659246444702,
+			"arrived": "(991.3561, 5593.475)",
+			"desired": "(960.0, 5568.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 4,
+			"phase": "building",
+			"replans": [],
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(992.0, 5600.0)"
+		},
+		{
+			"arrival_distance": 6.77490568161011,
+			"arrived": "(991.9935, 5721.225)",
+			"desired": "(960.0, 5728.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 2,
+			"phase": "building",
+			"replans": [],
+			"resolution_distance": 32.0,
+			"resolved": "(992.0, 5728.0)"
+		},
+		{
+			"arrival_distance": 6.47416305541992,
+			"arrived": "(996.7091, 5540.443)",
+			"desired": "(960.0, 5504.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 3,
+			"phase": "building",
+			"replans": [],
+			"resolution_distance": 45.2548332214355,
+			"resolved": "(992.0, 5536.0)"
+		},
+		{
+			"arrival_distance": 5.8389892578125,
+			"arrived": "(1242.161, 5536.0)",
+			"desired": "(1248.0, 5536.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 4,
+			"phase": "collection",
+			"replans": [],
+			"resolution_distance": 0.0,
+			"resolved": "(1248.0, 5536.0)"
+		},
+		{
+			"arrival_distance": 4.93539381027222,
+			"arrived": "(1252.9, 6303.409)",
+			"desired": "(1248.0, 6304.0)",
+			"destination_reached": true,
+			"event": "walk",
+			"path_cells": 14,
+			"phase": "boundary",
+			"replans": [],
+			"resolution_distance": 0.0,
+			"resolved": "(1248.0, 6304.0)"
+		}
+	],
+	"runtime_fixture": {
+		"actual_window": "(1280, 720)",
+		"engine_max_fps": 20,
+		"game_was_instantiated": true,
+		"physics_ticks_per_second": 60
+	},
+	"save_observation": {
+		"acceptance_end_api_counter": 0,
+		"autosave_disabled": true,
+		"baseline_api_counter": 0,
+		"current_profile_is_null": true,
+		"scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+		"writes_during_acceptance": 0
+	},
+	"scene": "res://scenes/game.tscn",
+	"segment": 2,
+	"staging": [
+		{
+			"chunk": "(0, 2)",
+			"kind": "candidate streaming warp",
+			"world": "(1024.0, 5120.0)"
+		},
+		{
+			"chunk": "(0, 2)",
+			"kind": "passage search warp",
+			"world": "(1056.0, 5152.0)"
+		},
+		{
+			"kind": "player initial warp beside a recorded passage",
+			"passage_world": "[P: (1280.0, 5632.0), S: (192.0, 448.0)]",
+			"start": "(-1024.0, 1024.0)",
+			"warp": "(1376.0, 5408.0)"
+		},
+		{
+			"kind": "ordinary ring item",
+			"world": "(1248.0, 5536.0)"
+		}
+	],
+	"street_continuity": true,
+	"window": "(1280, 720)",
+	"world_seed": 16102026
+}

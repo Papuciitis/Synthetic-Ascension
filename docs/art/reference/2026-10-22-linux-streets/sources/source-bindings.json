@@ -1,0 +1,236 @@
+{
+  "limitation": "Only exact SHA256-equal scoped snapshots bind to launch records. Earlier dirty draft bodies can remain unavailable.",
+  "runs": [
+    {
+      "binding": "sources/run-bindings/city22-street-allocation-green-1.json",
+      "run": "city22-street-allocation-green-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-apron-green-1.json",
+      "run": "city22-street-apron-green-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-apron-red-1.json",
+      "run": "city22-street-apron-red-1",
+      "unavailable_scoped_sources": [
+        "tools/dev/CityStreetTraversalProbe.gd",
+        "tools/tests/CityDoorApproachGroundTest.gd",
+        "tools/tests/CityStreetTraversalCorridorTest.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-care-green-1.json",
+      "run": "city22-street-care-green-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-care-measure-1.json",
+      "run": "city22-street-care-measure-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-dressed-r2-1.json",
+      "run": "city22-street-continuity-dressed-r2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-00-part00-v1-1.json",
+      "run": "city22-street-continuity-part-00-part00-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-01-part01-v1-1.json",
+      "run": "city22-street-continuity-part-01-part01-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-01-part01-v2-1.json",
+      "run": "city22-street-continuity-part-01-part01-v2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-02-part02-v1-1.json",
+      "run": "city22-street-continuity-part-02-part02-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-03-part03-v1-1.json",
+      "run": "city22-street-continuity-part-03-part03-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-04-part04-v1-1.json",
+      "run": "city22-street-continuity-part-04-part04-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-05-part05-v1-1.json",
+      "run": "city22-street-continuity-part-05-part05-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-06-part06-v1-1.json",
+      "run": "city22-street-continuity-part-06-part06-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-07-part07-v1-1.json",
+      "run": "city22-street-continuity-part-07-part07-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-08-part08-v1-1.json",
+      "run": "city22-street-continuity-part-08-part08-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-09-part09-v1-1.json",
+      "run": "city22-street-continuity-part-09-part09-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-10-part10-v1-1.json",
+      "run": "city22-street-continuity-part-10-part10-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-11-part11-v1-1.json",
+      "run": "city22-street-continuity-part-11-part11-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-12-part12-v1-1.json",
+      "run": "city22-street-continuity-part-12-part12-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-continuity-part-13-part13-v1-1.json",
+      "run": "city22-street-continuity-part-13-part13-v1-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-corridor-final-green-1.json",
+      "run": "city22-street-corridor-final-green-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-corridor-green-1.json",
+      "run": "city22-street-corridor-green-1",
+      "unavailable_scoped_sources": [
+        "tools/dev/CityStreetTraversalProbe.gd",
+        "tools/tests/CityDoorApproachGroundTest.gd",
+        "tools/tests/CityStreetTraversalCorridorTest.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-corridor-parse-1.json",
+      "run": "city22-street-corridor-parse-1",
+      "unavailable_scoped_sources": [
+        "tools/dev/CityStreetTraversalProbe.gd",
+        "tools/tests/CityStreetTraversalCorridorTest.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-corridor-red2-1.json",
+      "run": "city22-street-corridor-red2-1",
+      "unavailable_scoped_sources": [
+        "tools/dev/CityStreetTraversalProbe.gd",
+        "tools/tests/CityStreetTraversalCorridorTest.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-discovery-green-1.json",
+      "run": "city22-street-discovery-green-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-discovery-red-1.json",
+      "run": "city22-street-discovery-red-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-final-parse-1.json",
+      "run": "city22-street-final-parse-1",
+      "unavailable_scoped_sources": [
+        "tools/dev/CityStreetTraversalProbe.gd",
+        "tools/tests/CityDoorApproachGroundTest.gd",
+        "tools/tests/CityStreetTraversalCorridorTest.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-frontage-r3-1.json",
+      "run": "city22-street-frontage-r3-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-frontage-r4-1.json",
+      "run": "city22-street-frontage-r4-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-ground-parse-1.json",
+      "run": "city22-street-ground-parse-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-ground-red2-1.json",
+      "run": "city22-street-ground-red2-1",
+      "unavailable_scoped_sources": [
+        "tools/dev/CityStreetTraversalProbe.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-reward-r1-parse-1.json",
+      "run": "city22-street-native-reward-r1-parse-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-reward-r1-reward-after-1.json",
+      "run": "city22-street-native-reward-r1-reward-after-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-reward-r1-reward-before-1.json",
+      "run": "city22-street-native-reward-r1-reward-before-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-routes-r2-parse-1.json",
+      "run": "city22-street-native-routes-r2-parse-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-routes-r2-s2-1.json",
+      "run": "city22-street-native-routes-r2-s2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-routes-r3-s6-1.json",
+      "run": "city22-street-native-routes-r3-s6-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-routes-r3-s7-1.json",
+      "run": "city22-street-native-routes-r3-s7-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-s2-r1-parse-1.json",
+      "run": "city22-street-native-s2-r1-parse-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-native-s2-r1-s2-1.json",
+      "run": "city22-street-native-s2-r1-s2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-street-part-tools-parse-1.json",
+      "run": "city22-street-part-tools-parse-1",
+      "unavailable_scoped_sources": []
+    }
+  ],
+  "schema": 1
+}

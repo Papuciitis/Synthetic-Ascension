@@ -1,0 +1,30 @@
+{
+  "status": "SOURCE_READY_OFFLINE_FIXTURES_PASSED_ACTUAL_COMPLETION_REWARD_FULL_ROOT_REVIEW_PENDING",
+  "created_utc": "2026-10-23T02:32:37.174978+00:00",
+  "frozen_sources": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r3-adapter/build_street_packet_r3.py": "c6b31f0db5cefa9aa80dae39a5893b53f84d73a6b45c8999e56e328bbe95db8b",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r3-adapter/test_adapter_r3.py": "1e8593d99939084106516c1180f732184b67255a80f64baac97a9a9ad687ce73",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r3-adapter/README.md": "935b1097999c0999d5a984afd59b8f384f0e8ea652a4f40eec6dbe26aae89c73",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r3-adapter/root-review-template.json": "3b0859aa5b17cac54be4c62a09ebc562c86ac79045f70606032f81c7488219b2",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/build_street_packet_r2.py": "66bcab705c745fd054cb1d29b35e462fa3a97a74ffb3bda146239a026249011f",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/preparation.json": "1c90ea4f756e651c0fe448034a6e4941665fe93b6abb1773eab1739dc7cbab7f",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/source-bindings.json": "9d1bd70e2bb5e9bce75b7f4a139a943e76c1562290e68d35da68ce390c974cdf",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/continuation.py": "e0c42df3a5587314edd028f2bf17e1790dcdd64499ec8adced3767ad2b537784",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-s2-r2-root-visual-review.json": "122c9d6b7e6c6dc06a09dee59423b9de1345799ca03d7e95c3f6bf0182abd905"
+  },
+  "immutable_predecessors": {
+    "adapter66": "66bcab705c745fd054cb1d29b35e462fa3a97a74ffb3bda146239a026249011f",
+    "original48": "48f888438b6b9ec0807118322f96f31a14513e0df085095ec0f5a83331e84ffd"
+  },
+  "future_required_receipts": [
+    "/var/tmp/sa-city22/streets/native-routes-r3/completion.json",
+    "/var/tmp/sa-city22/streets/native-reward-r1/queue.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-r3-root-visual-review.json"
+  ],
+  "offline_test_methods": 8,
+  "actual_packet_built": false,
+  "engine_run": false,
+  "git_run": false,
+  "compression_run": false,
+  "scope": "Thin completion adapter only; unchanged matrix/reward/root5/source/raw/guard/physical/image and packaging gates, exact old/new command origins and stoppedR2 retained."
+}

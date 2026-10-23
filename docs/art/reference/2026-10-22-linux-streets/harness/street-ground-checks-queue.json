@@ -1,0 +1,28 @@
+[
+  [
+    "city22-street-ground-parse",
+    [
+      "--headless",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/source_parse_probe.tscn",
+      "--",
+      "res://core/systems/world/proc/SiteParcelsImpl.gd",
+      "res://tools/dev/CityStreetTraversalProbe.gd",
+      "res://tools/tests/CityDoorApproachGroundTest.gd",
+      "res://tools/tests/CityStreetTraversalCorridorTest.gd"
+    ]
+  ],
+  [
+    "city22-street-apron-green",
+    [
+      "--headless",
+      "res://tools/tests/CityDoorApproachGroundTest.tscn"
+    ]
+  ],
+  [
+    "city22-street-care-measure",
+    [
+      "--headless",
+      "res://tools/tests/CityGroundCareTest.tscn"
+    ]
+  ]
+]

@@ -1,0 +1,34 @@
+{
+  "status": "SOURCE_ONLY_READY_FOR_REVIEW_NOT_TESTED_OR_BUILT",
+  "quiet_window_open": true,
+  "tests_run": false,
+  "packet_built": false,
+  "engine_run": false,
+  "git_run": false,
+  "compression_run": false,
+  "frozen_sources": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/build_street_packet_r2.py": "66bcab705c745fd054cb1d29b35e462fa3a97a74ffb3bda146239a026249011f",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/original-build_packet-48f88843.py": "48f888438b6b9ec0807118322f96f31a14513e0df085095ec0f5a83331e84ffd",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/README.md": "0b65b82db40ef34e743f77b5c9daf38fa50b4d0518f296bb587ecc7c80862279",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/deferred-fixtures.json": "dfd42d3df1396822db682428d7ad8ce90d49f3850145de15c8316d8357421494",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/root-review-template.json": "1136bc9e0ce73089ff64b9dc0d4a6061f8386e66c67e98be77b8c82056a737b4",
+    "/var/tmp/sa-city22/packets/streets/build_packet.py": "48f888438b6b9ec0807118322f96f31a14513e0df085095ec0f5a83331e84ffd",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/source-bindings.json": "0abd1ed17bd9f9597cb91d20f5c5a1bd3698e0d739aac0a2c3b593f407660559",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2-independent-review.json": "1afaf699edcb37262e71d16303692e6c8f79f34b82881d52615353b6ea89f71e",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-s2-r1-root-visual-review.json": "e9c2a686c50d29da6eddb430e57ff4fb6dc2925e728f821052312aa8e1eebffb"
+  },
+  "future_required_queues": [
+    "/var/tmp/sa-city22/streets/native-routes-r2/queue.json",
+    "/var/tmp/sa-city22/streets/native-reward-r1/queue.json"
+  ],
+  "future_required_root_review": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-r2-root-visual-review.json",
+  "historical_failed_r1_queue": "/var/tmp/sa-city22/streets/native-s2-r1/queue.json",
+  "original_builder_preserved_once": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/original-build_packet-48f88843.py",
+  "deferred_checks": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-packet-r2-adapter/deferred-fixtures.json",
+  "limits": [
+    "No future native/visual pass claimed.",
+    "No test/module import/build/compression/Git/engine invocation by adapter author during OPEN.",
+    "Original reward program568b217e and separate R2 route program5e4f803e retain distinct source origins.",
+    "README/EVIDENCE packet introduction refresh remains root action after actual native acceptance."
+  ]
+}

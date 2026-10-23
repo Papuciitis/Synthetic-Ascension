@@ -1,0 +1,16 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-street-discovery-red-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 56.342,
+ "peak_rss_mb": 585,
+ "diagnostic_count": 1,
+ "diagnostics_head": [
+  "ERROR: passage search has no stream-before-query operation"
+ ]
+}
+--- stdout tail (3/3 lines) ---
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CityStreetTraversalDiscoveryTest: failures=1
