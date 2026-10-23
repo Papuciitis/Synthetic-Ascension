@@ -375,7 +375,9 @@ static func _outer_wall() -> Dictionary:
 	p.roles[ROLE_ROAD] = _role(SOURCE_SETTS, 352.0, Color(0.511, 0.505, 0.503), 0.71, Color(0.89, 0.91, 0.95))
 	p.roles[ROLE_LANE] = _role(SOURCE_SETTS, 256.0, Color(0.498, 0.492, 0.49), 0.66, Color(0.87, 0.89, 0.92))
 	p.roles[ROLE_FOOTWAY] = _role(SOURCE_FLAGS, 384.0, Color(0.616, 0.611, 0.601), 0.67, Color(1.10, 1.10, 1.10))
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 320.0, Color(0.573, 0.586, 0.543), 0.57, Color(1.46, 1.39, 1.67), LAYER_ROUND_COBBLE)
+	# Keep grassy outskirts cobbles at walking scale. The old whole-tile grade
+	# neutralized its green joints by pushing the stones themselves lavender.
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 192.0, Color(0.573, 0.586, 0.543), 0.52, Color(1.34, 1.37, 1.43), LAYER_ROUND_COBBLE)
 	p.kerb = 0.70
 	p.verge_layer = LAYER_SCRUB
 	p.verge_strength = 0.70
