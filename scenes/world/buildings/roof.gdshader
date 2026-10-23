@@ -28,10 +28,22 @@ uniform float under_ridge = 0.84;
 
 varying vec2 local_pos;
 varying vec4 surface_tint;
+varying flat float plane_seed;
+// Lichen near shaded eaves (CityWeathering). The lead's roof_lichen mask
+// (512x512, eave strip at the bottom, red = linear coverage) maps onto the
+// plane's south eave band and repeats along it; the theme sets the strength
+// once through project shader globals (0 = clean), and each roof plane varies
+// by a stable hash of its world position. It moves and fades with the roof.
+global uniform float sa_weather_lichen;
+global uniform vec4 sa_weather_lichen_tint;
+global uniform sampler2D sa_weather_lichen_mask : hint_default_black, filter_linear_mipmap, repeat_enable;
+const float LICHEN_BAND_PX = 112.0;
 
 void vertex() {
 	local_pos = VERTEX;
 	surface_tint = COLOR;
+	vec2 origin = floor((MODEL_MATRIX * vec4(bounds.xy, 0.0, 1.0)).xy / 16.0);
+	plane_seed = fract(sin(dot(origin, vec2(39.3468, 11.1355))) * 24634.6345);
 }
 
 void fragment() {
@@ -68,5 +80,23 @@ void fragment() {
 	float drip = max(smoothstep(drip_px, 0.0, size.y - local.y), smoothstep(drip_px * 0.75, 0.0, local.x));
 	shade *= 1.0 + rim_light * edge * lit_rim;
 	shade *= mix(1.0, drip_shade, drip * edge);
+	// Mask gradients come before the band test: implicit ones inside it are
+	// undefined where a pixel quad straddles the band's top edge.
+	float above_eave = size.y - local.y;
+	vec2 lichen_uv = vec2(local.x / 512.0 + plane_seed * 5.0, 1.0 - above_eave / LICHEN_BAND_PX);
+	vec2 lichen_dx = dFdx(lichen_uv);
+	vec2 lichen_dy = dFdy(lichen_uv);
+	if (sa_weather_lichen > 0.0) {
+		if (above_eave < LICHEN_BAND_PX) {
+			float coverage = textureGrad(sa_weather_lichen_mask, vec2(lichen_uv.x, clamp(lichen_uv.y, 0.0, 0.995)), lichen_dx, lichen_dy).r;
+			// Shaded slopes and older (high-seed) roofs carry more growth.
+			float shaded = shade < 1.0 ? 1.0 : 0.55;
+			// sa_weather_lichen: share of the way to the lichen hue at full
+			// coverage (the roof's own value is kept).
+			float amount = coverage * sa_weather_lichen * shaded * mix(0.6, 1.3, plane_seed);
+			vec3 hue = sa_weather_lichen_tint.rgb / max(dot(sa_weather_lichen_tint.rgb, vec3(0.299, 0.587, 0.114)), 0.001);
+			c.rgb = mix(c.rgb, hue * dot(c.rgb, vec3(0.299, 0.587, 0.114)), clamp(amount, 0.0, 1.0));
+		}
+	}
 	COLOR = vec4(c.rgb * shade, c.a);
 }

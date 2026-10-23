@@ -67,7 +67,8 @@ func _solids(kit: Node2D) -> Array[Polygon2D]:
 func _visible(kit: Node2D) -> Array[Polygon2D]:
 	var result: Array[Polygon2D] = []
 	for node: Node in kit.find_children("*","Polygon2D",true,false):
-		if node.has_meta(&"facade_wall_field") or node.has_meta(&"facade_plinth") or node.has_meta(&"facade_module"):
+		# Weathering stains are opaque wall pieces cut from the field (one owner per pixel).
+		if node.has_meta(&"facade_wall_field") or node.has_meta(&"facade_plinth") or node.has_meta(&"facade_module") or node.has_meta(&"facade_weathering"):
 			result.append(node)
 	return result
 
@@ -79,8 +80,9 @@ func _covered(kit: Node2D, point: Vector2) -> bool:
 
 
 func _rect_of(shape: Polygon2D) -> Rect2:
-	var box := Rect2(shape.polygon[0],Vector2.ZERO)
-	for point: Vector2 in shape.polygon: box = box.expand(point)
+	# In the parent's space: weathering pieces are unit squares scaled to their area.
+	var box := Rect2(shape.transform * shape.polygon[0],Vector2.ZERO)
+	for point: Vector2 in shape.polygon: box = box.expand(shape.transform * point)
 	return box
 
 

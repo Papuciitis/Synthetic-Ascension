@@ -243,3 +243,30 @@ rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 2d/snap/snap_2d_transforms_to_pixel=true
+
+[shader_globals]
+
+sa_weather_damp={
+"type": "float",
+"value": 0.0
+}
+sa_weather_damp_tint={
+"type": "color",
+"value": Color(0.8, 0.82, 0.77, 1)
+}
+sa_weather_damp_mask={
+"type": "sampler2D",
+"value": "res://assets/world/weathering/v1/wall_base_damp.png"
+}
+sa_weather_lichen={
+"type": "float",
+"value": 0.0
+}
+sa_weather_lichen_tint={
+"type": "color",
+"value": Color(0.52, 0.56, 0.4, 1)
+}
+sa_weather_lichen_mask={
+"type": "sampler2D",
+"value": "res://assets/world/weathering/v1/roof_lichen.png"
+}
