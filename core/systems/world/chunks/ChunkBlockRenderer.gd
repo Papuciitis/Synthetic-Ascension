@@ -335,22 +335,21 @@ func _add_prop_cast(data: ChunkBuildData, cell: Vector2i, world_center: Vector2,
 ## one bed or one parapet slab.
 func _add_plaza_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vector2, touched: Dictionary) -> void:
 	var mask := data.mask_at(cell)
-	var variant := data.variant_at(cell)
+	var style := PLAZA_EDGE.style_at(data, cell)
 	for fill in ChunkBlockVisualCatalog.KIT_FILLS:
 		var bits := int(fill[0])
 		if (mask & bits) != bits:
 			continue
 		var diagonal: Vector2i = fill[1]
-		var neighbour_variant := data.variant_at(cell + diagonal)
-		if not PLAZA_EDGE.owns(data.kind_at(cell + diagonal), neighbour_variant) or PLAZA_EDGE.is_balustrade(neighbour_variant) != PLAZA_EDGE.is_balustrade(variant):
+		if not PLAZA_EDGE.owns(data.kind_at(cell + diagonal), data.variant_at(cell + diagonal)) or PLAZA_EDGE.style_at(data, cell + diagonal) != style:
 			continue
-		var texture := PLAZA_EDGE.fill_texture(variant)
+		var texture := PLAZA_EDGE.fill_texture(style)
 		var key := _texture_key(texture)
 		var batch := _get_or_create_batch(key, texture, true, false, ChunkBlockVisualCatalog.FILL_Z)
 		if not touched.has(key):
 			touched[key] = batch.transforms.size()
 		var scale := ChunkBlockVisualCatalog.cell_scale(texture, float(texture.get_width()) * 0.5)
-		batch.transforms.append(Transform2D(0.0, world_center + PLAZA_EDGE.fill_offset(variant, diagonal)).scaled_local(Vector2(scale.x, -scale.y)))
+		batch.transforms.append(Transform2D(0.0, world_center + PLAZA_EDGE.fill_offset(style, diagonal)).scaled_local(Vector2(scale.x, -scale.y)))
 		batch.shadow_transforms.append(Transform2D())
 		batch.owners.append(data.coord)
 

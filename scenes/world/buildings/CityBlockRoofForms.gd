@@ -177,14 +177,16 @@ static func compose(host: Polygon2D, civic: bool, box: Rect2, profile: Dictionar
 		_rooftop(group, main, "roof_vents.png", Vector2(0.24 if variant % 2 == 0 else 0.76, 0.46), 46.0, &"vents")
 	else:
 		_chimney(group, main, false)
-		# Dormers face the street on east-west gables (south slope).
+		# Dormers face the street on east-west gables (south slope). Native
+		# review (2026-10-21, lead: attachment and scale need judgment before
+		# repetition): at 44 px a dormer reads as a small pale box seated
+		# mid-slope, and one or two on every house stamped the same mark down
+		# whole streets. One at most per building, on its first street-facing
+		# plane, on about half the houses (stable visual seed, not RNG).
 		var dormer := "dormer_slate.png" if bool(host.get_meta(&"city_roof_slate", false)) else "dormer_clay.png"
-		for plane: Polygon2D in ridged:
-			var count := 1 if plane.get_meta(&"city_roof_form") == &"service_room" else (2 if posmod(seed_value, 3) != 0 else 1)
-			for index: int in count:
-				var fx := (float(index) + 1.0) / float(count + 1)
-				fx += (float(posmod(seed_value >> (index * 3), 5)) - 2.0) * 0.03
-				_rooftop(group, plane, dormer, Vector2(fx, 0.70), 44.0, &"dormer")
+		if not ridged.is_empty() and posmod(hash(seed_value * 7919 + 6151), 2) == 0:
+			var fx := 0.5 + (float(posmod(seed_value >> 3, 5)) - 2.0) * 0.05
+			_rooftop(group, ridged[0], dormer, Vector2(fx, 0.70), 44.0, &"dormer")
 
 ## A painted rooftop element seated on a roof plane (fraction of its bounds),
 ## with a short projected contact shadow. It belongs to the fading roof.

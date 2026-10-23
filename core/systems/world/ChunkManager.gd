@@ -70,6 +70,7 @@ const _STREAM_PLANNER: Script = preload("res://core/systems/world/chunks/ChunkSt
 const _DECO_PLANNER: Script = preload("res://core/systems/world/proc/chunkgen/ChunkGenDeco.gd")
 const _FOLIAGE_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkFoliageRenderer.gd")
 const _BOSS_ARENA_SPACE := preload("res://core/systems/world/proc/BossArenaSpace.gd")
+const _PLAZA_EDGE_KIT := preload("res://core/systems/world/chunks/PlazaEdgeKit.gd")
 
 @export var generation_enabled: bool = true
 @export_group("Rendering")
@@ -274,6 +275,10 @@ static func prepare_transition_resources(tree: SceneTree) -> void:
 	GroundSplatRenderer.noise_texture()
 	_trace_transition_resource_step(started)
 	await _finish_transition_resource_frame(tree)
+	if Global.attempt_segment >= 2:
+		_transition_resource_stage = &"plaza"
+		var theme := SegmentThemePicker.get_theme(Global.attempt_segment, Global.attempt_world_seed)
+		await _PLAZA_EDGE_KIT.prepare_state_for_transition(tree, _PLAZA_EDGE_KIT.state_for_family(theme.district_family))
 	_transition_resource_stage = &"ready"
 
 
@@ -375,6 +380,10 @@ func _warm_ground_textures_for_plan() -> void:
 		# The splat shader's noise (built once per session) cost 160 ms inside
 		# the first segment-2 chunk activation (FPS audit 2026-10-04).
 		GroundSplatRenderer.noise_texture()
+	# Plaza edges: only this segment's maintenance state keeps its worn edge
+	# set and dressing textures resident (PlazaEdgeKit.warm_state), loaded
+	# here on the segment build rather than inside the first plaza chunk.
+	_PLAZA_EDGE_KIT.warm_family(district_family)
 
 
 func start_streaming(player_position: Vector2) -> void:

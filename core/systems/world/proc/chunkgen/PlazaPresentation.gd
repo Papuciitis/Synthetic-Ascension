@@ -15,6 +15,20 @@ extends RefCounted
 ## are visual or stand on an already blocked ring cell, and island cells that
 ## do not become a bed are re-paved with the plaza's own floor (ground only).
 ##
+## Maintenance states (plaza pass 2, lead review of phase 1): what a square
+## shows follows its district's use and upkeep (MAINTENANCE). Tended civic and
+## market squares keep planters, beds, benches and one cypress at most;
+## working yards draw worn kerbs, bare packed ground and goods (a handcart
+## among them) on the ring; ruined squares tumbled wall stumps, rubble and
+## debris; damp S7 squares mossy rims and wet beds; military ground a bare
+## parapet and supplies. Every state is presentation over the same physics
+## and plan inputs: goods and rubble stand on ring WALL cells, island props on
+## the island's existing half-cover cell, and the centrepiece footprint is
+## unchanged. Large squares with few ring cells still show their state along
+## their own edges: flat wear patches (packed earth, moss, weedy ground)
+## and low rubble and weeds on non-route edge paving, all walkable clutter
+## drawn under the actors, never an object that looks solid.
+##
 ## Determinism: no generator RNG stream is read or advanced. Choices come from
 ## cell coordinates, already-made generator choices (ring, islands, landmark)
 ## and the named salts below mixed with the chunk seed, so reloads and any
@@ -34,6 +48,13 @@ const SALT_FURNITURE := 0x51A7F1
 const SALT_BENCH := 0x51A7B3
 const SALT_DRAIN := 0x51A7D7
 const SALT_ACCENT := 0x51A7AC
+## Plaza pass 2 (maintenance states): ring goods / rubble, debris decals and
+## the per-island wear of a bed's kerb.
+const SALT_RING_PROPS := 0x51A7E5
+const SALT_DEBRIS := 0x51A7DB
+const SALT_BED_WEAR := 0x51A7BE
+## Wear along a square's own edges (large squares; flat patches, low clutter).
+const SALT_EDGE_WEAR := 0x51A7E7
 
 const META_ISLANDS := &"_plaza_islands"
 const META_PLAZA := &"_plaza_presentation"
@@ -55,6 +76,37 @@ const MARKET_FAMILIES: Array[StringName] = [&"civilian_cutthrough", &"service_co
 const COURT_FAMILIES: Array[StringName] = [&"service_courtyards", &"civilian_cutthrough"]
 ## Civic / residential districts favour a fountain, working districts a well.
 const FOUNTAIN_FAMILIES: Array[StringName] = [&"service_courtyards", &"civilian_cutthrough", &"inner_district_gate", &"gate_district", &"checkpoint_lanes", &"canal_services"]
+
+## Maintenance state of each district family's squares (lead review of
+## phase 1, "Theme identity"): tended civic and market squares keep their
+## planters; working yards get worn kerbs, stacked goods and bare packed
+## ground; ruined districts broken rims, rubble, weeds and neglected beds;
+## damp S7 mossy rims and wet beds; military ground bare stone and supplies.
+## The table lives with the edge kit (PlazaEdgeKit.STATE_BY_FAMILY), which
+## also keeps only the active state's art resident.
+const MAINTENANCE := KIT.STATE_BY_FAMILY
+## Goods, supplies or rubble standing on ring cells (blocked support), by
+## state: [ids in rotation, how many at most]. Tended squares keep their one
+## cypress accent instead; arena and gate parapets carry nothing. Working
+## clutter stands only here, on cells actors can never enter, so nothing that
+## looks solid ever stands on walkable paving (the handcart included).
+const RING_PROPS := {
+	KIT.STATE_WORKING: [[&"crates_stack", &"handcart", &"barrels_group", &"sacks_pile"], 4],
+	KIT.STATE_MILITARY: [[&"crates_stack", &"sacks_pile"], 4],
+	KIT.STATE_RUINED: [[&"rubble_pile", &"scaffold_crates", &"rubble_pile"], 3],
+	KIT.STATE_DAMP: [[&"barrels_group"], 1],
+}
+## Edge wear per state: [kind, cells of square edge per item, min, max].
+## Flat patches lie at ground level; rubble and weeds are low clutter.
+const EDGE_WEAR := {
+	KIT.STATE_WORKING: [[&"earth", 10, 2, 5]],
+	KIT.STATE_RUINED: [[&"weedy", 12, 2, 4], [&"rubble", 14, 1, 3], [&"weeds", 9, 2, 5]],
+	KIT.STATE_DAMP: [[&"moss", 10, 2, 5], [&"weeds", 12, 1, 4]],
+	KIT.STATE_MILITARY: [[&"earth", 9, 2, 5]],
+}
+## The frontal cypress is a placement-specific source (lead review): one per
+## tended square at most, never a repeated planter-end motif.
+const MAX_CYPRESS := 1
 
 ## Dev and test toggle: false reproduces the pre-pass chunk exactly.
 static var enabled := true
@@ -119,8 +171,11 @@ static func mark_ring(gen: ChunkGenImpl, chunk: Node2D, role: StringName, archet
 	var data := _build_data(gen)
 	var balustrade := role in BALUSTRADE_ROLES or archetype == &"gate"
 	var bits := KIT.VARIANT_PLAZA_EDGE | (KIT.VARIANT_BALUSTRADE if balustrade else 0)
+	var state := maintenance_state(gen.district_family)
 	var marked: Array[Vector2i] = []
 	if data != null:
+		# Presentation only: the finish the renderer draws the edges in.
+		data.plaza_edge_state = state
 		var ordered: Array = ring_cells.keys()
 		ordered.sort()
 		for cell: Vector2i in ordered:
@@ -133,6 +188,7 @@ static func mark_ring(gen: ChunkGenImpl, chunk: Node2D, role: StringName, archet
 		"role": role,
 		"archetype": archetype,
 		"balustrade": balustrade,
+		"state": state,
 		"plaza": plaza_cells.duplicate(),
 		"ring": marked,
 	})
@@ -211,8 +267,12 @@ static func plan_plaza(gen: ChunkGenImpl, chunk: Node2D, coord: Vector2i) -> Dic
 		islands.append(entry)
 		if bed.has_area():
 			ChunkShapeGen.add_rect(reserved, bed.grow(1))
+	var state := int(info.get("state", KIT.STATE_TENDED))
+	for island: Dictionary in islands:
+		island["wear_seed"] = _hash(base_seed, SALT_BED_WEAR, (island.rect as Rect2i).position)
 	var plan := {
 		"role": role, "family": family, "balustrade": bool(info.balustrade),
+		"state": state,
 		"islands": islands, "centrepiece": {}, "lamps": [], "benches": [],
 		"drains": [], "stalls": [],
 	}
@@ -257,13 +317,174 @@ static func plan_plaza(gen: ChunkGenImpl, chunk: Node2D, coord: Vector2i) -> Dic
 		if not bool(stall.ring):
 			ChunkShapeGen.add_rect(avoid, Rect2i(stall.cell, Vector2i(2, 1)).grow(1))
 	plan.lamps = _plan_lamps(plaza, ring_set, data, clear, centroid, avoid, edge_taken, boss, cells)
-	if not bool(info.balustrade):
+	# A ruined square keeps one lit road mouth (the lamps of the first, widest
+	# run), not a ceremonial pair of pairs.
+	if state == KIT.STATE_RUINED and not (plan.lamps as Array).is_empty():
+		var first_run := int((plan.lamps as Array)[0].run)
+		plan.lamps = (plan.lamps as Array).filter(func(lamp: Dictionary) -> bool: return int(lamp.run) == first_run)
+	# Benches face tended and damp squares only; working, ruined and military
+	# ground has no civic seating (and nothing solid-looking takes its place).
+	if not bool(info.balustrade) and state in [KIT.STATE_TENDED, KIT.STATE_DAMP]:
 		plan.benches = _plan_benches(ring_set, plaza, data, clear, edge_taken, avoid, base_seed)
+		if state == KIT.STATE_DAMP:
+			plan.benches = (plan.benches as Array).slice(0, 1)
 	plan.drains = _plan_drains(plaza, data, clear, avoid, boss, base_seed)
 	if not bool(info.balustrade):
-		plan["accents"] = _plan_accents(ring_set, data, plan.lamps, edge_taken, avoid, base_seed)
+		if state == KIT.STATE_TENDED:
+			plan["accents"] = _plan_accents(ring_set, data, plan.lamps, edge_taken, avoid, base_seed).slice(0, MAX_CYPRESS)
+		elif RING_PROPS.has(state):
+			plan["ring_props"] = _plan_ring_props(ring_set, data, plan.lamps, plan.benches, edge_taken, avoid, state, base_seed)
+	if state == KIT.STATE_RUINED:
+		plan["debris"] = _plan_debris(plaza, data, clear, avoid, plan.drains, boss, base_seed)
+	if EDGE_WEAR.has(state):
+		plan["edge_wear"] = _plan_edge_wear(plaza, data, clear, avoid, plan.lamps, (plan.drains as Array) + (plan.get("debris", []) as Array), boss, cells, state, base_seed)
 	plan["repave_tex"] = _plaza_floor_tex(data, plaza)
 	return plan
+
+
+static func maintenance_state(family: StringName) -> int:
+	return KIT.state_for_family(family)
+
+
+## Goods, supplies or rubble on ring cells (blocked support) of horizontal
+## runs, where a wide prop sits over the band rather than beside it: run ends
+## first, then straight cells, in a salted stable order, keeping off lamps,
+## stalls, the centrepiece, anchors and each other. Rubble also heaps on a
+## ruined ring's corners and vertical ends, where the stump has fallen most.
+## Military supplies stand in pairs on neighbouring cells (crates beside
+## sacks); other states spread.
+static func _plan_ring_props(ring_set: Dictionary, data: ChunkBuildData, lamps: Array, benches: Array, edge_taken: Dictionary, avoid: Dictionary, state: int, base_seed: int) -> Array:
+	if data == null:
+		return []
+	var spec: Array = RING_PROPS[state]
+	var ids: Array = spec[0]
+	var wanted: int = spec[1]
+	var lit: Dictionary = {}
+	for lamp: Dictionary in lamps:
+		lit[lamp.cell] = true
+	for bench: Dictionary in benches:
+		lit[bench.cell] = true
+		lit[(bench.cell as Vector2i) + Vector2i.RIGHT] = true
+	var horizontal := WorldBlockerGeometry.E | WorldBlockerGeometry.W
+	var ends: Array = []
+	var straights: Array = []
+	for key in ring_set.keys():
+		var cell: Vector2i = key
+		var mask := data.mask_at(cell) & 15
+		var vertical_arm := (mask & (WorldBlockerGeometry.N | WorldBlockerGeometry.S)) != 0
+		if mask == 0 or (vertical_arm and (state != KIT.STATE_RUINED or mask == (WorldBlockerGeometry.N | WorldBlockerGeometry.S))):
+			continue
+		if lit.has(cell) or edge_taken.has(cell) or avoid.has(cell):
+			continue
+		(straights if mask == horizontal else ends).append(cell)
+	var order: Array = _shuffled(ends, base_seed, SALT_RING_PROPS)
+	order.append_array(_shuffled(straights, base_seed, SALT_RING_PROPS + 1))
+	var candidates: Dictionary = {}
+	for cell: Vector2i in order:
+		candidates[cell] = true
+	var props: Array = []
+	var used: Dictionary = {}
+	for cell: Vector2i in order:
+		if props.size() >= wanted:
+			break
+		if used.has(cell):
+			continue
+		var far := true
+		for other: Dictionary in props:
+			if (other.cell as Vector2i).distance_squared_to(cell) < 16:
+				far = false
+		if not far:
+			continue
+		var id: StringName = ids[props.size() % ids.size()]
+		props.append({"cell": cell, "id": id})
+		used[cell] = true
+		if state == KIT.STATE_MILITARY and props.size() < wanted:
+			for step in [Vector2i.RIGHT, Vector2i.LEFT]:
+				var mate: Vector2i = cell + step
+				if candidates.has(mate) and not used.has(mate):
+					props.append({"cell": mate, "id": ids[props.size() % ids.size()]})
+					used[mate] = true
+					break
+	return props
+
+
+## Broken tile and stone debris (flat ground decals) on a ruined square's
+## open paving, off the route, beds, blockers and the gutters' grates.
+static func _plan_debris(plaza: Dictionary, data: ChunkBuildData, clear: Dictionary, avoid: Dictionary, drains: Array, boss: Rect2i, base_seed: int) -> Array:
+	var candidates: Array = []
+	for key in plaza.keys():
+		var cell: Vector2i = key
+		if clear.has(cell) or avoid.has(cell) or (boss.has_area() and boss.has_point(cell)):
+			continue
+		var open := true
+		for dir: Vector2i in [Vector2i.ZERO, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+			if data != null and data.kind_at(cell + dir) >= 0:
+				open = false
+		if open and plaza.has(cell + Vector2i.LEFT) and plaza.has(cell + Vector2i.RIGHT):
+			candidates.append(cell)
+	var debris: Array = []
+	for cell: Vector2i in _shuffled(candidates, base_seed, SALT_DEBRIS):
+		if debris.size() >= 3:
+			break
+		var far := true
+		for other: Dictionary in debris + drains:
+			if (other.cell as Vector2i).distance_squared_to(cell) < 36:
+				far = false
+		if far:
+			debris.append({"cell": cell})
+	return debris
+
+
+## Wear along the square's own edge band (plaza cells beside non-plaza
+## ground) where its state would otherwise not show: flat patches (packed
+## earth, moss, weedy ground) and low rubble and weeds, scaled to the
+## length of the edge. Off protected route cells, beds, the centrepiece and
+## anchors (avoid), lamps, drains and debris, the boss court and the chunk's
+## outer cells; spaced so no two of one kind crowd. Presentation only.
+static func _plan_edge_wear(plaza: Dictionary, data: ChunkBuildData, clear: Dictionary, avoid: Dictionary, lamps: Array, decals: Array, boss: Rect2i, cells: int, state: int, base_seed: int) -> Array:
+	var taken: Dictionary = {}
+	for item: Dictionary in lamps + decals:
+		taken[item.cell] = true
+	var edge: Array = []
+	for key in plaza.keys():
+		var cell: Vector2i = key
+		if cell.x < 1 or cell.y < 1 or cell.x > cells - 2 or cell.y > cells - 2:
+			continue
+		if clear.has(cell) or avoid.has(cell) or taken.has(cell) or (boss.has_area() and boss.has_point(cell)):
+			continue
+		if data != null and data.kind_at(cell) >= 0:
+			continue
+		var outer := Vector2i.ZERO
+		for dir: Vector2i in ChunkShapeGen.DIRS_4:
+			if not plaza.has(cell + dir):
+				outer += dir
+		if outer != Vector2i.ZERO:
+			edge.append(cell)
+	var items: Array = []
+	var spec: Array = EDGE_WEAR[state]
+	for k in spec.size():
+		var entry: Array = spec[k]
+		var kind: StringName = entry[0]
+		var wanted := clampi(edge.size() / int(entry[1]), int(entry[2]), int(entry[3]))
+		var placed := 0
+		for cell: Vector2i in _shuffled(edge, base_seed, SALT_EDGE_WEAR + k):
+			if placed >= wanted:
+				break
+			var far := true
+			for other: Dictionary in items:
+				var gap := (other.cell as Vector2i).distance_squared_to(cell)
+				if gap < 4 or (StringName(other.kind) == kind and gap < 25):
+					far = false
+					break
+			if not far:
+				continue
+			var outward := Vector2i.ZERO
+			for dir: Vector2i in ChunkShapeGen.DIRS_4:
+				if not plaza.has(cell + dir):
+					outward += dir
+			items.append({"cell": cell, "kind": kind, "outward": outward, "seed": _hash(base_seed, SALT_EDGE_WEAR + 16 + k, cell)})
+			placed += 1
+	return items
 
 
 ## Cypress accents in up to two closed planter ends (a run end with one arm)
@@ -531,7 +752,8 @@ static func _plan_lamps(plaza: Dictionary, ring_set: Dictionary, data: ChunkBuil
 	runs.sort_custom(func(a: Array, b: Array) -> bool: return a[0] > b[0] or (a[0] == b[0] and a[1] < b[1]))
 	var lamps: Array = []
 	var used: Dictionary = {}
-	for run: Array in runs.slice(0, MAX_LAMP_PAIRS):
+	for run_index in mini(runs.size(), MAX_LAMP_PAIRS):
+		var run: Array = runs[run_index]
 		var run_start: int = run[1]
 		var run_end: int = run[2]
 		var flanks := [[(start + run_start - 1 + total) % total, (start + run_start) % total], [(start + run_end) % total, (start + run_end - 1) % total]]
@@ -554,7 +776,7 @@ static func _plan_lamps(plaza: Dictionary, ring_set: Dictionary, data: ChunkBuil
 			used[cell] = true
 			# Stand at the side facing the road mouth, not in the planting.
 			var toward := Vector2(mouth_cell - cell).limit_length(1.0)
-			lamps.append({"cell": cell, "support": ring_set.has(cell), "toward": toward})
+			lamps.append({"cell": cell, "support": ring_set.has(cell), "toward": toward, "run": run_index})
 	return lamps
 
 
@@ -822,14 +1044,16 @@ static func _apply_physical(gen: ChunkGenImpl, chunk: Node2D, plan: Dictionary) 
 		var prop: Vector2i = island.prop
 		if prop.x >= 0:
 			_own_art(data, prop)
-	# Ground presentation only: the island cells that are not a bed take the
-	# plaza's own paving (stamped above the island; no blocker changes).
+	# Tended beds keep their planted underlay. Worn ground feathers into the
+	# square, so re-pave the whole existing island to remove the old lawn/care
+	# owner under its rough edge (no blocker or outside-island changes).
 	var tex := int(plan.get("repave_tex", -1))
 	if tex >= 0:
 		var unused_rng := RandomNumberGenerator.new()
 		for island: Dictionary in plan.islands:
 			var cells := ChunkShapeGen.rect_cells(island.rect)
-			ChunkShapeGen.subtract_rect(cells, island.bed)
+			if int(plan.get("state", KIT.STATE_TENDED)) == KIT.STATE_TENDED:
+				ChunkShapeGen.subtract_rect(cells, island.bed)
 			for rect: Rect2i in ChunkShapeGen.cells_to_rects(cells):
 				gen._stamp_floor_rect_cells(chunk, rect, tex, unused_rng, 0.95, -92)
 

@@ -60,10 +60,11 @@ func _test_wall_catalog() -> void:
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WINDOW, 5)).ends_with("wall_stone_window_v.png"), "vertical window selects window texture")
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WINDOW, 3)).ends_with("wall_stone_corner_ne.png"), "unsupported window mask falls back to matching full wall")
 	# 17 wall/window pieces, the Phase 3 face, and 8 half-cover variants, plus
-	# the low plaza edge kits: 16 planter and 16 parapet pieces, two straight
-	# planting variants, two parapet piers and one fill per style.
-	_check(ChunkBlockVisualCatalog.PLAZA_EDGE_KIT.texture_count() == 38, "plaza edge kits report 38 textures")
-	_check(ChunkBlockVisualCatalog.texture_count() == 26 + 38, "legacy catalog reports 18 wall and 8 half-cover texture variants plus the plaza edge kits")
+	# the low plaza edge kits: planter 19 + parapet 19 + working 19 +
+	# ruin 37 + damp 37. This is the catalog bound over all states, not
+	# simultaneous segment residency (38 + at most one worn style).
+	_check(ChunkBlockVisualCatalog.PLAZA_EDGE_KIT.texture_count() == 131, "plaza edge catalog reports all 131 possible state textures")
+	_check(ChunkBlockVisualCatalog.texture_count() == 26 + 131, "legacy catalog reports 18 wall and 8 half-cover texture variants plus the plaza edge kits")
 	_check(ChunkBlockVisualCatalog.face_texture(WorldBlockerGeometry.Kind.WALL, 10) != null, "legacy walls hang a separate face under an exposed edge")
 	# The three-quarter kit (default): one baked piece per connection mask.
 	ChunkBlockVisualCatalog.three_quarter_walls = true
@@ -103,7 +104,7 @@ func _test_half_cover_catalog() -> void:
 	_check(_texture_path(ChunkBlockVisualCatalog.half_texture(first)).ends_with("mossy_rubble.tres"), "packed half-cover variant selects the matching painted rubble")
 	_check(is_zero_approx(ChunkBlockVisualCatalog.half_rotation(first)), "painted rubble retains its directional lighting despite packed legacy quarter-turns")
 	_check(is_equal_approx(ChunkBlockVisualCatalog.half_rotation(negative), PI * 0.5), "legacy table variants retain their packed rotation")
-	_check(ChunkBlockVisualCatalog.texture_count() == 34 + 38, "kit catalog reports 16 pieces, 2 windows, 4 rhythm variants, 4 fills and 8 half-cover variants plus the plaza edge kits")
+	_check(ChunkBlockVisualCatalog.texture_count() == 34 + 131, "kit catalog reports 16 pieces, 2 windows, 4 rhythm variants, 4 fills and 8 half-cover variants plus the plaza edge kits")
 
 
 func _texture_path(texture: Texture2D) -> String:
