@@ -1,0 +1,110 @@
+{
+  "accepted": true,
+  "reviewer_role": "independent",
+  "reviewer_task": "/root/s9_source_review_23",
+  "source_head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+  "reviewed_utc": "2026-10-23T20:41:16.568670+00:00",
+  "originals": [
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/docs/art/reference/2026-10-23-ground-care-edges/native/before-s9-r2/ground-before.png",
+      "sha256": "224281844a6c7c4dcdd473c5d5f812f58721308d0016e80ca9b12e69ef4d527c"
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/docs/art/reference/2026-10-23-ground-care-edges/native/before-s9-r2/capture-info.json",
+      "sha256": "71a2f78758561ba804b86141021315680dced3413c328d567c70003235a440e4"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-r3/ground-before.png",
+      "sha256": "d29427361f314332b95c588536fe75542eed4df379acfef779d210be9bdfd0f1"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-r3/capture-info.json",
+      "sha256": "245ee198d98a94a2cae08b99989b81064b3cd59fe4e494de2e81accc241d565f"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-small-r2/ground-before.png",
+      "sha256": "a15c67f6dd6d88d82520a0289de0865ee10fe3896ed2cb210ae5666cd9952dca"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-small-r2/capture-info.json",
+      "sha256": "88f53e8c3d88e5e022a5387e83fec221daaeb65fb9e2294023e719f5dbe165ed"
+    }
+  ],
+  "assessment": {
+    "scope": "Bounded Outer Wall ROLE_YARD stone scale and local grade correction only.",
+    "source": "Compared production and candidate DistrictGroundPolicy.gd directly. Only the Outer Wall yard tuple and its explanatory comment differ: repeat 320 to 192, weight .57 to .52, tint (1.46,1.39,1.67) to (1.34,1.37,1.43). Round-cobble layer 9 and RGB mid remain; roads, lanes, footways, scrub verge and all semantic ownership/generation remain unchanged.",
+    "normal_originals": "Personally viewed the original 1280x720 baseline and fresh normal-r3 PNGs. Round cobbles outside the cared four-cell patch are visibly smaller and quieter; lavender is reduced toward grey-green. Grass joints and grassy outskirts character remain visible. Door landings, facade contact and the central player remain readable.",
+    "small_original": "Personally viewed fresh small-r2 original 960x540 PNG after root declared all engine work idle. The same grey-green cobble field remains legible at native small size without returning to oversized lavender stones. Grass joints and the player still read; the image is accepted only within this selected static view.",
+    "baseline_binding": "Committed baseline PNG and JSON were verified byte-identical to the /var/tmp/before-s9-r2 originals personally viewed/read. The six bindings use the committed baseline paths expected by the packet builder."
+  },
+  "controls": {
+    "matched_normal_and_small_to_baseline": [
+      "seed",
+      "attempt_seed",
+      "plan_seed",
+      "segment",
+      "theme",
+      "district_family",
+      "coord",
+      "role",
+      "fixture",
+      "ground_context_world_px",
+      "normal_hud",
+      "optional_details_hidden",
+      "ground",
+      "visible_care_attribution",
+      "route",
+      "failures",
+      "save_writes"
+    ],
+    "camera": "Same (-3104,-1384), zoom 1, rotation 0 and logical 1920x1080 view; native 1280x720 normal and 960x540 small. Small stretch .5 is recorded by the actual render contract.",
+    "world": "Same world seed 16102026, plan seed 1445060584, outer_wall family, coord (-2,-1), player parking (-3104,-1248).",
+    "ownership": "Entire ground object, material counts, care mask 767a3f6ae80644b7ef60659130a6ec70e20653a8ec281ad91e644b3a97a57729, visible four care 1/material 6 cells, ground cache and manifest hashes match exactly.",
+    "bound_roles": "Observed ShaderMaterial arrays match exactly between normal and small. Role 4 sample[3,9,192,1], mid[.573,.586,.543,.52], tint[1.34,1.37,1.43,1] within float precision; layer 9 source records match. These are material-parameter observations, not GPU readback.",
+    "exterior": "Opaque outside owners, loaded walkable parking, fixed camera, 20 FPS render cap, 60 Hz physics, normal HUD, optional details and zero save writes/failures match.",
+    "live_variation": "Weather remains live with the same atmosphere profile. The after HUD objective panel expands to show breach details. These live content differences are permitted; whole-frame pixel identity is not claimed.",
+    "queue": "Read actual final paving-queue-r3 ALL_COMPLETED at 6905e7ea. Clean normal and small run/guard originals were independently checked."
+  },
+  "run_records_checked": [
+    {
+      "label": "city23-ground-after-s9-r3",
+      "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r3-1/run-results.json",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "source_head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+      "clean_tracked_tree": true,
+      "guard_reason": "completed",
+      "instantaneous_stop_c": 90,
+      "owned_active_sampled_peak_c": 77.0,
+      "all_samples_peak_c": 86.0
+    },
+    {
+      "label": "city23-ground-after-s9-small-r2",
+      "run_result": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-small-r2-1/run-results.json",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "source_head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+      "clean_tracked_tree": true,
+      "guard_reason": "completed",
+      "instantaneous_stop_c": 98,
+      "owned_active_sampled_peak_c": 77.0,
+      "all_samples_peak_c": 89.0
+    }
+  ],
+  "thermal_qualification": {
+    "protocol": "Mixed functional protocols: baseline used older 2 CPU guard with Game-ready duty release; fresh normal-r3 used 1 CPU/default 90 instantaneous stop, while small-r2 selected optional 98. Fresh runs retained 65 launch, 85 C for three consecutive owned samples,10% duty through exit and no release marker.",
+    "mechanics_review": "Independent source diff 205badf2 to 4c074319 changes only optional instantaneous threshold selection/receipt and CLI 90-or-98 default 90. Read the actual frozen-old unsupported-option RED and seven simulated-sensor/non-Godot GREEN cases, including default stop, brief bursts, sustained 85/95, immediate 98 and rejected 97.",
+    "limit": "This is qualification of recorded sampling and guard mechanics only. One-Hz package samples do not bound unsampled peaks or establish component/hardware thermal safety. No timing or performance comparison is valid from these duty-controlled static captures."
+  },
+  "limits": [
+    "The broad orthogonal yard/property support, pale forecourt and plaza/road-strip geometry remain open.",
+    "The dark four-cell cared patch still reads as a square; this receipt does not accept its broader layout as finished.",
+    "Baseline precedes the already accepted care-edge shader correction. Policy appearance was judged outside cared support; this is not a policy-only pixel-difference experiment.",
+    "Static images with ambient spawner disabled and player god mode do not establish motion shimmer, combat-warning readability, live human play quality, performance or whole-city completion.",
+    "Interrupted prior after-s9 and small-r1 attempts are not accepted and must remain recorded separately."
+  ]
+}

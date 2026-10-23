@@ -1,0 +1,13 @@
+{
+  "reason": "User continued city work after discussing normal laptop heat; startup gap fixed, next small capture still interrupted on a single94C package sample after164throttlecycles. Optional98C instantaneous stop retains existing85C x3 sustained stop; default90 unchanged. No host temperature/frequency/power setting or foreign process changed. Readings are local kernel-reported bounds, not a proof of component safety.",
+  "guard_before_sha256": "205badf2274e8ba83a89dc35cfe0174cbe0f5604cda984a48306b958fe2146c5",
+  "kernel_readings": [
+    {
+      "sensor": "/sys/class/hwmon/hwmon9",
+      "package_input_millic": 62000,
+      "package_critical_millic": 100000,
+      "package_max_millic": 100000
+    }
+  ],
+  "preserved_failed_small_run": "city23-ground-after-s9-small-r1"
+}

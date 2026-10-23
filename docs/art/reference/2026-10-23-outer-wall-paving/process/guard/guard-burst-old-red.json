@@ -1,0 +1,27 @@
+{
+  "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+  "source_sha256": "205badf2274e8ba83a89dc35cfe0174cbe0f5604cda984a48306b958fe2146c5",
+  "real_godot_started": false,
+  "temperature_is_simulated": true,
+  "cases": [
+    {
+      "case": "brief95-one",
+      "expected_reason": "completed",
+      "sequence": [
+        95,
+        60
+      ],
+      "elapsed_seconds": 0.048,
+      "guard_exit": 2,
+      "identity": null,
+      "thermal": null,
+      "foreign_canary_live_and_unstopped": true,
+      "assertion_failures": [
+        "guard produced no thermal receipt (new option unsupported)",
+        "owned fake engine did not launch"
+      ],
+      "guard_stdout": "usage: guard.py [-h] --label LABEL --project PROJECT [--timeout TIMEOUT]\n                [--release-marker RELEASE_MARKER] [--duty-percent {10,25}]\n                [--cpu-count {1,2}] [--start-temperature {65.0,70.0}]\n                [--max-wait MAX_WAIT]\n                ...\nguard.py: error: unrecognized arguments: --burst-temperature\n"
+    }
+  ],
+  "failed_cases": 1
+}

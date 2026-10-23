@@ -1,0 +1,18 @@
+{
+  "baseline_packet": "../2026-10-23-ground-care-edges/",
+  "baseline_originals": [
+    {
+      "path": "docs/art/reference/2026-10-23-ground-care-edges/native/before-s9-r2/ground-before.png",
+      "bytes": 1446457,
+      "sha256": "224281844a6c7c4dcdd473c5d5f812f58721308d0016e80ca9b12e69ef4d527c"
+    },
+    {
+      "path": "docs/art/reference/2026-10-23-ground-care-edges/native/before-s9-r2/capture-info.json",
+      "bytes": 11403,
+      "sha256": "71a2f78758561ba804b86141021315680dced3413c328d567c70003235a440e4"
+    }
+  ],
+  "baseline_actual_result": "../2026-10-23-ground-care-edges/runs/city23-ground-before-s9-r2/run-results.json.gz",
+  "accepted_care_shader": "docs/art/reference/2026-10-23-ground-care-edges/sources/production/core/systems/world/ground/ground_splat.gdshader",
+  "limits": "Prior packet is referenced, not copied. Baseline precedes accepted care-edge shader; care/material/cache metadata remain exact."
+}

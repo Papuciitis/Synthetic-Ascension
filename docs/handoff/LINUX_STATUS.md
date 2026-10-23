@@ -3,6 +3,43 @@
 Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
+## 23 October — Outer Wall paving calibration verified and merged
+
+Normal-merged the saved S9 candidate through tested `6905e7ea` at `10d07c8a`.
+Outer Wall yard cobbles now use a 192 px repeat instead of 320 px and a quieter,
+more neutral local grade. Grassy joints and the outskirts character remain.
+This changes only that yard role; roads, doors, terrain ownership, care bytes,
+generation and source textures are unchanged.
+
+Both actual Game captures passed at native 1280×720 and 960×540 with zero
+diagnostics, 20 FPS rendering, 60 Hz physics and zero save writes. Their camera,
+material coverage, care mask and visible care cells match the baseline. The
+observed bound material uniforms confirm layer 9, repeat 192 and the selected
+grade. Root and independent original-image review accept the bounded scale and
+colour improvement. Fresh CityGroundCareTest passes 150/0 and
+WorldGroundSplatTest passes 63/0; all four runs exit 0 with completed guards.
+Production runtime sources match the tested isolated tree; no separate
+merged-main engine replay or motion/performance acceptance is claimed.
+
+The [paving evidence packet](../art/reference/2026-10-23-outer-wall-paving/README.md)
+contains 96 verified files, both native originals, complete actual records,
+source snapshots and the interrupted small-window attempt. The capture guard's
+startup discovery gap is fixed. Default 90 C instantaneous stopping remains;
+the last three checks selected an optional 98 C burst ceiling while retaining
+the 85 C three-sample sustained stop, 65 C launch gate and bounded duty.
+Their owned-engine sampled peaks were 69–78 C. This is a qualified capture
+protocol, not a hardware-safety result; 1 Hz sampling cannot bound unsampled
+peaks. Earlier failed records remain unchanged.
+
+Next: broad yard/property support shapes. Source attribution identifies the
+residual urban base and rectangular courtyard/frontage stamps, so grading
+cannot remove their outlines. Start with one yard: retain actual door, apron
+and walking support, and break up unused exposed corners through ground
+presentation while preserving semantic coverage, RNG, navigation and care.
+Formal objective/checkpoint/arena plazas need separate attribution. Broad
+rectangular plots, square care support, oversized mossy flags and tiny covered
+equipment remain open.
+
 ## 23 October — Claude playtest fixes received; grass edges corrected
 
 Resumed from Claude's `67728a93`, including the merged doorway, prop-shadow,
@@ -26,14 +63,12 @@ attempts. This is a bounded edge-blending correction. Broad orthogonal property
 and plaza layouts, oversized mossy flags and tiny covered-item visibility remain
 open; no whole-city or performance acceptance is claimed.
 
-S9's smaller, more neutral grassy-cobble calibration is saved separately as
-`745f96ef` on **`codex/c23-ground`**, and is **not merged**. Its existing policy
-catalogue passes 116/0, but its full-Game after captures repeatedly hit thermal
-stops at 97–98 C. The current Care owner attempts also stopped thermally;
-the queued WorldGroundSplat suite never ran. Those are incomplete outcomes.
-Finish the S9 normal and small-window captures in a quiet, cool session before
-accepting that candidate. The local guard now has a tested optional
-`--cpu-count 1`; its two-CPU default, thermal limits and cleanup are unchanged.
+At this earlier checkpoint, S9's calibration was saved separately as `745f96ef`
+on **`codex/c23-ground`** and remained unmerged. Its policy catalogue passed
+116/0, but full-Game after and Care attempts stopped thermally; the queued
+WorldGroundSplat suite had not run. Those original attempts remain incomplete.
+The later entry above closes the normal/small views and focused owner checks
+under explicitly recorded capture protocols, then integrates the candidate.
 
 ## 23 October — combined city checks passed
 

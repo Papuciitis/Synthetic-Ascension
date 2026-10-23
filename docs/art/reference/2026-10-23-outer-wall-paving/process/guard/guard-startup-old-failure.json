@@ -1,0 +1,93 @@
+{
+  "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/guard-before-startup-discovery.py",
+  "source_sha256": "3a6088b23aa55ddf4d54a3a4a4dd99c4c52c87129029c69e6dce0b0ebc3e97b0",
+  "expect": "throttled",
+  "real_godot_started": false,
+  "temperature_is_simulated": true,
+  "elapsed_seconds": 1.076,
+  "guard_exit": 1,
+  "identity": {
+    "pid": 64854,
+    "pgid": 64854,
+    "affinity": [
+      0
+    ],
+    "exe": "/tmp/sa-guard-startup-stub-h2lw926w/OwnedProbeStub"
+  },
+  "foreign_canary_live_and_unstopped": true,
+  "cpu_observations": [
+    {
+      "cpu_seconds": 0.9,
+      "temperature_c": 95
+    }
+  ],
+  "thermal": {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "python3",
+      "/tmp/sa-guard-startup-stub-h2lw926w/.superpowers/claude-city-20261021/sa_engine.py",
+      "--name",
+      "startup-stub",
+      "--project",
+      "/tmp/sa-guard-startup-stub-h2lw926w",
+      "--exclusive",
+      "--timeout",
+      "5",
+      "--max-wait",
+      "180",
+      "--tail",
+      "3",
+      "--"
+    ],
+    "environment_overrides": {
+      "SA_ENGINE_SLOTS": "1",
+      "SA_ENGINE_THERMAL_LIMIT_C": "65.0",
+      "SA_FULL_PROVENANCE": "1"
+    },
+    "cpu_affinity": [
+      0
+    ],
+    "start_temperature_c": 65.0,
+    "runtime_temperature_stop_c": 90,
+    "sustained_temperature_stop_c": 85,
+    "sustained_temperature_samples": 3,
+    "reason": "thermal_limit",
+    "received_signal": null,
+    "duty_cycle": 0.1,
+    "duty_run_seconds": 0.05,
+    "duty_pause_seconds": 0.45,
+    "release_marker": null,
+    "duty_released": false,
+    "throttle_cycles": 0,
+    "owned_pids": [
+      64854
+    ],
+    "wrapper_exit": 0,
+    "samples": [
+      {
+        "elapsed_seconds": 0.001,
+        "package_c": 60,
+        "duty_released": false,
+        "owned_engine_live": false,
+        "live_owned_pids": []
+      },
+      {
+        "elapsed_seconds": 1.002,
+        "package_c": 95,
+        "duty_released": false,
+        "owned_engine_live": true,
+        "live_owned_pids": [
+          64854
+        ]
+      }
+    ]
+  },
+  "assertion_failures": [
+    "new guard did not finish",
+    "new guard never actually duty-stopped stub",
+    "new stub exceeded simulated thermal budget"
+  ],
+  "guard_stdout": "\nTHERMAL startup-stub thermal_limit peak 95\n"
+}

@@ -1,0 +1,78 @@
+{
+  "accepted": true,
+  "reviewer_role": "root",
+  "source_head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+  "originals": [
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/docs/art/reference/2026-10-23-ground-care-edges/native/before-s9-r2/ground-before.png",
+      "sha256": "224281844a6c7c4dcdd473c5d5f812f58721308d0016e80ca9b12e69ef4d527c"
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/docs/art/reference/2026-10-23-ground-care-edges/native/before-s9-r2/capture-info.json",
+      "sha256": "71a2f78758561ba804b86141021315680dced3413c328d567c70003235a440e4"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-r3/ground-before.png",
+      "sha256": "d29427361f314332b95c588536fe75542eed4df379acfef779d210be9bdfd0f1"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-r3/capture-info.json",
+      "sha256": "245ee198d98a94a2cae08b99989b81064b3cd59fe4e494de2e81accc241d565f"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-small-r2/ground-before.png",
+      "sha256": "a15c67f6dd6d88d82520a0289de0865ee10fe3896ed2cb210ae5666cd9952dca"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s9-small-r2/capture-info.json",
+      "sha256": "88f53e8c3d88e5e022a5387e83fec221daaeb65fb9e2294023e719f5dbe165ed"
+    }
+  ],
+  "assessment": "Personally viewed the three native originals. Outer Wall cobbles outside the four-cell care patch are smaller and less lavender, with retained grassy joints. Selected player, facade and door landings remain readable at normal and small windows. Accept only yard texture scale and local grade.",
+  "controls": "Full semantic ground/cache/care records and visible care cells match the baseline; camera, seed, exterior, native dimensions, normal HUD, caps and zero saves checked. Observed bound ShaderMaterial role 4 is source3/layer9/repeat192; source weight .52 and tint1.34/1.37/1.43. This is uniform observation, not GPU readback.",
+  "protocol": "Normal capture uses startup-fixed guard205/default90. Small and owner checks use guard4c optional98 instantaneous limit; all retain65launch,85x3sustained,1CPU10percent duty through exit. Baseline used2CPU and a release marker. No timing/performance equivalence or hardware-safety claim; 1Hz sampling cannot bound unsampled peaks.",
+  "limits": [
+    "Broader rectangular residual yard and plaza/support shapes remain open.",
+    "Static frames do not establish shimmer during motion, combat readability or full city fidelity.",
+    "Care shader changed after baseline; assess policy effect outside the care patch.",
+    "Live weather and expanded objective HUD text differ; do not claim pixel-identical whole-frame controls."
+  ],
+  "runs": [
+    {
+      "label": "city23-ground-after-s9-r3",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "seconds": 256.821,
+      "burst_stop_c": 90,
+      "owned_peak_c": 77.0,
+      "queue_inclusive_peak_c": 86.0
+    },
+    {
+      "label": "city23-ground-after-s9-small-r2",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "seconds": 253.674,
+      "burst_stop_c": 98,
+      "owned_peak_c": 77.0,
+      "queue_inclusive_peak_c": 89.0
+    },
+    {
+      "label": "city23-ground-owner-care-r4",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "seconds": 132.425,
+      "burst_stop_c": 98,
+      "owned_peak_c": 78.0,
+      "queue_inclusive_peak_c": 84.0
+    },
+    {
+      "label": "city23-ground-owner-splat-r1",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "seconds": 101.437,
+      "burst_stop_c": 98,
+      "owned_peak_c": 69.0,
+      "queue_inclusive_peak_c": 88.0
+    }
+  ]
+}

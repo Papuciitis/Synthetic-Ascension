@@ -1,0 +1,102 @@
+{
+  "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+  "source_sha256": "4c07431955288522aadb7e89669d16d3b50f571310d1bc44259f7dc0bc4503d0",
+  "expect": "throttled",
+  "real_godot_started": false,
+  "temperature_is_simulated": true,
+  "elapsed_seconds": 2.691,
+  "guard_exit": 0,
+  "identity": {
+    "pid": 68960,
+    "pgid": 68960,
+    "affinity": [
+      0
+    ],
+    "exe": "/tmp/sa-guard-startup-stub-46yb3xyu/OwnedProbeStub"
+  },
+  "foreign_canary_live_and_unstopped": true,
+  "cpu_observations": [
+    {
+      "cpu_seconds": 0.08,
+      "temperature_c": 60
+    },
+    {
+      "cpu_seconds": 0.19,
+      "temperature_c": 60
+    }
+  ],
+  "thermal": {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "python3",
+      "/tmp/sa-guard-startup-stub-46yb3xyu/.superpowers/claude-city-20261021/sa_engine.py",
+      "--name",
+      "startup-stub",
+      "--project",
+      "/tmp/sa-guard-startup-stub-46yb3xyu",
+      "--exclusive",
+      "--timeout",
+      "5",
+      "--max-wait",
+      "180",
+      "--tail",
+      "3",
+      "--"
+    ],
+    "environment_overrides": {
+      "SA_ENGINE_SLOTS": "1",
+      "SA_ENGINE_THERMAL_LIMIT_C": "65.0",
+      "SA_FULL_PROVENANCE": "1"
+    },
+    "cpu_affinity": [
+      0
+    ],
+    "start_temperature_c": 65.0,
+    "runtime_temperature_stop_c": 90,
+    "sustained_temperature_stop_c": 85,
+    "sustained_temperature_samples": 3,
+    "reason": "completed",
+    "received_signal": null,
+    "duty_cycle": 0.1,
+    "duty_run_seconds": 0.05,
+    "duty_pause_seconds": 0.45,
+    "release_marker": null,
+    "duty_released": false,
+    "throttle_cycles": 5,
+    "owned_pids": [
+      68960
+    ],
+    "wrapper_exit": 0,
+    "samples": [
+      {
+        "elapsed_seconds": 0.001,
+        "package_c": 60,
+        "duty_released": false,
+        "owned_engine_live": false,
+        "live_owned_pids": []
+      },
+      {
+        "elapsed_seconds": 1.107,
+        "package_c": 60,
+        "duty_released": false,
+        "owned_engine_live": true,
+        "live_owned_pids": [
+          68960
+        ]
+      },
+      {
+        "elapsed_seconds": 2.114,
+        "package_c": 60,
+        "duty_released": false,
+        "owned_engine_live": true,
+        "live_owned_pids": [
+          68960
+        ]
+      }
+    ]
+  },
+  "assertion_failures": [],
+  "guard_stdout": "\nTHERMAL startup-stub completed peak 60\n"
+}

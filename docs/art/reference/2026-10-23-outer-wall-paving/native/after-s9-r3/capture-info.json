@@ -1,0 +1,629 @@
+{
+	"ambient_spawner": false,
+	"args": [
+		"--visible",
+		"--segment=9",
+		"--world-seed=16102026",
+		"--ground-context=-3104,-1384",
+		"--review=normal",
+		"--out=/var/tmp/sa-city23-ground/after-s9-r3"
+	],
+	"attempt_seed": 16102026,
+	"building_id": 0,
+	"camera": {
+		"position": "(-3104.0, -1384.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(1280, 720)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundPavingPreview.tscn",
+	"captured_frames": 0,
+	"controlled_enemies": false,
+	"coord": "(-2, -1)",
+	"deaths": 0,
+	"district_family": "outer_wall",
+	"failures": 0,
+	"final_combined": {
+		"atmosphere": {
+			"air_z": -8,
+			"environment_scans": 22,
+			"frozen_phase": 0.0,
+			"ground_receiver_enabled": true,
+			"mask_cell_px": 0.0,
+			"mask_origin": "(inf, inf)",
+			"mask_rebuilds": 0,
+			"mask_size": "(0, 0)",
+			"particle_count": 0,
+			"profile": {
+				"ambient_fill": "(0.98, 0.99, 1.0, 1.0)",
+				"cloud_opacity": 0.025,
+				"cloud_scale_px": 1280.0,
+				"cloud_velocity": "(-14.0, 3.5)",
+				"contact_strength": 0.95,
+				"context": "procedural",
+				"direct_light": 1.0,
+				"enabled": true,
+				"environment_tint": "(0.998, 0.998, 0.99, 1.0)",
+				"id": "outer_wall",
+				"label": "Clear windy outer approaches",
+				"mist_opacity": 0.0,
+				"mist_tint": "(0.72, 0.75, 0.72, 1.0)",
+				"particle_density": 0.0,
+				"particle_kind": "none",
+				"penumbra_px": 3.0,
+				"shadow_length": 1.18,
+				"sun_shade": "(0.66, 0.69, 0.78, 1.0)",
+				"vignette_strength": 0.0,
+				"wind": "(-0.933333, 0.233333)"
+			},
+			"reduced_motion": false,
+			"roof_material_count": 59,
+			"room_count": 0,
+			"sun_shadow_count": 34,
+			"vignette_strength": 0.0,
+			"weather_frozen": false,
+			"weather_time": 2.88133233333332
+		},
+		"capture_cap_policy": {
+			"mechanism": "SettingsManager synchronous post-apply signal; no per-frame cap writes, settings overrides or physics/actor freeze",
+			"post_apply_settings_events": 0,
+			"target_fps": 20
+		},
+		"capture_stills": [
+			{
+				"exterior": {
+					"actual_player": "(-3104.0, -1248.0)",
+					"all_opaque_outside": true,
+					"camera_unchanged": true,
+					"checked_kits": 17,
+					"checked_roofs": 23,
+					"empty_clipped_roof_slices": [],
+					"in_view_facades": 4,
+					"in_view_roof_planes": 12,
+					"indoor_overlap_or_flags": 0,
+					"inside_counts": 0,
+					"loaded_walkable": true,
+					"outside_bounds_grown64": true
+				},
+				"file": "ground-before.png",
+				"physics_ticks_per_second_before_still": 60,
+				"render_fps_cap_before_still": 20
+			}
+		],
+		"combat_flash_setting": "full",
+		"final_exterior": {
+			"actual_player": "(-3104.0, -1248.0)",
+			"all_opaque_outside": true,
+			"camera_unchanged": true,
+			"checked_kits": 17,
+			"checked_roofs": 23,
+			"empty_clipped_roof_slices": [],
+			"in_view_facades": 4,
+			"in_view_roof_planes": 12,
+			"indoor_overlap_or_flags": 0,
+			"inside_counts": 0,
+			"loaded_walkable": true,
+			"outside_bounds_grown64": true
+		},
+		"limits": "Parent actual Game, normal HUD/details/save isolation and optional five-second controlled fight retained. Only initial player parking changes; static capsule query excludes enemy layer. Camera remains fixed. Ordinary indoor exits and roof/facade tweens settle without counter, fade, shader or collision edits. No performance or full human-play claim.",
+		"loaded_profile_counts": {
+			"common_base": 17
+		},
+		"parking": {
+			"camera_unchanged": true,
+			"cell": "(-49, -20)",
+			"clearance_px": 64.0,
+			"distance_from_camera": 136.0,
+			"ordinary_physics_frames": 6,
+			"outside_and_opaque_after_settle": true,
+			"selected_world": "(-3104.0, -1248.0)",
+			"static_capsule_checked": true
+		},
+		"physics_ticks_per_second": 60,
+		"reduced_motion_setting": false,
+		"render_dimensions": {
+			"basis": "Godot ed1daf0bf native CANVAS_ITEMS source contract",
+			"canvas_items_mode": true,
+			"content_scale_aspect": 1,
+			"content_scale_factor": 1.0,
+			"content_scale_mode": 1,
+			"content_scale_size": [
+				1920,
+				1080
+			],
+			"content_scale_stretch": 0,
+			"display_server_size": [
+				1280,
+				720
+			],
+			"engine_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"logical_visible_size": [
+				1920.0,
+				1080.0
+			],
+			"native_window_id": 0,
+			"nonembedded": true,
+			"source_derived_native_size": [
+				1280.00003814697,
+				720.000021457672
+			],
+			"stretch_transform": [
+				0.666666686534882,
+				0.0,
+				0.0,
+				0.666666686534882,
+				0.0,
+				0.0
+			],
+			"texture_size_getter_diagnostic": [
+				854.0,
+				480.0
+			],
+			"window_is_viewport": true,
+			"window_size": [
+				1280,
+				720
+			]
+		},
+		"render_fps_cap": 20
+	},
+	"fixed_camera": true,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"frames": [],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 0,
+			"local_bounds": "[P: (23, 11), S: (1, 1)]",
+			"max_byte": 255,
+			"nonzero": 4,
+			"sha256": "767a3f6ae80644b7ef60659130a6ec70e20653a8ec281ad91e644b3a97a57729",
+			"sum_bytes": 1020
+		},
+		"chunk_material_counts": {
+			"11": 108,
+			"2": 112,
+			"3": 288,
+			"4": 175,
+			"6": 238,
+			"8": 103
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				-49,
+				-22
+			],
+			"material": 4,
+			"walkable": true,
+			"world_px": [
+				-3104.0,
+				-1384.0
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+					"layer_sha256": "d150b1bc0fcab5ff989af99d6243e4d45df56e18ef6d2ca06f0dcc2e8e956098",
+					"path": "res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+					"sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"ao_strength": "0.24",
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"overgrowth_a": "(0.0, 1.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"policy_enabled": "true",
+			"slot_index": [
+				6.0,
+				11.0,
+				7.0,
+				4.0,
+				2.0,
+				3.0,
+				8.0,
+				0.0
+			],
+			"slot_layer": [
+				6.0,
+				11.0,
+				7.0,
+				4.0,
+				4.0,
+				6.0,
+				8.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				384.0,
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0
+			],
+			"slot_role": [
+				4.0,
+				5.0,
+				1.0,
+				2.0,
+				3.0,
+				3.0,
+				1.0,
+				0.0
+			],
+			"world_tint": "(0.95, 0.95, 0.93, 1.0)"
+		},
+		"semantic_terrain": "urban"
+	},
+	"ground_context_world_px": [
+		-3104.0,
+		-1384.0
+	],
+	"ground_review": true,
+	"ground_role_uniforms": [
+		{
+			"mid": [
+				0.5,
+				0.5,
+				0.5,
+				0.0
+			],
+			"role": 0,
+			"sample": [
+				0.0,
+				0.0,
+				384.0,
+				0.0
+			],
+			"tint": [
+				1.0,
+				1.0,
+				1.0,
+				1.0
+			]
+		},
+		{
+			"mid": [
+				0.510999977588654,
+				0.504999995231628,
+				0.503000020980835,
+				0.709999978542328
+			],
+			"role": 1,
+			"sample": [
+				1.0,
+				-1.0,
+				352.0,
+				1.0
+			],
+			"tint": [
+				0.889999985694885,
+				0.910000026226044,
+				0.949999988079071,
+				1.0
+			]
+		},
+		{
+			"mid": [
+				0.497999995946884,
+				0.492000013589859,
+				0.490000009536743,
+				0.660000026226044
+			],
+			"role": 2,
+			"sample": [
+				1.0,
+				-1.0,
+				256.0,
+				1.0
+			],
+			"tint": [
+				0.870000004768372,
+				0.889999985694885,
+				0.920000016689301,
+				1.0
+			]
+		},
+		{
+			"mid": [
+				0.61599999666214,
+				0.611000001430511,
+				0.601000010967255,
+				0.670000016689301
+			],
+			"role": 3,
+			"sample": [
+				2.0,
+				-1.0,
+				384.0,
+				1.0
+			],
+			"tint": [
+				1.10000002384186,
+				1.10000002384186,
+				1.10000002384186,
+				1.0
+			]
+		},
+		{
+			"mid": [
+				0.573000013828278,
+				0.586000025272369,
+				0.542999982833862,
+				0.519999980926514
+			],
+			"role": 4,
+			"sample": [
+				3.0,
+				9.0,
+				192.0,
+				1.0
+			],
+			"tint": [
+				1.3400000333786,
+				1.37000000476837,
+				1.42999994754791,
+				1.0
+			]
+		},
+		{
+			"mid": [
+				0.310000002384186,
+				0.370000004768372,
+				0.270000010728836,
+				0.5
+			],
+			"role": 5,
+			"sample": [
+				0.0,
+				-1.0,
+				320.0,
+				0.0
+			],
+			"tint": [
+				1.10000002384186,
+				1.13999998569489,
+				1.03999996185303,
+				1.0
+			]
+		},
+		{
+			"mid": [
+				0.400000005960464,
+				0.379999995231628,
+				0.330000013113022,
+				0.449999988079071
+			],
+			"role": 6,
+			"sample": [
+				0.0,
+				-1.0,
+				384.0,
+				0.0
+			],
+			"tint": [
+				1.0,
+				1.0,
+				1.0,
+				1.0
+			]
+		},
+		{
+			"mid": [
+				0.5,
+				0.5,
+				0.5,
+				0.0
+			],
+			"role": 7,
+			"sample": [
+				0.0,
+				0.0,
+				384.0,
+				0.0
+			],
+			"tint": [
+				1.0,
+				1.0,
+				1.0,
+				1.0
+			]
+		}
+	],
+	"hits": 0,
+	"image_size": "(1280, 720)",
+	"initial_fight_population": 0,
+	"limits": "Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance.",
+	"local_security": 0,
+	"max_projectiles": 0,
+	"normal_hud": true,
+	"occupied_comparison": false,
+	"optional_details_hidden": false,
+	"plan_seed": 1445060584,
+	"player_god_mode": true,
+	"reduced_motion": false,
+	"requested_simulation_seconds": 0.0,
+	"review": "normal",
+	"role": "district_fill",
+	"round_cobble_source": {
+		"layer": 9,
+		"record": {
+			"import_sha256": "21a8d183a6278ac174f873f62029e3a05834d607dda3efcb716a6fe4a6a0c692",
+			"layer_sha256": "5a706d460e5e833fc4a63334aca405ac31d664eef451a64a2b9b84a1442e99b9",
+			"path": "res://assets/world/ground/ground_round_cobble_01.png",
+			"sha256": "df67ab3a8c5bcf21588e437a50fad070d2e00b278f29c3d5360f2b707c4f010d"
+		}
+	},
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "767a3f6ae80644b7ef60659130a6ec70e20653a8ec281ad91e644b3a97a57729",
+			"coord": "(-2, -1)",
+			"equal": true,
+			"event": "ground_context_streamed_reload"
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scripted_input": true,
+	"seed": 16102026,
+	"segment": 9,
+	"simulation_fight_seconds": 0.0,
+	"theme": "outer_wall",
+	"visible_care_attribution": {
+		"camera_view": "[P: (-4064.0, -1924.0), S: (1920.0, 1080.0)]",
+		"cell_px": 64,
+		"positive_cells": [
+			{
+				"care": 1.0,
+				"cell": [
+					-41,
+					-21
+				],
+				"material": 6,
+				"screen_origin": [
+					1440.0,
+					580.0
+				]
+			},
+			{
+				"care": 1.0,
+				"cell": [
+					-40,
+					-21
+				],
+				"material": 6,
+				"screen_origin": [
+					1504.0,
+					580.0
+				]
+			},
+			{
+				"care": 1.0,
+				"cell": [
+					-41,
+					-20
+				],
+				"material": 6,
+				"screen_origin": [
+					1440.0,
+					644.0
+				]
+			},
+			{
+				"care": 1.0,
+				"cell": [
+					-40,
+					-20
+				],
+				"material": 6,
+				"screen_origin": [
+					1504.0,
+					644.0
+				]
+			}
+		],
+		"scope": "Observed final light-map blue and semantic material for every positive care cell in the actual logical view; no care or terrain writes."
+	},
+	"wall_seconds": 0.0,
+	"weapon_fires": 0,
+	"world_cover": {
+		"alpha_upload_bytes": 24637360,
+		"alpha_uploads": 3,
+		"binding_usec": 9,
+		"cell_px": 256.0,
+		"collection_usec": 610,
+		"comparison_usec": 74,
+		"data_upload_bytes": 68480,
+		"data_uploads": 18,
+		"face_buckets": 33,
+		"force_uploads": false,
+		"foreground_sources": 3,
+		"generation": 91,
+		"grid_cells": 70,
+		"index_count": 262,
+		"index_disabled": false,
+		"index_resyncs": 24,
+		"indexed_faces": 32,
+		"indexed_forms": 41,
+		"indexed_roofs": 23,
+		"material_binds": 44,
+		"materials": 7,
+		"max_candidates": 15,
+		"peak_candidates": 18,
+		"peak_primitives": 69,
+		"peak_refresh_usec": 997592,
+		"primitive_count": 69,
+		"refresh_usec": 693,
+		"renewed_faces": 0,
+		"renewed_roofs": 0,
+		"roof_buckets": 39,
+		"roof_usec": 319,
+		"roof_validation_usec": 63,
+		"snapshot_builds": 6,
+		"snapshot_reuses": 85,
+		"snapshot_usec": 0,
+		"solid_usec": 139,
+		"source_reads": 3,
+		"sprite_usec": 60,
+		"structure_events": 969,
+		"validation_usec": 85,
+		"visited_faces": 10,
+		"visited_roofs": 5
+	}
+}

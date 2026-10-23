@@ -1,0 +1,47 @@
+{
+  "status": "STOPPED",
+  "source_head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+  "amends": "paving-queue.json used absent diagnostic_count on full raw instead of diagnostics list; it launched no additional engines. Normal r3 is actual0/diag0/completed, reused unchanged.",
+  "cases": [
+    {
+      "label": "city23-ground-after-s9-small-r1",
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city23-ground-after-s9-small-r1",
+        "--project",
+        "/tmp/sa-c23-ground",
+        "--cpu-count",
+        "1",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "900",
+        "--duty-percent",
+        "10",
+        "--",
+        "--max-fps",
+        "20",
+        "--resolution",
+        "960x540",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundPavingPreview.tscn",
+        "--",
+        "--visible",
+        "--segment=9",
+        "--world-seed=16102026",
+        "--ground-context=-3104,-1384",
+        "--review=small",
+        "--out=/var/tmp/sa-city23-ground/after-s9-small-r1"
+      ],
+      "status": "INCOMPLETE_OR_FAILED",
+      "guard_exit": 241
+    }
+  ]
+}

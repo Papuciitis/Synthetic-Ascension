@@ -1,0 +1,444 @@
+extends Node
+## District ground for every procedural theme (2026-10-21): the built
+## district stands on a continuous hard surface presented per family, the
+## exploration web and the wilderness stay wild, each theme fits the eight
+## splat slots without borrowing, and the presentation pass (occlusion and
+## household care) is deterministic and consumes no RNG.
+##
+## Run: <godot> --headless --path . res://tools/tests/DistrictGroundPolicyTest.tscn
+
+const POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
+const CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
+const COVER_FULL := preload("res://scenes/world/cover/CoverFull.tscn")
+const COVER_WINDOW := preload("res://scenes/world/cover/CoverWindow.tscn")
+const COVER_HALF := preload("res://scenes/world/cover/CoverHalf.tscn")
+const CPC := 32
+const EXPLORATION_ROLES: Array[StringName] = [&"service_lane", &"exploration_reward"]
+const TARGETS: Array[Dictionary] = [
+	{"segment": 2, "theme": &"service_courtyards"},
+	{"segment": 3, "theme": &"checkpoint_lanes"},
+	{"segment": 4, "theme": &"collapsed_ward"},
+	{"segment": 4, "theme": &"civilian_cutthrough"},
+	{"segment": 5, "theme": &"inner_district_gate"},
+	{"segment": 6, "theme": &"industrial_cutthrough"},
+	{"segment": 6, "theme": &"ruined_services"},
+	{"segment": 7, "theme": &"underpass_veins"},
+	{"segment": 7, "theme": &"canal_services"},
+	{"segment": 8, "theme": &"rail_yard"},
+	{"segment": 8, "theme": &"military_staging"},
+	{"segment": 9, "theme": &"outer_wall"},
+	{"segment": 9, "theme": &"siege_services"},
+	{"segment": 10, "theme": &"gate_district"},
+	{"segment": 11, "theme": &"service_courtyards"},
+]
+
+var _passes := 0
+var _failures := 0
+var _samples: Array[Dictionary] = []
+
+
+func _ready() -> void:
+	_run.call_deferred()
+
+
+func _check(condition: bool, message: String) -> void:
+	if condition:
+		_passes += 1
+		print("PASS: ", message)
+	else:
+		_failures += 1
+		push_error("FAIL: " + message)
+
+
+func _run() -> void:
+	var player := Node2D.new()
+	player.add_to_group(&"player")
+	add_child(player)
+	var previous_segment := Global.attempt_segment
+	_test_policy_catalogue()
+	for target: Dictionary in TARGETS:
+		_test_theme_district(int(target.segment), StringName(target.theme))
+	Global.attempt_segment = previous_segment
+	print("DistrictGroundPolicy samples: ", JSON.stringify(_samples))
+	print("DistrictGroundPolicyTest: %d passed, %d failed" % [_passes, _failures])
+	get_tree().quit(1 if _failures > 0 else 0)
+
+
+static func _luminance(color: Color) -> float:
+	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b
+
+
+func _test_policy_catalogue() -> void:
+	var signatures: Dictionary = {}
+	for family: StringName in POLICY.FAMILIES:
+		var policy := POLICY.resolve(family)
+		_check(bool(policy.get("enabled", false)) and StringName(policy.get("id", &"")) == family, "%s resolves its own enabled ground policy" % family)
+		_check(StringName(policy.get("district_terrain", &"")) == &"urban", "%s builds its district on the hard urban surface" % family)
+		var roles: Dictionary = policy.get("roles", {})
+		var complete := true
+		for role in range(1, POLICY.ROLE_COUNT):
+			var entry: Dictionary = roles.get(role, {})
+			var source := int(entry.get("source", -1))
+			if entry.is_empty() or source < POLICY.SOURCE_OWN or source > POLICY.SOURCE_LAYER or float(entry.get("repeat_px", 0.0)) < 64.0:
+				complete = false
+			if source == POLICY.SOURCE_LAYER and int(entry.get("layer", -1)) < 0:
+				complete = false
+		_check(complete, "%s defines every presentation role with a valid source" % family)
+		# Bright temperate daylight, cool-neutral stone: paving stays light and
+		# never drifts to beige (red may not run far ahead of blue).
+		var bright := true
+		var temperate := true
+		for role: int in [POLICY.ROLE_ROAD, POLICY.ROLE_LANE, POLICY.ROLE_FOOTWAY, POLICY.ROLE_YARD]:
+			var mid: Color = (roles.get(role, {}) as Dictionary).get("mid", Color.BLACK)
+			if _luminance(mid) < 0.36 or _luminance(mid) > 0.66:
+				bright = false
+			if mid.r - mid.b > 0.07:
+				temperate = false
+		var footway: Color = (roles.get(POLICY.ROLE_FOOTWAY, {}) as Dictionary).get("mid", Color.BLACK)
+		_check(bright and _luminance(footway) >= 0.5, "%s paving mid tones stay in the bright daylight band" % family)
+		_check(temperate, "%s paving stays cool-neutral (no desert drift)" % family)
+		_check(float(policy.get("kerb", 0.0)) > 0.0 and float(policy.get("ao", 0.0)) > 0.0 and float(policy.get("ao", 1.0)) <= 0.4, "%s draws kerbs and a bounded ground occlusion" % family)
+		var signature := POLICY.signature(policy)
+		_check(not signatures.has(signature), "%s has its own physical ground look (not a copy of %s)" % [family, str(signatures.get(signature, ""))])
+		signatures[signature] = family
+	var fallback := POLICY.resolve(&"unknown_future_family")
+	_check(bool(fallback.enabled) and StringName(fallback.id) == &"service_courtyards", "an unknown procedural family falls back to Service Courtyards")
+	var legacy := POLICY.resolve(&"")
+	_check(not bool(legacy.enabled), "no district family (S1, Hub) keeps the raw palette")
+	var first := POLICY.resolve(&"canal_services")
+	first.roles[POLICY.ROLE_YARD]["repeat_px"] = 1.0
+	_check(float(POLICY.resolve(&"canal_services").roles[POLICY.ROLE_YARD].repeat_px) > 64.0, "resolved policies are independent copies")
+	_test_hierarchy_values()
+	var expected := {7: POLICY.ROLE_ROAD, 8: POLICY.ROLE_ROAD, 9: POLICY.ROLE_ROAD, 3: POLICY.ROLE_FOOTWAY, 4: POLICY.ROLE_LANE, 2: POLICY.ROLE_FOOTWAY, 6: POLICY.ROLE_YARD, 0: POLICY.ROLE_LAWN, 10: POLICY.ROLE_LAWN, 11: POLICY.ROLE_LAWN, 12: POLICY.ROLE_LAWN, 1: POLICY.ROLE_SOIL, 5: POLICY.ROLE_SOIL}
+	var mapped := true
+	for index: int in expected:
+		if POLICY.role_for_index(index) != int(expected[index]): mapped = false
+	_check(mapped, "semantic materials map to their presentation roles")
+
+
+## The hierarchy pass (2026-10-21 lead review): quiet carriageways,
+## approaches between road and yard, working yards worn by use, the damp S7
+## setting with smaller quieter stone; families without a placed patch keep
+## the free noise field exactly as before.
+func _test_hierarchy_values() -> void:
+	var weight := func(policy: Dictionary, role: int) -> float: return ((policy.roles[role] as Dictionary).mid as Color).a
+	var value := func(policy: Dictionary, role: int) -> float: return _luminance((policy.roles[role] as Dictionary).mid as Color)
+	for family: StringName in [&"service_courtyards", &"industrial_cutthrough", &"underpass_veins", &"canal_services"]:
+		var policy := POLICY.resolve(family)
+		_check(float(weight.call(policy, POLICY.ROLE_ROAD)) <= 0.685 and float(weight.call(policy, POLICY.ROLE_LANE)) <= 0.625, "%s keeps its carriageway and lanes quiet (texture weight %.2f / %.2f)" % [family, float(weight.call(policy, POLICY.ROLE_ROAD)), float(weight.call(policy, POLICY.ROLE_LANE))])
+	for family: StringName in [&"service_courtyards", &"industrial_cutthrough"]:
+		var policy := POLICY.resolve(family)
+		var road: float = value.call(policy, POLICY.ROLE_ROAD)
+		var lane: float = value.call(policy, POLICY.ROLE_LANE)
+		var yard: float = value.call(policy, POLICY.ROLE_YARD)
+		_check(lane > road + 0.02 and lane < yard, "%s household approaches sit between the carriageway and the yard (%.3f < %.3f < %.3f)" % [family, road, lane, yard])
+	for family: StringName in [&"industrial_cutthrough", &"rail_yard"]:
+		var patch: Dictionary = POLICY.resolve(family).yard_patch
+		_check(float(patch.get("open_bias", 0.0)) > 0.0 and float(patch.get("noise", 1.0)) < 1.0 and float(patch.get("rim", 0.0)) > 0.0, "%s wears its yards into edged use-areas in the open, not free blotches" % family)
+	for family: StringName in [&"underpass_veins", &"canal_services"]:
+		var policy := POLICY.resolve(family)
+		var patch: Dictionary = policy.yard_patch
+		var yard: Dictionary = policy.roles[POLICY.ROLE_YARD]
+		_check(int(patch.get("layer", -1)) == POLICY.LAYER_DAMP_MOSS and float(patch.get("open_bias", 0.0)) < 0.0 and int(policy.verge_layer) == POLICY.LAYER_DAMP_MOSS, "%s settles damp moss at its wall feet and banks" % family)
+		_check(float(yard.repeat_px) <= 256.0 and float(weight.call(policy, POLICY.ROLE_YARD)) <= 0.5, "%s yard stone is smaller and quieter than the actor-sized pale tiles (%d px, %.2f)" % [family, int(yard.repeat_px), float(weight.call(policy, POLICY.ROLE_YARD))])
+	var splat := GroundSplatRenderer.new()
+	add_child(splat)
+	splat.configure(64, 32)
+	var material := splat.get_shader_material()
+	splat.set_ground_family(&"collapsed_ward")
+	var legacy_mid: Color = (POLICY.resolve(&"collapsed_ward").roles[POLICY.ROLE_YARD] as Dictionary).mid
+	var pushed: Color = material.get_shader_parameter("yard_patch_mid")
+	_check(material.get_shader_parameter("yard_patch_place") == Vector4(0.0, 0.0, 0.05, 0.0) and pushed.is_equal_approx(Color(legacy_mid.r * 0.92, legacy_mid.g * 0.92, legacy_mid.b * 0.92, 1.0)), "a free-noise patch keeps the phase-1 field, edge and mid tone")
+	splat.set_ground_family(&"industrial_cutthrough")
+	var place: Vector4 = material.get_shader_parameter("yard_patch_place")
+	_check(place.x > 0.0 and place.y > 0.0 and float((material.get_shader_parameter("yard_patch_mid") as Color).a) < 1.0, "the renderer passes a placed patch's use bias, rim and noise to the shader")
+	splat.free()
+
+
+func _theme_seed(segment: int, theme_id: StringName) -> int:
+	for seed_value in range(1, 400):
+		if SegmentThemePicker.get_theme(segment, seed_value).id == theme_id:
+			return seed_value
+	return -1
+
+
+func _manager(theme: SegmentThemeData, plan: Dictionary) -> ChunkManager:
+	var cm := ChunkManager.new()
+	theme.apply_to_chunk_manager(cm)
+	cm.generation_enabled = false
+	cm.ground_enabled = true
+	cm.ground_splat_enabled = true
+	cm.decals_enabled = false
+	cm.deco_enabled = false
+	cm.sites_enabled = false
+	cm.parcels_chunk_chance = 0.95
+	cm.district_sidewalk_width_cells = 1
+	cm.district_sidewalk_corner_pad_cells = 1
+	cm.cover_full_scene = COVER_FULL
+	cm.cover_window_scene = COVER_WINDOW
+	cm.cover_half_scene = COVER_HALF
+	add_child(cm)
+	cm.set_process(false)
+	cm.configure_procedural_world(int(plan.seed), plan.connectors_by_chunk, plan.urban_access_by_chunk, plan.role_by_chunk, plan.terrain_by_chunk, plan.archetype_by_chunk)
+	return cm
+
+
+func _count(splat: GroundSplatRenderer, coord: Vector2i, index: int) -> int:
+	var count := 0
+	for y in CPC:
+		for x in CPC:
+			if splat.material_at(coord * CPC + Vector2i(x, y)) == index: count += 1
+	return count
+
+
+func _test_theme_district(segment: int, theme_id: StringName) -> void:
+	var seed_value := _theme_seed(segment, theme_id)
+	_check(seed_value > 0, "a natural seed selects %s for segment %d" % [theme_id, segment])
+	if seed_value <= 0:
+		return
+	Global.attempt_segment = segment
+	var theme := SegmentThemePicker.get_theme(segment, seed_value)
+	var plan := DistrictPlan.generate(segment, seed_value, 2048, theme)
+	var exploration: Dictionary = {}
+	for coord: Vector2i in plan.exploration_chunks: exploration[coord] = true
+	for coord: Vector2i in plan.exploration_end_chunks: exploration[coord] = true
+	var terrain_ok := true
+	for coord: Vector2i in plan.terrain_by_chunk:
+		var terrain: StringName = plan.terrain_by_chunk[coord]
+		if exploration.has(coord) and terrain != StringName(theme.exploration_terrain): terrain_ok = false
+		if not exploration.has(coord) and terrain != &"urban": terrain_ok = false
+	_check(terrain_ok, "%s: district chunks stand on the urban surface, the exploration web keeps %s" % [theme_id, theme.exploration_terrain])
+	# Stream the start neighbourhood: route, envelope and (wild) exploration.
+	var start: Vector2i = plan.start_chunk
+	var chosen: Array[Vector2i] = []
+	for coord: Vector2i in plan.main_route.slice(0, 5):
+		if not chosen.has(coord): chosen.append(coord)
+	var by_distance: Array = plan.role_by_chunk.keys()
+	by_distance.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := (a - start).length_squared()
+		var db := (b - start).length_squared()
+		return da < db if da != db else (a.y < b.y if a.y != b.y else a.x < b.x))
+	var wild_chosen := 0
+	var fill_chosen := 0
+	# The presentation maps are a ring of MAP_SIZE cells: two chunks a whole
+	# ring apart share one slot and are never streamed together, so the
+	# fixture never loads such a pair either.
+	var ring := GroundSplatRenderer.MAP_SIZE / CPC
+	for coord: Vector2i in by_distance:
+		var role: StringName = plan.role_by_chunk[coord]
+		var aliased := false
+		for other: Vector2i in chosen:
+			if other != coord and posmod(other.x - coord.x, ring) == 0 and posmod(other.y - coord.y, ring) == 0: aliased = true
+		if aliased:
+			continue
+		if exploration.has(coord) and wild_chosen < 2 and not chosen.has(coord):
+			chosen.append(coord)
+			wild_chosen += 1
+		elif role == &"district_fill" and fill_chosen < 3 and not chosen.has(coord):
+			chosen.append(coord)
+			fill_chosen += 1
+	var cm := _manager(theme, plan)
+	for coord: Vector2i in chosen:
+		cm._chunks[coord] = cm._create_chunk(coord)
+	var splat := cm.get_ground_splat()
+	var active := splat.active_slot_materials()
+	_check(splat.slot_borrow_count() == 0 and active.size() <= 8, "%s fits the eight splat slots without borrowing (%s)" % [theme_id, str(active)])
+	_check(StringName(splat.ground_policy().get("id", &"")) == theme.district_family, "%s presents its own family policy" % theme_id)
+	var exploration_index := cm._ground_index_for_terrain(StringName(theme.exploration_terrain))
+	var district_cells := 0
+	var wild_in_district := 0
+	var urban_in_wild := 0
+	var wild_cells := 0
+	for coord: Vector2i in chosen:
+		if exploration.has(coord):
+			urban_in_wild += _count(splat, coord, 6)
+			wild_cells += _count(splat, coord, exploration_index)
+		else:
+			district_cells += _count(splat, coord, 6)
+			wild_in_district += _count(splat, coord, exploration_index)
+	_check(district_cells > 0, "%s district chunks show their continuous hard surface (%d cells)" % [theme_id, district_cells])
+	_check(urban_in_wild == 0 and (wild_chosen == 0 or wild_cells > 0), "%s exploration chunks stay wild (%d wild, %d urban cells)" % [theme_id, wild_cells, urban_in_wild])
+	# Presentation pass: deterministic, alpha/blue only, no RNG.
+	# The busiest district chunk (most walls and props) is the costliest case.
+	var district_coord := Vector2i(999999, 999999)
+	var most := 0
+	for coord: Vector2i in chosen:
+		if exploration.has(coord) or cm.get_chunk_build_data(coord) == null:
+			continue
+		var occupied := cm.get_chunk_build_data(coord).occupied_indices().size()
+		if occupied > most:
+			most = occupied
+			district_coord = coord
+	var presentation_ms := -1.0
+	var occlusion_ms := -1.0
+	if district_coord != Vector2i(999999, 999999):
+		var occluded := 0
+		for y in CPC:
+			for x in CPC:
+				if splat.openness_at(district_coord * CPC + Vector2i(x, y)) < 0.85: occluded += 1
+		_check(occluded > 0, "%s walls and props shade the ground around them (%d cells)" % [theme_id, occluded])
+		var light: PackedByteArray = (splat.get("_light") as Image).get_data()
+		var cover: PackedByteArray = (splat.get("_cover_a") as Image).get_data()
+		var rng_state := Global._rng.state
+		seed(20261021)
+		var expected_next := randi()
+		seed(20261021)
+		var started := Time.get_ticks_usec()
+		cm._activate_ground_care(district_coord, cm._chunks[district_coord])
+		presentation_ms = float(Time.get_ticks_usec() - started) / 1000.0
+		started = Time.get_ticks_usec()
+		splat.paint_occlusion(district_coord, cm.get_chunk_build_data(district_coord))
+		occlusion_ms = float(Time.get_ticks_usec() - started) / 1000.0
+		_check(randi() == expected_next and Global._rng.state == rng_state, "%s ground presentation consumes no RNG" % theme_id)
+		_check(light == (splat.get("_light") as Image).get_data() and cover == (splat.get("_cover_a") as Image).get_data(), "%s repeated presentation reproduces exact bytes" % theme_id)
+	# Occlusion is the exact sum over every loaded blocker within reach,
+	# across chunk lines too (the pass used to stop at each chunk's edge).
+	var seam := _occlusion_against_reference(cm, chosen)
+	_check(int(seam.mismatched) == 0, "%s occlusion equals the whole-district reference on every loaded cell, seams included (%d of %d cells off, %d shaded seam cells)" % [theme_id, int(seam.mismatched), int(seam.cells), int(seam.seam_shaded)])
+	if theme_id == &"service_courtyards" and segment == 2 or theme_id == &"canal_services":
+		# Streaming order: the same chunks in reverse give the same bytes.
+		var reversed := _manager(theme, plan)
+		var backwards := chosen.duplicate()
+		backwards.reverse()
+		for coord: Vector2i in backwards:
+			reversed._chunks[coord] = reversed._create_chunk(coord)
+		var same := true
+		for coord: Vector2i in chosen:
+			for y in CPC:
+				for x in CPC:
+					var cell := coord * CPC + Vector2i(x, y)
+					if reversed.get_ground_splat().openness_at(cell) != splat.openness_at(cell): same = false
+		_check(same, "%s seam occlusion is identical whatever order the chunks stream in" % theme_id)
+		reversed.free()
+	_test_paving_beds(cm, chosen, exploration, theme_id)
+	# Upload cost of the coverage mip chain (CPU side; headless has a dummy GPU).
+	splat.set("_dirty", true)
+	var flush_started := Time.get_ticks_usec()
+	splat.flush()
+	var flush_ms := float(Time.get_ticks_usec() - flush_started) / 1000.0
+	_samples.append({"flush_ms": flush_ms, "segment": segment, "seed": seed_value, "theme": String(theme_id), "slots": Array(active), "district_cells": district_cells, "wild_cells": wild_cells, "wild_margin_cells_in_district": wild_in_district, "chunks": chosen.size(), "presentation_ms": presentation_ms, "occlusion_ms": occlusion_ms, "blockers": cm.get_chunk_build_data(district_coord).occupied_indices().size() if district_coord != Vector2i(999999, 999999) else 0})
+	cm.free()
+	_test_carriageway_index(theme, plan, theme_id)
+
+
+## The reference occlusion of the loaded chunks, summed over every blocker in
+## world cells with GroundSplatRenderer's kernel, compared byte by byte
+## (one byte of rounding allowed for the renderer's float32 sums).
+func _occlusion_against_reference(cm: ChunkManager, chosen: Array[Vector2i]) -> Dictionary:
+	var splat := cm.get_ground_splat()
+	var shade: Dictionary = {}
+	var radius := GroundSplatRenderer.OCCLUSION_RADIUS
+	for coord: Vector2i in chosen:
+		var data := cm.get_chunk_build_data(coord)
+		if data == null:
+			continue
+		for index in data.occupied_indices():
+			var code := int(data.blocker_kind_code[index])
+			if code == 0:
+				continue
+			var weight := 1.0 if code <= 3 else 0.4
+			var cell := coord * CPC + data.cell_for_index(index)
+			for dy in range(-radius, radius + 1):
+				for dx in range(-radius, radius + 1):
+					if dx == 0 and dy == 0:
+						continue
+					var offset := Vector2(dx, dy)
+					var distance := offset.length()
+					if distance > float(radius) + 0.5:
+						continue
+					var side := maxf(0.0, offset.normalized().dot(Vector2(-0.8214, 0.5704)))
+					var target := cell + Vector2i(dx, dy)
+					shade[target] = float(shade.get(target, 0.0)) + weight * clampf(1.0 - (distance - 0.6) / 2.4, 0.0, 1.0) * (0.55 + 0.45 * side)
+	var loaded: Dictionary = {}
+	for coord: Vector2i in chosen: loaded[coord] = true
+	var mismatched := 0
+	var cells := 0
+	var seam_shaded := 0
+	for coord: Vector2i in chosen:
+		for y in CPC:
+			for x in CPC:
+				var cell := coord * CPC + Vector2i(x, y)
+				var expected := 255 - mini(255, roundi(float(shade.get(cell, 0.0)) * 255.0 / GroundSplatRenderer.OCCLUSION_FULL))
+				var actual := roundi(splat.openness_at(cell) * 255.0)
+				cells += 1
+				if absi(expected - actual) > 1:
+					mismatched += 1
+				# Shaded cells within reach of a line shared with another loaded chunk.
+				if expected < 255:
+					for direction: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+						var across := Vector2i(x, y) + direction * radius
+						if (across.x < 0 or across.y < 0 or across.x >= CPC or across.y >= CPC) and loaded.has(coord + direction):
+							seam_shaded += 1
+							break
+	return {"mismatched": mismatched, "cells": cells, "seam_shaded": seam_shaded}
+
+
+## On the district's hard surface a tended household plot is a bed against
+## the house: every cared paving cell lies within the bed depth of the
+## actual footprint it belongs to, none floats free on the stone.
+func _test_paving_beds(cm: ChunkManager, chosen: Array[Vector2i], exploration: Dictionary, theme_id: StringName) -> void:
+	var splat := cm.get_ground_splat()
+	var bed_cells := 0
+	var free_cells := 0
+	for coord: Vector2i in chosen:
+		if exploration.has(coord):
+			continue
+		var chunk := cm._chunks[coord] as Node2D
+		var footprints: Array[PackedVector2Array] = []
+		for kit: Node in chunk.get_children():
+			if kit.is_in_group(&"city_block_building") and kit.has_method("ground_care_spec"):
+				var spec: Dictionary = kit.call("ground_care_spec")
+				if not spec.is_empty(): footprints.append(spec.footprint_px)
+		for y in CPC:
+			for x in CPC:
+				var cell := coord * CPC + Vector2i(x, y)
+				if splat.care_at(cell) <= 0.0 or splat.material_at(cell) != POLICY.DISTRICT_GROUND_INDEX:
+					continue
+				var point := (Vector2(x, y) + Vector2(0.5, 0.5)) * 64.0
+				var nearest := INF
+				for footprint: PackedVector2Array in footprints:
+					nearest = minf(nearest, CARE._wall_distance(point, footprint))
+				# Plaza beds are laid by the district itself, not by a home.
+				var planted := false
+				for rect: Rect2i in chunk.get_meta(&"_ground_planting_rects", []):
+					if rect.has_point(Vector2i(x, y)): planted = true
+				if planted:
+					continue
+				bed_cells += 1
+				if nearest > CARE.PAVING_BED_DEPTH_CELLS * 64.0 + 0.01:
+					free_cells += 1
+	_check(free_cells == 0, "%s household beds on paving all meet their house wall (%d bed cells, %d free)" % [theme_id, bed_cells, free_cells])
+
+
+## The district's carriageway uses of the old index 3 (exit approach and
+## checkpoint lanes, gate and arena courts, hub pads) stamp the kerbed
+## main-street index; index 3 is left to building and room floors.
+func _test_carriageway_index(theme: SegmentThemeData, plan: Dictionary, theme_id: StringName) -> void:
+	var targets: Array[Vector2i] = []
+	for coord: Vector2i in plan.role_by_chunk:
+		if plan.role_by_chunk[coord] in [&"exit_approach", &"gate", &"checkpoint", &"miniboss_arena", &"boss_arena"]:
+			targets.append(coord)
+	targets.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.y < b.y or (a.y == b.y and a.x < b.x))
+	if targets.is_empty():
+		return
+	var cm := _manager(theme, plan)
+	var road_cells := 0
+	var floor_on_road := 0
+	var ring := GroundSplatRenderer.MAP_SIZE / CPC
+	var loaded: Array[Vector2i] = []
+	for coord: Vector2i in targets:
+		var aliased := false
+		for other: Vector2i in loaded:
+			if posmod(other.x - coord.x, ring) == 0 and posmod(other.y - coord.y, ring) == 0: aliased = true
+		if aliased:
+			continue
+		loaded.append(coord)
+		var chunk := cm._create_chunk(coord)
+		cm._chunks[coord] = chunk
+		var clear: Dictionary = chunk.get_meta(&"_proc_clear_cells", {})
+		for local: Vector2i in clear:
+			var material := cm.get_ground_splat().material_at(coord * CPC + local)
+			if material == 7: road_cells += 1
+			elif material == 3: floor_on_road += 1
+	_check(road_cells > 0 and floor_on_road == 0, "%s approach, gate and court carriageways stamp the main-street paving, never the floor index (%d road cells, %d floor cells)" % [theme_id, road_cells, floor_on_road])
+	cm.free()

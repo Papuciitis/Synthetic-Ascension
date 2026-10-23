@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "status": "ACCEPTED_BOUNDED_OUTER_WALL_PAVING",
+  "source_head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+  "runs": [
+    {
+      "label": "city23-ground-after-s9-r3",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+      "pid": 65242,
+      "guard_completed": true,
+      "throttle_cycles": 507,
+      "instantaneous_stop_c": 90,
+      "sustained_stop_c": 85,
+      "sustained_samples": 3,
+      "guard_source_sha256": "205badf2274e8ba83a89dc35cfe0174cbe0f5604cda984a48306b958fe2146c5",
+      "owned_peak_c": 77.0,
+      "elapsed_seconds": 256.821
+    },
+    {
+      "label": "city23-ground-after-s9-small-r2",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+      "pid": 69035,
+      "guard_completed": true,
+      "throttle_cycles": 502,
+      "instantaneous_stop_c": 98,
+      "sustained_stop_c": 85,
+      "sustained_samples": 3,
+      "guard_source_sha256": "4c07431955288522aadb7e89669d16d3b50f571310d1bc44259f7dc0bc4503d0",
+      "owned_peak_c": 77.0,
+      "elapsed_seconds": 253.674
+    },
+    {
+      "label": "city23-ground-owner-care-r4",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+      "pid": 69839,
+      "guard_completed": true,
+      "throttle_cycles": 261,
+      "instantaneous_stop_c": 98,
+      "sustained_stop_c": 85,
+      "sustained_samples": 3,
+      "guard_source_sha256": "4c07431955288522aadb7e89669d16d3b50f571310d1bc44259f7dc0bc4503d0",
+      "owned_peak_c": 78.0,
+      "elapsed_seconds": 132.425
+    },
+    {
+      "label": "city23-ground-owner-splat-r1",
+      "actual_exit": 0,
+      "diagnostics": 0,
+      "head": "6905e7ea5a768f4edd2c279f0b5add4aa6283ccd",
+      "pid": 70051,
+      "guard_completed": true,
+      "throttle_cycles": 200,
+      "instantaneous_stop_c": 98,
+      "sustained_stop_c": 85,
+      "sustained_samples": 3,
+      "guard_source_sha256": "4c07431955288522aadb7e89669d16d3b50f571310d1bc44259f7dc0bc4503d0",
+      "owned_peak_c": 69.0,
+      "elapsed_seconds": 101.437
+    }
+  ],
+  "incomplete_attempts": [
+    {
+      "label": "city23-ground-after-s9-small-r1",
+      "status": "INCOMPLETE_THERMAL_INTERRUPTION_NOT_ACCEPTED",
+      "actual_exit": -15,
+      "diagnostics": 0,
+      "instantaneous_stop_c": 90,
+      "guard_source_sha256": "205badf2274e8ba83a89dc35cfe0174cbe0f5604cda984a48306b958fe2146c5",
+      "throttle_cycles": 164
+    }
+  ],
+  "capture_checks": [
+    {
+      "mode": "normal",
+      "native_dimensions": [
+        1280,
+        720
+      ],
+      "baseline_data_controls_equal": true,
+      "yard_role": 4,
+      "yard_uniforms": {
+        "mid": [
+          0.573000013828278,
+          0.586000025272369,
+          0.542999982833862,
+          0.519999980926514
+        ],
+        "role": 4,
+        "sample": [
+          3.0,
+          9.0,
+          192.0,
+          1.0
+        ],
+        "tint": [
+          1.3400000333786,
+          1.37000000476837,
+          1.42999994754791,
+          1.0
+        ]
+      },
+      "original_png_sha256": "d29427361f314332b95c588536fe75542eed4df379acfef779d210be9bdfd0f1"
+    },
+    {
+      "mode": "small",
+      "native_dimensions": [
+        960,
+        540
+      ],
+      "baseline_data_controls_equal": true,
+      "yard_role": 4,
+      "yard_uniforms": {
+        "mid": [
+          0.573000013828278,
+          0.586000025272369,
+          0.542999982833862,
+          0.519999980926514
+        ],
+        "role": 4,
+        "sample": [
+          3.0,
+          9.0,
+          192.0,
+          1.0
+        ],
+        "tint": [
+          1.3400000333786,
+          1.37000000476837,
+          1.42999994754791,
+          1.0
+        ]
+      },
+      "original_png_sha256": "a15c67f6dd6d88d82520a0289de0865ee10fe3896ed2cb210ae5666cd9952dca"
+    }
+  ],
+  "reviews": [
+    "reviews/root.json",
+    "reviews/independent.json"
+  ],
+  "thermal_protocol": "Mixed functional profiles: normal default90; later small/owner runs optional98 instantaneous stop. Both retain65 launch,85x3 sustained,10% duty and exact owned identity. Mechanical evidence only;1Hz readings do not bound unsampled peaks or establish hardware safety.",
+  "scope": "Outer-wall yard round cobbles: 192 px repeat, .52 source weight and local tint only. No care/generator/door/cache changes.",
+  "limits": "Static appearance and focused functional correctness only; no motion-shimmer, performance, full playtest or whole-city completion claim."
+}
