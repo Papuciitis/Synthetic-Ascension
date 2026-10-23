@@ -1,0 +1,36 @@
+ERROR: FAIL: care 0.25 has proportional native influence (observed 0.0000)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:140)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+ERROR: FAIL: care 0.25 visibly advances beyond the preceding weight; no threshold plateau
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:142)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+ERROR: FAIL: care 0.50 has proportional native influence (observed 0.0000)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:140)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+ERROR: FAIL: care 0.50 visibly advances beyond the preceding weight; no threshold plateau
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:142)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+ERROR: FAIL: care 0.75 has proportional native influence (observed 1.0000)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:140)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+ERROR: FAIL: care 1.00 visibly advances beyond the preceding weight; no threshold plateau
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:142)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)

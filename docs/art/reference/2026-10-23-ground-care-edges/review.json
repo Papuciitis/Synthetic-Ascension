@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "status": "ACCEPTED_BOUNDED_CARE_EDGE_FIX; S9_CALIBRATION_PENDING",
+  "production_shader_commit": "9a2ef8b8",
+  "production_merge": "572ed5b7",
+  "wip_s9_commit": "745f96ef",
+  "wip_s9_branch": "codex/c23-ground",
+  "root_original_views": [
+    "native/before-s7/ground-before.png",
+    "native/after-s7-r2/ground-before.png"
+  ],
+  "root_verdict": "Selected S7 grass sticker edge is softened and the useful planted centre retained. The mask and ground ownership are unchanged. Broader orthogonal property/plaza geometry and large mossy flags remain open.",
+  "exact_pair_checks": {
+    "visible_care_cells": true,
+    "care_mask": true,
+    "chunk_material_counts": true,
+    "same_camera_context": true,
+    "normal_hud": true,
+    "save_writes_zero": true,
+    "exterior_opaque": true,
+    "render20_physics60": true
+  },
+  "provenance_qualification": "GREEN49 used baseline policy and exactly the merged shader/test bodies. S7 after also contained the pending S9-only policy calibration; its canal branch and returned profile are unchanged, and actual S7 ownership/care metadata match. The complete whole-file policy hash therefore differs between that after run and production. No clean merged-main rerun is claimed.",
+  "independent_review": "process/s7-independent-review.json",
+  "s9_status": "Baseline captured cleanly. Candidate catalogue116/0 only; native after and small-window review incomplete due thermal stops, including one-CPU retry. Candidate remains outside production.",
+  "additional_owners": "CityGroundCareTest attempts thermally interrupted; WorldGroundSplatTest queued but never executed. Not counted as passed.",
+  "cost_limit": "No performance claim. Existing sampler/fetch sites remain, but additional weak-care pixels can enter the existing branch. Setup duty/affinity and static readbacks cannot establish whole-Game cost."
+}

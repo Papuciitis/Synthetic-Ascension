@@ -1,0 +1,334 @@
+{
+  "schema": 1,
+  "generated_utc": "2026-10-23T19:12:35.076578+00:00",
+  "cases": [
+    {
+      "label": "city23-ground-before-s7-r1",
+      "classification": "accepted S7 baseline",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "elapsed_seconds": 78.155,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": "",
+      "guard_reason": "completed",
+      "guard_wrapper_exit": 0,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 88.0,
+      "raw_sha256": "997a5b388993b36e00c773564772caa0ebd4327c903982ca120c1b06630d0890",
+      "guard_sha256": "8a6158944ebe4e8dcb8592eec466f3c7426a0fcb06bae4fe6b8ec04e2387d58c",
+      "delivered_directory": "runs/city23-ground-before-s7-r1/"
+    },
+    {
+      "label": "city23-ground-before-s9-r1",
+      "classification": "thermal incomplete",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 29.567,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": "",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 96.0,
+      "raw_sha256": "3065af596bf4875403914876d5e9acd7b4532bb2217d9b75468aa5416233eced",
+      "guard_sha256": "70bd128d4f99e0f7177cc06242783bc563d6432648236364681b2da01650fd63",
+      "delivered_directory": "runs/city23-ground-before-s9-r1/"
+    },
+    {
+      "label": "city23-ground-before-s9-r2",
+      "classification": "S9 baseline only; candidate review pending",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "elapsed_seconds": 167.023,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": "",
+      "guard_reason": "completed",
+      "guard_wrapper_exit": 0,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 86.0,
+      "raw_sha256": "ea9657c46deec3dbba3af9547549ae0bd187238df86c36f5012acc417274ec44",
+      "guard_sha256": "f5d0f96b713344205e60d791a0eb901e7cc619eb930eddf14fdb38aac56bc6bc",
+      "delivered_directory": "runs/city23-ground-before-s9-r2/"
+    },
+    {
+      "label": "city23-care-render-red-r1",
+      "classification": "thermal incomplete; not causal RED",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 1.988,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": "",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 95.0,
+      "raw_sha256": "54a3ecf2bfdd0e1b5353a364bf7d45d0f28d35f5e50f5e8c80000f5103fec572",
+      "guard_sha256": "ec14fade69553f47ba9fe4eef75d9dc3821ee1145be7454b0aa4886b08b99c61",
+      "delivered_directory": "runs/city23-care-render-red-r1/"
+    },
+    {
+      "label": "city23-care-render-red-r2",
+      "classification": "invalid fixture parse; explicitly stopped",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: Static function \"release_static_caches()\" not found in base \"res://scenes/world/buildings/CityBlockKit.gd\".",
+        "ERROR: Failed to load script \"res://tools/tests/CityGroundCareRenderTest.gd\" with error \"Parse error\"."
+      ],
+      "elapsed_seconds": 122.139,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": "",
+      "guard_reason": "external_sigterm",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 88.0,
+      "raw_sha256": "39e9ce33b53f2b4653be86871eb5e94dfe543d70aeca6430cc8da425cf54c1c0",
+      "guard_sha256": "0df84564b1500e34eac828dce99926228499b750be90a75a0d728a451e000508",
+      "delivered_directory": "runs/city23-care-render-red-r2/"
+    },
+    {
+      "label": "city23-care-render-red-r3",
+      "classification": "expected six care cutoff failures",
+      "actual_exit": 1,
+      "runner_exit": 1,
+      "stop_reason": "nonzero_exit",
+      "diagnostics": [
+        "ERROR: FAIL: care 0.25 has proportional native influence (observed 0.0000)",
+        "ERROR: FAIL: care 0.25 visibly advances beyond the preceding weight; no threshold plateau",
+        "ERROR: FAIL: care 0.50 has proportional native influence (observed 0.0000)",
+        "ERROR: FAIL: care 0.50 visibly advances beyond the preceding weight; no threshold plateau",
+        "ERROR: FAIL: care 0.75 has proportional native influence (observed 1.0000)",
+        "ERROR: FAIL: care 1.00 visibly advances beyond the preceding weight; no threshold plateau"
+      ],
+      "elapsed_seconds": 125.922,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": "",
+      "guard_reason": "completed",
+      "guard_wrapper_exit": 1,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 84.0,
+      "raw_sha256": "a16a353a37ee13d2b0003d8b0a7e893f0af2599aeb43beaa260a90bb542eb1ae",
+      "guard_sha256": "072237441ccd5d08b2cf632539aa3258b4a0666aa07235d114be693e98f6beab",
+      "delivered_directory": "runs/city23-care-render-red-r3/"
+    },
+    {
+      "label": "city23-care-render-green-r1",
+      "classification": "accepted native render regression 49/0",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "elapsed_seconds": 108.537,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": " M core/systems/world/ground/ground_splat.gdshader\n",
+      "guard_reason": "completed",
+      "guard_wrapper_exit": 0,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 85.0,
+      "raw_sha256": "1794c9e2aa9aec923d59fd025df01d31d39a87f74f3fe6ab14abb8587482100f",
+      "guard_sha256": "f41f392290d6570a8c42f25161a42597b16b4297f98a1571b7e59cb3b5872c82",
+      "delivered_directory": "runs/city23-care-render-green-r1/"
+    },
+    {
+      "label": "city23-ground-after-s7-r1",
+      "classification": "thermal incomplete",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 2.086,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": " M core/systems/world/ground/ground_splat.gdshader\n",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 97.0,
+      "raw_sha256": "e81dc88c64a706b8be2629a46067881ab36caf3303e9209fea32431feb537fc3",
+      "guard_sha256": "0da2d0854ae68845b5a8b2a0069f44aeed394a876302d7f4297521419aaf40fc",
+      "delivered_directory": "runs/city23-ground-after-s7-r1/"
+    },
+    {
+      "label": "city23-ground-after-s7-r2",
+      "classification": "accepted selected S7 after view",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "elapsed_seconds": 148.383,
+      "git_head": "9a2ef8b895b696344bbca2e131699b495a7544a4",
+      "tracked_status": " M core/systems/world/ground/DistrictGroundPolicy.gd\n",
+      "guard_reason": "completed",
+      "guard_wrapper_exit": 0,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 89.0,
+      "raw_sha256": "aea8b4bd564869f52cb43b3b6f4711d97be96cb8cb3b8913bd4271dd5195d38c",
+      "guard_sha256": "d31e3205027d9315f220e40ce943edcd5e1a63eeedfc0fcd49122c73a423042b",
+      "delivered_directory": "runs/city23-ground-after-s7-r2/"
+    },
+    {
+      "label": "city23-ground-citygroundcaretest-r1",
+      "classification": "thermal incomplete",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 2.016,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "tracked_status": " M core/systems/world/ground/ground_splat.gdshader\n",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 95.0,
+      "raw_sha256": "157abba86080d44f795c1f69f74e6cffd63387836c6e2ae033c27209d7b84cd6",
+      "guard_sha256": "1b95e2aea033c68425b94f7913187865536e3b6889dafa22d15fdb276e03b2e6",
+      "delivered_directory": "runs/city23-ground-citygroundcaretest-r1/"
+    },
+    {
+      "label": "city23-ground-owner-catalogue-r2",
+      "classification": "pending S9 configuration catalogue 116/0 only",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "elapsed_seconds": 91.066,
+      "git_head": "9a2ef8b895b696344bbca2e131699b495a7544a4",
+      "tracked_status": " M core/systems/world/ground/DistrictGroundPolicy.gd\n",
+      "guard_reason": "completed",
+      "guard_wrapper_exit": 0,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 89.0,
+      "raw_sha256": "f0da1b3cbc02d130cd2c2f5d30d698b41ed5e8899a7c0d153e9745a3b57c50f1",
+      "guard_sha256": "79ec2b1b0cc39c1c126787a1a42e299c719c4f585a2fdd0ff4e643a42d2085d6",
+      "delivered_directory": "runs/city23-ground-owner-catalogue-r2/"
+    },
+    {
+      "label": "city23-ground-owner-care-r2",
+      "classification": "thermal incomplete",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 1.934,
+      "git_head": "9a2ef8b895b696344bbca2e131699b495a7544a4",
+      "tracked_status": " M core/systems/world/ground/DistrictGroundPolicy.gd\n",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 93.0,
+      "raw_sha256": "7329b5ca532bee6e9791bb1bb06b0869a15b7b951f4c058bbc5a35406d4897f8",
+      "guard_sha256": "3e2c7c33d8248c4fc164e68e5c3f9fd851b52d76a7ad7297604afb8a8b486c9a",
+      "delivered_directory": "runs/city23-ground-owner-care-r2/"
+    },
+    {
+      "label": "city23-ground-after-s9-r1",
+      "classification": "thermal incomplete; no acceptance",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 152.426,
+      "git_head": "9a2ef8b895b696344bbca2e131699b495a7544a4",
+      "tracked_status": " M core/systems/world/ground/DistrictGroundPolicy.gd\n",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0,
+        1
+      ],
+      "peak_package_c": 98.0,
+      "raw_sha256": "a7474eeb6325aad1fb34166b081587530ced3736cecb1367190b17c1266492d2",
+      "guard_sha256": "a177657571089db9976c64aba44a020854dd1b6e9d113912ed21a469a3996a67",
+      "delivered_directory": "runs/city23-ground-after-s9-r1/"
+    },
+    {
+      "label": "city23-ground-after-s9-r2",
+      "classification": "thermal incomplete on one CPU; no acceptance",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 2.068,
+      "git_head": "9a2ef8b895b696344bbca2e131699b495a7544a4",
+      "tracked_status": " M core/systems/world/ground/DistrictGroundPolicy.gd\n",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0
+      ],
+      "peak_package_c": 97.0,
+      "raw_sha256": "d494294621603a52788aecf3a43a93a82fb2b0b7814a71ed6609c9da0e913d07",
+      "guard_sha256": "a2d39375296a04a84b4d16b41e0a23c3a263215b54a6999e2e6ba2e30a0e93d2",
+      "delivered_directory": "runs/city23-ground-after-s9-r2/"
+    },
+    {
+      "label": "city23-ground-owner-care-r3",
+      "classification": "thermal incomplete on one CPU",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "stop_reason": "interrupted",
+      "diagnostics": [],
+      "elapsed_seconds": 2.15,
+      "git_head": "9a2ef8b895b696344bbca2e131699b495a7544a4",
+      "tracked_status": " M core/systems/world/ground/DistrictGroundPolicy.gd\n",
+      "guard_reason": "thermal_limit",
+      "guard_wrapper_exit": -15,
+      "guard_cpu_affinity": [
+        0
+      ],
+      "peak_package_c": 93.0,
+      "raw_sha256": "6f6b6e31cb93158092640c5028a91e002d0fd92d08b3d4cb746890e584a80b3b",
+      "guard_sha256": "361f21e55657226bf4cda25d9229a771ec88fd6014f84ba9af1af0a2e6228f3f",
+      "delivered_directory": "runs/city23-ground-owner-care-r3/"
+    }
+  ],
+  "never_executed": [
+    "WorldGroundSplatTest",
+    "S9 candidate small-window control"
+  ],
+  "classification_note": "Expected native RED assertions, invalid fixture parse, and thermal interruptions remain distinct from accepted passes."
+}
