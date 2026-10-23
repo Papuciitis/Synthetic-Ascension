@@ -1,0 +1,443 @@
+{
+	"ambient_spawner": false,
+	"args": [
+		"--visible",
+		"--segment=2",
+		"--world-seed=16102026",
+		"--ground-context=416,-104",
+		"--review=normal",
+		"--out=/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal"
+	],
+	"attempt_seed": 16102026,
+	"building_id": 0,
+	"camera": {
+		"position": "(416.0, -104.0)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(1280, 720)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+	"captured_frames": 0,
+	"controlled_enemies": false,
+	"coord": "(0, -1)",
+	"deaths": 0,
+	"district_family": "service_courtyards",
+	"failures": 0,
+	"final_combined": {
+		"atmosphere": {
+			"air_z": -8,
+			"environment_scans": 23,
+			"frozen_phase": 0.0,
+			"ground_receiver_enabled": true,
+			"mask_cell_px": 0.0,
+			"mask_origin": "(inf, inf)",
+			"mask_rebuilds": 0,
+			"mask_size": "(0, 0)",
+			"particle_count": 0,
+			"profile": {
+				"ambient_fill": "(0.98, 0.99, 1.0, 1.0)",
+				"cloud_opacity": 0.035,
+				"cloud_scale_px": 900.0,
+				"cloud_velocity": "(-4.0, 1.0)",
+				"contact_strength": 1.0,
+				"context": "procedural",
+				"direct_light": 0.96,
+				"enabled": true,
+				"environment_tint": "(1.0, 0.997, 0.988, 1.0)",
+				"id": "service_courtyards",
+				"label": "Open courtyard daylight",
+				"mist_opacity": 0.0,
+				"mist_tint": "(0.72, 0.75, 0.72, 1.0)",
+				"particle_density": 0.0,
+				"particle_kind": "none",
+				"penumbra_px": 4.0,
+				"shadow_length": 1.0,
+				"sun_shade": "(0.66, 0.69, 0.76, 1.0)",
+				"vignette_strength": 0.0,
+				"wind": "(-0.266667, 0.066667)"
+			},
+			"reduced_motion": false,
+			"roof_material_count": 132,
+			"room_count": 0,
+			"sun_shadow_count": 73,
+			"vignette_strength": 0.0,
+			"weather_frozen": false,
+			"weather_time": 4.752619
+		},
+		"capture_cap_policy": {
+			"mechanism": "SettingsManager synchronous post-apply signal; no per-frame cap writes, settings overrides or physics/actor freeze",
+			"post_apply_settings_events": 0,
+			"target_fps": 20
+		},
+		"capture_stills": [
+			{
+				"exterior": {
+					"actual_player": "(416.0, 32.0)",
+					"all_opaque_outside": true,
+					"camera_unchanged": true,
+					"checked_kits": 39,
+					"checked_roofs": 48,
+					"empty_clipped_roof_slices": [
+						{
+							"classification": "empty_clipped_dungeon_host",
+							"footprint": [
+								[
+									128.0,
+									-2880.0
+								],
+								[
+									512.0,
+									-2880.0
+								],
+								[
+									512.0,
+									-2560.0
+								],
+								[
+									128.0,
+									-2560.0
+								]
+							],
+							"polygon_vertices": 0,
+							"source_script": "res://scenes/world/buildings/DungeonRoof.gd"
+						}
+					],
+					"in_view_facades": 2,
+					"in_view_roof_planes": 6,
+					"indoor_overlap_or_flags": 0,
+					"inside_counts": 0,
+					"loaded_walkable": true,
+					"outside_bounds_grown64": true
+				},
+				"file": "ground-before.png",
+				"physics_ticks_per_second_before_still": 60,
+				"render_fps_cap_before_still": 20
+			}
+		],
+		"combat_flash_setting": "full",
+		"final_exterior": {
+			"actual_player": "(416.0, 32.0)",
+			"all_opaque_outside": true,
+			"camera_unchanged": true,
+			"checked_kits": 39,
+			"checked_roofs": 48,
+			"empty_clipped_roof_slices": [
+				{
+					"classification": "empty_clipped_dungeon_host",
+					"footprint": [
+						[
+							128.0,
+							-2880.0
+						],
+						[
+							512.0,
+							-2880.0
+						],
+						[
+							512.0,
+							-2560.0
+						],
+						[
+							128.0,
+							-2560.0
+						]
+					],
+					"polygon_vertices": 0,
+					"source_script": "res://scenes/world/buildings/DungeonRoof.gd"
+				}
+			],
+			"in_view_facades": 2,
+			"in_view_roof_planes": 6,
+			"indoor_overlap_or_flags": 0,
+			"inside_counts": 0,
+			"loaded_walkable": true,
+			"outside_bounds_grown64": true
+		},
+		"limits": "Parent actual Game, normal HUD/details/save isolation and optional five-second controlled fight retained. Only initial player parking changes; static capsule query excludes enemy layer. Camera remains fixed. Ordinary indoor exits and roof/facade tweens settle without counter, fade, shader or collision edits. No performance or full human-play claim.",
+		"loaded_profile_counts": {
+			"common_base": 39
+		},
+		"parking": {
+			"camera_unchanged": true,
+			"cell": "(6, 0)",
+			"clearance_px": 64.0,
+			"distance_from_camera": 136.0,
+			"ordinary_physics_frames": 6,
+			"outside_and_opaque_after_settle": true,
+			"selected_world": "(416.0, 32.0)",
+			"static_capsule_checked": true
+		},
+		"physics_ticks_per_second": 60,
+		"reduced_motion_setting": false,
+		"render_dimensions": {
+			"basis": "Godot ed1daf0bf native CANVAS_ITEMS source contract",
+			"canvas_items_mode": true,
+			"content_scale_aspect": 1,
+			"content_scale_factor": 1.0,
+			"content_scale_mode": 1,
+			"content_scale_size": [
+				1920,
+				1080
+			],
+			"content_scale_stretch": 0,
+			"display_server_size": [
+				1280,
+				720
+			],
+			"engine_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+			"logical_visible_size": [
+				1920.0,
+				1080.0
+			],
+			"native_window_id": 0,
+			"nonembedded": true,
+			"source_derived_native_size": [
+				1280.00003814697,
+				720.000021457672
+			],
+			"stretch_transform": [
+				0.666666686534882,
+				0.0,
+				0.0,
+				0.666666686534882,
+				0.0,
+				0.0
+			],
+			"texture_size_getter_diagnostic": [
+				854.0,
+				480.0
+			],
+			"window_is_viewport": true,
+			"window_size": [
+				1280,
+				720
+			]
+		},
+		"render_fps_cap": 20
+	},
+	"fixed_camera": true,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"frames": [],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 0,
+			"local_bounds": "[P: (0, 0), S: (0, 0)]",
+			"max_byte": 0,
+			"nonzero": 0,
+			"sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+			"sum_bytes": 0
+		},
+		"chunk_material_counts": {
+			"0": 132,
+			"2": 184,
+			"3": 151,
+			"4": 174,
+			"6": 258,
+			"8": 125
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+		"probe": {
+			"care": 0.0,
+			"cell": [
+				6,
+				-2
+			],
+			"material": 2,
+			"walkable": false,
+			"world_px": [
+				416.0,
+				-104.0
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+					"layer_sha256": "d150b1bc0fcab5ff989af99d6243e4d45df56e18ef6d2ca06f0dcc2e8e956098",
+					"path": "res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+					"sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"ao_strength": "0.24",
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"overgrowth_a": "(0.0, 1.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"policy_enabled": "true",
+			"slot_index": [
+				6.0,
+				0.0,
+				7.0,
+				4.0,
+				2.0,
+				8.0,
+				3.0,
+				0.0
+			],
+			"slot_layer": [
+				6.0,
+				0.0,
+				7.0,
+				4.0,
+				4.0,
+				8.0,
+				6.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				384.0,
+				320.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0
+			],
+			"slot_role": [
+				4.0,
+				5.0,
+				1.0,
+				2.0,
+				3.0,
+				1.0,
+				3.0,
+				0.0
+			],
+			"world_tint": "(1.0, 0.99, 0.96, 1.0)"
+		},
+		"semantic_terrain": "urban"
+	},
+	"ground_context_world_px": [
+		416.0,
+		-104.0
+	],
+	"ground_review": true,
+	"hits": 0,
+	"image_size": "(1280, 720)",
+	"initial_fight_population": 0,
+	"limits": "Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance.",
+	"local_security": 0,
+	"max_projectiles": 0,
+	"normal_hud": true,
+	"occupied_comparison": false,
+	"optional_details_hidden": false,
+	"plan_seed": 436524753,
+	"player_god_mode": true,
+	"reduced_motion": false,
+	"requested_simulation_seconds": 0.0,
+	"review": "normal",
+	"role": "district_fill",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+			"coord": "(0, -1)",
+			"equal": true,
+			"event": "ground_context_streamed_reload"
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scripted_input": true,
+	"seed": 16102026,
+	"segment": 2,
+	"simulation_fight_seconds": 0.0,
+	"theme": "service_courtyards",
+	"wall_seconds": 0.0,
+	"weapon_fires": 0,
+	"world_cover": {
+		"alpha_upload_bytes": 14152992,
+		"alpha_uploads": 2,
+		"binding_usec": 31,
+		"cell_px": 256.0,
+		"collection_usec": 2393,
+		"comparison_usec": 288,
+		"data_upload_bytes": 84960,
+		"data_uploads": 27,
+		"face_buckets": 69,
+		"force_uploads": false,
+		"foreground_sources": 2,
+		"generation": 146,
+		"grid_cells": 77,
+		"index_count": 181,
+		"index_disabled": false,
+		"index_resyncs": 34,
+		"indexed_faces": 67,
+		"indexed_forms": 88,
+		"indexed_roofs": 48,
+		"material_binds": 62,
+		"materials": 7,
+		"max_candidates": 13,
+		"peak_candidates": 13,
+		"peak_primitives": 58,
+		"peak_refresh_usec": 30127,
+		"primitive_count": 58,
+		"refresh_usec": 2716,
+		"renewed_faces": 0,
+		"renewed_roofs": 0,
+		"roof_buckets": 111,
+		"roof_usec": 1405,
+		"roof_validation_usec": 421,
+		"snapshot_builds": 9,
+		"snapshot_reuses": 137,
+		"snapshot_usec": 0,
+		"solid_usec": 475,
+		"source_reads": 2,
+		"sprite_usec": 307,
+		"structure_events": 909,
+		"validation_usec": 572,
+		"visited_faces": 4,
+		"visited_roofs": 5
+	}
+}

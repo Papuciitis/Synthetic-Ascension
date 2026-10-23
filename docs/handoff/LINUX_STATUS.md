@@ -3,7 +3,39 @@
 Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
-## 23 October — bounded city continuation integrated; combined checks next
+## 23 October — combined city checks passed
+
+The approved cover, streets, plaza and weathering stages are integrated locally.
+Final combined checks used main `369cfef4`: all eight guarded runs completed
+with exit 0, zero diagnostics and clean guard records. The explicit parser
+checked 53 owner/dependency scripts, including all 25 changed non-test
+GDScripts; the external parser checked three wrappers. Both report zero
+failures. Four normal S2/S6/S7/S9 views, reduced-motion S7 at 960×540, and the
+occupied S7 route passed their actual source/settings/physical controls.
+
+The occupied route traversed the narrow passage, entered and exited original
+and infill buildings, collected the exact ordinary staged item and crossed a
+chunk boundary with live AI, director, streaming and physics. It retains
+20 FPS rendering, 60 Hz physics and zero observed save writes. The separate
+signed-ID validator accepts the legitimate Resource ID; the old positive-only
+verdict remains recorded diagnostically, without rewriting its failure.
+
+Root and an independent reviewer accepted the ten original images within
+their selected scope. The [combined evidence packet](../art/reference/2026-10-23-linux-city-combined/README.md)
+binds all six native manifests, eight raw/guard records, the exact 815 required
+source hashes and 740 finite cache hashes. Its 173 indexed files and ten
+lossless gzip round trips were verified before committing. Later evidence and
+handoff changes do not change the tested runtime sources.
+
+Broader paving/plaza/property shapes still need work: hard rectangular grass
+patches persist in S7/S9, and S9 has oversized lavender cobbles. Tiny covered
+equipment, stronger district differentiation, per-theme lichen close-ups and
+soot with an operating-flue owner remain open. These selected views and the
+scripted occupied route do not establish every combat-warning case, motion
+cadence, human play quality or whole-Game performance. Next visual work should
+address the broad ground/property shapes before adding further surface detail.
+
+## 23 October — integrated stage records
 
 Normal-merged plaza candidate `0c92f28f` at `715439be`. Combined renderer
 `3f9d6ff4` retains the checked prop casts and resolves plaza fills through their
@@ -72,7 +104,7 @@ contains the checked views, all eight comparisons and their limits.
 The timing window is closed. The [cover evidence packet](../art/reference/2026-10-22-linux-cover/README.md)
 preserves the accepted bounded home/tree results, exact remaining readability
 limits, qualified cost observations and original failed attempts. Combined
-production route/settings checks and branch publication are pending. The
+production route/settings runs and local evidence publication are complete. The
 bounded texture-cache copier has verified and supplied only matching tracked
 world textures (101 entries, about 2 MB); no broad editor import or global
 class-cache copying was needed.
@@ -86,8 +118,11 @@ parser/S2 and adds only the two remaining native routes, preserving their
 distinct execution origins. Source reviews and focused receipt regressions
 are clean. Broad ground/plaza topology, visible rectangular grass/property
 patches and tiny equipment discoverability remain open. The final main check
-will parse all 53 changed owners/dependencies, then review four normal district
-views, reduced-motion S7 and the occupied S7 route on this combined source.
+parsed 53 explicit owner/dependency scripts (including all 25 changed non-test
+GDScripts) and three external wrappers with zero failures. Four normal district
+views, reduced-motion S7 and the occupied S7 route completed on combined main
+`369cfef4`, all actual exit 0 with zero diagnostics. The final selected review
+and combined evidence packet are linked above.
 
 ## 23 October — cover and prop shadows integrated; city continuation active
 

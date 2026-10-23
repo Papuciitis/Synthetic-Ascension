@@ -1,0 +1,1353 @@
+{
+  "schema": 1,
+  "status": "ROOT_SELECTED_COMBINED_VIEWS_ACCEPTED_BOUNDED",
+  "reviewed_utc": "2026-10-23T03:30:15.875927+00:00",
+  "review_method": "Root viewed all10 original PNGs using view_image, including the five native exteriors and five occupied plates; inspected all6 native manifests and freshly reverified actual8 raw/guard/source/command receipts. Independent original reviews are embedded as supporting evidence.",
+  "runtime_source_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+  "case_count": 6,
+  "original_png_count": 10,
+  "native_manifest_count": 6,
+  "selected_cases": [
+    {
+      "case": "s2-normal",
+      "root_selected_verdict": "ACCEPTED_BOUNDED",
+      "root_originals_inspected": true,
+      "root_observation": "Warm weathered masonry, roof modules, plinth and cast shadow remain readable at the service courtyard; selected exterior is acceptable.",
+      "actual_source_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+      "required_815_source_map_matches": true,
+      "raw_receipt": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s2-normal-r1-1/run-results.json",
+        "sha256": "a5df0b434b0927a9effc0e08fa939d9f4250945bac7a406aa1e24689633188a8"
+      },
+      "guard": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s2-normal-r1-thermal.json",
+        "sha256": "70be15153c51c1f49b57a7ed76548715a44faf61f1589f0b059a8ca27a82551d"
+      },
+      "native_manifest": {
+        "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal/capture-info.json",
+        "sha256": "f4d97cc5bb9c92b52aa263228cd55d3458d46907fb50f11b7862ce9d7316282f"
+      },
+      "original_images": [
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal/ground-before.png",
+          "bytes": 1532034,
+          "sha256": "2ff6d75bc14a2a20ef2c7c5fac6d951b168581c70860c00357175bcf1b4368fb"
+        }
+      ],
+      "functional_checks": {
+        "zero_failures": true,
+        "zero_save_writes": true,
+        "context": true,
+        "actual_r4_entrypoint": true,
+        "normal_hud_details": true,
+        "ordinary_reload_fixture": true,
+        "cap_and_physics": true,
+        "real_settings": true,
+        "actual_atmosphere_theme": true,
+        "actual_native_dimensions": true,
+        "real_opaque_exterior": true,
+        "actual_parking": true,
+        "capture_still_controls": true,
+        "original_png_size": true
+      },
+      "independent_review": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-independent-visual-review-prep/s2-normal-review.json",
+        "sha256": "dfda5dd0b2be31d4e6633053b9478d6a3d5cda78485ef0f4ae78ba3283eed125",
+        "complete_original_review": {
+          "case": "s2-normal",
+          "verdict": "SELECTED_VIEW_ACCEPTABLE_NO_NEW_BLOCKER",
+          "review_method": "Opened unchanged original ground-before.png at native1280x720, then read completed actual manifest/raw/guard and pinned execution fields. No atlas/material-only inference.",
+          "bindings": {
+            "image": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal/ground-before.png",
+              "sha256": "2ff6d75bc14a2a20ef2c7c5fac6d951b168581c70860c00357175bcf1b4368fb",
+              "bytes": 1532034
+            },
+            "manifest": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal/capture-info.json",
+              "sha256": "f4d97cc5bb9c92b52aa263228cd55d3458d46907fb50f11b7862ce9d7316282f",
+              "bytes": 11351
+            },
+            "raw": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s2-normal-r1-1/run-results.json",
+              "sha256": "a5df0b434b0927a9effc0e08fa939d9f4250945bac7a406aa1e24689633188a8",
+              "bytes": 460307
+            },
+            "guard": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s2-normal-r1-thermal.json",
+              "sha256": "70be15153c51c1f49b57a7ed76548715a44faf61f1589f0b059a8ca27a82551d",
+              "bytes": 23316
+            }
+          },
+          "source_observation": {
+            "actual_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+            "tracked_status": "",
+            "required_sources": 815,
+            "matched_sources": 815,
+            "path_normalization": "Execution absolute project paths normalized to raw project-relative keys before comparison.",
+            "actual_command_matches": true,
+            "cache_limit": "Execution carries root finite740cache-file binding; no duplicate cache or asset rehash in this review."
+          },
+          "completed_transport": {
+            "actual_exit": 0,
+            "runner_exit": 0,
+            "stop_reason": "completed",
+            "diagnostics": [],
+            "guard_reason": "completed",
+            "guard_exit": 0,
+            "received_signal": null
+          },
+          "actual_controls": {
+            "native_size": [
+              1280,
+              720
+            ],
+            "camera": {
+              "position": "(416.0, -104.0)",
+              "rotation": 0.0,
+              "viewport": "(1920.0, 1080.0)",
+              "window": "(1280, 720)",
+              "zoom": "(1.0, 1.0)"
+            },
+            "normal_hud": true,
+            "optional_details_hidden": false,
+            "save_writes": 0,
+            "failures": 0,
+            "render_cap": 20,
+            "physics_hz": 60,
+            "reduced_motion": false,
+            "combat_flash": "full",
+            "parking": {
+              "camera_unchanged": true,
+              "cell": "(6, 0)",
+              "clearance_px": 64.0,
+              "distance_from_camera": 136.0,
+              "ordinary_physics_frames": 6,
+              "outside_and_opaque_after_settle": true,
+              "selected_world": "(416.0, 32.0)",
+              "static_capsule_checked": true
+            },
+            "all_opaque_outside": true,
+            "indoor_overlaps": 0,
+            "inside_counts": 0,
+            "atmosphere_profile_id": "service_courtyards",
+            "architecture_profile_counts": {
+              "common_base": 39
+            },
+            "architecture_profile_qualification": "common_base is district architecture metadata, not missing weathering or atmosphere profile."
+          },
+          "pixel_observations": [
+            "Central red tile roof and pale masonry frontage remain complete/opaque and clearly separate from stone paving and grass; no new cutaway, missing-texture or floating material seam is visible.",
+            "Window/sill marks and lower-wall damp staining are restrained and sit on the facade; stone plinth/quoin edges and window frames remain readable.",
+            "The broad left/down building cast and small player cast establish contact and consistent scene depth; dark grass under the facade does not erase the visible player.",
+            "At native view the player around(640,454) keeps a clear head/body silhouette and clothing outline against grass. Normal corner HUD and objective banner remain readable.",
+            "Daylight remains near neutral with no conspicuous full-screen haze or vignette; the image alone does not establish atmospheric motion or frame performance."
+          ],
+          "open_qualifications": [
+            "Large stone paving coverage and broad grass shape/edge remain known OPEN composition issues; this view does not resolve city topology.",
+            "No enemy, projectile/tell or ordinary small-item comparison is exercised by this no-fight exterior still. Tiny-item discoverability remains OPEN.",
+            "No roof entry/restoration sequence, dynamic/reduced-motion cadence, whole-Game performance or full-vision acceptance is inferred."
+          ],
+          "new_visible_blockers": [],
+          "fixture_scope": "Staged exterior capsule parking64px clear; god mode/scripted setup; ambient spawner/encounter beats disabled; normal details and HUD; streaming frozen after ordinary checked reload. No engine, image edit, Git, build/compression or runtime modification by reviewer."
+        }
+      }
+    },
+    {
+      "case": "s6-normal",
+      "root_selected_verdict": "ACCEPTED_BOUNDED",
+      "root_originals_inspected": true,
+      "root_observation": "Cool roof, pale weathered frontage, service props and contact/cast shadows read against industrial brown ground; selected exterior is acceptable.",
+      "actual_source_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+      "required_815_source_map_matches": true,
+      "raw_receipt": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s6-normal-r1-1/run-results.json",
+        "sha256": "9cfb5ba4bf38c4bcbfe4db1e283b606736c234f750648ddbc1b1792c1628d4e5"
+      },
+      "guard": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s6-normal-r1-thermal.json",
+        "sha256": "561e42cc643495423f2134566536a01bbb147423e7aadf99442aa254d8193b4c"
+      },
+      "native_manifest": {
+        "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal/capture-info.json",
+        "sha256": "f8ea0d42578a52da40b3099a44e57fec3aabef987e6f0f369781687622865f45"
+      },
+      "original_images": [
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal/ground-before.png",
+          "bytes": 1395645,
+          "sha256": "77a3e7c9053cb42588f8723f686c679ab436b3cd0a37868eedf8b51d8229c981"
+        }
+      ],
+      "functional_checks": {
+        "zero_failures": true,
+        "zero_save_writes": true,
+        "context": true,
+        "actual_r4_entrypoint": true,
+        "normal_hud_details": true,
+        "ordinary_reload_fixture": true,
+        "cap_and_physics": true,
+        "real_settings": true,
+        "actual_atmosphere_theme": true,
+        "actual_native_dimensions": true,
+        "real_opaque_exterior": true,
+        "actual_parking": true,
+        "capture_still_controls": true,
+        "original_png_size": true
+      },
+      "independent_review": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-independent-visual-review-prep/s6-normal-review.json",
+        "sha256": "0a3826ae9a4c8404f7c5ed2adb92574c9a5a36ae80d8e789a4ad1287e36c4746",
+        "complete_original_review": {
+          "case": "s6-normal",
+          "verdict": "SELECTED_VIEW_ACCEPTABLE_NO_NEW_BLOCKER",
+          "review_method": "Opened unchanged original ground-before.png at native1280x720; read completed actual capture/raw/guard and execution source fields. No material/telemetry-only appearance inference.",
+          "bindings": {
+            "image": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal/ground-before.png",
+              "sha256": "77a3e7c9053cb42588f8723f686c679ab436b3cd0a37868eedf8b51d8229c981",
+              "bytes": 1395645
+            },
+            "manifest": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal/capture-info.json",
+              "sha256": "f8ea0d42578a52da40b3099a44e57fec3aabef987e6f0f369781687622865f45",
+              "bytes": 10580
+            },
+            "raw": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s6-normal-r1-1/run-results.json",
+              "sha256": "9cfb5ba4bf38c4bcbfe4db1e283b606736c234f750648ddbc1b1792c1628d4e5",
+              "bytes": 458316
+            },
+            "guard": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s6-normal-r1-thermal.json",
+              "sha256": "561e42cc643495423f2134566536a01bbb147423e7aadf99442aa254d8193b4c",
+              "bytes": 21672
+            }
+          },
+          "source_observation": {
+            "actual_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+            "tracked_status": "",
+            "required_sources": 815,
+            "matched_sources": 815,
+            "actual_command_matches": true,
+            "path_normalization": "Execution absolute keys normalized to raw project-relative keys.",
+            "cache_limit": "Root execution finite740cache-file binding retained; no asset/cache bulk rehash by reviewer.",
+            "postrun_verifier_qualification": "Later pure verifier evidence is post-run observation, not retroactively a native launch source."
+          },
+          "completed_transport": {
+            "actual_exit": 0,
+            "runner_exit": 0,
+            "stop_reason": "completed",
+            "diagnostics": [],
+            "guard_reason": "completed",
+            "guard_exit": 0,
+            "received_signal": null
+          },
+          "actual_controls": {
+            "native_size": [
+              1280,
+              720
+            ],
+            "segment": 6,
+            "seed": 16102028,
+            "theme": "industrial_cutthrough",
+            "camera": {
+              "position": "(384.0, -424.0)",
+              "rotation": 0.0,
+              "viewport": "(1920.0, 1080.0)",
+              "window": "(1280, 720)",
+              "zoom": "(1.0, 1.0)"
+            },
+            "normal_hud": true,
+            "optional_details_hidden": false,
+            "save_writes": 0,
+            "failures": 0,
+            "render_cap": 20,
+            "physics_hz": 60,
+            "reduced_motion": false,
+            "combat_flash": "full",
+            "parking": {
+              "camera_unchanged": true,
+              "cell": "(5, -5)",
+              "clearance_px": 64.0,
+              "distance_from_camera": 139.713989257812,
+              "ordinary_physics_frames": 6,
+              "outside_and_opaque_after_settle": true,
+              "selected_world": "(352.0, -288.0)",
+              "static_capsule_checked": true
+            },
+            "all_opaque_outside": true,
+            "indoor_overlaps": 0,
+            "inside_counts": 0,
+            "atmosphere_profile_id": "industrial_cutthrough",
+            "architecture_profile_counts": {
+              "common_base": 24
+            },
+            "ground_reload_equal": true
+          },
+          "pixel_observations": [
+            "Dark slate roof tiles remain distinguishable and aligned with the pale masonry frontage; no new missing plane, cutaway, texture hole or detached facade edge is visible.",
+            "Weathered wall joints/sills and the lower plinth remain legible. Barrels, crates and handcart at the frontage have attached contact/cast shade rather than obvious floating copies.",
+            "The pale worn yard transitions into gray setts and darker earth with irregular margins; this selected contact reads coherently while broad paving composition remains unresolved.",
+            "Player around(619,454) has a clear head/body outline against the yard, and a down-left attached cast. The slate roof and props remain readable under neutral workshop light.",
+            "Normal HUD/objective text are readable. There is no conspicuous full-screen mist/vignette in this industrial still; one image cannot prove live atmosphere motion or performance."
+          ],
+          "open_qualifications": [
+            "Broad paving and large yard/ground shapes remain OPEN; this selected view does not settle whole-city composition.",
+            "This no-fight still contains no exercised enemy/projectile/tell or ordinary loot comparison; tiny-item discoverability stays OPEN.",
+            "No roof-entry/restoration sequence, reduced-motion cadence or whole-Game visual/performance claim."
+          ],
+          "new_visible_blockers": [],
+          "fixture_scope": "Actual Game exterior review, god mode/scripted initial setup,64px-clear real-capsule parking, ambient spawner/encounter beats disabled, normal details/HUD and streaming frozen after checked reload. No image/runtime edit, engine, Git or heavy build by reviewer."
+        }
+      }
+    },
+    {
+      "case": "s7-normal",
+      "root_selected_verdict": "ACCEPTED_BOUNDED",
+      "root_originals_inspected": true,
+      "root_observation": "Roof edges, pale canal masonry and the parked player remain readable. The hard green lawn rectangle at lower left remains OPEN.",
+      "actual_source_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+      "required_815_source_map_matches": true,
+      "raw_receipt": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-normal-r1-1/run-results.json",
+        "sha256": "b758c2ba5bd6e471f42232bae8ced1af7c42398780ff21159f38e49c47575035"
+      },
+      "guard": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-normal-r1-thermal.json",
+        "sha256": "0434eb8ab14c2d69e8bfb5ee0922481462f4eb9e6038ee56bd28d92af4852ce5"
+      },
+      "native_manifest": {
+        "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/capture-info.json",
+        "sha256": "bed4a8383e0223f5148bed5c05e8ba46e3c7d17df07cb12ed42a89e86730e84f"
+      },
+      "original_images": [
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/ground-before.png",
+          "bytes": 1560605,
+          "sha256": "fd254516f51a9e2927e3a86b882212fa3a31e1de4bfb1842bfea318eb9d45dda"
+        }
+      ],
+      "functional_checks": {
+        "zero_failures": true,
+        "zero_save_writes": true,
+        "context": true,
+        "actual_r4_entrypoint": true,
+        "normal_hud_details": true,
+        "ordinary_reload_fixture": true,
+        "cap_and_physics": true,
+        "real_settings": true,
+        "actual_atmosphere_theme": true,
+        "actual_native_dimensions": true,
+        "real_opaque_exterior": true,
+        "actual_parking": true,
+        "capture_still_controls": true,
+        "original_png_size": true
+      },
+      "independent_review": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-independent-visual-review-prep/s7-normal-review.json",
+        "sha256": "1818191345a18851550b4310821625bf3c1d9777a00ab2d1a9a6fcb55c2d1140",
+        "complete_original_review": {
+          "case": "s7-normal",
+          "verdict": "SELECTED_VIEW_ACCEPTABLE_NO_NEW_BLOCKER_KNOWN_LAWN_RECTANGLE_OPEN",
+          "review_method": "Opened unchanged original at native1280x720; read completed actual capture/raw/guard/source records. Actual pixel observations are separate from shader/material/settings telemetry.",
+          "bindings": {
+            "image": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/ground-before.png",
+              "sha256": "fd254516f51a9e2927e3a86b882212fa3a31e1de4bfb1842bfea318eb9d45dda",
+              "bytes": 1560605
+            },
+            "manifest": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/capture-info.json",
+              "sha256": "bed4a8383e0223f5148bed5c05e8ba46e3c7d17df07cb12ed42a89e86730e84f",
+              "bytes": 10612
+            },
+            "raw": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-normal-r1-1/run-results.json",
+              "sha256": "b758c2ba5bd6e471f42232bae8ced1af7c42398780ff21159f38e49c47575035",
+              "bytes": 458263
+            },
+            "guard": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-normal-r1-thermal.json",
+              "sha256": "0434eb8ab14c2d69e8bfb5ee0922481462f4eb9e6038ee56bd28d92af4852ce5",
+              "bytes": 21681
+            }
+          },
+          "source_observation": {
+            "actual_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+            "tracked_status": "",
+            "required_sources": 815,
+            "matched_sources": 815,
+            "actual_command_matches": true,
+            "path_normalization": "Absolute execution keys mapped to project-relative raw keys.",
+            "cache_limit": "No duplicate bulk cache/asset hash; root finite740 binding is retained.",
+            "postrun_verifier_qualification": "Later e25f pure ledger is post-run verifier evidence, not native program source."
+          },
+          "completed_transport": {
+            "actual_exit": 0,
+            "runner_exit": 0,
+            "stop_reason": "completed",
+            "diagnostics": [],
+            "guard_reason": "completed",
+            "guard_exit": 0,
+            "received_signal": null
+          },
+          "actual_controls": {
+            "native_size": [
+              1280,
+              720
+            ],
+            "segment": 7,
+            "seed": 16102028,
+            "theme": "canal_services",
+            "camera": {
+              "position": "(-1632.0, 1304.0)",
+              "rotation": 0.0,
+              "viewport": "(1920.0, 1080.0)",
+              "window": "(1280, 720)",
+              "zoom": "(1.0, 1.0)"
+            },
+            "normal_hud": true,
+            "optional_details_hidden": false,
+            "save_writes": 0,
+            "failures": 0,
+            "render_cap": 20,
+            "physics_hz": 60,
+            "reduced_motion": false,
+            "combat_flash": "full",
+            "parking": {
+              "camera_unchanged": true,
+              "cell": "(-19, 20)",
+              "clearance_px": 64.0,
+              "distance_from_camera": 448.071411132812,
+              "ordinary_physics_frames": 6,
+              "outside_and_opaque_after_settle": true,
+              "selected_world": "(-1184.0, 1312.0)",
+              "static_capsule_checked": true
+            },
+            "all_opaque_outside": true,
+            "indoor_overlaps": 0,
+            "inside_counts": 0,
+            "atmosphere_profile_id": "canal_services",
+            "mist_opacity": 0.025,
+            "cloud_opacity": 0.075,
+            "architecture_profile_counts": {
+              "common_base": 28
+            },
+            "architecture_profile_qualification": "common_base is architecture metadata, not absent weathering or canal atmosphere.",
+            "ground_reload_equal": true
+          },
+          "pixel_observations": [
+            "Slate roofs and pale masonry remain fully drawn and opaque. Window openings, stone framing and front plinth stay readable; no new texture hole or unintended cutaway is visible.",
+            "The view appears softer and cooler than the industrial still, consistent with its diffuse canal setting, while facade/roof edges and ground paths remain distinct. The still cannot isolate atmosphere from differing materials, geometry or weather phase.",
+            "Player near(938,370) remains identifiable against the paved path, with an attached down-left shadow; normal HUD and objective text remain readable.",
+            "The green/yellow lawn rectangle beneath the left house is plainly visible aroundx154..313,y435..508. Its hard rectangular layout remains a known OPEN care/topology issue, not a solved transition.",
+            "The pale path, mossy margins and roof/tree layering remain legible at native size. No enemy/projectile/tell or small-loot comparison is present in this no-fight exterior."
+          ],
+          "open_qualifications": [
+            "Visible rectangular lawn beneath left house and broad paving/grass composition remain OPEN.",
+            "Tiny-item discoverability, enemy/tell contrast, dynamic atmosphere cadence and roof entry/restoration sequences are not accepted from this still.",
+            "No full-vision, city topology or performance claim."
+          ],
+          "new_visible_blockers": [],
+          "fixture_scope": "Actual Game exterior64px-clear real-capsule staging, fixed camera, god mode/scripted setup, disabled ambient spawner/encounter beats, normal HUD/details and streaming frozen after checked reload. No image/runtime edit, engine, Git or heavy build by reviewer."
+        }
+      }
+    },
+    {
+      "case": "s9-normal",
+      "root_selected_verdict": "ACCEPTED_BOUNDED",
+      "root_originals_inspected": true,
+      "root_observation": "Retained red/blue roofs, pale masonry and objective cast read clearly. Oversized lavender cobbles and hard lawn/property rectangles remain OPEN.",
+      "actual_source_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+      "required_815_source_map_matches": true,
+      "raw_receipt": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s9-normal-r1-1/run-results.json",
+        "sha256": "fb965ff9c65200daa0b618ca4ed1f01fcf3cd1c151ba2f079a7d4ba991383e33"
+      },
+      "guard": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s9-normal-r1-thermal.json",
+        "sha256": "e3d83141ce9ae5863ba0787e18bc205b43bc78224819c5d43bc490ba978d93aa"
+      },
+      "native_manifest": {
+        "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal/capture-info.json",
+        "sha256": "cb7c7bbe3fbff0502eff5fc054436df24c91db80e62034b658caf6236d07c9a5"
+      },
+      "original_images": [
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal/ground-before.png",
+          "bytes": 1614487,
+          "sha256": "b2a988cd3884de62dcc7295e989846d195aad874584b24c3e5acb196db7a602f"
+        }
+      ],
+      "functional_checks": {
+        "zero_failures": true,
+        "zero_save_writes": true,
+        "context": true,
+        "actual_r4_entrypoint": true,
+        "normal_hud_details": true,
+        "ordinary_reload_fixture": true,
+        "cap_and_physics": true,
+        "real_settings": true,
+        "actual_atmosphere_theme": true,
+        "actual_native_dimensions": true,
+        "real_opaque_exterior": true,
+        "actual_parking": true,
+        "capture_still_controls": true,
+        "original_png_size": true
+      },
+      "independent_review": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-independent-visual-review-prep/s9-normal-review.json",
+        "sha256": "a8a6af15224de1b73d42463ec7dabceab118381b2218d4b5ea1d41f1a4af8804",
+        "complete_original_review": {
+          "case": "s9-normal",
+          "verdict": "SELECTED_VIEW_ACCEPTABLE_NO_NEW_WEATHERING_BLOCKER_KNOWN_TERRAIN_OPEN",
+          "review_method": "Opened unchanged original at native1280x720 and read actual completed capture/raw/guard plus pinned execution source fields; pixel verdict is independent of uniform/material gate counts.",
+          "bindings": {
+            "image": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal/ground-before.png",
+              "sha256": "b2a988cd3884de62dcc7295e989846d195aad874584b24c3e5acb196db7a602f",
+              "bytes": 1614487
+            },
+            "manifest": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal/capture-info.json",
+              "sha256": "cb7c7bbe3fbff0502eff5fc054436df24c91db80e62034b658caf6236d07c9a5",
+              "bytes": 10592
+            },
+            "raw": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s9-normal-r1-1/run-results.json",
+              "sha256": "fb965ff9c65200daa0b618ca4ed1f01fcf3cd1c151ba2f079a7d4ba991383e33",
+              "bytes": 460424
+            },
+            "guard": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s9-normal-r1-thermal.json",
+              "sha256": "e3d83141ce9ae5863ba0787e18bc205b43bc78224819c5d43bc490ba978d93aa",
+              "bytes": 22341
+            }
+          },
+          "source_observation": {
+            "actual_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+            "tracked_status": "",
+            "required_sources": 815,
+            "matched_sources": 815,
+            "actual_command_matches": true,
+            "path_normalization": "Execution absolute source keys normalized to raw project-relative paths.",
+            "cache_limit": "No duplicate cache/asset bulk rehash; root finite740cache binding retained.",
+            "postrun_verifier_qualification": "Later e25f verifier evidence is not reclassified as native launch source."
+          },
+          "completed_transport": {
+            "actual_exit": 0,
+            "runner_exit": 0,
+            "stop_reason": "completed",
+            "diagnostics": [],
+            "guard_reason": "completed",
+            "guard_exit": 0,
+            "received_signal": null
+          },
+          "actual_controls": {
+            "native_size": [
+              1280,
+              720
+            ],
+            "segment": 9,
+            "seed": 16102026,
+            "theme": "outer_wall",
+            "camera": {
+              "position": "(-3104.0, -1384.0)",
+              "rotation": 0.0,
+              "viewport": "(1920.0, 1080.0)",
+              "window": "(1280, 720)",
+              "zoom": "(1.0, 1.0)"
+            },
+            "normal_hud": true,
+            "optional_details_hidden": false,
+            "save_writes": 0,
+            "failures": 0,
+            "render_cap": 20,
+            "physics_hz": 60,
+            "reduced_motion": false,
+            "combat_flash": "full",
+            "parking": {
+              "camera_unchanged": true,
+              "cell": "(-49, -20)",
+              "clearance_px": 64.0,
+              "distance_from_camera": 136.0,
+              "ordinary_physics_frames": 6,
+              "outside_and_opaque_after_settle": true,
+              "selected_world": "(-3104.0, -1248.0)",
+              "static_capsule_checked": true
+            },
+            "all_opaque_outside": true,
+            "indoor_overlaps": 0,
+            "inside_counts": 0,
+            "atmosphere_profile_id": "outer_wall",
+            "architecture_profile_counts": {
+              "common_base": 17
+            },
+            "ground_reload_equal": true
+          },
+          "pixel_observations": [
+            "Red/slate roof masses, pale weathered frontage and recessed open door portals remain complete and legible; no new missing roof/facade plane or unintended cutaway is visible.",
+            "Plinth/sill weathering, cargo props and door steps stay attached to the facade/ground. This exterior still does not test partial-alpha fade compositing.",
+            "The statue around(553,495), player near(640,454) and frontage props have coherent down-left contact/cast shadows. Player head/body silhouette remains clear against gray paving.",
+            "Clear outer-wall lighting retains distinct roof/wall/actor values without conspicuous global fog or vignette. The static image does not establish wind/cloud motion or frame performance.",
+            "Very large lavender/gray rounded cobbles are conspicuous around the upper/right approach strips; a hard rectangular green lawn area beneath the right frontage is also visible. These are known OPEN terrain/care/topology issues, not resolved by this selected review."
+          ],
+          "open_qualifications": [
+            "Oversized purple cobble scale, rectangular lawn approaches and broad paving/topology remain OPEN.",
+            "No enemy/projectile/tell/small-loot comparison is exercised by this no-fight still; tiny-item discoverability remains OPEN.",
+            "No full-city vision, roof entry/restoration sequence, reduced-motion cadence or performance acceptance."
+          ],
+          "new_visible_blockers": [],
+          "fixture_scope": "Actual Game fixed exterior view with64px-clear actual-capsule parking, god mode/scripted setup, ambient spawner/encounter beats disabled, normal HUD/details and streaming frozen after checked reload. No image/runtime edit, engine, Git or heavy build by reviewer."
+        }
+      }
+    },
+    {
+      "case": "s7-reduced",
+      "root_selected_verdict": "ACCEPTED_BOUNDED",
+      "root_originals_inspected": true,
+      "root_observation": "960x540 original retains readable player, building edges and ordinary HUD at the same camera. Actual reduced-motion/flash-off settings are confirmed; motion cadence and reduced combat-tell parity are not established by this still.",
+      "actual_source_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+      "required_815_source_map_matches": true,
+      "raw_receipt": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-reduced-r1-1/run-results.json",
+        "sha256": "202556f82144329db14296fb8451eb4cc7ae6f46b11f9893c3424f2a6ecbe2f8"
+      },
+      "guard": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-reduced-r1-thermal.json",
+        "sha256": "b03dba436923992262550924b856390bb0ffbe4542d5d3f7a0dc42d0fa55f353"
+      },
+      "native_manifest": {
+        "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced/capture-info.json",
+        "sha256": "1ca38af5a4995ad04fc0025b2e4396e8791ce1857887909276e497c34da7fcb1"
+      },
+      "original_images": [
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced/ground-before.png",
+          "bytes": 893100,
+          "sha256": "014f11185f5d8b6c2cb0f872708e5584b390aed8300f85a219bd72a9589169a0"
+        }
+      ],
+      "functional_checks": {
+        "zero_failures": true,
+        "zero_save_writes": true,
+        "context": true,
+        "actual_r4_entrypoint": true,
+        "normal_hud_details": true,
+        "ordinary_reload_fixture": true,
+        "cap_and_physics": true,
+        "real_settings": true,
+        "actual_atmosphere_theme": true,
+        "actual_native_dimensions": true,
+        "real_opaque_exterior": true,
+        "actual_parking": true,
+        "capture_still_controls": true,
+        "original_png_size": true
+      },
+      "independent_review": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-independent-visual-review-prep/s7-reduced-review.json",
+        "sha256": "90b6622d9ed0a0815c40bea0ae15b90dd80a4cbfa262b75aedd1da4e8863c74c",
+        "complete_original_review": {
+          "case": "s7-reduced",
+          "verdict": "SELECTED_REDUCED_VIEW_ACCEPTABLE_NO_NEW_BLOCKER_KNOWN_LAWN_OPEN",
+          "review_method": "Opened unchanged reduced960x540 and normal1280x720 originals at native sizes; read completed manifests/raw/guard/source. Compare corresponding world features, not resized/pixel-identical outputs.",
+          "bindings": {
+            "image": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced/ground-before.png",
+              "sha256": "014f11185f5d8b6c2cb0f872708e5584b390aed8300f85a219bd72a9589169a0",
+              "bytes": 893100
+            },
+            "manifest": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced/capture-info.json",
+              "sha256": "1ca38af5a4995ad04fc0025b2e4396e8791ce1857887909276e497c34da7fcb1",
+              "bytes": 10544
+            },
+            "raw": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-reduced-r1-1/run-results.json",
+              "sha256": "202556f82144329db14296fb8451eb4cc7ae6f46b11f9893c3424f2a6ecbe2f8",
+              "bytes": 460205
+            },
+            "guard": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-reduced-r1-thermal.json",
+              "sha256": "b03dba436923992262550924b856390bb0ffbe4542d5d3f7a0dc42d0fa55f353",
+              "bytes": 22973
+            },
+            "normal_image": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/ground-before.png",
+              "sha256": "fd254516f51a9e2927e3a86b882212fa3a31e1de4bfb1842bfea318eb9d45dda",
+              "bytes": 1560605
+            },
+            "normal_manifest": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/capture-info.json",
+              "sha256": "bed4a8383e0223f5148bed5c05e8ba46e3c7d17df07cb12ed42a89e86730e84f",
+              "bytes": 10612
+            }
+          },
+          "source_observation": {
+            "actual_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+            "tracked_status": "",
+            "required_sources": 815,
+            "matched_sources": 815,
+            "actual_command_matches": true,
+            "cache_limit": "No bulk cache/asset rehash; root finite740 binding retained.",
+            "postrun_verifier_qualification": "Later pure ledger remains post-run verification, not native program source."
+          },
+          "completed_transport": {
+            "actual_exit": 0,
+            "runner_exit": 0,
+            "stop_reason": "completed",
+            "diagnostics": [],
+            "guard_reason": "completed",
+            "guard_exit": 0,
+            "received_signal": null
+          },
+          "actual_controls": {
+            "native_size": [
+              960,
+              540
+            ],
+            "segment": 7,
+            "seed": 16102028,
+            "theme": "canal_services",
+            "camera": {
+              "position": "(-1632.0, 1304.0)",
+              "rotation": 0.0,
+              "viewport": "(1920.0, 1080.0)",
+              "window": "(960, 540)",
+              "zoom": "(1.0, 1.0)"
+            },
+            "normal_hud": true,
+            "optional_details_hidden": false,
+            "save_writes": 0,
+            "failures": 0,
+            "render_cap": 20,
+            "physics_hz": 60,
+            "reduced_motion": true,
+            "combat_flash": "off",
+            "atmosphere_reduced_motion": true,
+            "atmosphere_weather_time": 0.0,
+            "atmosphere_weather_frozen_diagnostic": false,
+            "settings_post_apply_events": 2,
+            "still_cap_observations": [
+              {
+                "file": "ground-before.png",
+                "render_fps_cap_before_still": 20,
+                "physics_ticks_per_second_before_still": 60
+              }
+            ],
+            "parking": {
+              "camera_unchanged": true,
+              "cell": "(-19, 20)",
+              "clearance_px": 64.0,
+              "distance_from_camera": 448.071411132812,
+              "ordinary_physics_frames": 6,
+              "outside_and_opaque_after_settle": true,
+              "selected_world": "(-1184.0, 1312.0)",
+              "static_capsule_checked": true
+            },
+            "all_opaque_outside": true,
+            "indoor_overlaps": 0,
+            "inside_counts": 0,
+            "atmosphere_profile_id": "canal_services"
+          },
+          "normal_comparison": {
+            "camera_position_equal": true,
+            "zoom_equal": true,
+            "logical_viewport_equal": true,
+            "ground_context_equal": true,
+            "selected_parking_equal": true,
+            "final_exterior_equal": true,
+            "atmosphere_profile_equal": true,
+            "normal_settings": {
+              "reduced": false,
+              "flash": "full",
+              "atmo_reduced": false,
+              "weather_time": 4.67815433333334,
+              "cap": 20,
+              "physics": 60
+            },
+            "identity_limit": "Different native pixel sizes and weather phase; no exact pixel identity claim."
+          },
+          "pixel_observations": [
+            "The reduced view preserves the same canal frontage/roof/path composition with whole opaque roofs and readable wall/window/plinth boundaries at960x540.",
+            "Player around(704,278) remains identifiable on the pale path with visible attached shade. Fine facade/foliage detail is smaller than normal, without a new visibility blocker in this selected still.",
+            "Normal HUD and objective banner remain present/readable in the smaller native window; no new missing panel or conspicuous full-screen wash is visible.",
+            "The left-house hard lawn rectangle remains clearly visible aroundx115..235,y326..381 at the corresponding world location. Its known care/topology issue stays OPEN."
+          ],
+          "motion_settings_qualification": "Actual reduced=true/flashoff/atmoreduced=true and weather_time0 are recorded. WorldAtmosphere.apply_theme disables weather_motion_enabled and its process advances weather_time only when neither reduced nor weather_frozen; weather_frozen=false is a separate diagnostic flag and does not negate reduced mode. A still alone proves no motion cadence/flash comfort in combat.",
+          "open_qualifications": [
+            "Rectangular lawn and broad paving/topology remain OPEN.",
+            "No enemy/projectile/tell/tiny-loot or roof-entry sequence in this no-fight still; tiny-item discoverability and occupied reduced-mode readability remain outside this case.",
+            "No full accessibility, temporal animation, whole-Game performance or full-vision acceptance."
+          ],
+          "new_visible_blockers": [],
+          "fixture_scope": "Actual exterior capsule parking64px clear, fixed camera, god mode/scripted initial setup, ambient spawner/encounter beats disabled, normal HUD/details and streaming frozen after checked reload. R4 cap observed20 after two ordinary settings applies; physics remains60. No image/runtime edit, engine, Git or heavy build by reviewer."
+        }
+      }
+    },
+    {
+      "case": "s7-occupied",
+      "root_selected_verdict": "ACCEPTED_BOUNDED",
+      "root_originals_inspected": true,
+      "root_observation": "Five original1280x720 frames show the passage, two readable cutaway interiors and a subsequent street view with closed neighboring/infill roofs. Live bodies, gold projectiles and white hit bursts remain readable. Actual physical trace and manifests establish tested entry/restoration, collection and boundary crossing. Boundary is a different location, not a matched restoration comparison of every roof.",
+      "actual_source_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+      "required_815_source_map_matches": true,
+      "raw_receipt": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-occupied-r1-1/run-results.json",
+        "sha256": "6e9d8210c549d89b1900934debc907505b8702557eb09ece76440e83f89e34ce"
+      },
+      "guard": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-occupied-r1-thermal.json",
+        "sha256": "31880f2b05ccf46b41ed9c7aa103a7913420d4035f3a42eb5ba0fc7f686bc007"
+      },
+      "native_manifest": {
+        "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal.json",
+        "sha256": "a86bcd0ed979fb9afb73eb5d7f8e9a2c14cd503c5aab6031b1149aad0c707069"
+      },
+      "original_images": [
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-1-passage.png",
+          "sha256": "ded7c300c06d2fc4080c958c6d92f5640d95ec451a1bcea2b318e02ea6f4fbbc",
+          "bytes": 1661131
+        },
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-2-inside.png",
+          "sha256": "ed0853dcc6964295a679a997a1df09adcf1553a78ee90d0e290f8f509cf8b527",
+          "bytes": 1703037
+        },
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-3-inside-infill.png",
+          "sha256": "e65b0a85386f238171d569b8ee61a2143fd8b0c941664b19fef1ac8459ead556",
+          "bytes": 1702938
+        },
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-4-collected.png",
+          "sha256": "b490a8be0a3cb3ba712ff1ddd5b1510589ea818ef1dd073d8222e53971424db4",
+          "bytes": 1704268
+        },
+        {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-5-boundary.png",
+          "sha256": "d9ea28a14de1e7696ff7b383d0ac97dbe96880e6cb994b9fbc9aff19be1f535e",
+          "bytes": 1501262
+        }
+      ],
+      "functional_checks": {
+        "failures_zero": true,
+        "segment_seed": true,
+        "requested_passage_chunk": true,
+        "dressed_continuity": true,
+        "narrow_inside_through": true,
+        "strict_physics_trace": true,
+        "original_entry_exit": true,
+        "infill_entry_exit": true,
+        "real_collection": true,
+        "chunk_crossing": true,
+        "director_stayed_live": true,
+        "walks_arrived": true,
+        "save_writes_observed_zero": true,
+        "requested_render_cap_unchanged_physics": true,
+        "expected_stills": true
+      },
+      "independent_review": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-independent-visual-review-prep/s7-occupied-review.json",
+        "sha256": "6b218f1a7a7e5d9474e08ea1450d9e6dce7edafcd5dcb6103ecd0687e612139b",
+        "complete_original_review": {
+          "case": "s7-occupied",
+          "verdict": "SELECTED_OCCUPIED_ROUTE_ORIGINALS_ACCEPTABLE_NO_NEW_BLOCKER",
+          "review_method": "Opened all five unchanged originals at actual native1280x720. Read traversal/raw/guard and exact execution source bindings, then root post-run serialized acceptance; no new engine/validator test or image editing.",
+          "bindings": {
+            "images": [
+              {
+                "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-1-passage.png",
+                "sha256": "ded7c300c06d2fc4080c958c6d92f5640d95ec451a1bcea2b318e02ea6f4fbbc",
+                "bytes": 1661131
+              },
+              {
+                "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-2-inside.png",
+                "sha256": "ed0853dcc6964295a679a997a1df09adcf1553a78ee90d0e290f8f509cf8b527",
+                "bytes": 1703037
+              },
+              {
+                "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-3-inside-infill.png",
+                "sha256": "e65b0a85386f238171d569b8ee61a2143fd8b0c941664b19fef1ac8459ead556",
+                "bytes": 1702938
+              },
+              {
+                "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-4-collected.png",
+                "sha256": "b490a8be0a3cb3ba712ff1ddd5b1510589ea818ef1dd073d8222e53971424db4",
+                "bytes": 1704268
+              },
+              {
+                "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-5-boundary.png",
+                "sha256": "d9ea28a14de1e7696ff7b383d0ac97dbe96880e6cb994b9fbc9aff19be1f535e",
+                "bytes": 1501262
+              }
+            ],
+            "manifest": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal.json",
+              "sha256": "a86bcd0ed979fb9afb73eb5d7f8e9a2c14cd503c5aab6031b1149aad0c707069",
+              "bytes": 12644
+            },
+            "raw": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-occupied-r1-1/run-results.json",
+              "sha256": "6e9d8210c549d89b1900934debc907505b8702557eb09ece76440e83f89e34ce",
+              "bytes": 494494
+            },
+            "guard": {
+              "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-occupied-r1-thermal.json",
+              "sha256": "31880f2b05ccf46b41ed9c7aa103a7913420d4035f3a42eb5ba0fc7f686bc007",
+              "bytes": 43771
+            },
+            "serialized_postrun_acceptance": {
+              "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/serialized-acceptance-r3.json",
+              "sha256": "e690bfa36f4a8bef21c38a093cad105fc3c8d1be5e5a5773fa68d25205015952",
+              "bytes": 6049
+            }
+          },
+          "source_observation": {
+            "actual_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+            "tracked_status": "",
+            "required_sources": 815,
+            "matched_sources": 815,
+            "actual_command_matches": true,
+            "cache_limit": "Root finite740cache binding retained; no bulk cache/asset hash pass by reviewer.",
+            "postrun_verifier_qualification": "Pure853 collection result and root ledger are later verification, not native program sources."
+          },
+          "completed_transport": {
+            "actual_exit": 0,
+            "runner_exit": 0,
+            "stop_reason": "completed",
+            "diagnostics": [],
+            "guard_reason": "completed",
+            "guard_exit": 0,
+            "received_signal": null
+          },
+          "actual_controls": {
+            "native_sizes": [
+              [
+                1280,
+                720
+              ],
+              [
+                1280,
+                720
+              ],
+              [
+                1280,
+                720
+              ],
+              [
+                1280,
+                720
+              ],
+              [
+                1280,
+                720
+              ]
+            ],
+            "runtime_fixture": {
+              "actual_window": "(1280, 720)",
+              "engine_max_fps": 20,
+              "game_was_instantiated": true,
+              "physics_ticks_per_second": 60
+            },
+            "segment": 7,
+            "seed": 16102028,
+            "failures": 0,
+            "save_observation": {
+              "acceptance_end_api_counter": 0,
+              "autosave_disabled": true,
+              "baseline_api_counter": 0,
+              "current_profile_is_null": true,
+              "scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+              "writes_during_acceptance": 0
+            },
+            "director_stayed_live": true,
+            "director_start_live": true,
+            "director_end_live": true,
+            "camera_points": [
+              {
+                "camera_world": "(-7200.001, 6423.953)",
+                "chunk": "(-4, 3)",
+                "id": "traversal-1-passage",
+                "phase": "passage",
+                "player_world": "(-7200.001, 6425.869)",
+                "zoom": "(1.0, 1.0)"
+              },
+              {
+                "camera_world": "(-7647.911, 7256.354)",
+                "chunk": "(-4, 3)",
+                "id": "traversal-2-inside",
+                "phase": "building",
+                "player_world": "(-7647.911, 7256.354)",
+                "zoom": "(1.0, 1.0)"
+              },
+              {
+                "camera_world": "(-7584.008, 6503.211)",
+                "chunk": "(-4, 3)",
+                "id": "traversal-3-inside-infill",
+                "phase": "building",
+                "player_world": "(-7584.008, 6503.211)",
+                "zoom": "(1.0, 1.0)"
+              },
+              {
+                "camera_world": "(-7335.258, 6752.0)",
+                "chunk": "(-4, 3)",
+                "id": "traversal-4-collected",
+                "phase": "collection",
+                "player_world": "(-7335.258, 6752.0)",
+                "zoom": "(1.0, 1.0)"
+              },
+              {
+                "camera_world": "(-7385.616, 5983.958)",
+                "chunk": "(-4, 2)",
+                "id": "traversal-5-boundary",
+                "phase": "boundary",
+                "player_world": "(-7385.616, 5983.958)",
+                "zoom": "(1.0, 1.0)"
+              }
+            ]
+          },
+          "functional_evidence_separate_from_pixels": {
+            "passage_inside": true,
+            "passage_through": true,
+            "actual_physics_trace": {
+              "allowed_cells": "[P: (-114, 96), S: (3, 8)]",
+              "far_index": 7,
+              "far_mouth": "[P: (-114, 103), S: (3, 1)]",
+              "jump_indices": [],
+              "middle_cross_section": "[P: (-114, 100), S: (3, 1)]",
+              "middle_index": 4,
+              "near_index": 0,
+              "near_mouth": "[P: (-114, 96), S: (3, 1)]",
+              "observed_cell_count": 8,
+              "ordered_mouth_middle_mouth": true,
+              "outside_indices": [],
+              "valid": true
+            },
+            "original_entry": {
+              "building_id": 1361326454,
+              "door": "(-7680.0, 7200.0)",
+              "events": [
+                {
+                  "building_id": 1361326454,
+                  "first_visit": true,
+                  "infill": false,
+                  "phase": "building"
+                }
+              ],
+              "infill": false,
+              "opened": true,
+              "restored": true
+            },
+            "infill_entry": {
+              "building_id": 2127116577,
+              "door": "(-7616.0, 6560.0)",
+              "events": [
+                {
+                  "building_id": 2127116577,
+                  "first_visit": false,
+                  "infill": true,
+                  "phase": "building"
+                }
+              ],
+              "infill": true,
+              "opened": true,
+              "restored": true
+            },
+            "boundary": {
+              "after": "(-4, 2)",
+              "before": "(-4, 3)",
+              "crossed": true,
+              "target": "(-7392.0, 5984.0)"
+            },
+            "collected": true,
+            "pickup": {
+              "armed_before_walk": true,
+              "collection_distance": 21.9365234375,
+              "delay": 1.0,
+              "item_id": "ring_crusher",
+              "picked": true,
+              "world": "(-7328.0, 6752.0)"
+            },
+            "collection": {
+              "ground_serial": 18,
+              "picked": true,
+              "accepted_event_index": 0,
+              "incoming_identity_retained": true,
+              "event_kind": "equipped",
+              "destination_still_owned": true,
+              "incoming_instance_id": -9223370818040347040,
+              "destination_instance_id": -9223370818040347040
+            },
+            "root_serialized_route_valid": true,
+            "root_serialized_signed_id_r3_valid": true,
+            "root_original_r2_collection_verdict": false,
+            "root_serialized_validator_exit": 0,
+            "qualification": "Old positive-ID predicate remains false; actual signed nonzero Resource identity is retained and853 accepts it. Exact staged acquisition is established by source operation/serial/identity receipts, not by a screenshot or disappearing loot."
+          },
+          "per_original_pixel_observations": [
+            {
+              "file": "traversal-1-passage.png",
+              "observation": "Player is plainly visible in the narrow gap between the two dressed frontages. Nearby dark armored bodies and brown creatures remain distinguishable on open ground; bright gold projectiles stand out. Full neighboring roofs/front walls remain legible."
+            },
+            {
+              "file": "traversal-2-inside.png",
+              "observation": "Original building roof is visibly removed, exposing enclosed floor, hearth/table/crate and bed. Player is clearly readable inside. Street actors and bright projectiles/white hit bursts remain visible beyond the opening."
+            },
+            {
+              "file": "traversal-3-inside-infill.png",
+              "observation": "Infill roof is visibly removed; room boundary, furniture and player at the doorway read clearly. Open-ground actors and gold/white combat effects remain distinguishable."
+            },
+            {
+              "file": "traversal-4-collected.png",
+              "observation": "Player and active gold projectiles/white impact are clear in the street; the left house roof/frontage is closed again, consistent with restored infill after exit. The exact staged ring acquisition is a receipt claim, not inferred from this still."
+            },
+            {
+              "file": "traversal-5-boundary.png",
+              "observation": "New camera/chunk location shows another open room beside intact neighboring red/slate roofs. Player and gold projectiles remain readable. This is a different location, so it is not a pixel-matched restoration pair for every earlier roof."
+            }
+          ],
+          "bounded_actor_effect_findings": "Visible player, exposed actor bodies, gold projectiles and white hit bursts remain readable in these selected originals. No dedicated pre-attack warning, exact friendly/hostile cue discrimination, moving behind-cover same-actor pair or covered tiny-equipment contrast is established.",
+          "open_qualifications": [
+            "Broad paving/grass rectangles and terrain/care topology remain OPEN.",
+            "Tiny covered-item discoverability and dedicated attack-warning parity remain OPEN/unproven by these five stills.",
+            "Functional entry/restore assertions and roof visibility in selected views are retained separately; no continuous human-play, balance/performance, every-roof visual sequence or full-vision claim."
+          ],
+          "new_visible_blockers": [],
+          "fixture_scope": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test."
+        }
+      }
+    }
+  ],
+  "fresh_functional_verification": {
+    "actual_completed_cases": 8,
+    "every_actual_exit_and_runner_exit": 0,
+    "every_diagnostic_count": 0,
+    "every_guard_completed_no_signal": true,
+    "runtime_parser_footer": "ExternalSourceParseProbe: checked=53 failures=0",
+    "external_parser_footer": "ExternalSourceParseProbe: checked=3 failures=0",
+    "parser_footers_freshly_matched_stdout": true,
+    "every_raw_required_source_map_matches": 815,
+    "current_required_source_bodies_rehashed": 815,
+    "current_finite_cache_bodies_rehashed": 740
+  },
+  "occupied_pure_acceptance": {
+    "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/serialized-acceptance-r3.json",
+    "sha256": "e690bfa36f4a8bef21c38a093cad105fc3c8d1be5e5a5773fa68d25205015952",
+    "amendment_sha256": "bf25f90ab799a9d516bbaee00057a44f3d91c4bb17946afda731c9ee5d22e20b",
+    "result": {
+      "route": {
+        "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal.json",
+        "sha256": "a86bcd0ed979fb9afb73eb5d7f8e9a2c14cd503c5aab6031b1149aad0c707069",
+        "checks": {
+          "failures_zero": true,
+          "segment_seed": true,
+          "requested_passage_chunk": true,
+          "dressed_continuity": true,
+          "narrow_inside_through": true,
+          "strict_physics_trace": true,
+          "original_entry_exit": true,
+          "infill_entry_exit": true,
+          "real_collection": true,
+          "chunk_crossing": true,
+          "director_stayed_live": true,
+          "walks_arrived": true,
+          "save_writes_observed_zero": true,
+          "requested_render_cap_unchanged_physics": true,
+          "expected_stills": true
+        },
+        "valid": true,
+        "window": "(1280, 720)",
+        "camera_zoom": "(1.0, 1.0)",
+        "trace": {
+          "allowed_cells": "[P: (-114, 96), S: (3, 8)]",
+          "far_index": 7,
+          "far_mouth": "[P: (-114, 103), S: (3, 1)]",
+          "jump_indices": [],
+          "middle_cross_section": "[P: (-114, 100), S: (3, 1)]",
+          "middle_index": 4,
+          "near_index": 0,
+          "near_mouth": "[P: (-114, 96), S: (3, 1)]",
+          "observed_cell_count": 8,
+          "ordered_mouth_middle_mouth": true,
+          "outside_indices": [],
+          "valid": true
+        },
+        "original_entry": {
+          "building_id": 1361326454,
+          "door": "(-7680.0, 7200.0)",
+          "events": [
+            {
+              "building_id": 1361326454,
+              "first_visit": true,
+              "infill": false,
+              "phase": "building"
+            }
+          ],
+          "infill": false,
+          "opened": true,
+          "restored": true
+        },
+        "infill_entry": {
+          "building_id": 2127116577,
+          "door": "(-7616.0, 6560.0)",
+          "events": [
+            {
+              "building_id": 2127116577,
+              "first_visit": false,
+              "infill": true,
+              "phase": "building"
+            }
+          ],
+          "infill": true,
+          "opened": true,
+          "restored": true
+        },
+        "boundary": {
+          "after": "(-4, 2)",
+          "before": "(-4, 3)",
+          "crossed": true,
+          "target": "(-7392.0, 5984.0)"
+        },
+        "director": {
+          "end": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {},
+              "counters": {
+                "aborted": 0,
+                "announced": 1,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 1,
+                "scheduled": 1,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 4.74689178466924,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 69.1583333333192,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "requested": true,
+          "start": {
+            "can_process": true,
+            "enabled": true,
+            "live": true,
+            "path": "/root/Game/EncounterDirector",
+            "physics_processing": true,
+            "player_bound": true,
+            "present": true,
+            "snapshot": {
+              "active_beats": {},
+              "counters": {
+                "aborted": 0,
+                "announced": 0,
+                "escalations": 0,
+                "members_skipped": 0,
+                "members_spawned": 0,
+                "scheduled": 0,
+                "specialist_responses": 0
+              },
+              "next_beat_in": 39.2166666666667,
+              "rite_channel_active": false,
+              "rite_response_left": 0.0,
+              "rite_wave_cursor": 0,
+              "swarm_in": 149.216666666666,
+              "swarm_state": 0
+            },
+            "spawner_bound": true
+          },
+          "stayed_live": true
+        },
+        "limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test.",
+        "save_observation": {
+          "acceptance_end_api_counter": 0,
+          "autosave_disabled": true,
+          "baseline_api_counter": 0,
+          "current_profile_is_null": true,
+          "scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+          "writes_during_acceptance": 0
+        },
+        "runtime_fixture": {
+          "actual_window": "(1280, 720)",
+          "engine_max_fps": 20,
+          "game_was_instantiated": true,
+          "physics_ticks_per_second": 60
+        }
+      },
+      "original_r2_collection_verdict": {
+        "valid": false,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": false,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true
+        },
+        "kind": "equipped",
+        "ground_serial": 18
+      },
+      "collection_signed_id_r3": {
+        "valid": true,
+        "checks": {
+          "original_picked": true,
+          "original_collected": true,
+          "receipt_picked": true,
+          "receipt_accepted": true,
+          "observation_only": true,
+          "serial_positive": true,
+          "ordinary_staged_instance": true,
+          "one_accepted_event": true,
+          "event_exact_serial": true,
+          "event_exact_source": true,
+          "live_destination": true,
+          "live_same_item": true,
+          "incoming_identity_retained": true,
+          "retained_progress": true,
+          "incoming_signed_int64_nonzero": true
+        },
+        "kind": "equipped",
+        "ground_serial": 18
+      },
+      "entrypoint_r2": true
+    },
+    "amendment_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-plan-r5/signed-id-r3-amendment.json",
+    "actual_serialized_command": [
+      "python3",
+      "-B",
+      "-c",
+      "import hashlib, importlib.util, json, sys\nfrom pathlib import Path\npins = {'/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py': '568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591', '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py': '5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a', '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py': '853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9'}\nfor name, expected in pins.items():\n    if hashlib.sha256(Path(name).read_bytes()).hexdigest() != expected:\n        raise RuntimeError(\"Frozen pure validator source changed: \" + name)\nspec = importlib.util.spec_from_file_location(\"final_main_collection_signed_id_r3\", Path('/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py'))\nmod = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(mod)\nout = Path(sys.argv[1])\ndata = json.loads((out / \"traversal.json\").read_text())\nresult = {\n    \"route\": mod.R2.ORIGINAL.validate_route(out, 7, 16102028, (-4, 3), 20),\n    \"original_r2_collection_verdict\": mod.R2.validate_collection(data),\n    \"collection_signed_id_r3\": mod.validate_collection(data),\n    \"entrypoint_r2\": data.get(\"collection_acceptance_entrypoint_r2\") == '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn'\n}\nprint(json.dumps(result, indent=2))\nsys.exit(0 if result[\"route\"][\"valid\"] and result[\"collection_signed_id_r3\"][\"valid\"] and result[\"entrypoint_r2\"] else 1)\n",
+      "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied"
+    ],
+    "actual_validator_exit": 0
+  },
+  "new_selected_blockers": [],
+  "limits": [
+    "Broad formal plaza/paving/property and grass topology remains OPEN, including hard rectangular green patches in S7/S9 and oversized lavender cobbles in S9.",
+    "Tiny covered-equipment discoverability remains OPEN; this selected route does not prove covered loot/actor/attack-warning parity at every obstacle.",
+    "Stronger district differentiation, all-theme close-up roof lichen evidence and soot tied to an operating flue remain OPEN.",
+    "Five normal/reduced stills use staged parking/godmode, disabled ambient encounters and streaming frozen after reload. Occupied S7 uses initial warp, staged ordinary ring, scripted input and godmode with live AI/director/streaming/physics. No human-play or whole-Game performance conclusion.",
+    "Prior stage failures, stopped positive-ID verifier and qualified static cost observations remain in linked committed stage packets; original failed outcomes are not rewritten."
+  ]
+}

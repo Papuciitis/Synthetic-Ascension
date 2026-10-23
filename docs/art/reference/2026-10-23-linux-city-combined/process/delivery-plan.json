@@ -1,0 +1,1513 @@
+{
+  "schema": 1,
+  "status": "SOURCE_PREPARATION_ONLY_NO_PACKET_OR_FUTURE_PASS",
+  "created_utc": "2026-10-23T02:56:32.645826+00:00",
+  "destination": "/home/user/Nauris/Synthetic-Ascension/docs/art/reference/2026-10-23-linux-city-combined",
+  "execution_source": "/var/tmp/sa-city22/final-combined/main-r5-r1/execution.json",
+  "expected_runtime_head": "369cfef470524705ff3e5a1bfa093b08dc63be4f",
+  "authorization_gate": {
+    "required_terminal_execution_status": "ROOT_COMBINED_NATIVE_VERIFIED",
+    "required_exact_case_ids": [
+      "runtime-parse",
+      "external-parse",
+      "s2-normal",
+      "s6-normal",
+      "s7-normal",
+      "s9-normal",
+      "s7-reduced",
+      "s7-occupied"
+    ],
+    "required_case_count": 8,
+    "required_native_case_count": 6,
+    "required_original_png_count": 10,
+    "required_native_manifest_count": 6,
+    "root_visual_review_source": "/var/tmp/sa-city22/final-combined/main-r5-r1/root-visual-review.json",
+    "root_visual_review_sha256": "1231249faa648068ea3e532797cead3d45ce33ee63102b222c2ecb4e57a65aed",
+    "review_path_status": "Proposed exact future root-owned path; root supplies its actual path before packaging if different. No review file or positive verdict is assumed.",
+    "rules": [
+      "No packet destination, copies, compression or delivery manifest writes before the final terminal execution status and all eight actual case records exist and root releases the active engine/heavy-work hold.",
+      "Execution must retain HEAD369cfef4, the exact bound815 required source map,740 finite cache map, original frozenR5 plan, accepted853 signed-ID amendment and actual53 runtime/3 external parse commands. Every expected case appears exactly once with its original command and actual completed raw/guard/source-head proof.",
+      "Every raw actual_exit=runner_exit0, completed stop, no diagnostics; every final outer guard completed/wrapper_exit0/no signal. Both exact53/3 parser footers are required. Native manifests retain all existing HUD/save/reload/outside/opacity/cap/physical gates; no new acceptance predicates replace them.",
+      "OccupiedS7 additionally retains actual853 signed-ID serialized verdict, original strictR2 verdict diagnostically and original physical validation. Preserve any actual root-recorded extra JSON/stdout verdict file, or its verbatim embedded terminal data; do not rerun a validator merely for packaging.",
+      "Root explicitly reviews/binds all ten original PNGs plus six native manifests to actual per-case raw/guard/source records. Missing, stale, negative or incomplete root review cannot authorize selected-view acceptance.",
+      "Before copying, root rechecks each selected source/external byte body and every raw/guard/manifest/PNG against the final receipts. An unavailable or different body blocks accepted packet publication; do not silently substitute later bytes or relabel partial output as complete."
+    ]
+  },
+  "copy_policy": {
+    "destination_ignore_first": ".gdignore (empty, written first only after authorization)",
+    "original_pngs": "Copy all10 exact originals without resizing, compositing, re-encoding or compression",
+    "metadata_and_text_compression": {
+      "threshold_bytes": 131072,
+      "format": "gzip level6 mtime0, only text/JSON/logs above threshold, keeping raw and delivered hashes/bytes and verified round trip in compression-map.json",
+      "exceptions": "Keep the explicit keep_uncompressed inputs as exact byte copies, even above threshold. All other large text/JSON/log/source bodies may use gzip with raw/delivered mapping."
+    },
+    "source_policy": "Copy only75 selected non-image source bodies (53explicit GDScripts+22declared resources),18 already-captured external blobs and finite explicit evidence below. Full815-source/740-cache inventories stay in final execution and actual raw receipts. No texture/cache binary directory copy, no global class cache rewrite/copy and no earlier packet tree copy.",
+    "earlier_attempts": "This is a selected exact final combined invocation packet; prior stage REDs/failures/cost qualifications remain in linked committed packets. If final invocation fails or changes, preserve its raw records and make an explicit revised root scope rather than publishing this plan as a pass.",
+    "keep_uncompressed": [
+      "All10 original PNGs",
+      "All6 original native JSON manifests (preserve README direct links)",
+      "process/execution.json",
+      "process/root-visual-review.json",
+      "All18 already-captured content-addressed external source blobs",
+      "The explicitly bound later post-run verifier source (separate from18 captured launch inputs)"
+    ]
+  },
+  "cases": [
+    {
+      "id": "runtime-parse",
+      "label": "city22-final-main-r5-runtime-parse-r1",
+      "native": false,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": 53,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=runtime-parse].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-runtime-parse-r1-1/run-results.json",
+          "destination": "process/runs/runtime-parse/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=runtime-parse].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-runtime-parse-r1-thermal.json",
+          "destination": "process/runs/runtime-parse/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-runtime-parse-r1-wrapper.log",
+          "destination": "process/runs/runtime-parse/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-runtime-parse-r1-1/logs/engine.log",
+          "destination": "process/runs/runtime-parse/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-runtime-parse-r1-1/logs/stdout.log",
+          "destination": "process/runs/runtime-parse/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-runtime-parse-r1-1/logs/stderr.log",
+          "destination": "process/runs/runtime-parse/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": []
+    },
+    {
+      "id": "external-parse",
+      "label": "city22-final-main-r5-external-parse-r1",
+      "native": false,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": 3,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=external-parse].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-external-parse-r1-1/run-results.json",
+          "destination": "process/runs/external-parse/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=external-parse].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-external-parse-r1-thermal.json",
+          "destination": "process/runs/external-parse/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-external-parse-r1-wrapper.log",
+          "destination": "process/runs/external-parse/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-external-parse-r1-1/logs/engine.log",
+          "destination": "process/runs/external-parse/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-external-parse-r1-1/logs/stdout.log",
+          "destination": "process/runs/external-parse/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-external-parse-r1-1/logs/stderr.log",
+          "destination": "process/runs/external-parse/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": []
+    },
+    {
+      "id": "s2-normal",
+      "label": "city22-final-main-r5-s2-normal-r1",
+      "native": true,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": null,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=s2-normal].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s2-normal-r1-1/run-results.json",
+          "destination": "process/runs/s2-normal/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=s2-normal].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s2-normal-r1-thermal.json",
+          "destination": "process/runs/s2-normal/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s2-normal-r1-wrapper.log",
+          "destination": "process/runs/s2-normal/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s2-normal-r1-1/logs/engine.log",
+          "destination": "process/runs/s2-normal/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s2-normal-r1-1/logs/stdout.log",
+          "destination": "process/runs/s2-normal/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s2-normal-r1-1/logs/stderr.log",
+          "destination": "process/runs/s2-normal/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": [
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal/capture-info.json",
+          "destination": "native/s2-normal/capture-info.json",
+          "kind": "original_manifest",
+          "expected_dimensions": null,
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal/ground-before.png",
+          "destination": "native/s2-normal/ground-before.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        }
+      ]
+    },
+    {
+      "id": "s6-normal",
+      "label": "city22-final-main-r5-s6-normal-r1",
+      "native": true,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": null,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=s6-normal].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s6-normal-r1-1/run-results.json",
+          "destination": "process/runs/s6-normal/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=s6-normal].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s6-normal-r1-thermal.json",
+          "destination": "process/runs/s6-normal/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s6-normal-r1-wrapper.log",
+          "destination": "process/runs/s6-normal/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s6-normal-r1-1/logs/engine.log",
+          "destination": "process/runs/s6-normal/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s6-normal-r1-1/logs/stdout.log",
+          "destination": "process/runs/s6-normal/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s6-normal-r1-1/logs/stderr.log",
+          "destination": "process/runs/s6-normal/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": [
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal/capture-info.json",
+          "destination": "native/s6-normal/capture-info.json",
+          "kind": "original_manifest",
+          "expected_dimensions": null,
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal/ground-before.png",
+          "destination": "native/s6-normal/ground-before.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        }
+      ]
+    },
+    {
+      "id": "s7-normal",
+      "label": "city22-final-main-r5-s7-normal-r1",
+      "native": true,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": null,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=s7-normal].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-normal-r1-1/run-results.json",
+          "destination": "process/runs/s7-normal/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=s7-normal].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-normal-r1-thermal.json",
+          "destination": "process/runs/s7-normal/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-normal-r1-wrapper.log",
+          "destination": "process/runs/s7-normal/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-normal-r1-1/logs/engine.log",
+          "destination": "process/runs/s7-normal/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-normal-r1-1/logs/stdout.log",
+          "destination": "process/runs/s7-normal/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-normal-r1-1/logs/stderr.log",
+          "destination": "process/runs/s7-normal/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": [
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/capture-info.json",
+          "destination": "native/s7-normal/capture-info.json",
+          "kind": "original_manifest",
+          "expected_dimensions": null,
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal/ground-before.png",
+          "destination": "native/s7-normal/ground-before.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        }
+      ]
+    },
+    {
+      "id": "s9-normal",
+      "label": "city22-final-main-r5-s9-normal-r1",
+      "native": true,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": null,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=s9-normal].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s9-normal-r1-1/run-results.json",
+          "destination": "process/runs/s9-normal/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=s9-normal].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s9-normal-r1-thermal.json",
+          "destination": "process/runs/s9-normal/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s9-normal-r1-wrapper.log",
+          "destination": "process/runs/s9-normal/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s9-normal-r1-1/logs/engine.log",
+          "destination": "process/runs/s9-normal/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s9-normal-r1-1/logs/stdout.log",
+          "destination": "process/runs/s9-normal/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s9-normal-r1-1/logs/stderr.log",
+          "destination": "process/runs/s9-normal/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": [
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal/capture-info.json",
+          "destination": "native/s9-normal/capture-info.json",
+          "kind": "original_manifest",
+          "expected_dimensions": null,
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal/ground-before.png",
+          "destination": "native/s9-normal/ground-before.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        }
+      ]
+    },
+    {
+      "id": "s7-reduced",
+      "label": "city22-final-main-r5-s7-reduced-r1",
+      "native": true,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": null,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=s7-reduced].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-reduced-r1-1/run-results.json",
+          "destination": "process/runs/s7-reduced/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=s7-reduced].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-reduced-r1-thermal.json",
+          "destination": "process/runs/s7-reduced/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-reduced-r1-wrapper.log",
+          "destination": "process/runs/s7-reduced/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-reduced-r1-1/logs/engine.log",
+          "destination": "process/runs/s7-reduced/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-reduced-r1-1/logs/stdout.log",
+          "destination": "process/runs/s7-reduced/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-reduced-r1-1/logs/stderr.log",
+          "destination": "process/runs/s7-reduced/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": [
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced/capture-info.json",
+          "destination": "native/s7-reduced/capture-info.json",
+          "kind": "original_manifest",
+          "expected_dimensions": null,
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced/ground-before.png",
+          "destination": "native/s7-reduced/ground-before.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            960,
+            540
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        }
+      ]
+    },
+    {
+      "id": "s7-occupied",
+      "label": "city22-final-main-r5-s7-occupied-r1",
+      "native": true,
+      "state": "PENDING_TERMINAL_ROOT_RECEIPT",
+      "expected_parser_checked": null,
+      "transport": [
+        {
+          "source_resolution": "executed_cases[id=s7-occupied].run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-occupied-r1-1/run-results.json",
+          "destination": "process/runs/s7-occupied/run-results.json",
+          "role": "Entire actual raw receipt, including full source_hashes/import inventories; never filter its maps"
+        },
+        {
+          "source_resolution": "executed_cases[id=s7-occupied].run.thermal_path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-occupied-r1-thermal.json",
+          "destination": "process/runs/s7-occupied/thermal.json",
+          "role": "Final outer guard receipt"
+        },
+        {
+          "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-final-main-r5-s7-occupied-r1-wrapper.log",
+          "destination": "process/runs/s7-occupied/wrapper.log",
+          "role": "Original guard-captured owned launcher stdout/stderr; not the full outer guard THERMAL console. Frozen guard9f8219 opens this file itself before Popen and replays it to the tool afterward."
+        },
+        {
+          "source_resolution": "Sibling logs/engine.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-occupied-r1-1/logs/engine.log",
+          "destination": "process/runs/s7-occupied/logs/engine.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stdout.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-occupied-r1-1/logs/stdout.log",
+          "destination": "process/runs/s7-occupied/logs/stdout.log",
+          "role": "Original actual run log; retain even when empty"
+        },
+        {
+          "source_resolution": "Sibling logs/stderr.log of the bound actual run.path",
+          "planned_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-final-main-r5-s7-occupied-r1-1/logs/stderr.log",
+          "destination": "process/runs/s7-occupied/logs/stderr.log",
+          "role": "Original actual run log; retain even when empty"
+        }
+      ],
+      "native_files": [
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal.json",
+          "destination": "native/s7-occupied/traversal.json",
+          "kind": "original_manifest",
+          "expected_dimensions": null,
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-1-passage.png",
+          "destination": "native/s7-occupied/traversal-1-passage.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-2-inside.png",
+          "destination": "native/s7-occupied/traversal-2-inside.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-3-inside-infill.png",
+          "destination": "native/s7-occupied/traversal-3-inside-infill.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-4-collected.png",
+          "destination": "native/s7-occupied/traversal-4-collected.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        },
+        {
+          "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal-5-boundary.png",
+          "destination": "native/s7-occupied/traversal-5-boundary.png",
+          "kind": "original_png",
+          "expected_dimensions": [
+            1280,
+            720
+          ],
+          "expected_sha256": null,
+          "binding_source": "Actual terminal executed_cases manifest/image inventory and root review; populate after completion"
+        }
+      ]
+    }
+  ],
+  "fixed_evidence": [
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/execution.json",
+      "destination": "process/execution.json",
+      "expected_sha256": null,
+      "role": "Final terminal root execution receipt, not the active READY version; retain complete815/740maps,18external bindings, accepted amendment, actual53 scope, all8 actual records and embedded verdicts"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/root-visual-review.json",
+      "destination": "process/root-visual-review.json",
+      "expected_sha256": null,
+      "role": "Actual terminal root review; update only to the explicitly root-supplied path if different"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-cache-executed.json",
+      "destination": "process/cache/import-cache-executed.json",
+      "expected_sha256": "99dc589e356b3ac889b1603c5355b39391eaf632f69c8cb1f1ebd53005008992",
+      "role": "Exact bounded texture-cache execution manifest;370tracked textures/740finite cache bindings,101derived copies2086965bytes/0errors are recorded preparation facts; generated cache binaries are not delivered"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-integration-source-review-84f19582.json",
+      "destination": "process/source/integration-source-review.json",
+      "expected_sha256": null,
+      "role": "Source audit explaining combined merges and original48\u2192actual53 explicit parse amendment; source review is not native acceptance"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-command-plan-r4.json",
+      "destination": "process/plan/predecessor-r4-plan.json",
+      "expected_sha256": "459668adf540f6be973d56dcacb0fc0e2bb1673d1c0c40a7a3be6fa385289662",
+      "role": "Immutable predecessor context; executed plan is the capturedR5 blob and actual execution amendment, not this older plan"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-plan-r5/plan-r4-to-r5.diff",
+      "destination": "process/plan/r4-to-r5.diff",
+      "expected_sha256": null,
+      "role": "Source preparation delta; final runtime53 delta and signed-ID replacement remain separately recorded"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-plan-r5-independent-review.json",
+      "destination": "process/plan/r5-independent-review.json",
+      "expected_sha256": null,
+      "role": "Preparation source review, not a final actual-view verdict"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-plan-r5/signed-id-r3-independent-review.json",
+      "destination": "process/plan/signed-id-amendment-independent-review.json",
+      "expected_sha256": null,
+      "role": "Pure853 amendment source review; original5e/positive-ID preparation remains frozen"
+    }
+  ],
+  "source_snapshots": [
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/proc/SiteParcelsImpl.gd",
+      "destination": "process/source/core/systems/world/proc/SiteParcelsImpl.gd",
+      "expected_sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "destination": "process/source/core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+      "expected_sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ChunkManager.gd",
+      "destination": "process/source/core/systems/world/ChunkManager.gd",
+      "expected_sha256": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/GroundSplatRenderer.gd",
+      "destination": "process/source/core/systems/world/ground/GroundSplatRenderer.gd",
+      "expected_sha256": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/DistrictGroundPolicy.gd",
+      "destination": "process/source/core/systems/world/ground/DistrictGroundPolicy.gd",
+      "expected_sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "destination": "process/source/core/systems/world/chunks/ChunkBlockRenderer.gd",
+      "expected_sha256": "3f9d6ff446cb50562b445ffc016ff65cd70ddcd3d3b86e843d72ac349dc55b7f",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/WorldDepthStyle.gd",
+      "destination": "process/source/core/systems/world/WorldDepthStyle.gd",
+      "expected_sha256": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/objectives/ObjectiveWorldArt.gd",
+      "destination": "process/source/core/systems/world/objectives/ObjectiveWorldArt.gd",
+      "expected_sha256": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+      "destination": "process/source/core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+      "expected_sha256": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/atmosphere/WorldAtmosphere.gd",
+      "destination": "process/source/core/systems/world/atmosphere/WorldAtmosphere.gd",
+      "expected_sha256": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/CityFacadeComposer.gd",
+      "destination": "process/source/scenes/world/buildings/CityFacadeComposer.gd",
+      "expected_sha256": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/weathering/CityWeathering.gd",
+      "destination": "process/source/scenes/world/buildings/weathering/CityWeathering.gd",
+      "expected_sha256": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/DungeonRoof.gd",
+      "destination": "process/source/scenes/world/buildings/DungeonRoof.gd",
+      "expected_sha256": "df4255f12352d273112f848056fa49a82f525349adae8ba7cc3a583ac2480c03",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/DungeonBuilding.gd",
+      "destination": "process/source/scenes/world/buildings/DungeonBuilding.gd",
+      "expected_sha256": "ac5172006c8c8ed1f180118311660942375d5136651d93f3c203761d0d776c35",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/CityBlockKit.gd",
+      "destination": "process/source/scenes/world/buildings/CityBlockKit.gd",
+      "expected_sha256": "8c1d11fd92266e62f994a3e8043e72c5e112a641aedbcedb74b82b3437af8ffd",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/RoofOverlay.gd",
+      "destination": "process/source/scenes/world/buildings/RoofOverlay.gd",
+      "expected_sha256": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/CityBlockPlayablePreview.gd",
+      "destination": "process/source/tools/dev/CityBlockPlayablePreview.gd",
+      "expected_sha256": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/CityStreetTraversalProbe.gd",
+      "destination": "process/source/tools/dev/CityStreetTraversalProbe.gd",
+      "expected_sha256": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/WorldCoverMovingVisualProbe.gd",
+      "destination": "process/source/tools/dev/WorldCoverMovingVisualProbe.gd",
+      "expected_sha256": "4ab8a4100dbb99487f88f7965a812762dc29bae165eba96894adb17b23de1b1e",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/WorldCover.gd",
+      "destination": "process/source/core/systems/world/visibility/WorldCover.gd",
+      "expected_sha256": "08cee76765ed12bbe50a5f478507f1d3385357acac8312009e4587369b759ad4",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/PickupCover.gd",
+      "destination": "process/source/core/systems/world/visibility/PickupCover.gd",
+      "expected_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/WorldCueCover.gd",
+      "destination": "process/source/core/systems/world/visibility/WorldCueCover.gd",
+      "expected_sha256": "7f1a21d986bc73af56a30727b1b78f26d14683b2eacc5175e9e318ba9a3cb414",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+      "destination": "process/source/core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+      "expected_sha256": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/WorldCoverVisuals.gd",
+      "destination": "process/source/core/systems/world/WorldCoverVisuals.gd",
+      "expected_sha256": "94c13ec14874377a7e7771a49c1ea954ab534dcc12aec70e86fbeec1f552f149",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/CityGroundCare.gd",
+      "destination": "process/source/core/systems/world/ground/CityGroundCare.gd",
+      "expected_sha256": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/chunks/ChunkBuildData.gd",
+      "destination": "process/source/core/systems/world/chunks/ChunkBuildData.gd",
+      "expected_sha256": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/chunks/PlazaEdgeKit.gd",
+      "destination": "process/source/core/systems/world/chunks/PlazaEdgeKit.gd",
+      "expected_sha256": "baee634f650e26d4d5ae670904c801ab1c1914755665ee349d83824458a11cb1",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/proc/chunkgen/PlazaPresentation.gd",
+      "destination": "process/source/core/systems/world/proc/chunkgen/PlazaPresentation.gd",
+      "expected_sha256": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/plazas/PlazaDressing.gd",
+      "destination": "process/source/scenes/world/plazas/PlazaDressing.gd",
+      "expected_sha256": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/CityBlockRoofForms.gd",
+      "destination": "process/source/scenes/world/buildings/CityBlockRoofForms.gd",
+      "expected_sha256": "ed2afa9ae8bd179cffd58aa10e3366cb0a697e14aba572e0423b2845b6616fc0",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/volumes/IndoorVolume.gd",
+      "destination": "process/source/scenes/world/volumes/IndoorVolume.gd",
+      "expected_sha256": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/WorldArt.gd",
+      "destination": "process/source/core/systems/world/WorldArt.gd",
+      "expected_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/WorldBlockerGeometry.gd",
+      "destination": "process/source/core/systems/world/WorldBlockerGeometry.gd",
+      "expected_sha256": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/WorldDressingMaterials.gd",
+      "destination": "process/source/core/systems/world/WorldDressingMaterials.gd",
+      "expected_sha256": "6104b79987dac2b5f85a2a3352893331e0899aed5c1afdca0fa806103dbbee70",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "destination": "process/source/core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+      "expected_sha256": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/autoload/RunEvents.gd",
+      "destination": "process/source/autoload/RunEvents.gd",
+      "expected_sha256": "46e88be1220e8f6d9bc4fcf17e9661b77cdd8e9ddb4138d38b116b778faa4ea3",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/autoload/global.gd",
+      "destination": "process/source/autoload/global.gd",
+      "expected_sha256": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/telemetry/BalanceItemContext.gd",
+      "destination": "process/source/core/systems/telemetry/BalanceItemContext.gd",
+      "expected_sha256": "a13f73fb2ed1fe4890688828669db228639aaa072a0c72d1fa6cc2707f26f345",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/data/items/Inventory.gd",
+      "destination": "process/source/data/items/Inventory.gd",
+      "expected_sha256": "dc68983802103e323536e9d7003cdd42406bd7f3a02f4543200eacb89dcf9967",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/data/items/BagInventory.gd",
+      "destination": "process/source/data/items/BagInventory.gd",
+      "expected_sha256": "4b0b79d58ef1ef392cebc7ac7c7a1123423635d2f7fc00c712cca15a6cdb2ca8",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/data/items/ItemInstance.gd",
+      "destination": "process/source/data/items/ItemInstance.gd",
+      "expected_sha256": "6c6be7310050998e8b0618c833a552fa78ccbd2155602b3e2ca3b8e81f9d2f54",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/data/items/ItemData.gd",
+      "destination": "process/source/data/items/ItemData.gd",
+      "expected_sha256": "c4c2c90ab54bb713d6226559164575adac97b7608427b8262b1bf3dcdb0cf70e",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/pickups/ItemPickup.gd",
+      "destination": "process/source/scenes/world/pickups/ItemPickup.gd",
+      "expected_sha256": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/pickups/GroundLootCap.gd",
+      "destination": "process/source/scenes/world/pickups/GroundLootCap.gd",
+      "expected_sha256": "e151779f6095485fdd74ecaa841af571af9a5baccc5e546971d862aa858fa29e",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/pickups/HealthPickup.gd",
+      "destination": "process/source/scenes/world/pickups/HealthPickup.gd",
+      "expected_sha256": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/autoload/SettingsManager.gd",
+      "destination": "process/source/autoload/SettingsManager.gd",
+      "expected_sha256": "5ef33189969c59edb2c2027179d294adf2e89da33e2c4afcf79b37fe1a6649e8",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/settings/SettingsRuntimeApplier.gd",
+      "destination": "process/source/core/settings/SettingsRuntimeApplier.gd",
+      "expected_sha256": "be625c2bbbbe8577bd2f0ecf6b709b046ad983348601f6a9473b216fd0f410f3",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/EliteCrowdFightPreview.gd",
+      "destination": "process/source/tools/dev/EliteCrowdFightPreview.gd",
+      "expected_sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/proc/chunkgen/ChunkShapeGen.gd",
+      "destination": "process/source/core/systems/world/proc/chunkgen/ChunkShapeGen.gd",
+      "expected_sha256": "359d6de393096c70495a3cbf4fd85a5e5395d5cb98c46d86e54aea8415c2e325",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/CityPlanMapProbe.gd",
+      "destination": "process/source/tools/dev/CityPlanMapProbe.gd",
+      "expected_sha256": "9e15fe430d9a5b2693e398e4a94f890750d31135f3da2fab98ac414d4bdc5004",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/ObjectiveShadowPreview.gd",
+      "destination": "process/source/tools/dev/ObjectiveShadowPreview.gd",
+      "expected_sha256": "25f7c89ce2edea57298017a3751261841f10175c7b8670c062cd6354e578a1eb",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/PropShadowSurvey.gd",
+      "destination": "process/source/tools/dev/PropShadowSurvey.gd",
+      "expected_sha256": "3e473b888c9505d7bbe4d8e4a53501a82c906c73c666dcfe071320e013e262d1",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/tools/dev/WorldCoverCostProbe.gd",
+      "destination": "process/source/tools/dev/WorldCoverCostProbe.gd",
+      "expected_sha256": "18630a78d9285245854268f96935aad823bceffaa908def5bcba97d5a23f240d",
+      "kind": "explicit_runtime_parse_scope"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/project.godot",
+      "destination": "process/source/project.godot",
+      "expected_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/game.tscn",
+      "destination": "process/source/scenes/game.tscn",
+      "expected_sha256": "aeb142668ffb90903a500cbe45eca8129d349f9d32443b7f60c9a676d77aaa44",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/facade_wall.gdshader",
+      "destination": "process/source/scenes/world/buildings/facade_wall.gdshader",
+      "expected_sha256": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/facade_wall.gdshaderinc",
+      "destination": "process/source/scenes/world/buildings/facade_wall.gdshaderinc",
+      "expected_sha256": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/facade_module.gdshader",
+      "destination": "process/source/scenes/world/buildings/facade_module.gdshader",
+      "expected_sha256": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/roof.gdshader",
+      "destination": "process/source/scenes/world/buildings/roof.gdshader",
+      "expected_sha256": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/weathering/facade_stain.gdshader",
+      "destination": "process/source/scenes/world/buildings/weathering/facade_stain.gdshader",
+      "expected_sha256": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/weathering/facade_damp.gdshaderinc",
+      "destination": "process/source/scenes/world/buildings/weathering/facade_damp.gdshaderinc",
+      "expected_sha256": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/buildings/weathering/facade_plinth.gdshader",
+      "destination": "process/source/scenes/world/buildings/weathering/facade_plinth.gdshader",
+      "expected_sha256": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/pickup_cover.gdshader",
+      "destination": "process/source/core/systems/world/visibility/pickup_cover.gdshader",
+      "expected_sha256": "a399f0e37d1cadf82712c9efb668eb8d62bb0866521ded5d415846332318e367",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/world_cover.gdshaderinc",
+      "destination": "process/source/core/systems/world/visibility/world_cover.gdshaderinc",
+      "expected_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/WorldCueMix.gdshader",
+      "destination": "process/source/core/systems/world/visibility/WorldCueMix.gdshader",
+      "expected_sha256": "df89320651eddec5e45e92d42df2320a5d022025ed9e5bdd3a883d3372efeae1",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/visibility/WorldCueAdd.gdshader",
+      "destination": "process/source/core/systems/world/visibility/WorldCueAdd.gdshader",
+      "expected_sha256": "14022898f9bc5dcfaab4124ff1bfebbc04436fe1f1263e2c6f11cedc3fd6741f",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/ground_splat.gdshader",
+      "destination": "process/source/core/systems/world/ground/ground_splat.gdshader",
+      "expected_sha256": "a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/sun_shadow.gdshader",
+      "destination": "process/source/core/systems/world/sun_shadow.gdshader",
+      "expected_sha256": "4079e426fb287a2fdcd2719065f2ddecaba3484c0250c7ba50c21ac2aee6732b",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/sun_shadow_material.tres",
+      "destination": "process/source/core/systems/world/sun_shadow_material.tres",
+      "expected_sha256": "2f7898d4f3b554dc91fa0b2dd54a26af8c11dbad98d90b2169c40f8cf55abcb2",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/actor_cast_shadow.gdshader",
+      "destination": "process/source/core/systems/world/actor_cast_shadow.gdshader",
+      "expected_sha256": "8a0c172a8e3bfcec87089384298bd40716891c6c60d3d794e81712b11773cf30",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/world_dressing_region.gdshader",
+      "destination": "process/source/core/systems/world/world_dressing_region.gdshader",
+      "expected_sha256": "acae035e117b1f4eb06a86c6931f8ea0ed741e5d8cddcecdef8d63d3a4f2c273",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/objectives/objective_world_art.gdshader",
+      "destination": "process/source/core/systems/world/objectives/objective_world_art.gdshader",
+      "expected_sha256": "f2ae8879746321fb59492ee935079eae8d7401c0bcd3cae14f2ce5606445fcdb",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/atmosphere/ground_air.gdshader",
+      "destination": "process/source/core/systems/world/atmosphere/ground_air.gdshader",
+      "expected_sha256": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/scenes/world/pickups/ItemPickup.tscn",
+      "destination": "process/source/scenes/world/pickups/ItemPickup.tscn",
+      "expected_sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+      "kind": "declared_non_image_resource"
+    },
+    {
+      "source": "/home/user/Nauris/Synthetic-Ascension/data/items/defs/accessories/ring_crusher.tres",
+      "destination": "process/source/data/items/defs/accessories/ring_crusher.tres",
+      "expected_sha256": "cf37ba39ca419c6382f902981bfd175c121875a6cb3b2d052cfa359092a3b975",
+      "kind": "declared_non_image_resource"
+    }
+  ],
+  "external_snapshots": [
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3-FinalCombinedCityPreview.gd",
+      "destination": "process/external/59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3-FinalCombinedCityPreview.gd",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.gd",
+      "expected_sha256": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991-FinalCombinedCityPreview.tscn",
+      "destination": "process/external/bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991-FinalCombinedCityPreview.tscn",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.tscn",
+      "expected_sha256": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8-StreetNativeAcceptanceProbe.gd",
+      "destination": "process/external/30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8-StreetNativeAcceptanceProbe.gd",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd",
+      "expected_sha256": "30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d-StreetNativeAcceptanceProbe.tscn",
+      "destination": "process/external/ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d-StreetNativeAcceptanceProbe.tscn",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn",
+      "expected_sha256": "ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/2a9848140bc40f452eb6855405d59b2bd6c09946ff47ea37dfcb44f4e41a5a29-external_source_parse_probe.gd",
+      "destination": "process/external/2a9848140bc40f452eb6855405d59b2bd6c09946ff47ea37dfcb44f4e41a5a29-external_source_parse_probe.gd",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.gd",
+      "expected_sha256": "2a9848140bc40f452eb6855405d59b2bd6c09946ff47ea37dfcb44f4e41a5a29",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/703521d388b2ad2fbee83b724af48a8b4586f15c07d7570d81b15feb1bdf4f0f-external_source_parse_probe.tscn",
+      "destination": "process/external/703521d388b2ad2fbee83b724af48a8b4586f15c07d7570d81b15feb1bdf4f0f-external_source_parse_probe.tscn",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.tscn",
+      "expected_sha256": "703521d388b2ad2fbee83b724af48a8b4586f15c07d7570d81b15feb1bdf4f0f",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba-guarded_engine.py",
+      "destination": "process/external/9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba-guarded_engine.py",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+      "expected_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591-street-native-queue.py",
+      "destination": "process/external/568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591-street-native-queue.py",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py",
+      "expected_sha256": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e-sa_engine.py",
+      "destination": "process/external/0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e-sa_engine.py",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+      "expected_sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5-run_engine_slot.py",
+      "destination": "process/external/31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5-run_engine_slot.py",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+      "expected_sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/8a8caed328705172959177dea6c220df5945d01b0cc17f0fed9f40f111d5caaf-FinalCombinedCityPreview.gd",
+      "destination": "process/external/8a8caed328705172959177dea6c220df5945d01b0cc17f0fed9f40f111d5caaf-FinalCombinedCityPreview.gd",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.gd",
+      "expected_sha256": "8a8caed328705172959177dea6c220df5945d01b0cc17f0fed9f40f111d5caaf",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/891417871b5808e6f201e4eedbf4e5299ef184da6038b3ed21981a53480da846-FinalCombinedCityPreview.tscn",
+      "destination": "process/external/891417871b5808e6f201e4eedbf4e5299ef184da6038b3ed21981a53480da846-FinalCombinedCityPreview.tscn",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+      "expected_sha256": "891417871b5808e6f201e4eedbf4e5299ef184da6038b3ed21981a53480da846",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/b4b608161d02fb0cf1c50698e796210b95ce481993df8517a45f6b448f202597-StreetNativeAcceptanceProbeR2.gd",
+      "destination": "process/external/b4b608161d02fb0cf1c50698e796210b95ce481993df8517a45f6b448f202597-StreetNativeAcceptanceProbeR2.gd",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.gd",
+      "expected_sha256": "b4b608161d02fb0cf1c50698e796210b95ce481993df8517a45f6b448f202597",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/cfae337dfdc7820dfbeb10444ee4235b84989432140ff24c68937f07f2c73e65-StreetNativeAcceptanceProbeR2.tscn",
+      "destination": "process/external/cfae337dfdc7820dfbeb10444ee4235b84989432140ff24c68937f07f2c73e65-StreetNativeAcceptanceProbeR2.tscn",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+      "expected_sha256": "cfae337dfdc7820dfbeb10444ee4235b84989432140ff24c68937f07f2c73e65",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a-street-pickup-r2.py",
+      "destination": "process/external/5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a-street-pickup-r2.py",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py",
+      "expected_sha256": "5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/7649002026448c6caee77c3b073b0da887129d6f61db14b3f1885a5cfa5f97c0-final-combined-main-command-plan-r5.json",
+      "destination": "process/external/7649002026448c6caee77c3b073b0da887129d6f61db14b3f1885a5cfa5f97c0-final-combined-main-command-plan-r5.json",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-command-plan-r5.json",
+      "expected_sha256": "7649002026448c6caee77c3b073b0da887129d6f61db14b3f1885a5cfa5f97c0",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/bf25f90ab799a9d516bbaee00057a44f3d91c4bb17946afda731c9ee5d22e20b-signed-id-r3-amendment.json",
+      "destination": "process/external/bf25f90ab799a9d516bbaee00057a44f3d91c4bb17946afda731c9ee5d22e20b-signed-id-r3-amendment.json",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-plan-r5/signed-id-r3-amendment.json",
+      "expected_sha256": "bf25f90ab799a9d516bbaee00057a44f3d91c4bb17946afda731c9ee5d22e20b",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    },
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/external-sources/853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9-collection_validator_r3.py",
+      "destination": "process/external/853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9-collection_validator_r3.py",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py",
+      "expected_sha256": "853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9",
+      "role": "Exact already-captured invocation program/scene/plan/amendment bytes; verify body, not filename alone"
+    }
+  ],
+  "derived_indexes": [
+    {
+      "destination": "README.md",
+      "source_template": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-delivery-prep/README.source.md",
+      "rule": "Root fills actual terminal time/status and observed selected result only after all gates; no pending preparation prose presented as final acceptance"
+    },
+    {
+      "destination": "process/source/scope.json",
+      "rule": "Record exact53list,22resources,actual5extra paths/root audit and HEAD; label53 as25changed non-test GDScripts plus integration dependencies rather than claiming all53changed Preserve the separate execution.post_run_verification_sources distinction: later verifier e25 is outside75 main-source bodies and18 invocation blobs."
+    },
+    {
+      "destination": "process/cache/inventory-reference.json",
+      "rule": "Point to final execution finite_world_generated_cache and import-cache-executed manifest; state740hash bindings/370textures and binary caches deliberately absent. initial_global_class_cache is initial provenance only, not a newly copied class cache or a loaded-resource trace."
+    },
+    {
+      "destination": "manifest.json",
+      "rule": "Inventory every delivered file except this manifest; record source path, source SHA256/bytes, delivered SHA256/bytes, role and final case. Only final actual files participate; optional future extra occupied verdict counts at most one explicitly bound artifact."
+    },
+    {
+      "destination": "compression-map.json",
+      "rule": "For every gzip replacement record original/delivered paths, raw/delivered SHA256/bytes and verified decompression round trip; PNG bytes never enter gzip."
+    },
+    {
+      "destination": "process/delivery-plan.json",
+      "rule": "Snapshot this finite source-only plan with the resolved final review/receipt hashes; keep its preparation status distinct from actual final execution verdict"
+    }
+  ],
+  "finite_counts": {
+    "actual_cases": 8,
+    "transport_files": 48,
+    "native_pngs": 10,
+    "native_manifests": 6,
+    "non_image_source_bodies": 75,
+    "explicit_runtime_gd": 53,
+    "other_resources": 22,
+    "captured_external_blobs": 18,
+    "fixed_evidence_records": 8,
+    "additional_explicit_occupied_verdict_artifact_max": 1,
+    "source_map_entries_retained_as_metadata": 815,
+    "finite_cache_map_entries_retained_as_metadata": 740,
+    "later_post_run_verifier_sources": 1
+  },
+  "prior_packets_links_only": [
+    "../2026-10-22-linux-cover/README.md",
+    "../2026-10-22-linux-prop-shadows/README.md",
+    "../2026-10-22-linux-plazas/README.md",
+    "../2026-10-22-linux-streets/README.md",
+    "../2026-10-22-linux-weathering/README.md"
+  ],
+  "pending_material_limits": [
+    "Broader forecourt/plaza topology remains OPEN.",
+    "Tiny covered equipment discoverability remains OPEN despite the bounded pickup density improvement.",
+    "Per-theme roof lichen close-up evidence remains OPEN.",
+    "The five static normal/reduced views retain staged parking/godmode/disabled ambient encounter/frozen streaming limitations; occupiedS7 retains actual live physics/director/AI/streaming. Functional capped checks do not establish comparative cost or live whole-Game performance."
+  ],
+  "preparation_actions": {
+    "source_reads_and_plan_documents_only": true,
+    "engine_started": false,
+    "git_invoked": false,
+    "tests_run": false,
+    "packet_copied": false,
+    "compression_run": false,
+    "source_cache_or_runtime_written": false,
+    "hashes": "Expected SHA strings copied from existing bound metadata; no bulk hashing or actual PNG reads during active final queue."
+  },
+  "later_post_run_verification_sources": [
+    {
+      "source": "/var/tmp/sa-city22/final-combined/main-r5-r1/post-run-verifiers/e25f5acab770c510d08198aa50607c7162eb11a6f64089e9c91e48d2efc40206-final-main-still-ledger.py",
+      "destination": "process/post-run-verifiers/e25f5acab770c510d08198aa50607c7162eb11a6f64089e9c91e48d2efc40206-final-main-still-ledger.py",
+      "original_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-main-still-ledger.py",
+      "expected_sha256": "e25f5acab770c510d08198aa50607c7162eb11a6f64089e9c91e48d2efc40206",
+      "binding_source": "Final execution.post_run_verification_sources",
+      "role": "Later pure root still-receipt updater:14actual manifest/settings/dimension/PNG/save/exterior checks plus815raw-source comparison. Created after S2 native completed, then used unchanged for S2/S6 and subsequent actual still verification. This is post-run verifier provenance, never a retroactive native launch input. Packaging copies only this explicitly named snapshot; any additional later terminal verifier needs its own root-provided finite binding."
+    }
+  ],
+  "wrapper_log_provenance": {
+    "guard_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+    "guard_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+    "source_lines": "88-89 capture owned launcher stdout/stderr;133 replays the captured file;134 prints the separate outer THERMAL line",
+    "scope": "All8 guard-owned wrapper.log originals remain part of48 transport files alongside8raw,8finalguards and24engine/stdout/stderr logs. Root manual subprocess forwarding does not suppress the guard-owned capture. No reconstructed tool console, outer THERMAL transcript or additional stdout redirect to that same file is requested.",
+    "superseded_preparation": "The transient optional-wrapper proposal was corrected after direct inspection of the frozen guard; no actual run or verdict changed and no rerun is required."
+  },
+  "resolved_final_delivery": {
+    "status": "ROOT_COMBINED_NATIVE_VERIFIED",
+    "execution_sha256": "606d0044544049e59eb27e67841b5e9568dccc73053beb5e21c215d6e9bac19d",
+    "root_review_sha256": "1231249faa648068ea3e532797cead3d45ce33ee63102b222c2ecb4e57a65aed",
+    "root_review_path": "/var/tmp/sa-city22/final-combined/main-r5-r1/root-visual-review.json",
+    "actual_cases": 8,
+    "original_pngs": 10,
+    "native_manifests": 6,
+    "resolved_utc": "2026-10-23T03:31:43.334186+00:00",
+    "occupied_extra_artifact": {
+      "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/serialized-acceptance-r3.json",
+      "sha256": "e690bfa36f4a8bef21c38a093cad105fc3c8d1be5e5a5773fa68d25205015952",
+      "amendment_sha256": "bf25f90ab799a9d516bbaee00057a44f3d91c4bb17946afda731c9ee5d22e20b",
+      "result": {
+        "route": {
+          "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal.json",
+          "sha256": "a86bcd0ed979fb9afb73eb5d7f8e9a2c14cd503c5aab6031b1149aad0c707069",
+          "checks": {
+            "failures_zero": true,
+            "segment_seed": true,
+            "requested_passage_chunk": true,
+            "dressed_continuity": true,
+            "narrow_inside_through": true,
+            "strict_physics_trace": true,
+            "original_entry_exit": true,
+            "infill_entry_exit": true,
+            "real_collection": true,
+            "chunk_crossing": true,
+            "director_stayed_live": true,
+            "walks_arrived": true,
+            "save_writes_observed_zero": true,
+            "requested_render_cap_unchanged_physics": true,
+            "expected_stills": true
+          },
+          "valid": true,
+          "window": "(1280, 720)",
+          "camera_zoom": "(1.0, 1.0)",
+          "trace": {
+            "allowed_cells": "[P: (-114, 96), S: (3, 8)]",
+            "far_index": 7,
+            "far_mouth": "[P: (-114, 103), S: (3, 1)]",
+            "jump_indices": [],
+            "middle_cross_section": "[P: (-114, 100), S: (3, 1)]",
+            "middle_index": 4,
+            "near_index": 0,
+            "near_mouth": "[P: (-114, 96), S: (3, 1)]",
+            "observed_cell_count": 8,
+            "ordered_mouth_middle_mouth": true,
+            "outside_indices": [],
+            "valid": true
+          },
+          "original_entry": {
+            "building_id": 1361326454,
+            "door": "(-7680.0, 7200.0)",
+            "events": [
+              {
+                "building_id": 1361326454,
+                "first_visit": true,
+                "infill": false,
+                "phase": "building"
+              }
+            ],
+            "infill": false,
+            "opened": true,
+            "restored": true
+          },
+          "infill_entry": {
+            "building_id": 2127116577,
+            "door": "(-7616.0, 6560.0)",
+            "events": [
+              {
+                "building_id": 2127116577,
+                "first_visit": false,
+                "infill": true,
+                "phase": "building"
+              }
+            ],
+            "infill": true,
+            "opened": true,
+            "restored": true
+          },
+          "boundary": {
+            "after": "(-4, 2)",
+            "before": "(-4, 3)",
+            "crossed": true,
+            "target": "(-7392.0, 5984.0)"
+          },
+          "director": {
+            "end": {
+              "can_process": true,
+              "enabled": true,
+              "live": true,
+              "path": "/root/Game/EncounterDirector",
+              "physics_processing": true,
+              "player_bound": true,
+              "present": true,
+              "snapshot": {
+                "active_beats": {},
+                "counters": {
+                  "aborted": 0,
+                  "announced": 1,
+                  "escalations": 0,
+                  "members_skipped": 0,
+                  "members_spawned": 1,
+                  "scheduled": 1,
+                  "specialist_responses": 0
+                },
+                "next_beat_in": 4.74689178466924,
+                "rite_channel_active": false,
+                "rite_response_left": 0.0,
+                "rite_wave_cursor": 0,
+                "swarm_in": 69.1583333333192,
+                "swarm_state": 0
+              },
+              "spawner_bound": true
+            },
+            "requested": true,
+            "start": {
+              "can_process": true,
+              "enabled": true,
+              "live": true,
+              "path": "/root/Game/EncounterDirector",
+              "physics_processing": true,
+              "player_bound": true,
+              "present": true,
+              "snapshot": {
+                "active_beats": {},
+                "counters": {
+                  "aborted": 0,
+                  "announced": 0,
+                  "escalations": 0,
+                  "members_skipped": 0,
+                  "members_spawned": 0,
+                  "scheduled": 0,
+                  "specialist_responses": 0
+                },
+                "next_beat_in": 39.2166666666667,
+                "rite_channel_active": false,
+                "rite_response_left": 0.0,
+                "rite_wave_cursor": 0,
+                "swarm_in": 149.216666666666,
+                "swarm_state": 0
+              },
+              "spawner_bound": true
+            },
+            "stayed_live": true
+          },
+          "limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test.",
+          "save_observation": {
+            "acceptance_end_api_counter": 0,
+            "autosave_disabled": true,
+            "baseline_api_counter": 0,
+            "current_profile_is_null": true,
+            "scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+            "writes_during_acceptance": 0
+          },
+          "runtime_fixture": {
+            "actual_window": "(1280, 720)",
+            "engine_max_fps": 20,
+            "game_was_instantiated": true,
+            "physics_ticks_per_second": 60
+          }
+        },
+        "original_r2_collection_verdict": {
+          "valid": false,
+          "checks": {
+            "original_picked": true,
+            "original_collected": true,
+            "receipt_picked": true,
+            "receipt_accepted": true,
+            "observation_only": true,
+            "serial_positive": true,
+            "ordinary_staged_instance": true,
+            "one_accepted_event": true,
+            "event_exact_serial": true,
+            "event_exact_source": true,
+            "live_destination": false,
+            "live_same_item": true,
+            "incoming_identity_retained": true,
+            "retained_progress": true
+          },
+          "kind": "equipped",
+          "ground_serial": 18
+        },
+        "collection_signed_id_r3": {
+          "valid": true,
+          "checks": {
+            "original_picked": true,
+            "original_collected": true,
+            "receipt_picked": true,
+            "receipt_accepted": true,
+            "observation_only": true,
+            "serial_positive": true,
+            "ordinary_staged_instance": true,
+            "one_accepted_event": true,
+            "event_exact_serial": true,
+            "event_exact_source": true,
+            "live_destination": true,
+            "live_same_item": true,
+            "incoming_identity_retained": true,
+            "retained_progress": true,
+            "incoming_signed_int64_nonzero": true
+          },
+          "kind": "equipped",
+          "ground_serial": 18
+        },
+        "entrypoint_r2": true
+      },
+      "amendment_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-plan-r5/signed-id-r3-amendment.json",
+      "actual_serialized_command": [
+        "python3",
+        "-B",
+        "-c",
+        "import hashlib, importlib.util, json, sys\nfrom pathlib import Path\npins = {'/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py': '568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591', '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py': '5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a', '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py': '853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9'}\nfor name, expected in pins.items():\n    if hashlib.sha256(Path(name).read_bytes()).hexdigest() != expected:\n        raise RuntimeError(\"Frozen pure validator source changed: \" + name)\nspec = importlib.util.spec_from_file_location(\"final_main_collection_signed_id_r3\", Path('/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py'))\nmod = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(mod)\nout = Path(sys.argv[1])\ndata = json.loads((out / \"traversal.json\").read_text())\nresult = {\n    \"route\": mod.R2.ORIGINAL.validate_route(out, 7, 16102028, (-4, 3), 20),\n    \"original_r2_collection_verdict\": mod.R2.validate_collection(data),\n    \"collection_signed_id_r3\": mod.validate_collection(data),\n    \"entrypoint_r2\": data.get(\"collection_acceptance_entrypoint_r2\") == '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn'\n}\nprint(json.dumps(result, indent=2))\nsys.exit(0 if result[\"route\"][\"valid\"] and result[\"collection_signed_id_r3\"][\"valid\"] and result[\"entrypoint_r2\"] else 1)\n",
+        "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied"
+      ],
+      "actual_validator_exit": 0
+    }
+  },
+  "source_preparation_plan_sha256": "68fc2a4d1fc1ee68e71d05c9481565792b8e7e3e403b38f8bb5fb8d9327c4b16"
+}

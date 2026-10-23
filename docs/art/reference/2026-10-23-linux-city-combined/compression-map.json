@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "threshold_bytes": 131072,
+  "format": "gzip level6 mtime0; all original PNG/native manifest/terminal review/execution/external/e25/verdict bytes unchanged",
+  "entries": [
+    {
+      "original_path": "process/runs/runtime-parse/run-results.json",
+      "raw_sha256": "344dbeb35e9b15bd6b5b39c8666f5ca097437a9497eb4dd85906c4007c287dfb",
+      "raw_bytes": 461638,
+      "gzip_path": "process/runs/runtime-parse/run-results.json.gz",
+      "gzip_sha256": "45026a074e037b200d505e1b2bffec15e9b6728db68bb3791e231caebf10a68f",
+      "gzip_bytes": 161496,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/runs/external-parse/run-results.json",
+      "raw_sha256": "cd0ec3dbfbb057f0a084a3973958bfd8d78d2894c3f4474ba447b0b234b5a34b",
+      "raw_bytes": 454405,
+      "gzip_path": "process/runs/external-parse/run-results.json.gz",
+      "gzip_sha256": "21f9014ddcc91d9d0979db0e17185cfaeb534a254ccf76d8e43b7e1eaba53539",
+      "gzip_bytes": 160256,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/runs/s2-normal/run-results.json",
+      "raw_sha256": "a5df0b434b0927a9effc0e08fa939d9f4250945bac7a406aa1e24689633188a8",
+      "raw_bytes": 460307,
+      "gzip_path": "process/runs/s2-normal/run-results.json.gz",
+      "gzip_sha256": "9e741d60c8cec573f318e185afa3dad3cee583a59a79d1c6fa5aa59116cf3671",
+      "gzip_bytes": 161096,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/runs/s6-normal/run-results.json",
+      "raw_sha256": "9cfb5ba4bf38c4bcbfe4db1e283b606736c234f750648ddbc1b1792c1628d4e5",
+      "raw_bytes": 458316,
+      "gzip_path": "process/runs/s6-normal/run-results.json.gz",
+      "gzip_sha256": "804e2b1a10f5c98c04db8afe0c5b80487a660dc7db64fef62d51a4fc649241e8",
+      "gzip_bytes": 160886,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/runs/s7-normal/run-results.json",
+      "raw_sha256": "b758c2ba5bd6e471f42232bae8ced1af7c42398780ff21159f38e49c47575035",
+      "raw_bytes": 458263,
+      "gzip_path": "process/runs/s7-normal/run-results.json.gz",
+      "gzip_sha256": "1ed27196c76eec434d1558ae77b05873e1c7763d230f5d919abb959be5765ff1",
+      "gzip_bytes": 160946,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/runs/s9-normal/run-results.json",
+      "raw_sha256": "fb965ff9c65200daa0b618ca4ed1f01fcf3cd1c151ba2f079a7d4ba991383e33",
+      "raw_bytes": 460424,
+      "gzip_path": "process/runs/s9-normal/run-results.json.gz",
+      "gzip_sha256": "72246996d68681c4de7bbb452d4e2fb5164d82f050874321f63f0ac76005b9af",
+      "gzip_bytes": 161107,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/runs/s7-reduced/run-results.json",
+      "raw_sha256": "202556f82144329db14296fb8451eb4cc7ae6f46b11f9893c3424f2a6ecbe2f8",
+      "raw_bytes": 460205,
+      "gzip_path": "process/runs/s7-reduced/run-results.json.gz",
+      "gzip_sha256": "7e73e15af86b48fb6da711692160219e35f20045ebda3b3b953bef155574eaea",
+      "gzip_bytes": 161072,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/runs/s7-occupied/run-results.json",
+      "raw_sha256": "6e9d8210c549d89b1900934debc907505b8702557eb09ece76440e83f89e34ce",
+      "raw_bytes": 494494,
+      "gzip_path": "process/runs/s7-occupied/run-results.json.gz",
+      "gzip_sha256": "8222736a7fd43087daa035a962e89d26dc273257a59c2397e13d2557164ad26d",
+      "gzip_bytes": 164266,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/cache/import-cache-executed.json",
+      "raw_sha256": "99dc589e356b3ac889b1603c5355b39391eaf632f69c8cb1f1ebd53005008992",
+      "raw_bytes": 388340,
+      "gzip_path": "process/cache/import-cache-executed.json.gz",
+      "gzip_sha256": "35dd3c518073aaffcd330b9d8d7390599c44de9e3be248678136d4428d290002",
+      "gzip_bytes": 80582,
+      "round_trip_verified": true
+    },
+    {
+      "original_path": "process/source/autoload/global.gd",
+      "raw_sha256": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+      "raw_bytes": 173523,
+      "gzip_path": "process/source/autoload/global.gd.gz",
+      "gzip_sha256": "0b0d8839efc187fe9de815b9810a1af6a7a65bc39eee8330a0b543c8201c37d1",
+      "gzip_bytes": 46963,
+      "round_trip_verified": true
+    }
+  ]
+}

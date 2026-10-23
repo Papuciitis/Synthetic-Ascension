@@ -1,0 +1,815 @@
+{
+  "schema": 2,
+  "created_utc": "2026-10-23T01:55:41.555697+00:00",
+  "status": "SOURCE_ONLY_PREPARED_UNPARSED_UNRUN; no tests, hashes, Git, builds or engines during OPEN quiet timing window; root review and all final merges/cache/source binding pending",
+  "project": "/home/user/Nauris/Synthetic-Ascension",
+  "final_main_sha": null,
+  "final_main_source_hashes": null,
+  "output": "/var/tmp/sa-city22/final-combined/main-r5-r1",
+  "external_preparation_bindings": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.gd": {
+      "sha256": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+      "bytes": 12188
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.tscn": {
+      "sha256": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+      "bytes": 269
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd": {
+      "sha256": "30958eb61ab45a45d24fcb3f591d9716563756a2341fe911f34ff07459baa6b8",
+      "bytes": 2263
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.tscn": {
+      "sha256": "ee443c8fef526dab2247bbe7952e462775d14f460f2d4d1c84abc934f248a76d",
+      "bytes": 262
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.gd": {
+      "sha256": "2a9848140bc40f452eb6855405d59b2bd6c09946ff47ea37dfcb44f4e41a5a29",
+      "bytes": 569
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.tscn": {
+      "sha256": "703521d388b2ad2fbee83b724af48a8b4586f15c07d7570d81b15feb1bdf4f0f",
+      "bytes": 259
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py": {
+      "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "bytes": 8176
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py": {
+      "sha256": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591",
+      "bytes": 19235
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py": {
+      "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+      "bytes": 8660
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py": {
+      "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+      "bytes": 13817
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.gd": {
+      "sha256": "8a8caed328705172959177dea6c220df5945d01b0cc17f0fed9f40f111d5caaf",
+      "bytes": 1843
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn": {
+      "sha256": "891417871b5808e6f201e4eedbf4e5299ef184da6038b3ed21981a53480da846",
+      "bytes": 274
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.gd": {
+      "sha256": "b4b608161d02fb0cf1c50698e796210b95ce481993df8517a45f6b448f202597",
+      "bytes": 4793
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn": {
+      "sha256": "cfae337dfdc7820dfbeb10444ee4235b84989432140ff24c68937f07f2c73e65",
+      "bytes": 283
+    },
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py": {
+      "sha256": "5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a",
+      "bytes": 10201
+    }
+  },
+  "runtime_gd_scope": [
+    "core/systems/world/proc/SiteParcelsImpl.gd",
+    "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+    "core/systems/world/ChunkManager.gd",
+    "core/systems/world/ground/GroundSplatRenderer.gd",
+    "core/systems/world/ground/DistrictGroundPolicy.gd",
+    "core/systems/world/chunks/ChunkBlockRenderer.gd",
+    "core/systems/world/WorldDepthStyle.gd",
+    "core/systems/world/objectives/ObjectiveWorldArt.gd",
+    "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+    "core/systems/world/atmosphere/WorldAtmosphere.gd",
+    "scenes/world/buildings/CityFacadeComposer.gd",
+    "scenes/world/buildings/weathering/CityWeathering.gd",
+    "scenes/world/buildings/DungeonRoof.gd",
+    "scenes/world/buildings/DungeonBuilding.gd",
+    "scenes/world/buildings/CityBlockKit.gd",
+    "scenes/world/buildings/RoofOverlay.gd",
+    "tools/dev/CityBlockPlayablePreview.gd",
+    "tools/dev/CityStreetTraversalProbe.gd",
+    "tools/dev/WorldCoverMovingVisualProbe.gd",
+    "core/systems/world/visibility/WorldCover.gd",
+    "core/systems/world/visibility/PickupCover.gd",
+    "core/systems/world/visibility/WorldCueCover.gd",
+    "core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+    "core/systems/world/WorldCoverVisuals.gd",
+    "core/systems/world/ground/CityGroundCare.gd",
+    "core/systems/world/chunks/ChunkBuildData.gd",
+    "core/systems/world/chunks/PlazaEdgeKit.gd",
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd",
+    "scenes/world/plazas/PlazaDressing.gd",
+    "scenes/world/buildings/CityBlockRoofForms.gd",
+    "scenes/world/volumes/IndoorVolume.gd",
+    "core/systems/world/WorldArt.gd",
+    "core/systems/world/WorldBlockerGeometry.gd",
+    "core/systems/world/WorldDressingMaterials.gd",
+    "core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+    "autoload/RunEvents.gd",
+    "autoload/global.gd",
+    "core/systems/telemetry/BalanceItemContext.gd",
+    "data/items/Inventory.gd",
+    "data/items/BagInventory.gd",
+    "data/items/ItemInstance.gd",
+    "data/items/ItemData.gd",
+    "scenes/world/pickups/ItemPickup.gd",
+    "scenes/world/pickups/GroundLootCap.gd",
+    "scenes/world/pickups/HealthPickup.gd",
+    "autoload/SettingsManager.gd",
+    "core/settings/SettingsRuntimeApplier.gd",
+    "tools/dev/EliteCrowdFightPreview.gd"
+  ],
+  "additional_runtime_resource_scope": [
+    "project.godot",
+    "scenes/game.tscn",
+    "scenes/world/buildings/facade_wall.gdshader",
+    "scenes/world/buildings/facade_wall.gdshaderinc",
+    "scenes/world/buildings/facade_module.gdshader",
+    "scenes/world/buildings/roof.gdshader",
+    "scenes/world/buildings/weathering/facade_stain.gdshader",
+    "scenes/world/buildings/weathering/facade_damp.gdshaderinc",
+    "scenes/world/buildings/weathering/facade_plinth.gdshader",
+    "core/systems/world/visibility/pickup_cover.gdshader",
+    "core/systems/world/visibility/world_cover.gdshaderinc",
+    "core/systems/world/visibility/WorldCueMix.gdshader",
+    "core/systems/world/visibility/WorldCueAdd.gdshader",
+    "core/systems/world/ground/ground_splat.gdshader",
+    "core/systems/world/sun_shadow.gdshader",
+    "core/systems/world/sun_shadow_material.tres",
+    "core/systems/world/actor_cast_shadow.gdshader",
+    "core/systems/world/world_dressing_region.gdshader",
+    "core/systems/world/objectives/objective_world_art.gdshader",
+    "core/systems/world/atmosphere/ground_air.gdshader",
+    "scenes/world/pickups/ItemPickup.tscn",
+    "data/items/defs/accessories/ring_crusher.tres"
+  ],
+  "readiness": [
+    "Root confirms all intended cover, props, plazas, street and final ecb weathering changes have been normally merged. No preparation-time/current premerge main SHA is final evidence.",
+    "Root completes required merged imports/cache copy and records exact source+sidecar+finite generated import inputs at invocation. No bake/import/Git/copy may overlap quiet timing or another engine.",
+    "Root reconciles runtime_gd_scope with final merged changed runtime .gd sources, including cover indexing/pickup, plaza presentation/cache/dressing, street ground/door/volume and weathering owners; pins actual final project/scene/shader/include/assets plus complete launcher source_hashes before each command. Preparation stage pins never substitute for final-main identity; missing future merged sources block invocation.",
+    "Root verifies every external_preparation_binding unchanged and retains exact helpers/scenes/guard/launchers/validator/plan snapshots. Parse R4 capture, original street wrapper and R2 pickup observer explicitly (expected3). R4 inherits the unchanged frozen R3 parent. Do not execute either hardcoded street queue main/check_pins on final main; import only pure validate_route/validate_collection.",
+    "Root requires successful actual R2 parser/native replay on the street worktree before street merge/final-main route; source review alone is not a native pass. Failed S2 R1 identity-only collection result stays failed and immutable, with observation-only correction separately qualified.",
+    "Root completes merged texture cache preparation from matching source+entire import bytes using the separate bounded copier, records finite generated cache inventory and final-main source maps, and performs no broad unrelated editor import. final_main_sha/source_hashes/import_cache_manifest remain null until these actual steps.",
+    "Root verifies fresh output/labels/raw run folders/thermal files and serial execution. Fresh suffix required for every retry.",
+    "Root retains full14-theme exact-source matrix aggregate/original five assertions as prior street evidence only. It is not a final merged-main whole-matrix rerun.",
+    "Stop on failed/incomplete parser or native raw/guard/manifest/image control; preserve partial attempts and diagnose before dependent cases.",
+    "Native cases are functional visuals/live-route checks outside the quiet timing window. No performance inference."
+  ],
+  "protocol": {
+    "start_temperature_c": 65,
+    "setup_duty_percent": 25,
+    "max_queue_wait_s": 900,
+    "release_marker_native": "[Game] ready",
+    "render_fps_cap_expected": 20,
+    "physics_hz_expected": 60,
+    "instant_stop_c": 90,
+    "sustained_stop_c": 85,
+    "sustained_samples": 3,
+    "exclusive_guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+    "root_only_execution": true
+  },
+  "cases": [
+    {
+      "id": "runtime-parse",
+      "label": "city22-final-main-r5-runtime-parse-r1",
+      "native": false,
+      "expected_checked": 48,
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-runtime-parse-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--",
+        "--headless",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.tscn",
+        "--",
+        "res://core/systems/world/proc/SiteParcelsImpl.gd",
+        "res://core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+        "res://core/systems/world/ChunkManager.gd",
+        "res://core/systems/world/ground/GroundSplatRenderer.gd",
+        "res://core/systems/world/ground/DistrictGroundPolicy.gd",
+        "res://core/systems/world/chunks/ChunkBlockRenderer.gd",
+        "res://core/systems/world/WorldDepthStyle.gd",
+        "res://core/systems/world/objectives/ObjectiveWorldArt.gd",
+        "res://core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd",
+        "res://core/systems/world/atmosphere/WorldAtmosphere.gd",
+        "res://scenes/world/buildings/CityFacadeComposer.gd",
+        "res://scenes/world/buildings/weathering/CityWeathering.gd",
+        "res://scenes/world/buildings/DungeonRoof.gd",
+        "res://scenes/world/buildings/DungeonBuilding.gd",
+        "res://scenes/world/buildings/CityBlockKit.gd",
+        "res://scenes/world/buildings/RoofOverlay.gd",
+        "res://tools/dev/CityBlockPlayablePreview.gd",
+        "res://tools/dev/CityStreetTraversalProbe.gd",
+        "res://tools/dev/WorldCoverMovingVisualProbe.gd",
+        "res://core/systems/world/visibility/WorldCover.gd",
+        "res://core/systems/world/visibility/PickupCover.gd",
+        "res://core/systems/world/visibility/WorldCueCover.gd",
+        "res://core/systems/world/visibility/ForegroundSpriteCoverage.gd",
+        "res://core/systems/world/WorldCoverVisuals.gd",
+        "res://core/systems/world/ground/CityGroundCare.gd",
+        "res://core/systems/world/chunks/ChunkBuildData.gd",
+        "res://core/systems/world/chunks/PlazaEdgeKit.gd",
+        "res://core/systems/world/proc/chunkgen/PlazaPresentation.gd",
+        "res://scenes/world/plazas/PlazaDressing.gd",
+        "res://scenes/world/buildings/CityBlockRoofForms.gd",
+        "res://scenes/world/volumes/IndoorVolume.gd",
+        "res://core/systems/world/WorldArt.gd",
+        "res://core/systems/world/WorldBlockerGeometry.gd",
+        "res://core/systems/world/WorldDressingMaterials.gd",
+        "res://core/systems/world/chunks/ChunkBlockVisualCatalog.gd",
+        "res://autoload/RunEvents.gd",
+        "res://autoload/global.gd",
+        "res://core/systems/telemetry/BalanceItemContext.gd",
+        "res://data/items/Inventory.gd",
+        "res://data/items/BagInventory.gd",
+        "res://data/items/ItemInstance.gd",
+        "res://data/items/ItemData.gd",
+        "res://scenes/world/pickups/ItemPickup.gd",
+        "res://scenes/world/pickups/GroundLootCap.gd",
+        "res://scenes/world/pickups/HealthPickup.gd",
+        "res://autoload/SettingsManager.gd",
+        "res://core/settings/SettingsRuntimeApplier.gd",
+        "res://tools/dev/EliteCrowdFightPreview.gd"
+      ],
+      "scope": "Explicit final combined changed owners and direct integration/collection/cap dependencies, reconciled from five producer records and actual source paths. Scoped compile check; no full-audit or shader-render claim.",
+      "expected_footer": "ExternalSourceParseProbe: checked=48 failures=0"
+    },
+    {
+      "id": "external-parse",
+      "label": "city22-final-main-r5-external-parse-r1",
+      "native": false,
+      "expected_checked": 3,
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-external-parse-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--",
+        "--headless",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.tscn",
+        "--",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/StreetNativeAcceptanceProbe.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.gd"
+      ],
+      "requires": [
+        "runtime-parse"
+      ],
+      "scope": "Exactly unchanged R4 final capture, original StreetNativeAcceptanceProbe and frozen R2 observer. The original street wrapper is parsed as parent, not used as the final route scene.",
+      "expected_footer": "ExternalSourceParseProbe: checked=3 failures=0"
+    },
+    {
+      "id": "s2-normal",
+      "label": "city22-final-main-r5-s2-normal-r1",
+      "native": true,
+      "requires": [
+        "runtime-parse",
+        "external-parse"
+      ],
+      "out": "/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal",
+      "segment": 2,
+      "seed": 16102026,
+      "theme": "service_courtyards",
+      "camera": [
+        416,
+        -104
+      ],
+      "review": "normal",
+      "expected_window": [
+        1280,
+        720
+      ],
+      "expected_logical_view": [
+        1920,
+        1080
+      ],
+      "expected_render_fps": 20,
+      "expected_physics_hz": 60,
+      "expected_files": [
+        "capture-info.json",
+        "ground-before.png"
+      ],
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-s2-normal-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+        "--",
+        "--visible",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--ground-context=416,-104",
+        "--review=normal",
+        "--out=/var/tmp/sa-city22/final-combined/main-r5-r1/s2-normal"
+      ]
+    },
+    {
+      "id": "s6-normal",
+      "label": "city22-final-main-r5-s6-normal-r1",
+      "native": true,
+      "requires": [
+        "runtime-parse",
+        "external-parse"
+      ],
+      "out": "/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal",
+      "segment": 6,
+      "seed": 16102028,
+      "theme": "industrial_cutthrough",
+      "camera": [
+        384,
+        -424
+      ],
+      "review": "normal",
+      "expected_window": [
+        1280,
+        720
+      ],
+      "expected_logical_view": [
+        1920,
+        1080
+      ],
+      "expected_render_fps": 20,
+      "expected_physics_hz": 60,
+      "expected_files": [
+        "capture-info.json",
+        "ground-before.png"
+      ],
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-s6-normal-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+        "--",
+        "--visible",
+        "--segment=6",
+        "--world-seed=16102028",
+        "--ground-context=384,-424",
+        "--review=normal",
+        "--out=/var/tmp/sa-city22/final-combined/main-r5-r1/s6-normal"
+      ]
+    },
+    {
+      "id": "s7-normal",
+      "label": "city22-final-main-r5-s7-normal-r1",
+      "native": true,
+      "requires": [
+        "runtime-parse",
+        "external-parse"
+      ],
+      "out": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal",
+      "segment": 7,
+      "seed": 16102028,
+      "theme": "canal_services",
+      "camera": [
+        -1632,
+        1304
+      ],
+      "review": "normal",
+      "expected_window": [
+        1280,
+        720
+      ],
+      "expected_logical_view": [
+        1920,
+        1080
+      ],
+      "expected_render_fps": 20,
+      "expected_physics_hz": 60,
+      "expected_files": [
+        "capture-info.json",
+        "ground-before.png"
+      ],
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-s7-normal-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+        "--",
+        "--visible",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--ground-context=-1632,1304",
+        "--review=normal",
+        "--out=/var/tmp/sa-city22/final-combined/main-r5-r1/s7-normal"
+      ]
+    },
+    {
+      "id": "s9-normal",
+      "label": "city22-final-main-r5-s9-normal-r1",
+      "native": true,
+      "requires": [
+        "runtime-parse",
+        "external-parse"
+      ],
+      "out": "/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal",
+      "segment": 9,
+      "seed": 16102026,
+      "theme": "outer_wall",
+      "camera": [
+        -3104,
+        -1384
+      ],
+      "review": "normal",
+      "expected_window": [
+        1280,
+        720
+      ],
+      "expected_logical_view": [
+        1920,
+        1080
+      ],
+      "expected_render_fps": 20,
+      "expected_physics_hz": 60,
+      "expected_files": [
+        "capture-info.json",
+        "ground-before.png"
+      ],
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-s9-normal-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+        "--",
+        "--visible",
+        "--segment=9",
+        "--world-seed=16102026",
+        "--ground-context=-3104,-1384",
+        "--review=normal",
+        "--out=/var/tmp/sa-city22/final-combined/main-r5-r1/s9-normal"
+      ]
+    },
+    {
+      "id": "s7-reduced",
+      "label": "city22-final-main-r5-s7-reduced-r1",
+      "native": true,
+      "requires": [
+        "runtime-parse",
+        "external-parse",
+        "s2-normal",
+        "s6-normal",
+        "s7-normal",
+        "s9-normal"
+      ],
+      "out": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced",
+      "segment": 7,
+      "seed": 16102028,
+      "theme": "canal_services",
+      "camera": [
+        -1632,
+        1304
+      ],
+      "review": "reduced",
+      "expected_window": [
+        960,
+        540
+      ],
+      "expected_logical_view": [
+        1920,
+        1080
+      ],
+      "expected_render_fps": 20,
+      "expected_physics_hz": 60,
+      "expected_files": [
+        "capture-info.json",
+        "ground-before.png"
+      ],
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-s7-reduced-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+        "--",
+        "--visible",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--ground-context=-1632,1304",
+        "--review=reduced",
+        "--out=/var/tmp/sa-city22/final-combined/main-r5-r1/s7-reduced"
+      ]
+    },
+    {
+      "id": "s7-occupied",
+      "label": "city22-final-main-r5-s7-occupied-r1",
+      "native": true,
+      "requires": [
+        "runtime-parse",
+        "external-parse"
+      ],
+      "out": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied",
+      "segment": 7,
+      "seed": 16102028,
+      "passage_chunk": [
+        -4,
+        3
+      ],
+      "expected_window": [
+        1280,
+        720
+      ],
+      "expected_render_fps": 20,
+      "expected_physics_hz": 60,
+      "expected_files": [
+        "traversal.json",
+        "traversal-1-passage.png",
+        "traversal-2-inside.png",
+        "traversal-3-inside-infill.png",
+        "traversal-4-collected.png",
+        "traversal-5-boundary.png"
+      ],
+      "command": [
+        "python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-final-main-r5-s7-occupied-r1",
+        "--project",
+        "/home/user/Nauris/Synthetic-Ascension",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "1800",
+        "--duty-percent",
+        "25",
+        "--release-marker",
+        "[Game] ready",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+        "--",
+        "--visible",
+        "--runtime-fps=20",
+        "--review=small",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--passage-chunk=-4,3",
+        "--out=/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied"
+      ],
+      "acceptance": "Both original pure validate_route(Path(out),7,16102028,(-4,3),20) and frozen R2 pure validate_collection(saved traversal JSON) must return valid true. Require exact new R2 collection entrypoint, complete actual main source/raw/guard receipts and five bound original native PNGs. No identity-only old scene or hardcoded R2 queue.main/check_pins.",
+      "serialized_acceptance_command": [
+        "python3",
+        "-B",
+        "-c",
+        "import hashlib,importlib.util,json,sys; from pathlib import Path; base=Path('/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022'); expected={'street-native-queue.py':'568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591','street-pickup-r2/street-pickup-r2.py':'5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a'}; mismatch=[str(base/name) for name,digest in expected.items() if hashlib.sha256((base/name).read_bytes()).hexdigest()!=digest]; mismatch and sys.exit('Frozen pure validator source changed: '+repr(mismatch)); spec=importlib.util.spec_from_file_location('final_main_pickup_acceptance',base/'street-pickup-r2/street-pickup-r2.py'); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); out=Path(sys.argv[1]); data=json.loads((out/'traversal.json').read_text()); result={'route':mod.ORIGINAL.validate_route(out,7,16102028,(-4,3),20),'collection':mod.validate_collection(data),'entrypoint_r2':data.get('collection_acceptance_entrypoint_r2')==str(base/'street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn')}; print(json.dumps(result,indent=2)); sys.exit(0 if result['route']['valid'] and result['collection']['valid'] and result['entrypoint_r2'] else 1)",
+        "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied"
+      ],
+      "serialized_acceptance_scope": "Root runs this command only after the actual native/guard checks, outside quiet timing. Imports the two frozen pure validators without calling either queue main; -B prevents bytecode writes. Preserve stdout and exit as separate acceptance evidence."
+    }
+  ],
+  "visual_acceptance": [
+    "Each raw actual_exit=runner_exit=0, stop_reason completed, diagnostics empty; thermal reason completed/wrapper_exit0, exact label/project/command/source map, no signal/thermal/timeout verdict.",
+    "capture-info.json failures0/save_writes0/local_security0, exact segment/seed/theme/camera/review/window, ground_review/fixed_camera/normal_hud true, optional_details_hidden false, occupied_comparison false. Real reload route notes require equal and care_equal true.",
+    "final_combined parking outside_and_opaque_after_settle true; every capture_stills exterior and final_exterior all_opaque_outside true, loaded_walkable/camera_unchanged true, zero room overlap/inside counts; retained narrow empty DungeonRoof records are not counted as drawable.",
+    "final_combined render_fps_cap20/physics_ticks_per_second60; normal reduced_motion false/combat_flash full, reduced true/off. Actual PNG dimensions must match1280x720 normal or960x540 reduced; viewport getter is explicitly a diagnostic, not native pixel size.",
+    "Root opens originals and assesses facade/material contact/ground transitions/irregular shadows/segment atmosphere and retained known gaps. Passing predicates alone do not accept visuals.",
+    "Each final_combined.capture_stills entry must record render_fps_cap_before_still20 and physics_ticks_per_second_before_still60. R4 capture_scene must be exact R4 scene; post-apply settings event observation is diagnostic, not an approval shortcut."
+  ],
+  "route_acceptance": "All existing strict physical corridor/order/no-jump, original+infill actual entry/cutaway/restoration, real crossing, live director/spawner/AI/projectiles, arrived walks, zero API save writes/null profile/autosave disabled,20FPS/60physics and five native PNG checks remain. Additionally require picked and exactly one accepted ground_serial/source=pickup/kind=drop/positive-op event: either exact incoming identity remains owned, or its exact snapshot quantitatively feeds a distinct still-owned same-id/polarity destination with positive finite mass/progress increase. Independent serialized validate_collection and exact R2 entrypoint mandatory; nearby loot, disappearance or identity-only inference cannot satisfy collection.",
+  "limits": [
+    "Four normal/reduced cases are static actual-Game exterior review with inherited staged parking, god mode, disabled ambient spawner/encounter beats, frozen streaming after checked reload and no ground-fight.",
+    "S7 occupied route uses unchanged actual physics/live director/spawner/AI/projectiles/collection/streaming route with frozen R2 observation-only pickup wrapper with disclosed initial placement/ordinary staged ring/god mode/scripted movement.",
+    "No helper/runtime/engine/Git/cache or image edits performed by command preparation. No pass or final source binding claimed.",
+    "R4 inherits every frozen R3 exterior/dimension/parking gate; only capture-cap ownership and per-still cap observations change. The fourteen R3 cost inputs remain unchanged and cost may continue parsing old59c as an unused capture helper.",
+    "R5 changes command preparation/source coverage and route observer entrypoint only. It adds no runner, helper/runtime/image edit or engine execution. R2 source/independent review and26 offline receipt fixtures do not establish native success; all final-main commands remain pending.",
+    "No source hashes were computed during this OPEN preparation. SHA strings are copied from existing producer/helper metadata. The new plan and diff receive actual hashes only after root closes the timing window; existing final-main SHA/cache fields remain null."
+  ],
+  "resolved_source_hazard": {
+    "cause": "Parent reduced/flash setters reapply persisted video.frame_limit after the original20FPS cap.",
+    "fix": "R4 connects SettingsManager.settings_changed before inherited runtime prepare. That signal emits synchronously AFTER RuntimeApplier.apply_all, so callback reasserts only Engine.max_fps20. Parent R3 prepare still sets the initial cap; no settings values or per-frame/physics/actor state changes.",
+    "acceptance": "Every actual still records render_fps_cap_before_still20 and physics_ticks_per_second_before_still60; wrong values add a failure before inherited readback. Actual parser/native confirmation remains pending."
+  },
+  "revision": "final-main-plan-r5",
+  "supersedes_command_plan": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-command-plan-r4.json",
+    "recorded_sha256": "459668adf540f6be973d56dcacb0fc0e2bb1673d1c0c40a7a3be6fa385289662",
+    "scope": "Future final-main commands only; old R4 plan remains immutable. R4 capture helper and all fourteen frozen R3 cost inputs remain unchanged."
+  },
+  "final_main_import_cache_manifest": null,
+  "pickup_collection_source_manifest": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/source-bindings.json",
+    "protocol": "street-collection-observation-r2",
+    "recorded_source_count": 36,
+    "scope": "Existing immutable R2 manifest supplies preparation provenance. Its original /tmp street source pins do not identify final main. Root records actual main telemetry/route/item dependencies separately before every final-main command."
+  },
+  "source_scope_provenance": {
+    "cover": "/var/tmp/sa-city22/packets/cover/sources/run-bindings/city22-cover-moving-tree-r8-1.json",
+    "props": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/prop-shadow-acceptance-source.json",
+    "plazas": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-native-r4-s6-1/run-results.json#source_hashes",
+    "streets_pickup": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/source-bindings.json",
+    "weathering": "/var/tmp/sa-city22/packets/weathering/source-plan.json#final_sources",
+    "boundaries": "Recorded stage hashes are producer/preparation evidence, not fresh filesystem verification or final-main pins. Integrated ChunkManager/ChunkBuildData/ChunkBlockRenderer/project may legitimately differ from a producer due to normal merges; root binds and reviews the final combined bytes after quiet window closes.",
+    "corrected_source_name": "PlazaPresentation.gd is the intended actual plaza source; DistrictGroundPresentation was a summary misname, not a missing runtime dependency.",
+    "street_building_source": "/var/tmp/sa-city22/packets/streets/sources/run-bindings/city22-street-ground-parse-1.json#scoped"
+  },
+  "recorded_stage_source_pins": {
+    "cover": {
+      "core/systems/world/visibility/WorldCover.gd": "08cee76765ed12bbe50a5f478507f1d3385357acac8312009e4587369b759ad4",
+      "core/systems/world/visibility/PickupCover.gd": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+      "core/systems/world/visibility/pickup_cover.gdshader": "a399f0e37d1cadf82712c9efb668eb8d62bb0866521ded5d415846332318e367",
+      "core/systems/world/visibility/world_cover.gdshaderinc": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+      "tools/dev/WorldCoverMovingVisualProbe.gd": "4ab8a4100dbb99487f88f7965a812762dc29bae165eba96894adb17b23de1b1e"
+    },
+    "props": {
+      "core/systems/world/WorldDepthStyle.gd": "f935bdf088312b8afcaee456c0ab16dddb152c95727a5b0e8f5559a633297c3d",
+      "core/systems/world/WorldArt.gd": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "core/systems/world/WorldBlockerGeometry.gd": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d",
+      "core/systems/world/WorldDressingMaterials.gd": "6104b79987dac2b5f85a2a3352893331e0899aed5c1afdca0fa806103dbbee70",
+      "core/systems/world/chunks/ChunkBlockVisualCatalog.gd": "84e7fe6863379eab68e090a6b48d284fd5a5dd4715557012cbbff0e5ef9e0d7f",
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": "369017c7db2873cd20c6dac8fff966882fbcde6f76f4a274a8ab38866a43faea",
+      "core/systems/world/chunks/ChunkBuildData.gd": "e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf",
+      "core/systems/world/objectives/ObjectiveWorldArt.gd": "a5873b7bc7b0d9ad9617a6ade4bb72355c269d1ac2e31e2755131cf7a0790cbd",
+      "assets/world/props/prop_cast_shadow.png": "65b8c7a2e8c649b6b4f7cbf22054ec42a754e7b5cf20888b04070ce655c23b13",
+      "assets/world/props/prop_cast_shadow.png.import": "9011423eb35b8c92e689459338cc70b6265cb0f967aad3a33baaa62b55088422"
+    },
+    "plazas": {
+      "core/systems/world/ChunkManager.gd": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": "9d70d3c320b7cd89dbf748dac66ad5ac764774594196e58803381da687dce6ff",
+      "core/systems/world/chunks/ChunkBuildData.gd": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618",
+      "core/systems/world/chunks/PlazaEdgeKit.gd": "baee634f650e26d4d5ae670904c801ab1c1914755665ee349d83824458a11cb1",
+      "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+      "scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+      "scenes/world/buildings/CityBlockRoofForms.gd": "ed2afa9ae8bd179cffd58aa10e3366cb0a697e14aba572e0423b2845b6616fc0"
+    },
+    "streets_pickup": {
+      "autoload/RunEvents.gd": "46e88be1220e8f6d9bc4fcf17e9661b77cdd8e9ddb4138d38b116b778faa4ea3",
+      "autoload/global.gd": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+      "core/systems/telemetry/BalanceItemContext.gd": "a13f73fb2ed1fe4890688828669db228639aaa072a0c72d1fa6cc2707f26f345",
+      "core/systems/world/ChunkManager.gd": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15",
+      "core/systems/world/ground/DistrictGroundPolicy.gd": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+      "core/systems/world/ground/GroundSplatRenderer.gd": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9",
+      "core/systems/world/proc/SiteParcelsImpl.gd": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+      "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66",
+      "data/items/BagInventory.gd": "4b0b79d58ef1ef392cebc7ac7c7a1123423635d2f7fc00c712cca15a6cdb2ca8",
+      "data/items/Inventory.gd": "dc68983802103e323536e9d7003cdd42406bd7f3a02f4543200eacb89dcf9967",
+      "data/items/ItemData.gd": "c4c2c90ab54bb713d6226559164575adac97b7608427b8262b1bf3dcdb0cf70e",
+      "data/items/ItemInstance.gd": "6c6be7310050998e8b0618c833a552fa78ccbd2155602b3e2ca3b8e81f9d2f54",
+      "data/items/defs/accessories/ring_crusher.tres": "cf37ba39ca419c6382f902981bfd175c121875a6cb3b2d052cfa359092a3b975",
+      "project.godot": "4ef9e853d293d77856207fbf5a046c95e330968b50d8b0da740e2a206f112ae5",
+      "scenes/world/buildings/RoofOverlay.gd": "8704de69b52b17015a7c2ce88ba511958038a525ab4c0a30d857f18126c29a07",
+      "scenes/world/pickups/GroundLootCap.gd": "e151779f6095485fdd74ecaa841af571af9a5baccc5e546971d862aa858fa29e",
+      "scenes/world/pickups/ItemPickup.gd": "5f0caf24e4983ec4c3a091bf50c548bf9ee02ca3f587f1e3b9603f385c7dd0af",
+      "scenes/world/pickups/ItemPickup.tscn": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+      "scenes/world/volumes/IndoorVolume.gd": "95c32bb75a16d8907f5c73cd6274ea15ec254806d079402423d34a20b8a0ce4a",
+      "tools/dev/CityBlockPlayablePreview.gd": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+      "tools/dev/CityStreetTraversalProbe.gd": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755",
+      "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "ui/components/InventorySlotView.gd": "69b63fae0c3f35ef9b94bcdb4e93a1e9536aa957aab86ba269b2758c46944bea",
+      "scenes/world/buildings/CityBlockKit.gd": "8c1d11fd92266e62f994a3e8043e72c5e112a641aedbcedb74b82b3437af8ffd"
+    },
+    "weathering": {
+      "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+      "scenes/world/buildings/weathering/CityWeathering.gd": "b5691e78901b56910ea23e210b25307bd786416e43fbdf1ec251d0ad83deac95",
+      "scenes/world/buildings/weathering/facade_stain.gdshader": "ae5ae629bf71aee4e5404a7b504d09fba7946c8347c43d44a2324e9310d44395",
+      "scenes/world/buildings/weathering/facade_damp.gdshaderinc": "4d09af2c97b99f8e814f7b18444aa4d7ed645a2a3b1f18b856610b15808e59df",
+      "scenes/world/buildings/roof.gdshader": "b387b31e555022c2a01b61b10acba2d4d34ddc91a6d3e09d360112d156223f9d",
+      "scenes/world/buildings/CityFacadeComposer.gd": "fec134c3ebcd7ab8a72bbc7f3bdc9a6b811c92dea839325f405d2441dddccfb5",
+      "scenes/world/buildings/facade_wall.gdshader": "235b8b69eee14b612acf879cfc6737fecc0145e25b9b96c1458bff6e6adaa4bd",
+      "scenes/world/buildings/facade_wall.gdshaderinc": "f44c36d4fd4e40003b1623fbb193c9085ab9e024e62ab66a7ee03fb4115f5e6c",
+      "scenes/world/buildings/facade_module.gdshader": "e64bfe81cf76b39bc5f2c12982452e666407f13394c4cfa90b68d188eeabda3c",
+      "scenes/world/buildings/weathering/facade_plinth.gdshader": "ed17bf1bbd8fb8f7b7dfd4d29b4e71d24cf30b5fa88a71fd485c1b750f8878e3",
+      "core/systems/world/atmosphere/ThemeAtmosphereProfiles.gd": "3d39d1f3636544faeac6a015a60a94bed5a8ea8d6b0ddc3590d34b79aefe32d4",
+      "assets/world/weathering/v1/wall_base_damp.png": "f3f33d5c201cee475bd9d21ea269d93d6123ee7726affe385b1c797c88bef6b7",
+      "assets/world/weathering/v1/wall_base_damp.png.import": "829eb4147cda27ffd7954adee2b996de6e6d757f5aa60127b5d4406ee4f5f71d",
+      "assets/world/weathering/v1/roof_lichen.png": "0f8a5ad9d6f5d0ea84f99438d2791a97726da69d175d474b15892caf23b5e9d1",
+      "assets/world/weathering/v1/roof_lichen.png.import": "6d9858e5650e104d7137df8a984e5b61d7265c4994e6fad804a1e81d5d7e6346",
+      "assets/world/weathering/v1/runoff_streaks.png": "179617d64d5143f7a9933077ff6b66bb3a2cdb99c54d911cb91a882eea0697e4",
+      "assets/world/weathering/v1/runoff_streaks.png.import": "786791f90d78d2374d1ea52c318b35d9061dbf9908945ee8c996394ae4fcf091",
+      "core/systems/world/atmosphere/WorldAtmosphere.gd": "d58c23cdb68aed1b5485839f8613ccee619658e8b72f95274b5f3faa951a1055",
+      "core/systems/world/atmosphere/ground_air.gdshader": "775e814461a378444b1759ab24b02b64e4560630e862af7d78704d702e3e80e6",
+      "assets/world/weathering/v1/vent_soot.png": "b403feb1346d0fb27e74c39c50b70458be52b99af1754527aa1811892cbe9db1",
+      "assets/world/weathering/v1/vent_soot.png.import": "cabbd964a71d3b5289933d89798048770e5ade21bd675f36f75d4f5e90c77e0a"
+    }
+  },
+  "support_source_pins_from_prior_native": {
+    "scenes/world/buildings/DungeonRoof.gd": "df4255f12352d273112f848056fa49a82f525349adae8ba7cc3a583ac2480c03",
+    "scenes/world/buildings/DungeonBuilding.gd": "ac5172006c8c8ed1f180118311660942375d5136651d93f3c203761d0d776c35",
+    "core/systems/world/visibility/WorldCueCover.gd": "7f1a21d986bc73af56a30727b1b78f26d14683b2eacc5175e9e318ba9a3cb414",
+    "core/systems/world/visibility/ForegroundSpriteCoverage.gd": "23802715b6653ca91479acb1335ded5b64a6cca44b6890d6f2113ffd35c79450",
+    "core/systems/world/WorldCoverVisuals.gd": "94c13ec14874377a7e7771a49c1ea954ab534dcc12aec70e86fbeec1f552f149",
+    "core/systems/world/ground/CityGroundCare.gd": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688",
+    "scenes/world/pickups/HealthPickup.gd": "391fe7038497ac098b1728465b8565764936e4d7287ce86d583c8b1495144df3",
+    "autoload/SettingsManager.gd": "5ef33189969c59edb2c2027179d294adf2e89da33e2c4afcf79b37fe1a6649e8",
+    "core/settings/SettingsRuntimeApplier.gd": "be625c2bbbbe8577bd2f0ecf6b709b046ad983348601f6a9473b216fd0f410f3"
+  },
+  "preparation_main_presence_only": {
+    "scope": "Path.is_file observations only, no content hashes, Git status or revision claim during OPEN window. Missing future merged sources are readiness blockers until normal merge supplies them.",
+    "pending_merge": [
+      "scenes/world/buildings/weathering/CityWeathering.gd",
+      "tools/dev/CityStreetTraversalProbe.gd"
+    ],
+    "present_count": 46
+  }
+}

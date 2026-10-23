@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "revision": "final-main-r5-pure-collection-signed-id-r3",
+  "created_utc": "2026-10-23T02:24:44.387891+00:00",
+  "status": "SOURCE_ONLY_PREPARED_UNEXECUTED; root must review; no engine/Git/runtime changes",
+  "base_plan": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-main-command-plan-r5.json",
+    "sha256": "7649002026448c6caee77c3b073b0da887129d6f61db14b3f1885a5cfa5f97c0",
+    "immutable": true
+  },
+  "change": "Replace only the future s7-occupied serialized_acceptance_command and its explanatory acceptance scope. Do not edit the base plan or any Godot/helper/native/parser commands, output directories or labels.",
+  "case_id": "s7-occupied",
+  "replacement": {
+    "serialized_acceptance_command": [
+      "python3",
+      "-B",
+      "-c",
+      "import hashlib, importlib.util, json, sys\nfrom pathlib import Path\npins = {'/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py': '568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591', '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py': '5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a', '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py': '853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9'}\nfor name, expected in pins.items():\n    if hashlib.sha256(Path(name).read_bytes()).hexdigest() != expected:\n        raise RuntimeError(\"Frozen pure validator source changed: \" + name)\nspec = importlib.util.spec_from_file_location(\"final_main_collection_signed_id_r3\", Path('/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py'))\nmod = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(mod)\nout = Path(sys.argv[1])\ndata = json.loads((out / \"traversal.json\").read_text())\nresult = {\n    \"route\": mod.R2.ORIGINAL.validate_route(out, 7, 16102028, (-4, 3), 20),\n    \"original_r2_collection_verdict\": mod.R2.validate_collection(data),\n    \"collection_signed_id_r3\": mod.validate_collection(data),\n    \"entrypoint_r2\": data.get(\"collection_acceptance_entrypoint_r2\") == '/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn'\n}\nprint(json.dumps(result, indent=2))\nsys.exit(0 if result[\"route\"][\"valid\"] and result[\"collection_signed_id_r3\"][\"valid\"] and result[\"entrypoint_r2\"] else 1)\n",
+      "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied"
+    ],
+    "serialized_acceptance_scope": "After native raw/guard/source/image controls pass, import only frozen pure R3 validate_collection plus its immutable R2/original dependencies. Require original physical route valid, corrected collection valid and exact unchanged b4 R2 entrypoint. Original R2 verdict is retained diagnostically, not required to fail or pass for future IDs. No queue.main/check_pins or continuation.py execution."
+  },
+  "pure_program_bindings": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-native-queue.py": "568b217ecc4eebe69a2b036fca6cb457457be8d364565b06d07c6104837ef591",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/street-pickup-r2.py": "5e4f803e99a8990ae799e3fb52c8bece0c3024b0e36f8348a5cdf28e202f984a",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/collection_validator_r3.py": "853bd23734f5568b902f8dc9dd3292ebee678ce98003678ae2bf7568593349f9"
+  },
+  "correction_basis": {
+    "official_engine_commit": "ed1daf0bf",
+    "source_url": "https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/core/object/object_id.h",
+    "local_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/object_id-ed1daf0bf.h",
+    "local_source_sha256": "ef39c28e4f36d3f9f0362e7751eb1a34321f52946eb3faf8290dd16c426a6167",
+    "source_metadata": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r3/object-id-source.json",
+    "source_metadata_sha256": "17b84a0c6e60a8882d9c817603f1a475a87e8109e065b7b2b053f4c302e1d4a6",
+    "contract": "RefCounted sets uint64 bit63; signed int64 observation can be negative. Both destination/incoming references must be nonbool signed-int64 and nonzero. No abs, remapping, resource identity, serial, operation, source, progress, mass or ownership relaxation."
+  },
+  "unchanged": {
+    "runtime_parse_checked": 48,
+    "external_parse_checked": 3,
+    "native_case_count": 6,
+    "capture_helper_revision": "final-combined-r4",
+    "occupied_scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/street-pickup-r2/StreetNativeAcceptanceProbeR2.tscn",
+    "occupied_scene_sha256": "cfae337dfdc7820dfbeb10444ee4235b84989432140ff24c68937f07f2c73e65",
+    "occupied_gd_sha256": "b4b608161d02fb0cf1c50698e796210b95ce481993df8517a45f6b448f202597",
+    "all_original_route_and_visual_gates": true,
+    "native_commands_labels_outputs_parser_commands": true,
+    "all_fourteen_R3_cost_inputs": true
+  },
+  "historical_qualification": {
+    "r2_queue": {
+      "path": "/var/tmp/sa-city22/streets/native-routes-r2/queue.json",
+      "sha256": "af1bef99ec2fcd0d4f8c0299fcb9bbe31a3a860723092224eb65e2ff6798cb14",
+      "status": "stopped; preserve unchanged"
+    },
+    "actual_s2_native": "Exit0/diagnostics0, all15 original route gates and GDScript collection true; subsequent old5e Python receipt rejected only negative destination ObjectID. This amendment does not rewrite that old queue/verdict or retroactively claim R5 execution.",
+    "old_R5_postrun_validator": "Immutable preparation used old5e positivity predicate. This separately bound amendment supersedes only that future post-run use.",
+    "actual_s7_s6_continuation": "Separately owned street-pickup-r3 continuation remains separate stage evidence; no new Godot replay required solely by this pure validator change."
+  },
+  "final_main_sha": null,
+  "final_main_source_hashes": null,
+  "final_main_import_cache_manifest": null,
+  "preparation_limits": "New amendment and note only; original R5/R4/b4/5e/raw/runtime remain untouched. No tests/engines/Git/builds or project/cache writes; small artifact hashes computed only after root CLOSED timing window."
+}

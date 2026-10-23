@@ -1,0 +1,195 @@
+{
+  "route": {
+    "path": "/var/tmp/sa-city22/final-combined/main-r5-r1/s7-occupied/traversal.json",
+    "sha256": "a86bcd0ed979fb9afb73eb5d7f8e9a2c14cd503c5aab6031b1149aad0c707069",
+    "checks": {
+      "failures_zero": true,
+      "segment_seed": true,
+      "requested_passage_chunk": true,
+      "dressed_continuity": true,
+      "narrow_inside_through": true,
+      "strict_physics_trace": true,
+      "original_entry_exit": true,
+      "infill_entry_exit": true,
+      "real_collection": true,
+      "chunk_crossing": true,
+      "director_stayed_live": true,
+      "walks_arrived": true,
+      "save_writes_observed_zero": true,
+      "requested_render_cap_unchanged_physics": true,
+      "expected_stills": true
+    },
+    "valid": true,
+    "window": "(1280, 720)",
+    "camera_zoom": "(1.0, 1.0)",
+    "trace": {
+      "allowed_cells": "[P: (-114, 96), S: (3, 8)]",
+      "far_index": 7,
+      "far_mouth": "[P: (-114, 103), S: (3, 1)]",
+      "jump_indices": [],
+      "middle_cross_section": "[P: (-114, 100), S: (3, 1)]",
+      "middle_index": 4,
+      "near_index": 0,
+      "near_mouth": "[P: (-114, 96), S: (3, 1)]",
+      "observed_cell_count": 8,
+      "ordered_mouth_middle_mouth": true,
+      "outside_indices": [],
+      "valid": true
+    },
+    "original_entry": {
+      "building_id": 1361326454,
+      "door": "(-7680.0, 7200.0)",
+      "events": [
+        {
+          "building_id": 1361326454,
+          "first_visit": true,
+          "infill": false,
+          "phase": "building"
+        }
+      ],
+      "infill": false,
+      "opened": true,
+      "restored": true
+    },
+    "infill_entry": {
+      "building_id": 2127116577,
+      "door": "(-7616.0, 6560.0)",
+      "events": [
+        {
+          "building_id": 2127116577,
+          "first_visit": false,
+          "infill": true,
+          "phase": "building"
+        }
+      ],
+      "infill": true,
+      "opened": true,
+      "restored": true
+    },
+    "boundary": {
+      "after": "(-4, 2)",
+      "before": "(-4, 3)",
+      "crossed": true,
+      "target": "(-7392.0, 5984.0)"
+    },
+    "director": {
+      "end": {
+        "can_process": true,
+        "enabled": true,
+        "live": true,
+        "path": "/root/Game/EncounterDirector",
+        "physics_processing": true,
+        "player_bound": true,
+        "present": true,
+        "snapshot": {
+          "active_beats": {},
+          "counters": {
+            "aborted": 0,
+            "announced": 1,
+            "escalations": 0,
+            "members_skipped": 0,
+            "members_spawned": 1,
+            "scheduled": 1,
+            "specialist_responses": 0
+          },
+          "next_beat_in": 4.74689178466924,
+          "rite_channel_active": false,
+          "rite_response_left": 0.0,
+          "rite_wave_cursor": 0,
+          "swarm_in": 69.1583333333192,
+          "swarm_state": 0
+        },
+        "spawner_bound": true
+      },
+      "requested": true,
+      "start": {
+        "can_process": true,
+        "enabled": true,
+        "live": true,
+        "path": "/root/Game/EncounterDirector",
+        "physics_processing": true,
+        "player_bound": true,
+        "present": true,
+        "snapshot": {
+          "active_beats": {},
+          "counters": {
+            "aborted": 0,
+            "announced": 0,
+            "escalations": 0,
+            "members_skipped": 0,
+            "members_spawned": 0,
+            "scheduled": 0,
+            "specialist_responses": 0
+          },
+          "next_beat_in": 39.2166666666667,
+          "rite_channel_active": false,
+          "rite_response_left": 0.0,
+          "rite_wave_cursor": 0,
+          "swarm_in": 149.216666666666,
+          "swarm_state": 0
+        },
+        "spawner_bound": true
+      },
+      "stayed_live": true
+    },
+    "limits": "Staged: initial player warp beside the passage, one ordinary ring item, god mode, modal onboarding bypass, scripted input movement and aim/fire at the nearest live enemy. Live: streaming, ambient spawner, authored encounter beats, procedural director, enemy scheduler, decoration, collisions, roof fades, pickup delay/magnet/contact. No actor freeze, never_cull, pickup override or direct collection. Not a performance or human-play test.",
+    "save_observation": {
+      "acceptance_end_api_counter": 0,
+      "autosave_disabled": true,
+      "baseline_api_counter": 0,
+      "current_profile_is_null": true,
+      "scope": "Inherited isolated setup through final route acceptance, before Game teardown; counters are read from SaveManager, not inferred from absent files.",
+      "writes_during_acceptance": 0
+    },
+    "runtime_fixture": {
+      "actual_window": "(1280, 720)",
+      "engine_max_fps": 20,
+      "game_was_instantiated": true,
+      "physics_ticks_per_second": 60
+    }
+  },
+  "original_r2_collection_verdict": {
+    "valid": false,
+    "checks": {
+      "original_picked": true,
+      "original_collected": true,
+      "receipt_picked": true,
+      "receipt_accepted": true,
+      "observation_only": true,
+      "serial_positive": true,
+      "ordinary_staged_instance": true,
+      "one_accepted_event": true,
+      "event_exact_serial": true,
+      "event_exact_source": true,
+      "live_destination": false,
+      "live_same_item": true,
+      "incoming_identity_retained": true,
+      "retained_progress": true
+    },
+    "kind": "equipped",
+    "ground_serial": 18
+  },
+  "collection_signed_id_r3": {
+    "valid": true,
+    "checks": {
+      "original_picked": true,
+      "original_collected": true,
+      "receipt_picked": true,
+      "receipt_accepted": true,
+      "observation_only": true,
+      "serial_positive": true,
+      "ordinary_staged_instance": true,
+      "one_accepted_event": true,
+      "event_exact_serial": true,
+      "event_exact_source": true,
+      "live_destination": true,
+      "live_same_item": true,
+      "incoming_identity_retained": true,
+      "retained_progress": true,
+      "incoming_signed_int64_nonzero": true
+    },
+    "kind": "equipped",
+    "ground_serial": 18
+  },
+  "entrypoint_r2": true
+}

@@ -1,0 +1,32 @@
+# Combined Linux city evidence — final-main R5
+
+**Checked on combined main `369cfef4`, 23 October 2026.** All eight actual runs completed with exit 0, zero diagnostics and clean outer guards. Root and an independent reviewer inspected all ten original PNGs and six native manifests. The terminal [execution receipt](process/execution.json) and [selected visual review](process/root-visual-review.json) bind the actual sources, commands and observations.
+
+The selected integration checks are two scoped parsers (53 runtime/dependency scripts and three external wrappers), four normal exterior views, S7 reduced motion and one occupied S7 physical route. Original R5 preparation parsed48 scripts; the actual receipt adds five independently audited source paths to53. The frozen R5 plan and separate853 signed-ObjectID amendment remain preserved, and actual commands/source hashes take precedence over superseded preparation text.
+
+| Case | Scene evidence | Native pixels | Original files |
+| --- | --- | --- | --- |
+| S2 normal | service courtyards |1280×720| [view](native/s2-normal/ground-before.png), [manifest](native/s2-normal/capture-info.json) |
+| S6 normal | industrial cutthrough |1280×720| [view](native/s6-normal/ground-before.png), [manifest](native/s6-normal/capture-info.json) |
+| S7 normal | canal services |1280×720| [view](native/s7-normal/ground-before.png), [manifest](native/s7-normal/capture-info.json) |
+| S9 normal | outer wall |1280×720| [view](native/s9-normal/ground-before.png), [manifest](native/s9-normal/capture-info.json) |
+| S7 reduced | reduced motion/flash off |960×540| [view](native/s7-reduced/ground-before.png), [manifest](native/s7-reduced/capture-info.json) |
+| S7 occupied | passage, original/infill interiors, ordinary loot, boundary |1280×720| [manifest](native/s7-occupied/traversal.json), five original plates below |
+
+The occupied originals show [passage](native/s7-occupied/traversal-1-passage.png), [original interior](native/s7-occupied/traversal-2-inside.png), [infill interior](native/s7-occupied/traversal-3-inside-infill.png), [collection](native/s7-occupied/traversal-4-collected.png) and [boundary](native/s7-occupied/traversal-5-boundary.png). The route requires actual physics, live director/AI/streaming, strict ordered passage and doorway/cutaway/restoration gates, ordinary exact-serial loot collection, zero observed save writes and20FPS/60physics. The separate853 pure validator accepts legitimate signed64/nonzero ObjectIDs while retaining every serial, identity, quantitative-feed and ownership check; its original5e verdict is retained diagnostically.
+
+The selected views retain readable masonry, roofs, contact and projected shadows across household, industrial, canal and outer-wall contexts. The occupied route passes all 15 physical gates, including ordered passage, original/infill entry and restoration, ordinary exact-serial collection and a chunk crossing with live AI/director/physics. Its visible cutaways, bodies, projectiles and hit bursts remain readable. The reduced still confirms actual reduced-motion and flash-off settings at 960×540.
+
+Hard grass/property rectangles and broad plaza paving remain open, as do oversized lavender cobbles in S9, tiny covered-equipment discoverability, stronger district differentiation, per-theme lichen close-ups and soot with an operating-flue owner. Static views do not establish combat or motion cadence; the occupied scripted route does not establish every attack-warning or covered-item case. No comparative-cost or whole-Game performance claim follows.
+
+## Evidence and source scope
+
+`process/execution.json` preserves the final source/cache/external bindings and all eight actual records. `process/runs/<case>/` contains the complete original raw result, final outer guard, original guard-owned launcher stdout/stderr capture and three engine/stdout/stderr logs:48transport files. The guard itself creates each `wrapper.log`; its separately printed final `THERMAL` console line is not part of that launcher capture. No log reconstruction or extra redirect to the same guard-owned file is needed. Native manifests and PNGs retain their exact bytes. `process/root-visual-review.json` binds root's actual selected review. The terminal execution, root review, six native JSON manifests and18 external blobs plus the separately bound later post-run verifier stay uncompressed for direct inspection. Other large text/JSON/log/source files may use deterministic gzip, recorded in `compression-map.json`; decompress to compare their raw SHA256 against `manifest.json`.
+
+Source bodies are bounded to53 explicitly parsed GDScripts plus22 other declared non-image resources under `process/source/`, and18 already captured external program/scene/plan/amendment blobs under `process/external/`. A separate `process/post-run-verifiers/` snapshot records root's later pure still ledger verifier e25f5aca (14actual still checks plus815raw-source comparisons). It was created after S2 native completed and is labeled later verification code; it is outside the18 captured invocation blobs and is not retroactively attributed to a native launch. The full815 required-source and740 finite generated-cache hashes remain intact in the terminal/raw metadata. `process/cache/import-cache-executed.json` records the checksum-verified texture transfer; imported texture binaries and source textures are not duplicated into this packet. The381-entry global-class-cache observation is initial provenance only; no new class-cache copy or registration is claimed.
+
+The [cover](../2026-10-22-linux-cover/README.md), [prop shadows](../2026-10-22-linux-prop-shadows/README.md), [plazas](../2026-10-22-linux-plazas/README.md), [streets](../2026-10-22-linux-streets/README.md) and [weathering](../2026-10-22-linux-weathering/README.md) packets retain earlier stage source proofs, REDs, failed attempts, visual decisions and cost qualifications. They are linked rather than copied. This packet adds the exact combined-main observation only.
+
+## Delivery
+
+This packet was published after terminal root acceptance and release of the engine hold, using the finite resolved [delivery plan](process/delivery-plan.json). All selected source bodies and actual raw, guard, manifest and original image bytes were checked before copying. `.gdignore` was written first. The delivery manifest and compression map record exact raw/delivered hashes; large text uses gzip level 6 with mtime 0 and verified round trips. Earlier packets and failed attempts remain separate.

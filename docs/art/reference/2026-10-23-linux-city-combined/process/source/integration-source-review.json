@@ -1,0 +1,96 @@
+{
+  "status": "SOURCE_AUDIT_NO_RUNTIME_MERGE_BLOCKER_PARSER_SCOPE_ADDITION_RECOMMENDED",
+  "reviewed_main": "84f195829f28ee7890138f19a337f7b36e5654b4",
+  "parents": [
+    "900f63d5351631f0d3db511cd7b0c62b321bf02f",
+    "b298202447a5b3a0cf2b0e8c55c46bf507a7f1c9"
+  ],
+  "changed_source_baseline": "1797bc67",
+  "tracked_worktree_status": "clean at start and end of audit",
+  "untracked_qualification": "Existing unrelated untracked files/import sidecars remain; no entirely-clean-filesystem claim or untracked equality gate.",
+  "stage_source_results": {
+    "cover": {"exact_stage_pins": 5, "differences": []},
+    "props": {
+      "exact_stage_pins": 8,
+      "differences": [
+        {
+          "path": "core/systems/world/chunks/ChunkBlockRenderer.gd",
+          "main_sha256": "3f9d6ff446cb50562b445ffc016ff65cd70ddcd3d3b86e843d72ac349dc55b7f",
+          "cause": "Compared with final9b7 prop source369017c7, only _add_plaza_fills changes to PlazaEdgeKit.style_at and style-based fill texture/offset. Prop-cast code remains byte-identical."
+        },
+        {
+          "path": "core/systems/world/chunks/ChunkBuildData.gd",
+          "main_sha256": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618",
+          "cause": "Compared with final9b7 e529821c, only presentation-only plaza_edge_state field/documentation is added."
+        }
+      ]
+    },
+    "plazas": {
+      "exact_stage_pins": 6,
+      "differences": [
+        {
+          "path": "core/systems/world/chunks/ChunkBlockRenderer.gd",
+          "cause": "Merged3f9 source retains the prop-cast helpers while retaining the reviewed plaza style_at fill logic. Last street merge does not change this file."
+        }
+      ]
+    },
+    "streets_pickup": {
+      "exact_stage_pins": 22,
+      "differences": [
+        {
+          "path": "core/systems/world/ChunkManager.gd",
+          "main_sha256": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+          "cause": "Compared with b298 street source354d2dfc, only PlazaEdgeKit preload, transition preparation and family warmup hooks are added. Main exactly matches reviewed plaza source."
+        },
+        {
+          "path": "project.godot",
+          "main_sha256": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+          "cause": "Compared with b298 project4ef9e853, only the six reviewed damp/lichen shader globals are added. Main exactly matches final weathering project."
+        }
+      ],
+      "critical_exact_pins": {
+        "core/systems/world/proc/SiteParcelsImpl.gd": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+        "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66",
+        "scenes/world/buildings/CityBlockKit.gd": "8c1d11fd92266e62f994a3e8043e72c5e112a641aedbcedb74b82b3437af8ffd",
+        "tools/dev/CityStreetTraversalProbe.gd": "0a3f23935fdd6153f19a606e9b7e9a601a14b72b745234594e102b7604c31755"
+      },
+      "shared_ground_contract": "All three current ChunkGenDistrict city_shared_ground declarations remain true; no shared-ground rollback."
+    },
+    "weathering": {"exact_stage_pins": 21, "differences": []}
+  },
+  "parser_scope": {
+    "immutable_r5_plan": "final-combined-main-command-plan-r5.json",
+    "existing_paths": 48,
+    "missing_existing_paths": [],
+    "changed_non_test_gd_since_approved_baseline": 25,
+    "changed_gd_covered_by_existing_scope": 20,
+    "recommended_extra_paths": [
+      "core/systems/world/proc/chunkgen/ChunkShapeGen.gd",
+      "tools/dev/CityPlanMapProbe.gd",
+      "tools/dev/ObjectiveShadowPreview.gd",
+      "tools/dev/PropShadowSurvey.gd",
+      "tools/dev/WorldCoverCostProbe.gd"
+    ],
+    "recommended_actual_invocation_checked_count": 53,
+    "reason": "ChunkShapeGen.court_polygon is an actual changed runtime dependency called by ChunkGenDistrict. The four new dev scripts are not required by final gameplay captures, but adding their explicit source loads provides bounded coverage of every changed non-test GDScript without running any suite or dev scene.",
+    "origin_byte_checks": {
+      "core/systems/world/proc/chunkgen/ChunkShapeGen.gd": "exact b298; SHA256359d6de393096c70495a3cbf4fd85a5e5395d5cb98c46d86e54aea8415c2e325",
+      "tools/dev/CityPlanMapProbe.gd": "exact b298; SHA2569e15fe430d9a5b2693e398e4a94f890750d31135f3da2fab98ac414d4bdc5004",
+      "tools/dev/ObjectiveShadowPreview.gd": "exact final9b7; SHA25625f7c89ce2edea57298017a3751261841f10175c7b8670c062cd6354e578a1eb",
+      "tools/dev/PropShadowSurvey.gd": "exact final9b7; SHA2563e473b888c9505d7bbe4d8e4a53501a82c906c73c666dcfe071320e013e262d1",
+      "tools/dev/WorldCoverCostProbe.gd": "exact merged8e779847; SHA25618630a78d9285245854268f96935aad823bceffaa908def5bcba97d5a23f240d"
+    },
+    "instruction": "Root should add these paths and expected53 footer only to the actual invocation receipt. Preserve the original R5 plan and separate853 signed-ID amendment. External parser scope remains3."
+  },
+  "class_cache": {
+    "actual_main_cache_entries": 381,
+    "declared_classes_in_recommended53_scope": 20,
+    "path_mapping_failures": [],
+    "finding": "Existing ChunkShapeGen maps to its current res path. The four extra developer scripts, CityWeathering and CityStreetTraversalProbe have no new class_name. No class-cache rewrite is justified by these sources."
+  },
+  "limits": [
+    "Read-only Git/source/cache inspection and scoped hashing only; no engine, runtime/source edit, heavy test or suite, import/cache write, build or compression.",
+    "This proves source integration and parser-scope coverage, not actual combined parser/native success. Root must bind the actual main revision/source/cache at invocation and perform the existing guarded53/3 parser and final captures/route.",
+    "Existing broad plaza topology, tiny locked-pickup readability, per-theme lichen closeup and comparative-cost limitations remain unchanged."
+  ]
+}
