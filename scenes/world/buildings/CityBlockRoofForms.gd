@@ -11,6 +11,14 @@ const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 const RETURN_LIFT := 1.04
 ## roof.gdshader's lit_slope default, for materials that leave it unset.
 const ROOF_LIT_SLOPE := 1.12
+## The main domestic eave: a dark iron gutter with a lit lip, then the eave's
+## soft shade on the wall below. A raised step's face takes the roof
+## family's mid in shade.
+const GUTTER_PX := 3.0
+const GUTTER_IRON := Color(0.17, 0.19, 0.20)
+const GUTTER_LIP := Color(0.55, 0.60, 0.58)
+const EAVE_SHADE := Color(0.10, 0.09, 0.10, 0.35)
+const STEP_FACE := 0.55
 
 ## Fitted S2 L/recessed roofs: independent gable planes and a shallow rim,
 ## with exactly the original visible union and one inherited fade per pixel.
@@ -246,8 +254,18 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 		_face(group, PackedVector2Array([Vector2(top.x, end.y), ridge_end, end]), Color("89958b"))
 	# A lit eave cap, a shaded south fascia and the short side return make
 	# each height change physical; no second outline around every roof tile.
-	if not cross_wing:
-		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, depth), Vector2(top.x, end.y + depth)]), Color("777e79") if slate else Color("62685f"))
+	# The main domestic eave meets the wall itself: an iron gutter, then the
+	# eave's soft shade on the real facade below (plate 08), never a flat band.
+	var dwelling_eave := kind == "dwelling" and not cross_wing
+	if dwelling_eave:
+		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, GUTTER_PX), Vector2(top.x, end.y + GUTTER_PX)]), GUTTER_IRON)
+		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, 1), Vector2(top.x, end.y + 1)]), GUTTER_LIP)
+		var shade := _face(group, PackedVector2Array([Vector2(top.x, end.y + GUTTER_PX), end + Vector2(0, GUTTER_PX), end + Vector2(0, depth + 6.0), Vector2(top.x, end.y + depth + 6.0)]), Color.WHITE)
+		shade.vertex_colors = PackedColorArray([EAVE_SHADE, EAVE_SHADE, Color(EAVE_SHADE, 0.0), Color(EAVE_SHADE, 0.0)])
+	elif not cross_wing:
+		# A raised step over a lower roof: its face in the roof's own shaded tone.
+		var mid: Vector3 = RoofOverlay.SLATE_MID if slate else RoofOverlay.CLAY_MID
+		_face(group, PackedVector2Array([Vector2(top.x, end.y), end, end + Vector2(0, depth), Vector2(top.x, end.y + depth)]), Color(mid.x * STEP_FACE, mid.y * STEP_FACE, mid.z * STEP_FACE))
 	# The short side return faces east, toward the sun: the lit roof's tone.
 	_face(group, PackedVector2Array([Vector2(end.x, top.y), end, end + Vector2(0, depth), Vector2(end.x + 7, top.y + depth)]), return_tone(source, slate))
 	var roof := Polygon2D.new()
@@ -275,7 +293,7 @@ static func _cap(group: Node2D, source: Polygon2D, area: Rect2, along_x: bool, l
 	eave.width = (3 if cross_wing else 4) if civic else 2
 	eave.default_color = Color("99a69c") if slate else Color("8c7962")
 	group.add_child(eave)
-	if not civic:
+	if not civic and not dwelling_eave:
 		var underside := Line2D.new()
 		underside.points = PackedVector2Array([Vector2(top.x,end.y+depth),end+Vector2(0,depth)])
 		underside.width = 3
