@@ -1,0 +1,80 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: fixture: the far occluders start well outside the grown view area
+PASS: fixture: nothing far away is covered before the changes
+PASS: the index visits no far occluder while the view is empty
+PASS: the uncached control reports its disabled index
+PASS: the uncached control visits every loaded roof and face
+PASS: fixture: the moved form now lies in view
+PASS: descendant roof form moved into view: the next indexed refresh has exactly the uncached control's records
+PASS: descendant roof form moved into view: the next indexed refresh samples the same coverage as the control
+PASS: descendant roof form moved into view: the control covers every changed sample
+PASS: descendant roof form moved into view: covered on the next refresh
+PASS: descendant roof form reshaped into view: the next indexed refresh has exactly the uncached control's records
+PASS: descendant roof form reshaped into view: the next indexed refresh samples the same coverage as the control
+PASS: descendant roof form reshaped into view: the control covers every changed sample
+PASS: descendant roof form reshaped into view: covered on the next refresh
+PASS: descendant roof form added in view: the next indexed refresh has exactly the uncached control's records
+PASS: descendant roof form added in view: the next indexed refresh samples the same coverage as the control
+PASS: descendant roof form added in view: the control covers every changed sample
+PASS: descendant roof form added in view: covered on the next refresh
+PASS: descendant roof form removed from view: the next indexed refresh has exactly the uncached control's records
+PASS: descendant roof form removed from view: the next indexed refresh samples the same coverage as the control
+PASS: descendant roof form removed from view: the control leaves every changed sample clear
+PASS: descendant roof form removed from view: cleared on the next refresh
+PASS: roof form added below a leaf node in view: the next indexed refresh has exactly the uncached control's records
+PASS: roof form added below a leaf node in view: the next indexed refresh samples the same coverage as the control
+PASS: roof form added below a leaf node in view: the control covers every changed sample
+PASS: roof form added below a leaf node in view: covered on the next refresh
+PASS: roof form below a leaf node freed: the next indexed refresh has exactly the uncached control's records
+PASS: roof form below a leaf node freed: the next indexed refresh samples the same coverage as the control
+PASS: roof form below a leaf node freed: the control leaves every changed sample clear
+PASS: roof form below a leaf node freed: cleared on the next refresh
+PASS: fixture: the hidden form now lies in view
+PASS: hidden descendant form moved into view: the next indexed refresh has exactly the uncached control's records
+PASS: hidden descendant form moved into view: the next indexed refresh samples the same coverage as the control
+PASS: hidden descendant form moved into view: the control leaves every changed sample clear
+PASS: hidden descendant form moved into view: cleared on the next refresh
+PASS: hidden descendant form shown in view: the next indexed refresh has exactly the uncached control's records
+PASS: hidden descendant form shown in view: the next indexed refresh samples the same coverage as the control
+PASS: hidden descendant form shown in view: the control covers every changed sample
+PASS: hidden descendant form shown in view: covered on the next refresh
+PASS: roof root moved into view: the next indexed refresh has exactly the uncached control's records
+PASS: roof root moved into view: the next indexed refresh samples the same coverage as the control
+PASS: roof root moved into view: the control covers every changed sample
+PASS: roof root moved into view: covered on the next refresh
+PASS: roof ancestor moved into view: the next indexed refresh has exactly the uncached control's records
+PASS: roof ancestor moved into view: the next indexed refresh samples the same coverage as the control
+PASS: roof ancestor moved into view: the control covers every changed sample
+PASS: roof ancestor moved into view: covered on the next refresh
+PASS: fixture: the plane starts outside the view over a footprint that reaches into it
+PASS: roof plane reshaped into view: the next indexed refresh has exactly the uncached control's records
+PASS: roof plane reshaped into view: the next indexed refresh samples the same coverage as the control
+PASS: roof plane reshaped into view: the control covers every changed sample
+PASS: roof plane reshaped into view: covered on the next refresh
+PASS: masonry face moved into view: the next indexed refresh has exactly the uncached control's records
+PASS: masonry face moved into view: the next indexed refresh samples the same coverage as the control
+PASS: masonry face moved into view: the control covers every changed sample
+PASS: masonry face moved into view: covered on the next refresh
+PASS: masonry face ancestor moved into view: the next indexed refresh has exactly the uncached control's records
+PASS: masonry face ancestor moved into view: the next indexed refresh samples the same coverage as the control
+PASS: masonry face ancestor moved into view: the control covers every changed sample
+PASS: masonry face ancestor moved into view: covered on the next refresh
+PASS: masonry face reshaped into view: the next indexed refresh has exactly the uncached control's records
+PASS: masonry face reshaped into view: the next indexed refresh samples the same coverage as the control
+PASS: masonry face reshaped into view: the control covers every changed sample
+PASS: masonry face reshaped into view: covered on the next refresh
+PASS: every changed occluder moved back out of view: the next indexed refresh has exactly the uncached control's records
+PASS: every changed occluder moved back out of view: the next indexed refresh samples the same coverage as the control
+PASS: every changed occluder moved back out of view: the control leaves every changed sample clear
+PASS: every changed occluder moved back out of view: cleared on the next refresh
+PASS: the index still visits no far occluder after the changes
+PASS: an unchanged refresh still reuses the packed snapshot
+PASS: one occluder back in view is the only one the index visits
+PASS: the provider itself can run as the uncached control
+PASS: leaving the control resumes the view index
+PASS: form added after the control round trip: the next indexed refresh has exactly the uncached control's records
+PASS: form added after the control round trip: the next indexed refresh samples the same coverage as the control
+PASS: form added after the control round trip: the control covers every changed sample
+PASS: form added after the control round trip: covered on the next refresh
+WorldCoverInvalidationTest: 77 passed, 0 failed

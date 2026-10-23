@@ -1,0 +1,6 @@
+SCRIPT ERROR: Invalid access to property or key 'kind' on a base object of type 'Dictionary'.
+          at: _target_strength (res://tools/dev/CityEntityCoverPreview.gd:364)
+          GDScript backtrace (most recent call first):
+              [0] _target_strength (res://tools/dev/CityEntityCoverPreview.gd:364)
+              [1] _sample_live_depth (res://tools/dev/CityMovingCoverPreview.gd:290)
+              [2] _process (res://tools/dev/CityMovingCoverPreview.gd:269)

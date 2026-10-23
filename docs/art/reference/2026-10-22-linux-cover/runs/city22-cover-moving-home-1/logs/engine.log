@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+[Game] ready seg=2 race=human style=ranged seed=16102026
+SCRIPT ERROR: Invalid access to property or key 'kind' on a base object of type 'Dictionary'.
+   at: _target_strength (res://tools/dev/CityEntityCoverPreview.gd:364)
+   GDScript backtrace (most recent call first):
+       [0] _target_strength (res://tools/dev/CityEntityCoverPreview.gd:364)
+       [1] _sample_live_depth (res://tools/dev/CityMovingCoverPreview.gd:290)
+       [2] _process (res://tools/dev/CityMovingCoverPreview.gd:269)
+WorldCoverMovingVisualProbe: frames=9 moving_body_transitions=1 home_plates=3 failures=0

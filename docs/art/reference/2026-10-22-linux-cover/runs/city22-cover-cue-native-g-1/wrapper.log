@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-cue-native-g-1",
+ "queued_seconds": 116.2,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 40.341,
+ "peak_rss_mb": 364,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/21 lines) ---
+WorldCueCoverRenderTest probe=fallback resized atlas region contact hidden=512 changed=512 exposed=512 delta=0.0000 restored=0.0000
+WorldCueCoverRenderTest probe=front fallback with raised pixels over roof hidden=0 changed=0 exposed=1024 delta=0.0000 restored=0.0000
+WorldCueCoverRenderTest: 67 passed, 0 failed

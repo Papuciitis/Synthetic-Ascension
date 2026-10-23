@@ -1,0 +1,148 @@
+{
+  "verdict": "BOUNDED_IMPROVEMENT_BUT_SMALL_EQUIPMENT_DISCOVERABILITY_REMAINS_OPEN",
+  "scope": "Independent native-size original PNG visual review; no engines, Git, tests, image edits or heavy packet rebuild. Only compact external review artifact written.",
+  "raw": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-moving-tree-r8-1/run-results.json",
+    "sha256": "4e1da203e5b67020dbf7584b62762bd59e2e2fb9ec024a5c856f07ae14c87fb8",
+    "actual_exit": 0,
+    "runner_exit": 0,
+    "diagnostics": []
+  },
+  "guard": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-cover-moving-tree-r8-thermal.json",
+    "sha256": "ad14f0e6de6d4b7edf06116c838e21f4d0f0c1d981f28174c5c1f19bd0ab2778",
+    "reason": "completed",
+    "wrapper_exit": 0
+  },
+  "visual_manifest": {
+    "path": "/var/tmp/sa-city22/cover/moving-tree-r8/visual-cover-info.json",
+    "sha256": "9213c16cde57141dd961ed49f2862d4ef0d2f95d9a080bd05000000a2792234f",
+    "failures": 0,
+    "save_writes": 0,
+    "render_fps": 15,
+    "physics_hz": 60
+  },
+  "launched_sources": {
+    "tools/dev/WorldCoverMovingVisualProbe.gd": "4ab8a4100dbb99487f88f7965a812762dc29bae165eba96894adb17b23de1b1e",
+    "core/systems/world/visibility/pickup_cover.gdshader": "a399f0e37d1cadf82712c9efb668eb8d62bb0866521ded5d415846332318e367"
+  },
+  "images": [
+    {
+      "path": "/var/tmp/sa-city22/cover/moving-tree-r8/tree-front.png",
+      "sha256": "f609d813908cb5b25813d3667a8c9c0761363cec6e0c22b97b52a6155931010e",
+      "reviewed_original": true,
+      "role": "R8 original"
+    },
+    {
+      "path": "/var/tmp/sa-city22/cover/moving-tree-r8/tree-behind.png",
+      "sha256": "bd54c2972810aed4ee9a038fb3a88bddf47d37fad4dc425e1db04e287bd341ee",
+      "reviewed_original": true,
+      "role": "R8 original"
+    },
+    {
+      "path": "/var/tmp/sa-city22/cover/moving-tree-r8/tree-front-restored.png",
+      "sha256": "fa789bcf51e684d5bc0a9e53b9a7dfd8f72fac46e2d1f5949b99709af989a3d4",
+      "reviewed_original": true,
+      "role": "R8 original"
+    },
+    {
+      "path": "/var/tmp/sa-city22/cover/moving-tree-r8/tree-normal-equipment.png",
+      "sha256": "fa109efa62a9f87e7eb840d9eae1dc7403a77f52af1d89ec9bfcfd6f261eec48",
+      "reviewed_original": true,
+      "role": "R8 original"
+    },
+    {
+      "path": "/var/tmp/sa-city22/cover/moving-tree-r7/tree-front-restored.png",
+      "sha256": "521de3eddc0e5899c1aeb318080e411e0a67c4f9c080551acb87ce33568fe457",
+      "reviewed_original": true,
+      "role": "R7 qualitative reference only"
+    },
+    {
+      "path": "/var/tmp/sa-city22/cover/moving-tree-r7/tree-normal-equipment.png",
+      "sha256": "fb2fbf91d994cfef9b18083eb209ae05d91fa96477389c719b73e8d91de87b89",
+      "reviewed_original": true,
+      "role": "R7 qualitative reference only"
+    }
+  ],
+  "normal_equipment_matched_reference": {
+    "passed": true,
+    "same_camera_and_view": true,
+    "comparison_camera_only_held": true,
+    "health_stays_locked": true,
+    "ordinary_wait_simulation_seconds": 0.366666666666685,
+    "ordinary_physics_frames": 22,
+    "original_locked_counts_preserved": true,
+    "locked_reference_camera": "(50.89394, 6655.259)",
+    "locked_reference_canvas": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (909.1061, -6115.259)]",
+    "before": [
+      {
+        "icon_modulate": "(0.85, 1.0, 1.0, 0.55)",
+        "instance_id": 1006465205824,
+        "material_id": -9223371030188242887,
+        "monitorable": false,
+        "monitoring": false,
+        "persistent_world_drop": true,
+        "pickup_ready": false,
+        "player_distance": 218.08576965332,
+        "same_owner_world_as_third_plate": true,
+        "texture_id": -9223371494413826372,
+        "world": "(-168.0, 6616.0)"
+      },
+      {
+        "icon_modulate": "(0.85, 1.0, 1.0, 0.55)",
+        "instance_id": 1006934968393,
+        "material_id": -9223371029718480812,
+        "monitorable": false,
+        "monitoring": false,
+        "persistent_world_drop": true,
+        "pickup_ready": false,
+        "player_distance": 141.095291137695,
+        "same_owner_world_as_third_plate": true,
+        "texture_id": -9223371494413826372,
+        "world": "(32.0, 6880.0)"
+      }
+    ],
+    "after": [
+      {
+        "icon_modulate": "(0.85, 1.0, 1.0, 1.0)",
+        "instance_id": 1006465205824,
+        "monitorable": true,
+        "monitoring": true,
+        "opaque_shared_exposed": 0,
+        "opaque_tree_covered": 19,
+        "picked": false,
+        "pickup_ready": true,
+        "player_distance": 217.161010742188,
+        "same_position_material_texture_and_owner_state": true,
+        "vfx_locked": false,
+        "world": "(-168.0, 6616.0)"
+      },
+      {
+        "icon_modulate": "(0.85, 1.0, 1.0, 1.0)",
+        "instance_id": 1006934968393,
+        "monitorable": true,
+        "monitoring": true,
+        "opaque_shared_exposed": 19,
+        "opaque_tree_covered": 0,
+        "picked": false,
+        "pickup_ready": true,
+        "player_distance": 140.218154907227,
+        "same_position_material_texture_and_owner_state": true,
+        "vfx_locked": false,
+        "world": "(32.0, 6880.0)"
+      }
+    ]
+  },
+  "observations": [
+    "The denser normal covered ring is a visible qualitative improvement over retained R7, whose camera differs; no pixelmatchedbeforeafter claim.",
+    "At original960x540, the locked covered ring near370..373,245..255 remains very hard to distinguish from leaf texture. The normal ring still needs foreknowledge of its exact location.",
+    "Health potion shapes and actor silhouettes read more readily than the tiny ring.",
+    "Passing19/19 source-opaque fragment gates establishes real same-owner coverage, not practical icon recognition.",
+    "No new general player/enemy appearance regression was apparent in these four originals; moving combat, effects and crowd overlap differ between stills."
+  ],
+  "limits": [
+    "This review does not accept equipment discoverability as solved. Root may retain the bounded improvement with this open visual limitation or choose a further narrowly scoped contour/scale treatment.",
+    "The original R7 failure remains failed due unmatched camera. R8 fixes that comparison gate and keeps real owners/points/ordinary readiness/health lock/physics live.",
+    "No performance or all-item/all-background readability conclusion. No fixed colour/alpha target is inferred from these screenshots."
+  ]
+}

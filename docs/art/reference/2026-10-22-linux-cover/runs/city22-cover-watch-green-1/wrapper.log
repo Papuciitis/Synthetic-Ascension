@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-watch-green-1",
+ "queued_seconds": 30.0,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 28.872,
+ "peak_rss_mb": 461,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/55 lines) ---
+PASS: FrontEdge child_entered_tree disconnects when its provider is freed
+PASS: FrontEdge child_exiting_tree disconnects when its provider is freed
+WorldCoverWatchLifecycleTest: 52 passed, 0 failed

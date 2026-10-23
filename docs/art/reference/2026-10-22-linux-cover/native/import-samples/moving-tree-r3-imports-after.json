@@ -1,0 +1,462 @@
+{
+  "schema": 1,
+  "label": "city22-cover-moving-tree-r3-after",
+  "project": "/tmp/sa-wp2-cover",
+  "started_utc": "2026-10-22T21:50:14.052569+00:00",
+  "ended_utc": "2026-10-22T21:50:14.164046+00:00",
+  "sampled_bytes": 18937531,
+  "per_file_limit": 33554432,
+  "total_limit": 268435456,
+  "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+  "seeds": [
+    "assets/world/city_block/clay.png",
+    "assets/world/city_block/slate.png",
+    "assets/world/city_block/temperate_tree.png",
+    "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+    "assets/textures/characters/baked/grunt_frames.tres",
+    "assets/textures/characters/baked/spitter_frames.tres",
+    "assets/textures/characters/baked/human_frames.tres",
+    "assets/textures/characters/baked/dragonborn_frames.tres",
+    "assets/textures/characters/baked/elf_frames.tres",
+    "assets/textures/characters/baked/warforged_frames.tres",
+    "core/actors/enemy/EnemySpec_Brute.tres",
+    "scenes/world/pickups/ItemPickup.tscn",
+    "scenes/world/pickups/HealthPickup.tscn"
+  ],
+  "entries": [
+    {
+      "path": ".godot/imported/clay.png-1d4c9a964a459c436387b5bf6be3b000.ctex",
+      "reason": "literal resource reference from assets/world/city_block/clay.png.import",
+      "status": "sampled",
+      "bytes": 1513258,
+      "sha256": "511dfce75c1178e00c68bc776e0ece13c861be170a9e30255a8939b839c74286"
+    },
+    {
+      "path": ".godot/imported/clay.png-1d4c9a964a459c436387b5bf6be3b000.md5",
+      "reason": "existing import metadata companion for .godot/imported/clay.png-1d4c9a964a459c436387b5bf6be3b000.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "3f154beac7e4877ec21b6eb53599f8020575cd580e3731f1e17b36a454af450c"
+    },
+    {
+      "path": ".godot/imported/dragonborn_atlas.png-f56d71c09874c637adb4318676a88739.ctex",
+      "reason": "literal resource reference from assets/textures/characters/baked/dragonborn_atlas.png.import",
+      "status": "sampled",
+      "bytes": 166716,
+      "sha256": "3b8a03f474aa53c5532237be8936af5e61e584bc02a65853768721161233394f"
+    },
+    {
+      "path": ".godot/imported/dragonborn_atlas.png-f56d71c09874c637adb4318676a88739.md5",
+      "reason": "existing import metadata companion for .godot/imported/dragonborn_atlas.png-f56d71c09874c637adb4318676a88739.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "bdf8b6089c2375db93879ff4c77045d4d8210a9d0388dbac7be042197dd8fbf8"
+    },
+    {
+      "path": ".godot/imported/elf_atlas.png-5a865b04b88290e0624265a28fe558e7.ctex",
+      "reason": "literal resource reference from assets/textures/characters/baked/elf_atlas.png.import",
+      "status": "sampled",
+      "bytes": 138776,
+      "sha256": "5b951d73a02e899060148beb4bc80a6707b5ce560b916885ef04f92abb1350d1"
+    },
+    {
+      "path": ".godot/imported/elf_atlas.png-5a865b04b88290e0624265a28fe558e7.md5",
+      "reason": "existing import metadata companion for .godot/imported/elf_atlas.png-5a865b04b88290e0624265a28fe558e7.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "df8d446fd9292b0210f8d68a6b5de49ff6e061cfadb9825a66216c0536c4c49f"
+    },
+    {
+      "path": ".godot/imported/enemy_roles_v4.png-4bc2149130929848c5f882c04f8abaed.ctex",
+      "reason": "literal resource reference from assets/textures/characters/generated/enemy_roles_v4.png.import",
+      "status": "sampled",
+      "bytes": 1239960,
+      "sha256": "2001bed7dde38a1c093496e7af033eed43101a600d1b645a7a31c6b76dcbcc3a"
+    },
+    {
+      "path": ".godot/imported/enemy_roles_v4.png-4bc2149130929848c5f882c04f8abaed.md5",
+      "reason": "existing import metadata companion for .godot/imported/enemy_roles_v4.png-4bc2149130929848c5f882c04f8abaed.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "f27a1f6cd9ee129001f4468b694c59bee787a2722c4e1bf18710835a14c37034"
+    },
+    {
+      "path": ".godot/imported/fruit_tree_overhead_v2.png-a0a5d62617d2f4a383fb02607f3861da.ctex",
+      "reason": "literal resource reference from assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import",
+      "status": "sampled",
+      "bytes": 1464678,
+      "sha256": "40f72e63c6202fd2b22c2f2dde3de43bf221fe52bf3aa22dcf65112c1f1a9418"
+    },
+    {
+      "path": ".godot/imported/fruit_tree_overhead_v2.png-a0a5d62617d2f4a383fb02607f3861da.md5",
+      "reason": "existing import metadata companion for .godot/imported/fruit_tree_overhead_v2.png-a0a5d62617d2f4a383fb02607f3861da.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "99320e006e362dfc4788d25c890e9e4d287520ec4859a71fe1fd78f3d8880358"
+    },
+    {
+      "path": ".godot/imported/grunt_atlas.png-11ba27334d8d5fb5cb815c90c75eefaf.ctex",
+      "reason": "literal resource reference from assets/textures/characters/baked/grunt_atlas.png.import",
+      "status": "sampled",
+      "bytes": 58700,
+      "sha256": "b2e6bc4cf6eb19a527cce5a45e518982c7f381ee497b71848d032356fb08ba98"
+    },
+    {
+      "path": ".godot/imported/grunt_atlas.png-11ba27334d8d5fb5cb815c90c75eefaf.md5",
+      "reason": "existing import metadata companion for .godot/imported/grunt_atlas.png-11ba27334d8d5fb5cb815c90c75eefaf.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "2e10e52ca813e754695e0cd9df5d0a4cd00f2b8ecfb2edb2b0b638ab705f842c"
+    },
+    {
+      "path": ".godot/imported/health_pickup.png-a5f7830de75cb45a15870ec5402ed2da.ctex",
+      "reason": "literal resource reference from assets/textures/items/pickups/health_pickup.png.import",
+      "status": "sampled",
+      "bytes": 276,
+      "sha256": "17a347126722d71a3a9239395486976e3f5435772f5c78ffc9c403a16340a1a0"
+    },
+    {
+      "path": ".godot/imported/health_pickup.png-a5f7830de75cb45a15870ec5402ed2da.md5",
+      "reason": "existing import metadata companion for .godot/imported/health_pickup.png-a5f7830de75cb45a15870ec5402ed2da.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "e704cfe381d8e95322b50ea6d01b540edb01d80b28bfc43ea062cd366bf512f7"
+    },
+    {
+      "path": ".godot/imported/human_atlas.png-b26a87b7e4e25c734a5cf43c0b0c96bf.ctex",
+      "reason": "literal resource reference from assets/textures/characters/baked/human_atlas.png.import",
+      "status": "sampled",
+      "bytes": 132396,
+      "sha256": "3e00f5dcb3556814f4e8cf26a571fa42dcb6f9d0df811c4b4e3f67add06f7db0"
+    },
+    {
+      "path": ".godot/imported/human_atlas.png-b26a87b7e4e25c734a5cf43c0b0c96bf.md5",
+      "reason": "existing import metadata companion for .godot/imported/human_atlas.png-b26a87b7e4e25c734a5cf43c0b0c96bf.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "07c988f8eb3cab1a7ce4d897029eac82b11cb01f0d60463f0dd7c6f8a4a7225f"
+    },
+    {
+      "path": ".godot/imported/slate.png-50ebe8d0cd9429f2053b65506f399231.ctex",
+      "reason": "literal resource reference from assets/world/city_block/slate.png.import",
+      "status": "sampled",
+      "bytes": 1367378,
+      "sha256": "9ba168c28782e408372795f7a7d22e152d5f4db48c75443529d7ddb4a467da12"
+    },
+    {
+      "path": ".godot/imported/slate.png-50ebe8d0cd9429f2053b65506f399231.md5",
+      "reason": "existing import metadata companion for .godot/imported/slate.png-50ebe8d0cd9429f2053b65506f399231.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "889f759826d43c17fd6557d6f3868146194a43a790cbb8c9b3a8c1d277aed845"
+    },
+    {
+      "path": ".godot/imported/spitter_atlas.png-4cc24143a114201e333babe1244661ae.ctex",
+      "reason": "literal resource reference from assets/textures/characters/baked/spitter_atlas.png.import",
+      "status": "sampled",
+      "bytes": 51502,
+      "sha256": "e3c6abd2f90b4862dc8a04caf6e43a6abc30b8ca5e9692d6647c95ede6d8abcd"
+    },
+    {
+      "path": ".godot/imported/spitter_atlas.png-4cc24143a114201e333babe1244661ae.md5",
+      "reason": "existing import metadata companion for .godot/imported/spitter_atlas.png-4cc24143a114201e333babe1244661ae.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "03641e10fa3d8b9ad262a7b7f520991092cbda6ec50330cff4a1d72257fe60b1"
+    },
+    {
+      "path": ".godot/imported/temperate_tree.png-8660e727334124bca444a767432b9d83.ctex",
+      "reason": "literal resource reference from assets/world/city_block/temperate_tree.png.import",
+      "status": "sampled",
+      "bytes": 1533632,
+      "sha256": "85be090925e06fd55fda1f2a7366cceb8365b81632d0c913062e785b57292858"
+    },
+    {
+      "path": ".godot/imported/temperate_tree.png-8660e727334124bca444a767432b9d83.md5",
+      "reason": "existing import metadata companion for .godot/imported/temperate_tree.png-8660e727334124bca444a767432b9d83.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "5b32d11b0f9fc4ff4e42a7ad0e21ba0f1f815174e41b860dda35eb8015df7067"
+    },
+    {
+      "path": ".godot/imported/warforged_atlas.png-275f26f03a5c0595f7b5e91a57028cb5.ctex",
+      "reason": "literal resource reference from assets/textures/characters/baked/warforged_atlas.png.import",
+      "status": "sampled",
+      "bytes": 169836,
+      "sha256": "b8cb8a05ee261b9c98ce267ce604ea67ca0ced561568c14c290613107e62eef2"
+    },
+    {
+      "path": ".godot/imported/warforged_atlas.png-275f26f03a5c0595f7b5e91a57028cb5.md5",
+      "reason": "existing import metadata companion for .godot/imported/warforged_atlas.png-275f26f03a5c0595f7b5e91a57028cb5.ctex",
+      "status": "sampled",
+      "bytes": 91,
+      "sha256": "82a14cbbc0f53bd3bee318c45ce0bd0e24ad4d215717d09cb4a6ae8658a342bf"
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+      "reason": "explicit launcher sample",
+      "status": "sampled",
+      "bytes": 13817,
+      "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5"
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+      "reason": "explicit launcher sample",
+      "status": "sampled",
+      "bytes": 8660,
+      "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e"
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-short-r3-queue.py",
+      "reason": "explicit launcher sample",
+      "status": "sampled",
+      "bytes": 1580,
+      "sha256": "1166eb138d0f6897f93e03cbcbe865541881d73cd777216632770a1035443ca8"
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+      "reason": "explicit launcher sample",
+      "status": "sampled",
+      "bytes": 8176,
+      "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba"
+    },
+    {
+      "path": "assets/textures/characters/baked/dragonborn_atlas.png",
+      "reason": "literal resource reference from assets/textures/characters/baked/dragonborn_frames.tres",
+      "status": "sampled",
+      "bytes": 197666,
+      "sha256": "bd008eb0cbeda571ff113d40a08ff4c844810d2851976f48317139e79c1427d0"
+    },
+    {
+      "path": "assets/textures/characters/baked/dragonborn_atlas.png.import",
+      "reason": "import sidecar for assets/textures/characters/baked/dragonborn_atlas.png",
+      "status": "sampled",
+      "bytes": 984,
+      "sha256": "23ae9ef363155e1676a1683dd48cead6190efd63a1c0018a270bf6ec90d30cda"
+    },
+    {
+      "path": "assets/textures/characters/baked/dragonborn_frames.tres",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 12940,
+      "sha256": "0ce77df7c7b049910c86a4b3c270c72ffbabc76241e5c4a061eef36f803ce125"
+    },
+    {
+      "path": "assets/textures/characters/baked/elf_atlas.png",
+      "reason": "literal resource reference from assets/textures/characters/baked/elf_frames.tres",
+      "status": "sampled",
+      "bytes": 162796,
+      "sha256": "9f779701b79232b70fe54018617ee67774ed1ae430e36f9363afe142da574e16"
+    },
+    {
+      "path": "assets/textures/characters/baked/elf_atlas.png.import",
+      "reason": "import sidecar for assets/textures/characters/baked/elf_atlas.png",
+      "status": "sampled",
+      "bytes": 964,
+      "sha256": "4dd5fad39ecf9f37b37f4753c6bd7af75d8288ec396f08be87b77e7fb4b78ad8"
+    },
+    {
+      "path": "assets/textures/characters/baked/elf_frames.tres",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 12700,
+      "sha256": "a7f0d5e1610a84aa8d3f6458cf44ffc1fd5ed003fcdb8ec26becfba9c2bdd09f"
+    },
+    {
+      "path": "assets/textures/characters/baked/grunt_atlas.png",
+      "reason": "literal resource reference from assets/textures/characters/baked/grunt_frames.tres",
+      "status": "sampled",
+      "bytes": 67013,
+      "sha256": "7bd96666bb92e1f1476a001706bf0205fa70868ce3dc76cde5fe5760f44121af"
+    },
+    {
+      "path": "assets/textures/characters/baked/grunt_atlas.png.import",
+      "reason": "import sidecar for assets/textures/characters/baked/grunt_atlas.png",
+      "status": "sampled",
+      "bytes": 970,
+      "sha256": "31659fb24cf4556db892c8e0f0f19cf485f0a971db6dcd54c2b1ecd4fd01fa77"
+    },
+    {
+      "path": "assets/textures/characters/baked/grunt_frames.tres",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 4918,
+      "sha256": "7e0ee77a0b4b7172f989d122e7b731ffaf6e178bf50ba5356b38294850cdb749"
+    },
+    {
+      "path": "assets/textures/characters/baked/human_atlas.png",
+      "reason": "literal resource reference from assets/textures/characters/baked/human_frames.tres",
+      "status": "sampled",
+      "bytes": 157181,
+      "sha256": "d47197b5e2ade7ddf825c85c564432478a1dd035a6c175cf0978dd7fccadc02b"
+    },
+    {
+      "path": "assets/textures/characters/baked/human_atlas.png.import",
+      "reason": "import sidecar for assets/textures/characters/baked/human_atlas.png",
+      "status": "sampled",
+      "bytes": 970,
+      "sha256": "9a95f5711ce0c2620fc69e053b9e5aed958ffc17a1cc6533278835ae1b2a78a6"
+    },
+    {
+      "path": "assets/textures/characters/baked/human_frames.tres",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 12933,
+      "sha256": "7efd20215dda5438d53d12410da1a75c3b089c18237b113bfba222c228ca9c29"
+    },
+    {
+      "path": "assets/textures/characters/baked/spitter_atlas.png",
+      "reason": "literal resource reference from assets/textures/characters/baked/spitter_frames.tres",
+      "status": "sampled",
+      "bytes": 59553,
+      "sha256": "9da1555a65701f312169f878e6137d351c6dca6a99b4645b3d2948ed0e285b6f"
+    },
+    {
+      "path": "assets/textures/characters/baked/spitter_atlas.png.import",
+      "reason": "import sidecar for assets/textures/characters/baked/spitter_atlas.png",
+      "status": "sampled",
+      "bytes": 976,
+      "sha256": "35e8798cf09dcf310cfde3ab56c39d5b267b9ac681709d88d14ab2b1b2ca0a6d"
+    },
+    {
+      "path": "assets/textures/characters/baked/spitter_frames.tres",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 4901,
+      "sha256": "a9f99912cf908d6d1b8e6b87f5825e7c31be7056684d57ce5d1cd79cc8c67266"
+    },
+    {
+      "path": "assets/textures/characters/baked/warforged_atlas.png",
+      "reason": "literal resource reference from assets/textures/characters/baked/warforged_frames.tres",
+      "status": "sampled",
+      "bytes": 199038,
+      "sha256": "22aac03ea33c6c27237e23d9d1598f816d09c386e34b7be66259286af8d2df0a"
+    },
+    {
+      "path": "assets/textures/characters/baked/warforged_atlas.png.import",
+      "reason": "import sidecar for assets/textures/characters/baked/warforged_atlas.png",
+      "status": "sampled",
+      "bytes": 981,
+      "sha256": "e06c989ae0926fb608786f13c4251f548a48771820ecbd45055b34cd96e8550d"
+    },
+    {
+      "path": "assets/textures/characters/baked/warforged_frames.tres",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 12938,
+      "sha256": "fb386af61aa1ca172cd7a2501d690fabded2996ece6739773fdaf06e609164af"
+    },
+    {
+      "path": "assets/textures/characters/generated/enemy_brute.tres",
+      "reason": "literal resource reference from core/actors/enemy/EnemySpec_Brute.tres",
+      "status": "sampled",
+      "bytes": 267,
+      "sha256": "6bda778ed375a624d14a05d13255ea3bdaceb1e478b59e93d9467cc75b2ebf60"
+    },
+    {
+      "path": "assets/textures/characters/generated/enemy_roles_v4.png",
+      "reason": "literal resource reference from assets/textures/characters/generated/enemy_brute.tres",
+      "status": "sampled",
+      "bytes": 1785012,
+      "sha256": "d312de2c81eb4896ca4fcc2deb6ad259843dd43110f712e609dc7b6963b47c16"
+    },
+    {
+      "path": "assets/textures/characters/generated/enemy_roles_v4.png.import",
+      "reason": "import sidecar for assets/textures/characters/generated/enemy_roles_v4.png",
+      "status": "sampled",
+      "bytes": 983,
+      "sha256": "d9e3786ef4c71f7effe3b3c5abe2243b12dde29e71f4b7180a0eded4af3d3572"
+    },
+    {
+      "path": "assets/textures/items/pickups/health_pickup.png",
+      "reason": "literal resource reference from scenes/world/pickups/HealthPickup.tscn",
+      "status": "sampled",
+      "bytes": 311,
+      "sha256": "01e99e3c53361fb13bbdfe14e665c0650edbcebb3fdab1348eaaddff27b2a11e"
+    },
+    {
+      "path": "assets/textures/items/pickups/health_pickup.png.import",
+      "reason": "import sidecar for assets/textures/items/pickups/health_pickup.png",
+      "status": "sampled",
+      "bytes": 972,
+      "sha256": "26e21b81ede1846de2b56a62d753cdd2ee5991212464263754c99c90c5e7e052"
+    },
+    {
+      "path": "assets/world/city_block/clay.png",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 2143317,
+      "sha256": "f636529852fe4d6d406010ccbd8b379fa18bb3a24b9d4efa62d4988f902d4f60"
+    },
+    {
+      "path": "assets/world/city_block/clay.png.import",
+      "reason": "import sidecar for assets/world/city_block/clay.png",
+      "status": "sampled",
+      "bytes": 939,
+      "sha256": "fca4377a9396f0da125a45b05136b4b3feb64f9a7f7d914ed2efbe952169809b"
+    },
+    {
+      "path": "assets/world/city_block/slate.png",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 2067227,
+      "sha256": "bb09a59686a36a1d33bac41ca568a8c872e859fc78cdea02d198840cb70e3247"
+    },
+    {
+      "path": "assets/world/city_block/slate.png.import",
+      "reason": "import sidecar for assets/world/city_block/slate.png",
+      "status": "sampled",
+      "bytes": 942,
+      "sha256": "2abc937cc0b88be429328824c259b623b3a4b2e6d1f6a13aed25084f5ccd460d"
+    },
+    {
+      "path": "assets/world/city_block/temperate_tree.png",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 2094193,
+      "sha256": "c8a2dfe0b7ce901e2d92db2a4b0e1e813f859d41a8eaefddbe287fed7f0357ef"
+    },
+    {
+      "path": "assets/world/city_block/temperate_tree.png.import",
+      "reason": "import sidecar for assets/world/city_block/temperate_tree.png",
+      "status": "sampled",
+      "bytes": 970,
+      "sha256": "2d8260dd9200d5bd10869800a289d57babf13647703f06bc146d36ec5e0fd8f5"
+    },
+    {
+      "path": "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 2057277,
+      "sha256": "9ef6f26a024704bbb9eafe8739568a9280a7efe5e243fab7b62a43f52f52ab60"
+    },
+    {
+      "path": "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import",
+      "reason": "import sidecar for assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+      "status": "sampled",
+      "bytes": 1003,
+      "sha256": "8e29c27f662a0a7ef2da58ad9be26767b90624e2335ff107a9dc8c0df4470ac7"
+    },
+    {
+      "path": "core/actors/enemy/EnemySpec_Brute.tres",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 924,
+      "sha256": "142f048edd991ba1496b329a854d461963052b0f1cb988375cba3c24427ece93"
+    },
+    {
+      "path": "scenes/world/pickups/HealthPickup.tscn",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 820,
+      "sha256": "4da72794beff2a295377e45d797461afd2b3ac7b484b1595f400936fc044f7e5"
+    },
+    {
+      "path": "scenes/world/pickups/ItemPickup.tscn",
+      "reason": "selected source seed",
+      "status": "sampled",
+      "bytes": 1519,
+      "sha256": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b"
+    }
+  ]
+}

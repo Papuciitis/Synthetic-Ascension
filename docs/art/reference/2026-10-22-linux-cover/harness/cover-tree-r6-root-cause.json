@@ -1,0 +1,122 @@
+{
+  "kind": "offline reproduction of existing camera filter from raw actual r5 frame; not a new engine test",
+  "r5_manifest": "/var/tmp/sa-city22/cover/moving-tree-r5/visual-cover-info.json",
+  "r5_manifest_sha256": "0cdfaa9c8e70fe66953a25a3a472164dbf0f8803c622838729caee13053cda36",
+  "r5_first_frame": {
+    "file": "frames/frame-0000.png",
+    "simulation_time": 0.0,
+    "camera": "(44.0, 6656.0)",
+    "canvas_transform": "[X: (1.0, 0.0), Y: (0.0, 1.0), O: (921.2355, -5324.012)]",
+    "logical_viewport": "[P: (0.0, 0.0), S: (1920.0, 1080.0)]"
+  },
+  "r5_actual_world_bounds": [
+    -921.2355,
+    5324.012,
+    1920.0,
+    1080.0
+  ],
+  "expected_reset_follow_bounds": [
+    -916.0,
+    6116.0,
+    1920.0,
+    1080.0
+  ],
+  "searches": [
+    {
+      "role": "equipment",
+      "desired": [
+        32.0,
+        6880.0
+      ],
+      "candidates": 81,
+      "r5_effective_view_eligible_centres": 0,
+      "corrected_follow_view_eligible_centres": 81,
+      "world_y_range": [
+        6624,
+        7136
+      ]
+    },
+    {
+      "role": "health",
+      "desired": [
+        160.0,
+        6880.0
+      ],
+      "candidates": 81,
+      "r5_effective_view_eligible_centres": 0,
+      "corrected_follow_view_eligible_centres": 81,
+      "world_y_range": [
+        6624,
+        7136
+      ]
+    },
+    {
+      "role": "Spitter",
+      "desired": [
+        160.0,
+        6912.0
+      ],
+      "candidates": 81,
+      "r5_effective_view_eligible_centres": 0,
+      "corrected_follow_view_eligible_centres": 72,
+      "world_y_range": [
+        6688,
+        7200
+      ]
+    }
+  ],
+  "r5_result": {
+    "failures": 5,
+    "covered_projectiles": 24,
+    "exposed_projectiles": 42,
+    "covered_windups": 15,
+    "exposed_windups": 0,
+    "counts": {
+      "equipment/covered": 266,
+      "equipment/tree/covered": 266,
+      "health/covered": 70,
+      "health/tree/covered": 70,
+      "ordinary/covered": 296,
+      "ordinary/exposed": 886,
+      "ordinary/partial": 7,
+      "ordinary/tree/covered": 127
+    },
+    "moving_body_transitions": 3,
+    "classification": "actual logical/harness failures, guard completed; no visual acceptance"
+  },
+  "disabled_body_errors": {
+    "raw_log": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-moving-tree-r5-1/logs/engine.log",
+    "old_lines": [
+      292,
+      323
+    ],
+    "calls_before_player_enable": true,
+    "old_clear_flags_are_valid_native_capsule_proof": false
+  },
+  "source_checks": {
+    "unchanged_functions": [
+      "_prepare_runtime",
+      "_visual_finish_phase",
+      "_physics_process",
+      "_grab_live",
+      "_walk_to",
+      "_live_wait",
+      "_live_step",
+      "_live_sidestep",
+      "_stage_visual_home",
+      "_visual_plate",
+      "_visual_frame",
+      "_visual_enemy",
+      "_visual_pickup",
+      "_visual_texture_fragments",
+      "_visual_fragment",
+      "_visual_material",
+      "_visual_track",
+      "_shutdown"
+    ],
+    "all_assertion_and_shutdown_bytes_unchanged": true,
+    "all_locals_explicitly_typed": true,
+    "no_test_move_calls": true,
+    "engine_or_native_parser_run_by_preparer": false
+  }
+}

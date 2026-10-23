@@ -1,0 +1,93 @@
+{
+  "status": "source_only_prepared_unparsed_unrun",
+  "old_native_r5_tool_sha256": "51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7",
+  "old_native_r5_tool_snapshot": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-basis/51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7-WorldCoverMovingVisualProbe.gd",
+  "new_tool_sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+  "artifacts": [
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+      "sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+      "bytes": 43625
+    },
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.tscn",
+      "sha256": "88dae1b622468347b76b82a15ff69d4afbdf055b58513f2620db788c07a1bbc2",
+      "bytes": 205
+    },
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.md",
+      "sha256": "e1a227a524cb3c7d7aebc4d70685fcd396e233b477e7c33fa3dafe697ef09e0f",
+      "bytes": 7858
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-tool.diff",
+      "sha256": "706c5963cd0e9f1970ea9f0a38ab7504504d2fc8c39f31572c3828c07c2a45f7",
+      "bytes": 14558
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-queue.py",
+      "sha256": "d38674c43fa1ead49a13ba7d7a1851e5f577ca6efe210c6a157aa4280478eb06",
+      "bytes": 5273
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-driver.diff",
+      "sha256": "13c693e25b4810b2cedc600f2092ac938830a2504231a8e27e348d5e5a50795a",
+      "bytes": 2245
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-root-cause.json",
+      "sha256": "6727d6de03c84be7579bf9badd70c454ab5dc5c999e0edd521f40aa0e483de1e",
+      "bytes": 3151
+    }
+  ],
+  "root_cause_file": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-root-cause.json",
+  "native_protocol": {
+    "start_c": 65,
+    "render_fps": 15,
+    "physics_ticks": 60,
+    "setup_duty_percent": 25,
+    "release_marker": "[Game] ready",
+    "runtime_limits_unchanged": [
+      90,
+      85,
+      3
+    ],
+    "finite_imports": "same capture_selected_imports.py before/after; actual current guard+driver+slot+sa_engine+tool paths"
+  },
+  "parser_protocol": {
+    "setup_duty_percent": 25,
+    "timeout_seconds": 300
+  },
+  "preserved_assertions": [
+    "_prepare_runtime",
+    "_visual_finish_phase",
+    "_physics_process",
+    "_grab_live",
+    "_walk_to",
+    "_live_wait",
+    "_live_step",
+    "_live_sidestep",
+    "_stage_visual_home",
+    "_visual_plate",
+    "_visual_frame",
+    "_visual_enemy",
+    "_visual_pickup",
+    "_visual_texture_fragments",
+    "_visual_fragment",
+    "_visual_material",
+    "_visual_track",
+    "_shutdown"
+  ],
+  "pending": [
+    "root scoped parser",
+    "fresh actual tree-r6 native run",
+    "native image review"
+  ],
+  "no_product_runtime_edits": true,
+  "independent_review": {
+    "agent": "street_native_prep_22",
+    "reviewed_gd_sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+    "finding": "No concrete parser/type/staging blocker found; actual current plain pickup sources and configured Spitter atlas region mapping reviewed. Actual native parse/run pending. Generic AtlasTexture margin branch is not a general atlas verification claim.",
+    "scope": "read-only exact current source versus preserved51204c; no engines/Git/edits"
+  }
+}

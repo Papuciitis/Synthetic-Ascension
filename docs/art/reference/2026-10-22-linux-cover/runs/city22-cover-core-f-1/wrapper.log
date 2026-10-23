@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-core-f-1",
+ "queued_seconds": 119.2,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 50.819,
+ "peak_rss_mb": 463,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/28 lines) ---
+PASS: a separate CanvasLayer in the same world cannot cast cover onto the camera canvas
+PASS: a second viewport sharing the actual world canvas retains its visible geometry
+WorldCoverTest: 25 passed, 0 failed

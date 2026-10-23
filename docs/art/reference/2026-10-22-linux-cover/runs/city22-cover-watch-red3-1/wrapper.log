@@ -1,0 +1,29 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-watch-red3-1",
+ "queued_seconds": 10.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 32.052,
+ "peak_rss_mb": 462,
+ "diagnostic_count": 14,
+ "diagnostics_head": [
+  "ERROR: FAIL: RoofOverlay child_entered_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: RoofOverlay child_exiting_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: RoofPoly child_entered_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: RoofPoly child_exiting_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: EaveShadow child_entered_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: EaveShadow child_exiting_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: @Polygon2D@38 child_entered_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: @Polygon2D@38 child_exiting_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: LifecycleComposition child_entered_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: LifecycleComposition child_exiting_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: LifecycleLeaf child_entered_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: LifecycleLeaf child_exiting_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: FrontEdge child_entered_tree releases its sole provider subscription with one disconnect",
+  "ERROR: FAIL: FrontEdge child_exiting_tree releases its sole provider subscription with one disconnect"
+ ]
+}
+--- stdout tail (3/41 lines) ---
+PASS: FrontEdge child_entered_tree disconnects when its provider is freed
+PASS: FrontEdge child_exiting_tree disconnects when its provider is freed
+WorldCoverWatchLifecycleTest: 38 passed, 14 failed

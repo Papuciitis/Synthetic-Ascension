@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-enemy-native-g-1",
+ "queued_seconds": 94.1,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 41.703,
+ "peak_rss_mb": 356,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/42 lines) ---
+PASS: coverage changes preserve authoritative enemy-world population
+PASS: coverage changes preserve authoritative enemy positions and health
+EnemyCoverRenderTest passes=38 failures=0

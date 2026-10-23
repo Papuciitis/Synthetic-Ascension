@@ -1,0 +1,13 @@
+--- baseline-3ede-pickup_cover.gdshader
++++ scratch-R8-a399-pickup_cover.gdshader
+@@ -12,5 +12,9 @@
+ void fragment() {
+ 	// COLOR already contains native Sprite2D texture/atlas sampling and the
+ 	// live polarity, lock, parent and glow modulation authored by their owners.
+-	COLOR = world_cover_composite(COLOR, world_cover_strength(world_cover_position, world_cover_feet_y));
++	float authored_alpha = COLOR.a;
++	float covered = world_cover_strength(world_cover_position, world_cover_feet_y);
++	COLOR = world_cover_composite(COLOR, covered);
++	// Small pickup icons need more density; keep every authored alpha factor.
++	COLOR.a = authored_alpha * mix(1.0, 0.85, covered);
+ }

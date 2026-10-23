@@ -1,0 +1,111 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: far original roof contributes no visible coverage
+PASS: RoofOverlay owns the provider's child_entered_tree subscription after churn
+ERROR: FAIL: RoofOverlay child_entered_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: RoofOverlay owns the provider's child_exiting_tree subscription after churn
+ERROR: FAIL: RoofOverlay child_exiting_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: RoofPoly owns the provider's child_entered_tree subscription after churn
+ERROR: FAIL: RoofPoly child_entered_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: RoofPoly owns the provider's child_exiting_tree subscription after churn
+ERROR: FAIL: RoofPoly child_exiting_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: EaveShadow owns the provider's child_entered_tree subscription after churn
+ERROR: FAIL: EaveShadow child_entered_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: EaveShadow owns the provider's child_exiting_tree subscription after churn
+ERROR: FAIL: EaveShadow child_exiting_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: @Polygon2D@38 owns the provider's child_entered_tree subscription after churn
+ERROR: FAIL: @Polygon2D@38 child_entered_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: @Polygon2D@38 owns the provider's child_exiting_tree subscription after churn
+ERROR: FAIL: @Polygon2D@38 child_exiting_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: LifecycleComposition owns the provider's child_entered_tree subscription after churn
+ERROR: FAIL: LifecycleComposition child_entered_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: LifecycleComposition owns the provider's child_exiting_tree subscription after churn
+ERROR: FAIL: LifecycleComposition child_exiting_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: LifecycleLeaf owns the provider's child_entered_tree subscription after churn
+ERROR: FAIL: LifecycleLeaf child_entered_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: LifecycleLeaf owns the provider's child_exiting_tree subscription after churn
+ERROR: FAIL: LifecycleLeaf child_exiting_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: FrontEdge owns the provider's child_entered_tree subscription after churn
+ERROR: FAIL: FrontEdge child_entered_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: FrontEdge owns the provider's child_exiting_tree subscription after churn
+ERROR: FAIL: FrontEdge child_exiting_tree releases its sole provider subscription with one disconnect
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldCoverWatchLifecycleTest.gd:29)
+       [1] _run (res://tools/tests/WorldCoverWatchLifecycleTest.gd:119)
+PASS: new branch below reconnected leaf: exact next-refresh records match uncached control
+PASS: new branch below reconnected leaf: original new form covers its control sample
+PASS: new branch below reconnected leaf: indexed sample matches control on the next refresh
+PASS: later form below newly watched branch: exact next-refresh records match uncached control
+PASS: later form below newly watched branch: original new form covers its control sample
+PASS: later form below newly watched branch: indexed sample matches control on the next refresh
+PASS: later form below newly watched branch: original new form covers its control sample
+PASS: later form below newly watched branch: indexed sample matches control on the next refresh
+PASS: provider is released without ownership by watched nodes
+PASS: RoofOverlay child_entered_tree disconnects when its provider is freed
+PASS: RoofOverlay child_exiting_tree disconnects when its provider is freed
+PASS: RoofPoly child_entered_tree disconnects when its provider is freed
+PASS: RoofPoly child_exiting_tree disconnects when its provider is freed
+PASS: EaveShadow child_entered_tree disconnects when its provider is freed
+PASS: EaveShadow child_exiting_tree disconnects when its provider is freed
+PASS: @Polygon2D@38 child_entered_tree disconnects when its provider is freed
+PASS: @Polygon2D@38 child_exiting_tree disconnects when its provider is freed
+PASS: LifecycleComposition child_entered_tree disconnects when its provider is freed
+PASS: LifecycleComposition child_exiting_tree disconnects when its provider is freed
+PASS: LifecycleLeaf child_entered_tree disconnects when its provider is freed
+PASS: LifecycleLeaf child_exiting_tree disconnects when its provider is freed
+PASS: FrontEdge child_entered_tree disconnects when its provider is freed
+PASS: FrontEdge child_exiting_tree disconnects when its provider is freed
+WorldCoverWatchLifecycleTest: 38 passed, 14 failed

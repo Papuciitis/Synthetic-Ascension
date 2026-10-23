@@ -1,0 +1,44 @@
+--- reviewed-b8e2-R8.gd
++++ final-4ab8-R8.gd
+@@ -24,6 +24,7 @@
+ var _visual_locked_camera: Vector2 = Vector2.INF
+ var _visual_locked_canvas: Transform2D = Transform2D.IDENTITY
+ var _visual_hold_comparison_camera: bool = false
++var _visual_locked_camera_offset: Vector2 = Vector2.ZERO
+ 
+ 
+ func _enter_tree() -> void:
+@@ -47,6 +48,7 @@
+ 	super._process(delta)
+ 	if _visual_hold_comparison_camera and is_instance_valid(_camera):
+ 		_camera.global_position = _visual_locked_camera
++		_camera.offset = _visual_locked_camera_offset
+ 		_camera.reset_smoothing()
+ 		_camera.force_update_scroll()
+ 
+@@ -467,6 +469,7 @@
+ func _visual_settle_return_camera() -> void:
+ 	var before: Dictionary = _visual_view_state()
+ 	_visual_locked_camera = _player.global_position + Vector2(140, -160)
++	_visual_locked_camera_offset = _camera.offset
+ 	_visual_hold_comparison_camera = true # Camera only: player movement, knockback and all producers remain live.
+ 	_camera.global_position = _visual_locked_camera
+ 	_camera.reset_smoothing()
+@@ -475,7 +478,7 @@
+ 	await get_tree().process_frame
+ 	_camera.force_update_scroll()
+ 	_evidence_cover.call("refresh", _player, true)
+-	_live_staging.append({"kind":"tree restored/normal comparison camera settle", "before":before, "after":_visual_view_state(), "actors_frozen":false, "comparison_camera_only_held":true, "fixed_camera_target":str(_visual_locked_camera)})
++	_live_staging.append({"kind":"tree restored/normal comparison camera settle", "before":before, "after":_visual_view_state(), "actors_frozen":false, "comparison_camera_only_held":true, "fixed_camera_target":str(_visual_locked_camera), "fixed_camera_offset":str(_visual_locked_camera_offset)})
+ 
+ 
+ func _visual_compare_normal_equipment() -> void:
+@@ -552,7 +555,7 @@
+ 	for pickup: HealthPickup in health:
+ 		health_locked = health_locked and not pickup._pickup_ready and not pickup.monitoring and not pickup.monitorable
+ 	good = good and health_locked and covered == 1 and exposed == 1
+-	_visual_normal_equipment = {"passed":good, "plate":plate, "before":before, "after":states, "minimum_player_distance":minimum_distance, "ordinary_wait_simulation_seconds":_combat_time-began, "ordinary_physics_frames":Engine.get_physics_frames()-physics_before, "same_camera_and_view":same_camera, "comparison_camera_only_held":_visual_hold_comparison_camera, "locked_reference_camera":str(_visual_locked_camera), "locked_reference_canvas":str(_visual_locked_canvas), "health_stays_locked":health_locked, "original_locked_counts_preserved":_visual_counts == locked_counts, "limits":"Same real owners and world points; pickup_delay0 uses ordinary ItemPickup._enable_pickup_later. Health eligibility, AI, physics and materials remain live. Only automatic readbacks pause and the camera target holds from restored through normal plate; player movement/knockback remain live. No pixel identity/performance claim."}
++	_visual_normal_equipment = {"passed":good, "plate":plate, "before":before, "after":states, "minimum_player_distance":minimum_distance, "ordinary_wait_simulation_seconds":_combat_time-began, "ordinary_physics_frames":Engine.get_physics_frames()-physics_before, "same_camera_and_view":same_camera, "comparison_camera_only_held":_visual_hold_comparison_camera, "locked_reference_camera":str(_visual_locked_camera), "locked_reference_canvas":str(_visual_locked_canvas), "health_stays_locked":health_locked, "original_locked_counts_preserved":_visual_counts == locked_counts, "limits":"Same real owners and world points; pickup_delay0 uses ordinary ItemPickup._enable_pickup_later. Health eligibility, AI, physics and materials remain live. Only automatic readbacks pause and the camera target/initial offset hold from restored through normal plate; player movement/knockback remain live. No pixel identity/performance claim."}
+ 	if not good: _fail("Normal equipment comparison requires unchanged distant ready owners, same view, and actual covered/exposed opaque samples")
+ 
+ 

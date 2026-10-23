@@ -1,0 +1,143 @@
+{
+  "status": "source_only_FROZEN_unparsed_unrun_shader_NOT_applied",
+  "basis_manifest": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-basis/snapshots.json",
+  "artifacts": [
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+      "sha256": "4ab8a4100dbb99487f88f7965a812762dc29bae165eba96894adb17b23de1b1e",
+      "bytes": 52925
+    },
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.tscn",
+      "sha256": "88dae1b622468347b76b82a15ff69d4afbdf055b58513f2620db788c07a1bbc2",
+      "bytes": 205
+    },
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.md",
+      "sha256": "8f677c5399a7418e7882309b801efccfd6c38cede520e975d5560d6e7c723672",
+      "bytes": 11567
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/pickup-cover-density-r8.gdshader",
+      "sha256": "a399f0e37d1cadf82712c9efb668eb8d62bb0866521ded5d415846332318e367",
+      "bytes": 724
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PickupCoverDensityNative.gd",
+      "sha256": "a99056f6250a03384ca8eb429a2bf68c81fc998455bd59ad2f6288eb995dab50",
+      "bytes": 663
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PickupCoverDensityNative.tscn",
+      "sha256": "130fb0879d5da2d55714b1c8bab3ceb4609d5c4ec0d933eaae4b1e8c5a68fa91",
+      "bytes": 258
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-queue.py",
+      "sha256": "d7b543546dfb08163ef3c5a2e54ecc5a22b57387a8b286df5efbce29c716c48b",
+      "bytes": 9764
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-tool.diff",
+      "sha256": "b6869fe6d7677abe2b26d5f822b72cd8d4bbe26cea0eaf16db0d7ddd29058afc",
+      "bytes": 4414
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-shader.diff",
+      "sha256": "69bb49ec16801888e1dbcecd6e4d22a8c4231db5436c674343504e03910aff39",
+      "bytes": 676
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-offset-only.diff",
+      "sha256": "650a47856f40d3fb027056c3599db6febba5218f61b534090626dda3c32f526b",
+      "bytes": 3959
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-queue.md",
+      "sha256": "e8b36336f4c05aabddd91ef3f2411d09a982f7c001e984cfa22538b196bd96e2",
+      "bytes": 2527
+    }
+  ],
+  "original_fail_call_lines_preserved": 38,
+  "unchanged_existing_functions": 28,
+  "changed_functions": [
+    "_run",
+    "_visual_settle_return_camera",
+    "_visual_compare_normal_equipment"
+  ],
+  "added_functions": [
+    "_process"
+  ],
+  "static_checks": [
+    "All original fail call lines retained",
+    "Only run/return-camera staging/comparison disclosure changed; all source/material/opaque/owner/AI gates retained",
+    "New process override calls parent then holds only camera target/initial impact offset; HitFeel settings/producers and live player/AI/physics unchanged",
+    "No inferred new local typing or trailing whitespace",
+    "One original cover-strength/composite call and no added texture reads",
+    "Driver AST/dry source checks pass; actual execute refuses unapplied shader",
+    "Existing33 native predicates unchanged; cap-only inherited ready envelope"
+  ],
+  "native_protocol": {
+    "start_c": 65,
+    "runtime_limits_unchanged": [
+      90,
+      85,
+      3
+    ],
+    "parser_duty_percent": 25,
+    "parser_timeout_seconds": 300,
+    "pickup_native_render_cap": 15,
+    "pickup_native_original_predicates": 33,
+    "moving_render_cap": 15,
+    "physics_ticks_per_second": 60,
+    "moving_setup_duty_percent": 25,
+    "moving_release_marker": "[Game] ready",
+    "finite_imports": "Same capture_selected_imports helper; explicit pickup shader seed, actual guard/driver/sa_engine/slot paths; not full Game closure"
+  },
+  "pickup_native_test_compatibility": {
+    "interpretation": "Source/formula reasoning only; no new unit assertions mirror the implementation. Existing native33 must execute and original images must be reviewed.",
+    "preserved_contracts": [
+      "Authored texture/atlas/transparent holes",
+      "POS/NEG and lock/fade/parent modulation",
+      "Ground-depth protection/cutaway/removal",
+      "Partial-alpha transition",
+      "Hidden icons",
+      "Health duplicate glow coverage and original.28 modulate",
+      "Material reuse/ownership/no saves"
+    ],
+    "expected_full_alpha": {
+      "baseline_normal": 0.56,
+      "candidate_normal": 0.85,
+      "baseline_locked": 0.30800000000000005,
+      "candidate_locked": 0.4675,
+      "baseline_health_glow": 0.15680000000000002,
+      "candidate_health_glow": 0.23800000000000002
+    },
+    "synthetic_gray_fixture_directional_predictions": {
+      "POS_clear_red": 0.8075,
+      "POS_covered_red": 0.20110250000000007,
+      "POS_partial_roof_red": 0.478656875,
+      "locked_covered_red": 0.398606375,
+      "health_glow_clear_red": 0.7268,
+      "health_glow_covered_red": 0.5191436
+    }
+  },
+  "r7_qualification": "Actual completed2fail/2diag camera mismatch; ordinary ring image remains qualitative and low contrast. Four originals and exact source are preserved; no R7 acceptance.",
+  "pending": [
+    "Root shader review/apply",
+    "Fresh scoped parser",
+    "Existing native33",
+    "R8 actual moving Game",
+    "Actual readable-contrast image review"
+  ],
+  "runtime_or_shader_product_edits": false,
+  "engines_or_git_run": false,
+  "camera_offset_cause": "HitFeel.gd299 independently writes Camera2D.offset; fixture-only initial offset capture keeps third/fourth effective view fixed under live impacts.",
+  "independent_review": {
+    "agent": "plaza_parse_diag",
+    "gd_sha256": "4ab8a4100dbb99487f88f7965a812762dc29bae165eba96894adb17b23de1b1e",
+    "driver_sha256": "d7b543546dfb08163ef3c5a2e54ecc5a22b57387a8b286df5efbce29c716c48b",
+    "shader_sha256": "a399f0e37d1cadf82712c9efb668eb8d62bb0866521ded5d415846332318e367",
+    "finding": "No concrete blocker in final source; camera-only target+initial offset hold, alpha-only proposal and native33/strict source/transport driver reviewed without engine/Git/edits."
+  }
+}

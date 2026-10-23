@@ -1,0 +1,107 @@
+{
+  "status": "source_only_prepared_unparsed_unrun",
+  "new_tool_sha256": "8737b1c5ff967a3caa097d1101649c3ddb0d227a0899b884cc9612202c6deab3",
+  "preserved_r6_tool_sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+  "preserved_r6_source": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r7-basis/00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f-WorldCoverMovingVisualProbe.gd",
+  "r6_raw_manifest": "/var/tmp/sa-city22/cover/moving-tree-r6/visual-cover-info.json",
+  "r6_review_status": "Clean functional capture, original3PNGs viewed; locked16px ring readability remains unresolved.",
+  "preserved_r6_plates": [
+    {
+      "file": "tree-front.png",
+      "sha256_from_existing_review": "09db4c2e4a4fc04f4ec2b5e280726bad3229bb03f5840521ab10b29e2de0d2bc"
+    },
+    {
+      "file": "tree-behind.png",
+      "sha256_from_existing_review": "4fea8f943aac378d4072949c334ca860d8205c559eea88021cc035649c285196"
+    },
+    {
+      "file": "tree-front-restored.png",
+      "sha256_from_existing_review": "03ef3d9f0cffc2b34e13bd3de941b1714abc8cdd7b8c7cbdb5e5c1a98bfcce65"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+      "sha256": "8737b1c5ff967a3caa097d1101649c3ddb0d227a0899b884cc9612202c6deab3",
+      "bytes": 51983
+    },
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.tscn",
+      "sha256": "88dae1b622468347b76b82a15ff69d4afbdf055b58513f2620db788c07a1bbc2",
+      "bytes": 205
+    },
+    {
+      "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.md",
+      "sha256": "39450a9006d2dd589f14a24bbcaac887f39588a126d9e1b31d5bad2d1e5aee89",
+      "bytes": 10421
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r7-tool.diff",
+      "sha256": "cf19c803e581d87b92e1bf53f236b47565e4dd92d630d942fa36c5f092d343e1",
+      "bytes": 15181
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r7-queue.py",
+      "sha256": "1d3e4a8ab319990e2695b60271da96fe72267b4d0d1ec813eabb5212152482a5",
+      "bytes": 5732
+    },
+    {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r7-driver.diff",
+      "sha256": "fb747acd6a89567698efe1bd74e4b38ad5364c48905e02f0551863d161bd7cd6",
+      "bytes": 3470
+    }
+  ],
+  "original_fail_call_lines_retained": 33,
+  "original_observation_home_live_deadline_functions_unchanged": 17,
+  "offline_checks": [
+    "explicitly typed locals; no inferred declarations/trailing whitespace",
+    "all33 original fail-call lines retained",
+    "new comparison contains no direct monitoring/readiness/lock/modulate/process-mode/freeze writes",
+    "distance preflight precedes owner delay0 activation; activation occurs after a process-frame yield",
+    "normal fourth plate does not append to original3platearray; oldcounts/tracks restored",
+    "finite R6 selected geometry puts both original equipment owners beyond126px, but R7 rechecks runtime"
+  ],
+  "finite_r6_distance_checks": [
+    {
+      "instance_id": 993630635481,
+      "r6_world": "(-168.0, 6616.0)",
+      "r6_return_player_distance": 214.30767826539102,
+      "required_distance": 126,
+      "interpretation": "Checks selected finite fixture geometry only; R7 independently asserts its actual runtime owners/positions/distances."
+    },
+    {
+      "instance_id": 994100397556,
+      "r6_world": "(32.0, 6880.0)",
+      "r6_return_player_distance": 137.3246699013056,
+      "required_distance": 126,
+      "interpretation": "Checks selected finite fixture geometry only; R7 independently asserts its actual runtime owners/positions/distances."
+    }
+  ],
+  "native_protocol": {
+    "parser_duty_percent": 25,
+    "parser_timeout_seconds": 300,
+    "native_start_c": 65,
+    "native_render_fps": 15,
+    "physics_ticks": 60,
+    "setup_duty_percent": 25,
+    "release_marker": "[Game] ready",
+    "runtime_limits_unchanged": [
+      90,
+      85,
+      3
+    ],
+    "before_after_imports": "same finite capture_selected_imports helper and actual guard/driver/sa_engine/slot/tool paths"
+  },
+  "pending": [
+    "root scoped parser",
+    "fresh root tree-r7 actual Game run",
+    "actual normal-versus-locked image review"
+  ],
+  "no_runtime_or_shader_or_gameplay_edits": true,
+  "independent_review": {
+    "agent": "street_native_prep_22",
+    "reviewed_gd_sha256": "8737b1c5ff967a3caa097d1101649c3ddb0d227a0899b884cc9612202c6deab3",
+    "finding": "No concrete parser/staging/gate blocker. Owner delay0 runs after a process yield; same owners/positions/materials/textures, safe distance, normal readiness, health lock and same view are checked. Recorder hold/drain and oldcount/track restoration preserve original locked gates.",
+    "scope": "Read-only source; no engine/Git/edits; actual native parser/run pending root."
+  }
+}

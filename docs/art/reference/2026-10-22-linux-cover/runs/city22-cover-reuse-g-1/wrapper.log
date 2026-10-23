@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-reuse-g-1",
+ "queued_seconds": 265.3,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 34.392,
+ "peak_rss_mb": 461,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/26 lines) ---
+PASS: leaving forced-upload control resumes exact snapshot reuse immediately
+PASS: unloaded hidden owners cannot revive stale coverage
+WorldCoverSnapshotReuseTest: 23 passed, 0 failed

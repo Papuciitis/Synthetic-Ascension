@@ -1,0 +1,35 @@
+--- exact-cover-tree-r5-queue.py
++++ cover-tree-r6-queue.py
+@@ -6,9 +6,9 @@
+ BASE = ROOT / '.superpowers/continuation-20261022'
+ PROJECT = Path('/tmp/sa-wp2-cover')
+ NATIVE = Path('/var/tmp/sa-city22/cover')
+-TOOL_SHA = '51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7'
+-CASE = 'tree-r5'
+-RESULT = BASE / 'cover-tree-r5-queue.json'
++TOOL_SHA = '00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f'
++CASE = 'tree-r6'
++RESULT = BASE / 'cover-tree-r6-queue.json'
+ 
+ 
+ def command(label, engine_args, native=False):
+@@ -33,8 +33,8 @@
+ def main():
+     parser = argparse.ArgumentParser(); parser.add_argument('--dry-run', action='store_true'); args = parser.parse_args()
+     source = PROJECT/'tools/dev/WorldCoverMovingVisualProbe.gd'
+-    if hashlib.sha256(source.read_bytes()).hexdigest() != TOOL_SHA: raise SystemExit('Frozen r4 tool source differs')
+-    parse_label = 'city22-cover-tree-r5-parse'; native_label = 'city22-cover-moving-tree-r5'
++    if hashlib.sha256(source.read_bytes()).hexdigest() != TOOL_SHA: raise SystemExit('Frozen r6 tool source differs')
++    parse_label = 'city22-cover-tree-r6-parse'; native_label = 'city22-cover-moving-tree-r6'
+     parse = command(parse_label, ['--headless', '--audio-driver', 'Dummy', str(BASE/'external_source_parse_probe.tscn'),
+                                 '--', 'res://tools/dev/WorldCoverMovingVisualProbe.gd'])
+     native = command(native_label, ['--rendering-driver', 'opengl3', '--audio-driver', 'Dummy',
+@@ -46,7 +46,7 @@
+     if args.dry_run: print(json.dumps(plan, indent=2)); return
+     occupied = [RESULT, NATIVE/('moving-'+CASE)] + [BASE/(label+'-thermal.json') for label in [parse_label,native_label]]
+     occupied += [NATIVE/f'moving-{CASE}-imports-{point}.json' for point in ['before','after']]
+-    if any(path.exists() for path in occupied): raise SystemExit('Fresh r4 outputs required; refusing to overwrite evidence')
++    if any(path.exists() for path in occupied): raise SystemExit('Fresh r6 outputs required; refusing to overwrite evidence')
+     plan['state'] = 'running_scoped_parse'; RESULT.write_text(json.dumps(plan,indent=2)+'\n')
+     plan['parse_returncode'] = subprocess.run(parse).returncode
+     if plan['parse_returncode']:

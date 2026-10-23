@@ -1,0 +1,226 @@
+--- accepted-home-failed-tree-b1f7.gd
++++ tree-r4-candidate.gd
+@@ -17,6 +17,8 @@
+ var _visual_deadline_hit: bool = false
+ var _visual_tree_plates: Array[Dictionary] = []
+ var _visual_phase_summary: Dictionary = {}
++var _visual_tree_fixture: Dictionary = {}
++var _visual_tree_attempts: Array[Dictionary] = []
+ 
+ 
+ func _enter_tree() -> void:
+@@ -90,13 +92,13 @@
+ 	var outward: Vector2 = _volume.get("_presentation_outward")
+ 	var front: Vector2 = _chunks.cell_to_world_center(_chunks.world_to_cell(door + outward * 96.0))
+ 	var behind: Vector2 = Vector2.INF
+-	_live_tree = _tree_target()
+ 	if _visual_phase == "tree":
+-		if not _live_tree.is_empty():
+-			var reachable: Dictionary = _player_reachable_cells()
+-			var samples: Array[Dictionary] = _player_fragment_samples()
+-			front = _player_tree_waypoint(_live_tree, reachable, samples, false)
+-			behind = _player_tree_waypoint(_live_tree, reachable, samples, true)
++		_visual_tree_fixture = _visual_select_tree_fixture()
++		if not _visual_tree_fixture.is_empty():
++			_live_tree = _visual_tree_fixture.target
++			front = _visual_tree_fixture.front
++			behind = _visual_tree_fixture.behind
++	else: _live_tree = _tree_target()
+ 	if front == Vector2.INF or not _chunks.is_cell_walkable(_chunks.world_to_cell(front)) or (_visual_phase == "tree" and behind == Vector2.INF):
+ 		_fail("Phase lacks a verified walkable initial/front/covered pair")
+ 		await _shutdown()
+@@ -119,10 +121,14 @@
+ 		var actor: EnemyActor = _spawn_actor("Brute", behind)
+ 		_visual_home_entities.append(weakref(actor))
+ 		_live_staging.append({"kind":"ordinary live tree Brute", "requested":str(behind), "actual":str(actor.global_position), "frozen":false})
+-		var covered_pickups: Array[Vector2] = _visual_tree_pickup_points()
++		_evidence_cover.call("refresh", _player, true)
++		var covered_pickups: Array[Vector2] = _visual_tree_fixture.pickups
+ 		if covered_pickups.size() >= 2: _visual_add_pickups(covered_pickups[0], covered_pickups[1], "tree covered")
+ 		else: _fail("Tree phase needs two reachable opaque covered pickup cells")
+-		_visual_add_pickups(front + Vector2(64, 0), front + Vector2(-64, 0), "tree front control")
++		var front_item: Vector2 = _visual_exposed_point(front + Vector2(128, 64))
++		var front_health: Vector2 = _visual_exposed_point(front + Vector2(256, 64))
++		if front_item != Vector2.INF and front_health != Vector2.INF: _visual_add_pickups(front_item, front_health, "tree front control")
++		else: _fail("Tree phase needs actual shared-uncovered front pickup cells")
+ 		_stage_live_shooters()
+ 		await _live_wait(0.2)
+ 		await _visual_plate("tree-front")
+@@ -148,7 +154,7 @@
+ 	if int(_live_spawns.get("ambient", 0)) <= 0: _fail("No ordinary ambient spawn resolved during live phase")
+ 	if SaveManager.debug_save_writes != _save_writes_before or SaveManager.current_save != null: _fail("Phase selected or wrote a profile")
+ 	if _visual_phase == "tree" and (_live_projectile_covered <= 0 or _live_projectile_exposed <= 0 or _live_tell_covered <= 0 or _live_tell_exposed <= 0): _fail("Tree phase requires covered/exposed live projectiles and ordinary windups")
+-	_visual_phase_summary = {"phase":_visual_phase, "simulation_seconds":_combat_time, "simulation_deadline_seconds":30.0, "deadline_hit":_visual_deadline_hit, "wall_seconds":float(Time.get_ticks_usec()-_live_start)/1000000.0, "distance_walked":_live_distance, "route":_route_notes, "staging":_live_staging, "producers_stayed_live":_live_flags_ok, "scheduler_start":_live_scheduler_start, "scheduler_end":scheduler_end, "spawned_by_source":_live_spawns, "chunk_centers":_live_centers, "projectile_covered":_live_projectile_covered, "projectile_exposed":_live_projectile_exposed, "tell_covered":_live_tell_covered, "tell_exposed":_live_tell_exposed, "first_foreground_crossings":_live_first_crossings, "omitted_gates":["ordinary item collection/inventory", "mandatory streaming boundary", "player fire/hit proof"]}
++	_visual_phase_summary = {"phase":_visual_phase, "simulation_seconds":_combat_time, "simulation_deadline_seconds":30.0, "deadline_hit":_visual_deadline_hit, "wall_seconds":float(Time.get_ticks_usec()-_live_start)/1000000.0, "distance_walked":_live_distance, "route":_route_notes, "staging":_live_staging, "tree_fixture_attempts":_visual_tree_attempts, "producers_stayed_live":_live_flags_ok, "scheduler_start":_live_scheduler_start, "scheduler_end":scheduler_end, "spawned_by_source":_live_spawns, "chunk_centers":_live_centers, "projectile_covered":_live_projectile_covered, "projectile_exposed":_live_projectile_exposed, "tell_covered":_live_tell_covered, "tell_exposed":_live_tell_exposed, "first_foreground_crossings":_live_first_crossings, "omitted_gates":["ordinary item collection/inventory", "mandatory streaming boundary", "player fire/hit proof"]}
+ 	for index: int in range(_pixels.size()):
+ 		_save_image(_pixels[index], _out.path_join("frames/frame-%04d.png" % index))
+ 		await get_tree().create_timer(0.08, true, false, true).timeout
+@@ -242,26 +248,137 @@
+ 	if data == null:
+ 		_fail("Tree phase requires the real ring_crusher item")
+ 		return
++	if not _chunks.is_cell_walkable(_chunks.world_to_cell(item_point)) or not _chunks.is_cell_walkable(_chunks.world_to_cell(health_point)):
++		_fail("Verified tree pickup points lost walkable cells")
++		return
+ 	var item: ItemPickup = ITEM_SCENE.instantiate() as ItemPickup
+ 	item.item_instance = ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.25, false)
+-	item.position = _free_spawn_position(item_point)
++	item.position = item_point
+ 	item.pickup_delay = 120.0
+ 	item.persistent_world_drop = true
+ 	_game.add_child(item)
+ 	var health: HealthPickup = HEALTH_SCENE.instantiate() as HealthPickup
+-	health.position = _free_spawn_position(health_point)
++	health.position = health_point
+ 	health.pickup_delay = 120.0
+ 	health.lifetime_seconds = 120.0
+ 	_game.add_child(health)
+ 	for pickup: Node2D in [item, health]:
+ 		_visual_home_entities.append(weakref(pickup))
+-		_live_staging.append({"kind":label + " locked pickup", "path":str(pickup.get_path()), "actual":str(pickup.global_position), "pickup_delay":120.0, "monitoring":(pickup as Area2D).monitoring, "walkable":_chunks.is_cell_walkable(_chunks.world_to_cell(pickup.global_position))})
+-
+-
+-func _visual_tree_pickup_points() -> Array[Vector2]:
++		_live_staging.append({"kind":label + " locked pickup", "path":str(pickup.get_path()), "actual":str(pickup.global_position), "cell":str(_chunks.world_to_cell(pickup.global_position)), "tree_strength_at_foot":_target_strength(_live_tree, pickup.global_position, pickup.global_position.y), "pickup_delay":120.0, "monitoring":(pickup as Area2D).monitoring, "walkable":_chunks.is_cell_walkable(_chunks.world_to_cell(pickup.global_position))})
++
++
++func _visual_tree_pickup_points(target: Dictionary, reachable: Dictionary) -> Array[Vector2]:
+ 	var result: Array[Vector2] = []
++	var bounds: Rect2 = target.bounds
++	var first: Vector2i = _chunks.world_to_cell(bounds.position)
++	var last: Vector2i = _chunks.world_to_cell(bounds.end)
++	var step: float = float(_chunks.cell_size_px) / 8.0
++	for y: int in range(first.y, last.y + 1):
++		for x: int in range(first.x, last.x + 1):
++			var cell: Vector2i = Vector2i(x, y)
++			if not reachable.has(cell) or not _chunks.is_cell_walkable(cell): continue
++			var centre: Vector2 = _chunks.cell_to_world_center(cell)
++			var selected: Vector2 = Vector2.INF
++			for oy: int in range(-3, 4):
++				for ox: int in range(-3, 4):
++					var point: Vector2 = centre + Vector2(ox, oy) * step
++					if _target_strength(target, point, point.y) < 0.99: continue
++					var separated: bool = true
++					for previous: Vector2 in result:
++						if previous.distance_to(point) < 32.0: separated = false
++					if not separated: continue
++					var start: Transform2D = _player.global_transform
++					start.origin = centre
++					if _player.test_move(start, point - centre): continue
++					if selected == Vector2.INF or point.distance_squared_to(centre) < selected.distance_squared_to(centre): selected = point
++			if selected != Vector2.INF: result.append(selected)
++			if result.size() >= 2: return result
++	return result
++
++
++func _visual_select_tree_fixture() -> Dictionary:
++	var candidates: Array[Sprite2D] = []
++	for node: Node in get_tree().get_nodes_in_group(FOREGROUND.GROUP):
++		if not node is Sprite2D or not String(node.name).contains("Tree"): continue
++		var sprite: Sprite2D = node as Sprite2D
++		var fruit: bool = sprite.texture != null and sprite.texture.resource_path.contains("fruit_tree")
++		if (_tree_kind == "fruit" and not fruit) or (_tree_kind == "ordinary" and fruit): continue
++		candidates.append(sprite)
++	candidates.sort_custom(func(a: Sprite2D, b: Sprite2D) -> bool: return a.global_position.distance_squared_to(_volume.global_position) < b.global_position.distance_squared_to(_volume.global_position))
+ 	var reachable: Dictionary = _player_reachable_cells()
+-	var bounds: Rect2 = _live_tree.bounds
++	var samples: Array[Dictionary] = _player_fragment_samples()
++	for index: int in range(mini(8, candidates.size())):
++		var descriptor: Dictionary = _sprite_surface(candidates[index])
++		if descriptor.is_empty(): continue
++		var target: Dictionary = {"kind":"fruit-tree" if String(descriptor.texture).contains("fruit_tree") else "ordinary-tree", "bounds":descriptor.bounds, "front_y":descriptor.front_y, "ground_world":descriptor.ground_world, "surfaces":[descriptor]}
++		var front: Vector2 = _player_tree_waypoint(target, reachable, samples, false)
++		var behind: Vector2 = _player_tree_waypoint(target, reachable, samples, true)
++		var points: Array[Vector2] = _visual_tree_pickup_points(target, reachable)
++		var shooter: Vector2 = _visual_covered_shooter_cell(target, reachable, front, behind)
++		var checks: Array[Dictionary] = []
++		for point: Vector2 in points:
++			var cell: Vector2i = _chunks.world_to_cell(point)
++			var start: Transform2D = _player.global_transform
++			start.origin = _chunks.cell_to_world_center(cell)
++			checks.append({"world":str(point), "cell":str(cell), "walkable":_chunks.is_cell_walkable(cell), "reachable":reachable.has(cell), "opaque_foot_strength":_target_strength(target, point, point.y), "capsule_from_cell_centre_clear":not _player.test_move(start, point - start.origin)})
++		_visual_tree_attempts.append({"path":descriptor.path, "texture":descriptor.texture, "bounds":str(target.bounds), "front_y":target.front_y, "ground_world":str(target.ground_world), "front":str(front), "behind":str(behind), "covered_pickup_checks":checks, "point_step_px":float(_chunks.cell_size_px)/8.0, "opaque_foot_threshold":0.99, "distinct_reachable_pickup_cells":points.size(), "covered_shooter_cell":str(shooter)})
++		if front != Vector2.INF and behind != Vector2.INF and points.size() >= 2 and shooter != Vector2.INF: return {"target":target, "front":front, "behind":behind, "pickups":points, "covered_shooter":shooter}
++	_fail("No bounded actual tree supplies a reachable front/behind pair and two opaque pickup cells")
++	return {}
++
++
++func _visual_exposed_point(desired: Vector2) -> Vector2:
++	var reachable: Dictionary = _player_reachable_cells()
++	var centre: Vector2i = _chunks.world_to_cell(desired)
++	var chosen: Vector2 = Vector2.INF
++	var best: float = INF
++	for y: int in range(-4, 5):
++		for x: int in range(-4, 5):
++			var cell: Vector2i = centre + Vector2i(x, y)
++			if not reachable.has(cell) or not _chunks.is_cell_walkable(cell): continue
++			var point: Vector2 = _chunks.cell_to_world_center(cell)
++			if not get_viewport().get_visible_rect().has_point(get_viewport().get_canvas_transform() * point): continue
++			var clear: bool = true
++			for offset: Vector2 in [Vector2.ZERO, Vector2(-32, 0), Vector2(32, 0), Vector2(0, -32), Vector2(0, 32)]:
++				if float(_evidence_cover.call("strength_at", point + offset, point.y)) > 0.01: clear = false
++			for occupied: Vector2 in _occupied:
++				if occupied.distance_to(point) < 44.0: clear = false
++			if clear and point.distance_squared_to(desired) < best:
++				chosen = point
++				best = point.distance_squared_to(desired)
++	return chosen
++
++
++func _stage_live_shooters() -> void:
++	if _visual_phase != "tree":
++		super._stage_live_shooters()
++		return
++	# Keep the existing covered producer; find an actual exposed producer on
++	# clear reachable ground instead of assuming the western arcade is exposed.
++	var chosen: Vector2 = _visual_tree_fixture.covered_shooter
++	var covered: EnemyActor = _spawn_actor("Spitter", chosen)
++	_visual_home_entities.append(weakref(covered))
++	var covered_muzzle: Vector2 = covered.global_position + covered.global_position.direction_to(_player.global_position) * 14.0
++	var covered_strength: float = _target_strength(_live_tree, covered_muzzle, covered_muzzle.y)
++	_live_staging.append({"kind":"ordinary live covered tree Spitter", "actual":str(covered.global_position), "tree_muzzle_cover":covered_strength, "frozen":false})
++	if covered_strength < 0.65: _fail("Actual covered shooter resolved out of its selected tree canopy")
++	var exposed_point: Vector2 = _visual_exposed_point(_player.global_position + Vector2(256, 96))
++	if exposed_point == Vector2.INF:
++		_fail("No actual shared-uncovered shooter control cell")
++		return
++	var exposed: EnemyActor = _spawn_actor("Spitter", exposed_point)
++	_visual_home_entities.append(weakref(exposed))
++	var actual_muzzle: Vector2 = exposed.global_position + exposed.global_position.direction_to(_player.global_position) * 14.0
++	var strength: float = float(_evidence_cover.call("strength_at", actual_muzzle, actual_muzzle.y))
++	_live_staging.append({"kind":"ordinary live exposed tree Spitter", "actual":str(exposed.global_position), "muzzle_cover":strength, "frozen":false})
++	if strength > 0.01: _fail("Actual exposed shooter resolved into shared cover")
++
++
++func _visual_covered_shooter_cell(target: Dictionary, reachable: Dictionary, front: Vector2, behind: Vector2) -> Vector2:
++	if front == Vector2.INF or behind == Vector2.INF: return Vector2.INF
++	var bounds: Rect2 = target.bounds
++	var chosen: Vector2 = Vector2.INF
++	var best: float = INF
+ 	var first: Vector2i = _chunks.world_to_cell(bounds.position)
+ 	var last: Vector2i = _chunks.world_to_cell(bounds.end)
+ 	for y: int in range(first.y, last.y + 1):
+@@ -269,8 +386,12 @@
+ 			var cell: Vector2i = Vector2i(x, y)
+ 			if not reachable.has(cell) or not _chunks.is_cell_walkable(cell): continue
+ 			var point: Vector2 = _chunks.cell_to_world_center(cell)
+-			if _target_strength(_live_tree, point, point.y) >= 0.99: result.append(point)
+-	return result
++			var muzzle: Vector2 = point + point.direction_to(front) * 14.0
++			if _target_strength(target, muzzle, muzzle.y) < 0.65 or point.distance_to(behind) < 44.0: continue
++			if point.distance_squared_to(front) < best:
++				chosen = point
++				best = point.distance_squared_to(front)
++	return chosen
+ 
+ 
+ func _stage_visual_home() -> void:
+@@ -494,7 +615,7 @@
+ 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out))
+ 	var file: FileAccess = FileAccess.open(_out.path_join("visual-cover-info.json"), FileAccess.WRITE)
+ 	if file != null:
+-		file.store_string(JSON.stringify({"tool":"res://tools/dev/WorldCoverMovingVisualProbe.tscn", "scene":"res://scenes/game.tscn", "args":OS.get_cmdline_user_args(), "phase":_visual_phase, "phase_summary":_visual_phase_summary, "tree_plates":_visual_tree_plates, "engine_max_fps":Engine.max_fps, "physics_ticks_per_second":Engine.physics_ticks_per_second, "counts":_visual_counts, "moving_enemy_transitions":moving_transitions, "material_failures":_visual_material_failures, "home_plates":_visual_home_plates, "frames":_visual_frames, "save_writes":SaveManager.debug_save_writes - _save_writes_before, "failures":_failures, "limits":"Default full phase extends the live CityMovingCoverPreview route and all its controls. Explicit home/tree phases independently bound live recording to30 simulation seconds, <=12 route frames plus3 phase plates, and yield80ms between post-route PNGs. They omit collection/inventory, mandatory stream-boundary and player fire/hit gates; those are never reported as passed. Initial player placement is staged near the actual doorway or verified real-tree front waypoint. Tree phase adds live Brute/Spitters and real locked covered/front pickups. Native player front/behind/front depth, tree-specific same-enemy opaque covered/exposed fragments, real windups/projectiles, original home roof entry/restoration, scheduler/producer activity, materials and saves remain asserted where applicable. Optional runtime-fps changes render cadence only; physics and AI stay live. The render cap is not performance evidence. Adds one ordinary live Brute plus real locked equipment/health pickups in reachable walkable cells of the generated home before entry. Pickup delay/lifetime is 120 seconds; monitoring is untouched. Scripted player fire pauses during home demonstration; enemy AI/scheduler/physics/spawning/streaming stay live. Enemy samples decode the actual renderer upload transform/atlas region and batch material, never the hidden Sprite2D transform. Covered/exposed counts are repeated source-opaque fragment observations, not unique actors or framebuffer color assertions. RGB samples include native scenery blending and overlap. Existing native render suites supply isolated compositing checks; the attached frames/plates require visual review. This route is not spontaneous placement, performance, balance or human-play acceptance."}, "\t"))
++		file.store_string(JSON.stringify({"tool":"res://tools/dev/WorldCoverMovingVisualProbe.tscn", "scene":"res://scenes/game.tscn", "args":OS.get_cmdline_user_args(), "phase":_visual_phase, "phase_summary":_visual_phase_summary, "tree_fixture_attempts":_visual_tree_attempts, "tree_plates":_visual_tree_plates, "engine_max_fps":Engine.max_fps, "physics_ticks_per_second":Engine.physics_ticks_per_second, "counts":_visual_counts, "moving_enemy_transitions":moving_transitions, "material_failures":_visual_material_failures, "home_plates":_visual_home_plates, "frames":_visual_frames, "save_writes":SaveManager.debug_save_writes - _save_writes_before, "failures":_failures, "limits":"Default full phase extends the live CityMovingCoverPreview route and all its controls. Explicit home/tree phases independently bound live recording to30 simulation seconds, <=12 route frames plus3 phase plates, and yield80ms between post-route PNGs. They omit collection/inventory, mandatory stream-boundary and player fire/hit gates; those are never reported as passed. Initial player placement is staged near the actual doorway or verified real-tree front waypoint. Tree phase adds live Brute/Spitters and real locked covered/front pickups. Native player front/behind/front depth, tree-specific same-enemy opaque covered/exposed fragments, real windups/projectiles, original home roof entry/restoration, scheduler/producer activity, materials and saves remain asserted where applicable. Optional runtime-fps changes render cadence only; physics and AI stay live. The render cap is not performance evidence. Adds one ordinary live Brute plus real locked equipment/health pickups in reachable walkable cells of the generated home before entry. Pickup delay/lifetime is 120 seconds; monitoring is untouched. Scripted player fire pauses during home demonstration; enemy AI/scheduler/physics/spawning/streaming stay live. Enemy samples decode the actual renderer upload transform/atlas region and batch material, never the hidden Sprite2D transform. Covered/exposed counts are repeated source-opaque fragment observations, not unique actors or framebuffer color assertions. RGB samples include native scenery blending and overlap. Existing native render suites supply isolated compositing checks; the attached frames/plates require visual review. This route is not spontaneous placement, performance, balance or human-play acceptance."}, "\t"))
+ 		file.close()
+ 	else:
+ 		_fail("Cannot write native visual cover manifest")

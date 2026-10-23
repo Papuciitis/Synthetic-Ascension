@@ -1,0 +1,1486 @@
+{
+  "cases": {
+    "moving-home": {
+      "actual_exit": 0,
+      "artifacts": [
+        "native/moving-home/frames/frame-0000.png",
+        "native/moving-home/frames/frame-0001.png",
+        "native/moving-home/frames/frame-0002.png",
+        "native/moving-home/frames/frame-0003.png",
+        "native/moving-home/frames/frame-0004.png",
+        "native/moving-home/frames/frame-0005.png",
+        "native/moving-home/frames/frame-0006.png",
+        "native/moving-home/frames/frame-0007.png",
+        "native/moving-home/frames/frame-0008.png",
+        "native/moving-home/home-covered-before-entry.png",
+        "native/moving-home/home-inside-real-cutaway.png",
+        "native/moving-home/home-outside-roof-restored.png",
+        "native/moving-home/visual-cover-info.json.gz"
+      ],
+      "diagnostics": [],
+      "final_manifest_present": true,
+      "manifest_summary": {
+        "engine_max_fps": 20,
+        "failures": 0,
+        "moving_enemy_transitions": [
+          {
+            "first_covered": 0.233333333333333,
+            "first_exposed": 1.08333333333333,
+            "instance_id": 992288458160,
+            "kind": "ordinary",
+            "max_displacement": 192.909561157227,
+            "tree_covered": 0,
+            "tree_exposed": 209
+          }
+        ],
+        "phase": "home",
+        "phase_summary": {
+          "deadline_hit": false,
+          "producers_stayed_live": true,
+          "projectile_covered": 4,
+          "projectile_exposed": 42,
+          "simulation_seconds": 5.23333333333332,
+          "tell_covered": 0,
+          "tell_exposed": 0,
+          "wall_seconds": 9.189633
+        },
+        "physics_ticks_per_second": 60,
+        "save_writes": 0
+      },
+      "outer_stop_reason": "completed",
+      "run": "city22-cover-moving-home",
+      "state": "pending_visual_review",
+      "tool_source_sha256": "b1f7b9f364ba1cf67baf1a3ecdb710dac0774e11d16078cbbe8790d6512ceff5"
+    },
+    "moving-home-r3": {
+      "actual_exit": 0,
+      "artifacts": [
+        "native/moving-home-r3/frames/frame-0000.png",
+        "native/moving-home-r3/frames/frame-0001.png",
+        "native/moving-home-r3/frames/frame-0002.png",
+        "native/moving-home-r3/frames/frame-0003.png",
+        "native/moving-home-r3/frames/frame-0004.png",
+        "native/moving-home-r3/frames/frame-0005.png",
+        "native/moving-home-r3/frames/frame-0006.png",
+        "native/moving-home-r3/frames/frame-0007.png",
+        "native/moving-home-r3/home-covered-before-entry.png",
+        "native/moving-home-r3/home-inside-real-cutaway.png",
+        "native/moving-home-r3/home-outside-roof-restored.png",
+        "native/moving-home-r3/visual-cover-info.json.gz"
+      ],
+      "diagnostics": [],
+      "final_manifest_present": true,
+      "manifest_summary": {
+        "engine_max_fps": 20,
+        "failures": 0,
+        "moving_enemy_transitions": [
+          {
+            "first_covered": 0.233333333333333,
+            "first_exposed": 1.13333333333333,
+            "instance_id": 992607225264,
+            "kind": "ordinary",
+            "max_displacement": 185.548004150391,
+            "tree_covered": 0,
+            "tree_exposed": 190
+          }
+        ],
+        "phase": "home",
+        "phase_summary": {
+          "deadline_hit": false,
+          "producers_stayed_live": true,
+          "projectile_covered": 0,
+          "projectile_exposed": 39,
+          "simulation_seconds": 5.26666666666665,
+          "tell_covered": 0,
+          "tell_exposed": 0,
+          "wall_seconds": 9.114513
+        },
+        "physics_ticks_per_second": 60,
+        "save_writes": 0
+      },
+      "outer_stop_reason": "completed",
+      "run": "city22-cover-moving-home-r3",
+      "state": "pending_visual_review",
+      "tool_source_sha256": "b1f7b9f364ba1cf67baf1a3ecdb710dac0774e11d16078cbbe8790d6512ceff5"
+    },
+    "moving-tree": {
+      "state": "pending_completed_run_record"
+    },
+    "moving-tree-r3": {
+      "actual_exit": -15,
+      "artifacts": [
+        "native/moving-tree-r3/frames/frame-0000.png",
+        "native/moving-tree-r3/frames/frame-0001.png",
+        "native/moving-tree-r3/frames/frame-0002.png",
+        "native/moving-tree-r3/frames/frame-0003.png",
+        "native/moving-tree-r3/frames/frame-0004.png",
+        "native/moving-tree-r3/frames/frame-0005.png",
+        "native/moving-tree-r3/frames/frame-0006.png",
+        "native/moving-tree-r3/frames/frame-0007.png",
+        "native/moving-tree-r3/frames/frame-0008.png",
+        "native/moving-tree-r3/frames/frame-0009.png",
+        "native/moving-tree-r3/frames/frame-0010.png",
+        "native/moving-tree-r3/frames/frame-0011.png",
+        "native/moving-tree-r3/tree-behind.png",
+        "native/moving-tree-r3/tree-front-restored.png",
+        "native/moving-tree-r3/tree-front.png",
+        "native/moving-tree-r3/visual-cover-info.json.gz"
+      ],
+      "diagnostics": [
+        "ERROR: EliteCrowdFightPreview: Tree phase needs two reachable opaque covered pickup cells",
+        "ERROR: EliteCrowdFightPreview: Tree phase requires covered/exposed live projectiles and ordinary windups",
+        "ERROR: EliteCrowdFightPreview: Tree phase lacks covered and exposed real equipment icon fragments",
+        "ERROR: EliteCrowdFightPreview: Tree phase lacks covered and exposed real health icon fragments"
+      ],
+      "final_manifest_present": true,
+      "manifest_summary": {
+        "engine_max_fps": 20,
+        "failures": 4,
+        "moving_enemy_transitions": [
+          {
+            "first_covered": 0.133333333333333,
+            "first_exposed": 0.133333333333333,
+            "instance_id": 992858883508,
+            "kind": "ordinary",
+            "max_displacement": 148.233917236328,
+            "tree_covered": 54,
+            "tree_exposed": 117
+          },
+          {
+            "first_covered": 9.2166666666667,
+            "first_exposed": 6.08333333333332,
+            "instance_id": 750662983571,
+            "kind": "ordinary",
+            "max_displacement": 326.714141845703,
+            "tree_covered": 7,
+            "tree_exposed": 49
+          }
+        ],
+        "phase": "tree",
+        "phase_summary": {
+          "deadline_hit": false,
+          "producers_stayed_live": true,
+          "projectile_covered": 28,
+          "projectile_exposed": 57,
+          "simulation_seconds": 11.7166666666668,
+          "tell_covered": 30,
+          "tell_exposed": 0,
+          "wall_seconds": 19.427775
+        },
+        "physics_ticks_per_second": 60,
+        "save_writes": 0
+      },
+      "outer_stop_reason": "thermal_limit",
+      "run": "city22-cover-moving-tree-r3",
+      "state": "partial_interrupted_capture_not_acceptance",
+      "tool_source_sha256": "b1f7b9f364ba1cf67baf1a3ecdb710dac0774e11d16078cbbe8790d6512ceff5"
+    },
+    "moving-tree-r5": {
+      "actual_exit": 1,
+      "artifacts": [
+        "native/moving-tree-r5/frames/frame-0000.png",
+        "native/moving-tree-r5/frames/frame-0001.png",
+        "native/moving-tree-r5/frames/frame-0002.png",
+        "native/moving-tree-r5/frames/frame-0003.png",
+        "native/moving-tree-r5/frames/frame-0004.png",
+        "native/moving-tree-r5/frames/frame-0005.png",
+        "native/moving-tree-r5/frames/frame-0006.png",
+        "native/moving-tree-r5/frames/frame-0007.png",
+        "native/moving-tree-r5/frames/frame-0008.png",
+        "native/moving-tree-r5/frames/frame-0009.png",
+        "native/moving-tree-r5/frames/frame-0010.png",
+        "native/moving-tree-r5/frames/frame-0011.png",
+        "native/moving-tree-r5/tree-behind.png",
+        "native/moving-tree-r5/tree-front-restored.png",
+        "native/moving-tree-r5/tree-front.png",
+        "native/moving-tree-r5/visual-cover-info.json.gz"
+      ],
+      "diagnostics": [
+        "ERROR: Parameter \"body->get_space()\" is null.",
+        "ERROR: EliteCrowdFightPreview: Tree phase needs actual shared-uncovered front pickup cells",
+        "ERROR: EliteCrowdFightPreview: No actual shared-uncovered shooter control cell",
+        "ERROR: EliteCrowdFightPreview: Tree phase requires covered/exposed live projectiles and ordinary windups",
+        "ERROR: EliteCrowdFightPreview: Tree phase lacks covered and exposed real equipment icon fragments",
+        "ERROR: EliteCrowdFightPreview: Tree phase lacks covered and exposed real health icon fragments"
+      ],
+      "final_manifest_present": true,
+      "interpretation": "Actual five logical/fixture failures and body-space diagnostics; guard completed. Covered icons/projectiles/bodies succeeded, exposed equipment/health controls and exposed windup did not. No thermal excuse or visual acceptance.",
+      "manifest_summary": {
+        "engine_max_fps": 15,
+        "failures": 5,
+        "moving_enemy_transitions": [
+          {
+            "first_covered": 0.133333333333333,
+            "first_exposed": 0.133333333333333,
+            "instance_id": 992489784753,
+            "kind": "ordinary",
+            "max_displacement": 149.430435180664,
+            "tree_covered": 66,
+            "tree_exposed": 142
+          },
+          {
+            "first_covered": 3.69999999999999,
+            "first_exposed": 0.133333333333333,
+            "instance_id": 744824512076,
+            "kind": "ordinary",
+            "max_displacement": 717.197448730469,
+            "tree_covered": 4,
+            "tree_exposed": 198
+          },
+          {
+            "first_covered": 7.13333333333331,
+            "first_exposed": 3.13333333333333,
+            "instance_id": 1027805825405,
+            "kind": "ordinary",
+            "max_displacement": 303.037963867188,
+            "tree_covered": 10,
+            "tree_exposed": 88
+          }
+        ],
+        "phase": "tree",
+        "phase_summary": {
+          "deadline_hit": false,
+          "producers_stayed_live": true,
+          "projectile_covered": 24,
+          "projectile_exposed": 42,
+          "simulation_seconds": 11.5000000000002,
+          "tell_covered": 15,
+          "tell_exposed": 0,
+          "wall_seconds": 24.024318
+        },
+        "physics_ticks_per_second": 60,
+        "save_writes": 0
+      },
+      "outer_stop_reason": "completed",
+      "run": "city22-cover-moving-tree-r5",
+      "state": "partial_interrupted_capture_not_acceptance",
+      "tool_source_sha256": "51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7"
+    },
+    "moving-tree-r6": {
+      "actual_exit": 0,
+      "appearance_review": {
+        "acceptance": "Withheld. R7 ordinary-ready comparison is a separate case, not a retroactive R6 pass.",
+        "finding": "No source/material/sampler/z mismatch identified; low-alpha locked ring is difficult to identify against busy canopy at native zoom.",
+        "functional_execution": "clean; independent from visual readability",
+        "record": "reviews/cover-tree-r6-native-appearance-review.json",
+        "review_sha256": "867f0101ea63b99c53ae2cc96559f16ec22c10dbe85a90086b6fd33fef96fb2d",
+        "state": "OPEN_locked_small_equipment_readability"
+      },
+      "artifacts": [
+        "native/moving-tree-r6/frames/frame-0000.png",
+        "native/moving-tree-r6/frames/frame-0001.png",
+        "native/moving-tree-r6/frames/frame-0002.png",
+        "native/moving-tree-r6/frames/frame-0003.png",
+        "native/moving-tree-r6/frames/frame-0004.png",
+        "native/moving-tree-r6/frames/frame-0005.png",
+        "native/moving-tree-r6/frames/frame-0006.png",
+        "native/moving-tree-r6/frames/frame-0007.png",
+        "native/moving-tree-r6/frames/frame-0008.png",
+        "native/moving-tree-r6/frames/frame-0009.png",
+        "native/moving-tree-r6/frames/frame-0010.png",
+        "native/moving-tree-r6/frames/frame-0011.png",
+        "native/moving-tree-r6/tree-behind.png",
+        "native/moving-tree-r6/tree-front-restored.png",
+        "native/moving-tree-r6/tree-front.png",
+        "native/moving-tree-r6/visual-cover-info.json.gz"
+      ],
+      "diagnostics": [],
+      "final_manifest_present": true,
+      "interpretation": "R6 clean native transport and functional gates do not establish readable locked equipment. Exact review867f0101 keeps actual ring contrast OPEN; r5 failures remain separate.",
+      "manifest_summary": {
+        "engine_max_fps": 15,
+        "failures": 0,
+        "moving_enemy_transitions": [
+          {
+            "first_covered": 0.0333333333333333,
+            "first_exposed": 0.0333333333333333,
+            "instance_id": 992942769592,
+            "kind": "ordinary",
+            "max_displacement": 150.610534667969,
+            "tree_covered": 84,
+            "tree_exposed": 143
+          }
+        ],
+        "phase": "tree",
+        "phase_summary": {
+          "deadline_hit": false,
+          "producers_stayed_live": true,
+          "projectile_covered": 22,
+          "projectile_exposed": 90,
+          "simulation_seconds": 11.6000000000002,
+          "tell_covered": 15,
+          "tell_exposed": 15,
+          "wall_seconds": 24.62394
+        },
+        "physics_ticks_per_second": 60,
+        "save_writes": 0
+      },
+      "outer_stop_reason": "completed",
+      "run": "city22-cover-moving-tree-r6",
+      "state": "pending_visual_review",
+      "tool_source_sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f"
+    },
+    "moving-tree-r7": {
+      "actual_exit": 1,
+      "artifacts": [
+        "native/moving-tree-r7/frames/frame-0000.png",
+        "native/moving-tree-r7/frames/frame-0001.png",
+        "native/moving-tree-r7/frames/frame-0002.png",
+        "native/moving-tree-r7/frames/frame-0003.png",
+        "native/moving-tree-r7/frames/frame-0004.png",
+        "native/moving-tree-r7/frames/frame-0005.png",
+        "native/moving-tree-r7/frames/frame-0006.png",
+        "native/moving-tree-r7/frames/frame-0007.png",
+        "native/moving-tree-r7/frames/frame-0008.png",
+        "native/moving-tree-r7/frames/frame-0009.png",
+        "native/moving-tree-r7/frames/frame-0010.png",
+        "native/moving-tree-r7/frames/frame-0011.png",
+        "native/moving-tree-r7/tree-behind.png",
+        "native/moving-tree-r7/tree-front-restored.png",
+        "native/moving-tree-r7/tree-front.png",
+        "native/moving-tree-r7/tree-normal-equipment.png",
+        "native/moving-tree-r7/visual-cover-info.json.gz"
+      ],
+      "diagnostics": [
+        "ERROR: EliteCrowdFightPreview: Normal equipment comparison requires unchanged distant ready owners, same view, and actual covered/exposed opaque samples",
+        "ERROR: EliteCrowdFightPreview: Tree phase requires the same-position ordinary-ready equipment comparison"
+      ],
+      "final_manifest_present": true,
+      "interpretation": "Actual R7 failed its same-view comparison after live knockback moved player/camera. Same-owner ordinary fragments/readiness succeeded, but unmatched third/fourth images remain qualitative references. No thermal excuse or matched-view acceptance.",
+      "manifest_summary": {
+        "engine_max_fps": 15,
+        "failures": 2,
+        "moving_enemy_transitions": [
+          {
+            "first_covered": 0.0333333333333333,
+            "first_exposed": 0.0333333333333333,
+            "instance_id": 993144096138,
+            "kind": "ordinary",
+            "max_displacement": 151.153091430664,
+            "tree_covered": 84,
+            "tree_exposed": 143
+          },
+          {
+            "first_covered": 4.66666666666666,
+            "first_exposed": 0.883333333333334,
+            "instance_id": 744371527212,
+            "kind": "ordinary",
+            "max_displacement": 339.977172851562,
+            "tree_covered": 22,
+            "tree_exposed": 165
+          },
+          {
+            "first_covered": 4.09999999999999,
+            "first_exposed": 5.19999999999999,
+            "instance_id": 743297784795,
+            "kind": "ordinary",
+            "max_displacement": 679.599060058594,
+            "tree_covered": 15,
+            "tree_exposed": 53
+          }
+        ],
+        "phase": "tree",
+        "phase_summary": {
+          "deadline_hit": false,
+          "producers_stayed_live": true,
+          "projectile_covered": 20,
+          "projectile_exposed": 87,
+          "simulation_seconds": 12.1500000000002,
+          "tell_covered": 18,
+          "tell_exposed": 18,
+          "wall_seconds": 25.824184
+        },
+        "physics_ticks_per_second": 60,
+        "save_writes": 0
+      },
+      "ordinary_equipment_comparison": {
+        "passed": false,
+        "state": "unclean_runner_or_guard_transport_not_acceptance"
+      },
+      "outer_stop_reason": "completed",
+      "run": "city22-cover-moving-tree-r7",
+      "state": "partial_interrupted_capture_not_acceptance",
+      "tool_source_sha256": "8737b1c5ff967a3caa097d1101649c3ddb0d227a0899b884cc9612202c6deab3"
+    },
+    "moving-tree-r8": {
+      "actual_exit": 0,
+      "appearance_review": {
+        "decision": "Integrate bounded pickup density improvement and native comparison tool; do not claim small-equipment discoverability resolved.",
+        "finding": "Normal ring is denser; locked and ordinary tiny ring still need foreknowledge against busy leaves. Potions and actors read more readily.",
+        "limits": "R7 originals are qualitative references only. R8 same-view/19-covered/19-exposed gates do not prove practical icon recognition. No performance or all-item/all-background acceptance.",
+        "record": "reviews/cover-tree-r8-independent-visual-review.json",
+        "review_sha256": "d66dbaf9f3259b4ef0d066baddbadeb50a38c1b974bc4a6fe395f60a8ca9123a",
+        "root_decision": "reviews/cover-tree-r8-root-decision.json",
+        "root_decision_sha256": "62a8fc6c40c9030691524d2b7d2f34e985542a8cb0866a1896a438ed16834619",
+        "state": "BOUNDED_IMPROVEMENT_APPROVED_DISCOVERABILITY_OPEN"
+      },
+      "artifacts": [
+        "native/moving-tree-r8/frames/frame-0000.png",
+        "native/moving-tree-r8/frames/frame-0001.png",
+        "native/moving-tree-r8/frames/frame-0002.png",
+        "native/moving-tree-r8/frames/frame-0003.png",
+        "native/moving-tree-r8/frames/frame-0004.png",
+        "native/moving-tree-r8/frames/frame-0005.png",
+        "native/moving-tree-r8/frames/frame-0006.png",
+        "native/moving-tree-r8/frames/frame-0007.png",
+        "native/moving-tree-r8/frames/frame-0008.png",
+        "native/moving-tree-r8/frames/frame-0009.png",
+        "native/moving-tree-r8/frames/frame-0010.png",
+        "native/moving-tree-r8/frames/frame-0011.png",
+        "native/moving-tree-r8/tree-behind.png",
+        "native/moving-tree-r8/tree-front-restored.png",
+        "native/moving-tree-r8/tree-front.png",
+        "native/moving-tree-r8/tree-normal-equipment.png",
+        "native/moving-tree-r8/visual-cover-info.json.gz"
+      ],
+      "diagnostics": [],
+      "final_manifest_present": true,
+      "interpretation": "Actual parser3/native33/moving capture clean at exact4ab/a399. Fixed camera-only comparison passes with same owners/world points/readiness; root approves bounded density improvement. Tiny ring discoverability remains OPEN; no all-item/background or performance claim.",
+      "manifest_summary": {
+        "engine_max_fps": 15,
+        "failures": 0,
+        "moving_enemy_transitions": [
+          {
+            "first_covered": 0.0333333333333333,
+            "first_exposed": 0.0333333333333333,
+            "instance_id": 1005777340410,
+            "kind": "ordinary",
+            "max_displacement": 151.771713256836,
+            "tree_covered": 84,
+            "tree_exposed": 142
+          },
+          {
+            "first_covered": 7.26666666666665,
+            "first_exposed": 4.13333333333332,
+            "instance_id": 1036982962632,
+            "kind": "ordinary",
+            "max_displacement": 225.069274902344,
+            "tree_covered": 10,
+            "tree_exposed": 56
+          }
+        ],
+        "phase": "tree",
+        "phase_summary": {
+          "deadline_hit": false,
+          "producers_stayed_live": true,
+          "projectile_covered": 26,
+          "projectile_exposed": 100,
+          "simulation_seconds": 12.0583333333335,
+          "tell_covered": 18,
+          "tell_exposed": 15,
+          "wall_seconds": 25.778268
+        },
+        "physics_ticks_per_second": 60,
+        "save_writes": 0
+      },
+      "ordinary_equipment_comparison": {
+        "appearance_acceptance": "OPEN; ordinary-versus-locked native images require actual review",
+        "covered_and_exposed_opaque_controls": true,
+        "limits": "The fourth plate cannot satisfy original locked controls. Same view is not whole-PNG identity, and source/material counts do not prove readable contrast.",
+        "passed": true,
+        "same_original_owners_and_world_points": true,
+        "state": "clean_native_comparison_requires_image_review"
+      },
+      "outer_stop_reason": "completed",
+      "prerequisites": {
+        "appearance": "Bounded density improvement only; small equipment discoverability OPEN",
+        "passed": true,
+        "state": "clean_parser3_native33_moving_capture"
+      },
+      "run": "city22-cover-moving-tree-r8",
+      "state": "pending_visual_review",
+      "tool_source_sha256": "4ab8a4100dbb99487f88f7965a812762dc29bae165eba96894adb17b23de1b1e"
+    },
+    "moving-visual": {
+      "actual_exit": -15,
+      "artifacts": [
+        "native/moving-visual/frames/frame-0000.png",
+        "native/moving-visual/frames/frame-0001.png",
+        "native/moving-visual/frames/frame-0002.png",
+        "native/moving-visual/frames/frame-0003.png",
+        "native/moving-visual/frames/frame-0004.png",
+        "native/moving-visual/frames/frame-0005.png",
+        "native/moving-visual/frames/frame-0006.png",
+        "native/moving-visual/home-covered-before-entry.png",
+        "native/moving-visual/home-inside-real-cutaway.png",
+        "native/moving-visual/home-outside-roof-restored.png"
+      ],
+      "diagnostics": [
+        "ERROR: EliteCrowdFightPreview: Mandatory westbound owning-chunk boundary arrival was not reached"
+      ],
+      "final_manifest_present": false,
+      "outer_stop_reason": "thermal_limit",
+      "run": "city22-cover-moving-visual",
+      "state": "partial_interrupted_capture_not_acceptance",
+      "tool_source_sha256": "8b0a43cece8a6e74f2595982173e847b3269dd9775c7dfacd4a840d35615fd60"
+    },
+    "player-reference": {
+      "actual_exit": 0,
+      "artifacts": [
+        "native/player-reference/normal-atlas-flipped.png",
+        "native/player-reference/normal-capacity-35.png",
+        "native/player-reference/normal-fruit-behind.png",
+        "native/player-reference/normal-fruit-front.png",
+        "native/player-reference/normal-ordinary-behind.png",
+        "native/player-reference/normal-ordinary-front.png",
+        "native/player-reference/normal-rgba-behind.png",
+        "native/player-reference/normal-rgba-front.png",
+        "native/player-reference/normal-roof-ancestor-partial.png",
+        "native/player-reference/normal-roof-cutaway.png",
+        "native/player-reference/normal-roof-opaque.png",
+        "native/player-reference/result.json",
+        "native/player-reference/small-atlas-flipped.png",
+        "native/player-reference/small-capacity-35.png",
+        "native/player-reference/small-fruit-behind.png",
+        "native/player-reference/small-fruit-front.png",
+        "native/player-reference/small-ordinary-behind.png",
+        "native/player-reference/small-ordinary-front.png",
+        "native/player-reference/small-rgba-behind.png",
+        "native/player-reference/small-rgba-front.png",
+        "native/player-reference/small-roof-ancestor-partial.png",
+        "native/player-reference/small-roof-cutaway.png",
+        "native/player-reference/small-roof-opaque.png"
+      ],
+      "diagnostics": [],
+      "final_manifest_present": true,
+      "outer_stop_reason": "completed",
+      "run": "city22-cover-player-native-g2",
+      "state": "completed_clean_native_fixture",
+      "tool_source_sha256": "8b0a43cece8a6e74f2595982173e847b3269dd9775c7dfacd4a840d35615fd60"
+    }
+  },
+  "finite_import_samples": {
+    "moving-home-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T21:17:48.957207+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 1933,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-short-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "ca27204d50fc38ed8671878c6bffa11b5d17fe300ccd530acf30da5b094248c2",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5918,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "5504e58d585f0e9dfecdc2b6dc7f3b047af1aeb339465c737b00096cee6bc317",
+          "status": "sampled"
+        },
+        {
+          "bytes": 523,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/source_parse_probe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "893bbd94bf884fe624388cf882bd82ed08e45e8c7d62518c9c317160ecaf61f6",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18936149,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T21:17:48.849544+00:00"
+    },
+    "moving-home-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T21:12:10.217374+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 1933,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-short-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "ca27204d50fc38ed8671878c6bffa11b5d17fe300ccd530acf30da5b094248c2",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5918,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "5504e58d585f0e9dfecdc2b6dc7f3b047af1aeb339465c737b00096cee6bc317",
+          "status": "sampled"
+        },
+        {
+          "bytes": 523,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/source_parse_probe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "893bbd94bf884fe624388cf882bd82ed08e45e8c7d62518c9c317160ecaf61f6",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18936149,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T21:12:10.057401+00:00"
+    },
+    "moving-home-r3-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T21:46:33.369260+00:00",
+      "entry_count": 62,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 1580,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-short-r3-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "1166eb138d0f6897f93e03cbcbe865541881d73cd777216632770a1035443ca8",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18937531,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T21:46:33.254286+00:00"
+    },
+    "moving-home-r3-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T21:44:55.478609+00:00",
+      "entry_count": 62,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 1580,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-short-r3-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "1166eb138d0f6897f93e03cbcbe865541881d73cd777216632770a1035443ca8",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18937531,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T21:44:55.300182+00:00"
+    },
+    "moving-tree-r3-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T21:50:14.164046+00:00",
+      "entry_count": 62,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 1580,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-short-r3-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "1166eb138d0f6897f93e03cbcbe865541881d73cd777216632770a1035443ca8",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18937531,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T21:50:14.052569+00:00"
+    },
+    "moving-tree-r3-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T21:46:36.507114+00:00",
+      "entry_count": 62,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 1580,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-short-r3-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "1166eb138d0f6897f93e03cbcbe865541881d73cd777216632770a1035443ca8",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18937531,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T21:46:36.437679+00:00"
+    },
+    "moving-tree-r5-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T22:47:14.239029+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5273,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r5-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "c74736f2b428e1f34683baaea94f0fc2c2df09113aebac824567367285cbbe43",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        },
+        {
+          "bytes": 37408,
+          "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18978632,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T22:47:14.172488+00:00"
+    },
+    "moving-tree-r5-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T22:38:25.468233+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5273,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r5-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "c74736f2b428e1f34683baaea94f0fc2c2df09113aebac824567367285cbbe43",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        },
+        {
+          "bytes": 37408,
+          "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18978632,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T22:38:25.395489+00:00"
+    },
+    "moving-tree-r6-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T23:15:41.448817+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5273,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "d38674c43fa1ead49a13ba7d7a1851e5f577ca6efe210c6a157aa4280478eb06",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        },
+        {
+          "bytes": 43625,
+          "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18984849,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T23:15:41.381359+00:00"
+    },
+    "moving-tree-r6-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T23:06:09.866432+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5273,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r6-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "d38674c43fa1ead49a13ba7d7a1851e5f577ca6efe210c6a157aa4280478eb06",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        },
+        {
+          "bytes": 43625,
+          "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18984849,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T23:06:09.794624+00:00"
+    },
+    "moving-tree-r7-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T23:49:43.850862+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5732,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r7-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "1d3e4a8ab319990e2695b60271da96fe72267b4d0d1ec813eabb5212152482a5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        },
+        {
+          "bytes": 51983,
+          "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "8737b1c5ff967a3caa097d1101649c3ddb0d227a0899b884cc9612202c6deab3",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18993666,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T23:49:43.781201+00:00"
+    },
+    "moving-tree-r7-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T23:41:59.472841+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5732,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r7-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "1d3e4a8ab319990e2695b60271da96fe72267b4d0d1ec813eabb5212152482a5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        },
+        {
+          "bytes": 51983,
+          "path": "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "8737b1c5ff967a3caa097d1101649c3ddb0d227a0899b884cc9612202c6deab3",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18993666,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn"
+      ],
+      "started_utc": "2026-10-22T23:41:59.404286+00:00"
+    },
+    "moving-tree-r8-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-23T00:11:05.057634+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 9764,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "d7b543546dfb08163ef3c5a2e54ecc5a22b57387a8b286df5efbce29c716c48b",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18946439,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn",
+        "core/systems/world/visibility/pickup_cover.gdshader"
+      ],
+      "started_utc": "2026-10-23T00:11:04.969375+00:00"
+    },
+    "moving-tree-r8-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-23T00:08:47.872402+00:00",
+      "entry_count": 63,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 9764,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-queue.py",
+          "reason": "explicit launcher sample",
+          "sha256": "d7b543546dfb08163ef3c5a2e54ecc5a22b57387a8b286df5efbce29c716c48b",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8176,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 18946439,
+      "sampled_generated_import_count": 24,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn",
+        "core/systems/world/visibility/pickup_cover.gdshader"
+      ],
+      "started_utc": "2026-10-23T00:08:47.802589+00:00"
+    },
+    "moving-visual-imports-after.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T20:58:56.448243+00:00",
+      "entry_count": 70,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5918,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "5504e58d585f0e9dfecdc2b6dc7f3b047af1aeb339465c737b00096cee6bc317",
+          "status": "sampled"
+        },
+        {
+          "bytes": 523,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/source_parse_probe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "893bbd94bf884fe624388cf882bd82ed08e45e8c7d62518c9c317160ecaf61f6",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 20349752,
+      "sampled_generated_import_count": 28,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn",
+        "assets/world/roofs/roof_clay.png",
+        "assets/world/roofs/roof_slate.png"
+      ],
+      "started_utc": "2026-10-22T20:58:56.382955+00:00"
+    },
+    "moving-visual-imports-before.json": {
+      "binding_limit": "Finite selected resources at this sample time, not full Game/import closure or loaded-resource telemetry.",
+      "ended_utc": "2026-10-22T20:55:05.261944+00:00",
+      "entry_count": 70,
+      "launcher_records": [
+        {
+          "bytes": 13817,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+          "reason": "explicit launcher sample",
+          "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+          "status": "sampled"
+        },
+        {
+          "bytes": 8660,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+          "status": "sampled"
+        },
+        {
+          "bytes": 5918,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "reason": "explicit launcher sample",
+          "sha256": "5504e58d585f0e9dfecdc2b6dc7f3b047af1aeb339465c737b00096cee6bc317",
+          "status": "sampled"
+        },
+        {
+          "bytes": 523,
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/source_parse_probe.gd",
+          "reason": "explicit launcher sample",
+          "sha256": "893bbd94bf884fe624388cf882bd82ed08e45e8c7d62518c9c317160ecaf61f6",
+          "status": "sampled"
+        }
+      ],
+      "sampled_bytes": 20349752,
+      "sampled_generated_import_count": 28,
+      "scope": "Finite selected cover canopy/roof/actor/pickup resources and their literal texture/import references, plus explicit launcher paths. Not full Game closure or load telemetry.",
+      "selected_seeds": [
+        "assets/world/city_block/clay.png",
+        "assets/world/city_block/slate.png",
+        "assets/world/city_block/temperate_tree.png",
+        "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png",
+        "assets/textures/characters/baked/grunt_frames.tres",
+        "assets/textures/characters/baked/spitter_frames.tres",
+        "assets/textures/characters/baked/human_frames.tres",
+        "assets/textures/characters/baked/dragonborn_frames.tres",
+        "assets/textures/characters/baked/elf_frames.tres",
+        "assets/textures/characters/baked/warforged_frames.tres",
+        "core/actors/enemy/EnemySpec_Brute.tres",
+        "scenes/world/pickups/ItemPickup.tscn",
+        "scenes/world/pickups/HealthPickup.tscn",
+        "assets/world/roofs/roof_clay.png",
+        "assets/world/roofs/roof_slate.png"
+      ],
+      "started_utc": "2026-10-22T20:55:05.159871+00:00"
+    }
+  },
+  "limits": "Original images are unmodified. R6 readability remains OPEN; R7 failed matched view. R8 clean exact parser3/native33/moving controls support a bounded density improvement approved by root; small-equipment discoverability remains OPEN in actual reviewed originals. Material/source-alpha counts do not accept practical contrast.",
+  "r8_prerequisites": {
+    "appearance": "Bounded density improvement only; small equipment discoverability OPEN",
+    "passed": true,
+    "state": "clean_parser3_native33_moving_capture"
+  }
+}

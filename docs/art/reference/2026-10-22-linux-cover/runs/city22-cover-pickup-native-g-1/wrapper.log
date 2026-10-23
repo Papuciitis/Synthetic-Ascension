@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-pickup-native-g-1",
+ "queued_seconds": 59.1,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 37.481,
+ "peak_rss_mb": 358,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/37 lines) ---
+PASS: pickup removal releases icons without keeping their owners alive
+PASS: cover presentation performs no save writes
+PickupCoverTest passes=33 failures=0

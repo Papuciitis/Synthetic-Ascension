@@ -1,0 +1,24 @@
+{
+  "status": "READ_ONLY_NO_CONCRETE_BLOCKER_FOUND_FINAL_R8_FREEZE",
+  "source_bindings": {
+    "/tmp/sa-wp2-cover/tools/dev/WorldCoverMovingVisualProbe.gd": "4ab8a4100dbb99487f88f7965a812762dc29bae165eba96894adb17b23de1b1e",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-queue.py": "d7b543546dfb08163ef3c5a2e54ecc5a22b57387a8b286df5efbce29c716c48b",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/pickup-cover-density-r8.gdshader": "a399f0e37d1cadf82712c9efb668eb8d62bb0866521ded5d415846332318e367",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PickupCoverDensityNative.gd": "a99056f6250a03384ca8eb429a2bf68c81fc998455bd59ad2f6288eb995dab50",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PickupCoverDensityNative.tscn": "130fb0879d5da2d55714b1c8bab3ceb4609d5c4ec0d933eaae4b1e8c5a68fa91",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/cover-tree-r8-source.json": "d4af6afe0a7e8f2c97c8cb95f04a583859f4ba13dc5c5b8df937fe31a9e32d4f"
+  },
+  "original_fail_call_lines": 38,
+  "findings": [
+    "New process override calls the original parent first, then holds only camera position and captured Camera2D.offset, resets smoothing and updates scroll from the third locked plate through the fourth ordinary plate.",
+    "Player motion/knockback, HitFeel settings, enemy AI, physics, ordinary pickup eligibility and all original fail-call controls remain unchanged. Same-view equality remains asserted.",
+    "Pickup-only shader retains native authored COLOR.a before the shared composite and replaces final alpha with authored_alpha*mix(1,.85,covered). RGB composition, texture/atlas sampling, exposed/zero-alpha pixels and relative lock/glow/parent alpha factors remain intact; global/player/enemy compositor stays unchanged.",
+    "Existing native33 predicates stay inherited and source inequalities remain compatible; this is not a new engine pass or visual-readability verdict.",
+    "Driver refuses execute with baseline shader, binds actual raw project sources and clean runner/guard/no diagnostics, then requires parser3, unchanged native33 with actual15FPS/60Hz envelope, and strict moving camera/owner/health/original locked controls and four PNGs."
+  ],
+  "limits": [
+    "No engines, Git, driver/main execution or runtime edits by reviewer.",
+    "Product shader application and all parser/native/appearance results remain root-owned.",
+    "Readability still requires actual original-image review."
+  ]
+}

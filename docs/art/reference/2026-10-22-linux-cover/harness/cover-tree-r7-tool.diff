@@ -1,0 +1,145 @@
+--- r6-exact-00f7eba6
++++ r7-WorldCoverMovingVisualProbe.gd
+@@ -19,6 +19,10 @@
+ var _visual_phase_summary: Dictionary = {}
+ var _visual_tree_fixture: Dictionary = {}
+ var _visual_tree_attempts: Array[Dictionary] = []
++var _visual_normal_equipment: Dictionary = {}
++var _visual_normal_capture: bool = false
++var _visual_locked_camera: Vector2 = Vector2.INF
++var _visual_locked_canvas: Transform2D = Transform2D.IDENTITY
+ 
+ 
+ func _enter_tree() -> void:
+@@ -149,8 +153,12 @@
+ 		await _visual_plate("tree-behind")
+ 		await _walk_to(front)
+ 		await _live_wait(0.3)
++		await _visual_settle_return_camera()
+ 		await _visual_plate("tree-front-restored")
++		_visual_locked_camera = _camera.global_position
++		_visual_locked_canvas = get_viewport().get_canvas_transform()
+ 		await _live_wait(2.5)
++		await _visual_compare_normal_equipment()
+ 	await _visual_finish_phase()
+ 
+ 
+@@ -186,7 +194,7 @@
+ 
+ 
+ func _grab_live() -> void:
+-	if _visual_phase != "full" and _pixels.size() >= 12:
++	if _visual_phase != "full" and (_pixels.size() >= 12 or _visual_normal_capture):
+ 		_live_grabbing = false
+ 		_next_usec = Time.get_ticks_usec() + 1000000
+ 		return
+@@ -444,6 +452,96 @@
+ 				best = point.distance_squared_to(desired)
+ 	_live_staging.append({"kind":"shared-uncovered control search", "role":role, "desired":str(desired), "selected":str(chosen), "view":_visual_view_state(), "candidates":81, "filter_counts":rejected, "reachable_cells":reachable.size(), "reserved_points":_occupied.size(), "source_opaque_probes":source_probes.size(), "muzzle_own_depth":muzzle})
+ 	return chosen
++
++
++func _visual_settle_return_camera() -> void:
++	var before: Dictionary = _visual_view_state()
++	_camera.global_position = _player.global_position + Vector2(140, -160)
++	_camera.reset_smoothing()
++	_camera.force_update_scroll()
++	await get_tree().physics_frame
++	await get_tree().process_frame
++	_camera.force_update_scroll()
++	_evidence_cover.call("refresh", _player, true)
++	_live_staging.append({"kind":"tree restored/normal comparison camera settle", "before":before, "after":_visual_view_state(), "actors_frozen":false})
++
++
++func _visual_compare_normal_equipment() -> void:
++	_visual_normal_equipment = {"passed":false}
++	_visual_normal_capture = true # Hold only new readbacks; live simulation remains enabled.
++	for _frame: int in range(4):
++		if not _live_grabbing: break
++		await get_tree().process_frame # Drain an already queued locked readback before unlocking.
++	if _live_grabbing:
++		_fail("Normal equipment comparison could not drain the locked readback")
++		return
++	await get_tree().process_frame # Invoke the ordinary monitoring owner from process, outside physics callbacks.
++	var equipment: Array[ItemPickup] = []
++	var health: Array[HealthPickup] = []
++	for ref: WeakRef in _visual_home_entities:
++		var node: Node = ref.get_ref() as Node
++		if node is ItemPickup: equipment.append(node as ItemPickup)
++		if node is HealthPickup: health.append(node as HealthPickup)
++	if equipment.size() != 2 or health.size() != 2 or _visual_tree_plates.size() != 3:
++		_fail("Normal equipment comparison requires the same two items and locked health controls")
++		return
++	var points: Array[Vector2] = []
++	var before: Array[Dictionary] = []
++	var minimum_distance: float = ItemPickup.MAGNET_RADIUS + 16.0
++	for pickup: ItemPickup in equipment:
++		var distance: float = pickup.global_position.distance_to(_player.global_position)
++		var reference: Dictionary = {}
++		for entry: Dictionary in _visual_tree_plates[2].entities:
++			if int(entry.instance_id) == pickup.get_instance_id(): reference = entry
++		if distance <= minimum_distance or pickup._picked or pickup._pickup_ready or pickup.monitoring or pickup.monitorable or pickup.vfx == null or not bool(pickup.vfx.get("_locked")) or reference.get("world", "") != str(pickup.global_position):
++			_fail("Normal equipment comparison requires distant, unpicked, originally locked owners")
++			return
++		points.append(pickup.global_position)
++		before.append({"instance_id":pickup.get_instance_id(), "world":str(pickup.global_position), "same_owner_world_as_third_plate":true, "player_distance":distance, "pickup_ready":pickup._pickup_ready, "monitoring":pickup.monitoring, "monitorable":pickup.monitorable, "icon_modulate":str(pickup.icon_sprite.modulate), "material_id":pickup.icon_sprite.material.get_instance_id(), "texture_id":pickup.icon_sprite.texture.get_instance_id(), "persistent_world_drop":pickup.persistent_world_drop})
++	var began: float = _combat_time
++	var physics_before: int = Engine.get_physics_frames()
++	for pickup: ItemPickup in equipment:
++		pickup.pickup_delay = 0.0
++		pickup._enable_pickup_later() # Normal owner path sets readiness, monitoring and Vfx lock state.
++	await _live_wait(0.35)
++	await get_tree().process_frame
++	await RenderingServer.frame_post_draw
++	var image: Image = get_viewport().get_texture().get_image()
++	_save_image(image, _out.path_join("tree-normal-equipment.png"))
++	var locked_counts: Dictionary = _visual_counts.duplicate(true)
++	var locked_tracks: Dictionary = _visual_tracks.duplicate(true)
++	var plate: Dictionary = _visual_frame(image, "tree-normal-equipment.png")
++	_visual_counts = locked_counts # The fourth plate cannot satisfy the original locked-state gates.
++	_visual_tracks = locked_tracks
++	var canvas: Transform2D = get_viewport().get_canvas_transform()
++	var same_camera: bool = _camera.global_position.distance_to(_visual_locked_camera) <= 0.001 and canvas.origin.distance_to(_visual_locked_canvas.origin) <= 0.01 and canvas.x.is_equal_approx(_visual_locked_canvas.x) and canvas.y.is_equal_approx(_visual_locked_canvas.y)
++	var good: bool = same_camera and not _visual_deadline_hit and _combat_time >= began + 0.35 and Engine.get_physics_frames() > physics_before
++	var covered: int = 0
++	var exposed: int = 0
++	var states: Array[Dictionary] = []
++	for index: int in range(equipment.size()):
++		var pickup: ItemPickup = equipment[index]
++		var record: Dictionary = {}
++		for entry: Dictionary in plate.entities:
++			if int(entry.instance_id) == pickup.get_instance_id(): record = entry
++		var opaque_covered: int = 0
++		var opaque_exposed: int = 0
++		for fragment: Dictionary in record.get("fragments", []):
++			if not bool(fragment.on_image) or float(fragment.source_alpha) < 0.85: continue
++			if float(fragment.cover_strength) >= 0.65 and float(fragment.tree_strength) >= 0.65: opaque_covered += 1
++			elif float(fragment.cover_strength) <= 0.01: opaque_exposed += 1
++		if opaque_covered > 0: covered += 1
++		if opaque_exposed > 0: exposed += 1
++		var base_modulate: Color = pickup.vfx.get("_base_modulate")
++		var state_ok: bool = not record.is_empty() and pickup._pickup_ready and pickup.monitoring and pickup.monitorable and not pickup._picked and not bool(pickup.vfx.get("_locked")) and pickup.icon_sprite.modulate.is_equal_approx(base_modulate) and pickup.icon_sprite.material.get_instance_id() == int(before[index].material_id) and pickup.icon_sprite.texture.get_instance_id() == int(before[index].texture_id) and pickup.global_position.distance_to(points[index]) <= 0.001 and pickup.global_position.distance_to(_player.global_position) > minimum_distance and bool(record.get("material", {}).get("cover_enabled", false))
++		good = good and state_ok
++		states.append({"instance_id":pickup.get_instance_id(), "world":str(pickup.global_position), "pickup_ready":pickup._pickup_ready, "monitoring":pickup.monitoring, "monitorable":pickup.monitorable, "picked":pickup._picked, "vfx_locked":pickup.vfx.get("_locked"), "icon_modulate":str(pickup.icon_sprite.modulate), "player_distance":pickup.global_position.distance_to(_player.global_position), "same_position_material_texture_and_owner_state":state_ok, "opaque_tree_covered":opaque_covered, "opaque_shared_exposed":opaque_exposed})
++	var health_locked: bool = true
++	for pickup: HealthPickup in health:
++		health_locked = health_locked and not pickup._pickup_ready and not pickup.monitoring and not pickup.monitorable
++	good = good and health_locked and covered == 1 and exposed == 1
++	_visual_normal_equipment = {"passed":good, "plate":plate, "before":before, "after":states, "minimum_player_distance":minimum_distance, "ordinary_wait_simulation_seconds":_combat_time-began, "ordinary_physics_frames":Engine.get_physics_frames()-physics_before, "same_camera_and_view":same_camera, "locked_reference_camera":str(_visual_locked_camera), "locked_reference_canvas":str(_visual_locked_canvas), "health_stays_locked":health_locked, "original_locked_counts_preserved":_visual_counts == locked_counts, "limits":"Same real owners and world points; pickup_delay0 uses ordinary ItemPickup._enable_pickup_later. Health eligibility, AI, physics and materials remain live. Only automatic readbacks pause for the comparison; no pixel identity/performance claim."}
++	if not good: _fail("Normal equipment comparison requires unchanged distant ready owners, same view, and actual covered/exposed opaque samples")
+ 
+ 
+ func _stage_live_shooters() -> void:
+@@ -714,10 +812,11 @@
+ 				if (index == 1 and maximum < 0.65) or (index != 1 and maximum > 0.01): _fail("Tree phase player did not achieve its actual covered/front-depth plate")
+ 		for kind: String in ["equipment", "health"]:
+ 			if int(_visual_counts.get(kind + "/tree/covered", 0)) <= 0 or int(_visual_counts.get(kind + "/exposed", 0)) <= 0: _fail("Tree phase lacks covered and exposed real " + kind + " icon fragments")
++		if not bool(_visual_normal_equipment.get("passed", false)): _fail("Tree phase requires the same-position ordinary-ready equipment comparison")
+ 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out))
+ 	var file: FileAccess = FileAccess.open(_out.path_join("visual-cover-info.json"), FileAccess.WRITE)
+ 	if file != null:
+-		file.store_string(JSON.stringify({"tool":"res://tools/dev/WorldCoverMovingVisualProbe.tscn", "scene":"res://scenes/game.tscn", "args":OS.get_cmdline_user_args(), "phase":_visual_phase, "phase_summary":_visual_phase_summary, "tree_fixture_attempts":_visual_tree_attempts, "tree_plates":_visual_tree_plates, "engine_max_fps":Engine.max_fps, "physics_ticks_per_second":Engine.physics_ticks_per_second, "counts":_visual_counts, "moving_enemy_transitions":moving_transitions, "material_failures":_visual_material_failures, "home_plates":_visual_home_plates, "frames":_visual_frames, "save_writes":SaveManager.debug_save_writes - _save_writes_before, "failures":_failures, "limits":"Default full phase extends the live CityMovingCoverPreview route and all its controls. Explicit home/tree phases independently bound live recording to30 simulation seconds, <=12 route frames plus3 phase plates, and yield80ms between post-route PNGs. They omit collection/inventory, mandatory stream-boundary and player fire/hit gates; those are never reported as passed. Initial player placement is staged near the actual doorway or verified real-tree front waypoint. Tree phase adds live Brute/Spitters and real locked covered/front pickups. Native player front/behind/front depth, tree-specific same-enemy opaque covered/exposed fragments, real windups/projectiles, original home roof entry/restoration, scheduler/producer activity, materials and saves remain asserted where applicable. Optional runtime-fps changes render cadence only; physics and AI stay live. The render cap is not performance evidence. Adds one ordinary live Brute plus real locked equipment/health pickups in reachable walkable cells of the generated home before entry. Pickup delay/lifetime is 120 seconds; monitoring is untouched. Scripted player fire pauses during home demonstration; enemy AI/scheduler/physics/spawning/streaming stay live. Enemy samples decode the actual renderer upload transform/atlas region and batch material, never the hidden Sprite2D transform. Covered/exposed counts are repeated source-opaque fragment observations, not unique actors or framebuffer color assertions. RGB samples include native scenery blending and overlap. Existing native render suites supply isolated compositing checks; the attached frames/plates require visual review. This route is not spontaneous placement, performance, balance or human-play acceptance."}, "\t"))
++		file.store_string(JSON.stringify({"tool":"res://tools/dev/WorldCoverMovingVisualProbe.tscn", "scene":"res://scenes/game.tscn", "args":OS.get_cmdline_user_args(), "phase":_visual_phase, "phase_summary":_visual_phase_summary, "tree_fixture_attempts":_visual_tree_attempts, "tree_plates":_visual_tree_plates, "normal_equipment_comparison":_visual_normal_equipment, "engine_max_fps":Engine.max_fps, "physics_ticks_per_second":Engine.physics_ticks_per_second, "counts":_visual_counts, "moving_enemy_transitions":moving_transitions, "material_failures":_visual_material_failures, "home_plates":_visual_home_plates, "frames":_visual_frames, "save_writes":SaveManager.debug_save_writes - _save_writes_before, "failures":_failures, "limits":"Default full phase extends the live CityMovingCoverPreview route and all its controls. Explicit home/tree phases independently bound live recording to30 simulation seconds, <=12 route frames plus3 original phase plates (tree adds a fourth ordinary-equipment comparison), and yield80ms between post-route PNGs. They omit collection/inventory, mandatory stream-boundary and player fire/hit gates; those are never reported as passed. Initial player placement is staged near the actual doorway or verified real-tree front waypoint. Tree phase adds live Brute/Spitters and real locked covered/front pickups. Native player front/behind/front depth, tree-specific same-enemy opaque covered/exposed fragments, real windups/projectiles, original home roof entry/restoration, scheduler/producer activity, materials and saves remain asserted where applicable. Optional runtime-fps changes render cadence only; physics and AI stay live. The render cap is not performance evidence. Adds one ordinary live Brute plus real locked equipment/health pickups in reachable walkable cells of the generated home before entry. Initial pickup delay/lifetime is120 seconds. Tree comparison reuses the same two equipment owners at identical points, checks player distance beyond magnet radius+16, and sets delay0 through the owner normal eligibility path; health stays locked. That owner alone enables monitoring/readiness and restores its own Vfx modulation. The fourth plate has separate source-opaque/material/state/view gates and cannot satisfy the original locked counts. Scripted player fire pauses during home demonstration; enemy AI/scheduler/physics/spawning/streaming stay live. Enemy samples decode the actual renderer upload transform/atlas region and batch material, never the hidden Sprite2D transform. Covered/exposed counts are repeated source-opaque fragment observations, not unique actors or framebuffer color assertions. RGB samples include native scenery blending and overlap. Existing native render suites supply isolated compositing checks; the attached frames/plates require visual review. This route is not spontaneous placement, performance, balance or human-play acceptance."}, "\t"))
+ 		file.close()
+ 	else:
+ 		_fail("Cannot write native visual cover manifest")

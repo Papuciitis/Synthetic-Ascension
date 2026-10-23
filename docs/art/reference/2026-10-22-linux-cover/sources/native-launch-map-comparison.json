@@ -1,0 +1,25 @@
+{
+  "baseline_count": 2708,
+  "baseline_only": [
+    ".superpowers/claude-city-20261021/run_engine_slot.py"
+  ],
+  "candidate_count": 2716,
+  "candidate_only": [
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+    "tools/dev/WorldCoverCostProbe.gd",
+    "tools/dev/WorldCoverCostProbe.tscn",
+    "tools/dev/WorldCoverMovingVisualProbe.gd",
+    "tools/dev/WorldCoverMovingVisualProbe.tscn",
+    "tools/tests/WorldCoverInvalidationTest.gd",
+    "tools/tests/WorldCoverInvalidationTest.tscn",
+    "tools/tests/WorldCoverWatchLifecycleTest.gd",
+    "tools/tests/WorldCoverWatchLifecycleTest.tscn"
+  ],
+  "changed_shared": {
+    "core/systems/world/visibility/WorldCover.gd": {
+      "baseline": "2799a5a1b1507f601867e328d227643e5fcd7fca747a18b7445af6636f5265cf",
+      "candidate": "08cee76765ed12bbe50a5f478507f1d3385357acac8312009e4587369b759ad4"
+    }
+  },
+  "shared_count": 2707
+}

@@ -1,0 +1,21 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-moving-tree-r5-1",
+ "queued_seconds": 398.4,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 129.504,
+ "peak_rss_mb": 535,
+ "diagnostic_count": 6,
+ "diagnostics_head": [
+  "ERROR: Parameter \"body->get_space()\" is null.",
+  "ERROR: EliteCrowdFightPreview: Tree phase needs actual shared-uncovered front pickup cells",
+  "ERROR: EliteCrowdFightPreview: No actual shared-uncovered shooter control cell",
+  "ERROR: EliteCrowdFightPreview: Tree phase requires covered/exposed live projectiles and ordinary windups",
+  "ERROR: EliteCrowdFightPreview: Tree phase lacks covered and exposed real equipment icon fragments",
+  "ERROR: EliteCrowdFightPreview: Tree phase lacks covered and exposed real health icon fragments"
+ ]
+}
+--- stdout tail (3/5 lines) ---
+
+[Game] ready seg=2 race=human style=ranged seed=16102026
+WorldCoverMovingVisualProbe: frames=12 moving_body_transitions=3 home_plates=0 failures=5

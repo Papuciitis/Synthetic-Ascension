@@ -1,0 +1,34 @@
+{
+  "state": "source-only candidate; no engine or Git invoked",
+  "previous_sha256": "b1f7b9f364ba1cf67baf1a3ecdb710dac0774e11d16078cbbe8790d6512ceff5",
+  "previous_snapshot": "/var/tmp/sa-city22/packets/cover/sources/blobs/b1f7b9f364ba1cf67baf1a3ecdb710dac0774e11d16078cbbe8790d6512ceff5-WorldCoverMovingVisualProbe.gd",
+  "bound_previous_runs": [
+    "city22-cover-moving-home-r3-1 clean0/diag0",
+    "city22-cover-moving-tree-r3-1 four probe failures plus sustained-thermal interruption"
+  ],
+  "candidate_sha256": "51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7",
+  "candidate_bytes": 37408,
+  "candidate_lines": 623,
+  "diff_sha256": "0a6e2ad2860ffbef6b9945fe52aac2c18610ab3895c3833cedceb76bd4d3a2bf",
+  "unchanged_checks": [
+    "Complete final shutdown assertion block byte-identical",
+    "Home staging function byte-identical",
+    "Physics/render cap/deadline callbacks byte-identical",
+    "Full phase delegates original route/shooters; home behavior unchanged"
+  ],
+  "new_setup_checks": [
+    "At most8 actual registered tree candidates",
+    "Same0.99 opaque pickup-foot requirement at8px grid offsets in distinct reachable/walkable cells",
+    "Actual player capsule centre-to-offset motion must be clear",
+    "Verified drop points retained exactly",
+    "Covered ordinary shooter must have at least0.65 actual tree muzzle coverage",
+    "Exposed controls must have at most0.01 actual shared coverage over a32px neighborhood"
+  ],
+  "execution_pending": [
+    "root scoped parse",
+    "root actual tree r4 at15FPS render/60Hz physics/65C start/unchanged90 and85x3 runtime guards",
+    "root image review"
+  ],
+  "driver_sha256": "e6dd5d75403ffdf01be6f5e97e41577279f10faf2c9e0b07d5926eec3f5b0ef2",
+  "docs_sha256": "ac15a975f4ccdb58a17e70656fb4c06cb6d3b09a01b3eb4a6de7f5c718e158f1"
+}

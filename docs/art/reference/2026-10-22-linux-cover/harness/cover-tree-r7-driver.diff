@@ -1,0 +1,47 @@
+--- exact-cover-tree-r6-queue.py
++++ cover-tree-r7-queue.py
+@@ -6,9 +6,9 @@
+ BASE = ROOT / '.superpowers/continuation-20261022'
+ PROJECT = Path('/tmp/sa-wp2-cover')
+ NATIVE = Path('/var/tmp/sa-city22/cover')
+-TOOL_SHA = '00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f'
+-CASE = 'tree-r6'
+-RESULT = BASE / 'cover-tree-r6-queue.json'
++TOOL_SHA = '8737b1c5ff967a3caa097d1101649c3ddb0d227a0899b884cc9612202c6deab3'
++CASE = 'tree-r7'
++RESULT = BASE / 'cover-tree-r7-queue.json'
+ 
+ 
+ def command(label, engine_args, native=False):
+@@ -33,8 +33,8 @@
+ def main():
+     parser = argparse.ArgumentParser(); parser.add_argument('--dry-run', action='store_true'); args = parser.parse_args()
+     source = PROJECT/'tools/dev/WorldCoverMovingVisualProbe.gd'
+-    if hashlib.sha256(source.read_bytes()).hexdigest() != TOOL_SHA: raise SystemExit('Frozen r6 tool source differs')
+-    parse_label = 'city22-cover-tree-r6-parse'; native_label = 'city22-cover-moving-tree-r6'
++    if hashlib.sha256(source.read_bytes()).hexdigest() != TOOL_SHA: raise SystemExit('Frozen r7 tool source differs')
++    parse_label = 'city22-cover-tree-r7-parse'; native_label = 'city22-cover-moving-tree-r7'
+     parse = command(parse_label, ['--headless', '--audio-driver', 'Dummy', str(BASE/'external_source_parse_probe.tscn'),
+                                 '--', 'res://tools/dev/WorldCoverMovingVisualProbe.gd'])
+     native = command(native_label, ['--rendering-driver', 'opengl3', '--audio-driver', 'Dummy',
+@@ -46,7 +46,7 @@
+     if args.dry_run: print(json.dumps(plan, indent=2)); return
+     occupied = [RESULT, NATIVE/('moving-'+CASE)] + [BASE/(label+'-thermal.json') for label in [parse_label,native_label]]
+     occupied += [NATIVE/f'moving-{CASE}-imports-{point}.json' for point in ['before','after']]
+-    if any(path.exists() for path in occupied): raise SystemExit('Fresh r6 outputs required; refusing to overwrite evidence')
++    if any(path.exists() for path in occupied): raise SystemExit('Fresh r7 outputs required; refusing to overwrite evidence')
+     plan['state'] = 'running_scoped_parse'; RESULT.write_text(json.dumps(plan,indent=2)+'\n')
+     plan['parse_returncode'] = subprocess.run(parse).returncode
+     if plan['parse_returncode']:
+@@ -67,6 +67,11 @@
+     clean = clean and record.get('actual_exit')==0 and record.get('stop_reason')=='completed' and not record.get('diagnostics')
+     clean = clean and record.get('source_hashes',{}).get('tools/dev/WorldCoverMovingVisualProbe.gd')==TOOL_SHA
+     clean = clean and manifest.get('failures')==0 and manifest.get('save_writes')==0 and manifest.get('engine_max_fps')==15 and manifest.get('physics_ticks_per_second')==60
++    normal = manifest.get('normal_equipment_comparison', {})
++    clean = clean and normal.get('passed') is True and normal.get('same_camera_and_view') is True
++    clean = clean and normal.get('health_stays_locked') is True and normal.get('original_locked_counts_preserved') is True
++    clean = clean and len(normal.get('before', []))==2 and len(normal.get('after', []))==2
++    clean = clean and (NATIVE/('moving-'+CASE)/'tree-normal-equipment.png').is_file()
+     plan['state']='clean_execution_requires_image_review' if clean else 'failed_or_incomplete_not_acceptance'
+     plan['manifest_failures']=manifest.get('failures'); plan['outer_reason']=thermal.get('reason')
+     plan['native_run_record']=str(records[-1]) if records else None; plan['diagnostics']=record.get('diagnostics')

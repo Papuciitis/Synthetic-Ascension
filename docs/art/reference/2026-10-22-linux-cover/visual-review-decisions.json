@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "home_r3": {
+    "run": "city22-cover-moving-home-r3-1",
+    "state": "accepted_for_bounded_staged_home_scope",
+    "source_sha256": "b1f7b9f364ba1cf67baf1a3ecdb710dac0774e11d16078cbbe8790d6512ceff5",
+    "engine_exit": 0,
+    "outer_exit": 0,
+    "diagnostics": 0,
+    "manifest_failures": 0,
+    "native_images_reviewed": [
+      "home-covered-before-entry.png",
+      "home-inside-real-cutaway.png",
+      "home-outside-roof-restored.png"
+    ]
+  },
+  "tree_r3": {
+    "run": "city22-cover-moving-tree-r3-1",
+    "state": "not_accepted_four_probe_failures_and_thermal_interruption",
+    "engine_exit": -15,
+    "outer_shell_return": 241,
+    "outer_reason": "thermal_limit",
+    "manifest_failures": 4,
+    "projectile_covered_exposed": [
+      28,
+      57
+    ],
+    "windup_covered_exposed": [
+      30,
+      0
+    ],
+    "covered_pickups_staged": false,
+    "native_images_reviewed": [
+      "tree-front.png",
+      "tree-behind.png",
+      "tree-front-restored.png"
+    ]
+  },
+  "tree_r4": {
+    "state": "source_only_parser_native_and_image_review_pending",
+    "source_sha256": "51204c3cec2d83682b3cc636c8960c3e9e6d89dd67e8570294d4b02f17e67ad7"
+  },
+  "scope_limit": "Only observed native pixels are described. Atlas/source fragments are geometric telemetry; scenery/blending remain in RGB. No full route, human play, performance, boss/custom actor or universal coverage claim."
+}

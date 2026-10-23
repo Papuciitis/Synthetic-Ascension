@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: actual irregular house supplies its existing painted window bays
+PASS: fixture has a lower south-facing wall bay below the roof
+PASS: irregular bay ground depth uses the real footprint edge rather than its sprite bottom
+PASS: opaque window pixels below the roof cover a behind entity
+PASS: the same wall pixel leaves an entity in front of the footprint normal
+PASS: actual house cutaway clears its upright window coverage
+PASS: actual irregular doorway retains its portal
+PASS: opaque upright doorway frame has a bounded descriptor
+PASS: walkable opening remains outside solid upright coverage
+PASS: actual doorway gap stays clear below its lintel
+PASS: feet on the walkable threshold stay uncovered at y=568
+PASS: feet on the walkable threshold stay uncovered at y=578
+PASS: opaque upper plaster receives real face coverage
+PASS: ordinary open frontage exposes its actual painted source slices as registered sprites
+PASS: ordinary open frontage paints a doorway only where the real south door is
+PASS: ordinary open frontage retains footprint front depth
+PASS: ordinary open frontage keeps parent-drawn service props above the original facade
+PASS: ordinary open frontage covers an entity at an opaque original source pixel
+PASS: ordinary open frontage leaves an entity in front normal
+PASS: ordinary open frontage retains the original transparent door opening
+PASS: ordinary open frontage fades coverage with the actual roof cutaway
+PASS: ordinary closed frontage exposes its actual painted source slices as registered sprites
+PASS: ordinary closed frontage paints a doorway only where the real south door is
+PASS: ordinary closed frontage retains footprint front depth
+PASS: ordinary closed frontage keeps parent-drawn service props above the original facade
+PASS: ordinary closed frontage covers an entity at an opaque original source pixel
+PASS: ordinary closed frontage leaves an entity in front normal
+PASS: ordinary closed frontage fades coverage with the actual roof cutaway
+PASS: civic open frontage exposes its actual painted source slices as registered sprites
+PASS: civic open frontage retains footprint front depth
+PASS: civic open frontage keeps parent-drawn service props above the original facade
+PASS: opaque source sample lies within its actual scaled wall rectangle
+PASS: civic open frontage covers an entity at an opaque original source pixel
+PASS: civic open frontage leaves an entity in front normal
+PASS: civic open frontage retains the original transparent door opening
+PASS: civic open frontage fades coverage with the actual roof cutaway
+PASS: civic closed frontage exposes its actual painted source slices as registered sprites
+PASS: civic closed frontage retains footprint front depth
+PASS: civic closed frontage keeps parent-drawn service props above the original facade
+PASS: opaque source sample lies within its actual scaled wall rectangle
+PASS: civic closed frontage covers an entity at an opaque original source pixel
+PASS: civic closed frontage leaves an entity in front normal
+PASS: civic closed frontage fades coverage with the actual roof cutaway
+BuildingFaceCoverTest passes=43 failures=0

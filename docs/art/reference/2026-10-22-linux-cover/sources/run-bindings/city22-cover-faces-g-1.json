@@ -1,0 +1,142 @@
+{
+  "git_head": "73fc803443b806cc24aceceea9ca1d625969d9e4",
+  "recorded_generated_import_count": 0,
+  "run": "city22-cover-faces-g-1",
+  "scoped": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py": {
+      "launch_sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+      "snapshot": "sources/blobs/31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5-run_engine_slot.py",
+      "status": "previously matched content"
+    },
+    "core/systems/world/visibility/PickupCover.gd": {
+      "launch_sha256": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+      "snapshot": "sources/blobs/bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1-PickupCover.gd",
+      "status": "previously matched content"
+    },
+    "core/systems/world/visibility/WorldCover.gd": {
+      "launch_sha256": "08cee76765ed12bbe50a5f478507f1d3385357acac8312009e4587369b759ad4",
+      "snapshot": "sources/blobs/08cee76765ed12bbe50a5f478507f1d3385357acac8312009e4587369b759ad4-WorldCover.gd",
+      "status": "previously matched content"
+    },
+    "core/systems/world/visibility/pickup_cover.gdshader": {
+      "launch_sha256": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+      "snapshot": "sources/blobs/3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87-pickup_cover.gdshader",
+      "status": "previously matched content"
+    },
+    "core/systems/world/visibility/world_cover.gdshaderinc": {
+      "launch_sha256": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+      "snapshot": "sources/blobs/d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a-world_cover.gdshaderinc",
+      "status": "previously matched content"
+    },
+    "tools/dev/CityBlockPlayablePreview.gd": {
+      "launch_sha256": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+      "snapshot": "sources/blobs/7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83-CityBlockPlayablePreview.gd",
+      "status": "previously matched content"
+    },
+    "tools/dev/CityEntityCoverPreview.gd": {
+      "launch_sha256": "2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c",
+      "snapshot": "sources/blobs/2108d8cb5d0cfc1631abf6a0c560e3d4d5135def2fbc7fdf485cf0eacbcbb07c-CityEntityCoverPreview.gd",
+      "status": "previously matched content"
+    },
+    "tools/dev/CityMovingCoverPreview.gd": {
+      "launch_sha256": "f0c1a14a3ada6b2ac21e124094ee7e0b546b517f52314326acde199169f98fa3",
+      "snapshot": "sources/blobs/f0c1a14a3ada6b2ac21e124094ee7e0b546b517f52314326acde199169f98fa3-CityMovingCoverPreview.gd",
+      "status": "previously matched content"
+    },
+    "tools/dev/EliteCrowdFightPreview.gd": {
+      "launch_sha256": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "snapshot": "sources/blobs/ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec-EliteCrowdFightPreview.gd",
+      "status": "previously matched content"
+    },
+    "tools/dev/WorldCoverCostProbe.gd": {
+      "launch_sha256": "18630a78d9285245854268f96935aad823bceffaa908def5bcba97d5a23f240d",
+      "snapshot": "sources/blobs/18630a78d9285245854268f96935aad823bceffaa908def5bcba97d5a23f240d-WorldCoverCostProbe.gd",
+      "status": "previously matched content"
+    },
+    "tools/dev/WorldCoverCostProbe.tscn": {
+      "launch_sha256": "579d34859cccd6f3cbfef1a2868cbabe05662af928653af7bd0f4b2ba28fd523",
+      "snapshot": "sources/blobs/579d34859cccd6f3cbfef1a2868cbabe05662af928653af7bd0f4b2ba28fd523-WorldCoverCostProbe.tscn",
+      "status": "previously matched content"
+    },
+    "tools/dev/WorldCoverMovingVisualProbe.gd": {
+      "launch_sha256": "8b0a43cece8a6e74f2595982173e847b3269dd9775c7dfacd4a840d35615fd60",
+      "snapshot": "sources/blobs/8b0a43cece8a6e74f2595982173e847b3269dd9775c7dfacd4a840d35615fd60-WorldCoverMovingVisualProbe.gd",
+      "status": "previously matched content"
+    },
+    "tools/dev/WorldCoverMovingVisualProbe.tscn": {
+      "launch_sha256": "88dae1b622468347b76b82a15ff69d4afbdf055b58513f2620db788c07a1bbc2",
+      "snapshot": "sources/blobs/88dae1b622468347b76b82a15ff69d4afbdf055b58513f2620db788c07a1bbc2-WorldCoverMovingVisualProbe.tscn",
+      "status": "previously matched content"
+    },
+    "tools/dev/WorldCoverStreamingProfile.gd": {
+      "launch_sha256": "e4fa8f7ed7f518529d6c7457523b606ba418ba7c4e5d669e66d74bfa3418f724",
+      "snapshot": "sources/blobs/e4fa8f7ed7f518529d6c7457523b606ba418ba7c4e5d669e66d74bfa3418f724-WorldCoverStreamingProfile.gd",
+      "status": "previously matched content"
+    },
+    "tools/dev/WorldCoverStreamingProfile.tscn": {
+      "launch_sha256": "9666b765ee546ac9165a827fa5fd8c52939fa3de4493b259ba5fa93cb7cf77a9",
+      "snapshot": "sources/blobs/9666b765ee546ac9165a827fa5fd8c52939fa3de4493b259ba5fa93cb7cf77a9-WorldCoverStreamingProfile.tscn",
+      "status": "previously matched content"
+    },
+    "tools/tests/EnemyCoverRenderTest.gd": {
+      "launch_sha256": "df37cfd1a0ec4628e25a42c64dad56c14933110e9f5ef20e6bc425cd4b0297b9",
+      "snapshot": "sources/blobs/df37cfd1a0ec4628e25a42c64dad56c14933110e9f5ef20e6bc425cd4b0297b9-EnemyCoverRenderTest.gd",
+      "status": "previously matched content"
+    },
+    "tools/tests/PickupCoverTest.gd": {
+      "launch_sha256": "c6cabab7b4b7b2ab6cba7de011478564f991d2237c17f5de2cd0a78e49271d74",
+      "snapshot": "sources/blobs/c6cabab7b4b7b2ab6cba7de011478564f991d2237c17f5de2cd0a78e49271d74-PickupCoverTest.gd",
+      "status": "previously matched content"
+    },
+    "tools/tests/PlayerForegroundCoverRenderTest.gd": {
+      "launch_sha256": "3b4d54628cbadfdc7871e2d34c7c1c504bf435a9ec3fa9783b543d1ed57214e2",
+      "snapshot": "sources/blobs/3b4d54628cbadfdc7871e2d34c7c1c504bf435a9ec3fa9783b543d1ed57214e2-PlayerForegroundCoverRenderTest.gd",
+      "status": "previously matched content"
+    },
+    "tools/tests/WorldCoverInvalidationTest.gd": {
+      "launch_sha256": "3d112ce841f12979b5c497735b57279936c0b10e09bdf3da5074e33548187294",
+      "snapshot": "sources/blobs/3d112ce841f12979b5c497735b57279936c0b10e09bdf3da5074e33548187294-WorldCoverInvalidationTest.gd",
+      "status": "previously matched content"
+    },
+    "tools/tests/WorldCoverInvalidationTest.tscn": {
+      "launch_sha256": "f7fcff574018dd8fe177a539e0465ecb692e8ff05e9ceac6b2a8c00e21eaf5f0",
+      "snapshot": "sources/blobs/f7fcff574018dd8fe177a539e0465ecb692e8ff05e9ceac6b2a8c00e21eaf5f0-WorldCoverInvalidationTest.tscn",
+      "status": "previously matched content"
+    },
+    "tools/tests/WorldCoverWatchLifecycleTest.gd": {
+      "launch_sha256": "b792eeb7f129d58b6d285745e5623a5b2aa8290c9163e69f17d2bec718cfe4f8",
+      "snapshot": "sources/blobs/b792eeb7f129d58b6d285745e5623a5b2aa8290c9163e69f17d2bec718cfe4f8-WorldCoverWatchLifecycleTest.gd",
+      "status": "previously matched content"
+    },
+    "tools/tests/WorldCoverWatchLifecycleTest.tscn": {
+      "launch_sha256": "6e98f7b2d2f60b86ab8b06d9858e836dabec4e1fc008fb04b1c53ca9645f6a0a",
+      "snapshot": "sources/blobs/6e98f7b2d2f60b86ab8b06d9858e836dabec4e1fc008fb04b1c53ca9645f6a0a-WorldCoverWatchLifecycleTest.tscn",
+      "status": "previously matched content"
+    },
+    "tools/tests/WorldCueCoverRenderTest.gd": {
+      "launch_sha256": "f1d5723124b7ea94d74f0db408432f8f077619fa1ea0ac6f54d82362371c9430",
+      "snapshot": "sources/blobs/f1d5723124b7ea94d74f0db408432f8f077619fa1ea0ac6f54d82362371c9430-WorldCueCoverRenderTest.gd",
+      "status": "previously matched content"
+    }
+  },
+  "source_untracked": [
+    "assets/world/city_block/domestic_awning.png.import",
+    "assets/world/city_block/donjon_cell_grille.png.import",
+    "assets/world/city_block/donjon_gate_arch.png.import",
+    "assets/world/city_block/donjon_masonry_bay.png.import",
+    "assets/world/city_block/planted_corner.png.import",
+    "assets/world/city_block/planted_stone_trough.png.import",
+    "assets/world/city_block/street_setts.png.import",
+    "assets/world/city_block/temperate_tree.png.import",
+    "assets/world/city_block/wall_lantern.png.import",
+    "assets/world/city_block/worn_setts.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import",
+    "tools/dev/WorldCoverMovingVisualProbe.gd",
+    "tools/dev/WorldCoverMovingVisualProbe.tscn"
+  ],
+  "tracked_git_status": ""
+}

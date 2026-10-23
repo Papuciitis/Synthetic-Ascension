@@ -1,0 +1,109 @@
+[
+  {
+    "label": "city22-street-corridor-parse",
+    "project": "/tmp/sa-wp2-streets",
+    "args": [
+      "--headless",
+      "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/source_parse_probe.tscn",
+      "--",
+      "res://tools/dev/CityStreetTraversalProbe.gd",
+      "res://tools/tests/CityStreetTraversalCorridorTest.gd"
+    ],
+    "expected": 0,
+    "timeout": 300
+  },
+  {
+    "label": "city22-street-corridor-red",
+    "project": "/tmp/sa-wp2-streets",
+    "args": [
+      "--headless",
+      "res://tools/tests/CityStreetTraversalCorridorTest.tscn"
+    ],
+    "expected": 1,
+    "timeout": 300
+  },
+  {
+    "label": "city22-cover-core",
+    "project": "/tmp/sa-wp2-cover",
+    "args": [
+      "--headless",
+      "res://tools/tests/WorldCoverTest.tscn"
+    ],
+    "expected": 0,
+    "timeout": 300
+  },
+  {
+    "label": "city22-cover-reuse",
+    "project": "/tmp/sa-wp2-cover",
+    "args": [
+      "--headless",
+      "res://tools/tests/WorldCoverSnapshotReuseTest.tscn"
+    ],
+    "expected": 0,
+    "timeout": 300
+  },
+  {
+    "label": "city22-cover-faces",
+    "project": "/tmp/sa-wp2-cover",
+    "args": [
+      "--headless",
+      "res://tools/tests/BuildingFaceCoverTest.tscn"
+    ],
+    "expected": 0,
+    "timeout": 300
+  },
+  {
+    "label": "city22-cover-enemy-native",
+    "project": "/tmp/sa-wp2-cover",
+    "args": [
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/tests/EnemyCoverRenderTest.tscn"
+    ],
+    "expected": 0,
+    "timeout": 300
+  },
+  {
+    "label": "city22-cover-pickup-native",
+    "project": "/tmp/sa-wp2-cover",
+    "args": [
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/tests/PickupCoverTest.tscn"
+    ],
+    "expected": 0,
+    "timeout": 300
+  },
+  {
+    "label": "city22-cover-cue-native",
+    "project": "/tmp/sa-wp2-cover",
+    "args": [
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/tests/WorldCueCoverRenderTest.tscn"
+    ],
+    "expected": 0,
+    "timeout": 300
+  },
+  {
+    "label": "city22-cover-player-native",
+    "project": "/tmp/sa-wp2-cover",
+    "args": [
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/tests/PlayerForegroundCoverRenderTest.tscn",
+      "--",
+      "--out=/var/tmp/sa-city22/cover/player-reference"
+    ],
+    "expected": 0,
+    "timeout": 300
+  }
+]

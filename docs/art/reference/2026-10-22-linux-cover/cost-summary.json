@@ -1,0 +1,1013 @@
+{
+  "native": {
+    "baseline": {
+      "actual_theme": "service_courtyards",
+      "args": [
+        "--visible",
+        "--review=small",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--start=608,7392",
+        "--waypoints=2208,7392:608,7392",
+        "--warmup=6",
+        "--route-timeout=75",
+        "--fps-cap=60",
+        "--profile-label=baseline",
+        "--out=/var/tmp/sa-city22/cover/profile-baseline"
+      ],
+      "combat": {
+        "ambient_spawner_active": true,
+        "deaths": 78,
+        "encounter_beats": true,
+        "hits": 81,
+        "max_projectiles": 4,
+        "spawner": {
+          "alive": 35,
+          "authored_wave_running": false,
+          "cap": 180,
+          "cull_refill_left": 0.0,
+          "elapsed": 39.3032006111109,
+          "force_queue": 0,
+          "interval": 0.932959068328758,
+          "pending_scenes": 0,
+          "pending_spawns": 0,
+          "rite_pressure_active": false,
+          "spawn_debt": 0,
+          "spawn_pause_left": 0.0,
+          "spawning_enabled": true
+        },
+        "weapon_fires": 184
+      },
+      "cover_summary": {
+        "alpha_array_rebuild_observations": 0,
+        "baseline_inferred_data_uploads": -1,
+        "final": {
+          "alpha_upload_bytes": 59680368,
+          "alpha_uploads": 2,
+          "binding_usec": 24,
+          "cell_px": 256.0,
+          "collection_usec": 1696,
+          "comparison_usec": 229,
+          "data_upload_bytes": 993872,
+          "data_uploads": 246,
+          "face_buckets": 92,
+          "force_uploads": false,
+          "foreground_sources": 4,
+          "generation": 2152,
+          "grid_cells": 77,
+          "index_count": 437,
+          "index_resyncs": 20,
+          "indexed_faces": 94,
+          "indexed_roofs": 56,
+          "material_binds": 1407,
+          "materials": 17,
+          "max_candidates": 17,
+          "peak_candidates": 17,
+          "peak_primitives": 121,
+          "peak_refresh_usec": 78758,
+          "primitive_count": 121,
+          "refresh_usec": 1949,
+          "roof_buckets": 121,
+          "roof_usec": 992,
+          "snapshot_builds": 82,
+          "snapshot_reuses": 2070,
+          "snapshot_usec": 0,
+          "solid_usec": 246,
+          "source_reads": 4,
+          "sprite_usec": 268,
+          "visited_faces": 10,
+          "visited_roofs": 8
+        },
+        "force_uploads": false,
+        "initial": {
+          "alpha_upload_bytes": 59680368,
+          "alpha_uploads": 2,
+          "binding_usec": 37,
+          "cell_px": 256.0,
+          "collection_usec": 3908,
+          "comparison_usec": 558,
+          "data_upload_bytes": 27040,
+          "data_uploads": 6,
+          "face_buckets": 92,
+          "force_uploads": false,
+          "foreground_sources": 4,
+          "generation": 365,
+          "grid_cells": 77,
+          "index_count": 437,
+          "index_resyncs": 20,
+          "indexed_faces": 94,
+          "indexed_roofs": 56,
+          "material_binds": 29,
+          "materials": 16,
+          "max_candidates": 17,
+          "peak_candidates": 17,
+          "peak_primitives": 121,
+          "peak_refresh_usec": 78758,
+          "primitive_count": 121,
+          "refresh_usec": 4505,
+          "roof_buckets": 121,
+          "roof_usec": 1954,
+          "snapshot_builds": 2,
+          "snapshot_reuses": 363,
+          "snapshot_usec": 0,
+          "solid_usec": 616,
+          "source_reads": 4,
+          "sprite_usec": 774,
+          "visited_faces": 10,
+          "visited_roofs": 8
+        },
+        "observed_generations": 1787,
+        "upload_qualifier": "Original unmodified baseline count is source-derived3xgeneration. Instrumented snapshots carry actual CPU upload-call/requested-byte counters in initial/final/per-frame cover records; -1 means the baseline inference is unused. These are not GPU transfer/stall timings. Forced-upload control preserves live collection while forcing each packed snapshot/material rebind on the same candidate source."
+      },
+      "distributions": {
+        "cover_refresh_ms": {
+          "count": 1787,
+          "max": 13.55,
+          "mean": 1.83764129826525,
+          "min": 0.632,
+          "p50": 1.632,
+          "p95": 3.486,
+          "p99": 5.303
+        },
+        "draw_calls": {
+          "count": 1787,
+          "max": 631.0,
+          "mean": 489.819809736989,
+          "min": 362.0,
+          "p50": 480.0,
+          "p95": 610.0,
+          "p99": 628.0
+        },
+        "enemies": {
+          "count": 1787,
+          "max": 37.0,
+          "mean": 21.6659205372132,
+          "min": 2.0,
+          "p50": 26.0,
+          "p95": 34.0,
+          "p99": 36.0
+        },
+        "engine_physics_ms": {
+          "count": 1787,
+          "max": 12.538,
+          "mean": 6.75836094012305,
+          "min": 2.937,
+          "p50": 7.004,
+          "p95": 11.158,
+          "p99": 12.538
+        },
+        "engine_process_ms": {
+          "count": 1787,
+          "max": 51.986,
+          "mean": 27.6223486289872,
+          "min": 17.317,
+          "p50": 25.454,
+          "p95": 48.361,
+          "p99": 51.986
+        },
+        "frame_wall_ms": {
+          "count": 1787,
+          "max": 62.963,
+          "mean": 18.2337526580862,
+          "min": 5.288,
+          "p50": 17.033,
+          "p95": 27.878,
+          "p99": 35.871
+        },
+        "instrumentation_usec": {
+          "count": 1787,
+          "max": 3106.0,
+          "mean": 83.0660324566312,
+          "min": 36.0,
+          "p50": 68.0,
+          "p95": 165.0,
+          "p99": 307.0
+        },
+        "primitives": {
+          "count": 1787,
+          "max": 26736.0,
+          "mean": 22984.322887521,
+          "min": 18148.0,
+          "p50": 22324.0,
+          "p95": 26371.0,
+          "p99": 26710.0
+        },
+        "projectiles": {
+          "count": 1787,
+          "max": 4.0,
+          "mean": 2.6552881925014,
+          "min": 0.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 4.0
+        }
+      },
+      "failures": 0,
+      "fixture": {
+        "capture_readbacks": 0,
+        "controlled_enemies": 0,
+        "god_mode": true,
+        "initial_staging_only": true,
+        "normal_hud": true,
+        "opening_completed": true,
+        "per_frame_file_writes": 0,
+        "scheduler_frozen": false,
+        "scripted_input": true,
+        "streaming_frozen": false,
+        "telemetry_recorders_disabled": true,
+        "user_data_profile_selected": false
+      },
+      "footways": {
+        "final_live_shader_polygons": 192,
+        "initial_live_shader_polygons": 192
+      },
+      "limits": "Scripted actual Game route with live ordinary ambient spawning/director/AI/streaming and god mode. No viewport readback or PNG/encoding. Wall-frame and engine process/physics observations are CPU-facing; no GPU timer or attribution for footway fragment cost. Population and route must be compared before any candidate claim. Historical capture timings are not a matched pre-feature baseline. Startup/warm-up and path planning excluded; half-second diagnostics are included and instrumentation cost recorded.",
+      "profile_label": "baseline",
+      "render": {
+        "adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+        "backend": "gl_compatibility",
+        "fps_cap": 60,
+        "logical_viewport": "(1920.0, 1080.0)",
+        "native_window": "(960, 540)",
+        "vsync_mode": 0
+      },
+      "rng_end": -1832285646945934188,
+      "rng_start": 2021224349141714452,
+      "route": {
+        "cells": "[(10, 115), (11, 115), (12, 115), (13, 115), (14, 115), (15, 115), (16, 115), (17, 115), (18, 115), (19, 115), (20, 115), (21, 115), (22, 115), (23, 115), (24, 115), (25, 115), (26, 115), (27, 115), (28, 115), (29, 115), (30, 115), (31, 115), (32, 115), (33, 115), (34, 115), (33, 115), (32, 115), (31, 115), (30, 115), (29, 115), (28, 115), (27, 115), (26, 115), (25, 115), (24, 115), (23, 115), (22, 115), (21, 115), (20, 115), (19, 115), (18, 115), (17, 115), (16, 115), (15, 115), (14, 115), (13, 115), (12, 115), (11, 115), (10, 115), (9, 115)]",
+        "cells_sha256": "42aa099c266e7401be15076c300925ebbd24253dbcc1b8070b47e1f01c5bf414",
+        "chunks_visited": "[(0, 3), (1, 3)]",
+        "completed": true,
+        "completed_cells": 50,
+        "distance_walked_px": 3237.55575068109,
+        "planned_cells": 50,
+        "start": "(608.0, 7392.0)",
+        "waypoints": [
+          {
+            "path_end_index": 24,
+            "requested": "(2208.0, 7392.0)",
+            "resolved": "(2208.0, 7392.0)"
+          },
+          {
+            "path_end_index": 49,
+            "requested": "(608.0, 7392.0)",
+            "resolved": "(608.0, 7392.0)"
+          }
+        ]
+      },
+      "sample_count": 1787,
+      "save_writes": 0,
+      "scene": "res://scenes/game.tscn",
+      "seed": 16102026,
+      "segment": 2,
+      "simulation_seconds": 32.4333333333328,
+      "streaming_summary": {
+        "activations_during_route": 3,
+        "enabled": true,
+        "final_loaded_chunks": 15,
+        "initial_chunks": "[(0, 3), (-1, 2), (0, 2), (1, 2), (-1, 3), (1, 3), (-1, 4), (0, 4), (1, 4), (-2, 2), (-2, 3), (-2, 4)]",
+        "max_queue": 2
+      },
+      "tool": "res://tools/dev/WorldCoverStreamingProfile.tscn",
+      "wall_seconds": 32.602055,
+      "warmup_simulation_seconds": 6.0
+    },
+    "candidate": {
+      "actual_theme": "service_courtyards",
+      "args": [
+        "--visible",
+        "--review=small",
+        "--segment=2",
+        "--world-seed=16102026",
+        "--start=608,7392",
+        "--waypoints=2208,7392:608,7392",
+        "--warmup=6",
+        "--route-timeout=75",
+        "--fps-cap=60",
+        "--profile-label=candidate",
+        "--out=/var/tmp/sa-city22/cover/profile-candidate"
+      ],
+      "combat": {
+        "ambient_spawner_active": true,
+        "deaths": 103,
+        "encounter_beats": true,
+        "hits": 103,
+        "max_projectiles": 5,
+        "spawner": {
+          "alive": 6,
+          "authored_wave_running": false,
+          "cap": 180,
+          "cull_refill_left": 0.0,
+          "elapsed": 41.7649672499996,
+          "force_queue": 0,
+          "interval": 0.9,
+          "pending_scenes": 0,
+          "pending_spawns": 0,
+          "rite_pressure_active": false,
+          "spawn_debt": 0,
+          "spawn_pause_left": 1.25028833333333,
+          "spawning_enabled": true
+        },
+        "weapon_fires": 202
+      },
+      "cover_summary": {
+        "alpha_array_rebuild_observations": 0,
+        "baseline_inferred_data_uploads": -1,
+        "final": {
+          "alpha_upload_bytes": 59680368,
+          "alpha_uploads": 2,
+          "binding_usec": 96,
+          "cell_px": 256.0,
+          "collection_usec": 2155,
+          "comparison_usec": 484,
+          "data_upload_bytes": 1304592,
+          "data_uploads": 312,
+          "face_buckets": 92,
+          "force_uploads": false,
+          "foreground_sources": 4,
+          "generation": 2312,
+          "grid_cells": 77,
+          "index_count": 437,
+          "index_disabled": false,
+          "index_resyncs": 20,
+          "indexed_faces": 94,
+          "indexed_forms": 115,
+          "indexed_roofs": 56,
+          "material_binds": 2027,
+          "materials": 23,
+          "max_candidates": 17,
+          "peak_candidates": 17,
+          "peak_primitives": 121,
+          "peak_refresh_usec": 63974,
+          "primitive_count": 121,
+          "refresh_usec": 2738,
+          "renewed_faces": 0,
+          "renewed_roofs": 0,
+          "roof_buckets": 121,
+          "roof_usec": 1003,
+          "roof_validation_usec": 203,
+          "snapshot_builds": 104,
+          "snapshot_reuses": 2208,
+          "snapshot_usec": 0,
+          "solid_usec": 592,
+          "source_reads": 4,
+          "sprite_usec": 367,
+          "structure_events": 0,
+          "validation_usec": 418,
+          "visited_faces": 10,
+          "visited_roofs": 8
+        },
+        "force_uploads": false,
+        "initial": {
+          "alpha_upload_bytes": 59680368,
+          "alpha_uploads": 2,
+          "binding_usec": 77,
+          "cell_px": 256.0,
+          "collection_usec": 3032,
+          "comparison_usec": 967,
+          "data_upload_bytes": 27040,
+          "data_uploads": 6,
+          "face_buckets": 92,
+          "force_uploads": false,
+          "foreground_sources": 4,
+          "generation": 366,
+          "grid_cells": 77,
+          "index_count": 437,
+          "index_disabled": false,
+          "index_resyncs": 20,
+          "indexed_faces": 94,
+          "indexed_forms": 115,
+          "indexed_roofs": 56,
+          "material_binds": 29,
+          "materials": 16,
+          "max_candidates": 17,
+          "peak_candidates": 17,
+          "peak_primitives": 121,
+          "peak_refresh_usec": 63974,
+          "primitive_count": 121,
+          "refresh_usec": 4082,
+          "renewed_faces": 0,
+          "renewed_roofs": 0,
+          "roof_buckets": 121,
+          "roof_usec": 1649,
+          "roof_validation_usec": 250,
+          "snapshot_builds": 2,
+          "snapshot_reuses": 364,
+          "snapshot_usec": 0,
+          "solid_usec": 535,
+          "source_reads": 4,
+          "sprite_usec": 607,
+          "structure_events": 0,
+          "validation_usec": 383,
+          "visited_faces": 10,
+          "visited_roofs": 8
+        },
+        "observed_generations": 1946,
+        "upload_qualifier": "Original unmodified baseline count is source-derived3xgeneration. Instrumented snapshots carry actual CPU upload-call/requested-byte counters in initial/final/per-frame cover records; -1 means the baseline inference is unused. These are not GPU transfer/stall timings. Forced-upload control preserves live collection while forcing each packed snapshot/material rebind on the same candidate source."
+      },
+      "distributions": {
+        "cover_refresh_ms": {
+          "count": 1946,
+          "max": 14.3,
+          "mean": 2.30123124357657,
+          "min": 0.757,
+          "p50": 2.058,
+          "p95": 4.207,
+          "p99": 6.17
+        },
+        "draw_calls": {
+          "count": 1946,
+          "max": 655.0,
+          "mean": 501.953751284687,
+          "min": 340.0,
+          "p50": 511.0,
+          "p95": 618.0,
+          "p99": 653.0
+        },
+        "enemies": {
+          "count": 1946,
+          "max": 28.0,
+          "mean": 15.0,
+          "min": 1.0,
+          "p50": 15.0,
+          "p95": 26.0,
+          "p99": 27.0
+        },
+        "engine_physics_ms": {
+          "count": 1946,
+          "max": 87.58,
+          "mean": 8.29283504624868,
+          "min": 2.322,
+          "p50": 5.019,
+          "p95": 10.396,
+          "p99": 87.58
+        },
+        "engine_process_ms": {
+          "count": 1946,
+          "max": 72.823,
+          "mean": 28.9379712230219,
+          "min": 16.879,
+          "p50": 24.18,
+          "p95": 66.445,
+          "p99": 72.823
+        },
+        "frame_wall_ms": {
+          "count": 1946,
+          "max": 117.692,
+          "mean": 18.2900416238438,
+          "min": 3.448,
+          "p50": 16.927,
+          "p95": 28.005,
+          "p99": 42.191
+        },
+        "instrumentation_usec": {
+          "count": 1946,
+          "max": 3175.0,
+          "mean": 93.0390544707091,
+          "min": 39.0,
+          "p50": 72.0,
+          "p95": 169.0,
+          "p99": 307.0
+        },
+        "primitives": {
+          "count": 1946,
+          "max": 34607.0,
+          "mean": 23510.5287769784,
+          "min": 17530.0,
+          "p50": 23304.0,
+          "p95": 31182.0,
+          "p99": 34581.0
+        },
+        "projectiles": {
+          "count": 1946,
+          "max": 5.0,
+          "mean": 2.48201438848921,
+          "min": 0.0,
+          "p50": 3.0,
+          "p95": 4.0,
+          "p99": 5.0
+        }
+      },
+      "failures": 0,
+      "fixture": {
+        "capture_readbacks": 0,
+        "controlled_enemies": 0,
+        "god_mode": true,
+        "initial_staging_only": true,
+        "normal_hud": true,
+        "opening_completed": true,
+        "per_frame_file_writes": 0,
+        "scheduler_frozen": false,
+        "scripted_input": true,
+        "streaming_frozen": false,
+        "telemetry_recorders_disabled": true,
+        "user_data_profile_selected": false
+      },
+      "footways": {
+        "final_live_shader_polygons": 192,
+        "initial_live_shader_polygons": 192
+      },
+      "limits": "Scripted actual Game route with live ordinary ambient spawning/director/AI/streaming and god mode. No viewport readback or PNG/encoding. Wall-frame and engine process/physics observations are CPU-facing; no GPU timer or attribution for footway fragment cost. Population and route must be compared before any candidate claim. Historical capture timings are not a matched pre-feature baseline. Startup/warm-up and path planning excluded; half-second diagnostics are included and instrumentation cost recorded.",
+      "profile_label": "candidate",
+      "render": {
+        "adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+        "backend": "gl_compatibility",
+        "fps_cap": 60,
+        "logical_viewport": "(1920.0, 1080.0)",
+        "native_window": "(960, 540)",
+        "vsync_mode": 0
+      },
+      "rng_end": 6834064895261868581,
+      "rng_start": 2091462400532227389,
+      "route": {
+        "cells": "[(10, 115), (11, 115), (12, 115), (13, 115), (14, 115), (15, 115), (16, 115), (17, 115), (18, 115), (19, 115), (20, 115), (21, 115), (22, 115), (23, 115), (24, 115), (25, 115), (26, 115), (27, 115), (28, 115), (29, 115), (30, 115), (31, 115), (32, 115), (33, 115), (34, 115), (33, 115), (32, 115), (31, 115), (30, 115), (29, 115), (28, 115), (27, 115), (26, 115), (25, 115), (24, 115), (23, 115), (22, 115), (21, 115), (20, 115), (19, 115), (18, 115), (17, 115), (16, 115), (15, 115), (14, 115), (13, 115), (12, 115), (11, 115), (10, 115), (9, 115)]",
+        "cells_sha256": "42aa099c266e7401be15076c300925ebbd24253dbcc1b8070b47e1f01c5bf414",
+        "chunks_visited": "[(0, 3), (1, 3)]",
+        "completed": true,
+        "completed_cells": 50,
+        "distance_walked_px": 4196.95341879316,
+        "planned_cells": 50,
+        "start": "(608.0, 7392.0)",
+        "waypoints": [
+          {
+            "path_end_index": 24,
+            "requested": "(2208.0, 7392.0)",
+            "resolved": "(2208.0, 7392.0)"
+          },
+          {
+            "path_end_index": 49,
+            "requested": "(608.0, 7392.0)",
+            "resolved": "(608.0, 7392.0)"
+          }
+        ]
+      },
+      "sample_count": 1946,
+      "save_writes": 0,
+      "scene": "res://scenes/game.tscn",
+      "seed": 16102026,
+      "segment": 2,
+      "simulation_seconds": 34.866666666666,
+      "streaming_summary": {
+        "activations_during_route": 3,
+        "enabled": true,
+        "final_loaded_chunks": 15,
+        "initial_chunks": "[(0, 3), (-1, 2), (0, 2), (1, 2), (-1, 3), (1, 3), (-1, 4), (0, 4), (1, 4), (-2, 2), (-2, 3), (-2, 4)]",
+        "max_queue": 2
+      },
+      "tool": "res://tools/dev/WorldCoverStreamingProfile.tscn",
+      "wall_seconds": 35.609558,
+      "warmup_simulation_seconds": 6.0
+    }
+  },
+  "performance_claim": "No watch-related speedup or isolated matched-workload throughput gain is established.",
+  "static": {
+    "s10": {
+      "cooldown_seconds": 0.5,
+      "faces": 1788,
+      "forms": 188,
+      "headless": true,
+      "kind": "static-cover-cpu-probe",
+      "refreshes_per_round": 48,
+      "roofs": 94,
+      "rounds": 5,
+      "variants": [
+        {
+          "final_stats": {
+            "alpha_upload_bytes": 4,
+            "alpha_uploads": 1,
+            "binding_usec": 1,
+            "cell_px": 256.0,
+            "collection_usec": 473,
+            "comparison_usec": 43,
+            "data_upload_bytes": 9312,
+            "data_uploads": 3,
+            "face_buckets": 145,
+            "force_uploads": false,
+            "foreground_sources": 0,
+            "generation": 260,
+            "grid_cells": 70,
+            "index_count": 154,
+            "index_resyncs": 2,
+            "indexed_faces": 1788,
+            "indexed_roofs": 94,
+            "material_binds": 0,
+            "materials": 0,
+            "max_candidates": 10,
+            "peak_candidates": 10,
+            "peak_primitives": 42,
+            "peak_refresh_usec": 23353,
+            "primitive_count": 42,
+            "refresh_usec": 517,
+            "roof_buckets": 170,
+            "roof_usec": 143,
+            "snapshot_builds": 1,
+            "snapshot_reuses": 259,
+            "snapshot_usec": 0,
+            "solid_usec": 295,
+            "source_reads": 0,
+            "sprite_usec": 9,
+            "visited_faces": 6,
+            "visited_roofs": 4
+          },
+          "name": "legacy",
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/variants/legacy-WorldCover.gd",
+          "refresh_usec_median": 736.5,
+          "rounds": [
+            {
+              "refresh_usec_median": 736.5,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 739.5,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 943.5,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 662.5,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 523.0,
+              "validation_usec_median": 0.0
+            }
+          ],
+          "same_static_records_as_first": true,
+          "sha256": "2799a5a1b1507f601867e328d227643e5fcd7fca747a18b7445af6636f5265cf"
+        },
+        {
+          "final_stats": {
+            "alpha_upload_bytes": 4,
+            "alpha_uploads": 1,
+            "binding_usec": 2,
+            "cell_px": 256.0,
+            "collection_usec": 3982,
+            "comparison_usec": 231,
+            "data_upload_bytes": 9312,
+            "data_uploads": 3,
+            "face_buckets": 145,
+            "force_uploads": false,
+            "foreground_sources": 0,
+            "generation": 260,
+            "grid_cells": 70,
+            "index_count": 154,
+            "index_disabled": false,
+            "index_resyncs": 2,
+            "indexed_faces": 1788,
+            "indexed_forms": 188,
+            "indexed_roofs": 94,
+            "material_binds": 0,
+            "materials": 0,
+            "max_candidates": 10,
+            "peak_candidates": 10,
+            "peak_primitives": 42,
+            "peak_refresh_usec": 26970,
+            "primitive_count": 42,
+            "refresh_usec": 4217,
+            "renewed_faces": 0,
+            "renewed_roofs": 0,
+            "roof_buckets": 170,
+            "roof_usec": 768,
+            "roof_validation_usec": 459,
+            "snapshot_builds": 1,
+            "snapshot_reuses": 259,
+            "snapshot_usec": 0,
+            "solid_usec": 3091,
+            "source_reads": 0,
+            "sprite_usec": 77,
+            "structure_events": 0,
+            "validation_usec": 2903,
+            "visited_faces": 6,
+            "visited_roofs": 4
+          },
+          "name": "pending",
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/variants/pending-WorldCover.gd",
+          "refresh_usec_median": 2233.0,
+          "rounds": [
+            {
+              "refresh_usec_median": 2233.0,
+              "validation_usec_median": 1645.0
+            },
+            {
+              "refresh_usec_median": 3301.5,
+              "validation_usec_median": 2203.5
+            },
+            {
+              "refresh_usec_median": 2081.0,
+              "validation_usec_median": 1524.5
+            },
+            {
+              "refresh_usec_median": 1898.5,
+              "validation_usec_median": 1400.0
+            },
+            {
+              "refresh_usec_median": 3437.5,
+              "validation_usec_median": 2321.0
+            }
+          ],
+          "same_static_records_as_first": true,
+          "sha256": "64a3d38b438944ba7d1f4962b53433686cf4bdf0ef77fdff85f452360887bdf9"
+        },
+        {
+          "final_stats": {
+            "alpha_upload_bytes": 4,
+            "alpha_uploads": 1,
+            "binding_usec": 1,
+            "cell_px": 256.0,
+            "collection_usec": 1631,
+            "comparison_usec": 54,
+            "data_upload_bytes": 9312,
+            "data_uploads": 3,
+            "face_buckets": 145,
+            "force_uploads": false,
+            "foreground_sources": 0,
+            "generation": 260,
+            "grid_cells": 70,
+            "index_count": 154,
+            "index_disabled": false,
+            "index_resyncs": 2,
+            "indexed_faces": 1788,
+            "indexed_forms": 188,
+            "indexed_roofs": 94,
+            "material_binds": 0,
+            "materials": 0,
+            "max_candidates": 10,
+            "peak_candidates": 10,
+            "peak_primitives": 42,
+            "peak_refresh_usec": 32987,
+            "primitive_count": 42,
+            "refresh_usec": 1686,
+            "renewed_faces": 0,
+            "renewed_roofs": 0,
+            "roof_buckets": 170,
+            "roof_usec": 343,
+            "roof_validation_usec": 184,
+            "snapshot_builds": 1,
+            "snapshot_reuses": 259,
+            "snapshot_usec": 0,
+            "solid_usec": 1253,
+            "source_reads": 0,
+            "sprite_usec": 14,
+            "structure_events": 0,
+            "validation_usec": 1130,
+            "visited_faces": 6,
+            "visited_roofs": 4
+          },
+          "name": "current",
+          "path": "res://core/systems/world/visibility/WorldCover.gd",
+          "refresh_usec_median": 3284.5,
+          "rounds": [
+            {
+              "refresh_usec_median": 4441.5,
+              "validation_usec_median": 3275.0
+            },
+            {
+              "refresh_usec_median": 3391.0,
+              "validation_usec_median": 2348.5
+            },
+            {
+              "refresh_usec_median": 2832.5,
+              "validation_usec_median": 2004.0
+            },
+            {
+              "refresh_usec_median": 2176.0,
+              "validation_usec_median": 1588.0
+            },
+            {
+              "refresh_usec_median": 3284.5,
+              "validation_usec_median": 2419.0
+            }
+          ],
+          "same_static_records_as_first": true,
+          "sha256": "08cee76765ed12bbe50a5f478507f1d3385357acac8312009e4587369b759ad4"
+        }
+      ]
+    },
+    "s2": {
+      "cooldown_seconds": 0.5,
+      "faces": 94,
+      "forms": 112,
+      "headless": true,
+      "kind": "static-cover-cpu-probe",
+      "refreshes_per_round": 48,
+      "roofs": 56,
+      "rounds": 5,
+      "variants": [
+        {
+          "final_stats": {
+            "alpha_upload_bytes": 4,
+            "alpha_uploads": 1,
+            "binding_usec": 2,
+            "cell_px": 256.0,
+            "collection_usec": 789,
+            "comparison_usec": 167,
+            "data_upload_bytes": 9312,
+            "data_uploads": 3,
+            "face_buckets": 15,
+            "force_uploads": false,
+            "foreground_sources": 0,
+            "generation": 260,
+            "grid_cells": 70,
+            "index_count": 154,
+            "index_resyncs": 2,
+            "indexed_faces": 94,
+            "indexed_roofs": 56,
+            "material_binds": 0,
+            "materials": 0,
+            "max_candidates": 10,
+            "peak_candidates": 10,
+            "peak_primitives": 42,
+            "peak_refresh_usec": 150978,
+            "primitive_count": 42,
+            "refresh_usec": 959,
+            "roof_buckets": 101,
+            "roof_usec": 437,
+            "snapshot_builds": 1,
+            "snapshot_reuses": 259,
+            "snapshot_usec": 0,
+            "solid_usec": 311,
+            "source_reads": 0,
+            "sprite_usec": 14,
+            "visited_faces": 6,
+            "visited_roofs": 4
+          },
+          "name": "legacy",
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/variants/legacy-WorldCover.gd",
+          "refresh_usec_median": 421.0,
+          "rounds": [
+            {
+              "refresh_usec_median": 421.0,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 389.5,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 390.5,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 531.5,
+              "validation_usec_median": 0.0
+            },
+            {
+              "refresh_usec_median": 601.0,
+              "validation_usec_median": 0.0
+            }
+          ],
+          "same_static_records_as_first": true,
+          "sha256": "2799a5a1b1507f601867e328d227643e5fcd7fca747a18b7445af6636f5265cf"
+        },
+        {
+          "final_stats": {
+            "alpha_upload_bytes": 4,
+            "alpha_uploads": 1,
+            "binding_usec": 1,
+            "cell_px": 256.0,
+            "collection_usec": 348,
+            "comparison_usec": 44,
+            "data_upload_bytes": 9312,
+            "data_uploads": 3,
+            "face_buckets": 15,
+            "force_uploads": false,
+            "foreground_sources": 0,
+            "generation": 260,
+            "grid_cells": 70,
+            "index_count": 154,
+            "index_disabled": false,
+            "index_resyncs": 2,
+            "indexed_faces": 94,
+            "indexed_forms": 112,
+            "indexed_roofs": 56,
+            "material_binds": 0,
+            "materials": 0,
+            "max_candidates": 10,
+            "peak_candidates": 10,
+            "peak_primitives": 42,
+            "peak_refresh_usec": 12255,
+            "primitive_count": 42,
+            "refresh_usec": 394,
+            "renewed_faces": 0,
+            "renewed_roofs": 0,
+            "roof_buckets": 101,
+            "roof_usec": 208,
+            "roof_validation_usec": 91,
+            "snapshot_builds": 1,
+            "snapshot_reuses": 259,
+            "snapshot_usec": 0,
+            "solid_usec": 118,
+            "source_reads": 0,
+            "sprite_usec": 4,
+            "structure_events": 0,
+            "validation_usec": 131,
+            "visited_faces": 6,
+            "visited_roofs": 4
+          },
+          "name": "pending",
+          "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/variants/pending-WorldCover.gd",
+          "refresh_usec_median": 576.0,
+          "rounds": [
+            {
+              "refresh_usec_median": 467.0,
+              "validation_usec_median": 151.0
+            },
+            {
+              "refresh_usec_median": 775.5,
+              "validation_usec_median": 262.5
+            },
+            {
+              "refresh_usec_median": 576.0,
+              "validation_usec_median": 185.5
+            },
+            {
+              "refresh_usec_median": 865.0,
+              "validation_usec_median": 290.5
+            },
+            {
+              "refresh_usec_median": 542.5,
+              "validation_usec_median": 173.5
+            }
+          ],
+          "same_static_records_as_first": true,
+          "sha256": "64a3d38b438944ba7d1f4962b53433686cf4bdf0ef77fdff85f452360887bdf9"
+        },
+        {
+          "final_stats": {
+            "alpha_upload_bytes": 4,
+            "alpha_uploads": 1,
+            "binding_usec": 2,
+            "cell_px": 256.0,
+            "collection_usec": 684,
+            "comparison_usec": 81,
+            "data_upload_bytes": 9312,
+            "data_uploads": 3,
+            "face_buckets": 15,
+            "force_uploads": false,
+            "foreground_sources": 0,
+            "generation": 260,
+            "grid_cells": 70,
+            "index_count": 154,
+            "index_disabled": false,
+            "index_resyncs": 2,
+            "indexed_faces": 94,
+            "indexed_forms": 112,
+            "indexed_roofs": 56,
+            "material_binds": 0,
+            "materials": 0,
+            "max_candidates": 10,
+            "peak_candidates": 10,
+            "peak_primitives": 42,
+            "peak_refresh_usec": 13093,
+            "primitive_count": 42,
+            "refresh_usec": 767,
+            "renewed_faces": 0,
+            "renewed_roofs": 0,
+            "roof_buckets": 101,
+            "roof_usec": 403,
+            "roof_validation_usec": 167,
+            "snapshot_builds": 1,
+            "snapshot_reuses": 259,
+            "snapshot_usec": 0,
+            "solid_usec": 240,
+            "source_reads": 0,
+            "sprite_usec": 10,
+            "structure_events": 0,
+            "validation_usec": 237,
+            "visited_faces": 6,
+            "visited_roofs": 4
+          },
+          "name": "current",
+          "path": "res://core/systems/world/visibility/WorldCover.gd",
+          "refresh_usec_median": 1286.5,
+          "rounds": [
+            {
+              "refresh_usec_median": 1506.0,
+              "validation_usec_median": 528.5
+            },
+            {
+              "refresh_usec_median": 2176.0,
+              "validation_usec_median": 811.0
+            },
+            {
+              "refresh_usec_median": 643.0,
+              "validation_usec_median": 185.5
+            },
+            {
+              "refresh_usec_median": 431.0,
+              "validation_usec_median": 134.0
+            },
+            {
+              "refresh_usec_median": 1286.5,
+              "validation_usec_median": 427.5
+            }
+          ],
+          "same_static_records_as_first": true,
+          "sha256": "08cee76765ed12bbe50a5f478507f1d3385357acac8312009e4587369b759ad4"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "status": "CLEAN_FUNCTIONAL_CAPTURE_VISUAL_LEGIBILITY_UNRESOLVED",
+  "run": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-moving-tree-r6-1/run-results.json",
+  "tool_sha256": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+  "manifest_failures": 0,
+  "native_exit": 0,
+  "diagnostics": [],
+  "all_three_original_plates_viewed": true,
+  "source_binding": {
+    "tools/dev/WorldCoverMovingVisualProbe.gd": "00f7eba66cffef7961f211e21410ed315244d37280fd8a33bf451c57c196527f",
+    "core/systems/world/visibility/PickupCover.gd": "bd5e32e6e02f5532e014a53660d66c97eb28e569170164e3cbb343dff04bbff1",
+    "core/systems/world/visibility/pickup_cover.gdshader": "3ede2225821f313419eb87425c99f1eae24b504f4afe6b6d4d2c1345d09f6a87",
+    "core/systems/world/visibility/world_cover.gdshaderinc": "d7f9057717ce97fa41aa3eb7bfe31071aaeb6cbaf59378d82db003aaf976d52a",
+    "core/actors/player/player_roof_occlusion.gdshader": "d6f1a3247638e6f4d0c7114c7105c46bb08a33af5737a335aaf33d41608ab3bb",
+    "scenes/world/buildings/CityBlockKit.gd": "f0769fc7c1fab4280df3b863719c17b045d40edb7c1006ae9116c3f27d46a344",
+    "scenes/world/buildings/CityFrontageDressing.gd": "c95a3c4d16504619c055eda167b1f4765b60e5871327ef17961f11aeaeed277b",
+    "scenes/world/pickups/ItemPickup.tscn": "64f8a95ae6f736dbce36b7e4b79fc1f90dfe489425540620172d775aca70254b",
+    "scenes/world/pickups/PickupVfx.gd": "7b2839c83e0ef8b8b632aa1ebf74be5b49fe80e69067d38b85b69ed5d2b53f03",
+    "core/systems/enemy_world/EnemyProxyRoot.gd": "d580f051ac26c15804f75ba2e3485581909f8de9e58a37c9da3fd14dd7aa11a6",
+    "core/systems/enemy_world/EnemyProxyRenderer.gd": "188578b30ce693b349812d1a5486fdb00d67c22b40c5610b9472582f54886c21"
+  },
+  "source_draw_order": {
+    "tree": "CityBlockKit relative z -2 plus tree Sprite2D relative z1 = effective -1, on ordinary Game canvas",
+    "equipment_icon": "Direct Game ItemPickup z0 plus Icon relative z5 = effective5",
+    "health_icon": "Direct Game HealthPickup z0 plus Icon relative z5 = effective5",
+    "enemy_batches": "Direct Game EnemyProxyRoot z10 plus materialized batch z0 = effective10",
+    "player": "Game Player/Visual/Body/Head default z0, above kit tree -1",
+    "limitation": "These are source-resolved ordinary hierarchy layers, not a new runtime z diagnostic dump. No source override lowering these consumers was found."
+  },
+  "composition": {
+    "same_rule_as_player": true,
+    "covered_rgb": "mix(authored.rgb, (0.08,0.13,0.16), covered*0.94)",
+    "covered_alpha": "authored.a * mix(1.0,0.56,covered)",
+    "locked_ring_authored_alpha": 0.55,
+    "nominal_source_opaque_ring_final_alpha": 0.308,
+    "nominal_background_fraction": 0.692,
+    "interpretation": "A correctly drawn covered locked icon retains about69% canopy/background in final RGB. Leaf-green framebuffer pixels alone do not mean it is behind the canopy. Compared with an opaque player/enemy at56% final alpha, its contrast weight is roughly half."
+  },
+  "native_observations": [
+    "At native960x540 the covered ring at world(-168,6616), roughly16px wide, is very difficult to identify against the busy green canopy; I cannot call its outline clearly readable from these plates.",
+    "The uncovered front ring is identifiable mainly through its orange lock cue; the covered copy loses much of that visual prominence.",
+    "Covered health near(-56,6752) has a real partly covered canopy edge: dark/muted covered fragments coexist with bright pink exposed lower pixels, rather than every pixel incorrectly staying bright.",
+    "Front/behind/front player observations restore normal art outside the tree and apply a dark blue-gray treatment within it. Busy foliage still contributes through its56% silhouette alpha.",
+    "The recorded same ordinary body has a real temporal covered-to-exposed transition; clean material/fragment gates are functional evidence, not a contrast or whole-sprite visibility oracle."
+  ],
+  "plates": [
+    {
+      "file": "tree-front.png",
+      "sha256": "09db4c2e4a4fc04f4ec2b5e280726bad3229bb03f5840521ab10b29e2de0d2bc",
+      "simulation_time": 0.25,
+      "ring_instance_id": 993630635481,
+      "ring_world": "(-168.0, 6616.0)",
+      "ring_opaque_sample_count": 19,
+      "all_ring_shared_strength_1": true,
+      "ring_authored_icon_modulate": "(0.85, 1.0, 1.0, 0.55)",
+      "computed_ring_alpha_range": [
+        0.28746666789054864,
+        0.30679215693473827
+      ],
+      "background_fraction_range": [
+        0.6932078430652617,
+        0.7125333321094514
+      ],
+      "example_actual_framebuffer_samples": [
+        {
+          "screen": "(374, 244)",
+          "world": "(-168.0, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.988235294818878,
+          "framebuffer_rgb": "(0.4039, 0.4588, 0.2471, 1.0)"
+        },
+        {
+          "screen": "(376, 244)",
+          "world": "(-162.6667, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.988235294818878,
+          "framebuffer_rgb": "(0.4431, 0.4824, 0.2431, 1.0)"
+        },
+        {
+          "screen": "(379, 244)",
+          "world": "(-157.3333, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.984313726425171,
+          "framebuffer_rgb": "(0.349, 0.3882, 0.2157, 1.0)"
+        }
+      ],
+      "actual_player_tree_covered_samples": 0,
+      "actual_player_tree_exposed_samples": 64
+    },
+    {
+      "file": "tree-behind.png",
+      "sha256": "4fea8f943aac378d4072949c334ca860d8205c559eea88021cc035649c285196",
+      "simulation_time": 7.23333333333331,
+      "ring_instance_id": 993630635481,
+      "ring_world": "(-168.0, 6616.0)",
+      "ring_opaque_sample_count": 19,
+      "all_ring_shared_strength_1": true,
+      "ring_authored_icon_modulate": "(0.85, 1.0, 1.0, 0.55)",
+      "computed_ring_alpha_range": [
+        0.28746666789054864,
+        0.30679215693473827
+      ],
+      "background_fraction_range": [
+        0.6932078430652617,
+        0.7125333321094514
+      ],
+      "example_actual_framebuffer_samples": [
+        {
+          "screen": "(338, 308)",
+          "world": "(-168.0, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.988235294818878,
+          "framebuffer_rgb": "(0.4549, 0.498, 0.2353, 1.0)"
+        },
+        {
+          "screen": "(341, 308)",
+          "world": "(-162.6667, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.988235294818878,
+          "framebuffer_rgb": "(0.4471, 0.4824, 0.2471, 1.0)"
+        },
+        {
+          "screen": "(343, 308)",
+          "world": "(-157.3333, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.984313726425171,
+          "framebuffer_rgb": "(0.1843, 0.2706, 0.1843, 1.0)"
+        }
+      ],
+      "actual_player_tree_covered_samples": 62,
+      "actual_player_tree_exposed_samples": 3
+    },
+    {
+      "file": "tree-front-restored.png",
+      "sha256": "03ef3d9f0cffc2b34e13bd3de941b1714abc8cdd7b8c7cbdb5e5c1a98bfcce65",
+      "simulation_time": 9.10000000000003,
+      "ring_instance_id": 993630635481,
+      "ring_world": "(-168.0, 6616.0)",
+      "ring_opaque_sample_count": 19,
+      "all_ring_shared_strength_1": true,
+      "ring_authored_icon_modulate": "(0.85, 1.0, 1.0, 0.55)",
+      "computed_ring_alpha_range": [
+        0.28746666789054864,
+        0.30679215693473827
+      ],
+      "background_fraction_range": [
+        0.6932078430652617,
+        0.7125333321094514
+      ],
+      "example_actual_framebuffer_samples": [
+        {
+          "screen": "(370, 245)",
+          "world": "(-168.0, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.988235294818878,
+          "framebuffer_rgb": "(0.4549, 0.498, 0.2314, 1.0)"
+        },
+        {
+          "screen": "(373, 245)",
+          "world": "(-162.6667, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.988235294818878,
+          "framebuffer_rgb": "(0.4471, 0.4824, 0.2471, 1.0)"
+        },
+        {
+          "screen": "(375, 245)",
+          "world": "(-157.3333, 6605.333)",
+          "source_alpha": 0.992156863212585,
+          "cover_strength": 1.0,
+          "tree_strength": 0.984313726425171,
+          "framebuffer_rgb": "(0.1843, 0.2706, 0.1843, 1.0)"
+        }
+      ],
+      "actual_player_tree_covered_samples": 0,
+      "actual_player_tree_exposed_samples": 65
+    }
+  ],
+  "acceptance": "Root still withholds visual acceptance. No missing-material, sampler or later-canopy-overdraw defect was identified by this read-only trace. The remaining issue is actual small locked-item readability; source/geometric counts alone cannot settle it.",
+  "limits": [
+    "No same-frame icon-on/icon-off native reference exists, so these data cannot isolate exact icon-to-background contrast numerically.",
+    "CPU source-alpha/cover queries occur at diagnostic world points; framebuffer RGB is sampled at floor-projected native pixels and includes filtering, scenery, lock modulation and overlays.",
+    "Original isolated PickupCoverTest foliage uses a solid gray backdrop and saturated synthetic red atlas; its locked case tests modulation/background show-through, not readability against this actual canopy.",
+    "No engine, Git, runtime/tool edit or raw image mutation by this review."
+  ]
+}

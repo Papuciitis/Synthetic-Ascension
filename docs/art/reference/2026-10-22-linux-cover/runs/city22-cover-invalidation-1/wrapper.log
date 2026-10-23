@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-cover-invalidation-1",
+ "queued_seconds": 10.0,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 29.259,
+ "peak_rss_mb": 463,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/80 lines) ---
+PASS: form added after the control round trip: the control covers every changed sample
+PASS: form added after the control round trip: covered on the next refresh
+WorldCoverInvalidationTest: 77 passed, 0 failed

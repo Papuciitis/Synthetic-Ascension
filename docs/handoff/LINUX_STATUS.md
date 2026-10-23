@@ -21,7 +21,7 @@ retains exact sources, native 48/0 and owner checks, original selected images,
 and the actual failed headless attempt. Its manifest hashes and lossless
 compressed records were verified before publication into this checkout.
 
-Street continuity has checked eleven of fourteen themes; remaining parts are
+Street continuity has checked twelve of fourteen themes; remaining parts are
 running before the original aggregate conditions and physical routes. Normal
 merged pickup density candidate `67d6b259` at `8e779847`: covered icons keep
 their authored texture/lock/fade factors with denser alpha. The unchanged native
@@ -40,8 +40,11 @@ before sampling: an editor-only global renderer query and failed full exterior
 visibility gate. No performance conclusion is available; helper diagnosis is
 separate from the unmerged runtime. Four candidate-only untracked source-SVG
 import sidecars are preserved outside that checkout for matching test inputs.
-The timing window is closed. Combined-production import, route and settings
-checks, compact evidence and publication remain pending.
+The timing window is closed. The [cover evidence packet](../art/reference/2026-10-22-linux-cover/README.md)
+preserves the accepted bounded home/tree results, exact remaining readability
+limits, qualified cost observations and original failed attempts. Combined
+production import, route and settings checks, remaining evidence and branch
+publication are pending.
 
 ## 23 October — cover and prop shadows integrated; city continuation active
 
