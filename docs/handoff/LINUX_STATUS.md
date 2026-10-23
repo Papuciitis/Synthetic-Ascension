@@ -3,6 +3,30 @@
 Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
+## 23 October — plaza upkeep integrated; remaining checks continue
+
+Normal-merged plaza candidate `0c92f28f` at `715439be`. Combined renderer
+`3f9d6ff4` retains the checked prop casts and resolves plaza fills through their
+actual upkeep style. Worn industrial, canal and military planting patches now
+feather onto their native paving instead of exposing a bright cared-garden
+rectangle. Tended beds and existing cover/physics footprints remain checked.
+The focused regression has exact RED 31/8 then GREEN 39/0; all three fresh
+actual-Game stills, source/material/care and stream-reload checks pass with
+exit 0 and zero diagnostics. Root visually accepted their original images.
+These views do not establish live combat, performance or a redesign of broad
+formal plaza paving; that larger visual issue remains open.
+
+Street continuity remains held at nine of fourteen themes, pending the full
+matrix and physical traversal/entry/collection checks. The pickup-only covered
+alpha candidate passes the unchanged native 33/0 predicates after a clean
+three-script parse; its new live tree capture and readability review are still
+pending. Claude's final weathering candidate `ecb568f2` has a matching current
+32,203/0 owner check and four completed before/after surveys. Root has viewed
+the selected frontage pairs; independent receipt review and matched scenery
+cost checks precede integration. The timing window remains closed until the
+remaining root native capture finishes. Combined-production import, route and
+settings checks, compact evidence and publication remain pending.
+
 ## 23 October — cover and prop shadows integrated; city continuation active
 
 Normal-merged `claude/wp2-cover` at `6357cc10`, preserving the integrated
