@@ -173,7 +173,7 @@ static func compose(kit: Node2D) -> void:
 		marker.position = contact
 		marker.set_meta(&"city_garden_contact", contact)
 		garden.add_child(marker)
-	var dressing: Node2D
+	var dressing: Node2D = null
 	var records: Array = (layout.props as Array).duplicate()
 	# Further-back feet draw first; nothing here is y-sorted at runtime.
 	records.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _draws_before(a, b))

@@ -111,9 +111,9 @@ func apply_theme(theme_id: StringName, context: StringName = &"procedural", redu
 		_material.set_shader_parameter(key, _profile[key])
 	for key: String in ["mist_opacity", "mist_tint", "wind"]:
 		_mist_material.set_shader_parameter(key, _profile[key])
-	for material: ShaderMaterial in [_material, _mist_material]:
-		material.set_shader_parameter("weather_motion_enabled", not reduced_motion)
-		material.set_shader_parameter("frozen_weather_time", _frozen_phase)
+	for shader_material: ShaderMaterial in [_material, _mist_material]:
+		shader_material.set_shader_parameter("weather_motion_enabled", not reduced_motion)
+		shader_material.set_shader_parameter("frozen_weather_time", _frozen_phase)
 	_mist.visible = visible and float(_profile.mist_opacity) > 0.0
 	# The district's wall-foot damp and roof lichen (shader globals); authored
 	# S1/Hub contexts stay clean.
@@ -230,9 +230,9 @@ func _count_roof_materials() -> int:
 		if roof == null or not _same_canvas(roof):
 			continue
 		for child: Node in roof.find_children("*","Polygon2D",true,false):
-			var material := (child as Polygon2D).material as ShaderMaterial
-			if material != null and material.shader == ROOF_SHADER:
-				materials[material.get_instance_id()] = true
+			var roof_material := (child as Polygon2D).material as ShaderMaterial
+			if roof_material != null and roof_material.shader == ROOF_SHADER:
+				materials[roof_material.get_instance_id()] = true
 	return materials.size()
 
 
@@ -302,9 +302,9 @@ func _bind_ground_receiver() -> void:
 	_mist_material.set_shader_parameter("ground_receiver_enabled",true)
 
 
-func _uniform_value(material: ShaderMaterial, key: String, fallback: Variant) -> Variant:
-	var value: Variant = material.get_shader_parameter(key)
-	return value if value != null else _source_default(material.shader,key,fallback)
+func _uniform_value(shader_material: ShaderMaterial, key: String, fallback: Variant) -> Variant:
+	var value: Variant = shader_material.get_shader_parameter(key)
+	return value if value != null else _source_default(shader_material.shader,key,fallback)
 
 
 func _source_default(shader: Shader, key: String, fallback: Variant) -> Variant:

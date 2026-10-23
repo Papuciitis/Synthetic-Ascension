@@ -2,6 +2,17 @@ extends RefCounted
 class_name EnemySniper
 
 const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+const VFX_KIT := preload("res://core/systems/vfx/VfxKit.gd")
+## The aim and the shot use the pixel-art beam kit (Ranged V5; plan
+## docs/art/2026-09-27-pixel-art-vfx-batches.md): the authored beam core,
+## tinted hostile red, and its needle-burst cap at the impact.
+const BEAM_CORE_PATH := "res://assets/textures/vfx/ranged/beam_core.png"
+const BEAM_CAP_PATH := "res://assets/textures/vfx/ranged/beam_cap.png"
+const AIM_TINT := Color(1.0, 0.40, 0.28)
+## The danger lane: the shot's real hit width, a quiet blood-red band.
+const LANE_TINT := Color(0.78, 0.13, 0.09)
+## The lock-on diamond closing on the impact point.
+const LOCK_TINT := Color(1.0, 0.82, 0.52)
 
 enum State { IDLE, RELOCATE, WINDUP }
 
@@ -455,56 +466,51 @@ func _ray_first_non_enemy(from: Vector2, to: Vector2) -> Dictionary:
 
 
 # --------------------
-# Telegraph visuals (kept from your version)
+# Telegraph visuals: the lane at the true hit width (no wide glow promising a
+# bigger danger), the beam core as the aim line, thickening as the charge
+# builds, and a diamond that closes on the impact point. Normal blending: the
+# kit art carries its own light. The three Line2Ds keep their metas.
 # --------------------
 func _ensure_telegraph() -> void:
 	if _tele != null and is_instance_valid(_tele):
 		return
 
-	_tele = Line2D.new()
-	_tele.top_level = true
-	_tele.antialiased = true
-	_tele.z_index = 200
-
 	var s: EnemySpec = _owner.spec
 	var w: float = maxf(_read_spec_float(s, &"sniper_beam_width", 14.0), 14.0)
-	_tele.width = w
-	_tele.default_color = Color(1.0, 0.35, 0.20, 0.25)
-	_tele.joint_mode = Line2D.LINE_JOINT_ROUND
-	_tele.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	_tele.end_cap_mode = Line2D.LINE_CAP_ROUND
 
-	# Glow line (child)
+	_tele = Line2D.new()
+	_tele.name = "AimCore"
+	_tele.top_level = true
+	_tele.z_index = 200
+	_tele.width = maxf(8.0, w * 0.30)
+	_tele.default_color = Color(AIM_TINT, 0.35)
+	var core := _kit_texture(BEAM_CORE_PATH)
+	if core != null:
+		_tele.texture = core
+		_tele.texture_mode = Line2D.LINE_TEXTURE_STRETCH
+	else:
+		_tele.antialiased = true
+		_tele.begin_cap_mode = Line2D.LINE_CAP_ROUND
+		_tele.end_cap_mode = Line2D.LINE_CAP_ROUND
+
+	# The danger lane (child; keeps the old "_glow_id" meta).
 	var glow := Line2D.new()
-	glow.name = "Glow"
+	glow.name = "Lane"
 	glow.top_level = true
-	glow.antialiased = true
 	glow.z_index = 199
-	glow.width = w * 2.6
-	glow.default_color = Color(1.0, 0.15, 0.95, 0.18)
-	glow.joint_mode = Line2D.LINE_JOINT_ROUND
-	glow.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	glow.end_cap_mode = Line2D.LINE_CAP_ROUND
+	glow.width = w
+	glow.default_color = Color(LANE_TINT, 0.08)
 
-	var glow_mat := CanvasItemMaterial.new()
-	glow_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	glow.material = glow_mat
-
-	# End marker tick (child)
+	# The lock-on diamond (child; keeps the old "_mark_id" meta).
 	var mark := Line2D.new()
-	mark.name = "EndMark"
+	mark.name = "LockOn"
 	mark.top_level = true
 	mark.antialiased = true
 	mark.z_index = 201
-	mark.width = maxf(2.0, w * 0.12)
-	mark.default_color = Color(1.0, 0.75, 0.35, 0.55)
-	mark.joint_mode = Line2D.LINE_JOINT_ROUND
-	mark.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	mark.end_cap_mode = Line2D.LINE_CAP_ROUND
-
-	var mark_mat := CanvasItemMaterial.new()
-	mark_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	mark.material = mark_mat
+	mark.closed = true
+	mark.width = 2.0
+	mark.joint_mode = Line2D.LINE_JOINT_SHARP
+	mark.default_color = Color(LOCK_TINT, 0.45)
 
 	_owner.get_tree().current_scene.add_child(glow)
 	_owner.get_tree().current_scene.add_child(_tele)
@@ -524,7 +530,7 @@ func _bind_telegraph_cover() -> void:
 	for key: String in ["_glow_id", "_mark_id"]:
 		var layer := instance_from_id(int(_tele.get_meta(key, 0))) as Line2D
 		if layer != null:
-			layer.material = cue_cover.material_for(layer, true, true)
+			layer.material = cue_cover.material_for(layer, false, true)
 
 
 func _update_telegraph() -> void:
@@ -555,23 +561,20 @@ func _update_telegraph() -> void:
 	var windup_total: float = maxf(_read_spec_float(s, &"sniper_windup", 0.25), 0.05)
 	var prog: float = 1.0 - clampf(_windup_left / windup_total, 0.0, 1.0) # 0->1
 
-	var pulse: float = 0.75 + 0.25 * sin(tt * TAU * 2.5)
-	var jitter: float = (0.4 + 1.6 * prog) * sin(tt * 18.0)
+	# Reduced motion keeps the charge ramp but drops the pulse and the sway.
+	var motion := VFX_KIT.attack_motion_enabled()
+	var pulse: float = 0.80 + 0.20 * sin(tt * TAU * 2.5) if motion else 0.9
+	var jitter: float = (0.3 + 1.2 * prog) * sin(tt * 18.0) if motion else 0.0
 	var perp: Vector2 = Vector2(-dir.y, dir.x)
 
 	var from2: Vector2 = from + perp * jitter
 	var to2: Vector2 = to + perp * jitter
 
 	var base_w: float = maxf(_read_spec_float(s, &"sniper_beam_width", 14.0), 14.0)
-	var core_w: float = base_w * (0.82 + 0.28 * prog)
-	var glow_w: float = core_w * 2.6
 
-	var a_core: float = lerpf(0.22, 0.78, prog) * pulse
-	var a_glow: float = lerpf(0.10, 0.34, prog) * pulse
-	var a_mark: float = lerpf(0.35, 0.85, prog) * (0.85 + 0.15 * sin(tt * TAU * 4.0))
-
-	_tele.width = core_w
-	_tele.default_color = Color(1.0, 0.35, 0.20, a_core)
+	# beam_core's light fills the middle half of its height.
+	_tele.width = maxf(8.0, base_w * lerpf(0.30, 0.55, prog))
+	_tele.default_color = Color(AIM_TINT, lerpf(0.35, 0.95, prog) * pulse)
 	_tele.clear_points()
 	_tele.add_point(from2)
 	_tele.add_point(to2)
@@ -590,23 +593,22 @@ func _update_telegraph() -> void:
 		mark = mobj as Line2D
 
 	if glow != null and is_instance_valid(glow):
-		glow.width = glow_w
-		glow.default_color = Color(1.0, 0.15, 0.95, a_glow)
+		glow.width = base_w
+		glow.default_color = Color(LANE_TINT, lerpf(0.10, 0.30, prog) * pulse)
 		glow.clear_points()
 		glow.add_point(from2)
 		glow.add_point(to2)
 
 	if mark != null and is_instance_valid(mark):
-		var tick_len: float = maxf(10.0, base_w * 0.55) * (0.85 + 0.25 * prog)
-		mark.width = maxf(2.0, base_w * 0.12)
-		mark.default_color = Color(1.0, 0.75, 0.35, a_mark)
-
-		var p0: Vector2 = to2 - perp * (tick_len * 0.5)
-		var p1: Vector2 = to2 + perp * (tick_len * 0.5)
-
+		# The diamond starts wide and closes to the lane as the shot locks.
+		var r: float = base_w * lerpf(1.3, 0.62, prog)
+		mark.width = lerpf(1.5, 2.5, prog)
+		mark.default_color = Color(LOCK_TINT, lerpf(0.45, 0.95, prog))
 		mark.clear_points()
-		mark.add_point(p0)
-		mark.add_point(p1)
+		mark.add_point(to2 - dir * r)
+		mark.add_point(to2 + perp * r)
+		mark.add_point(to2 + dir * r)
+		mark.add_point(to2 - perp * r)
 
 
 func _free_telegraph() -> void:
@@ -646,66 +648,78 @@ func _read_spec_float(spec: Object, prop: StringName, fallback: float) -> float:
 	return fallback
 
 
+static func _kit_texture(path: String) -> Texture2D:
+	return load(path) as Texture2D if ResourceLoader.exists(path) else null
+
+
+## The shot: the beam core white-hot along the line, narrowing as it fades.
 func _spawn_beam_flash(from: Vector2, to: Vector2, width: float) -> void:
-	var alpha := Accessibility.current_flash_alpha(0.95)
-	if alpha <= 0.0:
+	var color := VFX_KIT.attack_core(AIM_TINT, 0.95)
+	if color.a <= 0.0:
 		return
 	var flash := Line2D.new()
 	flash.top_level = true
-	flash.antialiased = true
 	flash.z_index = 260
-	flash.width = width * 1.05
-	flash.default_color = Color(1, 1, 1, alpha)
-	flash.joint_mode = Line2D.LINE_JOINT_ROUND
-	flash.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	flash.end_cap_mode = Line2D.LINE_CAP_ROUND
-
-	var mat := CanvasItemMaterial.new()
-	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	flash.material = mat
+	flash.width = width * 1.3
+	flash.default_color = color
+	var core := _kit_texture(BEAM_CORE_PATH)
+	if core != null:
+		flash.texture = core
+		flash.texture_mode = Line2D.LINE_TEXTURE_STRETCH
+	else:
+		flash.antialiased = true
+		flash.begin_cap_mode = Line2D.LINE_CAP_ROUND
+		flash.end_cap_mode = Line2D.LINE_CAP_ROUND
 
 	flash.add_point(from)
 	flash.add_point(to)
 
 	_owner.get_tree().current_scene.add_child(flash)
-	flash.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(flash, true, true)
+	flash.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(flash, false, true)
 
-	var tw := flash.create_tween()
-	tw.tween_property(flash, "modulate", Color(1, 1, 1, 0), 0.09)
-	tw.tween_callback(Callable(flash, "queue_free"))
+	var tw := flash.create_tween().set_parallel(true)
+	tw.tween_property(flash, "width", width * 0.4, 0.12)
+	tw.tween_property(flash, "modulate", Color(1, 1, 1, 0), 0.12)
+	tw.chain().tween_callback(Callable(flash, "queue_free"))
 
 
+## The impact: the beam's needle-burst cap, opening as it fades.
 func _spawn_end_pop(pos: Vector2, dir: Vector2, width: float) -> void:
 	var alpha := Accessibility.current_flash_alpha(0.9)
 	if alpha <= 0.0:
 		return
-	var pop := Line2D.new()
-	pop.top_level = true
-	pop.antialiased = true
-	pop.z_index = 261
-	pop.width = maxf(2.0, width * 0.10)
-	pop.default_color = Color(1.0, 0.85, 0.45, alpha)
-	pop.joint_mode = Line2D.LINE_JOINT_ROUND
-	pop.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	pop.end_cap_mode = Line2D.LINE_CAP_ROUND
-
-	var mat := CanvasItemMaterial.new()
-	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	pop.material = mat
-
+	var cap := _kit_texture(BEAM_CAP_PATH)
 	var d := (dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT)
-	var perp := Vector2(-d.y, d.x)
-	var r: float = maxf(10.0, width * 0.45)
-
-	pop.add_point(pos - perp * r)
-	pop.add_point(pos + perp * r)
+	var pop: Node2D
+	if cap != null:
+		var burst := Sprite2D.new()
+		burst.texture = cap
+		burst.rotation = d.angle()
+		var size := maxf(28.0, width * 2.2)
+		burst.scale = Vector2.ONE * (size / float(cap.get_width()))
+		burst.modulate = Color(1.0, 0.86, 0.62, alpha)
+		pop = burst
+	else:
+		var tick := Line2D.new()
+		tick.antialiased = true
+		tick.width = maxf(2.0, width * 0.10)
+		tick.default_color = Color(1.0, 0.85, 0.45, alpha)
+		var perp := Vector2(-d.y, d.x)
+		var r: float = maxf(10.0, width * 0.45)
+		tick.add_point(-perp * r)
+		tick.add_point(perp * r)
+		pop = tick
+	pop.top_level = true
+	pop.z_index = 261
+	pop.global_position = pos
 
 	_owner.get_tree().current_scene.add_child(pop)
-	pop.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(pop, true, true)
+	pop.material = preload("res://core/systems/world/visibility/WorldCueCover.gd").material_for(pop, false, true)
 
-	var tw := pop.create_tween()
-	tw.tween_property(pop, "modulate", Color(1, 1, 1, 0), 0.10)
-	tw.tween_callback(Callable(pop, "queue_free"))
+	var tw := pop.create_tween().set_parallel(true)
+	tw.tween_property(pop, "scale", pop.scale * 1.3, 0.14)
+	tw.tween_property(pop, "modulate:a", 0.0, 0.14)
+	tw.chain().tween_callback(Callable(pop, "queue_free"))
 
 
 func is_winding_up() -> bool:

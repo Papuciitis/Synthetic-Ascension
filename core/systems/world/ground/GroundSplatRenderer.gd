@@ -291,10 +291,10 @@ func care_ground(coord: Vector2i, region: Rect2i = Rect2i(0,0,1 << 20,1 << 20)) 
 	if origin.x+n > MAP_SIZE or origin.y+n > MAP_SIZE:
 		for y in range(region.position.y,region.end.y):
 			for x in range(region.position.x,region.end.x):
-				var material := material_at(coord*n+Vector2i(x,y))
-				if care_eligible_index(material):
+				var ground_material := material_at(coord*n+Vector2i(x,y))
+				if care_eligible_index(ground_material):
 					eligible[y*n+x] = 1
-					if material == _POLICY.DISTRICT_GROUND_INDEX: paving[y*n+x] = 1
+					if ground_material == _POLICY.DISTRICT_GROUND_INDEX: paving[y*n+x] = 1
 		return {"eligible": eligible, "paving": paving}
 	var block := Rect2i(origin,Vector2i(n,n))
 	# Coverage is one-hot: each cell's RGBA word is 0 or exactly one channel at
@@ -518,13 +518,13 @@ func _write_occlusion(coord: Vector2i, part: Rect2i, shade: PackedFloat32Array, 
 	var map_rect := Rect2i(origin+local,part.size)
 	var region := _light.get_region(map_rect)
 	var bytes := region.get_data()
-	var scale := 255.0/OCCLUSION_FULL
+	var byte_scale := 255.0/OCCLUSION_FULL
 	var changed := false
 	var index := 0
 	for y in part.size.y:
 		var padded := (part.position.y+y+margin)*stride+part.position.x+margin
 		for x in part.size.x:
-			var value := 255-mini(255,roundi(shade[padded+x]*scale))
+			var value := 255-mini(255,roundi(shade[padded+x]*byte_scale))
 			var at := index*4+3
 			if bytes[at] != value:
 				bytes[at] = value

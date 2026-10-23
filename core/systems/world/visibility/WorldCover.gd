@@ -785,7 +785,10 @@ func _upload_snapshot() -> void:
 	_index_count = ids.size()
 	ids.resize(maxi(1,ceili(float(ids.size())/(BUFFER_WIDTH*4)))*BUFFER_WIDTH*4)
 	_grid = _upload(_grid,Image.create_from_data(_grid_size.x,_grid_size.y,false,Image.FORMAT_RGBAF,headers.to_byte_array()))
+	# Both buffers were padded to whole rows above, so the divisions are exact.
+	@warning_ignore("integer_division")
 	_indices = _upload(_indices,Image.create_from_data(BUFFER_WIDTH,ids.size()/(BUFFER_WIDTH*4),false,Image.FORMAT_RGBAF,ids.to_byte_array()))
+	@warning_ignore("integer_division")
 	_data = _upload(_data,Image.create_from_data(BUFFER_WIDTH,data.size()/(BUFFER_WIDTH*4),false,Image.FORMAT_RGBAF,data.to_byte_array()))
 
 func _upload(existing: ImageTexture, image: Image) -> ImageTexture:

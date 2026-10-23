@@ -8,6 +8,10 @@ signal management_mode_changed(is_open: bool)
 @export var top_left_path: NodePath
 @export var run_sheet_path: NodePath
 @export var manage_overlay_path: NodePath
+## The objective stack (gate overlay, absolute z 2000) is hidden as a whole
+## while the bag is open, so no objective banner can cover the backpack; its
+## panels keep their own visibility for when the bag closes.
+@export var context_stack_path: NodePath
 
 var bag_ui: Control = null
 var management_mode: bool = false
@@ -16,6 +20,7 @@ var _inv_bar: Node = null
 var _top_left: Control = null
 var _run_sheet: Control = null
 var _overlay: ColorRect = null
+var _context_stack: CanvasItem = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -28,6 +33,7 @@ func _ready() -> void:
 	_top_left = _resolve_node(top_left_path, "TopLeft") as Control
 	_run_sheet = _resolve_node(run_sheet_path, "RunSheetHUD") as Control
 	_overlay = _resolve_node(manage_overlay_path, "ManageOverlay") as ColorRect
+	_context_stack = _resolve_node(context_stack_path, "ContextStack") as CanvasItem
 
 	_ensure_overlay()
 	_ensure_bag_ui()
@@ -179,6 +185,8 @@ func _on_bag_open_changed(is_open: bool) -> void:
 
 	if _overlay != null:
 		_overlay.visible = management_mode
+	if _context_stack != null and is_instance_valid(_context_stack):
+		_context_stack.visible = not management_mode
 	_set_management_surface_layer(management_mode)
 
 	if _inv_bar != null and _inv_bar.has_method("set_management_mode"):

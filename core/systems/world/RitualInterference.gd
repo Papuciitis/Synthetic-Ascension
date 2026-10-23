@@ -28,6 +28,11 @@ const TEACH := "Kills inside the sigil rise once, weakened. Fight outside it, or
 ## Steady-state ring redraw cadence (the ManifestationEffect idiom), and the
 ## slower step used while motion is reduced.
 const PULSE_REDRAW_MS := 33
+const HUD_THEME := preload("res://ui/theme/SyntheticHudTheme.tres")
+## The warning's words draw above the crowd (enemies sit at z 10) on a dark
+## plate, so they stay readable mid-fight; the ring stays at ground level.
+const TEXT_Z := 30
+const TEXT_PLATE := Color(0.05, 0.035, 0.03, 0.72)
 const STATIC_REDRAW_MS := 1000
 
 ## Kills within this many px of the sigil's centre rise.
@@ -53,11 +58,26 @@ var _raised := 0
 var _expired := false
 var _reduced_motion := false
 var _last_pulse_bucket: int = -1
+var _text: WarningText = null
+
+
+class WarningText extends Node2D:
+	var ritual: RitualInterference
+
+	func _draw() -> void:
+		if ritual != null:
+			ritual._draw_texts(self)
 
 
 func _ready() -> void:
 	add_to_group(&"ritual_interference")
 	z_index = 5
+	_text = WarningText.new()
+	_text.name = "WarningText"
+	_text.ritual = self
+	_text.z_as_relative = false
+	_text.z_index = TEXT_Z
+	add_child(_text)
 	_time_left = duration
 	_reduced_motion = _read_reduced_motion()
 	if RunEvents != null and RunEvents.has_signal("enemy_defeated"):
@@ -296,15 +316,25 @@ func _draw() -> void:
 			var at := dir * radius
 			draw_colored_polygon(PackedVector2Array([at - side * 5.0, at + dir * 11.0, at + side * 5.0]), edge)
 	_draw_return_mark(Vector2.ZERO, 18.0, edge)
-	_draw_warning_text(Vector2(-154, 45), "Killed enemies rise once", 22)
-	_draw_warning_text(Vector2(-79, 68), "Expires in %d s" % ceili(maxf(0.0, _time_left)), 16)
 	for index in range(_pending.size()):
 		var entry: Dictionary = _pending[index]
 		var at := to_local(entry["pos"] as Vector2)
 		_draw_return_mark(at, 13.0, Color(0.95, 0.74, 0.53, 0.95))
 		var fraction := corpse_return_fraction(index)
 		draw_arc(at, 21.0, -PI * 0.5, -PI * 0.5 + maxf(0.001, TAU * fraction), 24, Color(0.96, 0.8, 0.62), 2.0, true)
-		_draw_warning_text(at + Vector2(-20, -26), "%.1f s" % maxf(0.0, float(entry["t"])), 18)
+	if _text != null:
+		_text.queue_redraw()
+
+
+## Called by the WarningText child: the words, each centred on a dark plate.
+func _draw_texts(canvas: CanvasItem) -> void:
+	if _expired:
+		return
+	_draw_warning_text(canvas, Vector2(0, 45), "Killed enemies rise once", 22)
+	_draw_warning_text(canvas, Vector2(0, 68), "Expires in %d s" % ceili(maxf(0.0, _time_left)), 16)
+	for index in range(_pending.size()):
+		var entry: Dictionary = _pending[index]
+		_draw_warning_text(canvas, to_local(entry["pos"] as Vector2) + Vector2(0, -26), "%.1f s" % maxf(0.0, float(entry["t"])), 18)
 
 
 func _draw_return_mark(at: Vector2, size: float, color: Color) -> void:
@@ -318,6 +348,13 @@ func _draw_return_mark(at: Vector2, size: float, color: Color) -> void:
 	draw_polyline(PackedVector2Array([arrow + Vector2(-4, -size * 0.35), arrow + Vector2(0, -size * 0.65), arrow + Vector2(4, -size * 0.35)]), color, 2.0, true)
 
 
-func _draw_warning_text(at: Vector2, text: String, size: int) -> void:
-	draw_string_outline(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, 5, Color(0.055, 0.04, 0.03, 0.95))
-	draw_string(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(0.91, 0.8, 0.65))
+## `baseline` is the text's baseline centre.
+func _draw_warning_text(canvas: CanvasItem, baseline: Vector2, text: String, size: int) -> void:
+	var font: Font = HUD_THEME.get_font(&"font", &"HudCaption")
+	if font == null:
+		font = ThemeDB.fallback_font
+	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	var at := Vector2(baseline.x - width * 0.5, baseline.y)
+	canvas.draw_rect(Rect2(at.x - 8.0, at.y - font.get_ascent(size) - 3.0, width + 16.0, font.get_height(size) + 6.0), TEXT_PLATE)
+	canvas.draw_string_outline(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, 5, Color(0.055, 0.04, 0.03, 0.95))
+	canvas.draw_string(font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(0.91, 0.8, 0.65))

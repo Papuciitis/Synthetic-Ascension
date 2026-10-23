@@ -864,16 +864,16 @@ func _cover_service() -> Node:
 		return null
 	_world_cover = WORLD_COVER.get_for(self)
 	if _world_cover != null:
-		for material: ShaderMaterial in [_region_material, _elite_material]:
-			if material != null:
-				_world_cover.call("bind_material", material)
+		for cover_material: ShaderMaterial in [_region_material, _elite_material]:
+			if cover_material != null:
+				_world_cover.call("bind_material", cover_material)
 	return _world_cover
 
 
-func _bind_cover_material(material: ShaderMaterial) -> void:
+func _bind_cover_material(cover_material: ShaderMaterial) -> void:
 	var cover := _cover_service()
 	if cover != null:
-		cover.call("bind_material", material)
+		cover.call("bind_material", cover_material)
 
 
 func _ensure_region_material(elite: bool = false) -> ShaderMaterial:
