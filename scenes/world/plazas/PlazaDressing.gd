@@ -365,7 +365,8 @@ func _worn_prop(id: StringName, foot: Vector2) -> Sprite2D:
 func _shadow_for(sprite: Sprite2D, foot: Vector2, texture: Texture2D) -> Polygon2D:
 	var region := sprite.region_rect
 	var half := region.size * 0.5
-	var projection := DEPTH.project_transform(sprite.transform, foot)
+	# Cast from the footprint's centre, not the sprite's bottom edge.
+	var projection := DEPTH.project_transform(sprite.transform, DEPTH.footprint_pivot(foot, region.size * sprite.scale))
 	var points := PackedVector2Array()
 	var uv := PackedVector2Array()
 	for corner: Vector2 in [Vector2.ZERO, Vector2(region.size.x, 0.0), region.size, Vector2(0.0, region.size.y)]:

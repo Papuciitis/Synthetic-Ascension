@@ -31,6 +31,10 @@ const GROUND_SHADE_Z := -87
 const SUN_SHADE := Color(0.66, 0.69, 0.76)
 ## A building casts from its eave (facade height * K) plus its gable.
 const BUILDING_SHADOW_K := 0.85
+## footprint_pivot: a painted prop's ground footprint, as a share of its
+## drawn width and at most a share of its drawn height.
+const FOOTPRINT_DEPTH_OF_WIDTH := 0.40
+const FOOTPRINT_DEPTH_OF_HEIGHT := 0.45
 const GABLE_ALLOWANCE_PX := 24.0
 const PENUMBRA_PX := 4.0
 ## Wall-base contact: strongest under the shaded south face, lighter on the
@@ -59,6 +63,19 @@ static func projection_at(feet: Vector2) -> Transform2D:
 
 static func project_transform(visual_transform: Transform2D, feet: Vector2) -> Transform2D:
 	return projection_at(feet) * visual_transform
+
+
+## A three-quarter painted prop (a fountain basin, a stall, a crate pile)
+## draws its ground footprint as the lower part of its sprite. Projecting from
+## the sprite's bottom edge cast that footprint as if it were height, so the
+## shadow fell detached below and left of the prop (playtest 2026-10-23).
+## Cast from the footprint's centre instead: the parts below it fold under
+## the sprite. `drawn` is the sprite's drawn size; the footprint's depth is
+## estimated from it (a round basin is about 0.4 of its width deep, a low
+## bench far less: bounded by its height).
+static func footprint_pivot(feet: Vector2, drawn: Vector2) -> Vector2:
+	var depth := minf(drawn.x * FOOTPRINT_DEPTH_OF_WIDTH, drawn.y * FOOTPRINT_DEPTH_OF_HEIGHT)
+	return feet - Vector2(0.0, maxf(0.0, depth) * 0.5)
 
 
 static func offset_for_height(height_px: float) -> Vector2:

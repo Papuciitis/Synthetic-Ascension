@@ -770,7 +770,9 @@ static func _add_prop(kit: Node2D, parent: Node2D, record: Dictionary) -> void:
 	# Tall props silhouette actors who pass behind them, like the kit trees.
 	if is_tall(prop):
 		FOREGROUND.register(sprite, foot)
-	_add_shadow(kit, sprite, foot, texture)
+	# A flush bed is ground and casts nothing; a pile casts from its footprint.
+	if not prop in FLAT_PROPS:
+		_add_shadow(kit, sprite, foot, texture, DEPTH.footprint_pivot(foot, rect.size * scale_value))
 
 
 static func _add_tree(kit: Node2D, tree: Dictionary) -> void:
@@ -797,8 +799,10 @@ static func _add_tree(kit: Node2D, tree: Dictionary) -> void:
 ## A ground shadow projected from the sprite's own silhouette, like the kit
 ## trees: same light, and the same receiver trimming (city_sun_shadow + UV
 ## metas let CityBlockKit.trim_paving cut it out of every occupied footprint).
-static func _add_shadow(kit: Node2D, sprite: Sprite2D, foot: Vector2, texture: Texture2D) -> Polygon2D:
-	var projection := DEPTH.project_transform(sprite.transform, foot)
+## `pivot` is where the cast starts: the root for a tree, a painted pile's
+## footprint centre (WorldDepthStyle.footprint_pivot).
+static func _add_shadow(kit: Node2D, sprite: Sprite2D, foot: Vector2, texture: Texture2D, pivot: Variant = null) -> Polygon2D:
+	var projection := DEPTH.project_transform(sprite.transform, foot if pivot == null else pivot as Vector2)
 	var half := texture.get_size() * 0.5
 	var uv := PackedVector2Array([Vector2.ZERO, Vector2(texture.get_width(), 0), texture.get_size(), Vector2(0, texture.get_height())])
 	var points := PackedVector2Array()
