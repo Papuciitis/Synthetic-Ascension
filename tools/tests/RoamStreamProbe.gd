@@ -13,7 +13,8 @@ extends Node
 # Run: <godot> --headless --path . --quit-after 200000 res://tools/tests/RoamStreamProbe.tscn
 # Env: ROAM_STOPS (16; capped by the route's length in route mode),
 # ROAM_HORDE (120), ROAM_DWELL_SEC (2.0), ROAM_SEED (attempt world seed; a
-# fresh one when unset), ROAM_ROUTE (main | east)
+# fresh one when unset), ROAM_ROUTE (main | east), ROAM_SEGMENT (2),
+# ROAM_CONTINUITY (on | off: ChunkManager.street_continuity_enabled)
 
 class Driver:
 	extends Node
@@ -37,6 +38,8 @@ class Driver:
 	var _chunk_px := 1024.0
 	var _route: Array = []
 	var _route_mode := "main"
+	var _segment := 2
+	var _continuity := true
 
 	func _env_int(key: String, fallback: int) -> int:
 		var value := OS.get_environment(key).strip_edges()
@@ -56,7 +59,12 @@ class Driver:
 		var seed_env := OS.get_environment("ROAM_SEED").strip_edges()
 		if seed_env.is_valid_int():
 			Global.attempt_world_seed = int(seed_env)
-		Global.attempt_segment = 2
+		_segment = maxi(2, _env_int("ROAM_SEGMENT", 2))
+		_continuity = OS.get_environment("ROAM_CONTINUITY").strip_edges() != "off"
+		# Before the game's ChunkManager builds its first chunk.
+		get_tree().node_added.connect(func(node: Node) -> void:
+			if node is ChunkManager: (node as ChunkManager).street_continuity_enabled = _continuity)
+		Global.attempt_segment = _segment
 		Global.debug_dev_segment = false
 		Global.debug_dev_mode = true
 		# No story card may stop an unattended run (StoryDirector.cards_allowed).
@@ -134,7 +142,7 @@ class Driver:
 			_phase = 2
 			_stop_index = -1
 			_stop_started = _elapsed
-			print("RoamStreamProbe: segment 2 seed %d, horde %d, %d stops (%s route, chunk %d px) every %.1f s" % [Global.attempt_world_seed, _horde, _stops, ("main" if _route_mode == "main" else "east"), int(_chunk_px), _dwell])
+			print("RoamStreamProbe: segment %d seed %d, street continuity %s, horde %d, %d stops (%s route, chunk %d px) every %.1f s" % [_segment, Global.attempt_world_seed, "on" if _continuity else "off", _horde, _stops, ("main" if _route_mode == "main" else "east"), int(_chunk_px), _dwell])
 			return
 		if _phase != 2:
 			return

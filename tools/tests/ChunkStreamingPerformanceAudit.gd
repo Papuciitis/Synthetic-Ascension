@@ -2,6 +2,18 @@ extends Node
 
 const AUDIT_SEED := 251337
 const AUDIT_RADIUS := 2
+## Planned variant (2026-10-21): the 25 chunks nearest the start of a real S3
+## district plan, every one a full city block, built through the production
+## activation path with the street continuity pass off and on (alternating per
+## chunk, so both see the same machine load). The pass's extra architecture
+## may cost at most PLANNED_CONTINUITY_RATIO of the pass-off build time, and a
+## planned chunk stays within the absolute budgets below.
+const PLANNED_SEGMENT := 3
+const PLANNED_SEED := 16102026
+const PLANNED_CHUNKS := 25
+const PLANNED_CONTINUITY_RATIO := 1.6
+const PLANNED_MEDIAN_BUDGET_MS := 40.0
+const PLANNED_MAX_BUDGET_MS := 120.0
 const COVER_FULL := preload("res://scenes/world/cover/CoverFull.tscn")
 const COVER_WINDOW := preload("res://scenes/world/cover/CoverWindow.tscn")
 const COVER_HALF := preload("res://scenes/world/cover/CoverHalf.tscn")
@@ -118,10 +130,96 @@ func _run() -> void:
 		"static_memory_delta_bytes": static_after - static_baseline,
 	}
 	print("CHUNK_AUDIT ", JSON.stringify(audit))
-	print("ChunkStreamingPerformanceAudit: %d passed, %d failed" % [_passes, _failures])
 	manager.queue_free()
 	await get_tree().process_frame
+	await _audit_planned_chunks()
+	print("ChunkStreamingPerformanceAudit: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+func _planned_manager(theme: SegmentThemeData, plan: Dictionary, continuity: bool) -> ChunkManager:
+	var manager := ChunkManager.new()
+	theme.apply_to_chunk_manager(manager)
+	manager.parcels_chunk_chance = 0.95
+	manager.district_sidewalk_width_cells = 1
+	manager.district_sidewalk_corner_pad_cells = 1
+	manager.debug_draw_chunk_outlines = false
+	manager.debug_show_blocks = false
+	manager.street_continuity_enabled = continuity
+	manager.cover_full_scene = COVER_FULL
+	manager.cover_window_scene = COVER_WINDOW
+	manager.cover_half_scene = COVER_HALF
+	add_child(manager)
+	manager.set_process(false)
+	manager.configure_procedural_world(int(plan.seed), plan.connectors_by_chunk, plan.urban_access_by_chunk, plan.role_by_chunk, plan.terrain_by_chunk, plan.archetype_by_chunk)
+	return manager
+
+
+func _planned_build_ms(manager: ChunkManager, coord: Vector2i) -> float:
+	var chunk := manager._create_chunk(coord)
+	var sample: Dictionary = manager._phase_sample_by_coord.get(coord, {})
+	var total := float(sample.get("total_ms", INF))
+	manager._unregister_chunk_cells(coord)
+	manager._chunk_build_data.erase(coord)
+	manager._phase_sample_by_coord.erase(coord)
+	chunk.free()
+	return total
+
+
+func _audit_planned_chunks() -> void:
+	var player := Node2D.new()
+	player.add_to_group(&"player")
+	add_child(player)
+	var previous_segment: int = Global.attempt_segment
+	Global.attempt_segment = PLANNED_SEGMENT
+	var theme := SegmentThemePicker.get_theme(PLANNED_SEGMENT, PLANNED_SEED)
+	var plan := DistrictPlan.generate(PLANNED_SEGMENT, PLANNED_SEED, 2048, theme)
+	var start: Vector2i = plan.start_chunk
+	var coords: Array[Vector2i] = []
+	for coord: Vector2i in plan.role_by_chunk:
+		coords.append(coord)
+	coords.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := maxi(absi(a.x - start.x), absi(a.y - start.y))
+		var db := maxi(absi(b.x - start.x), absi(b.y - start.y))
+		return da < db if da != db else (a.x < b.x or (a.x == b.x and a.y < b.y)))
+	coords = coords.slice(0, PLANNED_CHUNKS)
+	var off := _planned_manager(theme, plan, false)
+	var on := _planned_manager(theme, plan, true)
+	# Warm both paths (first-touch resources, carvers, composers).
+	for coord: Vector2i in coords.slice(0, 3):
+		_planned_build_ms(off, coord)
+		_planned_build_ms(on, coord)
+	var off_ms: Array[float] = []
+	var on_ms: Array[float] = []
+	for index in coords.size():
+		var coord := coords[index]
+		if index % 2 == 0:
+			off_ms.append(_planned_build_ms(off, coord))
+			on_ms.append(_planned_build_ms(on, coord))
+		else:
+			on_ms.append(_planned_build_ms(on, coord))
+			off_ms.append(_planned_build_ms(off, coord))
+		await get_tree().process_frame
+	off.queue_free()
+	on.queue_free()
+	player.queue_free()
+	Global.attempt_segment = previous_segment
+	await get_tree().process_frame
+	var off_total := 0.0
+	var on_total := 0.0
+	for value: float in off_ms: off_total += value
+	for value: float in on_ms: on_total += value
+	var sorted_on := on_ms.duplicate()
+	sorted_on.sort()
+	var median_on: float = sorted_on[sorted_on.size() / 2]
+	var max_on: float = sorted_on.back()
+	print("CHUNK_AUDIT_PLANNED ", JSON.stringify({"segment": PLANNED_SEGMENT, "seed": PLANNED_SEED, "chunks": coords.size(),
+		"off_total_ms": snappedf(off_total, 0.01), "on_total_ms": snappedf(on_total, 0.01), "on_median_ms": snappedf(median_on, 0.01), "on_max_ms": snappedf(max_on, 0.01),
+		"off_ms": off_ms.map(func(v: float) -> float: return snappedf(v, 0.01)), "on_ms": on_ms.map(func(v: float) -> float: return snappedf(v, 0.01))}))
+	_check(coords.size() == PLANNED_CHUNKS, "the planned audit builds %d planned chunks" % PLANNED_CHUNKS)
+	_check(on_total <= off_total * PLANNED_CONTINUITY_RATIO, "street continuity adds at most %d%% to planned chunk builds (%.1f -> %.1f ms)" % [int(round((PLANNED_CONTINUITY_RATIO - 1.0) * 100.0)), off_total, on_total])
+	_check(median_on < PLANNED_MEDIAN_BUDGET_MS, "median planned chunk activation is below %.0f ms (%.1f ms)" % [PLANNED_MEDIAN_BUDGET_MS, median_on])
+	_check(max_on < PLANNED_MAX_BUDGET_MS, "no planned chunk activation exceeds %.0f ms (%.1f ms)" % [PLANNED_MAX_BUDGET_MS, max_on])
 
 
 func _count_cover_nodes(root: Node) -> int:

@@ -5,6 +5,12 @@ extends Node
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const ROOF := preload("res://scenes/world/buildings/RoofOverlay.tscn")
 const CELL := 64
+## Whole-chunk material histogram measured 22 October 2026 after city aprons
+## were fitted to their actual doorway cores and recessed thresholds. With
+## continuity off the measured pin is {0:719,2:130,4:169,7:6}; bounded infill
+## and setback steps produce the continuity-on pin below. Both modes retain
+## six road-index-7 cells and the home's own 15 cared cells / 9 strong cells.
+const BED_CONTINUITY_HISTOGRAM := {0:562,2:124,3:151,4:181,7:6}
 var _passed := 0
 var _failed := 0
 
@@ -167,9 +173,13 @@ func _test_production_footway_pockets() -> void:
 	player.add_to_group(&"player")
 	add_child(player)
 	Global.attempt_segment = 2
+	# Street continuity off reproduces the accepted native-trial layout; on is
+	# production (its architecture-only infill shares the lane with the homes).
 	for sample: Dictionary in [
-		{"seed":16102026,"coord":Vector2i(0,3),"id":944996572,"spec":_bed_spec()},
-		{"seed":17,"coord":Vector2i(-3,5),"id":2128236757,"spec":_tree_spec()},
+		{"seed":16102026,"coord":Vector2i(0,3),"id":944996572,"spec":_bed_spec(),"continuity":false},
+		{"seed":16102026,"coord":Vector2i(0,3),"id":944996572,"spec":_bed_spec(),"continuity":true},
+		{"seed":17,"coord":Vector2i(-3,5),"id":2128236757,"spec":_tree_spec(),"continuity":false},
+		{"seed":17,"coord":Vector2i(-3,5),"id":2128236757,"spec":_tree_spec(),"continuity":true},
 	]:
 		var theme := SegmentThemePicker.get_theme(2,int(sample.seed))
 		var plan := DistrictPlan.generate(2,int(sample.seed),2048,theme)
@@ -185,6 +195,7 @@ func _test_production_footway_pockets() -> void:
 		cm.cover_full_scene = load("res://scenes/world/cover/CoverFull.tscn")
 		cm.cover_window_scene = load("res://scenes/world/cover/CoverWindow.tscn")
 		cm.cover_half_scene = load("res://scenes/world/cover/CoverHalf.tscn")
+		cm.street_continuity_enabled = bool(sample.continuity)
 		add_child(cm)
 		cm.set_process(false)
 		cm.configure_procedural_world(int(plan.seed),plan.connectors_by_chunk,plan.urban_access_by_chunk,plan.role_by_chunk,plan.terrain_by_chunk,plan.archetype_by_chunk)
@@ -210,15 +221,12 @@ func _test_production_footway_pockets() -> void:
 				positive += 1
 				if care >= 0.7: strong += 1
 		if int(sample.id) == 944996572:
-			# Street continuity (2026-10-21) attaches three architecture-only
-			# infill lots in this lane (a shop beside the home, a shop beside
-			# the service annex, one across the lane); their floors and aprons
-			# own those cells. With street_continuity_enabled off the chunk still
-			# yields the native-trial histogram {0:716,2:125,4:177,7:6}. The six
-			# hub-pad cells stamp the kerbed main-street index 7 since the
-			# index-3 role split (2026-10-21; they stamped 3, now the stone floor
-			# of buildings and rooms, and drew identically as carriageway).
-			_check(counts == {0:525,2:117,3:174,4:202,7:6},"the bed fixture retains the production floor ownership from the failed native trial")
+			if not bool(sample.continuity):
+				_check(counts == {0:719,2:130,4:169,7:6},"the bed fixture retains road index 7 with street continuity disabled")
+			else:
+				# Infill/aprons change ownership; keep the street fixture pinned.
+				print("Production care fixture (street continuity) histogram: ", counts)
+				_check(counts == BED_CONTINUITY_HISTOGRAM,"with street continuity the bed chunk keeps its pinned floor ownership")
 			var compact_core := true
 			for core_y in range(14,17):
 				for core_x in range(0,3):
@@ -229,7 +237,7 @@ func _test_production_footway_pockets() -> void:
 		_check(eligible,"production-footway care stays on actual available vegetation id=%d" % int(sample.id))
 		_check(positive >= 8,"production footways leave at least eight cared vegetation cells near the kept garden id=%d actual=%d" % [int(sample.id),positive])
 		_check(strong >= 3,"the actual garden has at least three substantial lawn cells beyond paving id=%d actual=%d" % [int(sample.id),strong])
-		print("Production care fixture: id=%d positive=%d strong=%d materials=%s" % [int(sample.id),positive,strong,str(counts)])
+		print("Production care fixture: id=%d continuity=%s positive=%d strong=%d materials=%s" % [int(sample.id),str(sample.continuity),positive,strong,str(counts)])
 		cm.free()
 	player.free()
 

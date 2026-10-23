@@ -6,6 +6,9 @@ class_name IndoorVolume
 @export var size_cells: Vector2i = Vector2i(1, 1)
 @export var building_id: int = 0
 @export var secondary_objective_id: int = 0
+## Street continuity infill (2026-10-21) is architecture only: entering it is
+## not exploration, so it never counts as a first building visit.
+@export var visit_counts_as_exploration: bool = true
 
 @onready var _shape: CollisionShape2D = get_node_or_null("CollisionShape2D") as CollisionShape2D
 
@@ -142,7 +145,8 @@ func _on_body_entered(b: Node) -> void:
 		# would let an exploration rule be farmed by pacing a chunk boundary.
 		# An unauthored volume (building_id 0) never counts as a first visit.
 		var first_visit: bool = (
-			Global != null
+			visit_counts_as_exploration
+			and Global != null
 			and Global.has_method("note_building_visit")
 			and bool(Global.call("note_building_visit", building_id))
 		)

@@ -11,6 +11,11 @@ const _DIR_N: int = 1
 const _DIR_E: int = 2
 const _DIR_S: int = 4
 const _DIR_W: int = 8
+## Medieval street pass (2026-10-21): plaza roles drawn as irregular courts
+## (ChunkShapeGen.court_polygon) from their own salt. Objective, ward, gate,
+## checkpoint and arena plazas keep their shapes.
+const COURT_SHAPE_ROLES: Array[StringName] = [&"landmark_plaza", &"entry_court", &"exploration_reward"]
+const COURT_SHAPE_SALT := 9021
 # Auto-extracted from ChunkGenImpl.gd to keep the generator modular.
 # Do not keep state here; use the passed `gen` (ChunkGenImpl) as context.
 
@@ -59,7 +64,6 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			"parcel_loot_pickup_delay": 0.15,
 			"urban_access_mask": urban_access_mask,
 			"street_continuity": gen.street_continuity_enabled,
-			"urban_fill_front_dirs": _road_facing_dirs(gen, coord) if gen.street_continuity_enabled else [],
 		}
 		gen._site_mgr.decorate_urban_fill(gen.cm, chunk, coord, fill_cfg)
 		steps["fill"] = Time.get_ticks_usec() - step_started_usec
@@ -118,9 +122,11 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	if role == &"landmark_plaza":
 		plaza_size = mini(cells - 4, plaza_size + 4)
 		if frame_square:
-			# 12-14 cells, centred on the chunk: every side keeps a ring deep
-			# enough for a 7-cell house, and the lanes still cross the square.
-			plaza_size = clampi(plaza_size - 10, 12, 14)
+			# A worn octagon of 16 is clipped to a centred 12x12 square below (a
+			# plain square is 12): every frame ring keeps 7 cells, so its houses
+			# can stay off the two open cells beside a seam where a lane leaves
+			# the chunk, and the lanes still cross the square.
+			plaza_size = 16 if gen.organic_shapes_enabled else 12
 	elif role == &"entry_court" or role == &"wardstone_court" or role == &"checkpoint":
 		plaza_size = mini(cells - 4, plaza_size + 2)
 
@@ -266,7 +272,20 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				family = 0
 			var center := Vector2(plaza_rect.position) + Vector2(plaza_rect.size) * 0.5
 			var polygon: PackedVector2Array = ChunkShapeGen.plaza_polygon(rng_roads, center, float(plaza_size) * 0.5, family)
+			if role in COURT_SHAPE_ROLES and not boss_court.has_area():
+				# Medieval street pass: landmark, entry and reward squares are
+				# irregular courts, not the same round square at every crossing.
+				# The octagon/blob above still draws its rng_roads values, so the
+				# stream stays identical; the court comes from its own salt.
+				var court_rng := RandomNumberGenerator.new()
+				court_rng.seed = gen._mix_seed_int(base_seed, COURT_SHAPE_SALT)
+				polygon = ChunkShapeGen.court_polygon(court_rng, center, float(plaza_size) * 0.5)
 			plaza_cells = ChunkShapeGen.rasterize_polygon(polygon, bounds.grow(-2))
+			if frame_square:
+				var frame_box := Rect2i(Vector2i.ONE * (int(cells / 2.0) - 6), Vector2i(12, 12))
+				for cell: Vector2i in plaza_cells.keys():
+					if not frame_box.has_point(cell):
+						plaza_cells.erase(cell)
 			if plaza_cells.size() < 16:
 				plaza_cells = ChunkShapeGen.rect_cells(plaza_rect)
 			if boss_court.has_area():
@@ -316,9 +335,10 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				"district_family": gen.district_family,
 				"district_common_base_preview": gen.district_common_base_preview,
 				"city_block_style": preload("res://scenes/world/buildings/CityBlockKit.gd").enabled_for(role, Global.attempt_segment),
-				# Composed paving belongs only to the accepted S2 prototype block.
-				# Later districts retain their terrain and semantic route materials.
-				"city_shared_ground": role != &"secondary_reward_building" or Global.attempt_segment != 2,
+				# Generated reward streets share the same semantic ground and
+				# fitted door approaches as other streets; the standalone kit's
+				# parcel surround must not replace their yards and carriageway.
+				"city_shared_ground": true,
 				"complete_service_frontage": Global.attempt_segment == 2 and role == &"service_lane",
 				"force_parcel": forced_reward_building,
 				"frontage_target": (0.92 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.84),
@@ -389,6 +409,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			"door_apron_tex": 4,
 			"door_apron_alpha": 0.92,
 			"door_apron_z": -93,
+			"lane_rect_h": lane_rect_h,
+			"lane_rect_v": lane_rect_v,
 		}
 		var framed: Array[Rect2i] = gen._site_mgr.decorate_square_frame(gen.cm, chunk, coord, plaza_rect, keepout_rects, square_cfg)
 		if not framed.is_empty():
@@ -894,18 +916,6 @@ static func _lane_center_for_col(gen: ChunkGenImpl, col: int, cells: int) -> int
 	var rr := RandomNumberGenerator.new()
 	rr.seed = gen._mix_seed_int(gen.world_seed, col * 928371 + 7703)
 	return rr.randi_range(int(floor(float(cells) * 0.35)), int(ceil(float(cells) * 0.65)))
-
-
-## Courtyard rings whose neighbour carries road connectors (plan data only, so
-## streaming order cannot change it) open toward that street. North rings stay
-## inward: in the 3/4 view a north doorway shows no facade, so turning them
-## would only trade the court's entrances for blank walls.
-static func _road_facing_dirs(gen: ChunkGenImpl, coord: Vector2i) -> Array[Vector2i]:
-	var dirs: Array[Vector2i] = []
-	for dir: Vector2i in [Vector2i(0, 1), Vector2i(1, 0), Vector2i(-1, 0)]:
-		if gen.get_chunk_connectors(coord + dir) != 0:
-			dirs.append(dir)
-	return dirs
 
 
 ## Chunk-centred objective anchor boxes the street infill keeps open.
