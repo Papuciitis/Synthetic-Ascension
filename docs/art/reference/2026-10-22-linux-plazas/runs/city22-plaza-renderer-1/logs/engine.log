@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: one visual instance is emitted per occupied blocker cell
+PASS: shadow batches retain blocker readability
+PASS: renderer node count is bounded by texture variants
+PASS: streaming creates no runtime image textures
+PASS: host owns only the reported visual batches
+PASS: renderer creates no per-cell sprites
+PASS: renderer creates no tile layers
+PASS: renderer adds no per-cell helper nodes
+PASS: chunk removal retires only its instances
+PASS: chunk removal retires matching shadow instances
+PASS: clear releases all visual batches
+PASS: renderer carries intact-building state through texture selection at a ruin-pier coordinate
+ChunkBlockRendererTest: 12 passed, 0 failed

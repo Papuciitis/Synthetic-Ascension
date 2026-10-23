@@ -1,0 +1,19 @@
+{
+  "old_bug_source_only_bindings": {
+    "/var/tmp/sa-city22/plaza-beds/s6/ground-before.png": "5b0c4f534b071ffcc1281797c341ea01c1df514e32ebcb9390c8bc89935991af",
+    "/var/tmp/sa-city22/plaza-beds/s6/bed-validation.json": "435c21e2dd3eadbff70ba6112c65b75ffbb6a708986d3ddc2721940dd56d3aae",
+    "/var/tmp/sa-city22/plaza-beds/s6/capture-info.json": "3d85a193a94814299c64dfc907c4c5c8cbeb7520d32d4acfa911d0074dac0533",
+    "/tmp/sa-wp2-plazas/core/systems/world/proc/chunkgen/ChunkGenStamp.gd": "342e81050c1fee019961dd75f783ac109986c7658ec1518c420f2fb299d7807f",
+    "/tmp/sa-wp2-plazas/core/systems/world/ChunkManager.gd": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+    "/tmp/sa-wp2-plazas/core/systems/world/ground/GroundSplatRenderer.gd": "d3f0bb7982f511ca7863256ac137a2ff2437323d1e3f90e28b076bf3343b87e9",
+    "/tmp/sa-wp2-plazas/core/systems/world/ground/ground_splat.gdshader": "a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9",
+    "/tmp/sa-wp2-plazas/scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+    "/tmp/sa-wp2-plazas/assets/world/plazas_v1/kit/plaza_soil.png": "1e310cc48b44324ff6e9b9ca84ee457c3b7adc4923fa0abcc6f63464325620cf"
+  },
+  "actual_native_material": 6,
+  "actual_native_care": 1.0,
+  "actual_native_cared_cells": 6,
+  "actual_native_bed_cells": 6,
+  "actual_native_kerb_nodes": 0,
+  "inference": "Worn rough alpha edge reveals the untouched urban6 island on which CM paints full planting care. Ground shader draws cared green margin; no Polygon2D kerb owner exists in actual worn node list. Runtime hypothesis must still pass focused RED/GREEN and native review."
+}

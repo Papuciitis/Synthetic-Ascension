@@ -1,0 +1,220 @@
+{
+  "cases": [
+    {
+      "label": "city22-plaza-bed-tools-parse-r4",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-plaza-bed-tools-parse-r4",
+        "--project",
+        "/tmp/sa-wp2-plazas",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "300",
+        "--duty-percent",
+        "25",
+        "--",
+        "--headless",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.tscn",
+        "--",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedDiscovery.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/PlazaBedDiscoveryTerrain.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedGamePreview.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.gd"
+      ],
+      "scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/external_source_parse_probe.tscn",
+      "extra": [
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedDiscovery.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/PlazaBedDiscoveryTerrain.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedGamePreview.gd",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.gd"
+      ],
+      "state": "clean",
+      "guard_started_unix_ns": 1792712160418230038,
+      "guard_source_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "wrapper_exit": 0,
+      "records": {
+        "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-tools-parse-r4-1/run-results.json",
+        "raw_sha256": "b8530a71848a8e48aa54338816a4e1535eeeaadfd69f9c9d281326e64d6ae517",
+        "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-tools-parse-r4-thermal.json",
+        "guard_sha256": "4235a74ae0165db80baa524e81f1b8c392f1254d724e8a82d3a0e671bf8042d5"
+      }
+    },
+    {
+      "label": "city22-plaza-bed-discovery-r4",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-plaza-bed-discovery-r4",
+        "--project",
+        "/tmp/sa-wp2-plazas",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "900",
+        "--duty-percent",
+        "25",
+        "--",
+        "--headless",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/PlazaBedDiscoveryTerrain.tscn",
+        "--",
+        "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r4/plaza-bed-discovery-r4.json"
+      ],
+      "scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/PlazaBedDiscoveryTerrain.tscn",
+      "extra": [
+        "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r4/plaza-bed-discovery-r4.json"
+      ],
+      "state": "clean",
+      "guard_started_unix_ns": 1792712260528064757,
+      "guard_source_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "wrapper_exit": 0,
+      "records": {
+        "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-discovery-r4-1/run-results.json",
+        "raw_sha256": "0436ee7cfdab2ffda1632c1e87f7dbe55b6abd0864f54630e4a1d06291afe5da",
+        "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-discovery-r4-thermal.json",
+        "guard_sha256": "e727bbc14fe80e2a88dcf323eaada9dfe2e35dc56168f47eb98d99fc79252657"
+      }
+    }
+  ],
+  "completed_discovery": true,
+  "runtime_writes": 0,
+  "regression_reruns": 0,
+  "verified_completed_r3_regression": {
+    "red": {
+      "label": "city22-plaza-underlay-red-r3",
+      "red": true,
+      "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-red-r3-1/run-results.json",
+      "raw_sha256": "50bd0e83020a23255ffc0d91132b76a15ef087ea803aa60be6f5015e0a736bac",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-underlay-red-r3-thermal.json",
+      "guard_sha256": "6720060f40d27f8c5cc75b08fd8340a4216451b8aa022c258d99af7ea2380fad",
+      "report": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/underlay-red-r3.json",
+      "report_sha256": "f8729250ee0dbab5b9393460f15cc27cf5d4fdd4ea0ee226544eb56409df5444",
+      "stdout": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-red-r3-1/logs/stdout.log",
+      "stdout_sha256": "845f8bc5eef109ab5fd204d53a394313f93d0375fb2913b8fdcbe99f2a10854d",
+      "source_overrides": {
+        "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284"
+      }
+    },
+    "green": {
+      "label": "city22-plaza-underlay-green-r3",
+      "red": false,
+      "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-green-r3-1/run-results.json",
+      "raw_sha256": "5dcae61aba0e90a8aa55c7540c3addeba5cb06d1e47d392c892879751b9d2443",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-underlay-green-r3-thermal.json",
+      "guard_sha256": "c08d74d5ad12c5ce405d3f8541236b796d7a0aaa81d50fede2d9d8742b03c1c6",
+      "report": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/underlay-green-r3.json",
+      "report_sha256": "6fddefbcde0697608648df06f0cae0bd8335e46b5bb237f7432161cd7565cc32",
+      "stdout": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-green-r3-1/logs/stdout.log",
+      "stdout_sha256": "734f5cd013ee3b7c9fa3c28aa21104ba3d17faf0c4c2edbde4bfa992542929c3",
+      "source_overrides": {}
+    },
+    "source_hashes": {
+      "core/systems/world/ChunkManager.gd": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+      "core/systems/world/chunks/ChunkBlockRenderer.gd": "9d70d3c320b7cd89dbf748dac66ad5ac764774594196e58803381da687dce6ff",
+      "core/systems/world/chunks/ChunkBuildData.gd": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618",
+      "core/systems/world/chunks/PlazaEdgeKit.gd": "baee634f650e26d4d5ae670904c801ab1c1914755665ee349d83824458a11cb1",
+      "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+      "scenes/world/buildings/CityBlockRoofForms.gd": "ed2afa9ae8bd179cffd58aa10e3366cb0a697e14aba572e0423b2845b6616fc0",
+      "scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+      "tools/dev/CityBlockPlayablePreview.gd": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+      "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "tools/tests/PlazaBedUnderlayTest.gd": "b96657c21a95c382a27fc66a1adb3ef7ff39b6d5f6a7ae77e942773c420038ce",
+      "tools/tests/PlazaBedUnderlayTest.tscn": "a9f363e9b400f7d37a69d56a55159c5a4b90b5d9d29f28c46684bf3e8044455e",
+      "tools/tests/PlazaPresentationTest.gd": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286"
+    },
+    "r3_interruption": {
+      "executor_summary": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/root-underlay-execution-r3.json",
+      "executor_summary_sha256": "af6973414bcdab1227efe82dbd8df47321ac0aab348f32c236c4201c7ad293dc",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-tools-parse-r3-thermal.json",
+      "guard_sha256": "bc2db30e0d36d7b008971a1c610378dbd55d9aa30ce864cf57947b0d7c1175a2",
+      "classification": "external_SIGTERM15_while_queued_no_owned_engine_or_parser_assertions",
+      "sender": "unknown; no sender inference from these records"
+    }
+  },
+  "scope": "Continuation only; native and explicit visual acceptance remain separate.",
+  "validated_discovery": {
+    "discovery": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r4/plaza-bed-discovery-r4.json",
+    "discovery_sha256": "62d8e476f9ed738b479899d95fd68e582b14d0c44d327d1e2b843f4be6b38190",
+    "discovery_records": {
+      "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-discovery-r4-1/run-results.json",
+      "raw_sha256": "0436ee7cfdab2ffda1632c1e87f7dbe55b6abd0864f54630e4a1d06291afe5da",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-discovery-r4-thermal.json",
+      "guard_sha256": "e727bbc14fe80e2a88dcf323eaada9dfe2e35dc56168f47eb98d99fc79252657"
+    },
+    "scoped_parse_records": {
+      "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-tools-parse-r4-1/run-results.json",
+      "raw_sha256": "b8530a71848a8e48aa54338816a4e1535eeeaadfd69f9c9d281326e64d6ae517",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-tools-parse-r4-thermal.json",
+      "guard_sha256": "4235a74ae0165db80baa524e81f1b8c392f1254d724e8a82d3a0e671bf8042d5"
+    },
+    "completed_r3_regression": {
+      "red": {
+        "label": "city22-plaza-underlay-red-r3",
+        "red": true,
+        "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-red-r3-1/run-results.json",
+        "raw_sha256": "50bd0e83020a23255ffc0d91132b76a15ef087ea803aa60be6f5015e0a736bac",
+        "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-underlay-red-r3-thermal.json",
+        "guard_sha256": "6720060f40d27f8c5cc75b08fd8340a4216451b8aa022c258d99af7ea2380fad",
+        "report": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/underlay-red-r3.json",
+        "report_sha256": "f8729250ee0dbab5b9393460f15cc27cf5d4fdd4ea0ee226544eb56409df5444",
+        "stdout": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-red-r3-1/logs/stdout.log",
+        "stdout_sha256": "845f8bc5eef109ab5fd204d53a394313f93d0375fb2913b8fdcbe99f2a10854d",
+        "source_overrides": {
+          "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284"
+        }
+      },
+      "green": {
+        "label": "city22-plaza-underlay-green-r3",
+        "red": false,
+        "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-green-r3-1/run-results.json",
+        "raw_sha256": "5dcae61aba0e90a8aa55c7540c3addeba5cb06d1e47d392c892879751b9d2443",
+        "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-underlay-green-r3-thermal.json",
+        "guard_sha256": "c08d74d5ad12c5ce405d3f8541236b796d7a0aaa81d50fede2d9d8742b03c1c6",
+        "report": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/underlay-green-r3.json",
+        "report_sha256": "6fddefbcde0697608648df06f0cae0bd8335e46b5bb237f7432161cd7565cc32",
+        "stdout": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-green-r3-1/logs/stdout.log",
+        "stdout_sha256": "734f5cd013ee3b7c9fa3c28aa21104ba3d17faf0c4c2edbde4bfa992542929c3",
+        "source_overrides": {}
+      },
+      "source_hashes": {
+        "core/systems/world/ChunkManager.gd": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+        "core/systems/world/chunks/ChunkBlockRenderer.gd": "9d70d3c320b7cd89dbf748dac66ad5ac764774594196e58803381da687dce6ff",
+        "core/systems/world/chunks/ChunkBuildData.gd": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618",
+        "core/systems/world/chunks/PlazaEdgeKit.gd": "baee634f650e26d4d5ae670904c801ab1c1914755665ee349d83824458a11cb1",
+        "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+        "scenes/world/buildings/CityBlockRoofForms.gd": "ed2afa9ae8bd179cffd58aa10e3366cb0a697e14aba572e0423b2845b6616fc0",
+        "scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+        "tools/dev/CityBlockPlayablePreview.gd": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+        "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+        "tools/tests/PlazaBedUnderlayTest.gd": "b96657c21a95c382a27fc66a1adb3ef7ff39b6d5f6a7ae77e942773c420038ce",
+        "tools/tests/PlazaBedUnderlayTest.tscn": "a9f363e9b400f7d37a69d56a55159c5a4b90b5d9d29f28c46684bf3e8044455e",
+        "tools/tests/PlazaPresentationTest.gd": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286"
+      },
+      "r3_interruption": {
+        "executor_summary": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/root-underlay-execution-r3.json",
+        "executor_summary_sha256": "af6973414bcdab1227efe82dbd8df47321ac0aab348f32c236c4201c7ad293dc",
+        "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-tools-parse-r3-thermal.json",
+        "guard_sha256": "bc2db30e0d36d7b008971a1c610378dbd55d9aa30ce864cf57947b0d7c1175a2",
+        "classification": "external_SIGTERM15_while_queued_no_owned_engine_or_parser_assertions",
+        "sender": "unknown; no sender inference from these records"
+      }
+    }
+  },
+  "interrupted_signal": null,
+  "final_runtime_sha256": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324"
+}

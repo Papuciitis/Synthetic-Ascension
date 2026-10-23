@@ -1,0 +1,40 @@
+{
+  "base_terrain": "grass",
+  "failures": 0,
+  "points": [
+    {
+      "chunk_at": "(-1, 0)",
+      "kits_within_2200px": 13,
+      "name": "start",
+      "world": [
+        -1024.0,
+        1024.0
+      ]
+    },
+    {
+      "chunk_at": "(1, 9)",
+      "kits_within_2200px": 20,
+      "name": "objective",
+      "type": "dangerous_alley_cache",
+      "world": [
+        3072.0,
+        19456.0
+      ]
+    },
+    {
+      "chunk": "(-2, 3)",
+      "chunk_at": "(-2, 3)",
+      "kits_within_2200px": 19,
+      "name": "plaza1-landmark_plaza",
+      "role": "landmark_plaza",
+      "world": [
+        -3072.0,
+        7168.0
+      ]
+    }
+  ],
+  "segment": 2,
+  "theme_id": "service_courtyards",
+  "theme_label": "Service Courtyards",
+  "world_seed": 16102026
+}

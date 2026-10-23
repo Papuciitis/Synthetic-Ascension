@@ -1,0 +1,198 @@
+{
+  "actual_bed_nodes": [
+    {
+      "contains_expected_focus": true,
+      "node": "PlazaDressing/Bed_0",
+      "texture": "res://assets/world/plazas_v1/kit/plaza_moss_soil.png",
+      "vertex_alpha_max": 1.0,
+      "vertex_alpha_min": 0.0,
+      "vertex_color_count": 25,
+      "world_aabb": {
+        "position": [
+          9225.080078125,
+          6496.80810546875
+        ],
+        "size": [
+          298.4521484375,
+          150.9296875
+        ]
+      }
+    }
+  ],
+  "actual_edge_wear_count": 5,
+  "actual_family": "canal_services",
+  "actual_piece_counts": {
+    "barrels_group": 1,
+    "bed": 1,
+    "bench_stone": 1,
+    "drain_grate": 2,
+    "edge_ground": 3,
+    "edge_weeds": 2,
+    "lamp_post": 4,
+    "weeds": 5
+  },
+  "actual_plan_island_beds": [
+    {
+      "position": [
+        16,
+        6
+      ],
+      "size": [
+        5,
+        2
+      ]
+    }
+  ],
+  "actual_ring_cells": 76,
+  "actual_role": "wardstone_court",
+  "actual_state": 3,
+  "actual_underlay_cells": [
+    {
+      "care": 0.0,
+      "cell": [
+        144,
+        102
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        145,
+        102
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        146,
+        102
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        147,
+        102
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        148,
+        102
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        144,
+        103
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        145,
+        103
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        146,
+        103
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        147,
+        103
+      ],
+      "material": 7
+    },
+    {
+      "care": 0.0,
+      "cell": [
+        148,
+        103
+      ],
+      "material": 7
+    }
+  ],
+  "discovery_json": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r4/plaza-bed-discovery-r4.json",
+  "discovery_sha256": "62d8e476f9ed738b479899d95fd68e582b14d0c44d327d1e2b843f4be6b38190",
+  "expected": {
+    "actual_fixture_bed_nodes": [
+      {
+        "bounds": {
+          "position": [
+            9225.080078125,
+            6496.80810546875
+          ],
+          "size": [
+            298.4521484375,
+            150.9296875
+          ]
+        },
+        "camera_world_px": [
+          9374.306640625,
+          6572.27294921875
+        ],
+        "node": "PlazaDressing/Bed_0"
+      }
+    ],
+    "attempt_seed": 1.0,
+    "bed_rect_cells": {
+      "position": [
+        16.0,
+        6.0
+      ],
+      "size": [
+        5.0,
+        2.0
+      ]
+    },
+    "camera_world_px": [
+      9374.306640625,
+      6572.27294921875
+    ],
+    "candidate_only_not_native_validated": true,
+    "coord": [
+      4.0,
+      3.0
+    ],
+    "family": "canal_services",
+    "fixture_ground_splat_enabled": false,
+    "matching_seed_number": 1.0,
+    "plan_seed": 1908948527.0,
+    "planned_semantic_terrain": "urban",
+    "role": "wardstone_court",
+    "segment": 7.0,
+    "semantic_terrain": "urban",
+    "state": 3.0
+  },
+  "expected_underlay_material": 7,
+  "failures": 0,
+  "limits": "Existing native Game metadata/nodes after real streaming reload; native PNG must still be visually reviewed. No forced styles or injected dressing.",
+  "matches_expected": true,
+  "node_covers_expected_focus": true,
+  "planned_bed_matches": true,
+  "save_writes": 0,
+  "source_sha256": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.gd": "f4edd4a66f5de5e77c075754e65cfcd3ac11a6b2ddb2e6dde7d1ea38a4408ea5",
+    "res://core/systems/world/proc/chunkgen/PlazaPresentation.gd": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+    "res://scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+    "res://tools/dev/CityBlockPlayablePreview.gd": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+    "res://tools/tests/PlazaPresentationTest.gd": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286"
+  },
+  "underlay_matches": true
+}

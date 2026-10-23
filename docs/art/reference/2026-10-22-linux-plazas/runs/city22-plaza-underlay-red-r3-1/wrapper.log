@@ -1,0 +1,23 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-red-r3-1",
+ "queued_seconds": 311.3,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 69.643,
+ "peak_rss_mb": 515,
+ "diagnostic_count": 8,
+ "diagnostics_head": [
+  "ERROR: FAIL: state1 bed underlay keeps tended urban ground only in state0; worn states use own plaza paving",
+  "ERROR: FAIL: state1 tended care is1 only in state0 and0 under every worn bed",
+  "ERROR: FAIL: state2 bed underlay keeps tended urban ground only in state0; worn states use own plaza paving",
+  "ERROR: FAIL: state2 tended care is1 only in state0 and0 under every worn bed",
+  "ERROR: FAIL: state3 bed underlay keeps tended urban ground only in state0; worn states use own plaza paving",
+  "ERROR: FAIL: state3 tended care is1 only in state0 and0 under every worn bed",
+  "ERROR: FAIL: state4 bed underlay keeps tended urban ground only in state0; worn states use own plaza paving",
+  "ERROR: FAIL: state4 tended care is1 only in state0 and0 under every worn bed"
+ ]
+}
+--- stdout tail (3/4 lines) ---
+
+NATURAL_S6_UNDERLAY material=6 care=1.000 repave=7
+PlazaBedUnderlayTest: 31 passed, 8 failed

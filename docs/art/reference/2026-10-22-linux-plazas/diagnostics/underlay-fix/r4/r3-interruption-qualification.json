@@ -1,0 +1,23 @@
+{
+  "status": "R3_FOCUSED_RESULTS_RETAINED_FRESH_DISCOVERY_REQUIRED",
+  "red": "Actual31/8 with exact original8 diagnostics; valid causal RED",
+  "green": "Actual39/0 clean; fixedc163 retained and root committed0c92",
+  "interruption": {
+    "executor_summary": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r3/root-underlay-execution-r3.json",
+    "executor_summary_sha256": "af6973414bcdab1227efe82dbd8df47321ac0aab348f32c236c4201c7ad293dc",
+    "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-tools-parse-r3-thermal.json",
+    "guard_sha256": "bc2db30e0d36d7b008971a1c610378dbd55d9aa30ce864cf57947b0d7c1175a2",
+    "classification": "external_SIGTERM15_while_queued_no_owned_engine_or_parser_assertions",
+    "sender": "unknown; no sender inference from these records"
+  },
+  "guard_facts": {
+    "reason": "external_sigterm",
+    "received_signal": 15,
+    "wrapper_exit": -15,
+    "owned_pids": [],
+    "throttle_cycles": 0
+  },
+  "parser_raw_folders": [],
+  "no_red_green_rerun": true,
+  "native_r3": "not launched; cannot supply native acceptance"
+}

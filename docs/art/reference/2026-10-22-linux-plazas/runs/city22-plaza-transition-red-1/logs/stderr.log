@@ -1,0 +1,40 @@
+ERROR: working plaza edge cache is ready before manager instantiation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:102)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: working plaza dressing cache is ready before manager instantiation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:104)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: all working plaza additions are retained after integrated preparation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:109)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: cold plaza preparation yields loading-cue process frames
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:110)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: cold plaza preparation submits visible loading-cue frames
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:112)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: generation-disabled manager preserves the prepared working plaza state
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:122)

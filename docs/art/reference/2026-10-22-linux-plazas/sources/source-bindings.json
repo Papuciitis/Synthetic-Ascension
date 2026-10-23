@@ -1,0 +1,146 @@
+{
+  "limitation": "Only exact SHA256-equal scoped snapshots bind to launch records. Earlier dirty draft bodies can remain unavailable.",
+  "runs": [
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-discovery-1.json",
+      "run": "city22-plaza-bed-discovery-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-discovery-r4-1.json",
+      "run": "city22-plaza-bed-discovery-r4-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-native-r4-s6-1.json",
+      "run": "city22-plaza-bed-native-r4-s6-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-native-r4-s7-1.json",
+      "run": "city22-plaza-bed-native-r4-s7-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-native-r4-s8-1.json",
+      "run": "city22-plaza-bed-native-r4-s8-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-native-s6-1.json",
+      "run": "city22-plaza-bed-native-s6-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-tools-parse-1.json",
+      "run": "city22-plaza-bed-tools-parse-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-bed-tools-parse-r4-1.json",
+      "run": "city22-plaza-bed-tools-parse-r4-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-build-data-1.json",
+      "run": "city22-plaza-build-data-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-import-1.json",
+      "run": "city22-plaza-import-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-native-s2-1.json",
+      "run": "city22-plaza-native-s2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-parse-1.json",
+      "run": "city22-plaza-parse-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-parse-late-picker-1.json",
+      "run": "city22-plaza-parse-late-picker-1",
+      "unavailable_scoped_sources": [
+        "core/systems/world/ChunkManager.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-parse-overlay-baseline-1.json",
+      "run": "city22-plaza-parse-overlay-baseline-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-parse-production-baseline-r2-1.json",
+      "run": "city22-plaza-parse-production-baseline-r2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-parse-sorted-candidate-r2-1.json",
+      "run": "city22-plaza-parse-sorted-candidate-r2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-parse-twoframes-r2-1.json",
+      "run": "city22-plaza-parse-twoframes-r2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-parse-verbose-1.json",
+      "run": "city22-plaza-parse-verbose-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-presentation-1.json",
+      "run": "city22-plaza-presentation-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-renderer-1.json",
+      "run": "city22-plaza-renderer-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-residency-green-native-1.json",
+      "run": "city22-plaza-residency-green-native-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-residency-red-1.json",
+      "run": "city22-plaza-residency-red-1",
+      "unavailable_scoped_sources": [
+        "tools/tests/PlazaPresentationTest.gd",
+        "tools/tests/PlazaResourceResidencyTest.gd"
+      ]
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-transition-green-1.json",
+      "run": "city22-plaza-transition-green-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-transition-red-1.json",
+      "run": "city22-plaza-transition-red-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-underlay-green-r3-1.json",
+      "run": "city22-plaza-underlay-green-r3-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-underlay-red-r2-1.json",
+      "run": "city22-plaza-underlay-red-r2-1",
+      "unavailable_scoped_sources": []
+    },
+    {
+      "binding": "sources/run-bindings/city22-plaza-underlay-red-r3-1.json",
+      "run": "city22-plaza-underlay-red-r3-1",
+      "unavailable_scoped_sources": []
+    }
+  ],
+  "schema": 1
+}

@@ -1,0 +1,1218 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL: tended dressing does not preload the worn atlas
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:32)
+ERROR: FAIL: tended dressing does not preload ruined bed fill
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:33)
+ERROR: FAIL: tended dressing does not preload damp bed fill
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:34)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_00_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_00_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_01_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_01_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_02_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_02_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_03_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_03_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_04_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_04_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_06_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_06_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_07_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_07_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_08_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_08_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_09_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_09_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_11_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_11_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_12_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_12_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_13_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_13_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_14_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_14_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_15_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_15_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_00_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_00_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_01_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_01_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_02_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_02_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_03_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_03_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_04_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_04_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_06_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_06_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_07_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_07_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_08_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_08_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_09_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_09_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_11_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_11_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_12_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_12_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_13_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_13_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_14_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_14_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_15_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_15_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: FAIL: state 4 retains only its own worn edge style
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:42)
+ERROR: FAIL: state 4 releases unused piece references
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:43)
+ERROR: FAIL: state 4 releases unused fill reference
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:44)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_00_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_00_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_01_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_01_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_02_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_02_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_03_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_03_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_04_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_04_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_06_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_06_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_07_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_07_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_08_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_08_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_09_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_09_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_11_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_11_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_12_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_12_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_13_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_13_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_14_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_14_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_15_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_15_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: FAIL: state 0 retains only its own worn edge style
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:42)
+ERROR: FAIL: state 0 releases unused piece references
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:43)
+ERROR: FAIL: state 0 releases unused fill reference
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:44)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_00_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_00_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_01_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_01_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_02_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_02_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_03_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_03_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_04_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_04_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_05_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_06_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_06_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_07_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_07_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_08_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_08_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_09_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_09_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_10_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_11_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_11_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_12_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_12_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_13_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_13_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_14_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_14_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_15_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/moss34_15_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] warm_state (res://core/systems/world/chunks/PlazaEdgeKit.gd:265)
+       [2] _run (res://tools/tests/PlazaResourceResidencyTest.gd:40)
+ERROR: FAIL: state 4 retains only its own worn edge style
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:42)
+ERROR: FAIL: state 4 releases unused piece references
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:43)
+ERROR: FAIL: state 4 releases unused fill reference
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/PlazaResourceResidencyTest.gd:19)
+       [1] _run (res://tools/tests/PlazaResourceResidencyTest.gd:44)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_00_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_00_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_01_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_01_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_02_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_02_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_03_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_03_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_04_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_04_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_05_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_06_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_06_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_07_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_07_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_08_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_08_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_09_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_09_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_2.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_10_3.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_11_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_11_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_12_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_12_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_13_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_13_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_14_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_14_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_15_0.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+ERROR: Failed loading resource: res://assets/world/plazas_v1/kit/ruin34_15_1.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] _load_style (res://core/systems/world/chunks/PlazaEdgeKit.gd:291)
+       [1] _worn_pieces (res://core/systems/world/chunks/PlazaEdgeKit.gd:280)
+       [2] texture_for (res://core/systems/world/chunks/PlazaEdgeKit.gd:207)
+       [3] add_chunk (res://core/systems/world/chunks/ChunkBlockRenderer.gd:103)
+       [4] _run (res://tools/tests/PlazaResourceResidencyTest.gd:61)
+SCRIPT ERROR: Cannot call method 'get_instance_id' on a null value.
+   at: _run (res://tools/tests/PlazaResourceResidencyTest.gd:63)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tools/tests/PlazaResourceResidencyTest.gd:63)

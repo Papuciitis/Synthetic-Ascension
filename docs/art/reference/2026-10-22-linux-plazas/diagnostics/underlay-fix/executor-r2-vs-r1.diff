@@ -1,0 +1,82 @@
+--- preserved_r1_executor
++++ fresh_r2_executor
+@@ -23,11 +23,27 @@
+ def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+ def load(path): return json.loads(Path(path).read_text())
+ 
++def guard_cleanup_record(row, thermal_path=None):
++    """Require a fresh final record written after the exact guard waited for its launcher."""
++    path = thermal_path or BASE / (row['label'] + '-thermal.json')
++    need(path.is_file() and path.stat().st_mtime_ns >= row['guard_started_unix_ns'], 'No fresh last-guard final record; retain fixed runtime')
++    need(sha(BASE / 'guarded_engine.py') == row['guard_source_sha256'], 'Last guard source changed; cleanup uncertain')
++    record = load(path)
++    command = record.get('command', [])
++    def pair(key, value): return any(command[i:i + 2] == [key, value] for i in range(len(command) - 1))
++    need(pair('--name', row['label']) and pair('--project', str(PROJECT)), 'Last guard record belongs to another run')
++    engine_args = row['command'][row['command'].index('--') + 1:]
++    need(all(part in command for part in engine_args), 'Last guard final command differs')
++    reason, received = record.get('reason'), record.get('received_signal')
++    expected_signal = {signal.SIGINT: 'external_sigint', signal.SIGTERM: 'external_sigterm'}
++    need(isinstance(record.get('wrapper_exit'), int) and ((received is None and reason in ('completed', 'thermal_limit')) or (received in expected_signal and reason == expected_signal[received])), 'Last guard has no recognized final cleanup result')
++    return {'path': str(path), 'sha256': sha(path), 'reason': reason, 'received_signal': received}
++
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--execute', action='store_true')
+     args = parser.parse_args()
+-    manifest = load(FIX / 'manifest.json')
++    manifest = load(FIX / 'manifest-r2.json')
+     assertions = load(FIX / 'assertion-manifest.json')
+     for name, digest in manifest['files'].items(): need(sha(FIX / name) == digest, 'Frozen package changed: ' + name)
+     before, after = FIX / 'PlazaPresentation.before.gd.data', FIX / 'PlazaPresentation.after.gd.data'
+@@ -41,11 +57,11 @@
+     source(original)
+     spec = importlib.util.spec_from_file_location('bed_r2', FIX / 'plaza-bed-native-r2.py')
+     bed = importlib.util.module_from_spec(spec); spec.loader.exec_module(bed)
+-    red_out, green_out = FIX / 'underlay-red.json', FIX / 'underlay-green.json'
++    red_out, green_out = FIX / 'underlay-red-r2.json', FIX / 'underlay-green-r2.json'
+     discovery = FIX / 'plaza-bed-discovery-r2.json'
+     cases = [
+-        ('city22-plaza-underlay-red', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(red_out)], 600),
+-        ('city22-plaza-underlay-green', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(green_out)], 600),
++        ('city22-plaza-underlay-red-r2', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(red_out)], 600),
++        ('city22-plaza-underlay-green-r2', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(green_out)], 600),
+         ('city22-plaza-bed-tools-parse-r2', str(BASE / 'external_source_parse_probe.tscn'), [str(BASE / 'PlazaBedDiscovery.gd'), str(BASE / 'PlazaBedGamePreview.gd'), str(FIX / 'PlazaBedUnderlayGamePreview.gd')], 300),
+         ('city22-plaza-bed-discovery-r2', str(BASE / 'PlazaBedDiscovery.tscn'), ['--out=' + str(discovery)], 900)]
+     commands = []
+@@ -56,7 +72,7 @@
+     if not args.execute:
+         print(json.dumps({'engines_started': 0, 'runtime_edits': 0, 'commands': commands, 'runtime_change_after_strict_red_only': str(after), 'expected': assertions}, indent=2))
+         return 0
+-    summary_path = FIX / 'root-underlay-execution.json'
++    summary_path = FIX / 'root-underlay-execution-r2.json'
+     need(not summary_path.exists(), 'Execution record already exists')
+     summary = {'cases': [], 'runtime_applied': False, 'green_clean': False, 'completed_discovery': False, 'scope': 'Focused causal regression and fresh discovery only; no native visual acceptance/full-audit claim.'}
+     child = None
+@@ -72,7 +88,7 @@
+         need(interrupted is None, 'Executor interrupted before next action')
+         source(expected)
+         label, scene, extra, _ = cases[index]
+-        row = {'label': label, 'command': commands[index], 'state': 'running'}
++        row = {'label': label, 'command': commands[index], 'state': 'running', 'guard_started_unix_ns': time.time_ns(), 'guard_source_sha256': sha(BASE / 'guarded_engine.py')}
+         summary['cases'].append(row); save()
+         child = subprocess.Popen(commands[index], cwd=PROJECT, start_new_session=True)
+         rc = child.wait(); row['wrapper_exit'] = rc; save()
+@@ -85,7 +101,7 @@
+         need(thermal.get('reason') == 'completed' and thermal.get('wrapper_exit') == rc and thermal.get('received_signal') is None, 'Guard did not complete normally')
+         need(raw.get('ended_utc') and raw.get('actual_exit') == rc and raw.get('runner_exit') == rc and raw.get('stop_reason') == ('nonzero_exit' if red else 'completed'), 'Raw engine exit does not match expected result')
+         need(Path(raw['project_root']).resolve() == PROJECT and scene in raw['command'] and '--headless' in raw['command'] and all(arg in raw['command'] for arg in extra), 'Raw command/source scope differs')
+-        for relative, digest in expected.items(): need(raw['source_hashes'].get(relative) == digest, 'Raw launch source hash differs: ' + relative)
++        for relative, digest in dict(expected, **test_paths).items(): need(raw['source_hashes'].get(relative) == digest, 'Raw launch source hash differs: ' + relative)
+         diagnostics = assertions['red_diagnostics'] if red else []
+         need(raw.get('diagnostics') == diagnostics, 'Unexpected/missing diagnostics: ' + label)
+         source(expected)
+@@ -121,6 +137,8 @@
+             if child is not None and child.poll() is None:
+                 child.send_signal(signal.SIGTERM); child.wait(timeout=30)
+             if summary['runtime_applied'] and not summary['green_clean']:
++                need(bool(summary['cases']), 'No last guarded case; cleanup uncertain')
++                summary['rollback_cleanup_record'] = guard_cleanup_record(summary['cases'][-1])
+                 need(sha(PROJECT / RUNTIME) == manifest['proposed_runtime_sha256'], 'Runtime changed; refuse automatic rollback')
+                 (PROJECT / RUNTIME).write_bytes(before.read_bytes()); summary['runtime_rolled_back_after_unclean_green'] = True
+         except BaseException as error: summary['cleanup_error'] = str(error)

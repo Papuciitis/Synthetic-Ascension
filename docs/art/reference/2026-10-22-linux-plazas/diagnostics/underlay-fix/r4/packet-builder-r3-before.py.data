@@ -1,0 +1,541 @@
+#!/usr/bin/env python3
+"""Refresh a scratch-only completed-run evidence packet; never runs Godot.
+
+Run with nice -n 19. Only final outer thermal files admit runs. Optional
+--native LABEL=/absolute/output/path binds later exact images/records to a
+completed run; the binding persists in native-inputs.json for future refreshes.
+No active project, original evidence, Git state, or documentation is modified.
+"""
+from pathlib import Path
+import argparse
+import datetime
+import gzip
+import hashlib
+import json
+import re
+import subprocess
+
+PACKET = Path(__file__).resolve().parent
+KIND = json.loads((PACKET / 'packet-config.json').read_text())['kind']
+ROOT = Path('/home/user/Nauris/Synthetic-Ascension')
+CONTROL = ROOT / '.superpowers/continuation-20261022'
+RUNS = ROOT / '.superpowers/claude-city-20261021/runs'
+THRESHOLD = 128 * 1024
+PROJECT = Path('/tmp/sa-wp2-' + KIND)
+SCOPED = {
+    'streets': [
+        'core/systems/world/proc/SiteParcelsImpl.gd',
+        'core/systems/world/proc/chunkgen/ChunkGenDistrict.gd',
+        'scenes/world/buildings/CityBlockKit.gd',
+        'scenes/world/buildings/RoofOverlay.gd',
+        'scenes/world/volumes/IndoorVolume.gd',
+        'tools/dev/CityStreetTraversalProbe.gd', 'tools/dev/CityStreetTraversalProbe.tscn',
+        *[f'tools/tests/{name}.{suffix}' for name in [
+            'CityGroundCareTest', 'CityDoorApproachGroundTest',
+            'CityStreetGroundAllocationTest', 'CityStreetTraversalCorridorTest',
+            'CityStreetTraversalDiscoveryTest', 'CityStreetFrontageTest',
+            'CityStreetContinuityTest'] for suffix in ['gd', 'tscn']],
+    ],
+    'plazas': [
+        'core/systems/world/ChunkManager.gd',
+        'core/systems/world/chunks/ChunkBlockRenderer.gd',
+        'core/systems/world/chunks/ChunkBuildData.gd',
+        'scenes/world/buildings/CityBlockRoofForms.gd',
+        'core/systems/world/chunks/PlazaEdgeKit.gd',
+        'core/systems/world/proc/chunkgen/PlazaPresentation.gd',
+        'scenes/world/plazas/PlazaDressing.gd',
+        'tools/design/build_plaza_wear_kit.py', 'tools/design/build_plaza_kit.py',
+        *[f'tools/tests/{name}.{suffix}' for name in [
+            'ChunkBuildDataTest', 'ChunkBlockRendererTest', 'PlazaPresentationTest',
+            'TransitionResourceWarmupTest', 'PlazaResourceResidencyTest', 'PlazaBedUnderlayTest',
+            'ScriptParseAuditTest'] for suffix in ['gd', 'tscn']],
+        'tools/dev/CitySegmentSurvey.gd', 'tools/dev/CitySegmentSurvey.tscn',
+    ]}[KIND]
+PREFIX = {'streets': 'city22-street-', 'plazas': 'city22-plaza-'}[KIND]
+GATES = {
+    'streets': {
+        'discovery': ['discovery-green'], 'corridor-contract': ['corridor-green'],
+        'door-apron-core': ['apron-green'], 'reward-ground-allocation': ['ground-green', 'allocation-green'],
+        'household-care': ['care-green'], 'frontage': ['frontage'], 'continuity': ['continuity'],
+        'scoped-parser': ['ground-parse'],
+        'native-S2-physical-route': ['native-s2', 'traversal-s2'],
+        'native-S7-physical-route': ['native-s7', 'traversal-s7'],
+        'native-S6-physical-route': ['native-s6', 'traversal-s6'],
+        'reward-paving-views': ['reward-after'],
+    },
+    'plazas': {
+        'residency': ['residency-green-native'], 'transition-preparation': ['transition-green'],
+        'chunk-build-data': ['build-data'], 'batch-renderer': ['renderer'],
+        'presentation': ['presentation'], 'original-full-parse-audit': [],
+        'sorted-load-diagnostic': ['parse-sorted-candidate'],
+        'bed-underlay-regression': ['underlay-green-r3'],
+        'bed-tools-scoped-parser': ['bed-tools-parse-r3'], 'headless-bed-discovery': ['bed-discovery-r3'],
+        'native-bed-S6': ['bed-native-r3-s6'], 'native-bed-S7': ['bed-native-r3-s7'], 'native-bed-S8': ['bed-native-r3-s8'],
+        'native-S2': ['native-s2', 'survey-s2'], 'native-S6': ['native-s6', 'survey-s6'],
+        'native-S7': ['native-s7', 'survey-s7'], 'native-S8': ['native-s8', 'survey-s8'],
+    }}[KIND]
+EXPECTED_REDS = {
+    'city22-street-discovery-red': 1, 'city22-street-ground-red2': 2,
+    'city22-street-corridor-red2': 3, 'city22-street-apron-red': 12,
+    'city22-plaza-transition-red': 6,
+}
+files, compression, source_cache, blob_data = {}, [], {}, {}
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def put(data, relative, origin, role, allow_compression=True):
+    raw_path = str(relative)
+    packed = allow_compression and len(data) > THRESHOLD and Path(raw_path).suffix != '.png'
+    relative = raw_path + '.gz' if packed else raw_path
+    destination = PACKET / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    payload = gzip.compress(data, compresslevel=6, mtime=0) if packed else data
+    destination.write_bytes(payload)
+    files[relative] = {'path': relative, 'role': role, 'source_path': str(origin),
+                      'raw_sha256': sha(data), 'raw_bytes': len(data),
+                      'delivered_sha256': sha(payload), 'delivered_bytes': len(payload)}
+    if packed:
+        compression.append({'original_path': raw_path, 'raw_sha256': sha(data),
+                            'raw_bytes': len(data), 'gzip_path': relative,
+                            'gzip_sha256': sha(payload), 'gzip_bytes': len(payload),
+                            'round_trip_verified': gzip.decompress(payload) == data})
+    return relative
+
+
+def copy(path, relative, role):
+    return put(path.read_bytes(), relative, path, role)
+
+
+def output(relative, obj):
+    return put((json.dumps(obj, indent=2, sort_keys=True) + '\n').encode(), relative,
+               'derived from original recorded inputs; see references', 'derived index')
+
+
+def snapshot(data, basename, origin, role):
+    digest = sha(data)
+    blob_data[digest] = data
+    return put(data, 'sources/blobs/' + digest + '-' + basename, origin, role, False)
+
+
+def matched_bytes(project, path, expected, head):
+    if expected in blob_data:
+        return blob_data[expected], 'preserved exact content'
+    for p in (PACKET / 'sources/blobs').glob(expected + '-*'):
+        data = p.read_bytes()
+        if sha(data) == expected:
+            blob_data[expected] = data
+            return data, 'preserved packet snapshot exactly matches launch SHA256'
+    key = (str(project), path, expected, head)
+    if key in source_cache:
+        return source_cache[key]
+    candidate = project / path
+    if candidate.is_file():
+        data = candidate.read_bytes()
+        if sha(data) == expected:
+            source_cache[key] = (data, 'current scoped bytes exactly match launch SHA256')
+            return source_cache[key]
+    result = subprocess.run(['git', 'show', f'{head}:{path}'], cwd=project,
+                            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    if result.returncode == 0 and sha(result.stdout) == expected:
+        source_cache[key] = (result.stdout, 'historical Git bytes exactly match launch SHA256')
+    else:
+        source_cache[key] = (None, 'recorded hash only; exact dirty draft bytes unavailable')
+    return source_cache[key]
+
+
+def classify(label, record, stdout):
+    if label in ['city22-plaza-underlay-red', 'city22-plaza-underlay-red-r2', 'city22-plaza-underlay-red-r3']:
+        path = CONTROL / ('plaza-bed-underlay-fix/r3/assertion-manifest.json' if label.endswith('-r3') else 'plaza-bed-underlay-fix/assertion-manifest.json')
+        expected = json.loads(path.read_text()) if path.is_file() else {}
+        if (record.get('actual_exit') == 1 and record.get('stop_reason') == 'nonzero_exit'
+                and expected.get('red_footer', '<missing>') in stdout
+                and record.get('diagnostics') == expected.get('red_diagnostics')):
+            return 'expected_exact_worn_underlay_behavioral_red'
+        return 'unexpected_underlay_red_outcome_review_original_diagnostics'
+    if label == 'city22-plaza-residency-red':
+        return 'incomplete_import_failure_and_owned_cleanup_not_clean_behavioral_red'
+    if label == 'city22-street-care-measure':
+        return 'measured_changed_histogram_requires_review_not_green'
+    if label in EXPECTED_REDS:
+        footer = any(re.search(r'(\d+ failed|failures=\d+)', line) for line in stdout.splitlines() if 'Test:' in line)
+        bad_source = bool(re.search(r'(Parse Error:|Failed to load|Could not resolve|No loader found|Cannot open file)', stdout + json.dumps(record.get('diagnostics', []))))
+        if record.get('actual_exit') == 1 and footer and not bad_source and len(record.get('diagnostics', [])) == EXPECTED_REDS[label]:
+            return 'expected_targeted_behavioral_red'
+        return 'unexpected_red_outcome_review_original_diagnostics'
+    if record.get('actual_exit') == 0 and record.get('stop_reason') == 'completed' and not record.get('diagnostics'):
+        return 'completed_zero_diagnostics'
+    return 'failed_or_diagnostic_run'
+
+
+def include_variants():
+    if KIND == 'streets':
+        p = CONTROL / 'street-before-approach-SiteParcels.gd.data'
+        if p.is_file():
+            snapshot(p.read_bytes(), 'SiteParcelsImpl.gd', p, 'preserved pre-apron-fix source; launch binding still requires exact hash equality')
+    else:
+        p = CONTROL / 'plaza-transition-red-mutation.json'
+        if p.is_file():
+            meta = json.loads(p.read_text())
+            copy(p, 'variants/plaza-transition-red-mutation.json', 'original targeted mutation and restoration record')
+            backup = Path(meta['backup'])
+            data = backup.read_bytes()
+            if sha(data) != meta['original_sha256']:
+                raise ValueError('plaza original backup SHA256 mismatch')
+            snapshot(data, 'ChunkManager.gd', backup, 'exact restored GREEN source backup')
+            hook = (b'\tif Global.attempt_segment >= 2:\n'
+                    b'\t\t_transition_resource_stage = &"plaza"\n'
+                    b'\t\tvar theme := SegmentThemePicker.get_theme(Global.attempt_segment, Global.attempt_world_seed)\n'
+                    b'\t\tawait _PLAZA_EDGE_KIT.prepare_state_for_transition(tree, _PLAZA_EDGE_KIT.state_for_family(theme.district_family))\n')
+            red = data.replace(hook, b'', 1)
+            if sha(red) == meta['red_sha256']:
+                snapshot(red, 'ChunkManager.gd', 'exact backup minus documented four-line hook, verified against recorded RED SHA256',
+                         'reconstructed bytes exactly match original RED launch/mutation SHA256')
+
+
+
+def include_plaza_diagnostics():
+    if KIND != 'plazas':
+        return
+    names = [
+        'plaza-parse-directory-orders.json', 'plaza-parse-diagnostic-original.gd',
+        'plaza-parse-diagnostic-twoframes.gd', 'plaza-parse-diagnostic-twoframes.tscn',
+        'plaza-parse-diagnostic-meta.json', 'plaza-parse-diagnostic-dynamic-picker.patch',
+        'plaza-parse-diagnostic-dynamic-picker-ChunkManager.gd',
+        'plaza-parse-diagnostic-dynamic-picker-meta.json',
+        'plaza-parse-diagnostic-sorted.gd', 'plaza-parse-diagnostic-sorted.tscn',
+        'plaza-parse-diagnostic-sorted-original.gd.data', 'plaza-parse-diagnostic-sorted.diff',
+        'plaza-parse-diagnostic-sorted-meta.json',
+        'city22-plaza-parse-sorted-candidate-external-interrupt.json',
+        'PlazaBedDiscovery.gd', 'PlazaBedDiscovery.tscn', 'PlazaBedGamePreview.gd',
+        'PlazaBedGamePreview.tscn', 'plaza-bed-helpers-meta.json', 'plaza-bed-helpers.md',
+        'CityPlazaContextSurvey.gd', 'CityPlazaContextSurvey.tscn',
+        'CityPlazaContextSurvey-meta.json', 'CityPlazaContextSurvey.md',
+        'plaza-bed-native-queue.py', 'plaza-bed-native-queue.md', 'plaza-bed-native-queue.json',
+        'plaza-stage-commit-paths.json', 'plaza-runtime-readonly-review.md',
+        'plaza-bed-old-source-cancellation.json', 'functional-prep-r3-queue.py',
+        'functional-prep-r3-queue.json', 'external_source_parse_probe.gd',
+        'external_source_parse_probe.tscn', 'guarded_engine.py',
+    ]
+    for name in names:
+        source = CONTROL / name
+        if source.is_file():
+            copy(source, 'diagnostics/' + name,
+                 'exact retained external diagnostic/helper bytes; runtime binding requires its recorded source SHA')
+    for source in CONTROL.glob('city22-plaza-parse-sorted*-trace.json'):
+        copy(source, 'diagnostics/' + source.name, 'original explicit sorted audit load-order trace')
+    fix_dir = CONTROL / 'plaza-bed-underlay-fix'
+    if fix_dir.is_dir():
+        for source in sorted(fix_dir.rglob('*')):
+            if not source.is_file() or '__pycache__' in source.parts or source.suffix == '.pyc':
+                continue
+            if source.name.startswith('root-underlay-execution') and source.suffix == '.json':
+                result = json.loads(source.read_text())
+                if not result.get('completed_discovery') and not result.get('error') and not result.get('interrupted_signal'):
+                    continue  # Never package an active executor summary as final evidence.
+            copy(source, 'diagnostics/underlay-fix/' + str(source.relative_to(fix_dir)),
+                 'retained proposal/helper/cancellation or final executor bytes; logical/native acceptance requires its separate final raw records')
+            if source.name == 'PlazaBedUnderlayTest.gd' or source.name == 'PlazaBedUnderlayTest.gd.data':
+                snapshot(source.read_bytes(), 'PlazaBedUnderlayTest.gd', source, 'retained full focused test body; a launch binds only on exact SHA equality')
+            elif source.name == 'PlazaBedUnderlayTest.repo.tscn':
+                snapshot(source.read_bytes(), 'PlazaBedUnderlayTest.tscn', source, 'retained installed focused scene bytes; a launch binds only on exact SHA equality')
+        manifest_path = fix_dir / 'manifest.json'
+        if manifest_path.is_file():
+            fix = json.loads(manifest_path.read_text())
+            for name, key in [('PlazaPresentation.before.gd.data', 'original_runtime_sha256'),
+                              ('PlazaPresentation.after.gd.data', 'proposed_runtime_sha256')]:
+                source = fix_dir / name
+                if source.is_file():
+                    data = source.read_bytes()
+                    if sha(data) != fix[key]:
+                        raise ValueError('Underlay frozen runtime SHA mismatch: ' + str(source))
+                    snapshot(data, 'PlazaPresentation.gd', source, 'exact frozen underlay before/proposed-after runtime; application is proven only by launch records')
+    overlay_dir = CONTROL / 'plaza-parse-baseline-overlay'
+    for name in ['manifest.json', 'run_overlay.py',
+                 'city22-plaza-parse-overlay-baseline-result.json',
+                 'city22-plaza-parse-overlay-baseline-queue.log']:
+        source = overlay_dir / name
+        if source.is_file():
+            copy(source, 'diagnostics/baseline-overlay/' + name, 'original same-worktree source-isolation record')
+    manifest_path = overlay_dir / 'manifest.json'
+    if manifest_path.is_file():
+        for item in json.loads(manifest_path.read_text())['files']:
+            for version in ['baseline', 'candidate']:
+                source = Path(item[version]['path'])
+                data = source.read_bytes()
+                if sha(data) != item[version]['sha256']:
+                    raise ValueError('Overlay retained source SHA mismatch: ' + str(source))
+                snapshot(data, Path(item['runtime_path']).name, source,
+                         'retained ' + version + ' bytes for original seven-file source-isolation experiment')
+
+
+def plaza_original_audit_candidate(row, completed):
+    record = completed[row['label']][1]
+    if Path(record['project_root']) != PROJECT or 'res://tools/tests/ScriptParseAuditTest.tscn' not in row['command']:
+        return False
+    overlay = CONTROL / 'plaza-parse-baseline-overlay/city22-plaza-parse-overlay-baseline-result.json'
+    if not overlay.is_file():
+        return False
+    expected = json.loads(overlay.read_text())['source_restored']
+    expected = {path: sha((PROJECT / path).read_bytes()) for path in expected}
+    return all(record.get('source_hashes', {}).get(path) == digest for path, digest in expected.items())
+
+
+def plaza_fixed_source(row, completed):
+    manifest = CONTROL / 'plaza-bed-underlay-fix/r3/manifest-r3.json'
+    if not manifest.is_file():
+        return False
+    expected = json.loads(manifest.read_text())
+    hashes = completed[row['label']][1].get('source_hashes', {})
+    return (hashes.get('core/systems/world/proc/chunkgen/PlazaPresentation.gd') == expected['proposed_runtime_sha256']
+            and hashes.get('tools/tests/PlazaBedUnderlayTest.gd') == expected['files']['PlazaBedUnderlayTest.gd']
+            and hashes.get('tools/tests/PlazaBedUnderlayTest.tscn') == expected['files']['PlazaBedUnderlayTest.repo.tscn'])
+
+
+def plaza_underlay_report_clean(row):
+    outputs = [Path(part[6:]) for part in row['command'] if part.startswith('--out=')]
+    if len(outputs) != 1 or not outputs[0].is_file():
+        return False
+    report = json.loads(outputs[0].read_text())
+    return (report.get('passes') == 39 and report.get('failures') == 0
+            and report.get('semantic_terrain') == 'urban' and report.get('generator_underlay_matches_native') is True and report.get('save_writes') == 0
+            and len(report.get('states', [])) == 5
+            and {state.get('state') for state in report['states']} == set(range(5))
+            and all(state.get('material_ok') and state.get('care_ok') and state.get('outside_ok') for state in report['states']))
+
+
+def plaza_bed_report_clean(row):
+    outputs = [Path(part[6:]) for part in row['command'] if part.startswith('--out=')]
+    scene = CONTROL / 'plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.tscn'
+    if len(outputs) != 1 or str(scene) not in row['command']:
+        return False
+    path = outputs[0] / 'bed-validation.json'
+    if not path.is_file():
+        return False
+    report = json.loads(path.read_text())
+    capture_path = outputs[0] / 'capture-info.json'
+    if not capture_path.is_file():
+        return False
+    capture = json.loads(capture_path.read_text())
+    semantic = report.get('expected', {}).get('semantic_terrain')
+    cells = report.get('actual_underlay_cells', [])
+    expected = report.get('expected', {}).get('bed_rect_cells', {}).get('size', [])
+    expected_material = report.get('expected_underlay_material', -1)
+    return (report.get('matches_expected') is True and report.get('underlay_matches') is True
+            and report.get('failures') == 0 and report.get('save_writes') == 0
+            and bool(report.get('actual_bed_nodes')) and len(expected) == 2
+            and len(cells) == int(expected[0] * expected[1]) and len(cells) > 0
+            and expected_material in [7, 9] and bool(semantic)
+            and report.get('expected', {}).get('planned_semantic_terrain') == semantic
+            and capture.get('ground', {}).get('semantic_terrain') == semantic
+            and all(cell.get('material') == expected_material and cell.get('care') == 0 for cell in cells))
+
+
+def thermal_peaks(outer):
+    samples = outer.get('samples', [])
+    def peak(predicate):
+        values = [sample['package_c'] for sample in samples
+                  if sample.get('package_c') is not None and predicate(sample)]
+        return max(values) if values else None
+    return {'peak_package_c': peak(lambda sample: True),
+            'peak_owned_engine_package_c': peak(lambda sample: sample.get('owned_engine_live') is True),
+            'peak_no_owned_engine_package_c': peak(lambda sample: sample.get('owned_engine_live') is False),
+            'owned_temperature_scope': 'Only explicit per-sample owned_engine_live flags classify owned versus queued heat; historical samples without flags remain unclassified.'}
+
+
+def plaza_visual_status(label):
+    if label == 'city22-plaza-bed-native-s6':
+        return {'visual_review': 'VISUAL_REJECTED',
+                'reason': 'Clean execution still exposes a raised green cared-garden rectangle beneath the brown industrial worn bed.',
+                'image_sha256': '5b0c4f534b071ffcc1281797c341ea01c1df514e32ebcb9390c8bc89935991af',
+                'acceptance': False}
+    return {'visual_review': 'pending explicit root image review; clean execution alone is not visual acceptance'}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--native', action='append', default=[], metavar='LABEL=/absolute/output')
+    args = parser.parse_args()
+    (PACKET / '.gdignore').touch(exist_ok=True)
+    include_variants()
+    include_plaza_diagnostics()
+    native_cfg_path = PACKET / 'native-inputs.json'
+    native_cfg = json.loads(native_cfg_path.read_text()) if native_cfg_path.is_file() else {}
+    for assignment in args.native:
+        label, path = assignment.split('=', 1)
+        if not label.startswith(PREFIX) or not Path(path).is_absolute():
+            raise ValueError('native binding requires this stage label and an absolute path')
+        native_cfg[label] = path
+    native_cfg_path.write_text(json.dumps(native_cfg, indent=2, sort_keys=True) + '\n')
+    labels = sorted({p.name.removesuffix('-thermal.json') for p in CONTROL.glob(PREFIX + '*-thermal.json')})
+    index, bindings, completed, pending = [], [], {}, []
+    for label in labels:
+        thermal = CONTROL / (label + '-thermal.json')
+        outer = json.loads(thermal.read_text())
+        matching = [p for p in RUNS.glob(label + '-*') if re.fullmatch(re.escape(label) + r'-\d+', p.name)]
+        finished = []
+        for folder in sorted(matching):
+            p = folder / 'run-results.json'
+            if p.is_file():
+                record = json.loads(p.read_text())
+                if record.get('ended_utc') and record.get('actual_exit') is not None:
+                    finished.append((p, record))
+        if not finished:
+            if outer.get('owned_pids'):
+                pending.append({'label': label, 'reason': 'outer record exists but no final engine result; review ownership'})
+                continue
+            row = {'label': label, 'classification': 'preflight_without_owned_godot_no_behavioral_result',
+                   'godot_started': False, 'owned_pids': outer.get('owned_pids'),
+                   'guard_reason': outer.get('reason'), 'received_signal': outer.get('received_signal'),
+                   'thermal': copy(thermal, 'runs/' + label + '/thermal.json', 'original completed preflight record')}
+            wrapper = CONTROL / (label + '-wrapper.log')
+            if wrapper.is_file():
+                row['wrapper'] = copy(wrapper, 'runs/' + label + '/wrapper.log', 'original wrapper record')
+            index.append(row)
+            continue
+        for path, record in finished:
+            folder = path.parent
+            dest = 'runs/' + folder.name + '/'
+            stdout_path = folder / 'logs/stdout.log'
+            stdout = stdout_path.read_text(errors='replace') if stdout_path.is_file() else ''
+            row = {'label': label, 'run_folder': folder.name, 'classification': classify(label, record, stdout),
+                   'actual_exit': record['actual_exit'], 'stop_reason': record.get('stop_reason'),
+                   'diagnostic_count': len(record.get('diagnostics', [])), 'git_head': record.get('git_head'),
+                   'started_utc': record.get('started_utc'), 'ended_utc': record.get('ended_utc'),
+                   'command': record['command'], 'command_shell': record.get('command_shell'),
+                   'source_hash_count': len(record.get('source_hashes', {})),
+                   'assertion_footer_lines': [line for line in stdout.splitlines()
+                       if re.search(r'(Test:|SourceParseProbe:|fixture.*histogram)', line, re.I)],
+                   'run_results': copy(path, dest + 'run-results.json', 'original launch/source/resource/diagnostic record'),
+                   'thermal': copy(thermal, dest + 'thermal.json', 'original final outer thermal record'),
+                   'peak_package_c': max((s.get('package_c') or 0 for s in outer.get('samples', [])), default=None),
+                   'start_gate_environment': outer.get('environment_overrides', {}).get('SA_ENGINE_THERMAL_LIMIT_C'),
+                   'first_wrapper_sample_c': outer.get('samples', [{}])[0].get('package_c'),
+                   'actual_engine_start_temperature_c': None,
+                   'temperature_scope': 'First wrapper sample may precede engine launch; not actual Godot-start temperature.'}
+            row.update(thermal_peaks(outer))
+            if KIND == 'plazas' and 'bed-native' in label:
+                row.update(plaza_visual_status(label))
+            for name in ['stdout.log', 'stderr.log', 'engine.log']:
+                p = folder / 'logs' / name
+                if p.is_file():
+                    copy(p, dest + 'logs/' + name, 'original engine log')
+            wrapper = CONTROL / (label + '-wrapper.log')
+            if wrapper.is_file():
+                copy(wrapper, dest + 'wrapper.log', 'original wrapper summary')
+            index.append(row)
+            completed[label] = (row, record)
+            hashes = record.get('source_hashes', {})
+            scoped = {}
+            for source in SCOPED:
+                expected = hashes.get(source)
+                if expected is None:
+                    continue
+                data, status = matched_bytes(Path(record['project_root']), source, expected, record['git_head'])
+                detail = {'launch_sha256': expected, 'status': status}
+                if data is not None:
+                    detail['snapshot'] = snapshot(data, Path(source).name, Path(record['project_root']) / source,
+                                                  'scoped bytes exactly matching original launch SHA256')
+                scoped[source] = detail
+            asset_imports = {p: h for p, h in hashes.items() if p.startswith('assets/') or p.startswith('.godot/imported/')}
+            raw_map = (json.dumps(asset_imports, indent=2, sort_keys=True) + '\n').encode()
+            asset_map_path = put(raw_map, 'sources/recorded-maps/' + sha(raw_map) + '.json',
+                                 str(path) + '#source_hashes', 'recorded project launch asset/import inventory; not loaded-resource telemetry')
+            bind = {'run': folder.name, 'git_head': record['git_head'],
+                    'tracked_git_status': record.get('git_status_porcelain'),
+                    'source_untracked': record.get('source_untracked'), 'scoped': scoped,
+                    'recorded_asset_import_inventory': asset_map_path,
+                    'recorded_generated_import_count': sum(p.startswith('.godot/imported/') for p in hashes),
+                    'closure_limit': 'No complete historical Game or generated cache byte closure is supplied. Dynamic resources and absent launch cache hashes stay missing.'}
+            binding_path = output('sources/run-bindings/' + folder.name + '.json', bind)
+            bindings.append({'run': folder.name, 'binding': binding_path,
+                             'unavailable_scoped_sources': [p for p, d in scoped.items() if 'snapshot' not in d]})
+            # Auto-discover explicit output path only after this run is final.
+            for part in record['command']:
+                for prefix in ['--out=', '--trace-out=']:
+                    if part.startswith(prefix) and Path(part[len(prefix):]).is_absolute():
+                        native_cfg.setdefault(label, part[len(prefix):])
+    native_index = []
+    for label, source_text in sorted(native_cfg.items()):
+        if label not in completed:
+            pending.append({'label': label, 'reason': 'native binding awaits completed outer+run records'})
+            continue
+        source = Path(source_text)
+        if source.is_file():
+            delivered = [copy(source, 'native/' + label + '/' + source.name,
+                              'original completed diagnostic/tool output file; not a native image')]
+            native_index.append({'label': label, 'run_folder': completed[label][0]['run_folder'],
+                                 'source': source_text, 'files': delivered, 'kind': 'diagnostic_or_discovery_file',
+                                 'visual_review': 'This file alone supplies no native visual acceptance.'})
+            continue
+        if not source.is_dir():
+            native_index.append({'label': label, 'source': source_text, 'status': 'output missing'})
+            continue
+        delivered = []
+        for path in sorted(source.rglob('*')):
+            if path.is_file() and path.suffix in ['.png', '.json', '.log', '.txt', '.md', '.csv', '.gz']:
+                delivered.append(copy(path, 'native/' + label + '/' + str(path.relative_to(source)),
+                                      'original completed native output; PNG bytes unchanged'))
+        native_index.append({'label': label, 'run_folder': completed[label][0]['run_folder'],
+                             'source': source_text, 'files': delivered, **plaza_visual_status(label)})
+    native_cfg_path.write_text(json.dumps(native_cfg, indent=2, sort_keys=True) + '\n')
+    gate_status = {}
+    for gate, suffixes in GATES.items():
+        successes = [row for row in index if row['classification'] == 'completed_zero_diagnostics'
+                     and any(row['label'] == PREFIX + s or row['label'].startswith(PREFIX + s + '-') for s in suffixes)]
+        if KIND == 'plazas' and gate == 'original-full-parse-audit':
+            successes = [row for row in index if row['classification'] == 'completed_zero_diagnostics'
+                         and plaza_original_audit_candidate(row, completed)]
+        elif KIND == 'plazas' and gate == 'sorted-load-diagnostic':
+            successes = [row for row in successes
+                         if str(CONTROL / 'plaza-parse-diagnostic-sorted.tscn') in row['command']]
+        elif KIND == 'plazas' and gate == 'bed-underlay-regression':
+            successes = [row for row in successes if plaza_fixed_source(row, completed) and plaza_underlay_report_clean(row)]
+        elif KIND == 'plazas' and gate in ['bed-tools-scoped-parser', 'headless-bed-discovery']:
+            successes = [row for row in successes if plaza_fixed_source(row, completed)]
+        elif KIND == 'plazas' and gate.startswith('native-bed-'):
+            successes = [row for row in successes if plaza_fixed_source(row, completed) and plaza_bed_report_clean(row)]
+        gate_status[gate] = successes[-1]['run_folder'] if successes else 'pending_clean_completion'
+    for name in ['guarded_engine-final.py', 'source_parse_probe.gd', 'source_parse_probe.tscn',
+                 'street-ground-checks-queue.json' if KIND == 'streets' else 'plaza-focused-queue.json']:
+        p = CONTROL / name
+        if p.is_file():
+            copy(p, 'harness/' + name, 'packaging-time harness/queue copy; historical launch bytes not established by this later copy')
+    output('sources/source-bindings.json', {'schema': 1, 'runs': bindings,
+           'limitation': 'Only exact SHA256-equal scoped snapshots bind to launch records. Earlier dirty draft bodies can remain unavailable.'})
+    output('evidence-index.json', {'schema': 1, 'kind': KIND, 'runs': index,
+           'focused_gate_status': gate_status, 'pending_cases': pending, 'native_outputs': native_index,
+           'visual_acceptance': 'Pending explicit image/route review. A clean native scene exit alone supplies no acceptance decision.',
+           'performance_claim': 'Functional tests/captures under external duty limiting establish no comparative FPS/GPU/whole-Game budget claim.',
+           'plaza_audit_qualification': ('Original pre-underlay candidate audit compiles 564/0 but has 8 shutdown diagnostics (772 objects / 548 resources); not clean. Production original audit is clean. Exact seven-file production overlay in SAME plaza checkout reproduces identical diagnostics and restores candidate hashes, excluding those seven runtime edits as that checkout cause without proving first cause. Sorted pre-underlay diagnostic completed 564/0 with 0 diagnostics: its maximum was 82 C while its owned engine was live and 98 C while queued with no owned engine. Sorted/helper parsers remain separate and never replace the original audit gate.' if KIND == 'plazas' else None),
+           'plaza_bed_visual_qualification': ({'old_S6': plaza_visual_status('city22-plaza-bed-native-s6'), 'old_followups': 'Root cancelled the owned old-source S7 queue after visual rejection; old S8 was not launched. Retained cancellation/raw/guard records are separate from assertion results.', 'r2_fixture_failure': 'Actual focused r2 was unexpected31passed/6failed. Its parent fixture omitted plan terrain, selecting fallback dirt1/care0 rather than the native urban6/care1. The failed source/raw/footer stay unchanged; it is not a causal RED pass.', 'r3': 'Requires terrain-corrected fixed-source focused 39/0, fresh discovery and actual Game plan/node/reload evidence with exact planned terrain, material 7 or 9 and care 0 in every bed cell. Native images remain pending explicit root visual acceptance.'} if KIND == 'plazas' else None)})
+    evidence = PACKET / 'EVIDENCE.md'
+    text = evidence.read_text().split('\n## Completed-run refresh\n')[0]
+    table = '\n| Gate | Latest clean completed run |\n| --- | --- |\n'
+    table += '\n'.join('| ' + gate + ' | ' + value + ' |' for gate, value in gate_status.items()) + '\n'
+    if KIND == 'plazas':
+        text = text.split('\n## Worn-bed visual correction\n')[0]
+        text += '\n## Worn-bed visual correction\n\nThe first S6 bed capture completed cleanly but is **VISUAL_REJECTED**: a raised green cared-garden frame remains beneath brown industrial earth. Its original PNG and raw records are preserved. Root cancelled remaining old-source followups; S7 cancellation supplies no gameplay assertion, and S8 has no old-source capture. The first focused r2 was unexpected 31/6 because its inherited fixture omitted the real terrain map and tested fallback dirt. That failed result is preserved. The r3 fixture copies the exact planned terrain and keeps the original 37 checks plus two native-cause preconditions; its strict prediction is RED 31/8 then GREEN 39/0. Fresh r3 discovery/native gates are separate. Clean r3 captures still require explicit image review; no first-S6 visual acceptance is claimed. Sorted diagnostic completed 564/0 with no diagnostics on its retained pre-underlay source; 82 C was its owned-engine maximum, while 98 C occurred queued with no owned engine. Original full-audit shutdown diagnostics remain qualified.\n'
+        readme = PACKET / 'README.md'
+        original = readme.read_text().split('\n## Worn-bed visual correction\n')[0]
+        readme.write_text(original + text[text.index('\n## Worn-bed visual correction\n'):])
+    evidence.write_text(text + '\n## Completed-run refresh\n\nGenerated from final outer thermal and launch records only. Unsuccessful attempts remain in the machine index. Native rows require separate root review.\n' + table)
+    (PACKET / 'compression-map.json').write_text(json.dumps({'schema': 1, 'threshold_bytes': THRESHOLD,
+        'format': 'gzip level6 mtime0; native PNGs unchanged', 'scratch_originals_modified': False,
+        'entries': list({e['gzip_path']: e for e in compression}.values())}, indent=2) + '\n')
+    inventory = []
+    for path in sorted(PACKET.rglob('*')):
+        if path.is_file() and path.name != 'manifest.json':
+            data = path.read_bytes()
+            inventory.append({'path': str(path.relative_to(PACKET)), 'bytes': len(data), 'sha256': sha(data)})
+    (PACKET / 'manifest.json').write_text(json.dumps({'schema': 1,
+        'generated_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'files': inventory, 'raw_record_map': list(files.values())}, indent=2) + '\n')
+    print(json.dumps({'kind': KIND, 'run_records': len(index), 'gate_status': gate_status,
+                      'delivered_files': len(inventory), 'bytes': sum(p['bytes'] for p in inventory)}))
+
+
+if __name__ == '__main__':
+    main()

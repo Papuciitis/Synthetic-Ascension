@@ -1,0 +1,204 @@
+{
+  "prerequisite": {
+    "discovery": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-discovery.json",
+    "discovery_sha256": "843914cdb24e17d52504cb1fd9573dd80312a5d03f13a20ed87ff630ea9a34a9",
+    "discovery_records": {
+      "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-discovery-1/run-results.json",
+      "raw_sha256": "49cfcd9e7129cd23ddc0219a227b8e4d2cff0582c9cfc6ee50c202029cd84bd3",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-discovery-thermal.json",
+      "guard_sha256": "2704cab668174d28ff4c985b1e9152b66df740bfa50a28ec8b4e84bd182b95ab"
+    },
+    "scoped_parse_records": {
+      "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-tools-parse-1/run-results.json",
+      "raw_sha256": "ac21d9c9b060b14dd296f3b1c4b0f220b3e29720081c8851d905384525d6fc54",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-tools-parse-thermal.json",
+      "guard_sha256": "833e59eba239566131e60f549ad9d4cf594a40a45bc7e557eaac60b62ea74ea8"
+    }
+  },
+  "cases": [
+    {
+      "segment": 6,
+      "label": "city22-plaza-bed-native-s6",
+      "output": "/var/tmp/sa-city22/plaza-beds/s6",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-plaza-bed-native-s6",
+        "--project",
+        "/tmp/sa-wp2-plazas",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "10",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedGamePreview.tscn",
+        "--",
+        "--visible",
+        "--review=normal",
+        "--render-fps=20",
+        "--discovery=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-discovery.json",
+        "--family=industrial_cutthrough",
+        "--out=/var/tmp/sa-city22/plaza-beds/s6"
+      ],
+      "expected": {
+        "actual_fixture_bed_nodes": [
+          {
+            "bounds": {
+              "position": [
+                1478.98999023438,
+                -822.926025390625
+              ],
+              "size": [
+                178.920043945312,
+                109.677978515625
+              ]
+            },
+            "camera_world_px": [
+              1568.44995117188,
+              -768.087036132812
+            ],
+            "node": "PlazaDressing/Bed_0"
+          }
+        ],
+        "attempt_seed": 4,
+        "bed_rect_cells": {
+          "position": [
+            23,
+            19
+          ],
+          "size": [
+            3,
+            2
+          ]
+        },
+        "camera_world_px": [
+          1568.44995117188,
+          -768.087036132812
+        ],
+        "candidate_only_not_native_validated": true,
+        "coord": [
+          0,
+          -1
+        ],
+        "family": "industrial_cutthrough",
+        "fixture_ground_splat_enabled": false,
+        "matching_seed_number": 3,
+        "plan_seed": 1235886371,
+        "role": "entry_court",
+        "segment": 6,
+        "state": 1
+      },
+      "state": "native_checks_clean_pending_visual_review",
+      "returncode": 0,
+      "validation": {
+        "records": {
+          "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-native-s6-1/run-results.json",
+          "raw_sha256": "6177acef74b6515b26be13efffe78c8f24daaa7c4e68e9311798bb8c7e8e43aa",
+          "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-native-s6-thermal.json",
+          "guard_sha256": "a42f8757eed87b31b065a8707565d2ca8a351a762ae9eb9e3bf575016c1f743f"
+        },
+        "bed_validation_sha256": "435c21e2dd3eadbff70ba6112c65b75ffbb6a708986d3ddc2721940dd56d3aae",
+        "capture_info_sha256": "3d85a193a94814299c64dfc907c4c5c8cbeb7520d32d4acfa911d0074dac0533",
+        "image": "/var/tmp/sa-city22/plaza-beds/s6/ground-before.png",
+        "image_sha256": "5b0c4f534b071ffcc1281797c341ea01c1df514e32ebcb9390c8bc89935991af",
+        "actual_node_count": 1,
+        "acceptance": "native plan/node/reload checks clean; visual review of original PNG still required"
+      }
+    },
+    {
+      "segment": 7,
+      "label": "city22-plaza-bed-native-s7",
+      "output": "/var/tmp/sa-city22/plaza-beds/s7",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-plaza-bed-native-s7",
+        "--project",
+        "/tmp/sa-wp2-plazas",
+        "--start-temperature",
+        "70",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "10",
+        "--",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedGamePreview.tscn",
+        "--",
+        "--visible",
+        "--review=normal",
+        "--render-fps=20",
+        "--discovery=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-discovery.json",
+        "--family=canal_services",
+        "--out=/var/tmp/sa-city22/plaza-beds/s7"
+      ],
+      "expected": {
+        "actual_fixture_bed_nodes": [
+          {
+            "bounds": {
+              "position": [
+                9225.080078125,
+                6496.80810546875
+              ],
+              "size": [
+                298.4521484375,
+                150.9296875
+              ]
+            },
+            "camera_world_px": [
+              9374.306640625,
+              6572.27294921875
+            ],
+            "node": "PlazaDressing/Bed_0"
+          }
+        ],
+        "attempt_seed": 1,
+        "bed_rect_cells": {
+          "position": [
+            16,
+            6
+          ],
+          "size": [
+            5,
+            2
+          ]
+        },
+        "camera_world_px": [
+          9374.306640625,
+          6572.27294921875
+        ],
+        "candidate_only_not_native_validated": true,
+        "coord": [
+          4,
+          3
+        ],
+        "family": "canal_services",
+        "fixture_ground_splat_enabled": false,
+        "matching_seed_number": 1,
+        "plan_seed": 1908948527,
+        "role": "wardstone_court",
+        "segment": 7,
+        "state": 3
+      },
+      "state": "guard_finished",
+      "returncode": 143
+    }
+  ],
+  "scope": "Native frozen actual-Game bed/reload evidence; render20/physics60, functional duty only. No live/performance claim; original unsorted audit diagnostics remain unresolved.",
+  "interrupted_signal": 15
+}

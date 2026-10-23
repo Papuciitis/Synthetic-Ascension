@@ -1,0 +1,55 @@
+{
+  "source_only_prepared": true,
+  "engine_runs_by_preparer": 0,
+  "helpers": {
+    "PlazaBedDiscovery": {
+      "gd": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedDiscovery.gd",
+      "sha256": "125c9b8ffbf86276a225d7448fbbbe281b3319992259eb4becdbbdae3795f4fa",
+      "scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedDiscovery.tscn",
+      "scene_sha256": "f041117c976beae5bbed8505b0958ec1600be1217df34f0fe52d3aa2cb66e0d2"
+    },
+    "PlazaBedGamePreview": {
+      "gd": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedGamePreview.gd",
+      "sha256": "f62d1ec663572d055bd513dbba8c715d3fab5de030d47ed433093e2baa499bcd",
+      "scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedGamePreview.tscn",
+      "scene_sha256": "ef50ab559d635076ed5458b6712a673e1140ff858e0a91f81dbd2c4e710e78ab"
+    },
+    "PlazaBedUnderlayGamePreview": {
+      "gd": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.gd",
+      "sha256": "f4edd4a66f5de5e77c075754e65cfcd3ac11a6b2ddb2e6dde7d1ea38a4408ea5",
+      "scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.tscn",
+      "scene_sha256": "a790a29a454fd3a8b14efc99c99ce64aec56797084fe1554f64aaf28a21014f1"
+    }
+  },
+  "parent_runtime_sha256": {
+    "tools/tests/PlazaPresentationTest.gd": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286",
+    "tools/dev/CityBlockPlayablePreview.gd": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+    "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+    "core/systems/world/ChunkManager.gd": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+    "scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222"
+  },
+  "discovery_bounds": {
+    "families": [
+      "industrial_cutthrough",
+      "canal_services",
+      "military_staging"
+    ],
+    "segments": [
+      6,
+      7,
+      8
+    ],
+    "natural_seed_search": [
+      1,
+      400
+    ],
+    "max_matching_seeds_per_family": 8,
+    "coords": "same sorted first coordinate per planned plaza role as existing PlazaPresentationTest",
+    "fixture": "existing _fixture(theme,plan,coord,true); one fixture at a time; manager.free and fixture.clear immediately; yield frame; stop first actual bed per family",
+    "no_whole_presentation_suite": true
+  },
+  "acceptance": "Fixture discovery is candidate selection only. Native helper reads actual discovered segment/attemptseed/focus; inherited actual Game performs explicit unload/reload. Requires expected actual family/state/role/plannedbedrect and a real bed node containing focus before native PNG. Missing bed fails; no forced styles/new dressing injected. Read PNGs plus bed-validation.json, not headless result alone.",
+  "native_capture_limits": "Parent isolated frozen ambient spawner/encounter beats, normal HUD, static camera and reload, 20FPS render cap default with unchanged60Hz physics. No performance/live gameplay claim.",
+  "status": "Fresh post-fix source binding only. Original helpers/records unchanged; root scoped parse/discovery/native runs pending."
+}

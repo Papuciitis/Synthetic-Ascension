@@ -1,0 +1,33 @@
+{
+  "unapplied": true,
+  "original_runtime_sha256": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284",
+  "proposed_runtime_sha256": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+  "proposed_runtime_unchanged": true,
+  "installed_test_before_sha256": "dc54cb0d2fbd4a4d05fddf02524c7ed82c82501d84ed708050e6a2cafba3b56f",
+  "files": {
+    "assertion-manifest.json": "63932a9c5ce03590944d0009cb8046bb4b888139854611b7637fd11783ac1c89",
+    "fixture-source-map.json": "b946cde19a0669c3d4894765b971d2ea92d2c8b86acae008560da704a8ff2ee6",
+    "PlazaBedUnderlayTest.tscn": "d13afe4d6a6a4178089528cfa4778311e40ff3c63fbb16d4915fa7b96bc5c5a4",
+    "plaza-bed-native-r3.py": "d5d97f77f8c10832ab6bd7dd62ce1f7a439cfc5d3b6c3559a67dcadc9a47e013",
+    "fixture-parent-original.gd.data": "766a2de56cf48bd65e97aba5f975d8dd77a3d90fbac19077b8eb5d0de567be07",
+    "executor-r3-vs-r2.diff": "12b44b9787d8263df57c32fbf2b8f7f9821ab2eb5f6c615b2ea82cc41ec13240",
+    "PlazaBedUnderlayTest.gd": "b96657c21a95c382a27fc66a1adb3ef7ff39b6d5f6a7ae77e942773c420038ce",
+    "test-r3.patch": "0c41e7085f3689d5e5c9230833b9881d78f266bbbf9d35be7752e3a95e7b9d0f",
+    "plaza-bed-helpers-r3-meta.json": "5c26c0521ef608b0eab42c963d4df2bccf02a4c6bf2febe1248ea1c6a39e3d20",
+    "root-underlay-red-green-r3.py": "be1ced5279588e1831c1024396c75be264daec6737953d0b7fe4918ee96be106",
+    "fixture-with-terrain.gd.data": "4106888c6c7aaefdd3e6472af2cdcaf92bea5226cc1fa4f2f7d9805c245c36ac",
+    "PlazaBedUnderlayTest.repo.tscn": "a9f363e9b400f7d37a69d56a55159c5a4b90b5d9d29f28c46684bf3e8044455e",
+    "PlazaBedDiscoveryTerrain.gd": "a49ba86fbc433a6b2e16c552e653b72793fa4d95cceed779f2ff00e87383ddcc",
+    "PlazaBedDiscoveryTerrain.tscn": "2955ad5d469a0aefe35760b23af1341e6cd8946a60ff268196997ab68f5e3e45",
+    "discovery-run-observer.diff": "e59508e06cb2184f9b043d0c318211c1ace6031a50e674911216ee9a24185ee6",
+    "native-r3-vs-r2.diff": "ca0aff2b7f29eaaa3358121449d2b6437d2ad3c8c06a6015682a07f922050ad2",
+    "fixture-only.diff": "cfc8c23442d2b18f65d5fa7f9b7e34413f316d81fa72528abda07567199480f5",
+    "source-preparation-checks.json": "0a077fb6030eee5cb190119ab2f577d77f22665004db207f2e0e50f80324e2e1",
+    "executor-r3-cleanup-fixture-test.py": "badecd03bec589bc78323eb3076db8601f7f486580c63d8c072774ed19c750fe",
+    "executor-r3-cleanup-fixture-result.json": "4c806e5b94d828952a1b17cc4664b321e7b413e7a48787521560b49b6481db25"
+  },
+  "engines_run": 0,
+  "expected_red": "31passed/8failed with exact original8 causal worn-state material/care failures; two native-owner preconditions must pass",
+  "expected_green": "39/0 including unchanged37 meanings plus exact planned urban/native-owner preconditions",
+  "old_r2_outcome": "Unexpected31/6 retainedunchanged; runtime not applied"
+}

@@ -1,0 +1,62 @@
+{
+  "status": "SOURCE_ONLY_TINY_JSON_FIXTURES",
+  "passed": 13,
+  "failed": 0,
+  "checks": [
+    {
+      "label": "actual immutable R3 RED/GREEN and current12 source pins validate",
+      "ok": true
+    },
+    {
+      "label": "minimal exact RED/GREEN byte receipts accepted",
+      "ok": true
+    },
+    {
+      "label": "wrong RED count rejected",
+      "ok": true
+    },
+    {
+      "label": "missing RED diagnostic rejected",
+      "ok": true
+    },
+    {
+      "label": "extra GREEN diagnostic rejected",
+      "ok": true
+    },
+    {
+      "label": "stale raw runtime source rejected",
+      "ok": true
+    },
+    {
+      "label": "wrong GREEN state set rejected",
+      "ok": true
+    },
+    {
+      "label": "outside island regression rejected",
+      "ok": true
+    },
+    {
+      "label": "missing native cause rejected",
+      "ok": true
+    },
+    {
+      "label": "terrain fallback rejected",
+      "ok": true
+    },
+    {
+      "label": "save write rejected",
+      "ok": true
+    },
+    {
+      "label": "cancelled GREEN guard rejected",
+      "ok": true
+    },
+    {
+      "label": "missing original footer rejected",
+      "ok": true
+    }
+  ],
+  "runtime_writes": 0,
+  "engines_started": 0,
+  "regression_reruns": 0
+}

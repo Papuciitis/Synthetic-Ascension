@@ -1,0 +1,477 @@
+{
+  "project": "/tmp/sa-wp2-plazas",
+  "runtime_modified": [
+    "core/systems/world/ChunkManager.gd",
+    "core/systems/world/chunks/PlazaEdgeKit.gd",
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd",
+    "scenes/world/plazas/PlazaDressing.gd"
+  ],
+  "tests_modified": [
+    "tools/tests/ChunkBuildDataTest.gd",
+    "tools/tests/PlazaPresentationTest.gd",
+    "tools/tests/TransitionResourceWarmupTest.gd"
+  ],
+  "tests_new": [
+    "tools/tests/PlazaResourceResidencyTest.gd",
+    "tools/tests/PlazaResourceResidencyTest.tscn"
+  ],
+  "builder_modified": [
+    "tools/design/build_plaza_wear_kit.py"
+  ],
+  "related_new_script_uid_optional": [
+    "tools/tests/PlazaResourceResidencyTest.gd.uid"
+  ],
+  "assigned_tracked_bytecode_deletions_only": [
+    "tools/design/__pycache__/build_plaza_kit.cpython-312.pyc",
+    "tools/design/__pycache__/build_plaza_wear_kit.cpython-312.pyc"
+  ],
+  "new_source_pngs_this_stage": [],
+  "relevant_generated_imports": [
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_00_0.png.import",
+      "sha256": "a575463898669c4fcb9de8cbf9c39a9a43e445a34ffae26010b25e4e95307454",
+      "source_image": "assets/world/plazas_v1/kit/moss34_00_0.png",
+      "source_sha256": "a837239b613d67e07b67784cafdebfc07c029931f18b3d150a41a1463dac8cb3"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_00_1.png.import",
+      "sha256": "568314556d55b8880d4a45e31762e68b36307fdbf5010197a67ba23144cdd6d1",
+      "source_image": "assets/world/plazas_v1/kit/moss34_00_1.png",
+      "source_sha256": "a85eb906bf2a5dc980a74259723aeb8624cf8f103f0641109a6cce863f5e95cd"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_01_0.png.import",
+      "sha256": "7c572ef06a26a65cfb7975466e8dde45dc98243202db14c446a3039a051ff196",
+      "source_image": "assets/world/plazas_v1/kit/moss34_01_0.png",
+      "source_sha256": "721c2b83457dc20b18526747a727731558a7c74d59432acee77e3449bb742c10"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_01_1.png.import",
+      "sha256": "517a21f900a41cec1e359b777fab5754df89e4f40b2a499cd7f33e98a27e729e",
+      "source_image": "assets/world/plazas_v1/kit/moss34_01_1.png",
+      "source_sha256": "54fc7226562f6e0d777796f4ed2d6986ee9c9d2832d791af154b46de9bf5fe3f"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_02_0.png.import",
+      "sha256": "10ff79de9009b26257d3d716518405b96d400b425c9c76fa54ea14e4a59bfee1",
+      "source_image": "assets/world/plazas_v1/kit/moss34_02_0.png",
+      "source_sha256": "98d6ce96c03a85ac9e52f33008198155f08a7de5be04c029c45ab37414460961"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_02_1.png.import",
+      "sha256": "ca675df3dea3162d6405d5be5ca60a5f41ce68101c97c813ad629d531780bae0",
+      "source_image": "assets/world/plazas_v1/kit/moss34_02_1.png",
+      "source_sha256": "b4b31477c78f91834109cafd4fd97063da646b91f333f160fbbe9e7db1a148d2"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_03_0.png.import",
+      "sha256": "d3d1013287dde0fd7d736dc9ec55845f846ee9950714793ff151b9ac7a6eb324",
+      "source_image": "assets/world/plazas_v1/kit/moss34_03_0.png",
+      "source_sha256": "e986d3c75847739a0141b2aace6e5c9ae3b432673595babae16a114139e58bc8"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_03_1.png.import",
+      "sha256": "33d2d195fac2a02efc35126bdd5d9e9406a2ee7126189fefef704856d30bc236",
+      "source_image": "assets/world/plazas_v1/kit/moss34_03_1.png",
+      "source_sha256": "435d7b582a9862999a9abb9d968ee90fdc41954fa7a2aa33933ca176a9b5164b"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_04_0.png.import",
+      "sha256": "58c7ab949c392d1fc8f91af41f35ffd0ffeade579f511d084e534f59e3f3a797",
+      "source_image": "assets/world/plazas_v1/kit/moss34_04_0.png",
+      "source_sha256": "c7d9e80deb547541a3a4a8556fa434251057e6ab1f23a18301f4ad1c1efea643"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_04_1.png.import",
+      "sha256": "41244e102284257c37cfedf6821c871a0321a5963f03c583e3738913956d5a5b",
+      "source_image": "assets/world/plazas_v1/kit/moss34_04_1.png",
+      "source_sha256": "6b4736139db6652449cf6a7ea899650c834605255e04232a2edbbb7de4ff0892"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_05_0.png.import",
+      "sha256": "fe686b549186c0d1ef22f072f05a7a49e49dcd3e4f6a045b8f662b360a56fa98",
+      "source_image": "assets/world/plazas_v1/kit/moss34_05_0.png",
+      "source_sha256": "e284d65ee5440180cf5ec3326f220dca77bf74b79b48b2273f584a01cd28d664"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_05_1.png.import",
+      "sha256": "913c88f48003987cd1dbeceafeeec1c198a22a53f658f632c83882bb4d41cbba",
+      "source_image": "assets/world/plazas_v1/kit/moss34_05_1.png",
+      "source_sha256": "ea8e19b0ab2185f260c98562ae11eb43bff6b6dde0c036de2f83d8aa44fdf60a"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_05_2.png.import",
+      "sha256": "7b61937b6286a309d24fef4f4808671bc7d4badd1be9fc52890bcfd3c626595e",
+      "source_image": "assets/world/plazas_v1/kit/moss34_05_2.png",
+      "source_sha256": "96c0521016806ae682680703bd28504ac1f16eadf8ea61c2d358378d7c42da84"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_05_3.png.import",
+      "sha256": "e076d227af06b2cc263e8d1ef88f34d86f7a49b95e200a70bb0f1a51e44cadfb",
+      "source_image": "assets/world/plazas_v1/kit/moss34_05_3.png",
+      "source_sha256": "bc0557c7f24e898895b33072eb84a3f2e8945f5a15b68293c50ec0210c73ed00"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_06_0.png.import",
+      "sha256": "599326786a71f2507c2b7ac0de3cc53f26cb70d11d7bdba4dcd015c3ee2af485",
+      "source_image": "assets/world/plazas_v1/kit/moss34_06_0.png",
+      "source_sha256": "3933b77c99f811a527cc08e2a61e9845496ace4b469f487e161f004071bb4263"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_06_1.png.import",
+      "sha256": "2bb3c3c45fdc1c183f9674f7cce2d6c480a3c7866a57fb79d6520eddf57146fd",
+      "source_image": "assets/world/plazas_v1/kit/moss34_06_1.png",
+      "source_sha256": "0cedbbe9c01167fc40011cdc1252bddc39ee617bfd345f6e1afc9aeaaf8f570e"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_07_0.png.import",
+      "sha256": "54b80fef116cddb82a0e73ceebc0c6deca7637f00999a66870e44aba4dd98cab",
+      "source_image": "assets/world/plazas_v1/kit/moss34_07_0.png",
+      "source_sha256": "56d1fc8805108f31e9106ee2854abdb4f9abfbebb81721db2f6c0be9e5ad3b13"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_07_1.png.import",
+      "sha256": "a8bd2bc22f6d778445a6c5e633dd53315327f883ee3c812291471d3c6a397e97",
+      "source_image": "assets/world/plazas_v1/kit/moss34_07_1.png",
+      "source_sha256": "ba4756146aea73c668bfc10a1e2806c4b9f13aed60d5932e7d5a79e5d53ef834"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_08_0.png.import",
+      "sha256": "a3ff1f83994fa82e7e94b5e76adad917138fee02471a9da4246e4a0d2982871e",
+      "source_image": "assets/world/plazas_v1/kit/moss34_08_0.png",
+      "source_sha256": "debdcbcfcb77d2dc5ad136e84fe03e2e2993b4f9406f48a42fb5f613e8631abb"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_08_1.png.import",
+      "sha256": "d5398682c484c37f70d955a7f6fac455aa82dbd046e14bfadb97dbe76ba986c7",
+      "source_image": "assets/world/plazas_v1/kit/moss34_08_1.png",
+      "source_sha256": "c98723a753f55d55c548565bbd50029344d691e14e180dc9bd904137d13e2d15"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_09_0.png.import",
+      "sha256": "74eecdf2183dc4a56979de743644b3e420b89f5c85bf0bf6eb1c490caace9c86",
+      "source_image": "assets/world/plazas_v1/kit/moss34_09_0.png",
+      "source_sha256": "e91064073e8e7de3ab928f842611fab93167cf9c7c32ff77fbaa46ccb2e71f87"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_09_1.png.import",
+      "sha256": "c825129b319883b29d62e23d5e956fce95923af0aaa47ef482ccf588aa1651eb",
+      "source_image": "assets/world/plazas_v1/kit/moss34_09_1.png",
+      "source_sha256": "4ac020a1fb255de3f1fb25e38bdfcab992f6c17ade7fd6bf3ed62ff41d6bd1e8"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_10_0.png.import",
+      "sha256": "d63484528d1a14ea070338581af92c32cd157f58f3d4cb73766469219234fb1e",
+      "source_image": "assets/world/plazas_v1/kit/moss34_10_0.png",
+      "source_sha256": "e453279dd2d5e58efe8eafc323545458f4e4ff60fc5164b20ef1fb4c85f2f86c"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_10_1.png.import",
+      "sha256": "2e9907bcf3d9164073cb0073ee3d7181445d983445f8f390c6698d5c66492f0e",
+      "source_image": "assets/world/plazas_v1/kit/moss34_10_1.png",
+      "source_sha256": "30c157976f073ffe523a5dc3451755357688381cad3da15056f8b151e62b56b2"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_10_2.png.import",
+      "sha256": "10e0cc73ed7097f6b6985782568e7afef05a5a2507a99445e9e418b30ecc2492",
+      "source_image": "assets/world/plazas_v1/kit/moss34_10_2.png",
+      "source_sha256": "289957791ae1124a19cba981fdffc8e5f3de7e592b8a0ebef9544d8a5a6b4f93"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_10_3.png.import",
+      "sha256": "79c8517887521f7b9c9831b5aeff776fe0e53e8e3e732bc3d3a6f33231fc273f",
+      "source_image": "assets/world/plazas_v1/kit/moss34_10_3.png",
+      "source_sha256": "49cf631e605255ec1ed1e0e18c740fd1fda4d2b71b5e098cf6181000dbac1a8c"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_11_0.png.import",
+      "sha256": "6422f2c80d973fdcc4f328013ffc58500d6865b49f556714479858a3d0b213a4",
+      "source_image": "assets/world/plazas_v1/kit/moss34_11_0.png",
+      "source_sha256": "5735d9322e88ccd466b9ab2833a3c41a100f382d506bc0456e2f23758c3dcc50"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_11_1.png.import",
+      "sha256": "8fec8c94629d1e40b7e8391932b55ad648b45ee60436cccb98b8caa59d6f02da",
+      "source_image": "assets/world/plazas_v1/kit/moss34_11_1.png",
+      "source_sha256": "2fa50f31928a6786b548e28d15f9178e22f413cdd6c2f795057e2910e37b0873"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_12_0.png.import",
+      "sha256": "d4a5490dd74da64564b70d033d5941135b485997e09136b51cfb5abb3d13f3c1",
+      "source_image": "assets/world/plazas_v1/kit/moss34_12_0.png",
+      "source_sha256": "1055c055c869e84801d3ff3dd0297a947f145a1e4387cad5d2e8b2e614584b63"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_12_1.png.import",
+      "sha256": "d40cd81025522b9b2aaadc431546625a33119c793bcde89470ef9494c0f1317f",
+      "source_image": "assets/world/plazas_v1/kit/moss34_12_1.png",
+      "source_sha256": "20d9b7085fb7906323832b78d6a12e1e9f20fe7b9526f99a73809170f33fbcc1"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_13_0.png.import",
+      "sha256": "17a7d44cf5a865b553d23fe9c4fcbb61204177166e2d0cbf830b83f1fa014b6c",
+      "source_image": "assets/world/plazas_v1/kit/moss34_13_0.png",
+      "source_sha256": "b84f3d070c9915624d40761c34bb939b128ace9ba32f51ea30779235ab18aa65"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_13_1.png.import",
+      "sha256": "fa6bb3264adb67bacc86d11e001bf251895eb4966242b9214345b867ff968d16",
+      "source_image": "assets/world/plazas_v1/kit/moss34_13_1.png",
+      "source_sha256": "ec142ffe88f72c4cc7ab4832dc37b97fc1722eb3e54e01a59d0bd1b55e1dbdf0"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_14_0.png.import",
+      "sha256": "cb19ff52e3a8ca873d3c6392366769b3eaf0cc2d3f5c60d0d3c31e73e67d1af4",
+      "source_image": "assets/world/plazas_v1/kit/moss34_14_0.png",
+      "source_sha256": "abd7b1373cf55433be23db044bc684904cdee758fb3808a38f76d1fda6466529"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_14_1.png.import",
+      "sha256": "cb9cbeed2a6101253816aad4a79f4354c47b38afdcb6a2998d2b5602048eb5a1",
+      "source_image": "assets/world/plazas_v1/kit/moss34_14_1.png",
+      "source_sha256": "1d2d85de47ac7c185787c1e025a441fff86459f8e75c67997382397695025c67"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_15_0.png.import",
+      "sha256": "bf78eeead702d2d9f92ab881ed321d4216a2f0e3115d4a051954e4ebd2d9529a",
+      "source_image": "assets/world/plazas_v1/kit/moss34_15_0.png",
+      "source_sha256": "c60ee660ad680b1127add9bf48de7bd9522e23f00a4faa449538341a16d0ff0c"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/moss34_15_1.png.import",
+      "sha256": "d297a4e74fdd7b74b4855aa64d8c93a41a079572e009315c33fb9ac916f7be13",
+      "source_image": "assets/world/plazas_v1/kit/moss34_15_1.png",
+      "source_sha256": "f92d1cc623a0bb323013e69f9c9ae52ff088729c905b8761502e32c5f0b0a368"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_00_0.png.import",
+      "sha256": "02d8626d3de96446b5fd608821a8389af068de7c14f6bf9ece2f4c1c9f3bbb95",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_00_0.png",
+      "source_sha256": "0ad201ebe5a08afded620590375c8341520c41a87d9185e773d8c2ea8275e926"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_00_1.png.import",
+      "sha256": "c48106b4fb2ff4be10bea1f67a4110be029e38355c16429b3f8183b63ca4fdc5",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_00_1.png",
+      "source_sha256": "215289206932521ee8061f3ffcffed90796343850cf16d5dfd947248afd5ba8f"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_01_0.png.import",
+      "sha256": "ca5e3ef51e6db11306af6d7c6eed4e8e1108dab1df944786562c3bcfe145258a",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_01_0.png",
+      "source_sha256": "cf7c67904b1132fe40c916b459f4e11281af9868db4ddaed2841e48978f6f904"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_01_1.png.import",
+      "sha256": "5e88bfd5c858706b0cce3384698f625807ce289874a372f97169156fca4d3cc9",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_01_1.png",
+      "source_sha256": "95766b73b49240a10d4aafda008727be0ce3b95c0ad71543e43cddadd6e996b4"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_02_0.png.import",
+      "sha256": "d0806f912c2580cce142e7d90ba8a8490872e368996a8692fd5e2e65967ff152",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_02_0.png",
+      "source_sha256": "cd56416e3df6908bb549363ebb71073310d4d779314891fd7b641e9aa7d30071"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_02_1.png.import",
+      "sha256": "d3bef08e3f29131995dd97eaa1a24c559917318b57cea547b292990fad64c79f",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_02_1.png",
+      "source_sha256": "7ec430487b1764dc591c184a962803459aebb6c04ccc1c5d388cdb56a11ae869"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_03_0.png.import",
+      "sha256": "de7479520a819c9786463a6cbd34309ae8d511f2c448fe7dba4e7300e6a08d9a",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_03_0.png",
+      "source_sha256": "9a6f8e198f33ccce98970c0b94871b5600109a9fe462e7c5415b1349a5516c8c"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_03_1.png.import",
+      "sha256": "578be4b87e795abbe83f75967c39fa38c73dc0856f883ac582fdd62fd120817b",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_03_1.png",
+      "source_sha256": "a214207a587a5dfcd561951377f6c80d9184aef87aee12bdf85816c110671730"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_04_0.png.import",
+      "sha256": "7cc6106e4e0edfb8ff9f9a5ca454f7ab95a4069dd57dff041be39f7bd28bbede",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_04_0.png",
+      "source_sha256": "0ddd86ab048b8bd609f30a42e2beacf3f1f77c9ca2f63a09a2c081d3e8a2bc1d"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_04_1.png.import",
+      "sha256": "352fe1ace7b1c0bc6ac579b2507b064c231b0a17b376aa31230ff6118b9cd6b3",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_04_1.png",
+      "source_sha256": "22835b882a1a786a37a8342cb4338c1ebdaf783a088e616c402d57f30f17fa2a"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_05_0.png.import",
+      "sha256": "e3ad6a288a08e0a873391fbc00265262a3b416dc99c998cf96d7e23bbadeec4e",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_05_0.png",
+      "source_sha256": "fa3e111b7649b2f6c8d1107c10a5f97a7ac5c84dfe94456f83a429cb6f7abc08"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_05_1.png.import",
+      "sha256": "c04120209ebe8da36fbbb92523674d4fb0dfc940d7a3b7ff8e52d0a38e6aaada",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_05_1.png",
+      "source_sha256": "926f431f918cf278dc445773030afbaf8fb6a5838825cc0c0b06e976d650d29f"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_05_2.png.import",
+      "sha256": "5cc60061463c00b7a236be884c31788617b7aa411dac5f3739ab7312ea5276c1",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_05_2.png",
+      "source_sha256": "d7843173ce71b716b6464e819c491b0dec0804184718b4b8fd3ec64463893af0"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_05_3.png.import",
+      "sha256": "ec0075cf24fa315d20f86072b9e5395ec0194d7d858ce197169248b767fb297b",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_05_3.png",
+      "source_sha256": "98183da0e260e09c51ac23ff109cad7c4e67a441954b5015307663cf6fc9fb3b"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_06_0.png.import",
+      "sha256": "ed02eea256bc73b6d697a330daa18d3a2a714251b37ea06c394c42a25bd8d297",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_06_0.png",
+      "source_sha256": "28996fbab584e4a4b094cc590f74304b74d91120bfdb3326427f491c17e6abf6"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_06_1.png.import",
+      "sha256": "2a560c92aa2654ec3876a9dc2dc91926100d7aa44fb7dc73746701ce45b5900c",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_06_1.png",
+      "source_sha256": "ca63cb0b5ee7af338e5825019f854c2cdf5e0b0995788603df946a1f6cc1795d"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_07_0.png.import",
+      "sha256": "4679873b34ead67b3585a8215c0059a201d47b144f7cee796e9fc82a3c12445f",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_07_0.png",
+      "source_sha256": "3fd0271c656df38e4c7a040d7dd66cfaa152e675ba23800881154384335d076f"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_07_1.png.import",
+      "sha256": "dcd34fe5659e8b9e9c0c161cef96441e295346a37e1e717116642a682ed01d2a",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_07_1.png",
+      "source_sha256": "f7d1bbffdc9cd06b3da9167c785cf8e0c46b011823e788367d2d21175a31d349"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_08_0.png.import",
+      "sha256": "f3733fff593e450a76b6caf7de6bcd525a4b123a06552c23275a357d5e602bc3",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_08_0.png",
+      "source_sha256": "b6f692de86d82f9b12a3b48705fd50c03b86b526981a1f66291ffe7e76fe88f4"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_08_1.png.import",
+      "sha256": "33e62357cd66c496ada09430841fe6fdee562c1d88ae22d1737b02b7784f08ac",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_08_1.png",
+      "source_sha256": "38c3bc814c546dc280901fe26d6d05f5a10977d1de2571fde401dbc2ee716c96"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_09_0.png.import",
+      "sha256": "6cd6384bf79a6e838cc72cc46c17a7965c7b8220eaed360a47208b0845394d2d",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_09_0.png",
+      "source_sha256": "dc4c95525f78e743c64a67d8ac95648061fd7a103a2835e1377a3509bb57f3bd"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_09_1.png.import",
+      "sha256": "7edda439f20ea1fd3abd6b8a1828f6e994c6bc3b7e768e8d70f7f990901abfdc",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_09_1.png",
+      "source_sha256": "a5118dafd0551d17009fa564b24518b62d54e1e13071a508d646c3a47cca8e41"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_10_0.png.import",
+      "sha256": "b5c5a2ecf7f1be6d63ae9038698db4b866d6862d2788c88114a7f0c546951af0",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_10_0.png",
+      "source_sha256": "6506d062a85e63ab2b7a4c0429fde8dc81125e9b3b3f24819dbdffb62cf67687"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_10_1.png.import",
+      "sha256": "f35b5994b1369dae790ad96607fdc7086df6db73f3d94541af1331588d0ab7a3",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_10_1.png",
+      "source_sha256": "625927856c765ff7a787eb20092a2a595a9165c6d6f70854bd9bfa0e066700ed"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_10_2.png.import",
+      "sha256": "d77070e5d3ee7830d0d8152d91f121d6b36fc227925ee349674d870c88c38358",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_10_2.png",
+      "source_sha256": "327c03c28a72bd5e205b43c25fef649e9654668bd31ad26fc9b91f74845e071c"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_10_3.png.import",
+      "sha256": "dd4c16e0fb68857bd9ad83b2cd71e29951b811ad4211c0c2b12861496d3de648",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_10_3.png",
+      "source_sha256": "c47c410ce091dc6199124ddfd392bc0dc0d8aa63b305a7d3788a105ad2d0bc9b"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_11_0.png.import",
+      "sha256": "8b4d4ae6fd565e6cf8fe753875ad906b2b5bc82396a2e4384a09f0ab5b5a4100",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_11_0.png",
+      "source_sha256": "87717412bcf2dc7cb6011235514fd26b15070945230e41ec053ea8d249041712"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_11_1.png.import",
+      "sha256": "089b40c429faa98608ad35334e0c0fd85015d99e236d04ecb50765c299792571",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_11_1.png",
+      "source_sha256": "6b02673cba2efa8e3a46cce18f698d21fec90ca15cb667791aa13e8751a99951"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_12_0.png.import",
+      "sha256": "b4596d5739d504da2333556725dd755346bb5cad2159b526b7951e637848633c",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_12_0.png",
+      "source_sha256": "93b83dc9341d465df0911743c479f16c2a273bc6565b09726b692bd5a246bb34"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_12_1.png.import",
+      "sha256": "af33457406dfa960b3b8bbcd427bb0fab214879cd178d339f1e5883538c16fb6",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_12_1.png",
+      "source_sha256": "38d45e428d2f20b72a0b6df5bc46766ea90fe87087375b754fbb909bf17e294e"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_13_0.png.import",
+      "sha256": "90c3597613ec71665ba2f6654c7b97539319a259a92b9b9e4efe0cf36e7d14f3",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_13_0.png",
+      "source_sha256": "4c8ab5785c484a4042870f6572122e23fd1c42563e31b897521f1d4c8272258c"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_13_1.png.import",
+      "sha256": "10f00fdde765d092f3ed052316f9c3b3e234d453f9e63f1c8212615c025f5cb5",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_13_1.png",
+      "source_sha256": "a9d3533b4110c15938d54162f597cb534e21009c27e22e9c54de33e6644d2887"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_14_0.png.import",
+      "sha256": "c5f1271be33d1ffebb9c9f894e4b6b91b0a295b29afdf94224f0b08da527a2e5",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_14_0.png",
+      "source_sha256": "c85c93055c8d31642f883b68085b0f9baa191762d95224ce27c76fde330a028e"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_14_1.png.import",
+      "sha256": "307d7943933d1ca8920da92a883edf09dcc993a5f3544940d325522cd446c0f1",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_14_1.png",
+      "source_sha256": "0dadc7f121eee7378ae5b7af367cd70c4d9c3db1501b0675988dc4ad6b0e1518"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_15_0.png.import",
+      "sha256": "97f8aa6b55b6207266de9165251fc314a65174b4a480c4398f7552e7b32d7690",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_15_0.png",
+      "source_sha256": "9c1e0bf41e20c44298f9193594532ceaf26c01033c7edc886765ff595447cb6f"
+    },
+    {
+      "path": "assets/world/plazas_v1/kit/ruin34_15_1.png.import",
+      "sha256": "479727709733b1d80ec9a0f513866a80e766261dc93bc2586aedc40230a8f9ea",
+      "source_image": "assets/world/plazas_v1/kit/ruin34_15_1.png",
+      "source_sha256": "0464982c36807f58eeea2a1d99e46439b2304eddbe3b3000b88d0da3f5320456"
+    }
+  ],
+  "exclude": "All other untracked imports, unrelated gd.uid/shader.uid files, .godot cache, scratch helpers and whole-directory staging. Prior candidate commit already contains other renderer/BuildData/RoofForms/art changes; do not treat them as newly unstaged hunks.",
+  "current_file_sha256": {
+    "core/systems/world/ChunkManager.gd": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+    "core/systems/world/chunks/PlazaEdgeKit.gd": "baee634f650e26d4d5ae670904c801ab1c1914755665ee349d83824458a11cb1",
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284",
+    "scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+    "tools/tests/ChunkBuildDataTest.gd": "4f1419c4762899bf3f9b30940726ac530b29cd475beabfede4caa7c71aed0dce",
+    "tools/tests/PlazaPresentationTest.gd": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286",
+    "tools/tests/TransitionResourceWarmupTest.gd": "0f529a19d8707306fef334f0825c9560a37e872ed1a6067f55cbe589141c3f8b",
+    "tools/tests/PlazaResourceResidencyTest.gd": "feba396d6f6cf6c170028f94ef6d27d6550e32b2946b2af8c89f4056c4fba157",
+    "tools/tests/PlazaResourceResidencyTest.tscn": "6dd52c8feb311ce092b9094930893c255f790c55a3fa30c28ee1677c94aca9f6",
+    "tools/design/build_plaza_wear_kit.py": "1d8ac9e80c3cf94ba9a446c8c10050ca5ad67f2c60ab5cfbb14cbb8043496090",
+    "tools/tests/PlazaResourceResidencyTest.gd.uid": "02b984f8a7e3337aef7fd4f83ca484184d227cf42b55954a76fa994fa02e2676"
+  }
+}

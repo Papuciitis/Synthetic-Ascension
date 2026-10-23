@@ -1,0 +1,342 @@
+{
+  "complete": true,
+  "accepted_segments": [
+    6,
+    7,
+    8
+  ],
+  "pending_segments": [],
+  "reviews": [
+    {
+      "segment": 6,
+      "status": "ROOT_VISUAL_ACCEPTED",
+      "before_image": "/var/tmp/sa-city22/plaza-beds/s6/ground-before.png",
+      "before_sha256": "5b0c4f534b071ffcc1281797c341ea01c1df514e32ebcb9390c8bc89935991af",
+      "after_image": "/var/tmp/sa-city22/plaza-beds-r4/s6/ground-before.png",
+      "after_sha256": "9301cabf950d64ccba30f07f0de8d67d8dc3a1253d5fc4408c8f5f1a371d1d13",
+      "same_camera": "(1568.45, -768.087)",
+      "native_record": {
+        "segment": 6,
+        "label": "city22-plaza-bed-native-r4-s6",
+        "output": "/var/tmp/sa-city22/plaza-beds-r4/s6",
+        "command": [
+          "/usr/bin/python3",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "--label",
+          "city22-plaza-bed-native-r4-s6",
+          "--project",
+          "/tmp/sa-wp2-plazas",
+          "--start-temperature",
+          "65",
+          "--max-wait",
+          "900",
+          "--timeout",
+          "600",
+          "--duty-percent",
+          "25",
+          "--",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.tscn",
+          "--",
+          "--visible",
+          "--review=normal",
+          "--render-fps=20",
+          "--discovery=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r4/plaza-bed-discovery-r4.json",
+          "--family=industrial_cutthrough",
+          "--out=/var/tmp/sa-city22/plaza-beds-r4/s6"
+        ],
+        "expected": {
+          "actual_fixture_bed_nodes": [
+            {
+              "bounds": {
+                "position": [
+                  1478.98999023438,
+                  -822.926025390625
+                ],
+                "size": [
+                  178.920043945312,
+                  109.677978515625
+                ]
+              },
+              "camera_world_px": [
+                1568.44995117188,
+                -768.087036132812
+              ],
+              "node": "PlazaDressing/Bed_0"
+            }
+          ],
+          "attempt_seed": 4,
+          "bed_rect_cells": {
+            "position": [
+              23,
+              19
+            ],
+            "size": [
+              3,
+              2
+            ]
+          },
+          "camera_world_px": [
+            1568.44995117188,
+            -768.087036132812
+          ],
+          "candidate_only_not_native_validated": true,
+          "coord": [
+            0,
+            -1
+          ],
+          "family": "industrial_cutthrough",
+          "fixture_ground_splat_enabled": false,
+          "matching_seed_number": 3,
+          "plan_seed": 1235886371,
+          "planned_semantic_terrain": "urban",
+          "role": "entry_court",
+          "segment": 6,
+          "semantic_terrain": "urban",
+          "state": 1
+        },
+        "state": "native_checks_clean_pending_visual_review",
+        "returncode": 0,
+        "validation": {
+          "records": {
+            "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-native-r4-s6-1/run-results.json",
+            "raw_sha256": "4ad3a8e5ec7ceb36f156d7c193e358b0bcfa1ff786954b1de51a87b6c4eebea1",
+            "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-native-r4-s6-thermal.json",
+            "guard_sha256": "0914f4b628f074d49a00f4c58d9f7d8467b3bd9ae8d43922f18328356e914e8a"
+          },
+          "bed_validation_sha256": "1054d39179fb8f70dcf46b53245910dc3c423de5622c18583671056d0a8b5ad6",
+          "capture_info_sha256": "25a7d47c0d011cd299d8309e67d192704e4e3d4a4926b50168b1b0ac94160cc2",
+          "image": "/var/tmp/sa-city22/plaza-beds-r4/s6/ground-before.png",
+          "image_sha256": "9301cabf950d64ccba30f07f0de8d67d8dc3a1253d5fc4408c8f5f1a371d1d13",
+          "actual_node_count": 1,
+          "acceptance": "native plan/node/reload checks clean; visual review of original PNG still required"
+        }
+      },
+      "observations": "Bright rectangular cared-lawn frame is gone. Brown worn soil feathers directly onto surrounding setts. No new raised kerb/pad is visible; footprint and context match the retained rejected before view.",
+      "limits": "Frozen actual-Game still plus plan/node/material/care/reload/save checks; not moving combat/performance evidence."
+    },
+    {
+      "segment": 7,
+      "status": "ROOT_VISUAL_ACCEPTED",
+      "image": "/var/tmp/sa-city22/plaza-beds-r4/s7/ground-before.png",
+      "image_sha256": "b19a6228c57ef5ec0f1331ba5cb87d029be7d6165c01f107e542f5eb440c4923",
+      "native_record": {
+        "segment": 7,
+        "label": "city22-plaza-bed-native-r4-s7",
+        "output": "/var/tmp/sa-city22/plaza-beds-r4/s7",
+        "command": [
+          "/usr/bin/python3",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "--label",
+          "city22-plaza-bed-native-r4-s7",
+          "--project",
+          "/tmp/sa-wp2-plazas",
+          "--start-temperature",
+          "65",
+          "--max-wait",
+          "900",
+          "--timeout",
+          "600",
+          "--duty-percent",
+          "25",
+          "--",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.tscn",
+          "--",
+          "--visible",
+          "--review=normal",
+          "--render-fps=20",
+          "--discovery=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r4/plaza-bed-discovery-r4.json",
+          "--family=canal_services",
+          "--out=/var/tmp/sa-city22/plaza-beds-r4/s7"
+        ],
+        "expected": {
+          "actual_fixture_bed_nodes": [
+            {
+              "bounds": {
+                "position": [
+                  9225.080078125,
+                  6496.80810546875
+                ],
+                "size": [
+                  298.4521484375,
+                  150.9296875
+                ]
+              },
+              "camera_world_px": [
+                9374.306640625,
+                6572.27294921875
+              ],
+              "node": "PlazaDressing/Bed_0"
+            }
+          ],
+          "attempt_seed": 1,
+          "bed_rect_cells": {
+            "position": [
+              16,
+              6
+            ],
+            "size": [
+              5,
+              2
+            ]
+          },
+          "camera_world_px": [
+            9374.306640625,
+            6572.27294921875
+          ],
+          "candidate_only_not_native_validated": true,
+          "coord": [
+            4,
+            3
+          ],
+          "family": "canal_services",
+          "fixture_ground_splat_enabled": false,
+          "matching_seed_number": 1,
+          "plan_seed": 1908948527,
+          "planned_semantic_terrain": "urban",
+          "role": "wardstone_court",
+          "segment": 7,
+          "semantic_terrain": "urban",
+          "state": 3
+        },
+        "state": "native_checks_clean_pending_visual_review",
+        "returncode": 0,
+        "validation": {
+          "records": {
+            "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-native-r4-s7-1/run-results.json",
+            "raw_sha256": "46e0bd0f72dbfda4815d316b56ac8c683d243dbea30508ed988a6d5c6f7eae4a",
+            "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-native-r4-s7-thermal.json",
+            "guard_sha256": "9eee7480d548af1e95920008d1d4a226317e4fcb0edd37b8dd3bd4ef6810077b"
+          },
+          "bed_validation_sha256": "ab2ff2257d8a182c856953931342862361d885a31de821b0922dde95b369627f",
+          "capture_info_sha256": "a55ea739f71e20870f348dac67a5e4c595cdb9b3ec68ae190a94f6dbf1744435",
+          "image": "/var/tmp/sa-city22/plaza-beds-r4/s7/ground-before.png",
+          "image_sha256": "b19a6228c57ef5ec0f1331ba5cb87d029be7d6165c01f107e542f5eb440c4923",
+          "actual_node_count": 1,
+          "acceptance": "native plan/node/reload checks clean; visual review of original PNG still required"
+        }
+      },
+      "underlay_material": 7,
+      "underlay_cells": 10,
+      "observations": "Olive damp soil/moss has a rough edge on setts without a bright raised tended-lawn border. Existing separate low-cover planters retain their declared footprint; this does not resolve the broader formal plaza topology.",
+      "limits": "Frozen actual-Game still plus plan/node/material/care/reload/save checks; no prior native S7 before image exists and no matched visual before/after claim."
+    },
+    {
+      "segment": 8,
+      "status": "ROOT_VISUAL_ACCEPTED",
+      "image": "/var/tmp/sa-city22/plaza-beds-r4/s8/ground-before.png",
+      "image_sha256": "ee182c96a03f9448a7755adef4489993c8ca41a3de40b12f9fd19cdf3210124a",
+      "native_record": {
+        "segment": 8,
+        "label": "city22-plaza-bed-native-r4-s8",
+        "output": "/var/tmp/sa-city22/plaza-beds-r4/s8",
+        "command": [
+          "/usr/bin/python3",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+          "--label",
+          "city22-plaza-bed-native-r4-s8",
+          "--project",
+          "/tmp/sa-wp2-plazas",
+          "--start-temperature",
+          "65",
+          "--max-wait",
+          "900",
+          "--timeout",
+          "600",
+          "--duty-percent",
+          "25",
+          "--",
+          "--rendering-driver",
+          "opengl3",
+          "--audio-driver",
+          "Dummy",
+          "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/PlazaBedUnderlayGamePreview.tscn",
+          "--",
+          "--visible",
+          "--review=normal",
+          "--render-fps=20",
+          "--discovery=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/r4/plaza-bed-discovery-r4.json",
+          "--family=military_staging",
+          "--out=/var/tmp/sa-city22/plaza-beds-r4/s8"
+        ],
+        "expected": {
+          "actual_fixture_bed_nodes": [
+            {
+              "bounds": {
+                "position": [
+                  -1120.90795898438,
+                  -29426.931640625
+                ],
+                "size": [
+                  151.319946289062,
+                  356.189453125
+                ]
+              },
+              "camera_world_px": [
+                -1045.248046875,
+                -29248.8359375
+              ],
+              "node": "PlazaDressing/Bed_2"
+            }
+          ],
+          "attempt_seed": 2,
+          "bed_rect_cells": {
+            "position": [
+              15,
+              20
+            ],
+            "size": [
+              2,
+              6
+            ]
+          },
+          "camera_world_px": [
+            -1045.248046875,
+            -29248.8359375
+          ],
+          "candidate_only_not_native_validated": true,
+          "coord": [
+            -1,
+            -15
+          ],
+          "family": "military_staging",
+          "fixture_ground_splat_enabled": false,
+          "matching_seed_number": 2,
+          "plan_seed": 434527035,
+          "planned_semantic_terrain": "urban",
+          "role": "exploration_reward",
+          "segment": 8,
+          "semantic_terrain": "urban",
+          "state": 4
+        },
+        "state": "native_checks_clean_pending_visual_review",
+        "returncode": 0,
+        "validation": {
+          "records": {
+            "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-bed-native-r4-s8-1/run-results.json",
+            "raw_sha256": "f36f4fffd757b012f39ab6565e4f8fcc64e49b8b13661d8e7893c17615a88c6f",
+            "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-bed-native-r4-s8-thermal.json",
+            "guard_sha256": "a4a79a8dff79b261660196203a5fa729bf7a4c85295c5a49de472d7a5fba736c"
+          },
+          "bed_validation_sha256": "86a82fffcd91cb9d6c7f5c242c128904fd85988266e8d1d7ea1fccb3972b4a80",
+          "capture_info_sha256": "e587cce48f5348f74deae5350bec790096c1bb67317d10e8549e28121818c51d",
+          "image": "/var/tmp/sa-city22/plaza-beds-r4/s8/ground-before.png",
+          "image_sha256": "ee182c96a03f9448a7755adef4489993c8ca41a3de40b12f9fd19cdf3210124a",
+          "actual_node_count": 1,
+          "acceptance": "native plan/node/reload checks clean; visual review of original PNG still required"
+        }
+      },
+      "underlay_material": 7,
+      "underlay_cells": 12,
+      "observations": "Dark worn soil has an irregular softened edge directly on the setts. No bright cared-lawn rectangular border remains. Existing bed footprint is retained; broad square plaza paving/topology remains a separate open visual issue.",
+      "limits": "Frozen actual-Game still plus plan/node/material/care/reload/save checks. No matched before image or combat/performance claim."
+    }
+  ]
+}

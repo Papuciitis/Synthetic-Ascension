@@ -1,0 +1,6 @@
+{
+  "applied": false,
+  "runtime_source_sha256": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+  "proposed_source_sha256": "d9951d016af6bd7752970be50072b0b4a9fa61cef3b49983fd43a261dad658c8",
+  "hypothesis": "First ChunkManager->SegmentThemePicker compile dependency closes Picker->SegmentThemeData->ChunkManager script cycle; delay same picker call until actual transition. No cache clears, no fixture or assertion change. Must wait for root signal and diagnostic outcome."
+}

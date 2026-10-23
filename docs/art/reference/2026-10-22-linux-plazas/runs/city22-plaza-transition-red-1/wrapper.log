@@ -1,0 +1,21 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-transition-red-1",
+ "queued_seconds": 141.1,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 63.078,
+ "peak_rss_mb": 386,
+ "diagnostic_count": 6,
+ "diagnostics_head": [
+  "ERROR: working plaza edge cache is ready before manager instantiation",
+  "ERROR: working plaza dressing cache is ready before manager instantiation",
+  "ERROR: all working plaza additions are retained after integrated preparation",
+  "ERROR: cold plaza preparation yields loading-cue process frames",
+  "ERROR: cold plaza preparation submits visible loading-cue frames",
+  "ERROR: generation-disabled manager preserves the prepared working plaza state"
+ ]
+}
+--- stdout tail (3/13 lines) ---
+PASS: prepared ground layers are pixel-identical to the original synchronous route
+PASS: transition resource fixture makes no save writes or profile selection
+TransitionResourceWarmupTest: 7 passed, 6 failed

@@ -1,0 +1,17 @@
+{
+  "source_only_prepared": true,
+  "engine_runs_by_preparer": 0,
+  "helper": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPlazaContextSurvey.gd",
+  "sha256": "fde847c4fd33d0ff02cee526ef79fadb9846bccfe87a9b11e2ecba1f08a8a203",
+  "scene": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/CityPlazaContextSurvey.tscn",
+  "scene_sha256": "f9458e25c9b93c068f1a302ecd231b49936867d6d0ca587dc761cdeb50f5d7cf",
+  "parent_runtime_sources": {
+    "tools/dev/CitySegmentSurvey.gd": "57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb",
+    "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+    "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd": "906fc8d65477bad0715b5e038bec8ebf97c66401be1f6e9ca5c88ce365a0aeeb",
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284",
+    "scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222"
+  },
+  "behavior": "Inherited survey points and images unchanged; overrides only image-save observation and pre-shutdown JSON. Records loaded plaza plans, surviving ring counts, actual bed/kerb/edge nodes and camera-framing counts. Recommends the first deterministic existing bed node in already loaded chunks without moving to it. No custom generation, new nodes, forced state, or modified collisions.",
+  "qualification": "Scoped Godot parse pending root. AABB framing is not pixel visibility. Static capture with parent Player/Spawner frozen and encounter beats disabled. Original S2 landmark image proves tended carriageway context but has no visible bed."
+}

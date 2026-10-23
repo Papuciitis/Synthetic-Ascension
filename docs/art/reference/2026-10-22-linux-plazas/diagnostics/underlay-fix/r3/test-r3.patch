@@ -1,0 +1,72 @@
+--- a/tools/tests/PlazaBedUnderlayTest.gd
++++ b/tools/tests/PlazaBedUnderlayTest.gd
+@@ -26,6 +26,7 @@
+ 	var repeated: Dictionary = _fixture(theme, district, UNDERLAY_COORD, true)
+ 	var chunk: Node2D = natural.chunk as Node2D
+ 	var presentation: Dictionary = chunk.get_meta(PLAZA.META_PLAN, {})
++	_check((natural.manager as ChunkManager).get_chunk_terrain(UNDERLAY_COORD) == &"urban" and district.terrain_by_chunk.get(UNDERLAY_COORD, &"") == &"urban" and (natural.manager as ChunkManager).plaza_island_ground_index(UNDERLAY_COORD) == 6, "planned urban terrain reaches the fixture exactly as in the native S6 capture")
+ 	var beds: Array[Rect2i] = []
+ 	var islands: Dictionary = {}
+ 	for island: Dictionary in presentation.get("islands", []):
+@@ -37,6 +38,12 @@
+ 	var original_data: ChunkBuildData = original.data as ChunkBuildData
+ 	var natural_data: ChunkBuildData = natural.data as ChunkBuildData
+ 	var baseline: GroundSplatRenderer = _underlay_splat(original_data, chunk)
++	var native_source_owner: bool = true
++	for y: int in range(UNDERLAY_BED.position.y, UNDERLAY_BED.end.y):
++		for x: int in range(UNDERLAY_BED.position.x, UNDERLAY_BED.end.x):
++			var cell: Vector2i = UNDERLAY_COORD * CPC + Vector2i(x, y)
++			native_source_owner = native_source_owner and baseline.material_at(cell) == 6 and is_equal_approx(baseline.care_at(cell), 1.0)
++	_check(native_source_owner, "unmodified generator island reproduces native urban6 care1 in all six bed cells")
+ 	var observed: GroundSplatRenderer = _underlay_splat(natural_data, chunk)
+ 	var probe: Vector2i = UNDERLAY_COORD * CPC + UNDERLAY_BED.position
+ 	print("NATURAL_S6_UNDERLAY material=%d care=%.3f repave=%d" % [observed.material_at(probe), observed.care_at(probe), int(presentation.get("repave_tex", -1))])
+@@ -102,7 +109,7 @@
+ 		if arg.begins_with("--out="):
+ 			var file: FileAccess = FileAccess.open(arg.trim_prefix("--out="), FileAccess.WRITE)
+ 			if file != null:
+-				file.store_string(JSON.stringify({"passes": _passes, "failures": _failures, "states": _underlay_rows, "fixture": "S6seed4entry_court(0,-1)", "save_writes": SaveManager.debug_save_writes - writes_before}, "\t"))
++				file.store_string(JSON.stringify({"passes": _passes, "failures": _failures, "states": _underlay_rows, "fixture": "S6seed4entry_court(0,-1)", "semantic_terrain": "urban", "generator_underlay_matches_native": native_source_owner, "save_writes": SaveManager.debug_save_writes - writes_before}, "\t"))
+ 			else: _check(false, "cannot write underlay diagnostic output")
+ 	print("PlazaBedUnderlayTest: %d passed, %d failed" % [_passes, _failures])
+ 	get_tree().quit(1 if _failures > 0 else 0)
+@@ -118,3 +125,39 @@
+ 	for rect: Rect2i in chunk.get_meta(&"_ground_planting_rects", []):
+ 		splat.paint_planting(UNDERLAY_COORD, rect)
+ 	return splat
++
++
++# The original fixture omits terrain; bind the exact real plan before generation.
++func _fixture(theme: SegmentThemeData, plan: Dictionary, coord: Vector2i, enabled: bool) -> Dictionary:
++	PLAZA.enabled = enabled
++	var manager := ChunkManager.new()
++	theme.apply_to_chunk_manager(manager)
++	manager.world_seed = int(plan.seed)
++	manager.generation_enabled = false
++	manager.ground_enabled = true
++	manager.ground_splat_enabled = false
++	manager.decals_enabled = false
++	manager.deco_enabled = true
++	manager.sites_enabled = false
++	manager.cover_full_scene = COVER_FULL
++	manager.cover_window_scene = COVER_WINDOW
++	manager.cover_half_scene = COVER_HALF
++	manager._site_mgr = SiteManager.new()
++	add_child(manager)
++	manager._chunk_connectors = plan.connectors_by_chunk.duplicate()
++	manager._chunk_urban_access = plan.urban_access_by_chunk.duplicate()
++	manager._chunk_role = plan.role_by_chunk.duplicate()
++	manager._chunk_archetype = plan.archetype_by_chunk.duplicate()
++	manager._chunk_terrain = plan.terrain_by_chunk.duplicate()
++	manager._gen_coord = coord
++	manager._chunk_blocked[coord] = []
++	var data := ChunkBuildData.new(coord, CPC)
++	manager._active_build_data = data
++	var chunk := Node2D.new()
++	chunk.position = Vector2(coord) * manager.chunk_size_px
++	manager.add_child(chunk)
++	manager._generate_chunk(coord, chunk)
++	manager._active_build_data = null
++	PLAZA.enabled = true
++	return {"manager": manager, "chunk": chunk, "data": data}
++

@@ -1,0 +1,14 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-transition-green-1",
+ "queued_seconds": 102.1,
+ "stop_reason": "completed",
+ "actual_exit": 0,
+ "elapsed_seconds": 61.585,
+ "peak_rss_mb": 381,
+ "diagnostic_count": 0,
+ "diagnostics_head": []
+}
+--- stdout tail (3/19 lines) ---
+PASS: prepared ground layers are pixel-identical to the original synchronous route
+PASS: transition resource fixture makes no save writes or profile selection
+TransitionResourceWarmupTest: 13 passed, 0 failed

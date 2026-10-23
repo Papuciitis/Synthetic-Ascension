@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-22T22:20:50.965542+00:00",
+  "owned_queue_pid": 564425,
+  "children": [
+    {
+      "pid": 571939,
+      "label": "city22-plaza-bed-native-s7"
+    }
+  ],
+  "reason": "Stop remaining old-source native bed checks after S6 image exposed rectangular grass underlay; preserve completed S6 result and prepare source fix before fresh views.",
+  "signal": "SIGTERM to owned queue; it forwards to owned guard and waits cleanup."
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "label": "city22-plaza-transition-green",
+    "project": "/tmp/sa-wp2-plazas",
+    "args": [
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/tests/TransitionResourceWarmupTest.tscn"
+    ],
+    "marker": "TRANSITION_WARMUP_READY"
+  },
+  {
+    "label": "city22-plaza-residency-green-native",
+    "project": "/tmp/sa-wp2-plazas",
+    "args": [
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "res://tools/tests/PlazaResourceResidencyTest.tscn"
+    ],
+    "marker": null
+  },
+  {
+    "label": "city22-plaza-build-data",
+    "project": "/tmp/sa-wp2-plazas",
+    "args": [
+      "--headless",
+      "res://tools/tests/ChunkBuildDataTest.tscn"
+    ],
+    "marker": null
+  },
+  {
+    "label": "city22-plaza-renderer",
+    "project": "/tmp/sa-wp2-plazas",
+    "args": [
+      "--headless",
+      "res://tools/tests/ChunkBlockRendererTest.tscn"
+    ],
+    "marker": null
+  },
+  {
+    "label": "city22-plaza-presentation",
+    "project": "/tmp/sa-wp2-plazas",
+    "args": [
+      "--headless",
+      "res://tools/tests/PlazaPresentationTest.tscn"
+    ],
+    "marker": null
+  },
+  {
+    "label": "city22-plaza-parse",
+    "project": "/tmp/sa-wp2-plazas",
+    "args": [
+      "--headless",
+      "res://tools/tests/ScriptParseAuditTest.tscn"
+    ],
+    "marker": null
+  }
+]

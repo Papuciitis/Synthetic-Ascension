@@ -1,0 +1,343 @@
+{
+	"ambient_spawner": false,
+	"args": [
+		"--visible",
+		"--review=normal",
+		"--render-fps=20",
+		"--discovery=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-discovery.json",
+		"--family=industrial_cutthrough",
+		"--out=/var/tmp/sa-city22/plaza-beds/s6"
+	],
+	"attempt_seed": 4,
+	"bed_render_fps_cap": 20,
+	"building_id": 0,
+	"camera": {
+		"position": "(1568.45, -768.087)",
+		"rotation": 0.0,
+		"viewport": "(1920.0, 1080.0)",
+		"window": "(1280, 720)",
+		"zoom": "(1.0, 1.0)"
+	},
+	"capture_scene": "res://tools/dev/CityBlockPlayablePreview.tscn",
+	"captured_frames": 0,
+	"controlled_enemies": false,
+	"coord": "(0, -1)",
+	"deaths": 0,
+	"district_family": "industrial_cutthrough",
+	"failures": 0,
+	"fixed_camera": true,
+	"fixture": {
+		"ambient_spawner": false,
+		"optional_details_hidden": false,
+		"player_god_mode": true,
+		"renderer": "gl_compatibility",
+		"scripted_input": true,
+		"streaming_frozen_after_reload": true,
+		"video_adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)"
+	},
+	"frames": [],
+	"ground": {
+		"bound": true,
+		"bound_array_layers": 14,
+		"bound_array_path": "res://assets/world/ground/baked/ground_materials.res",
+		"bound_array_size": [
+			512,
+			512
+		],
+		"cache_path": "res://assets/world/ground/baked/ground_materials.res",
+		"cache_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+		"care_mask": {
+			"cells": 1024,
+			"fractional": 0,
+			"local_bounds": "[P: (23, 19), S: (2, 1)]",
+			"max_byte": 255,
+			"nonzero": 6,
+			"sha256": "e945e74efbcb20e3acd0265f813a6b76124dcd87bcf9e0251f69a741b919f9da",
+			"sum_bytes": 1530
+		},
+		"chunk_material_counts": {
+			"2": 17,
+			"4": 68,
+			"6": 612,
+			"7": 327
+		},
+		"manifest_path": "res://assets/world/ground/baked/ground_materials.json",
+		"manifest_sha256": "0709b2614537222889696f24c47a2e0cf96d853421d62a41b2f19b7b525e13ac",
+		"probe": {
+			"care": 1.0,
+			"cell": [
+				24,
+				-13
+			],
+			"material": 6,
+			"walkable": true,
+			"world_px": [
+				1568.44995117188,
+				-768.087036132812
+			]
+		},
+		"selected_sources": [
+			{
+				"layer": 0,
+				"record": {
+					"import_sha256": "674e27f02d3970e50c2b99be04e062074addac8a8414c9bab9ce46223f544664",
+					"layer_sha256": "e03540d8ee935403b9927ded4cfc6ee70abe8c45da77e317c8d742c9d84c52bc",
+					"path": "res://assets/world/ground/ground_grass_01.png",
+					"sha256": "27553f2f93dcd67d712dad138759e3ea46129576c7c3debcbef9370a8e01da29"
+				}
+			},
+			{
+				"layer": 5,
+				"record": {
+					"import_sha256": "bc6227a82bb64d5d3d4d65518348729bf298a6a357beb57ce8ed13ce0416b244",
+					"layer_sha256": "d150b1bc0fcab5ff989af99d6243e4d45df56e18ef6d2ca06f0dcc2e8e956098",
+					"path": "res://assets/world/ground/city_care/wet_earth_v1/wet_earth.png",
+					"sha256": "46d180c754c9c531c88e445dbcb119f435c1d3e7d3340ecac5118d57842f619d"
+				}
+			},
+			{
+				"layer": 12,
+				"record": {
+					"import_sha256": "aed71f2ebfd42afa98644b18699785209113a4350a63fb863dccf8bdeff34635",
+					"layer_sha256": "9ca38c589379e9f4dea9b2c37af0665e5e7121ef1c17e672b3846d98409b0933",
+					"path": "res://assets/world/ground/city_care/v1/damp_moss_soil.png",
+					"sha256": "f18b25c81ba1e859be95195d857ce495c6433f66d72e3a1d2d3016b7eae562fd"
+				}
+			},
+			{
+				"layer": 13,
+				"record": {
+					"import_sha256": "b16b1930745055121f9877f8233bab5e2390add630f011159b6c9923f2de1626",
+					"layer_sha256": "7673fc2de9d7bd7f0d523fbd2fe2bb69823208e72caffffe4875084571b50707",
+					"path": "res://assets/world/ground/city_care/v1/cared_lawn.png",
+					"sha256": "f255b16e580b7b0c88800fd392983af7882ff2ae2c77250f9856fa8954812082"
+				}
+			}
+		],
+		"selected_uniforms": {
+			"ao_strength": "0.3",
+			"cared_lawn_layer": "13.0",
+			"cared_lawn_repeat_px": "320.0",
+			"overgrowth_a": "(0.0, 0.0, 0.0, 0.0)",
+			"overgrowth_b": "(0.0, 0.0, 0.0, 0.0)",
+			"policy_enabled": "true",
+			"slot_index": [
+				6.0,
+				7.0,
+				4.0,
+				2.0,
+				1.0,
+				3.0,
+				8.0,
+				0.0
+			],
+			"slot_layer": [
+				6.0,
+				7.0,
+				4.0,
+				4.0,
+				1.0,
+				6.0,
+				8.0,
+				0.0
+			],
+			"slot_repeat_px": [
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				384.0,
+				320.0
+			],
+			"slot_role": [
+				4.0,
+				1.0,
+				2.0,
+				3.0,
+				6.0,
+				3.0,
+				1.0,
+				0.0
+			],
+			"world_tint": "(0.96, 0.94, 0.9, 1.0)"
+		},
+		"semantic_terrain": "urban"
+	},
+	"ground_context_world_px": [
+		1568.44995117188,
+		-768.087036132812
+	],
+	"ground_review": true,
+	"hits": 0,
+	"image_size": "(1280, 720)",
+	"initial_fight_population": 0,
+	"limits": "Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance.",
+	"local_security": 0,
+	"max_projectiles": 0,
+	"normal_hud": true,
+	"occupied_comparison": false,
+	"optional_details_hidden": false,
+	"physics_ticks_per_second": 60,
+	"plan_seed": 1235886371,
+	"player_god_mode": true,
+	"plaza_bed": {
+		"actual_bed_nodes": [
+			{
+				"contains_expected_focus": true,
+				"node": "PlazaDressing/Bed_0",
+				"texture": "res://assets/world/plazas_v1/kit/plaza_soil.png",
+				"vertex_alpha_max": 1.0,
+				"vertex_alpha_min": 0.0,
+				"vertex_color_count": 25,
+				"world_aabb": {
+					"position": [
+						1478.98999023438,
+						-822.926025390625
+					],
+					"size": [
+						178.920043945312,
+						109.677978515625
+					]
+				}
+			}
+		],
+		"actual_edge_wear_count": 2,
+		"actual_family": "industrial_cutthrough",
+		"actual_piece_counts": {
+			"bed": 1,
+			"crates_stack": 1,
+			"drain_grate": 2,
+			"edge_ground": 2,
+			"handcart": 1,
+			"lamp_post": 4
+		},
+		"actual_plan_island_beds": [
+			{
+				"position": [
+					23,
+					19
+				],
+				"size": [
+					3,
+					2
+				]
+			}
+		],
+		"actual_ring_cells": 9,
+		"actual_role": "entry_court",
+		"actual_state": 1,
+		"expected": {
+			"actual_fixture_bed_nodes": [
+				{
+					"bounds": {
+						"position": [
+							1478.98999023438,
+							-822.926025390625
+						],
+						"size": [
+							178.920043945312,
+							109.677978515625
+						]
+					},
+					"camera_world_px": [
+						1568.44995117188,
+						-768.087036132812
+					],
+					"node": "PlazaDressing/Bed_0"
+				}
+			],
+			"attempt_seed": 4.0,
+			"bed_rect_cells": {
+				"position": [
+					23.0,
+					19.0
+				],
+				"size": [
+					3.0,
+					2.0
+				]
+			},
+			"camera_world_px": [
+				1568.44995117188,
+				-768.087036132812
+			],
+			"candidate_only_not_native_validated": true,
+			"coord": [
+				0.0,
+				-1.0
+			],
+			"family": "industrial_cutthrough",
+			"fixture_ground_splat_enabled": false,
+			"matching_seed_number": 3.0,
+			"plan_seed": 1235886371.0,
+			"role": "entry_court",
+			"segment": 6.0,
+			"state": 1.0
+		},
+		"limits": "Existing native Game metadata/nodes after real streaming reload; native PNG must still be visually reviewed. No forced styles or injected dressing.",
+		"matches_expected": true,
+		"node_covers_expected_focus": true,
+		"planned_bed_matches": true
+	},
+	"reduced_motion": false,
+	"requested_simulation_seconds": 0.0,
+	"review": "normal",
+	"role": "entry_court",
+	"route": [
+		{
+			"care_equal": true,
+			"care_sha256": "e945e74efbcb20e3acd0265f813a6b76124dcd87bcf9e0251f69a741b919f9da",
+			"coord": "(0, -1)",
+			"equal": true,
+			"event": "ground_context_streamed_reload"
+		}
+	],
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scripted_input": true,
+	"seed": 4,
+	"segment": 6,
+	"simulation_fight_seconds": 0.0,
+	"theme": "industrial_cutthrough",
+	"wall_seconds": 0.0,
+	"weapon_fires": 0,
+	"world_cover": {
+		"alpha_upload_bytes": 20443092,
+		"alpha_uploads": 2,
+		"binding_usec": 47,
+		"cell_px": 256.0,
+		"collection_usec": 1475,
+		"comparison_usec": 408,
+		"data_upload_bytes": 89344,
+		"data_uploads": 27,
+		"face_buckets": 76,
+		"force_uploads": false,
+		"foreground_sources": 3,
+		"generation": 101,
+		"grid_cells": 80,
+		"index_count": 78,
+		"index_resyncs": 38,
+		"indexed_faces": 97,
+		"indexed_roofs": 47,
+		"material_binds": 62,
+		"materials": 7,
+		"max_candidates": 14,
+		"peak_candidates": 15,
+		"peak_primitives": 78,
+		"peak_refresh_usec": 511805,
+		"primitive_count": 29,
+		"refresh_usec": 1933,
+		"roof_buckets": 108,
+		"roof_usec": 488,
+		"snapshot_builds": 9,
+		"snapshot_reuses": 92,
+		"snapshot_usec": 0,
+		"solid_usec": 460,
+		"source_reads": 3,
+		"sprite_usec": 451,
+		"visited_faces": 7,
+		"visited_roofs": 2
+	}
+}

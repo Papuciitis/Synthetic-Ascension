@@ -1,0 +1,30 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-parse-verbose-1",
+ "queued_seconds": 71.1,
+ "stop_reason": "runtime_diagnostics",
+ "actual_exit": 0,
+ "elapsed_seconds": 69.759,
+ "peak_rss_mb": 613,
+ "diagnostic_count": 7648,
+ "diagnostics_head": [
+  "ERROR: 5 RID allocations of type 'P12GodotShape2D' were leaked at exit.",
+  "ERROR: 4 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.",
+  "ERROR: 1 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.",
+  "ERROR: 138 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.",
+  "ERROR: 10 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.",
+  "Leaked instance: CompressedTexture2D:9223372060477096218 - Reference count: 10",
+  "Leaked instance: GDScriptNativeClass:9223372042575806779 - Reference count: 13",
+  "Leaked instance: GDScriptNativeClass:9223372042676470081 - Reference count: 4",
+  "Leaked instance: FontFile:9223372060124774757 - Reference count: 7",
+  "Leaked instance: GDScriptNativeClass:9223372043733434752 - Reference count: 2",
+  "Leaked instance: GDScriptNativeClass:9223372043968315790 - Reference count: 1",
+  "Leaked instance: GDScriptNativeClass:9223372044320637347 - Reference count: 12",
+  "Leaked instance: GDScriptNativeClass:9223372044337414564 - Reference count: 20",
+  "Leaked instance: GDScriptNativeClass:9223372044354191781 - Reference count: 2",
+  "Leaked instance: GDScriptNativeClass:9223372044505186734 - Reference count: 1"
+ ]
+}
+--- stdout tail (3/10203 lines) ---
+Orphan StringName: _city_wall_parts (static: 0, total: 1)
+Orphan StringName: fitting (static: 0, total: 1)
+StringName: 6867 unclaimed string names at exit.

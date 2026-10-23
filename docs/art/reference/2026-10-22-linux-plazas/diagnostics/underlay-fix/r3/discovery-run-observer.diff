@@ -1,0 +1,20 @@
+--- original_bounded_discovery_run
++++ same_run_with_semantic_terrain_observation
+@@ -52,7 +52,7 @@
+ 								bounds = bounds.expand(polygon.to_global(vertex))
+ 							beds.append({"node": str(chunk.get_path_to(node)), "bounds": {"position": [bounds.position.x, bounds.position.y], "size": [bounds.size.x, bounds.size.y]}, "camera_world_px": [bounds.get_center().x, bounds.get_center().y]})
+ 				var plaza_plan: Dictionary = chunk.get_meta(PLAZA.META_PLAN, {})
+-				_bed_attempts.append({"family": str(target.family), "attempt_seed": attempt_seed, "plan_seed": int(plan.seed), "coord": [coord.x, coord.y], "role": str(role), "actual_bed_nodes": beds.size(), "matching_seed_number": matching})
++				_bed_attempts.append({"family": str(target.family), "attempt_seed": attempt_seed, "plan_seed": int(plan.seed), "coord": [coord.x, coord.y], "role": str(role), "actual_bed_nodes": beds.size(), "matching_seed_number": matching, "semantic_terrain": str((fixture.manager as ChunkManager).get_chunk_terrain(coord)), "planned_semantic_terrain": str(plan.terrain_by_chunk.get(coord, &""))})
+ 				if not beds.is_empty():
+ 					var focus: Array = beds[0].camera_world_px
+ 					var local_cell: Vector2i = Vector2i(Vector2(float(focus[0]), float(focus[1])) - chunk.global_position) / int(fixture.manager.cell_size_px)
+@@ -62,7 +62,7 @@
+ 						if rect.has_area() and rect.has_point(local_cell):
+ 							bed_rect = rect
+ 							break
+-					result = {"segment": int(target.segment), "family": str(target.family), "attempt_seed": attempt_seed, "plan_seed": int(plan.seed), "coord": [coord.x, coord.y], "role": str(role), "state": int(plaza_plan.get("state", -1)), "bed_rect_cells": {"position": [bed_rect.position.x, bed_rect.position.y], "size": [bed_rect.size.x, bed_rect.size.y]}, "camera_world_px": focus, "actual_fixture_bed_nodes": beds, "candidate_only_not_native_validated": true, "fixture_ground_splat_enabled": false, "matching_seed_number": matching}
++					result = {"segment": int(target.segment), "family": str(target.family), "attempt_seed": attempt_seed, "plan_seed": int(plan.seed), "coord": [coord.x, coord.y], "role": str(role), "state": int(plaza_plan.get("state", -1)), "semantic_terrain": str((fixture.manager as ChunkManager).get_chunk_terrain(coord)), "planned_semantic_terrain": str(plan.terrain_by_chunk.get(coord, &"")), "bed_rect_cells": {"position": [bed_rect.position.x, bed_rect.position.y], "size": [bed_rect.size.x, bed_rect.size.y]}, "camera_world_px": focus, "actual_fixture_bed_nodes": beds, "candidate_only_not_native_validated": true, "fixture_ground_splat_enabled": false, "matching_seed_number": matching}
+ 				fixture.manager.free()
+ 				fixture.clear()
+ 				PLAZA.enabled = true

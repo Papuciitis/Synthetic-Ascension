@@ -1,0 +1,74 @@
+--- failed_r2_executor_unchanged
++++ terrain_corrected_r3_executor
+@@ -12,7 +12,7 @@
+ import time
+ 
+ FIX = Path(__file__).resolve().parent
+-BASE = FIX.parent
++BASE = FIX.parent.parent
+ PROJECT = Path('/tmp/sa-wp2-plazas')
+ RUNS = BASE.parent / 'claude-city-20261021/runs'
+ RUNTIME = 'core/systems/world/proc/chunkgen/PlazaPresentation.gd'
+@@ -43,10 +43,10 @@
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--execute', action='store_true')
+     args = parser.parse_args()
+-    manifest = load(FIX / 'manifest-r2.json')
++    manifest = load(FIX / 'manifest-r3.json')
+     assertions = load(FIX / 'assertion-manifest.json')
+     for name, digest in manifest['files'].items(): need(sha(FIX / name) == digest, 'Frozen package changed: ' + name)
+-    before, after = FIX / 'PlazaPresentation.before.gd.data', FIX / 'PlazaPresentation.after.gd.data'
++    before, after = FIX.parent / 'PlazaPresentation.before.gd.data', FIX.parent / 'PlazaPresentation.after.gd.data'
+     need(sha(before) == manifest['original_runtime_sha256'] and sha(after) == manifest['proposed_runtime_sha256'], 'Frozen runtime bytes changed')
+     overlay = load(BASE / 'plaza-parse-baseline-overlay/manifest.json')
+     original = {row['runtime_path']: row['candidate']['sha256'] for row in overlay['files']}
+@@ -55,15 +55,15 @@
+     def source(expected):
+         for relative, digest in dict(expected, **test_paths).items(): need(sha(PROJECT / relative) == digest, 'Pinned project source changed/missing: ' + relative)
+     source(original)
+-    spec = importlib.util.spec_from_file_location('bed_r2', FIX / 'plaza-bed-native-r2.py')
++    spec = importlib.util.spec_from_file_location('bed_r2', FIX / 'plaza-bed-native-r3.py')
+     bed = importlib.util.module_from_spec(spec); spec.loader.exec_module(bed)
+-    red_out, green_out = FIX / 'underlay-red-r2.json', FIX / 'underlay-green-r2.json'
+-    discovery = FIX / 'plaza-bed-discovery-r2.json'
++    red_out, green_out = FIX / 'underlay-red-r3.json', FIX / 'underlay-green-r3.json'
++    discovery = FIX / 'plaza-bed-discovery-r3.json'
+     cases = [
+-        ('city22-plaza-underlay-red-r2', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(red_out)], 600),
+-        ('city22-plaza-underlay-green-r2', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(green_out)], 600),
+-        ('city22-plaza-bed-tools-parse-r2', str(BASE / 'external_source_parse_probe.tscn'), [str(BASE / 'PlazaBedDiscovery.gd'), str(BASE / 'PlazaBedGamePreview.gd'), str(FIX / 'PlazaBedUnderlayGamePreview.gd')], 300),
+-        ('city22-plaza-bed-discovery-r2', str(BASE / 'PlazaBedDiscovery.tscn'), ['--out=' + str(discovery)], 900)]
++        ('city22-plaza-underlay-red-r3', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(red_out)], 600),
++        ('city22-plaza-underlay-green-r3', 'res://tools/tests/PlazaBedUnderlayTest.tscn', ['--out=' + str(green_out)], 600),
++        ('city22-plaza-bed-tools-parse-r3', str(BASE / 'external_source_parse_probe.tscn'), [str(BASE / 'PlazaBedDiscovery.gd'), str(FIX / 'PlazaBedDiscoveryTerrain.gd'), str(BASE / 'PlazaBedGamePreview.gd'), str(FIX.parent / 'PlazaBedUnderlayGamePreview.gd')], 300),
++        ('city22-plaza-bed-discovery-r3', str(FIX / 'PlazaBedDiscoveryTerrain.tscn'), ['--out=' + str(discovery)], 900)]
+     commands = []
+     for label, scene, extra, timeout in cases:
+         need(not (BASE / (label + '-thermal.json')).exists() and not list(RUNS.glob(label + '-*')), 'Label already used: ' + label)
+@@ -72,7 +72,7 @@
+     if not args.execute:
+         print(json.dumps({'engines_started': 0, 'runtime_edits': 0, 'commands': commands, 'runtime_change_after_strict_red_only': str(after), 'expected': assertions}, indent=2))
+         return 0
+-    summary_path = FIX / 'root-underlay-execution-r2.json'
++    summary_path = FIX / 'root-underlay-execution-r3.json'
+     need(not summary_path.exists(), 'Execution record already exists')
+     summary = {'cases': [], 'runtime_applied': False, 'green_clean': False, 'completed_discovery': False, 'scope': 'Focused causal regression and fresh discovery only; no native visual acceptance/full-audit claim.'}
+     child = None
+@@ -111,7 +111,7 @@
+         save()
+         raw = run(0, original, True)
+         report = load(red_out)
+-        need(report['passes'] == 29 and report['failures'] == 8 and report['save_writes'] == 0, 'RED footer JSON differs')
++        need(report['passes'] == 31 and report['failures'] == 8 and report['save_writes'] == 0 and report.get('semantic_terrain') == 'urban' and report.get('generator_underlay_matches_native') is True, 'RED footer JSON differs')
+         need(assertions['red_footer'] in (raw.parent / 'logs/stdout.log').read_text(), 'Expected RED footer absent')
+         for row in report['states']:
+             need(row['state'] in range(5) and row['outside_ok'] and row['material_ok'] == (row['state'] == 0) and row['care_ok'] == (row['state'] == 0), 'RED failed outside the exact intended state checks')
+@@ -122,7 +122,7 @@
+         time.sleep(3)
+         raw = run(1, fixed)
+         report = load(green_out)
+-        need(report['passes'] == 37 and report['failures'] == 0 and report['save_writes'] == 0 and len(report['states']) == 5, 'GREEN count/state/save report differs')
++        need(report['passes'] == 39 and report['failures'] == 0 and report['save_writes'] == 0 and report.get('semantic_terrain') == 'urban' and report.get('generator_underlay_matches_native') is True and len(report['states']) == 5, 'GREEN count/state/save report differs')
+         need(assertions['green_footer'] in (raw.parent / 'logs/stdout.log').read_text() and all(row['material_ok'] and row['care_ok'] and row['outside_ok'] for row in report['states']), 'GREEN underlay matrix not clean')
+         summary['green_clean'] = True; save()
+         time.sleep(3); run(2, fixed)

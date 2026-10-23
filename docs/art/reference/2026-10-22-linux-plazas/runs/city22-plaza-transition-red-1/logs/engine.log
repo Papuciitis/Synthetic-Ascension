@@ -1,0 +1,53 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: pinned segment and seed select the real working district
+PASS: working plaza additions begin cold before integrated preparation
+TRANSITION_WARMUP_READY
+PASS: integrated preparation reaches ready after the plaza stage
+ERROR: working plaza edge cache is ready before manager instantiation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:102)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: working plaza dressing cache is ready before manager instantiation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:104)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: all working plaza additions are retained after integrated preparation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:109)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: cold plaza preparation yields loading-cue process frames
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:110)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: cold plaza preparation submits visible loading-cue frames
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:112)
+       [2] prepare_transition_resources (res://core/systems/world/ChunkManager.gd:278)
+       [3] _finish_transition_resource_frame (res://core/systems/world/ChunkManager.gd:286)
+ERROR: generation-disabled manager preserves the prepared working plaza state
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/TransitionResourceWarmupTest.gd:45)
+       [1] _run (res://tools/tests/TransitionResourceWarmupTest.gd:122)
+PASS: cold preparation renders multiple loading-cue frames rather than one frozen card
+PASS: cold preparation avoids the previous one-second main-thread block (largest 202.8 ms)
+WARMUP frames=18 largest_gap_ms=202.807 plaza_process_frames=0 plaza_draw_frames=0 renderer=X11
+PASS: prepared ground layers are pixel-identical to the original synchronous route
+PASS: transition resource fixture makes no save writes or profile selection
+TransitionResourceWarmupTest: 7 passed, 6 failed

@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "label": "city22-plaza-underlay-red-r2",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+        "--label",
+        "city22-plaza-underlay-red-r2",
+        "--project",
+        "/tmp/sa-wp2-plazas",
+        "--start-temperature",
+        "65",
+        "--max-wait",
+        "900",
+        "--timeout",
+        "600",
+        "--duty-percent",
+        "25",
+        "--",
+        "--headless",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "res://tools/tests/PlazaBedUnderlayTest.tscn",
+        "--",
+        "--out=/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-underlay-fix/underlay-red-r2.json"
+      ],
+      "state": "running",
+      "guard_started_unix_ns": 1792708713113440824,
+      "guard_source_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "wrapper_exit": 1,
+      "raw": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-underlay-red-r2-1/run-results.json",
+      "raw_sha256": "741cf2cb62a00e27b1db34b3baf4584d30be1e5a5ff3ee87924abe1ae375dd0e",
+      "guard": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city22-plaza-underlay-red-r2-thermal.json",
+      "guard_sha256": "6bdfa2ccc5f7584e528e10e9739e111f6220fe075ac99acec98938cebba0a275"
+    }
+  ],
+  "runtime_applied": false,
+  "green_clean": false,
+  "completed_discovery": false,
+  "scope": "Focused causal regression and fresh discovery only; no native visual acceptance/full-audit claim.",
+  "error": "RuntimeError: Unexpected/missing diagnostics: city22-plaza-underlay-red-r2",
+  "interrupted_signal": null,
+  "final_runtime_sha256": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284"
+}

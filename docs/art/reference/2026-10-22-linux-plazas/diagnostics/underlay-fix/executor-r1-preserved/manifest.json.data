@@ -1,0 +1,27 @@
+{
+  "unapplied": true,
+  "project": "/tmp/sa-wp2-plazas",
+  "original_runtime_sha256": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284",
+  "proposed_runtime_sha256": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+  "files": {
+    "runtime.patch": "ebc74e69a6c1579472c4fc5ecca2e4d41eae537245a026754ad3ccc41724993b",
+    "test.patch": "9a9a49b0dad01074b124b7ffdc57af1e08c3e9802c7119210d96b413ab57c245",
+    "PlazaBedUnderlayTest.gd": "dc54cb0d2fbd4a4d05fddf02524c7ed82c82501d84ed708050e6a2cafba3b56f",
+    "PlazaBedUnderlayTest.tscn": "8d771ced327b40dfb757ef1c432e9079ddfd17e63b1db5f1b35d7b2966b7e9af",
+    "PlazaBedUnderlayTest.repo.tscn": "a9f363e9b400f7d37a69d56a55159c5a4b90b5d9d29f28c46684bf3e8044455e",
+    "PlazaBedUnderlayGamePreview.gd": "f4edd4a66f5de5e77c075754e65cfcd3ac11a6b2ddb2e6dde7d1ea38a4408ea5",
+    "PlazaBedUnderlayGamePreview.tscn": "a790a29a454fd3a8b14efc99c99ce64aec56797084fe1554f64aaf28a21014f1",
+    "plaza-bed-helpers-r2-meta.json": "466a5cd2d11c8ef46379a12100ddb83744e748eda9658c2c6a2c0153c53406ad",
+    "plaza-bed-native-r2.py": "2d4935cf53e9fbe7b5467b55dd0549e7cdc319fcba7216030aed9b3a972f789b",
+    "native-r2-vs-original.diff": "9f5ffab91f25d67fb1bfc1a89a7fb79450185f43ef01690842ecaab1aaf6a526",
+    "assertion-manifest.json": "f41f5b6d94d9e211880b648ea313e1f338f65cb2bcbfb863424bf6cf7b1930ef",
+    "root-underlay-red-green.py": "ea707856c1743027656745a58544f745e5cf0b43b90ac55a2016bae1e1c5f7fa",
+    "causal-source-evidence.json": "98769ea48c34e3a4aa908fade88aff3b6316785fd42e67f5f728671422cf4f32",
+    "README.md": "470c46734cf5b598cfc7f8c6a16fd3cdd9acac05e589209024d617c7a5f67708"
+  },
+  "engines_run": 0,
+  "expected_red": "4 worn states x material+care =8failures; tended/outside/physics/seed controls should pass",
+  "expected_green": "all focused underlay checks pass; separate actual native visual acceptance still required",
+  "fixture_correction": "Independent read-only review found missing mark_ring variant bits in disabled-pass clone; matrix now clones final natural physical/low-cover arrays while using original floor arrays. No runtime behavior modified by this correction.",
+  "independent_review": "Corrected test dc54cb0d / observer f4edd4a6 / runtimepatch ebc74e69 reviewed read-only by /root/street_native_prep_22; no further concrete GDScript/type or causal blocker; expected counts remain unrun."
+}

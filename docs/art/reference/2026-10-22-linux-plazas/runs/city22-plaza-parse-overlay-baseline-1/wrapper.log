@@ -1,0 +1,23 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city22-plaza-parse-overlay-baseline-1",
+ "queued_seconds": 147.1,
+ "stop_reason": "runtime_diagnostics",
+ "actual_exit": 0,
+ "elapsed_seconds": 77.926,
+ "peak_rss_mb": 613,
+ "diagnostic_count": 8,
+ "diagnostics_head": [
+  "ERROR: 5 RID allocations of type 'P12GodotShape2D' were leaked at exit.",
+  "ERROR: 4 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.",
+  "ERROR: 1 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.",
+  "ERROR: 138 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.",
+  "ERROR: 10 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.",
+  "WARNING: 772 ObjectDB instances were leaked at exit (run with `--verbose` for details).",
+  "ERROR: 548 resources still in use at exit (run with --verbose for details).",
+  "ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE"
+ ]
+}
+--- stdout tail (3/17 lines) ---
+ERROR: 1 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.
+ERROR: 138 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.
+ERROR: 10 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.

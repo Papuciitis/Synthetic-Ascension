@@ -1,0 +1,124 @@
+--- preserved-r3-build_packet.py
++++ r4-build_packet.py
+@@ -11,6 +11,7 @@
+ import datetime
+ import gzip
+ import hashlib
++import importlib.util
+ import json
+ import re
+ import subprocess
+@@ -69,8 +70,8 @@
+         'presentation': ['presentation'], 'original-full-parse-audit': [],
+         'sorted-load-diagnostic': ['parse-sorted-candidate'],
+         'bed-underlay-regression': ['underlay-green-r3'],
+-        'bed-tools-scoped-parser': ['bed-tools-parse-r3'], 'headless-bed-discovery': ['bed-discovery-r3'],
+-        'native-bed-S6': ['bed-native-r3-s6'], 'native-bed-S7': ['bed-native-r3-s7'], 'native-bed-S8': ['bed-native-r3-s8'],
++        'bed-tools-scoped-parser': ['bed-tools-parse-r4'], 'headless-bed-discovery': ['bed-discovery-r4'],
++        'native-bed-S6': ['bed-native-r4-s6'], 'native-bed-S7': ['bed-native-r4-s7'], 'native-bed-S8': ['bed-native-r4-s8'],
+         'native-S2': ['native-s2', 'survey-s2'], 'native-S6': ['native-s6', 'survey-s6'],
+         'native-S7': ['native-s7', 'survey-s7'], 'native-S8': ['native-s8', 'survey-s8'],
+     }}[KIND]
+@@ -231,7 +232,7 @@
+         for source in sorted(fix_dir.rglob('*')):
+             if not source.is_file() or '__pycache__' in source.parts or source.suffix == '.pyc':
+                 continue
+-            if source.name.startswith('root-underlay-execution') and source.suffix == '.json':
++            if source.name.startswith(('root-underlay-execution', 'resume-discovery-execution')) and source.suffix == '.json':
+                 result = json.loads(source.read_text())
+                 if not result.get('completed_discovery') and not result.get('error') and not result.get('interrupted_signal'):
+                     continue  # Never package an active executor summary as final evidence.
+@@ -284,14 +285,47 @@
+ 
+ 
+ def plaza_fixed_source(row, completed):
+-    manifest = CONTROL / 'plaza-bed-underlay-fix/r3/manifest-r3.json'
+-    if not manifest.is_file():
+-        return False
+-    expected = json.loads(manifest.read_text())
++    path = CONTROL / 'plaza-bed-underlay-fix/r4/plaza-bed-helpers-r4-meta.json'
++    if not path.is_file():
++        return False
++    expected = json.loads(path.read_text())['parent_runtime_sha256']
+     hashes = completed[row['label']][1].get('source_hashes', {})
+-    return (hashes.get('core/systems/world/proc/chunkgen/PlazaPresentation.gd') == expected['proposed_runtime_sha256']
+-            and hashes.get('tools/tests/PlazaBedUnderlayTest.gd') == expected['files']['PlazaBedUnderlayTest.gd']
+-            and hashes.get('tools/tests/PlazaBedUnderlayTest.tscn') == expected['files']['PlazaBedUnderlayTest.repo.tscn'])
++    return all(hashes.get(relative) == digest and sha((PROJECT / relative).read_bytes()) == digest
++               for relative, digest in expected.items())
++
++
++def plaza_r4_evidence_clean(row, completed):
++    """Use the frozen native validator to recheck actual R4 prerequisite/bed receipts."""
++    path = CONTROL / 'plaza-bed-underlay-fix/r4/plaza-bed-native-r4.py'
++    try:
++        if sha(path.read_bytes()) != 'eeb01709edd4c22d35f2d4c1317fc343f61eddd4b6e55207aa3427abdef89a05':
++            return False
++        spec = importlib.util.spec_from_file_location('plaza_packet_bed_r4', path)
++        bed = importlib.util.module_from_spec(spec)
++        spec.loader.exec_module(bed)
++        bed.verify_focused()
++        label = row['label']
++        if label == 'city22-plaza-bed-tools-parse-r4':
++            raw, binding = bed.clean_records(label)
++            meta = json.loads((path.parent / 'plaza-bed-helpers-r4-meta.json').read_text())
++            return (plaza_fixed_source(row, completed)
++                    and all(helper['gd'] in raw['command'] for helper in meta['helpers'].values())
++                    and 'ExternalSourceParseProbe: checked=4 failures=0' in (Path(binding['raw']).parent / 'logs/stdout.log').read_text())
++        discovery = path.parent / 'plaza-bed-discovery-r4.json'
++        meta, entries, hashes, _ = bed.validate(discovery)
++        if label == 'city22-plaza-bed-discovery-r4':
++            return plaza_fixed_source(row, completed)
++        match = re.fullmatch(r'city22-plaza-bed-native-r4-s([678])', label)
++        if match is None:
++            return False
++        segment = int(match.group(1))
++        outputs = [Path(arg[6:]) for arg in row['command'] if arg.startswith('--out=')]
++        if len(outputs) != 1:
++            return False
++        bed.native_acceptance(segment, entries[segment], outputs[0], label, hashes, meta)
++        return plaza_fixed_source(row, completed)
++    except (RuntimeError, ValueError, KeyError, OSError, TypeError):
++        return False
+ 
+ 
+ def plaza_underlay_report_clean(row):
+@@ -390,6 +424,9 @@
+                    'godot_started': False, 'owned_pids': outer.get('owned_pids'),
+                    'guard_reason': outer.get('reason'), 'received_signal': outer.get('received_signal'),
+                    'thermal': copy(thermal, 'runs/' + label + '/thermal.json', 'original completed preflight record')}
++            if label == 'city22-plaza-bed-tools-parse-r3' and outer.get('reason') == 'external_sigterm' and outer.get('received_signal') == 15 and outer.get('owned_pids') == [] and outer.get('throttle_cycles') == 0:
++                row['classification'] = 'queued_external_sigterm_no_parser_assertions'
++                row['qualification'] = 'Completed R3 RED31/8 and GREEN39/0 remain valid; parser was queued with no owned Godot. Signal sender is unknown. R4 resumes only fresh tools/discovery/native.'
+             wrapper = CONTROL / (label + '-wrapper.log')
+             if wrapper.is_file():
+                 row['wrapper'] = copy(wrapper, 'runs/' + label + '/wrapper.log', 'original wrapper record')
+@@ -494,9 +531,9 @@
+         elif KIND == 'plazas' and gate == 'bed-underlay-regression':
+             successes = [row for row in successes if plaza_fixed_source(row, completed) and plaza_underlay_report_clean(row)]
+         elif KIND == 'plazas' and gate in ['bed-tools-scoped-parser', 'headless-bed-discovery']:
+-            successes = [row for row in successes if plaza_fixed_source(row, completed)]
++            successes = [row for row in successes if plaza_fixed_source(row, completed) and plaza_r4_evidence_clean(row, completed)]
+         elif KIND == 'plazas' and gate.startswith('native-bed-'):
+-            successes = [row for row in successes if plaza_fixed_source(row, completed) and plaza_bed_report_clean(row)]
++            successes = [row for row in successes if plaza_fixed_source(row, completed) and plaza_bed_report_clean(row) and plaza_r4_evidence_clean(row, completed)]
+         gate_status[gate] = successes[-1]['run_folder'] if successes else 'pending_clean_completion'
+     for name in ['guarded_engine-final.py', 'source_parse_probe.gd', 'source_parse_probe.tscn',
+                  'street-ground-checks-queue.json' if KIND == 'streets' else 'plaza-focused-queue.json']:
+@@ -510,14 +547,14 @@
+            'visual_acceptance': 'Pending explicit image/route review. A clean native scene exit alone supplies no acceptance decision.',
+            'performance_claim': 'Functional tests/captures under external duty limiting establish no comparative FPS/GPU/whole-Game budget claim.',
+            'plaza_audit_qualification': ('Original pre-underlay candidate audit compiles 564/0 but has 8 shutdown diagnostics (772 objects / 548 resources); not clean. Production original audit is clean. Exact seven-file production overlay in SAME plaza checkout reproduces identical diagnostics and restores candidate hashes, excluding those seven runtime edits as that checkout cause without proving first cause. Sorted pre-underlay diagnostic completed 564/0 with 0 diagnostics: its maximum was 82 C while its owned engine was live and 98 C while queued with no owned engine. Sorted/helper parsers remain separate and never replace the original audit gate.' if KIND == 'plazas' else None),
+-           'plaza_bed_visual_qualification': ({'old_S6': plaza_visual_status('city22-plaza-bed-native-s6'), 'old_followups': 'Root cancelled the owned old-source S7 queue after visual rejection; old S8 was not launched. Retained cancellation/raw/guard records are separate from assertion results.', 'r2_fixture_failure': 'Actual focused r2 was unexpected31passed/6failed. Its parent fixture omitted plan terrain, selecting fallback dirt1/care0 rather than the native urban6/care1. The failed source/raw/footer stay unchanged; it is not a causal RED pass.', 'r3': 'Requires terrain-corrected fixed-source focused 39/0, fresh discovery and actual Game plan/node/reload evidence with exact planned terrain, material 7 or 9 and care 0 in every bed cell. Native images remain pending explicit root visual acceptance.'} if KIND == 'plazas' else None)})
++           'plaza_bed_visual_qualification': ({'old_S6': plaza_visual_status('city22-plaza-bed-native-s6'), 'old_followups': 'Root cancelled the owned old-source S7 queue after visual rejection; old S8 was not launched. Retained cancellation/raw/guard records are separate from assertion results.', 'r2_fixture_failure': 'Actual focused r2 was unexpected31passed/6failed. Its parent fixture omitted plan terrain, selecting fallback dirt1/care0 rather than the native urban6/care1. The failed source/raw/footer stay unchanged; it is not a causal RED pass.', 'r3_focused': 'Actual exact RED31/8 and clean GREEN39/0 retained on terrain-corrected fixture; fixed c163 committed0c92. R3 helper parser received external SIGTERM15 while queued with no owned Godot; sender unknown, no parser/discovery/native verdict.', 'r4_resume': 'Revalidates immutable completed R3 regression and all12 current source pins, then only fresh R4 parser/discovery/native. Same a49 terrain helper and actual Game plan/node/reload/terrain/material7or9/care0 checks; original PNGs still need explicit root visual acceptance.'} if KIND == 'plazas' else None)})
+     evidence = PACKET / 'EVIDENCE.md'
+     text = evidence.read_text().split('\n## Completed-run refresh\n')[0]
+     table = '\n| Gate | Latest clean completed run |\n| --- | --- |\n'
+     table += '\n'.join('| ' + gate + ' | ' + value + ' |' for gate, value in gate_status.items()) + '\n'
+     if KIND == 'plazas':
+         text = text.split('\n## Worn-bed visual correction\n')[0]
+-        text += '\n## Worn-bed visual correction\n\nThe first S6 bed capture completed cleanly but is **VISUAL_REJECTED**: a raised green cared-garden frame remains beneath brown industrial earth. Its original PNG and raw records are preserved. Root cancelled remaining old-source followups; S7 cancellation supplies no gameplay assertion, and S8 has no old-source capture. The first focused r2 was unexpected 31/6 because its inherited fixture omitted the real terrain map and tested fallback dirt. That failed result is preserved. The r3 fixture copies the exact planned terrain and keeps the original 37 checks plus two native-cause preconditions; its strict prediction is RED 31/8 then GREEN 39/0. Fresh r3 discovery/native gates are separate. Clean r3 captures still require explicit image review; no first-S6 visual acceptance is claimed. Sorted diagnostic completed 564/0 with no diagnostics on its retained pre-underlay source; 82 C was its owned-engine maximum, while 98 C occurred queued with no owned engine. Original full-audit shutdown diagnostics remain qualified.\n'
++        text += '\n## Worn-bed visual correction\n\nThe first S6 bed capture completed cleanly but is **VISUAL_REJECTED**: a raised green cared-garden frame remains beneath brown industrial earth. Its original PNG and raw records are preserved. Root cancelled remaining old-source followups; S7 cancellation supplies no gameplay assertion, and S8 has no old-source capture. The first focused r2 was unexpected 31/6 because its inherited fixture omitted the real terrain map and tested fallback dirt. That failed result is preserved. The r3 fixture copies the exact planned terrain and keeps the original 37 checks plus two native-cause preconditions; its actual strict RED31/8 and clean GREEN39/0 are retained, with fixedc163 committed0c92. The subsequent R3 helper parser received external SIGTERM15 while queued with no owned Godot; sender is unknown and no parser assertions ran. R4 resumes only fresh four-helper parse/discovery/native after revalidating completed regression and all12 fixed source pins; the same a49 terrain helper is reused. Clean R4 captures still require explicit image review; no first-S6 visual acceptance is claimed. Sorted diagnostic completed 564/0 with no diagnostics on its retained pre-underlay source; 82 C was its owned-engine maximum, while 98 C occurred queued with no owned engine. Original full-audit shutdown diagnostics remain qualified.\n'
+         readme = PACKET / 'README.md'
+         original = readme.read_text().split('\n## Worn-bed visual correction\n')[0]
+         readme.write_text(original + text[text.index('\n## Worn-bed visual correction\n'):])

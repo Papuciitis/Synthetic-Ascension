@@ -1,0 +1,127 @@
+{
+  "closure_limit": "No complete historical Game or generated cache byte closure is supplied. Dynamic resources and absent launch cache hashes stay missing.",
+  "git_head": "d14d71c3a52e85f4fc5d77a1150eed8240c3b548",
+  "recorded_asset_import_inventory": "sources/recorded-maps/106d8b54d7b381ca64fcfdaaf2cf082442b28f7578cf5f32d6d7117ac5c9806f.json",
+  "recorded_generated_import_count": 0,
+  "run": "city22-plaza-parse-production-baseline-r2-1",
+  "scoped": {
+    "core/systems/world/ChunkManager.gd": {
+      "launch_sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15",
+      "snapshot": "sources/blobs/354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15-ChunkManager.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+      "launch_sha256": "f30f0240c40c9bc740341ed67bf6ac6bcb0846257c652fd121f1dfcaa8425fdb",
+      "snapshot": "sources/blobs/f30f0240c40c9bc740341ed67bf6ac6bcb0846257c652fd121f1dfcaa8425fdb-ChunkBlockRenderer.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/chunks/ChunkBuildData.gd": {
+      "launch_sha256": "e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf",
+      "snapshot": "sources/blobs/e529821c74071ad44663f791c61e9f6594d452f28e0cc94213aa9ddec9a90bcf-ChunkBuildData.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/chunks/PlazaEdgeKit.gd": {
+      "launch_sha256": "f7484c16eabb7a95ea4b2a14e222380107e0e31245f287209b6d887bdf4fe84d",
+      "snapshot": "sources/blobs/f7484c16eabb7a95ea4b2a14e222380107e0e31245f287209b6d887bdf4fe84d-PlazaEdgeKit.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd": {
+      "launch_sha256": "b810403898e2349116642d0455f5cfb0d8cf113d6669194a51e8b7b3aba9a31b",
+      "snapshot": "sources/blobs/b810403898e2349116642d0455f5cfb0d8cf113d6669194a51e8b7b3aba9a31b-PlazaPresentation.gd",
+      "status": "preserved exact content"
+    },
+    "scenes/world/buildings/CityBlockRoofForms.gd": {
+      "launch_sha256": "cae6029ba6549f5a989ba33d872df81d04dfd9a1b9f31b52f82dcd9e5762c7da",
+      "snapshot": "sources/blobs/cae6029ba6549f5a989ba33d872df81d04dfd9a1b9f31b52f82dcd9e5762c7da-CityBlockRoofForms.gd",
+      "status": "preserved exact content"
+    },
+    "scenes/world/plazas/PlazaDressing.gd": {
+      "launch_sha256": "f7f08d6fe3820314dfe77f56a6e9bafc9cde6883139f5c9e84535478cd854bf1",
+      "snapshot": "sources/blobs/f7f08d6fe3820314dfe77f56a6e9bafc9cde6883139f5c9e84535478cd854bf1-PlazaDressing.gd",
+      "status": "preserved exact content"
+    },
+    "tools/design/build_plaza_kit.py": {
+      "launch_sha256": "ebe34824540129f1cdf99f17487c95a10aaead5cad561143a75709e818848c88",
+      "snapshot": "sources/blobs/ebe34824540129f1cdf99f17487c95a10aaead5cad561143a75709e818848c88-build_plaza_kit.py",
+      "status": "preserved exact content"
+    },
+    "tools/dev/CitySegmentSurvey.gd": {
+      "launch_sha256": "57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb",
+      "snapshot": "sources/blobs/57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb-CitySegmentSurvey.gd",
+      "status": "preserved exact content"
+    },
+    "tools/dev/CitySegmentSurvey.tscn": {
+      "launch_sha256": "e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18",
+      "snapshot": "sources/blobs/e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18-CitySegmentSurvey.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ChunkBlockRendererTest.gd": {
+      "launch_sha256": "997652b709198295b1e1af9fa4fd086705061362ca703493e78e6c4006b269c8",
+      "snapshot": "sources/blobs/997652b709198295b1e1af9fa4fd086705061362ca703493e78e6c4006b269c8-ChunkBlockRendererTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ChunkBlockRendererTest.tscn": {
+      "launch_sha256": "46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3",
+      "snapshot": "sources/blobs/46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3-ChunkBlockRendererTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ChunkBuildDataTest.gd": {
+      "launch_sha256": "a10f7d5dd137c941f1d4bc3738e93f9886ffaf23645f568659c5266b4cecb770",
+      "snapshot": "sources/blobs/a10f7d5dd137c941f1d4bc3738e93f9886ffaf23645f568659c5266b4cecb770-ChunkBuildDataTest.gd",
+      "status": "preserved packet snapshot exactly matches launch SHA256"
+    },
+    "tools/tests/ChunkBuildDataTest.tscn": {
+      "launch_sha256": "1ba3b48b93258640859370b400ebfdd377b8c12989f23a977b948cfc38d6da2d",
+      "snapshot": "sources/blobs/1ba3b48b93258640859370b400ebfdd377b8c12989f23a977b948cfc38d6da2d-ChunkBuildDataTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/PlazaPresentationTest.gd": {
+      "launch_sha256": "834e6be26a202ece5c0054395da0786e461602c4dd637de3c5d92408087b87d7",
+      "snapshot": "sources/blobs/834e6be26a202ece5c0054395da0786e461602c4dd637de3c5d92408087b87d7-PlazaPresentationTest.gd",
+      "status": "historical Git bytes exactly match launch SHA256"
+    },
+    "tools/tests/PlazaPresentationTest.tscn": {
+      "launch_sha256": "de7d541eb0eaff8e64b2cd305a5b1373509f5fe468369738737f79c4592fda4c",
+      "snapshot": "sources/blobs/de7d541eb0eaff8e64b2cd305a5b1373509f5fe468369738737f79c4592fda4c-PlazaPresentationTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ScriptParseAuditTest.gd": {
+      "launch_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+      "snapshot": "sources/blobs/0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736-ScriptParseAuditTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ScriptParseAuditTest.tscn": {
+      "launch_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+      "snapshot": "sources/blobs/332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2-ScriptParseAuditTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/TransitionResourceWarmupTest.gd": {
+      "launch_sha256": "135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1",
+      "snapshot": "sources/blobs/135becac459c25716314f17a11fc1883de540da1bc1ca4c40207675ec7d4bce1-TransitionResourceWarmupTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/TransitionResourceWarmupTest.tscn": {
+      "launch_sha256": "0d8da33d969ebb50ff1597e0972ca373ff83c4688bbe67b07ff34afef91c4f2c",
+      "snapshot": "sources/blobs/0d8da33d969ebb50ff1597e0972ca373ff83c4688bbe67b07ff34afef91c4f2c-TransitionResourceWarmupTest.tscn",
+      "status": "preserved exact content"
+    }
+  },
+  "source_untracked": [
+    "assets/world/city_block/domestic_awning.png.import",
+    "assets/world/city_block/donjon_cell_grille.png.import",
+    "assets/world/city_block/donjon_gate_arch.png.import",
+    "assets/world/city_block/donjon_masonry_bay.png.import",
+    "assets/world/city_block/planted_corner.png.import",
+    "assets/world/city_block/planted_stone_trough.png.import",
+    "assets/world/city_block/street_setts.png.import",
+    "assets/world/city_block/temperate_tree.png.import",
+    "assets/world/city_block/wall_lantern.png.import",
+    "assets/world/city_block/worn_setts.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import"
+  ],
+  "tracked_git_status": ""
+}

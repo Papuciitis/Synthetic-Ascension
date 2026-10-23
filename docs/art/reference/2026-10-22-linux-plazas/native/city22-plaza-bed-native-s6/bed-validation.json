@@ -1,0 +1,110 @@
+{
+  "actual_bed_nodes": [
+    {
+      "contains_expected_focus": true,
+      "node": "PlazaDressing/Bed_0",
+      "texture": "res://assets/world/plazas_v1/kit/plaza_soil.png",
+      "vertex_alpha_max": 1.0,
+      "vertex_alpha_min": 0.0,
+      "vertex_color_count": 25,
+      "world_aabb": {
+        "position": [
+          1478.98999023438,
+          -822.926025390625
+        ],
+        "size": [
+          178.920043945312,
+          109.677978515625
+        ]
+      }
+    }
+  ],
+  "actual_edge_wear_count": 2,
+  "actual_family": "industrial_cutthrough",
+  "actual_piece_counts": {
+    "bed": 1,
+    "crates_stack": 1,
+    "drain_grate": 2,
+    "edge_ground": 2,
+    "handcart": 1,
+    "lamp_post": 4
+  },
+  "actual_plan_island_beds": [
+    {
+      "position": [
+        23,
+        19
+      ],
+      "size": [
+        3,
+        2
+      ]
+    }
+  ],
+  "actual_ring_cells": 9,
+  "actual_role": "entry_court",
+  "actual_state": 1,
+  "discovery_json": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/plaza-bed-discovery.json",
+  "discovery_sha256": "843914cdb24e17d52504cb1fd9573dd80312a5d03f13a20ed87ff630ea9a34a9",
+  "expected": {
+    "actual_fixture_bed_nodes": [
+      {
+        "bounds": {
+          "position": [
+            1478.98999023438,
+            -822.926025390625
+          ],
+          "size": [
+            178.920043945312,
+            109.677978515625
+          ]
+        },
+        "camera_world_px": [
+          1568.44995117188,
+          -768.087036132812
+        ],
+        "node": "PlazaDressing/Bed_0"
+      }
+    ],
+    "attempt_seed": 4.0,
+    "bed_rect_cells": {
+      "position": [
+        23.0,
+        19.0
+      ],
+      "size": [
+        3.0,
+        2.0
+      ]
+    },
+    "camera_world_px": [
+      1568.44995117188,
+      -768.087036132812
+    ],
+    "candidate_only_not_native_validated": true,
+    "coord": [
+      0.0,
+      -1.0
+    ],
+    "family": "industrial_cutthrough",
+    "fixture_ground_splat_enabled": false,
+    "matching_seed_number": 3.0,
+    "plan_seed": 1235886371.0,
+    "role": "entry_court",
+    "segment": 6.0,
+    "state": 1.0
+  },
+  "failures": 0,
+  "limits": "Existing native Game metadata/nodes after real streaming reload; native PNG must still be visually reviewed. No forced styles or injected dressing.",
+  "matches_expected": true,
+  "node_covers_expected_focus": true,
+  "planned_bed_matches": true,
+  "save_writes": 0,
+  "source_sha256": {
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/PlazaBedGamePreview.gd": "f62d1ec663572d055bd513dbba8c715d3fab5de030d47ed433093e2baa499bcd",
+    "res://core/systems/world/proc/chunkgen/PlazaPresentation.gd": "6c3f5d62de0677fbb0b605f5804e65f1d09117b22fc168e938e52f41b3667284",
+    "res://scenes/world/plazas/PlazaDressing.gd": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+    "res://tools/dev/CityBlockPlayablePreview.gd": "7abb8d4b0471d47a403b8b702ccf834364bb5cb2dfe01b12c54526c38c47ed83",
+    "res://tools/tests/PlazaPresentationTest.gd": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286"
+  }
+}

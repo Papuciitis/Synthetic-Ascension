@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: pinned segment and seed select the real working district
+PASS: working plaza additions begin cold before integrated preparation
+TRANSITION_WARMUP_READY
+PASS: integrated preparation reaches ready after the plaza stage
+PASS: cold preparation renders multiple loading-cue frames rather than one frozen card
+PASS: cold preparation avoids the previous one-second main-thread block (largest 202.8 ms)
+WARMUP frames=18 largest_gap_ms=202.807 plaza_process_frames=0 plaza_draw_frames=0 renderer=X11
+PASS: prepared ground layers are pixel-identical to the original synchronous route
+PASS: transition resource fixture makes no save writes or profile selection
+TransitionResourceWarmupTest: 7 passed, 6 failed

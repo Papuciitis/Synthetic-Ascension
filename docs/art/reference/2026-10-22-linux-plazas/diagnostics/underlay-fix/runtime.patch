@@ -1,0 +1,22 @@
+--- a/core/systems/world/proc/chunkgen/PlazaPresentation.gd
++++ b/core/systems/world/proc/chunkgen/PlazaPresentation.gd
+@@ -1044,14 +1044,16 @@
+ 		var prop: Vector2i = island.prop
+ 		if prop.x >= 0:
+ 			_own_art(data, prop)
+-	# Ground presentation only: the island cells that are not a bed take the
+-	# plaza's own paving (stamped above the island; no blocker changes).
++	# Tended beds keep their planted underlay. Worn ground feathers into the
++	# square, so re-pave the whole existing island to remove the old lawn/care
++	# owner under its rough edge (no blocker or outside-island changes).
+ 	var tex := int(plan.get("repave_tex", -1))
+ 	if tex >= 0:
+ 		var unused_rng := RandomNumberGenerator.new()
+ 		for island: Dictionary in plan.islands:
+ 			var cells := ChunkShapeGen.rect_cells(island.rect)
+-			ChunkShapeGen.subtract_rect(cells, island.bed)
++			if int(plan.get("state", KIT.STATE_TENDED)) == KIT.STATE_TENDED:
++				ChunkShapeGen.subtract_rect(cells, island.bed)
+ 			for rect: Rect2i in ChunkShapeGen.cells_to_rects(cells):
+ 				gen._stamp_floor_rect_cells(chunk, rect, tex, unused_rng, 0.95, -92)
+ 

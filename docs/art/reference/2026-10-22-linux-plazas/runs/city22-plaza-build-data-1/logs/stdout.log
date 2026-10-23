@@ -1,0 +1,106 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: chunk coordinate is retained
+PASS: first blocker write succeeds
+PASS: duplicate blocker write is suppressed
+PASS: kind code decodes without colliding with empty zero
+PASS: wall mask is retained
+PASS: blocker variant is retained
+PASS: occupied index is recorded once
+PASS: occupied index converts back to its local cell
+PASS: empty cell decodes to no blocker
+PASS: negative local cell is rejected
+PASS: cell outside chunk width is rejected
+PASS: floor rectangle is retained as one descriptor
+PASS: floor rectangle and style remain packed together
+PASS: floor alpha is retained without a node
+PASS: vertical wall mask selects vertical texture
+PASS: horizontal wall mask selects horizontal texture
+PASS: north-east wall mask selects matching corner
+PASS: four-way wall mask selects cross texture
+PASS: vertical window selects window texture
+PASS: unsupported window mask falls back to matching full wall
+PASS: plaza edge catalog reports all 131 possible state textures
+PASS: legacy catalog reports 18 wall and 8 half-cover texture variants plus the plaza edge kits
+PASS: legacy walls hang a separate face under an exposed edge
+PASS: kit: vertical wall mask selects its piece
+PASS: kit: horizontal wall mask selects its piece
+PASS: kit: north-east corner selects its piece
+PASS: kit: four-way mask selects its piece
+PASS: kit: vertical window selects the barred piece
+PASS: kit: unsupported window mask falls back to the wall piece
+PASS: kit: faces are baked into the pieces, never hung separately
+PASS: kit: a piece draws exactly one cell wide
+PASS: kit: a piece draws one cell plus the wall height tall
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: intact building wall remains continuous instead of using broken/pier ruin pieces
+PASS: kit: a 60-cell straight run carries a buttress every 6 cells (10)
+PASS: kit: rhythm is deterministic per cell
+PASS: kit: corners never take a rhythm variant
+PASS: kit: windows never take a rhythm variant
+PASS: legacy half-cover RNG encodes texture 3 and quarter-turn 1 at 32,32
+PASS: legacy half-cover RNG encodes texture 1 and quarter-turn 3 at 96,160
+PASS: legacy half-cover RNG remains stable for negative world coordinates
+PASS: packed half-cover variant selects the matching painted rubble
+PASS: painted rubble retains its directional lighting despite packed legacy quarter-turns
+PASS: legacy table variants retain their packed rotation
+PASS: kit catalog reports 16 pieces, 2 windows, 4 rhythm variants, 4 fills and 8 half-cover variants plus the plaza edge kits
+ChunkBuildDataTest: 103 passed, 0 failed

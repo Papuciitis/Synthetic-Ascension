@@ -1,0 +1,103 @@
+--- original_frozen_queue
++++ separate_r2_queue
+@@ -12,7 +12,8 @@
+ import time
+ 
+ ROOT = Path('/home/user/Nauris/Synthetic-Ascension')
+-BASE = Path(__file__).resolve().parent
++FIX = Path(__file__).resolve().parent
++BASE = FIX.parent
+ PROJECT = Path('/tmp/sa-wp2-plazas')
+ RUNS = ROOT / '.superpowers/claude-city-20261021/runs'
+ EXPECTED = {6: ('industrial_cutthrough', 1), 7: ('canal_services', 3), 8: ('military_staging', 4)}
+@@ -52,14 +53,14 @@
+ 
+ 
+ def validate(discovery_path):
+-    meta = load(BASE / 'plaza-bed-helpers-meta.json')
++    meta = load(FIX / 'plaza-bed-helpers-r2-meta.json')
+     for helper in meta['helpers'].values():
+         require(sha(helper['gd']) == helper['sha256'], 'Frozen helper changed: ' + helper['gd'])
+         require(sha(helper['scene']) == helper['scene_sha256'], 'Frozen helper scene changed.')
+-    raw_parse, parse_binding = clean_records('city22-plaza-bed-tools-parse')
++    raw_parse, parse_binding = clean_records('city22-plaza-bed-tools-parse-r2')
+     for helper in meta['helpers'].values():
+         require(helper['gd'] in raw_parse['command'], 'Scoped parser omitted a bed helper.')
+-    discovery_raw, discovery_binding = clean_records('city22-plaza-bed-discovery')
++    discovery_raw, discovery_binding = clean_records('city22-plaza-bed-discovery-r2')
+     require(str(BASE / 'PlazaBedDiscovery.tscn') in discovery_raw['command']
+             and '--headless' in discovery_raw['command']
+             and '--out=' + str(discovery_path) in discovery_raw['command'],
+@@ -72,6 +73,7 @@
+     overlay = load(BASE / 'plaza-parse-baseline-overlay/city22-plaza-parse-overlay-baseline-result.json')
+     require(overlay.get('restored_exactly') and not overlay.get('restore_errors'), 'Candidate overlay not restored.')
+     source_hashes.update(overlay['source_restored'])
++    source_hashes.update(meta['parent_runtime_sha256'])
+     for relative, digest in source_hashes.items():
+         require(sha(PROJECT / relative) == digest, 'Current source changed: ' + relative)
+         require(discovery_raw['source_hashes'].get(relative) == digest,
+@@ -111,7 +113,7 @@
+     capture = load(output / 'capture-info.json')
+     family, state = EXPECTED[segment]
+     require(actual.get('matches_expected') is True and actual.get('failures') == 0
+-            and actual.get('save_writes') == 0, 'Actual Game bed validation failed.')
++            and actual.get('save_writes') == 0 and actual.get('underlay_matches') is True, 'Actual Game bed/underlay validation failed.')
+     require(actual.get('expected') == expected and actual.get('actual_family') == family
+             and actual.get('actual_state') == state and actual.get('actual_role') == expected['role'],
+             'Actual family/state/role/expected binding differs.')
+@@ -121,8 +123,8 @@
+         bounds = node['world_aabb']; position = bounds['position']; size = bounds['size']
+         return all(position[i] <= focus[i] < position[i] + size[i] for i in [0, 1])
+     require(any(contains(node) for node in actual.get('actual_bed_nodes', [])), 'No real bed covers focal camera.')
+-    require(actual['source_sha256'].get(str(BASE / 'PlazaBedGamePreview.gd'))
+-            == meta['helpers']['PlazaBedGamePreview']['sha256'], 'Native helper runtime SHA differs.')
++    require(actual['source_sha256'].get(str(FIX / 'PlazaBedUnderlayGamePreview.gd'))
++            == meta['helpers']['PlazaBedUnderlayGamePreview']['sha256'], 'Native helper runtime SHA differs.')
+     require(capture.get('failures') == 0 and capture.get('save_writes') == 0
+             and capture.get('normal_hud') is True and capture.get('optional_details_hidden') is False,
+             'Parent native fixture/save/HUD checks failed.')
+@@ -142,10 +144,11 @@
+ 
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--discovery', type=Path, default=BASE / 'plaza-bed-discovery.json')
++    parser.add_argument('--discovery', type=Path, default=FIX / 'plaza-bed-discovery-r2.json')
+     parser.add_argument('--segments', type=int, nargs='+', choices=sorted(EXPECTED), default=sorted(EXPECTED))
+-    parser.add_argument('--label-prefix', default='city22-plaza-bed-native')
+-    parser.add_argument('--duty-percent', type=int, choices=[10, 25], default=10)
++    parser.add_argument('--label-prefix', default='city22-plaza-bed-native-r2')
++    parser.add_argument('--duty-percent', type=int, choices=[10, 25], default=25)
++    parser.add_argument('--start-temperature', type=int, choices=[65, 70], default=65)
+     parser.add_argument('--validate-only', action='store_true')
+     args = parser.parse_args()
+     require(re.fullmatch('city22-plaza-bed-native(?:-[a-z0-9-]+)?', args.label_prefix) is not None,
+@@ -154,15 +157,15 @@
+     cases = []
+     for segment in args.segments:
+         label = args.label_prefix + '-s' + str(segment)
+-        output = Path('/var/tmp/sa-city22/plaza-beds/s' + str(segment))
++        output = Path('/var/tmp/sa-city22/plaza-beds-r2/s' + str(segment))
+         require(not (BASE / (label + '-thermal.json')).exists()
+                 and not list(RUNS.glob(label + '-*')), 'Native label already used: ' + label)
+         require(not output.exists() or not any(output.iterdir()), 'Native output is not fresh: ' + str(output))
+         command = [sys.executable, str(BASE / 'guarded_engine.py'), '--label', label,
+-                   '--project', str(PROJECT), '--start-temperature', '70', '--max-wait', '900',
++                   '--project', str(PROJECT), '--start-temperature', str(args.start_temperature), '--max-wait', '900',
+                    '--timeout', '600', '--duty-percent', str(args.duty_percent), '--',
+                    '--rendering-driver', 'opengl3', '--audio-driver', 'Dummy',
+-                   str(BASE / 'PlazaBedGamePreview.tscn'), '--', '--visible', '--review=normal',
++                   str(FIX / 'PlazaBedUnderlayGamePreview.tscn'), '--', '--visible', '--review=normal',
+                    '--render-fps=20', '--discovery=' + str(args.discovery.resolve()),
+                    '--family=' + EXPECTED[segment][0], '--out=' + str(output)]
+         cases.append({'segment': segment, 'label': label, 'output': str(output), 'command': command,
+@@ -171,8 +174,8 @@
+         print(json.dumps({'validated': True, 'prerequisite': prerequisite, 'cases': cases,
+                           'engines_started': 0}, indent=2), flush=True)
+         return 0
+-    summary_path = BASE / 'plaza-bed-native-queue.json'
+-    summary = {'prerequisite': prerequisite, 'cases': [], 'scope': 'Native frozen actual-Game bed/reload evidence; render20/physics60, functional duty only. No live/performance claim; original unsorted audit diagnostics remain unresolved.'}
++    summary_path = FIX / 'plaza-bed-native-queue-r2.json'
++    summary = {'prerequisite': prerequisite, 'cases': [], 'scope': 'Native frozen actual-Game worn bed/underlay/reload evidence; render20/physics60, 65C start/25% default functional duty only. No live/performance claim; original unsorted audit diagnostics remain unresolved.'}
+     child = None
+     interrupted = None
+     def stop(signum, _frame):

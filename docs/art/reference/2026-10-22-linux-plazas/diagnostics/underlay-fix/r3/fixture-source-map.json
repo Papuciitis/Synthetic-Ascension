@@ -1,0 +1,16 @@
+{
+  "original_parent_path": "tools/tests/PlazaPresentationTest.gd",
+  "original_parent_sha256": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286",
+  "original_fixture_sha256": "6086e1db207359ab42a985154cd43a89e68dfd9797ac162e33a609c047b3c239",
+  "corrected_fixture_sha256": "821e9b551714e151c7eb8505dcc634dd668a5fb887f17354beb185fa22601683",
+  "delta": "Exactly one assignment copies plan.terrain_by_chunk before _generate_chunk; no original body line changed. Used in focused test and fresh discovery.",
+  "native_capture": "/var/tmp/sa-city22/plaza-beds/s6/capture-info.json",
+  "native_capture_sha256": "3d85a193a94814299c64dfc907c4c5c8cbeb7520d32d4acfa911d0074dac0533",
+  "native_semantic_terrain": "urban",
+  "r2_observed": "31pass/6fail, material1care0 from theme fallback due omitted terrain map; kept as unexpected failure, never relabelled",
+  "r3_extra_preconditions": [
+    "planned urban reaches manager/island selector",
+    "original generator island urban6/care1 in every six bed cells"
+  ],
+  "engines_run": 0
+}

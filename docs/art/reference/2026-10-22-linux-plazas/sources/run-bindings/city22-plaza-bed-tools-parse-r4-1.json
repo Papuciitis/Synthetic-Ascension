@@ -1,0 +1,156 @@
+{
+  "closure_limit": "No complete historical Game or generated cache byte closure is supplied. Dynamic resources and absent launch cache hashes stay missing.",
+  "git_head": "0c92f28f9bd6f99b73c82f3e867377f82b43004f",
+  "recorded_asset_import_inventory": "sources/recorded-maps/d563980ba17af7829f1ceb1a4903b9fd541788384776d3301e1c445b5e6ddcbd.json",
+  "recorded_generated_import_count": 0,
+  "run": "city22-plaza-bed-tools-parse-r4-1",
+  "scoped": {
+    "core/systems/world/ChunkManager.gd": {
+      "launch_sha256": "d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574",
+      "snapshot": "sources/blobs/d404c7dbfe92e766378cf4552c8d24a71beb3e192dc2fe77705bcb0f63d4d574-ChunkManager.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/chunks/ChunkBlockRenderer.gd": {
+      "launch_sha256": "9d70d3c320b7cd89dbf748dac66ad5ac764774594196e58803381da687dce6ff",
+      "snapshot": "sources/blobs/9d70d3c320b7cd89dbf748dac66ad5ac764774594196e58803381da687dce6ff-ChunkBlockRenderer.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/chunks/ChunkBuildData.gd": {
+      "launch_sha256": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618",
+      "snapshot": "sources/blobs/517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618-ChunkBuildData.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/chunks/PlazaEdgeKit.gd": {
+      "launch_sha256": "baee634f650e26d4d5ae670904c801ab1c1914755665ee349d83824458a11cb1",
+      "snapshot": "sources/blobs/baee634f650e26d4d5ae670904c801ab1c1914755665ee349d83824458a11cb1-PlazaEdgeKit.gd",
+      "status": "preserved exact content"
+    },
+    "core/systems/world/proc/chunkgen/PlazaPresentation.gd": {
+      "launch_sha256": "c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324",
+      "snapshot": "sources/blobs/c1635b11e42ea5d220cc06074771f90b7024ceba807da49f8f6cf243a53d7324-PlazaPresentation.gd",
+      "status": "preserved exact content"
+    },
+    "scenes/world/buildings/CityBlockRoofForms.gd": {
+      "launch_sha256": "ed2afa9ae8bd179cffd58aa10e3366cb0a697e14aba572e0423b2845b6616fc0",
+      "snapshot": "sources/blobs/ed2afa9ae8bd179cffd58aa10e3366cb0a697e14aba572e0423b2845b6616fc0-CityBlockRoofForms.gd",
+      "status": "preserved exact content"
+    },
+    "scenes/world/plazas/PlazaDressing.gd": {
+      "launch_sha256": "5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222",
+      "snapshot": "sources/blobs/5f57a20ed7007b76b144398ce15cb47dfc3cc2ee3d6056499955f2d0c4c17222-PlazaDressing.gd",
+      "status": "preserved exact content"
+    },
+    "tools/design/build_plaza_kit.py": {
+      "launch_sha256": "ebe34824540129f1cdf99f17487c95a10aaead5cad561143a75709e818848c88",
+      "snapshot": "sources/blobs/ebe34824540129f1cdf99f17487c95a10aaead5cad561143a75709e818848c88-build_plaza_kit.py",
+      "status": "preserved exact content"
+    },
+    "tools/design/build_plaza_wear_kit.py": {
+      "launch_sha256": "1d8ac9e80c3cf94ba9a446c8c10050ca5ad67f2c60ab5cfbb14cbb8043496090",
+      "snapshot": "sources/blobs/1d8ac9e80c3cf94ba9a446c8c10050ca5ad67f2c60ab5cfbb14cbb8043496090-build_plaza_wear_kit.py",
+      "status": "preserved exact content"
+    },
+    "tools/dev/CitySegmentSurvey.gd": {
+      "launch_sha256": "57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb",
+      "snapshot": "sources/blobs/57dc127035fe49f5ddab3a6d8ede91c209940d084020dd9a4ea65ee024aa54bb-CitySegmentSurvey.gd",
+      "status": "preserved exact content"
+    },
+    "tools/dev/CitySegmentSurvey.tscn": {
+      "launch_sha256": "e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18",
+      "snapshot": "sources/blobs/e6ef091a98ffe4159933cbb8316545eae4bdea48b39e592507f265b5b6abdd18-CitySegmentSurvey.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ChunkBlockRendererTest.gd": {
+      "launch_sha256": "997652b709198295b1e1af9fa4fd086705061362ca703493e78e6c4006b269c8",
+      "snapshot": "sources/blobs/997652b709198295b1e1af9fa4fd086705061362ca703493e78e6c4006b269c8-ChunkBlockRendererTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ChunkBlockRendererTest.tscn": {
+      "launch_sha256": "46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3",
+      "snapshot": "sources/blobs/46b954ce024dd6058411a6bf5d4de8d425188fa3e10f49afd7d2a9f81a7b05d3-ChunkBlockRendererTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ChunkBuildDataTest.gd": {
+      "launch_sha256": "4f1419c4762899bf3f9b30940726ac530b29cd475beabfede4caa7c71aed0dce",
+      "snapshot": "sources/blobs/4f1419c4762899bf3f9b30940726ac530b29cd475beabfede4caa7c71aed0dce-ChunkBuildDataTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ChunkBuildDataTest.tscn": {
+      "launch_sha256": "1ba3b48b93258640859370b400ebfdd377b8c12989f23a977b948cfc38d6da2d",
+      "snapshot": "sources/blobs/1ba3b48b93258640859370b400ebfdd377b8c12989f23a977b948cfc38d6da2d-ChunkBuildDataTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/PlazaBedUnderlayTest.gd": {
+      "launch_sha256": "b96657c21a95c382a27fc66a1adb3ef7ff39b6d5f6a7ae77e942773c420038ce",
+      "snapshot": "sources/blobs/b96657c21a95c382a27fc66a1adb3ef7ff39b6d5f6a7ae77e942773c420038ce-PlazaBedUnderlayTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/PlazaBedUnderlayTest.tscn": {
+      "launch_sha256": "a9f363e9b400f7d37a69d56a55159c5a4b90b5d9d29f28c46684bf3e8044455e",
+      "snapshot": "sources/blobs/a9f363e9b400f7d37a69d56a55159c5a4b90b5d9d29f28c46684bf3e8044455e-PlazaBedUnderlayTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/PlazaPresentationTest.gd": {
+      "launch_sha256": "55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286",
+      "snapshot": "sources/blobs/55a7ff19dd977011efaacbc3d05d3a803a1c7f6e67f9af44aa014691b69b9286-PlazaPresentationTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/PlazaPresentationTest.tscn": {
+      "launch_sha256": "de7d541eb0eaff8e64b2cd305a5b1373509f5fe468369738737f79c4592fda4c",
+      "snapshot": "sources/blobs/de7d541eb0eaff8e64b2cd305a5b1373509f5fe468369738737f79c4592fda4c-PlazaPresentationTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/PlazaResourceResidencyTest.gd": {
+      "launch_sha256": "feba396d6f6cf6c170028f94ef6d27d6550e32b2946b2af8c89f4056c4fba157",
+      "snapshot": "sources/blobs/feba396d6f6cf6c170028f94ef6d27d6550e32b2946b2af8c89f4056c4fba157-PlazaResourceResidencyTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/PlazaResourceResidencyTest.tscn": {
+      "launch_sha256": "6dd52c8feb311ce092b9094930893c255f790c55a3fa30c28ee1677c94aca9f6",
+      "snapshot": "sources/blobs/6dd52c8feb311ce092b9094930893c255f790c55a3fa30c28ee1677c94aca9f6-PlazaResourceResidencyTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ScriptParseAuditTest.gd": {
+      "launch_sha256": "0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736",
+      "snapshot": "sources/blobs/0a1a538b70404fdf68e27678cbcaf0c7137d07ff1bdf8b3b701eae8b5fd32736-ScriptParseAuditTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/ScriptParseAuditTest.tscn": {
+      "launch_sha256": "332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2",
+      "snapshot": "sources/blobs/332407c0098497fc40eaaf439cee8e1b846e6e82ce9cc0d61d09dd7973d385b2-ScriptParseAuditTest.tscn",
+      "status": "preserved exact content"
+    },
+    "tools/tests/TransitionResourceWarmupTest.gd": {
+      "launch_sha256": "0f529a19d8707306fef334f0825c9560a37e872ed1a6067f55cbe589141c3f8b",
+      "snapshot": "sources/blobs/0f529a19d8707306fef334f0825c9560a37e872ed1a6067f55cbe589141c3f8b-TransitionResourceWarmupTest.gd",
+      "status": "preserved exact content"
+    },
+    "tools/tests/TransitionResourceWarmupTest.tscn": {
+      "launch_sha256": "0d8da33d969ebb50ff1597e0972ca373ff83c4688bbe67b07ff34afef91c4f2c",
+      "snapshot": "sources/blobs/0d8da33d969ebb50ff1597e0972ca373ff83c4688bbe67b07ff34afef91c4f2c-TransitionResourceWarmupTest.tscn",
+      "status": "preserved exact content"
+    }
+  },
+  "source_untracked": [
+    "assets/world/city_block/domestic_awning.png.import",
+    "assets/world/city_block/donjon_cell_grille.png.import",
+    "assets/world/city_block/donjon_gate_arch.png.import",
+    "assets/world/city_block/donjon_masonry_bay.png.import",
+    "assets/world/city_block/planted_corner.png.import",
+    "assets/world/city_block/planted_stone_trough.png.import",
+    "assets/world/city_block/street_setts.png.import",
+    "assets/world/city_block/temperate_tree.png.import",
+    "assets/world/city_block/wall_lantern.png.import",
+    "assets/world/city_block/worn_setts.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_closed.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_arch_open.png.import",
+    "assets/world/districts/checkpoint_lanes/guard_quiet_infill_v2.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree.png.import",
+    "assets/world/domestic_gardens/v1/fruit_tree_overhead_v2.png.import",
+    "assets/world/material_support/v1/masks/roof_lichen.svg.import",
+    "assets/world/material_support/v1/masks/runoff_streaks.svg.import",
+    "assets/world/material_support/v1/masks/vent_soot.svg.import",
+    "assets/world/material_support/v1/masks/wall_base_damp.svg.import"
+  ],
+  "tracked_git_status": ""
+}

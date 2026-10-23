@@ -16,12 +16,17 @@ exit 0 and zero diagnostics. Root visually accepted their original images.
 These views do not establish live combat, performance or a redesign of broad
 formal plaza paving; that larger visual issue remains open.
 
+The [plaza evidence packet](../art/reference/2026-10-22-linux-plazas/README.md)
+includes those three accepted views and exact source/guard records. It retains
+the original rejected S6 view, fixture failures, interrupted helper and qualified
+worktree audit as separate outcomes.
+
 The [prop-shadow evidence packet](../art/reference/2026-10-22-linux-prop-shadows/README.md)
 retains exact sources, native 48/0 and owner checks, original selected images,
 and the actual failed headless attempt. Its manifest hashes and lossless
 compressed records were verified before publication into this checkout.
 
-Street continuity has checked twelve of fourteen themes; remaining parts are
+Street continuity has checked thirteen of fourteen themes; remaining parts are
 running before the original aggregate conditions and physical routes. Normal
 merged pickup density candidate `67d6b259` at `8e779847`: covered icons keep
 their authored texture/lock/fade factors with denser alpha. The unchanged native

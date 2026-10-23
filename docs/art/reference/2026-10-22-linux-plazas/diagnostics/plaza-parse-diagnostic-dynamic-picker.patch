@@ -1,0 +1,17 @@
+--- a/core/systems/world/ChunkManager.gd
++++ b/core/systems/world/ChunkManager.gd
+@@ -277,8 +277,12 @@
+ 	await _finish_transition_resource_frame(tree)
+ 	if Global.attempt_segment >= 2:
+ 		_transition_resource_stage = &"plaza"
+-		var theme := SegmentThemePicker.get_theme(Global.attempt_segment, Global.attempt_world_seed)
+-		await _PLAZA_EDGE_KIT.prepare_state_for_transition(tree, _PLAZA_EDGE_KIT.state_for_family(theme.district_family))
++		# Theme data applies itself to ChunkManager; resolve the picker at
++		# transition time to keep that dependency out of this script's compile graph.
++		var theme_picker: Script = load("res://core/systems/world/proc/SegmentThemePicker.gd") as Script
++		var theme: Resource = theme_picker.call(&"get_theme", Global.attempt_segment, Global.attempt_world_seed) as Resource
++		var family: StringName = StringName(theme.get("district_family"))
++		await _PLAZA_EDGE_KIT.prepare_state_for_transition(tree, _PLAZA_EDGE_KIT.state_for_family(family))
+ 	_transition_resource_stage = &"ready"
+ 
+ 

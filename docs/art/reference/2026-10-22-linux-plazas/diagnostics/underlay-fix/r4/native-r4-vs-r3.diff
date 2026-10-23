@@ -1,0 +1,119 @@
+--- frozen-r3-native.py
++++ r4-native.py
+@@ -52,22 +52,61 @@
+                  'guard': str(thermal_path), 'guard_sha256': sha(thermal_path)}
+ 
+ 
++def verify_focused(meta=None):
++    """Revalidate immutable completed R3 results; never rerun or rewrite runtime."""
++    meta = meta or load(FIX / 'plaza-bed-helpers-r4-meta.json')
++    for path, digest in meta['external_bindings'].items():
++        require(sha(path) == digest, 'Frozen prerequisite changed: ' + path)
++    for helper in meta['helpers'].values():
++        require(sha(helper['gd']) == helper['sha256'] and sha(helper['scene']) == helper['scene_sha256'], 'Frozen bed helper changed')
++    for relative, digest in meta['parent_runtime_sha256'].items():
++        require(sha(PROJECT / relative) == digest, 'Current fixed source changed: ' + relative)
++    assertions = load(FIX.parent / 'r3/assertion-manifest.json')
++    result = []
++    require(len(meta['prior_focused_cases']) == 2 and [c['red'] for c in meta['prior_focused_cases']] == [True, False], 'Need exact prior RED and GREEN')
++    for case in meta['prior_focused_cases']:
++        for key in ['raw', 'guard', 'report', 'stdout']:
++            require(sha(case[key]) == case[key + '_sha256'], 'Prior regression record changed: ' + case[key])
++        raw, guard, report = load(case['raw']), load(case['guard']), load(case['report'])
++        red = case['red']; code = 1 if red else 0
++        require(raw.get('ended_utc') and raw.get('actual_exit') == code and raw.get('runner_exit') == code and raw.get('stop_reason') == ('nonzero_exit' if red else 'completed'), 'Prior regression exit differs')
++        require(guard.get('reason') == 'completed' and guard.get('wrapper_exit') == code and guard.get('received_signal') is None, 'Prior regression guard not normally completed')
++        require(raw.get('diagnostics') == (assertions['red_diagnostics'] if red else []), 'Prior regression diagnostics differ')
++        expected = dict(meta['parent_runtime_sha256'], **case['source_overrides'])
++        require(Path(raw['project_root']).resolve() == PROJECT and 'res://tools/tests/PlazaBedUnderlayTest.tscn' in raw['command'] and '--out=' + case['report'] in raw['command'], 'Prior regression command differs')
++        for relative, digest in expected.items():
++            require(raw['source_hashes'].get(relative) == digest, 'Prior regression source differs: ' + relative)
++        require(report.get('passes') == (31 if red else 39) and report.get('failures') == (8 if red else 0) and report.get('save_writes') == 0 and report.get('semantic_terrain') == 'urban' and report.get('generator_underlay_matches_native') is True, 'Prior regression causal/count/save report differs')
++        states = report.get('states', [])
++        require(len(states) == 5 and {row.get('state') for row in states} == set(range(5)), 'Prior regression five-state matrix differs')
++        require(all(row.get('outside_ok') is True and row.get('material_ok') == (not red or row['state'] == 0) and row.get('care_ok') == (not red or row['state'] == 0) for row in states), 'Prior regression state checks differ')
++        require(assertions['red_footer' if red else 'green_footer'] in Path(case['stdout']).read_text(), 'Prior regression footer absent')
++        result.append(dict(case))
++    interrupted = meta['r3_interruption']
++    old = load(interrupted['executor_summary']); guard = load(interrupted['guard'])
++    require(old.get('green_clean') is True and old.get('completed_discovery') is False and old.get('interrupted_signal') == 15 and old.get('final_runtime_sha256') == meta['parent_runtime_sha256']['core/systems/world/proc/chunkgen/PlazaPresentation.gd'], 'R3 interruption summary differs')
++    require(guard.get('reason') == 'external_sigterm' and guard.get('received_signal') == 15 and guard.get('owned_pids') == [] and guard.get('throttle_cycles') == 0 and all(row.get('owned_engine_live') is False for row in guard.get('samples', [])), 'R3 interruption was not the recorded no-owned-engine queued stop')
++    require(not list(RUNS.glob('city22-plaza-bed-tools-parse-r3-*')), 'R3 parser now has unexpected raw evidence; review before resume')
++    return {'red': result[0], 'green': result[1], 'source_hashes': meta['parent_runtime_sha256'], 'r3_interruption': interrupted}
++
++
+ def validate(discovery_path):
+-    meta = load(FIX / 'plaza-bed-helpers-r3-meta.json')
++    meta = load(FIX / 'plaza-bed-helpers-r4-meta.json')
++    focused = verify_focused(meta)
+     for helper in meta['helpers'].values():
+         require(sha(helper['gd']) == helper['sha256'], 'Frozen helper changed: ' + helper['gd'])
+         require(sha(helper['scene']) == helper['scene_sha256'], 'Frozen helper scene changed.')
+-    raw_parse, parse_binding = clean_records('city22-plaza-bed-tools-parse-r3')
++    raw_parse, parse_binding = clean_records('city22-plaza-bed-tools-parse-r4')
+     for helper in meta['helpers'].values():
+         require(helper['gd'] in raw_parse['command'], 'Scoped parser omitted a bed helper.')
+-    discovery_raw, discovery_binding = clean_records('city22-plaza-bed-discovery-r3')
+-    require(str(FIX / 'PlazaBedDiscoveryTerrain.tscn') in discovery_raw['command']
++    discovery_raw, discovery_binding = clean_records('city22-plaza-bed-discovery-r4')
++    require(meta['helpers']['PlazaBedDiscoveryTerrain']['scene'] in discovery_raw['command']
+             and '--headless' in discovery_raw['command']
+             and '--out=' + str(discovery_path) in discovery_raw['command'],
+             'Discovery command does not bind this JSON.')
+     data = load(discovery_path)
+     require(data.get('failures') == 0 and data.get('save_writes') == 0, 'Discovery report not clean.')
+-    require(data.get('source_sha256', {}).get(str(FIX / 'PlazaBedDiscoveryTerrain.gd'))
++    require(data.get('source_sha256', {}).get(meta['helpers']['PlazaBedDiscoveryTerrain']['gd'])
+             == meta['helpers']['PlazaBedDiscoveryTerrain']['sha256'], 'Discovery helper SHA mismatch.')
+     source_hashes = dict(meta['parent_runtime_sha256'])
+     overlay = load(BASE / 'plaza-parse-baseline-overlay/city22-plaza-parse-overlay-baseline-result.json')
+@@ -76,8 +115,8 @@
+     source_hashes.update(meta['parent_runtime_sha256'])
+     for relative, digest in source_hashes.items():
+         require(sha(PROJECT / relative) == digest, 'Current source changed: ' + relative)
+-        require(discovery_raw['source_hashes'].get(relative) == digest,
+-                'Discovery launch source mismatch: ' + relative)
++        require(discovery_raw['source_hashes'].get(relative) == digest and raw_parse['source_hashes'].get(relative) == digest,
++                'Parse/discovery launch source mismatch: ' + relative)
+     entries = data.get('results', [])
+     require(len(entries) == 3, 'Discovery must return exactly three distinct family candidates.')
+     by_segment = {}
+@@ -104,7 +143,7 @@
+     require(all(bool(row.get('semantic_terrain')) and row.get('semantic_terrain') == row.get('planned_semantic_terrain') for row in data.get('attempts', [])), 'Attempt terrain trace differs from its natural plan.')
+     return meta, by_segment, source_hashes, {'discovery': str(discovery_path),
+             'discovery_sha256': sha(discovery_path), 'discovery_records': discovery_binding,
+-            'scoped_parse_records': parse_binding}
++            'scoped_parse_records': parse_binding, 'completed_r3_regression': focused}
+ 
+ 
+ def native_acceptance(segment, expected, output, label, source_hashes, meta):
+@@ -148,9 +187,9 @@
+ 
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--discovery', type=Path, default=FIX / 'plaza-bed-discovery-r3.json')
++    parser.add_argument('--discovery', type=Path, default=FIX / 'plaza-bed-discovery-r4.json')
+     parser.add_argument('--segments', type=int, nargs='+', choices=sorted(EXPECTED), default=sorted(EXPECTED))
+-    parser.add_argument('--label-prefix', default='city22-plaza-bed-native-r3')
++    parser.add_argument('--label-prefix', default='city22-plaza-bed-native-r4')
+     parser.add_argument('--duty-percent', type=int, choices=[10, 25], default=25)
+     parser.add_argument('--start-temperature', type=int, choices=[65, 70], default=65)
+     parser.add_argument('--validate-only', action='store_true')
+@@ -161,7 +200,7 @@
+     cases = []
+     for segment in args.segments:
+         label = args.label_prefix + '-s' + str(segment)
+-        output = Path('/var/tmp/sa-city22/plaza-beds-r3/s' + str(segment))
++        output = Path('/var/tmp/sa-city22/plaza-beds-r4/s' + str(segment))
+         require(not (BASE / (label + '-thermal.json')).exists()
+                 and not list(RUNS.glob(label + '-*')), 'Native label already used: ' + label)
+         require(not output.exists() or not any(output.iterdir()), 'Native output is not fresh: ' + str(output))
+@@ -178,7 +217,7 @@
+         print(json.dumps({'validated': True, 'prerequisite': prerequisite, 'cases': cases,
+                           'engines_started': 0}, indent=2), flush=True)
+         return 0
+-    summary_path = FIX / 'plaza-bed-native-queue-r3.json'
++    summary_path = FIX / 'plaza-bed-native-queue-r4.json'
+     summary = {'prerequisite': prerequisite, 'cases': [], 'scope': 'Native frozen actual-Game worn bed/underlay/reload evidence; render20/physics60, 65C start/25% default functional duty only. No live/performance claim; original unsorted audit diagnostics remain unresolved.'}
+     child = None
+     interrupted = None
