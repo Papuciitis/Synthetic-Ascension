@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-23T18:56:40.846526+00:00",
+  "reviewer": "Codex independent claude_handoff_audit_23 helper",
+  "decision": "ACCEPT_BOUNDED_S7_CARE_EDGE_IMPROVEMENT",
+  "scope": "Independent viewing of both original native PNGs, matched metadata, actual run/guard records and footer, plus current source-only S9 policy review. No engine run or runtime edit by reviewer.",
+  "original_images_inspected": [
+    {
+      "path": "/var/tmp/sa-city23-ground/before-s7/ground-before.png",
+      "bytes": 1408497,
+      "sha256": "0ca0b65c5395b22bdf7dc51a3753e0c5fde0d3eb4f675b8c532aca09455cd41c"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s7-r2/ground-before.png",
+      "bytes": 1406815,
+      "sha256": "0b74463fa0c623ddd4f2853f525f814310d1b623f6e04ae03ab72d6522d53431"
+    }
+  ],
+  "metadata_bindings": [
+    {
+      "path": "/var/tmp/sa-city23-ground/before-s7/capture-info.json",
+      "bytes": 12607,
+      "sha256": "32e7fb858a41130162992cea56efa6395d8629b6f7c91cd1b64fb8cfc8523ea3"
+    },
+    {
+      "path": "/var/tmp/sa-city23-ground/after-s7-r2/capture-info.json",
+      "bytes": 12610,
+      "sha256": "256c6ab6c22b46bf41c2e6550cefc696467ef71fbf211fba3354312fab264f59"
+    }
+  ],
+  "metadata_equality_checks": {
+    "segment": true,
+    "seed": true,
+    "attempt_seed": true,
+    "theme": true,
+    "district_family": true,
+    "ground_context_world_px": true,
+    "camera": true,
+    "image_size": true,
+    "visible_care_attribution": true,
+    "normal_hud": true,
+    "optional_details_hidden": true,
+    "save_writes": true,
+    "route": true,
+    "fixture": true,
+    "ground.care_mask": true,
+    "ground.chunk_material_counts": true,
+    "ground.selected_sources": true,
+    "ground.selected_uniforms": true,
+    "ground.cache_sha256": true,
+    "ground.manifest_sha256": true,
+    "final_combined.final_exterior": true,
+    "final_combined.render_dimensions": true,
+    "final_combined.physics_ticks_per_second": true,
+    "final_combined.render_fps_cap": true,
+    "final_combined.capture_cap_policy": true
+  },
+  "visible_care": {
+    "positive_cells": 12,
+    "full_care_cells": 6,
+    "attribution_exact_between_images": true,
+    "note": "Selected probe chunk care_mask is all-zero in both records; the positive patch is in the whole-view visible_care_attribution, which is also exact. Do not use the probe chunk mask alone to describe visible support."
+  },
+  "visual_findings": [
+    "The green household patch below the left house retains a useful green centre; its weak side cells now blend into the surrounding mossy yard instead of reading as a hard rectangular sticker.",
+    "The selected house footprint, exterior facade, entrances, stone access areas, actor silhouette and normal HUD remain coherent in these two originals; no new visible care spill across an entrance or road is apparent.",
+    "This is a material-edge improvement. Broad orthogonal property/setback geometry and the oversized mossy flags at the lower left still read clearly and remain outside this correction."
+  ],
+  "runs": {
+    "before": {
+      "run_record": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/run-results.json",
+        "bytes": 466125,
+        "sha256": "997a5b388993b36e00c773564772caa0ebd4327c903982ca120c1b06630d0890"
+      },
+      "thermal_record": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s7-r1-thermal.json",
+        "bytes": 16191,
+        "sha256": "8a6158944ebe4e8dcb8592eec466f3c7426a0fcb06bae4fe6b8ec04e2387d58c"
+      },
+      "wrapper_log": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s7-r1-wrapper.log",
+        "bytes": 475,
+        "sha256": "3020c0eacbe46b523a66e90db02c8576e530724d8bada55d3a856beede338e0a"
+      },
+      "stdout_log": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/logs/stdout.log",
+        "bytes": 360,
+        "sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702"
+      },
+      "stderr_log": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/logs/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "actual_footer": "CityGroundReview: segment=7 seed=16102028 context=true frames=0 fires=0 hits=0 failures=0",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "other_godot_pids": [],
+      "elapsed_seconds": 78.155,
+      "peak_package_c": 88.0,
+      "git_head": "67728a93bd95dd9a85187c369d6fd2b1d1f275b1",
+      "git_status_porcelain": "",
+      "source_hashes": {
+        "core/systems/world/ground/ground_splat.gdshader": "a5f877acb6cf6f5f5dfbb803ef7d2fae9169d71907cb91675519c230f6b0cfb9",
+        "core/systems/world/ground/DistrictGroundPolicy.gd": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+        "core/systems/world/ground/GroundSplatRenderer.gd": "22ce00dc5ca55dbfac5138b4cfc8b598a91c403ddd15c8c57ce0e666f10b4c4f",
+        "core/systems/world/ground/CityGroundCare.gd": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688"
+      },
+      "command": [
+        "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+        "--path",
+        "/tmp/sa-c23-ground",
+        "--log-file",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/logs/engine.log",
+        "--flush-output",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundCarePreview.tscn",
+        "--",
+        "--visible",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--ground-context=-1632,1304",
+        "--review=normal",
+        "--out=/var/tmp/sa-city23-ground/before-s7"
+      ],
+      "guard_duty_cycle": 0.25,
+      "guard_duty_released": true
+    },
+    "after": {
+      "run_record": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/run-results.json",
+        "bytes": 489079,
+        "sha256": "aea8b4bd564869f52cb43b3b6f4711d97be96cb8cb3b8913bd4271dd5195d38c"
+      },
+      "thermal_record": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s7-r2-thermal.json",
+        "bytes": 28436,
+        "sha256": "d31e3205027d9315f220e40ce943edcd5e1a63eeedfc0fcd49122c73a423042b"
+      },
+      "wrapper_log": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s7-r2-wrapper.log",
+        "bytes": 475,
+        "sha256": "f1d44314f2f2111eb204b79b0d44dda04ff226402293149ae360c5f5089b008b"
+      },
+      "stdout_log": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/logs/stdout.log",
+        "bytes": 360,
+        "sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702"
+      },
+      "stderr_log": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/logs/stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "actual_footer": "CityGroundReview: segment=7 seed=16102028 context=true frames=0 fires=0 hits=0 failures=0",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostic_count": 0,
+      "other_godot_pids": [],
+      "elapsed_seconds": 148.383,
+      "peak_package_c": 89.0,
+      "git_head": "9a2ef8b895b696344bbca2e131699b495a7544a4",
+      "git_status_porcelain": " M core/systems/world/ground/DistrictGroundPolicy.gd\n",
+      "source_hashes": {
+        "core/systems/world/ground/ground_splat.gdshader": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9",
+        "core/systems/world/ground/DistrictGroundPolicy.gd": "63b872201358bb718bce0daae7cc387c10b604e62fb1c1fcd0c7432515c78738",
+        "core/systems/world/ground/GroundSplatRenderer.gd": "22ce00dc5ca55dbfac5138b4cfc8b598a91c403ddd15c8c57ce0e666f10b4c4f",
+        "core/systems/world/ground/CityGroundCare.gd": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688"
+      },
+      "command": [
+        "/home/user/Downloads/Godot_v4.7.2-stable_linux.x86_64",
+        "--path",
+        "/tmp/sa-c23-ground",
+        "--log-file",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/logs/engine.log",
+        "--flush-output",
+        "--max-fps",
+        "20",
+        "--resolution",
+        "1280x720",
+        "--rendering-driver",
+        "opengl3",
+        "--audio-driver",
+        "Dummy",
+        "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundCarePreview.tscn",
+        "--",
+        "--visible",
+        "--segment=7",
+        "--world-seed=16102028",
+        "--ground-context=-1632,1304",
+        "--review=normal",
+        "--out=/var/tmp/sa-city23-ground/after-s7-r2"
+      ],
+      "guard_duty_cycle": 0.1,
+      "guard_duty_released": true
+    }
+  },
+  "source_review": {
+    "shader": {
+      "path": "/tmp/sa-c23-ground/core/systems/world/ground/ground_splat.gdshader",
+      "bytes": 18683,
+      "sha256": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9"
+    },
+    "policy": {
+      "path": "/tmp/sa-c23-ground/core/systems/world/ground/DistrictGroundPolicy.gd",
+      "bytes": 21039,
+      "sha256": "63b872201358bb718bce0daae7cc387c10b604e62fb1c1fcd0c7432515c78738"
+    },
+    "ownership": "GroundSplatRenderer and CityGroundCare source hashes are identical in actual before/after records. The shader retains zero-centre veto, wrapped cardinal neighbour checks and filtered-care multiplication; full positive cores remain available.",
+    "cost_limit": "Fetch sites and samplers are unchanged, but more fractional-care pixels enter the existing neighbour/plant branch; no identical-cost or performance claim follows.",
+    "s9_policy_line": "p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 192.0, Color(0.573, 0.586, 0.543), 0.52, Color(1.34, 1.37, 1.43), LAYER_ROUND_COBBLE)",
+    "s9_source_decision": "Source candidate matches the proposed local scale/weight/tint correction. It retains the round-cobble source and grassy outskirts character, with unchanged mid, other roles and global grade. S9 native visual acceptance remains pending; no S9 output was polled or reviewed."
+  },
+  "limits": [
+    "These are selected static, exterior, normal-size images with no occupied combat. They establish no whole-city geometry completion, combat readability, motion/shimmer or performance result.",
+    "Native window is 1280x720 while logical coordinates are 1920x1080, with exact 2/3 stretch in both metadata records.",
+    "Baseline and candidate guard duty/startup invocation differ, while actual camera, dimensions, capture cap20, physics60 and semantic/care controls match. Wall durations are not a performance comparison.",
+    "Weather is not frozen in either metadata record and weather times differ; no assertion of pixel identity outside care is made.",
+    "Earlier thermal-stopped attempts remain separate incomplete evidence and are not superseded as passing runs by this review."
+  ]
+}

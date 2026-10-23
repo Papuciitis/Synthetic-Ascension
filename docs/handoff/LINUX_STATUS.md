@@ -3,6 +3,38 @@
 Owner: Linux production worker. Updated 23 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
 
+## 23 October — Claude playtest fixes received; grass edges corrected
+
+Resumed from Claude's `67728a93`, including the merged doorway, prop-shadow,
+sniper, HUD and mipmap fixes. Claude's previously owed frontage test was already
+closed at 30777/0 after reboot; it was not repeated as unfinished work.
+
+Normal-merged `9a2ef8b8` at `572ed5b7`. Household care on paved yards now keeps
+its fractional edge weights instead of rendering cells above 50% as fully
+planted boxes. CPU care bytes, eligibility, doors and terrain ownership are
+unchanged. A new native render regression reproduced the cutoff at 43/6,
+then passed 49/0 with zero diagnostics after the shader correction. It checks
+intermediate blends, retained green cores, road/lane/door controls and reset.
+The matched real-Game S7 before/after views finish with exit 0, zero diagnostics,
+20 FPS rendering, 60 Hz physics and zero save writes. Their visible care cells,
+care mask and material counts match exactly. Root and independent review accept
+the softer transition while retaining the useful planted centre.
+
+The [care-edge evidence and pending S9 record](../art/reference/2026-10-23-ground-care-edges/README.md)
+retains original images, complete run records, source snapshots and interrupted
+attempts. This is a bounded edge-blending correction. Broad orthogonal property
+and plaza layouts, oversized mossy flags and tiny covered-item visibility remain
+open; no whole-city or performance acceptance is claimed.
+
+S9's smaller, more neutral grassy-cobble calibration is saved separately as
+`745f96ef` on **`codex/c23-ground`**, and is **not merged**. Its existing policy
+catalogue passes 116/0, but its full-Game after captures repeatedly hit thermal
+stops at 97–98 C. The current Care owner attempts also stopped thermally;
+the queued WorldGroundSplat suite never ran. Those are incomplete outcomes.
+Finish the S9 normal and small-window captures in a quiet, cool session before
+accepting that candidate. The local guard now has a tested optional
+`--cpu-count 1`; its two-CPU default, thermal limits and cleanup are unchanged.
+
 ## 23 October — combined city checks passed
 
 The approved cover, streets, plaza and weathering stages are integrated locally.

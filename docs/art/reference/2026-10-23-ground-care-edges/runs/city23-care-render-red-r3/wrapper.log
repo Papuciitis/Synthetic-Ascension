@@ -1,0 +1,21 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r3-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 125.922,
+ "peak_rss_mb": 373,
+ "diagnostic_count": 6,
+ "diagnostics_head": [
+  "ERROR: FAIL: care 0.25 has proportional native influence (observed 0.0000)",
+  "ERROR: FAIL: care 0.25 visibly advances beyond the preceding weight; no threshold plateau",
+  "ERROR: FAIL: care 0.50 has proportional native influence (observed 0.0000)",
+  "ERROR: FAIL: care 0.50 visibly advances beyond the preceding weight; no threshold plateau",
+  "ERROR: FAIL: care 0.75 has proportional native influence (observed 1.0000)",
+  "ERROR: FAIL: care 1.00 visibly advances beyond the preceding weight; no threshold plateau"
+ ]
+}
+--- stdout tail (3/51 lines) ---
+PASS: the real reserved door approach retains its original native pixels
+PASS: public household care leaves road and lane pixels unchanged
+CityGroundCareRenderTest: 43 passed, 6 failed

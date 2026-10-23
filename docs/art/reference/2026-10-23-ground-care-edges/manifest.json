@@ -1,0 +1,1465 @@
+{
+  "schema": 1,
+  "generated_utc": "2026-10-23T19:12:35.077934+00:00",
+  "files": [
+    {
+      "path": ".gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": null,
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "Godot import exclusion written first"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3778,
+      "sha256": "c7dd8550b5bd889b8e72bdb4f40971a5946056e5397c901837f1dae4ff508194",
+      "source_path": null,
+      "source_bytes": 3778,
+      "source_sha256": "c7dd8550b5bd889b8e72bdb4f40971a5946056e5397c901837f1dae4ff508194",
+      "raw_path": "README.md",
+      "role": "generated index"
+    },
+    {
+      "path": "compression-map.json",
+      "bytes": 6567,
+      "sha256": "9230cc355ad6c2699578e5055883d77c5dbe2c66d80e358946f50a77e840f9f6",
+      "source_path": null,
+      "source_bytes": 6567,
+      "source_sha256": "9230cc355ad6c2699578e5055883d77c5dbe2c66d80e358946f50a77e840f9f6",
+      "raw_path": "compression-map.json",
+      "role": "generated index"
+    },
+    {
+      "path": "native/after-s7-r2/capture-info.json",
+      "bytes": 12610,
+      "sha256": "256c6ab6c22b46bf41c2e6550cefc696467ef71fbf211fba3354312fab264f59",
+      "source_path": "/var/tmp/sa-city23-ground/after-s7-r2/capture-info.json",
+      "source_bytes": 12610,
+      "source_sha256": "256c6ab6c22b46bf41c2e6550cefc696467ef71fbf211fba3354312fab264f59",
+      "raw_path": "native/after-s7-r2/capture-info.json",
+      "role": "Original native manifest"
+    },
+    {
+      "path": "native/after-s7-r2/ground-before.png",
+      "bytes": 1406815,
+      "sha256": "0b74463fa0c623ddd4f2853f525f814310d1b623f6e04ae03ab72d6522d53431",
+      "source_path": "/var/tmp/sa-city23-ground/after-s7-r2/ground-before.png",
+      "source_bytes": 1406815,
+      "source_sha256": "0b74463fa0c623ddd4f2853f525f814310d1b623f6e04ae03ab72d6522d53431",
+      "raw_path": "native/after-s7-r2/ground-before.png",
+      "role": "Unmodified original native PNG"
+    },
+    {
+      "path": "native/before-s7/capture-info.json",
+      "bytes": 12607,
+      "sha256": "32e7fb858a41130162992cea56efa6395d8629b6f7c91cd1b64fb8cfc8523ea3",
+      "source_path": "/var/tmp/sa-city23-ground/before-s7/capture-info.json",
+      "source_bytes": 12607,
+      "source_sha256": "32e7fb858a41130162992cea56efa6395d8629b6f7c91cd1b64fb8cfc8523ea3",
+      "raw_path": "native/before-s7/capture-info.json",
+      "role": "Original native manifest"
+    },
+    {
+      "path": "native/before-s7/ground-before.png",
+      "bytes": 1408497,
+      "sha256": "0ca0b65c5395b22bdf7dc51a3753e0c5fde0d3eb4f675b8c532aca09455cd41c",
+      "source_path": "/var/tmp/sa-city23-ground/before-s7/ground-before.png",
+      "source_bytes": 1408497,
+      "source_sha256": "0ca0b65c5395b22bdf7dc51a3753e0c5fde0d3eb4f675b8c532aca09455cd41c",
+      "raw_path": "native/before-s7/ground-before.png",
+      "role": "Unmodified original native PNG"
+    },
+    {
+      "path": "native/before-s9-r2/capture-info.json",
+      "bytes": 11403,
+      "sha256": "71a2f78758561ba804b86141021315680dced3413c328d567c70003235a440e4",
+      "source_path": "/var/tmp/sa-city23-ground/before-s9-r2/capture-info.json",
+      "source_bytes": 11403,
+      "source_sha256": "71a2f78758561ba804b86141021315680dced3413c328d567c70003235a440e4",
+      "raw_path": "native/before-s9-r2/capture-info.json",
+      "role": "Original native manifest"
+    },
+    {
+      "path": "native/before-s9-r2/ground-before.png",
+      "bytes": 1446457,
+      "sha256": "224281844a6c7c4dcdd473c5d5f812f58721308d0016e80ca9b12e69ef4d527c",
+      "source_path": "/var/tmp/sa-city23-ground/before-s9-r2/ground-before.png",
+      "source_bytes": 1446457,
+      "source_sha256": "224281844a6c7c4dcdd473c5d5f812f58721308d0016e80ca9b12e69ef4d527c",
+      "raw_path": "native/before-s9-r2/ground-before.png",
+      "role": "Unmodified original native PNG"
+    },
+    {
+      "path": "native/render-green/care-000.png",
+      "bytes": 285824,
+      "sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/care-000.png",
+      "source_bytes": 285824,
+      "source_sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "raw_path": "native/render-green/care-000.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-green/care-025.png",
+      "bytes": 286531,
+      "sha256": "676e93345345affc4e5b419e6cfd303cfe902efa3b13c4a14066ebf1be6813b3",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/care-025.png",
+      "source_bytes": 286531,
+      "source_sha256": "676e93345345affc4e5b419e6cfd303cfe902efa3b13c4a14066ebf1be6813b3",
+      "raw_path": "native/render-green/care-025.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-green/care-050.png",
+      "bytes": 290985,
+      "sha256": "30cc5bc55c42ba9e27f195348e8945c44ee01c128c8f82041b5ce9ebdd168506",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/care-050.png",
+      "source_bytes": 290985,
+      "source_sha256": "30cc5bc55c42ba9e27f195348e8945c44ee01c128c8f82041b5ce9ebdd168506",
+      "raw_path": "native/render-green/care-050.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-green/care-075.png",
+      "bytes": 297143,
+      "sha256": "8e9d025158e7c57aa13e53a215b523781266f2460dc3c97005ae93356124c054",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/care-075.png",
+      "source_bytes": 297143,
+      "source_sha256": "8e9d025158e7c57aa13e53a215b523781266f2460dc3c97005ae93356124c054",
+      "raw_path": "native/render-green/care-075.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-green/care-100.png",
+      "bytes": 304206,
+      "sha256": "8a75f9860170bf3179a1fe70938d6dfbec9c972b26b4a6c742aace2eae202833",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/care-100.png",
+      "source_bytes": 304206,
+      "source_sha256": "8a75f9860170bf3179a1fe70938d6dfbec9c972b26b4a6c742aace2eae202833",
+      "raw_path": "native/render-green/care-100.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-green/care-restored-zero.png",
+      "bytes": 285824,
+      "sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/care-restored-zero.png",
+      "source_bytes": 285824,
+      "source_sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "raw_path": "native/render-green/care-restored-zero.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-green/household-bare.png",
+      "bytes": 285001,
+      "sha256": "31b2525ff10141ece3c3ba1ae4136cf6871844002a0da5d7b06df5ba1c26c43c",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/household-bare.png",
+      "source_bytes": 285001,
+      "source_sha256": "31b2525ff10141ece3c3ba1ae4136cf6871844002a0da5d7b06df5ba1c26c43c",
+      "raw_path": "native/render-green/household-bare.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-green/household-cared.png",
+      "bytes": 296378,
+      "sha256": "f5b615b410278022ca5771401c8e5b74e057a197fd8048a1552e596afc1d3264",
+      "source_path": "/var/tmp/sa-city23-ground/render-green/household-cared.png",
+      "source_bytes": 296378,
+      "source_sha256": "f5b615b410278022ca5771401c8e5b74e057a197fd8048a1552e596afc1d3264",
+      "raw_path": "native/render-green/household-cared.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/care-000.png",
+      "bytes": 285824,
+      "sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/care-000.png",
+      "source_bytes": 285824,
+      "source_sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "raw_path": "native/render-red-r3/care-000.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/care-025.png",
+      "bytes": 285824,
+      "sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/care-025.png",
+      "source_bytes": 285824,
+      "source_sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "raw_path": "native/render-red-r3/care-025.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/care-050.png",
+      "bytes": 285824,
+      "sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/care-050.png",
+      "source_bytes": 285824,
+      "source_sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "raw_path": "native/render-red-r3/care-050.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/care-075.png",
+      "bytes": 306824,
+      "sha256": "e8d4d9d1d22aef65006cc0950bf721c6900cf8ff7f1dcfc2144fce8e2a7027cb",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/care-075.png",
+      "source_bytes": 306824,
+      "source_sha256": "e8d4d9d1d22aef65006cc0950bf721c6900cf8ff7f1dcfc2144fce8e2a7027cb",
+      "raw_path": "native/render-red-r3/care-075.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/care-100.png",
+      "bytes": 306824,
+      "sha256": "e8d4d9d1d22aef65006cc0950bf721c6900cf8ff7f1dcfc2144fce8e2a7027cb",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/care-100.png",
+      "source_bytes": 306824,
+      "source_sha256": "e8d4d9d1d22aef65006cc0950bf721c6900cf8ff7f1dcfc2144fce8e2a7027cb",
+      "raw_path": "native/render-red-r3/care-100.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/care-restored-zero.png",
+      "bytes": 285824,
+      "sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/care-restored-zero.png",
+      "source_bytes": 285824,
+      "source_sha256": "d100d9c25ae9bd730892b2c9ddae98d8005cd05c9c682798f27503645c71f216",
+      "raw_path": "native/render-red-r3/care-restored-zero.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/household-bare.png",
+      "bytes": 285001,
+      "sha256": "31b2525ff10141ece3c3ba1ae4136cf6871844002a0da5d7b06df5ba1c26c43c",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/household-bare.png",
+      "source_bytes": 285001,
+      "source_sha256": "31b2525ff10141ece3c3ba1ae4136cf6871844002a0da5d7b06df5ba1c26c43c",
+      "raw_path": "native/render-red-r3/household-bare.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "native/render-red-r3/household-cared.png",
+      "bytes": 298208,
+      "sha256": "54e8a573807584ccd5bd6aa704c40a63327d5a9ebe4d6a549e6d91645c7bd333",
+      "source_path": "/var/tmp/sa-city23-ground/render-red-r3/household-cared.png",
+      "source_bytes": 298208,
+      "source_sha256": "54e8a573807584ccd5bd6aa704c40a63327d5a9ebe4d6a549e6d91645c7bd333",
+      "raw_path": "native/render-red-r3/household-cared.png",
+      "role": "Unmodified native render-test PNG"
+    },
+    {
+      "path": "pending-s9/DistrictGroundPolicy.gd",
+      "bytes": 21039,
+      "sha256": "63b872201358bb718bce0daae7cc387c10b604e62fb1c1fcd0c7432515c78738",
+      "source_path": "/tmp/sa-c23-ground/core/systems/world/ground/DistrictGroundPolicy.gd",
+      "source_bytes": 21039,
+      "source_sha256": "63b872201358bb718bce0daae7cc387c10b604e62fb1c1fcd0c7432515c78738",
+      "raw_path": "pending-s9/DistrictGroundPolicy.gd",
+      "role": "WIP745f96ef pending native review; not production"
+    },
+    {
+      "path": "process/GroundCarePreview.gd",
+      "bytes": 1533,
+      "sha256": "9a15e9516827593cd4f7ee299bc932f86b7f45911d06f7c05e704828b490b652",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundCarePreview.gd",
+      "source_bytes": 1533,
+      "source_sha256": "9a15e9516827593cd4f7ee299bc932f86b7f45911d06f7c05e704828b490b652",
+      "raw_path": "process/GroundCarePreview.gd",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/GroundCarePreview.tscn",
+      "bytes": 251,
+      "sha256": "980642b685a10d927722aea976c656cec99953641ab214d356b6e749238dd6a3",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundCarePreview.tscn",
+      "source_bytes": 251,
+      "source_sha256": "980642b685a10d927722aea976c656cec99953641ab214d356b6e749238dd6a3",
+      "raw_path": "process/GroundCarePreview.tscn",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/GroundPolicyCatalogue.gd",
+      "bytes": 311,
+      "sha256": "d19cb42ee836938c6b8bfe59b7787a8cd631ff2085a284630944d7d89e1d59bb",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundPolicyCatalogue.gd",
+      "source_bytes": 311,
+      "source_sha256": "d19cb42ee836938c6b8bfe59b7787a8cd631ff2085a284630944d7d89e1d59bb",
+      "raw_path": "process/GroundPolicyCatalogue.gd",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/GroundPolicyCatalogue.tscn",
+      "bytes": 257,
+      "sha256": "ae34f54779caeb725dab147be2f0809fc39825d7160b3800f3bff7c127f9cab7",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/GroundPolicyCatalogue.tscn",
+      "source_bytes": 257,
+      "source_sha256": "ae34f54779caeb725dab147be2f0809fc39825d7160b3800f3bff7c127f9cab7",
+      "raw_path": "process/GroundPolicyCatalogue.tscn",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/capture-source.json",
+      "bytes": 1036,
+      "sha256": "17369cf4252984f5092f83cbeb8885be824a67e77dac4dddc935a5c3d111c366",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/capture-source.json",
+      "source_bytes": 1036,
+      "source_sha256": "17369cf4252984f5092f83cbeb8885be824a67e77dac4dddc935a5c3d111c366",
+      "raw_path": "process/capture-source.json",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/final-combined-r4/FinalCombinedCityPreview.gd",
+      "bytes": 1843,
+      "sha256": "8a8caed328705172959177dea6c220df5945d01b0cc17f0fed9f40f111d5caaf",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.gd",
+      "source_bytes": 1843,
+      "source_sha256": "8a8caed328705172959177dea6c220df5945d01b0cc17f0fed9f40f111d5caaf",
+      "raw_path": "process/final-combined-r4/FinalCombinedCityPreview.gd",
+      "role": "Unchanged inherited exterior capture controls"
+    },
+    {
+      "path": "process/final-combined-r4/FinalCombinedCityPreview.tscn",
+      "bytes": 274,
+      "sha256": "891417871b5808e6f201e4eedbf4e5299ef184da6038b3ed21981a53480da846",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/final-combined-r4/FinalCombinedCityPreview.tscn",
+      "source_bytes": 274,
+      "source_sha256": "891417871b5808e6f201e4eedbf4e5299ef184da6038b3ed21981a53480da846",
+      "raw_path": "process/final-combined-r4/FinalCombinedCityPreview.tscn",
+      "role": "Unchanged inherited exterior capture controls"
+    },
+    {
+      "path": "process/guard-affinity-current-recheck.stderr",
+      "bytes": 100,
+      "sha256": "45c52635cc912e0384dd28802d0b9e9166ae1229745682070b3f7136ae2e9b10",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/guard-affinity-current-recheck.stderr",
+      "source_bytes": 100,
+      "source_sha256": "45c52635cc912e0384dd28802d0b9e9166ae1229745682070b3f7136ae2e9b10",
+      "raw_path": "process/guard-affinity-current-recheck.stderr",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/guard-affinity-current-recheck.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/guard-affinity-current-recheck.stdout",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "process/guard-affinity-current-recheck.stdout",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/guard-affinity-original-recheck.stderr",
+      "bytes": 1182,
+      "sha256": "44e7a7c50149185ad81323c46dcca602d00781ce4a4b211d703d99c972f6028b",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/guard-affinity-original-recheck.stderr",
+      "source_bytes": 1182,
+      "source_sha256": "44e7a7c50149185ad81323c46dcca602d00781ce4a4b211d703d99c972f6028b",
+      "raw_path": "process/guard-affinity-original-recheck.stderr",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/guard-affinity-original-recheck.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/guard-affinity-original-recheck.stdout",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "process/guard-affinity-original-recheck.stdout",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/guard-affinity-rechecks.json",
+      "bytes": 645,
+      "sha256": "5fc2c41b856223130bce4275530dabb78615b9dbcd40bfe68143bd4d7b9b87f6",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/guard-affinity-rechecks.json",
+      "source_bytes": 645,
+      "source_sha256": "5fc2c41b856223130bce4275530dabb78615b9dbcd40bfe68143bd4d7b9b87f6",
+      "raw_path": "process/guard-affinity-rechecks.json",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/guard-before-cpu-option.py",
+      "bytes": 8176,
+      "sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/guard-before-cpu-option.py",
+      "source_bytes": 8176,
+      "source_sha256": "9f8219f0a9b4ee81e9b797c58f48aa347f16c53cf788dbe5969bf3e2767f7eba",
+      "raw_path": "process/guard-before-cpu-option.py",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/guard-current.py",
+      "bytes": 8325,
+      "sha256": "3a6088b23aa55ddf4d54a3a4a4dd99c4c52c87129029c69e6dce0b0ebc3e97b0",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/guarded_engine.py",
+      "source_bytes": 8325,
+      "source_sha256": "3a6088b23aa55ddf4d54a3a4a4dd99c4c52c87129029c69e6dce0b0ebc3e97b0",
+      "raw_path": "process/guard-current.py",
+      "role": "Current optional one-CPU guard; existing defaults/protections unchanged"
+    },
+    {
+      "path": "process/run_engine_slot.py",
+      "bytes": 13817,
+      "sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/run_engine_slot.py",
+      "source_bytes": 13817,
+      "source_sha256": "31bdeebf5b3aebd82e564ddf25493773e625360980f55647049c1f896681b9d5",
+      "raw_path": "process/run_engine_slot.py",
+      "role": "Actual local launcher source"
+    },
+    {
+      "path": "process/s7-independent-review.json",
+      "bytes": 11708,
+      "sha256": "f9660fc8097de94c9cb802922e29a4362efdb90165723779b99d08269a8c177c",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/s7-independent-review.json",
+      "source_bytes": 11708,
+      "source_sha256": "f9660fc8097de94c9cb802922e29a4362efdb90165723779b99d08269a8c177c",
+      "raw_path": "process/s7-independent-review.json",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/sa_engine.py",
+      "bytes": 8660,
+      "sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/sa_engine.py",
+      "source_bytes": 8660,
+      "source_sha256": "0b6e8a7ffc29dbd0d52bac62b406f5efc60ae261b7df7a13cd1c5bb5e188557e",
+      "raw_path": "process/sa_engine.py",
+      "role": "Actual local launcher source"
+    },
+    {
+      "path": "process/stage4-cost-r3/FinalCombinedCityPreview.gd",
+      "bytes": 12188,
+      "sha256": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.gd",
+      "source_bytes": 12188,
+      "source_sha256": "59c05fb590528a8d5d5f588af3f4a1463450c9b4453b592a2f6d29f93d8723a3",
+      "raw_path": "process/stage4-cost-r3/FinalCombinedCityPreview.gd",
+      "role": "Unchanged inherited exterior capture controls"
+    },
+    {
+      "path": "process/stage4-cost-r3/FinalCombinedCityPreview.tscn",
+      "bytes": 269,
+      "sha256": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/stage4-cost-r3/FinalCombinedCityPreview.tscn",
+      "source_bytes": 269,
+      "source_sha256": "bee14fd9af4bf26d1687577c740da0b1637ed50cfe771c37c52f887f563b2991",
+      "raw_path": "process/stage4-cost-r3/FinalCombinedCityPreview.tscn",
+      "role": "Unchanged inherited exterior capture controls"
+    },
+    {
+      "path": "process/test_guard_cpu_count.py",
+      "bytes": 2231,
+      "sha256": "4e75d351dc18125efa928fadcdb6a2c85dbd33e100104cd8d3647e4cfc2236aa",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/test_guard_cpu_count.py",
+      "source_bytes": 2231,
+      "source_sha256": "4e75d351dc18125efa928fadcdb6a2c85dbd33e100104cd8d3647e4cfc2236aa",
+      "raw_path": "process/test_guard_cpu_count.py",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "process/test_guard_cpu_count_original.py",
+      "bytes": 2247,
+      "sha256": "22e70ca7762e35501bd50f246e9023fce1e360c06dc1ae58e75330374f41d4bd",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261023-ground/test_guard_cpu_count_original.py",
+      "source_bytes": 2247,
+      "source_sha256": "22e70ca7762e35501bd50f246e9023fce1e360c06dc1ae58e75330374f41d4bd",
+      "raw_path": "process/test_guard_cpu_count_original.py",
+      "role": "Exact local capture/verification/source-review artifact"
+    },
+    {
+      "path": "results.json",
+      "bytes": 12920,
+      "sha256": "8b8db81206874da9c18266f101ccdf1ceac1e76ecf03a63417ab987616d50203",
+      "source_path": null,
+      "source_bytes": 12920,
+      "source_sha256": "8b8db81206874da9c18266f101ccdf1ceac1e76ecf03a63417ab987616d50203",
+      "raw_path": "results.json",
+      "role": "generated index"
+    },
+    {
+      "path": "review.json",
+      "bytes": 1876,
+      "sha256": "89132f64d6aa49dafe7a63cac8b651fb0ef8bbaf0a4e37dfc8464571830eb0ba",
+      "source_path": null,
+      "source_bytes": 1876,
+      "source_sha256": "89132f64d6aa49dafe7a63cac8b651fb0ef8bbaf0a4e37dfc8464571830eb0ba",
+      "raw_path": "review.json",
+      "role": "generated index"
+    },
+    {
+      "path": "runs/city23-care-render-green-r1/logs/engine.log",
+      "bytes": 3824,
+      "sha256": "1aaf14958ec9abacce91b29928bcb4217a16846b5b4bc305eb7340738f0a3050",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-green-r1-1/logs/engine.log",
+      "source_bytes": 3824,
+      "source_sha256": "1aaf14958ec9abacce91b29928bcb4217a16846b5b4bc305eb7340738f0a3050",
+      "raw_path": "runs/city23-care-render-green-r1/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-green-r1/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-green-r1-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-care-render-green-r1/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-green-r1/logs/stdout.log",
+      "bytes": 3824,
+      "sha256": "1aaf14958ec9abacce91b29928bcb4217a16846b5b4bc305eb7340738f0a3050",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-green-r1-1/logs/stdout.log",
+      "source_bytes": 3824,
+      "source_sha256": "1aaf14958ec9abacce91b29928bcb4217a16846b5b4bc305eb7340738f0a3050",
+      "raw_path": "runs/city23-care-render-green-r1/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-green-r1/run-results.json.gz",
+      "bytes": 163438,
+      "sha256": "11ba79691102116f86cd312e89cda58f72f635bea505d0be90a346a070eb3ec1",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-green-r1-1/run-results.json",
+      "source_bytes": 476210,
+      "source_sha256": "1794c9e2aa9aec923d59fd025df01d31d39a87f74f3fe6ab14abb8587482100f",
+      "raw_path": "runs/city23-care-render-green-r1/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-care-render-green-r1/thermal.json",
+      "bytes": 23385,
+      "sha256": "f41f392290d6570a8c42f25161a42597b16b4297f98a1571b7e59cb3b5872c82",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-green-r1-thermal.json",
+      "source_bytes": 23385,
+      "source_sha256": "f41f392290d6570a8c42f25161a42597b16b4297f98a1571b7e59cb3b5872c82",
+      "raw_path": "runs/city23-care-render-green-r1/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-care-render-green-r1/wrapper.log",
+      "bytes": 516,
+      "sha256": "071c6f2fe1961ffff3ee2b28900b8b6594a12c3ef420c14734965496be6126d4",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-green-r1-wrapper.log",
+      "source_bytes": 516,
+      "source_sha256": "071c6f2fe1961ffff3ee2b28900b8b6594a12c3ef420c14734965496be6126d4",
+      "raw_path": "runs/city23-care-render-green-r1/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-care-render-red-r1/logs/engine.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r1-1/logs/engine.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-care-render-red-r1/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r1/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r1-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-care-render-red-r1/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r1/logs/stdout.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r1-1/logs/stdout.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-care-render-red-r1/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r1/run-results.json.gz",
+      "bytes": 160086,
+      "sha256": "d3265329364345ff8ee4704e8ca0e9ddce3ba69cf87628c26efaf23c56386fdf",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r1-1/run-results.json",
+      "source_bytes": 442415,
+      "source_sha256": "54a3ecf2bfdd0e1b5353a364bf7d45d0f28d35f5e50f5e8c80000f5103fec572",
+      "raw_path": "runs/city23-care-render-red-r1/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-care-render-red-r1/thermal.json",
+      "bytes": 1661,
+      "sha256": "ec14fade69553f47ba9fe4eef75d9dc3821ee1145be7454b0aa4886b08b99c61",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-red-r1-thermal.json",
+      "source_bytes": 1661,
+      "source_sha256": "ec14fade69553f47ba9fe4eef75d9dc3821ee1145be7454b0aa4886b08b99c61",
+      "raw_path": "runs/city23-care-render-red-r1/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-care-render-red-r1/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-red-r1-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-care-render-red-r1/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-care-render-red-r2/logs/engine.log",
+      "bytes": 589,
+      "sha256": "2bd57a969d147501e5eae81a03f6c7605eb6418fe0b7f380b63688a24fe1a2c8",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r2-1/logs/engine.log",
+      "source_bytes": 589,
+      "source_sha256": "2bd57a969d147501e5eae81a03f6c7605eb6418fe0b7f380b63688a24fe1a2c8",
+      "raw_path": "runs/city23-care-render-red-r2/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r2/logs/stderr.log",
+      "bytes": 383,
+      "sha256": "1aa20e4c373ce8ad3ab29f0ed5afc2e23be3b32cf66c3dec0d664b8033b76e7a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r2-1/logs/stderr.log",
+      "source_bytes": 383,
+      "source_sha256": "1aa20e4c373ce8ad3ab29f0ed5afc2e23be3b32cf66c3dec0d664b8033b76e7a",
+      "raw_path": "runs/city23-care-render-red-r2/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r2/logs/stdout.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r2-1/logs/stdout.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-care-render-red-r2/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r2/run-results.json.gz",
+      "bytes": 163836,
+      "sha256": "ec30b600a9af505853084488d9c16b6797e555e3c83bc2600cebc980b12fd603",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r2-1/run-results.json",
+      "source_bytes": 480129,
+      "source_sha256": "39e9ce33b53f2b4653be86871eb5e94dfe543d70aeca6430cc8da425cf54c1c0",
+      "raw_path": "runs/city23-care-render-red-r2/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-care-render-red-r2/thermal.json",
+      "bytes": 24139,
+      "sha256": "0df84564b1500e34eac828dce99926228499b750be90a75a0d728a451e000508",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-red-r2-thermal.json",
+      "source_bytes": 24139,
+      "source_sha256": "0df84564b1500e34eac828dce99926228499b750be90a75a0d728a451e000508",
+      "raw_path": "runs/city23-care-render-red-r2/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-care-render-red-r2/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-red-r2-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-care-render-red-r2/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-care-render-red-r3/logs/engine.log",
+      "bytes": 5822,
+      "sha256": "9bb02d070a2ef363b5fe5f3f1fb1e378ea119e801b2b75cd636b02b23fd24407",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r3-1/logs/engine.log",
+      "source_bytes": 5822,
+      "source_sha256": "9bb02d070a2ef363b5fe5f3f1fb1e378ea119e801b2b75cd636b02b23fd24407",
+      "raw_path": "runs/city23-care-render-red-r3/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r3/logs/stderr.log",
+      "bytes": 2451,
+      "sha256": "baf8060b167abe84d689f12d91abd5b489ae2b13f411b4c80bc92bd5162b401a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r3-1/logs/stderr.log",
+      "source_bytes": 2451,
+      "source_sha256": "baf8060b167abe84d689f12d91abd5b489ae2b13f411b4c80bc92bd5162b401a",
+      "raw_path": "runs/city23-care-render-red-r3/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r3/logs/stdout.log",
+      "bytes": 3371,
+      "sha256": "60206470cfdfe5b97b6565f93dc58d9bcc2fcc23c9a65b3c6aada81d58529e5f",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r3-1/logs/stdout.log",
+      "source_bytes": 3371,
+      "source_sha256": "60206470cfdfe5b97b6565f93dc58d9bcc2fcc23c9a65b3c6aada81d58529e5f",
+      "raw_path": "runs/city23-care-render-red-r3/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-care-render-red-r3/run-results.json.gz",
+      "bytes": 164082,
+      "sha256": "bac925d760c34d574a7f2d5ed41512350a6f5509bd14237f753fe6a262314c75",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-care-render-red-r3-1/run-results.json",
+      "source_bytes": 481442,
+      "source_sha256": "a16a353a37ee13d2b0003d8b0a7e893f0af2599aeb43beaa260a90bb542eb1ae",
+      "raw_path": "runs/city23-care-render-red-r3/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-care-render-red-r3/thermal.json",
+      "bytes": 25030,
+      "sha256": "072237441ccd5d08b2cf632539aa3258b4a0666aa07235d114be693e98f6beab",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-red-r3-thermal.json",
+      "source_bytes": 25030,
+      "source_sha256": "072237441ccd5d08b2cf632539aa3258b4a0666aa07235d114be693e98f6beab",
+      "raw_path": "runs/city23-care-render-red-r3/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-care-render-red-r3/wrapper.log",
+      "bytes": 1042,
+      "sha256": "16c0a7259fe0c79c6596b677783b4c7fd8490036fae6ef342af00c6c6d4a102d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-care-render-red-r3-wrapper.log",
+      "source_bytes": 1042,
+      "source_sha256": "16c0a7259fe0c79c6596b677783b4c7fd8490036fae6ef342af00c6c6d4a102d",
+      "raw_path": "runs/city23-care-render-red-r3/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r1/logs/engine.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r1-1/logs/engine.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-ground-after-s7-r1/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r1/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r1-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-after-s7-r1/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r1/logs/stdout.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r1-1/logs/stdout.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-ground-after-s7-r1/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r1/run-results.json.gz",
+      "bytes": 160247,
+      "sha256": "a693284e69099649049da8d903426531ff6ba863159baa82ec56c46abaf3677b",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r1-1/run-results.json",
+      "source_bytes": 442883,
+      "source_sha256": "e81dc88c64a706b8be2629a46067881ab36caf3303e9209fea32431feb537fc3",
+      "raw_path": "runs/city23-ground-after-s7-r1/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r1/thermal.json",
+      "bytes": 3530,
+      "sha256": "0da2d0854ae68845b5a8b2a0069f44aeed394a876302d7f4297521419aaf40fc",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s7-r1-thermal.json",
+      "source_bytes": 3530,
+      "source_sha256": "0da2d0854ae68845b5a8b2a0069f44aeed394a876302d7f4297521419aaf40fc",
+      "raw_path": "runs/city23-ground-after-s7-r1/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r1/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s7-r1-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-after-s7-r1/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r2/logs/engine.log",
+      "bytes": 360,
+      "sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/logs/engine.log",
+      "source_bytes": 360,
+      "source_sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "raw_path": "runs/city23-ground-after-s7-r2/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r2/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-after-s7-r2/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r2/logs/stdout.log",
+      "bytes": 360,
+      "sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/logs/stdout.log",
+      "source_bytes": 360,
+      "source_sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "raw_path": "runs/city23-ground-after-s7-r2/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r2/run-results.json.gz",
+      "bytes": 164594,
+      "sha256": "6ea489b2284d8767a0e8b0ebe3695ffb9d0c283567064dc303a16be066678e96",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s7-r2-1/run-results.json",
+      "source_bytes": 489079,
+      "source_sha256": "aea8b4bd564869f52cb43b3b6f4711d97be96cb8cb3b8913bd4271dd5195d38c",
+      "raw_path": "runs/city23-ground-after-s7-r2/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r2/thermal.json",
+      "bytes": 28436,
+      "sha256": "d31e3205027d9315f220e40ce943edcd5e1a63eeedfc0fcd49122c73a423042b",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s7-r2-thermal.json",
+      "source_bytes": 28436,
+      "source_sha256": "d31e3205027d9315f220e40ce943edcd5e1a63eeedfc0fcd49122c73a423042b",
+      "raw_path": "runs/city23-ground-after-s7-r2/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-after-s7-r2/wrapper.log",
+      "bytes": 475,
+      "sha256": "f1d44314f2f2111eb204b79b0d44dda04ff226402293149ae360c5f5089b008b",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s7-r2-wrapper.log",
+      "source_bytes": 475,
+      "source_sha256": "f1d44314f2f2111eb204b79b0d44dda04ff226402293149ae360c5f5089b008b",
+      "raw_path": "runs/city23-ground-after-s7-r2/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r1/logs/engine.log",
+      "bytes": 360,
+      "sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r1-1/logs/engine.log",
+      "source_bytes": 360,
+      "source_sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "raw_path": "runs/city23-ground-after-s9-r1/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r1/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r1-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-after-s9-r1/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r1/logs/stdout.log",
+      "bytes": 360,
+      "sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r1-1/logs/stdout.log",
+      "source_bytes": 360,
+      "source_sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "raw_path": "runs/city23-ground-after-s9-r1/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r1/run-results.json.gz",
+      "bytes": 164752,
+      "sha256": "1c9e06cfdc1d658d217b586782532934b322edd160e81f99ddfcad38f822dcec",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r1-1/run-results.json",
+      "source_bytes": 490459,
+      "source_sha256": "a7474eeb6325aad1fb34166b081587530ced3736cecb1367190b17c1266492d2",
+      "raw_path": "runs/city23-ground-after-s9-r1/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r1/thermal.json",
+      "bytes": 32476,
+      "sha256": "a177657571089db9976c64aba44a020854dd1b6e9d113912ed21a469a3996a67",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s9-r1-thermal.json",
+      "source_bytes": 32476,
+      "source_sha256": "a177657571089db9976c64aba44a020854dd1b6e9d113912ed21a469a3996a67",
+      "raw_path": "runs/city23-ground-after-s9-r1/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r1/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s9-r1-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-after-s9-r1/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r2/logs/engine.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r2-1/logs/engine.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-ground-after-s9-r2/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r2/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r2-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-after-s9-r2/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r2/logs/stdout.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r2-1/logs/stdout.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-ground-after-s9-r2/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r2/run-results.json.gz",
+      "bytes": 160206,
+      "sha256": "6912f39aa0c6a9ae10b87bdb3fa632ea4867521d345d41e420431eadbd925f7b",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-after-s9-r2-1/run-results.json",
+      "source_bytes": 442797,
+      "source_sha256": "d494294621603a52788aecf3a43a93a82fb2b0b7814a71ed6609c9da0e913d07",
+      "raw_path": "runs/city23-ground-after-s9-r2/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r2/thermal.json",
+      "bytes": 2714,
+      "sha256": "a2d39375296a04a84b4d16b41e0a23c3a263215b54a6999e2e6ba2e30a0e93d2",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s9-r2-thermal.json",
+      "source_bytes": 2714,
+      "source_sha256": "a2d39375296a04a84b4d16b41e0a23c3a263215b54a6999e2e6ba2e30a0e93d2",
+      "raw_path": "runs/city23-ground-after-s9-r2/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-after-s9-r2/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-after-s9-r2-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-after-s9-r2/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-before-s7-r1/logs/engine.log",
+      "bytes": 360,
+      "sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/logs/engine.log",
+      "source_bytes": 360,
+      "source_sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "raw_path": "runs/city23-ground-before-s7-r1/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s7-r1/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-before-s7-r1/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s7-r1/logs/stdout.log",
+      "bytes": 360,
+      "sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/logs/stdout.log",
+      "source_bytes": 360,
+      "source_sha256": "a788514c2ac8418522181616916baeed8cbf23c604f56d61225a071f2ec50702",
+      "raw_path": "runs/city23-ground-before-s7-r1/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s7-r1/run-results.json.gz",
+      "bytes": 162554,
+      "sha256": "2de0517b12ed4b2848136478b0086b2e8800d1edcd98d59dd699b18773bfa272",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s7-r1-1/run-results.json",
+      "source_bytes": 466125,
+      "source_sha256": "997a5b388993b36e00c773564772caa0ebd4327c903982ca120c1b06630d0890",
+      "raw_path": "runs/city23-ground-before-s7-r1/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-before-s7-r1/thermal.json",
+      "bytes": 16191,
+      "sha256": "8a6158944ebe4e8dcb8592eec466f3c7426a0fcb06bae4fe6b8ec04e2387d58c",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s7-r1-thermal.json",
+      "source_bytes": 16191,
+      "source_sha256": "8a6158944ebe4e8dcb8592eec466f3c7426a0fcb06bae4fe6b8ec04e2387d58c",
+      "raw_path": "runs/city23-ground-before-s7-r1/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-before-s7-r1/wrapper.log",
+      "bytes": 475,
+      "sha256": "3020c0eacbe46b523a66e90db02c8576e530724d8bada55d3a856beede338e0a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s7-r1-wrapper.log",
+      "source_bytes": 475,
+      "source_sha256": "3020c0eacbe46b523a66e90db02c8576e530724d8bada55d3a856beede338e0a",
+      "raw_path": "runs/city23-ground-before-s7-r1/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r1/logs/engine.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r1-1/logs/engine.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-ground-before-s9-r1/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r1/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r1-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-before-s9-r1/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r1/logs/stdout.log",
+      "bytes": 213,
+      "sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r1-1/logs/stdout.log",
+      "source_bytes": 213,
+      "source_sha256": "2cfc0ce2248ed63bb8a80d6dd6644239ad69d70763d62cd8a1a2277ae6f5234d",
+      "raw_path": "runs/city23-ground-before-s9-r1/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r1/run-results.json.gz",
+      "bytes": 161112,
+      "sha256": "9530459b40c2a06ca3aaa36643d5ae6c64a1edee1d5e4425c9fea15e5cc7681c",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r1-1/run-results.json",
+      "source_bytes": 450984,
+      "source_sha256": "3065af596bf4875403914876d5e9acd7b4532bb2217d9b75468aa5416233eced",
+      "raw_path": "runs/city23-ground-before-s9-r1/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r1/thermal.json",
+      "bytes": 7611,
+      "sha256": "70bd128d4f99e0f7177cc06242783bc563d6432648236364681b2da01650fd63",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s9-r1-thermal.json",
+      "source_bytes": 7611,
+      "source_sha256": "70bd128d4f99e0f7177cc06242783bc563d6432648236364681b2da01650fd63",
+      "raw_path": "runs/city23-ground-before-s9-r1/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r1/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s9-r1-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-before-s9-r1/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r2/logs/engine.log",
+      "bytes": 360,
+      "sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r2-1/logs/engine.log",
+      "source_bytes": 360,
+      "source_sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "raw_path": "runs/city23-ground-before-s9-r2/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r2/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r2-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-before-s9-r2/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r2/logs/stdout.log",
+      "bytes": 360,
+      "sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r2-1/logs/stdout.log",
+      "source_bytes": 360,
+      "source_sha256": "5e3d90555ceacbe2049948b9e52de79c786dfe5342d8228c44c61aa66473e14a",
+      "raw_path": "runs/city23-ground-before-s9-r2/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r2/run-results.json.gz",
+      "bytes": 165331,
+      "sha256": "8ad82a74f361c678430c54de0895d843ae8a2334bc3a052507c03618a7e89a3c",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-before-s9-r2-1/run-results.json",
+      "source_bytes": 494877,
+      "source_sha256": "ea9657c46deec3dbba3af9547549ae0bd187238df86c36f5012acc417274ec44",
+      "raw_path": "runs/city23-ground-before-s9-r2/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r2/thermal.json",
+      "bytes": 31775,
+      "sha256": "f5d0f96b713344205e60d791a0eb901e7cc619eb930eddf14fdb38aac56bc6bc",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s9-r2-thermal.json",
+      "source_bytes": 31775,
+      "source_sha256": "f5d0f96b713344205e60d791a0eb901e7cc619eb930eddf14fdb38aac56bc6bc",
+      "raw_path": "runs/city23-ground-before-s9-r2/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-before-s9-r2/wrapper.log",
+      "bytes": 476,
+      "sha256": "b7d3c1a9e7f378a26583c7aade92e25e0d4d40c9f5d2e92ed499fae09f9cef38",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-before-s9-r2-wrapper.log",
+      "source_bytes": 476,
+      "source_sha256": "b7d3c1a9e7f378a26583c7aade92e25e0d4d40c9f5d2e92ed499fae09f9cef38",
+      "raw_path": "runs/city23-ground-before-s9-r2/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-citygroundcaretest-r1/logs/engine.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-citygroundcaretest-r1-1/logs/engine.log",
+      "source_bytes": 73,
+      "source_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_path": "runs/city23-ground-citygroundcaretest-r1/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-citygroundcaretest-r1/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-citygroundcaretest-r1-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-citygroundcaretest-r1/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-citygroundcaretest-r1/logs/stdout.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-citygroundcaretest-r1-1/logs/stdout.log",
+      "source_bytes": 73,
+      "source_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_path": "runs/city23-ground-citygroundcaretest-r1/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-citygroundcaretest-r1/run-results.json.gz",
+      "bytes": 160051,
+      "sha256": "7006409603049db14584fed50ea891e1dbd17c7dcba91dac9041070427e534d9",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-citygroundcaretest-r1-1/run-results.json",
+      "source_bytes": 442280,
+      "source_sha256": "157abba86080d44f795c1f69f74e6cffd63387836c6e2ae033c27209d7b84cd6",
+      "raw_path": "runs/city23-ground-citygroundcaretest-r1/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-citygroundcaretest-r1/thermal.json",
+      "bytes": 2356,
+      "sha256": "1b95e2aea033c68425b94f7913187865536e3b6889dafa22d15fdb276e03b2e6",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-citygroundcaretest-r1-thermal.json",
+      "source_bytes": 2356,
+      "source_sha256": "1b95e2aea033c68425b94f7913187865536e3b6889dafa22d15fdb276e03b2e6",
+      "raw_path": "runs/city23-ground-citygroundcaretest-r1/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-citygroundcaretest-r1/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-citygroundcaretest-r1-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-citygroundcaretest-r1/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r2/logs/engine.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r2-1/logs/engine.log",
+      "source_bytes": 73,
+      "source_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_path": "runs/city23-ground-owner-care-r2/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r2/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r2-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-owner-care-r2/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r2/logs/stdout.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r2-1/logs/stdout.log",
+      "source_bytes": 73,
+      "source_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_path": "runs/city23-ground-owner-care-r2/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r2/run-results.json.gz",
+      "bytes": 160033,
+      "sha256": "b92698437dd97f8f1321cc3ba7eb379c18d8fa43f15afd60b9e8b13db86245ba",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r2-1/run-results.json",
+      "source_bytes": 442204,
+      "source_sha256": "7329b5ca532bee6e9791bb1bb06b0869a15b7b951f4c058bbc5a35406d4897f8",
+      "raw_path": "runs/city23-ground-owner-care-r2/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r2/thermal.json",
+      "bytes": 1566,
+      "sha256": "3e2c7c33d8248c4fc164e68e5c3f9fd851b52d76a7ad7297604afb8a8b486c9a",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-owner-care-r2-thermal.json",
+      "source_bytes": 1566,
+      "source_sha256": "3e2c7c33d8248c4fc164e68e5c3f9fd851b52d76a7ad7297604afb8a8b486c9a",
+      "raw_path": "runs/city23-ground-owner-care-r2/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r2/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-owner-care-r2-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-owner-care-r2/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r3/logs/engine.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r3-1/logs/engine.log",
+      "source_bytes": 73,
+      "source_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_path": "runs/city23-ground-owner-care-r3/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r3/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r3-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-owner-care-r3/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r3/logs/stdout.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r3-1/logs/stdout.log",
+      "source_bytes": 73,
+      "source_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "raw_path": "runs/city23-ground-owner-care-r3/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r3/run-results.json.gz",
+      "bytes": 160041,
+      "sha256": "c5fa1a148e1be997539adf858c991dff407185d237ec4a2a8d60a20f4ff3ff25",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-care-r3-1/run-results.json",
+      "source_bytes": 442206,
+      "source_sha256": "6f6b6e31cb93158092640c5028a91e002d0fd92d08b3d4cb746890e584a80b3b",
+      "raw_path": "runs/city23-ground-owner-care-r3/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r3/thermal.json",
+      "bytes": 2366,
+      "sha256": "361f21e55657226bf4cda25d9229a771ec88fd6014f84ba9af1af0a2e6228f3f",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-owner-care-r3-thermal.json",
+      "source_bytes": 2366,
+      "source_sha256": "361f21e55657226bf4cda25d9229a771ec88fd6014f84ba9af1af0a2e6228f3f",
+      "raw_path": "runs/city23-ground-owner-care-r3/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-owner-care-r3/wrapper.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-owner-care-r3-wrapper.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-owner-care-r3/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "runs/city23-ground-owner-catalogue-r2/logs/engine.log",
+      "bytes": 8315,
+      "sha256": "8efa06f3e5346a741793279f6ec8fb8d10510e04b8f1825e0b5a6bf347982363",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-catalogue-r2-1/logs/engine.log",
+      "source_bytes": 8315,
+      "source_sha256": "8efa06f3e5346a741793279f6ec8fb8d10510e04b8f1825e0b5a6bf347982363",
+      "raw_path": "runs/city23-ground-owner-catalogue-r2/logs/engine.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-catalogue-r2/logs/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-catalogue-r2-1/logs/stderr.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_path": "runs/city23-ground-owner-catalogue-r2/logs/stderr.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-catalogue-r2/logs/stdout.log",
+      "bytes": 8315,
+      "sha256": "8efa06f3e5346a741793279f6ec8fb8d10510e04b8f1825e0b5a6bf347982363",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-catalogue-r2-1/logs/stdout.log",
+      "source_bytes": 8315,
+      "source_sha256": "8efa06f3e5346a741793279f6ec8fb8d10510e04b8f1825e0b5a6bf347982363",
+      "raw_path": "runs/city23-ground-owner-catalogue-r2/logs/stdout.log",
+      "role": "Original engine transport log, including empty files"
+    },
+    {
+      "path": "runs/city23-ground-owner-catalogue-r2/run-results.json.gz",
+      "bytes": 162788,
+      "sha256": "e22e961895be3a468598c36508e88eda71d52b5b2315ff7265c058144b4e1bb4",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/city23-ground-owner-catalogue-r2-1/run-results.json",
+      "source_bytes": 470480,
+      "source_sha256": "f0da1b3cbc02d130cd2c2f5d30d698b41ed5e8899a7c0d153e9745a3b57c50f1",
+      "raw_path": "runs/city23-ground-owner-catalogue-r2/run-results.json",
+      "role": "Complete original run record with unfiltered source map"
+    },
+    {
+      "path": "runs/city23-ground-owner-catalogue-r2/thermal.json",
+      "bytes": 29363,
+      "sha256": "79ec2b1b0cc39c1c126787a1a42e299c719c4f585a2fdd0ff4e643a42d2085d6",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-owner-catalogue-r2-thermal.json",
+      "source_bytes": 29363,
+      "source_sha256": "79ec2b1b0cc39c1c126787a1a42e299c719c4f585a2fdd0ff4e643a42d2085d6",
+      "raw_path": "runs/city23-ground-owner-catalogue-r2/thermal.json",
+      "role": "Original guard receipt"
+    },
+    {
+      "path": "runs/city23-ground-owner-catalogue-r2/wrapper.log",
+      "bytes": 518,
+      "sha256": "88736fba02576cce81e54fe678db623b80c559c94b7a378b48aa6a96bf34fe69",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/city23-ground-owner-catalogue-r2-wrapper.log",
+      "source_bytes": 518,
+      "source_sha256": "88736fba02576cce81e54fe678db623b80c559c94b7a378b48aa6a96bf34fe69",
+      "raw_path": "runs/city23-ground-owner-catalogue-r2/wrapper.log",
+      "role": "Original guard-captured launcher stdout/stderr"
+    },
+    {
+      "path": "sources/production/core/systems/world/WorldArt.gd",
+      "bytes": 14411,
+      "sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/WorldArt.gd",
+      "source_bytes": 14411,
+      "source_sha256": "724b14743a3a3f29717fe8f6365ec95aa5febff3010bf952f2f07644715ec3b4",
+      "raw_path": "sources/production/core/systems/world/WorldArt.gd",
+      "role": "Selected production source body; no S9 candidate integrated"
+    },
+    {
+      "path": "sources/production/core/systems/world/ground/CityGroundCare.gd",
+      "bytes": 9077,
+      "sha256": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/CityGroundCare.gd",
+      "source_bytes": 9077,
+      "source_sha256": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688",
+      "raw_path": "sources/production/core/systems/world/ground/CityGroundCare.gd",
+      "role": "Selected production source body; no S9 candidate integrated"
+    },
+    {
+      "path": "sources/production/core/systems/world/ground/DistrictGroundPolicy.gd",
+      "bytes": 20888,
+      "sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/DistrictGroundPolicy.gd",
+      "source_bytes": 20888,
+      "source_sha256": "cba9036a5c30093ad854156f6bf6e48b8fc27a79c4f2e83979e6d513e0a32a36",
+      "raw_path": "sources/production/core/systems/world/ground/DistrictGroundPolicy.gd",
+      "role": "Selected production source body; no S9 candidate integrated"
+    },
+    {
+      "path": "sources/production/core/systems/world/ground/GroundSplatRenderer.gd",
+      "bytes": 38174,
+      "sha256": "22ce00dc5ca55dbfac5138b4cfc8b598a91c403ddd15c8c57ce0e666f10b4c4f",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/GroundSplatRenderer.gd",
+      "source_bytes": 38174,
+      "source_sha256": "22ce00dc5ca55dbfac5138b4cfc8b598a91c403ddd15c8c57ce0e666f10b4c4f",
+      "raw_path": "sources/production/core/systems/world/ground/GroundSplatRenderer.gd",
+      "role": "Selected production source body; no S9 candidate integrated"
+    },
+    {
+      "path": "sources/production/core/systems/world/ground/ground_splat.gdshader",
+      "bytes": 18683,
+      "sha256": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/core/systems/world/ground/ground_splat.gdshader",
+      "source_bytes": 18683,
+      "source_sha256": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9",
+      "raw_path": "sources/production/core/systems/world/ground/ground_splat.gdshader",
+      "role": "Selected production source body; no S9 candidate integrated"
+    },
+    {
+      "path": "sources/production/tools/tests/CityGroundCareRenderTest.gd",
+      "bytes": 10167,
+      "sha256": "c2a2995cb3b4ff6029842b34f02b0d5ee738e5003d06fe6fcd015c52785e2455",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/tools/tests/CityGroundCareRenderTest.gd",
+      "source_bytes": 10167,
+      "source_sha256": "c2a2995cb3b4ff6029842b34f02b0d5ee738e5003d06fe6fcd015c52785e2455",
+      "raw_path": "sources/production/tools/tests/CityGroundCareRenderTest.gd",
+      "role": "Selected production source body; no S9 candidate integrated"
+    },
+    {
+      "path": "sources/production/tools/tests/CityGroundCareRenderTest.tscn",
+      "bytes": 203,
+      "sha256": "f4eaad092d6cd607b75f62fb23b01840ae636997e6825755bc98462768d5af22",
+      "source_path": "/home/user/Nauris/Synthetic-Ascension/tools/tests/CityGroundCareRenderTest.tscn",
+      "source_bytes": 203,
+      "source_sha256": "f4eaad092d6cd607b75f62fb23b01840ae636997e6825755bc98462768d5af22",
+      "raw_path": "sources/production/tools/tests/CityGroundCareRenderTest.tscn",
+      "role": "Selected production source body; no S9 candidate integrated"
+    }
+  ]
+}

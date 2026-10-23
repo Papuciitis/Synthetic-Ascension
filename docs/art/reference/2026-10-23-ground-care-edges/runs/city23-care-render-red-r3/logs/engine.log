@@ -1,0 +1,87 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: finite native evidence directory is writable
+PASS: care-000 reads the actual native ground target
+PASS: care-000 saves its unmodified native pixels
+PASS: care-025 reads the actual native ground target
+PASS: care-025 saves its unmodified native pixels
+PASS: care-050 reads the actual native ground target
+PASS: care-050 saves its unmodified native pixels
+PASS: care-075 reads the actual native ground target
+PASS: care-075 saves its unmodified native pixels
+PASS: care-100 reads the actual native ground target
+PASS: care-100 saves its unmodified native pixels
+PASS: a fully cared core remains visibly distinct from the same bare paving
+PASS: full care retains the green lawn core rather than merely darkening stone
+CityGroundCareRenderTest weight=0.25 influence=0.0000 relative_residual=0.0000 endpoint_energy=0.251873
+ERROR: FAIL: care 0.25 has proportional native influence (observed 0.0000)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:140)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+PASS: care 0.25 blends toward its full cared appearance at matching pixels
+ERROR: FAIL: care 0.25 visibly advances beyond the preceding weight; no threshold plateau
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:142)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+PASS: care 0.25 leaves zero-mask outer yard pixels unchanged
+PASS: care 0.25 leaves the stamped road pixels unchanged
+PASS: care 0.25 leaves the stamped access lane pixels unchanged
+CityGroundCareRenderTest weight=0.50 influence=0.0000 relative_residual=0.0000 endpoint_energy=0.251873
+ERROR: FAIL: care 0.50 has proportional native influence (observed 0.0000)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:140)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+PASS: care 0.50 blends toward its full cared appearance at matching pixels
+ERROR: FAIL: care 0.50 visibly advances beyond the preceding weight; no threshold plateau
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:142)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+PASS: care 0.50 leaves zero-mask outer yard pixels unchanged
+PASS: care 0.50 leaves the stamped road pixels unchanged
+PASS: care 0.50 leaves the stamped access lane pixels unchanged
+CityGroundCareRenderTest weight=0.75 influence=1.0000 relative_residual=0.0000 endpoint_energy=0.251873
+ERROR: FAIL: care 0.75 has proportional native influence (observed 1.0000)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:140)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+PASS: care 0.75 blends toward its full cared appearance at matching pixels
+PASS: care 0.75 visibly advances beyond the preceding weight; no threshold plateau
+PASS: care 0.75 leaves zero-mask outer yard pixels unchanged
+PASS: care 0.75 leaves the stamped road pixels unchanged
+PASS: care 0.75 leaves the stamped access lane pixels unchanged
+CityGroundCareRenderTest weight=1.00 influence=1.0000 relative_residual=0.0000 endpoint_energy=0.251873
+ERROR: FAIL: care 1.00 visibly advances beyond the preceding weight; no threshold plateau
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityGroundCareRenderTest.gd:36)
+       [1] _fractional_sweep (res://tools/tests/CityGroundCareRenderTest.gd:142)
+       [2] _pixels (res://tools/tests/CityGroundCareRenderTest.gd:98)
+PASS: care 1.00 leaves zero-mask outer yard pixels unchanged
+PASS: care 1.00 leaves the stamped road pixels unchanged
+PASS: care 1.00 leaves the stamped access lane pixels unchanged
+PASS: the matched sweep changes only care, preserving coverage and all other light channels
+PASS: care-restored-zero reads the actual native ground target
+PASS: care-restored-zero saves its unmodified native pixels
+PASS: clearing care restores every original rendered ground pixel
+PASS: household-bare reads the actual native ground target
+PASS: household-bare saves its unmodified native pixels
+PASS: household-cared reads the actual native ground target
+PASS: household-cared saves its unmodified native pixels
+PASS: the public household planner actually places a bounded cared pocket
+PASS: the actual door veto keeps its district-ground approach free of care
+PASS: public care preserves road and access-lane restrictions
+PASS: the public household pocket has visible cared pixels beside the house
+PASS: the real reserved door approach retains its original native pixels
+PASS: public household care leaves road and lane pixels unchanged
+CityGroundCareRenderTest: 43 passed, 6 failed
