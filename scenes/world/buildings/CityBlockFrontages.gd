@@ -10,6 +10,18 @@ const DOMESTIC_BASE := preload("res://assets/world/walls/kit/wall34_10.png")
 const PLASTER_SOURCE := Rect2(1360,260,140,240)
 const TIMBER_SOURCE := Rect2(920,217,11,420)
 const WINDOW_SOURCES: Array[Rect2] = [Rect2(294,172,420,460),Rect2(1480,120,520,510)]
+## A composed house's side returns are its own masonry, lit by the top-right
+## sun (WorldDepthStyle): the west face in cool shade, the east face close to
+## the facade's light. Flat sage panels read as a blank frame (playtest
+## 2026-10-23, plate 08's stone corners).
+const RETURN_SHADE := Color(0.50, 0.52, 0.57)
+const RETURN_LIT := Color(0.80, 0.79, 0.77)
+## Some houses run an iron downpipe from the eave to the ground in one return.
+const PIPE_PX := 5.0
+const PIPE_SHARE := 0.6
+const PIPE_IRON := Color(0.17, 0.20, 0.21)
+const PIPE_LIT := Color(0.52, 0.57, 0.56)
+const SALT_PIPE := 0x91FE
 
 static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVector2Array, lantern_texture: Texture2D = null, portal_masonry: Texture2D = null) -> void:
 	var group := Node2D.new()
@@ -58,6 +70,11 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 		# A continuous shaded return beneath the eave, split around side doors.
 		# A party wall shared with an attached neighbour has no exposed return.
 		var party := int(kit.get_meta(&"party_edges",0))
+		var profile: Dictionary = kit.get("_district_profile") if kit.get("_district_profile") is Dictionary else {}
+		var pipe_roll := float(posmod(hash([int(profile.get("visual_seed", int(box.position.x) * 31 + int(box.position.y))), SALT_PIPE]), 1000)) / 1000.0
+		# The pipe runs from the eave (the facade's top) down the chosen return.
+		var pipe_dir := (-1 if pipe_roll < PIPE_SHARE * 0.5 else 1) if pipe_roll < PIPE_SHARE else 0
+		var eave_y := box.end.y - 16.0 - float(kit.get("_facade_height"))
 		for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT]:
 			if (dir.x < 0 and (party & 8) != 0) or (dir.x > 0 and (party & 2) != 0): continue
 			var x := box.position.x+16 if dir.x < 0 else box.end.x-16
@@ -72,6 +89,9 @@ static func compose(kit: Node2D, doors: Array, cell_px: int, outline: PackedVect
 				runs = next
 			for run: Vector2 in runs:
 				if run.y <= run.x: continue
+				if composed:
+					_masonry_return(group,kit,Rect2(x-7,run.x,14,run.y-run.x),dir.x < 0,eave_y if dir.x == pipe_dir else INF)
+					continue
 				var face := _panel(group,Rect2(x-7,run.x,14,run.y-run.x),Color("57635f") if dir.x < 0 else Color("92998a"))
 				if finish != null: _plaster(face,finish,Color("858d80") if dir.x < 0 else Color("b7b8a5"),plaster_material)
 	else:
@@ -380,6 +400,40 @@ static func _subtract_rect(field: Rect2, cut: Rect2) -> Array[Rect2]:
 	for piece: Rect2 in candidates:
 		if piece.has_area(): pieces.append(piece)
 	return pieces
+
+## One side return in the wall family's masonry (the composer's wall shader,
+## world-anchored, with its base shade and wall-foot damp), from `pipe_from`
+## down carrying an iron downpipe on its outer side. Every piece is opaque
+## and owns its pixels, so the return fades once with the facade.
+static func _masonry_return(group: Node2D, kit: Node2D, rect: Rect2, west: bool, pipe_from: float) -> void:
+	var pieces: Array[Rect2] = [rect]
+	var pipe := Rect2()
+	if pipe_from < rect.end.y - 24.0:
+		var top := maxf(rect.position.y, pipe_from)
+		pipe = Rect2(rect.position.x + 1.0 if west else rect.end.x - 1.0 - PIPE_PX, top, PIPE_PX, rect.end.y - top)
+		pieces = COMPOSER.subtract_rect(rect, pipe)
+	var material := COMPOSER._family_material(COMPOSER.family_for(kit), false)
+	for piece: Rect2 in pieces:
+		var face := _panel(group, piece, RETURN_SHADE if west else RETURN_LIT)
+		if face == null: continue
+		face.name = "WallReturn"
+		face.material = material
+		# A 1x1 texture keeps the UVs unnormalised, as the composer's field:
+		# UV.y the 0..1 height, UV.x the height in px (for the foot damp).
+		face.texture = COMPOSER._white_texture()
+		var uv := PackedVector2Array()
+		for point: Vector2 in face.polygon:
+			uv.append(Vector2(rect.size.y, (point.y - rect.position.y) / rect.size.y))
+		face.uv = uv
+	if pipe.has_area():
+		# Iron, lit along its east edge by the top-right sun.
+		var lit := 1.5
+		var body := _panel(group, Rect2(pipe.position, Vector2(pipe.size.x - lit, pipe.size.y)), PIPE_IRON)
+		var edge := _panel(group, Rect2(Vector2(pipe.end.x - lit, pipe.position.y), Vector2(lit, pipe.size.y)), PIPE_LIT)
+		for part: Polygon2D in [body, edge]:
+			if part != null:
+				part.name = "WallDownpipe"
+				part.set_meta(&"city_downpipe", true)
 
 static func _panel(parent: Node2D, rect: Rect2, color: Color) -> Polygon2D:
 	if not rect.has_area(): return null
