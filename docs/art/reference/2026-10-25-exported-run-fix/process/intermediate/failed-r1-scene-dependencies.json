@@ -1,0 +1,1583 @@
+{
+  "pack_path": "/home/user/Nauris/Synthetic-Ascension/build/playtest-20261025/SyntheticAscension-playtest.exe",
+  "pack_sha256": "befb0582c2693734f155da28dcf75f806a6dac1ea8c647345f4e7c0b27731d17",
+  "method": "Offline PCK4 directory/payload MD5 checks plus recursively observed literal res:// file references in current source bodies. Not a runtime Resource deserializer; dynamic paths and implicit class-name dependencies are not included.",
+  "closures": {
+    "ui/screens/Segment1NarrativeOverlay.tscn": {
+      "nodes": [
+        "assets/fonts/cinzel/Cinzel-Variable.ttf",
+        "assets/fonts/cinzel_decorative/CinzelDecorative-Bold.ttf",
+        "assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf",
+        "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+        "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+        "assets/ui/menu/icon_check_off.png",
+        "assets/ui/menu/icon_check_on.png",
+        "assets/ui/menu/icon_chevron.png",
+        "assets/ui/menu/icon_grabber.png",
+        "assets/ui/menu/icon_grabber_hl.png",
+        "ui/components/ArcaneFrame.gd",
+        "ui/components/ArcaneRule.gd",
+        "ui/screens/Segment1NarrativeOverlay.gd",
+        "ui/screens/Segment1NarrativeOverlay.tscn",
+        "ui/theme/ArcaneMenuTheme.tres",
+        "ui/theme/SyntheticHudTheme.tres",
+        "ui/widgets/ArcaneMotion.gd",
+        "ui/widgets/overlays/OverlayKit.gd"
+      ],
+      "edges": [
+        {
+          "from": "ui/screens/Segment1NarrativeOverlay.tscn",
+          "to": "ui/screens/Segment1NarrativeOverlay.gd",
+          "source_line": 3
+        },
+        {
+          "from": "ui/screens/Segment1NarrativeOverlay.tscn",
+          "to": "ui/theme/ArcaneMenuTheme.tres",
+          "source_line": 4
+        },
+        {
+          "from": "ui/screens/Segment1NarrativeOverlay.tscn",
+          "to": "ui/components/ArcaneFrame.gd",
+          "source_line": 5
+        },
+        {
+          "from": "ui/screens/Segment1NarrativeOverlay.tscn",
+          "to": "ui/components/ArcaneRule.gd",
+          "source_line": 6
+        },
+        {
+          "from": "ui/screens/Segment1NarrativeOverlay.gd",
+          "to": "ui/widgets/overlays/OverlayKit.gd",
+          "source_line": 10
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/cinzel/Cinzel-Variable.ttf",
+          "source_line": 3
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf",
+          "source_line": 4
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+          "source_line": 5
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+          "source_line": 6
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_check_off.png",
+          "source_line": 7
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_check_on.png",
+          "source_line": 8
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_grabber.png",
+          "source_line": 9
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_grabber_hl.png",
+          "source_line": 10
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_chevron.png",
+          "source_line": 11
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "ui/theme/ArcaneMenuTheme.tres",
+          "source_line": 13
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "ui/theme/SyntheticHudTheme.tres",
+          "source_line": 14
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "ui/widgets/ArcaneMotion.gd",
+          "source_line": 15
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+          "source_line": 16
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "assets/fonts/cinzel/Cinzel-Variable.ttf",
+          "source_line": 17
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+          "source_line": 3
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+          "source_line": 4
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/cinzel/Cinzel-Variable.ttf",
+          "source_line": 5
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/cinzel_decorative/CinzelDecorative-Bold.ttf",
+          "source_line": 6
+        }
+      ]
+    },
+    "core/systems/world/opening/OpeningSequenceController.tscn": {
+      "nodes": [
+        "assets/fonts/cinzel/Cinzel-Variable.ttf",
+        "assets/fonts/cinzel_decorative/CinzelDecorative-Bold.ttf",
+        "assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf",
+        "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+        "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+        "assets/textures/characters/generated/enemy_minion.tres",
+        "assets/textures/characters/generated/enemy_roles_v4.png",
+        "assets/textures/characters/generated/enemy_warden.tres",
+        "assets/ui/menu/icon_check_off.png",
+        "assets/ui/menu/icon_check_on.png",
+        "assets/ui/menu/icon_chevron.png",
+        "assets/ui/menu/icon_grabber.png",
+        "assets/ui/menu/icon_grabber_hl.png",
+        "core/actors/enemy/EnemySpec.gd",
+        "core/actors/enemy/EnemySpec_ContainmentConstruct.tres",
+        "core/actors/enemy/EnemySpec_OpeningOfficer.tres",
+        "core/settings/AccessibilityPresentation.gd",
+        "core/systems/world/opening/OpeningActor.gd",
+        "core/systems/world/opening/OpeningActor.tscn",
+        "core/systems/world/opening/OpeningSequenceController.gd",
+        "core/systems/world/opening/OpeningSequenceController.tscn",
+        "core/systems/world/opening/OpeningSequenceWorld.gd",
+        "core/systems/world/opening/OpeningSequenceWorld.tscn",
+        "ui/components/ArcaneFrame.gd",
+        "ui/components/ArcaneRule.gd",
+        "ui/controllers/TutorialInputLabels.gd",
+        "ui/screens/opening/OpeningPresentation.gd",
+        "ui/screens/opening/OpeningPresentation.tscn",
+        "ui/screens/opening/opening_still.gdshader",
+        "ui/theme/ArcaneMenuTheme.tres",
+        "ui/theme/SyntheticHudTheme.tres",
+        "ui/widgets/ArcaneMotion.gd",
+        "ui/widgets/overlays/OverlayKit.gd"
+      ],
+      "edges": [
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.tscn",
+          "to": "core/systems/world/opening/OpeningSequenceController.gd",
+          "source_line": 3
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.gd",
+          "to": "core/settings/AccessibilityPresentation.gd",
+          "source_line": 4
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.gd",
+          "to": "ui/controllers/TutorialInputLabels.gd",
+          "source_line": 5
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.gd",
+          "to": "ui/screens/opening/OpeningPresentation.tscn",
+          "source_line": 23
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.gd",
+          "to": "core/systems/world/opening/OpeningSequenceWorld.tscn",
+          "source_line": 24
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.gd",
+          "to": "core/systems/world/opening/OpeningActor.tscn",
+          "source_line": 25
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.gd",
+          "to": "core/actors/enemy/EnemySpec_ContainmentConstruct.tres",
+          "source_line": 26
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceController.gd",
+          "to": "core/actors/enemy/EnemySpec_OpeningOfficer.tres",
+          "source_line": 27
+        },
+        {
+          "from": "ui/screens/opening/OpeningPresentation.tscn",
+          "to": "ui/screens/opening/OpeningPresentation.gd",
+          "source_line": 3
+        },
+        {
+          "from": "core/systems/world/opening/OpeningSequenceWorld.tscn",
+          "to": "core/systems/world/opening/OpeningSequenceWorld.gd",
+          "source_line": 3
+        },
+        {
+          "from": "core/systems/world/opening/OpeningActor.tscn",
+          "to": "core/systems/world/opening/OpeningActor.gd",
+          "source_line": 3
+        },
+        {
+          "from": "core/actors/enemy/EnemySpec_ContainmentConstruct.tres",
+          "to": "core/actors/enemy/EnemySpec.gd",
+          "source_line": 3
+        },
+        {
+          "from": "core/actors/enemy/EnemySpec_ContainmentConstruct.tres",
+          "to": "assets/textures/characters/generated/enemy_minion.tres",
+          "source_line": 4
+        },
+        {
+          "from": "core/actors/enemy/EnemySpec_OpeningOfficer.tres",
+          "to": "core/actors/enemy/EnemySpec.gd",
+          "source_line": 3
+        },
+        {
+          "from": "core/actors/enemy/EnemySpec_OpeningOfficer.tres",
+          "to": "assets/textures/characters/generated/enemy_warden.tres",
+          "source_line": 4
+        },
+        {
+          "from": "ui/screens/opening/OpeningPresentation.gd",
+          "to": "core/settings/AccessibilityPresentation.gd",
+          "source_line": 18
+        },
+        {
+          "from": "ui/screens/opening/OpeningPresentation.gd",
+          "to": "ui/theme/ArcaneMenuTheme.tres",
+          "source_line": 19
+        },
+        {
+          "from": "ui/screens/opening/OpeningPresentation.gd",
+          "to": "ui/widgets/overlays/OverlayKit.gd",
+          "source_line": 20
+        },
+        {
+          "from": "ui/screens/opening/OpeningPresentation.gd",
+          "to": "ui/components/ArcaneFrame.gd",
+          "source_line": 21
+        },
+        {
+          "from": "ui/screens/opening/OpeningPresentation.gd",
+          "to": "ui/components/ArcaneRule.gd",
+          "source_line": 22
+        },
+        {
+          "from": "ui/screens/opening/OpeningPresentation.gd",
+          "to": "ui/screens/opening/opening_still.gdshader",
+          "source_line": 23
+        },
+        {
+          "from": "core/systems/world/opening/OpeningActor.gd",
+          "to": "core/settings/AccessibilityPresentation.gd",
+          "source_line": 4
+        },
+        {
+          "from": "assets/textures/characters/generated/enemy_minion.tres",
+          "to": "assets/textures/characters/generated/enemy_roles_v4.png",
+          "source_line": 3
+        },
+        {
+          "from": "assets/textures/characters/generated/enemy_warden.tres",
+          "to": "assets/textures/characters/generated/enemy_roles_v4.png",
+          "source_line": 3
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/cinzel/Cinzel-Variable.ttf",
+          "source_line": 3
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf",
+          "source_line": 4
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+          "source_line": 5
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+          "source_line": 6
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_check_off.png",
+          "source_line": 7
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_check_on.png",
+          "source_line": 8
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_grabber.png",
+          "source_line": 9
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_grabber_hl.png",
+          "source_line": 10
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_chevron.png",
+          "source_line": 11
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "ui/theme/ArcaneMenuTheme.tres",
+          "source_line": 13
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "ui/theme/SyntheticHudTheme.tres",
+          "source_line": 14
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "ui/widgets/ArcaneMotion.gd",
+          "source_line": 15
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+          "source_line": 16
+        },
+        {
+          "from": "ui/widgets/overlays/OverlayKit.gd",
+          "to": "assets/fonts/cinzel/Cinzel-Variable.ttf",
+          "source_line": 17
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+          "source_line": 3
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+          "source_line": 4
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/cinzel/Cinzel-Variable.ttf",
+          "source_line": 5
+        },
+        {
+          "from": "ui/theme/SyntheticHudTheme.tres",
+          "to": "assets/fonts/cinzel_decorative/CinzelDecorative-Bold.ttf",
+          "source_line": 6
+        }
+      ]
+    },
+    "scenes/world/dev_segment/DevSegment.tscn": {
+      "nodes": [
+        "scenes/world/dev_segment/DevSegment.tscn",
+        "scenes/world/dev_segment/pieces/EmptyOutdoor.tscn",
+        "scenes/world/dev_segment/pieces/RoomCorner.tscn"
+      ],
+      "edges": [
+        {
+          "from": "scenes/world/dev_segment/DevSegment.tscn",
+          "to": "scenes/world/dev_segment/pieces/EmptyOutdoor.tscn",
+          "source_line": 3
+        },
+        {
+          "from": "scenes/world/dev_segment/DevSegment.tscn",
+          "to": "scenes/world/dev_segment/pieces/RoomCorner.tscn",
+          "source_line": 4
+        }
+      ]
+    },
+    "ui/screens/PauseMenu.tscn": {
+      "nodes": [
+        "assets/fonts/cinzel/Cinzel-Variable.ttf",
+        "assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf",
+        "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+        "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+        "assets/ui/menu/cloud_noise.png",
+        "assets/ui/menu/flare_star.png",
+        "assets/ui/menu/icon_check_off.png",
+        "assets/ui/menu/icon_check_on.png",
+        "assets/ui/menu/icon_chevron.png",
+        "assets/ui/menu/icon_grabber.png",
+        "assets/ui/menu/icon_grabber_hl.png",
+        "assets/ui/menu/menu_highlight.png",
+        "ui/components/ArcaneDialog.gd",
+        "ui/components/ArcaneFrame.gd",
+        "ui/components/ArcaneMenuItem.gd",
+        "ui/components/ArcaneRule.gd",
+        "ui/screens/PauseMenu.gd",
+        "ui/screens/PauseMenu.tscn",
+        "ui/screens/settings/BindingConflictOverlay.gd",
+        "ui/screens/settings/BindingConflictOverlay.tscn",
+        "ui/screens/settings/BindingRow.gd",
+        "ui/screens/settings/BindingRow.tscn",
+        "ui/screens/settings/DisplayConfirmationOverlay.gd",
+        "ui/screens/settings/DisplayConfirmationOverlay.tscn",
+        "ui/screens/settings/InputCaptureOverlay.gd",
+        "ui/screens/settings/InputCaptureOverlay.tscn",
+        "ui/screens/settings/SettingsScreen.gd",
+        "ui/screens/settings/SettingsScreen.tscn",
+        "ui/shaders/menu_highlight.gdshader",
+        "ui/theme/ArcaneMenuTheme.tres",
+        "ui/widgets/ArcaneMotion.gd",
+        "ui/widgets/ArcaneParticles.gd"
+      ],
+      "edges": [
+        {
+          "from": "ui/screens/PauseMenu.tscn",
+          "to": "ui/screens/PauseMenu.gd",
+          "source_line": 3
+        },
+        {
+          "from": "ui/screens/PauseMenu.gd",
+          "to": "ui/theme/ArcaneMenuTheme.tres",
+          "source_line": 4
+        },
+        {
+          "from": "ui/screens/PauseMenu.gd",
+          "to": "ui/components/ArcaneFrame.gd",
+          "source_line": 5
+        },
+        {
+          "from": "ui/screens/PauseMenu.gd",
+          "to": "ui/components/ArcaneRule.gd",
+          "source_line": 6
+        },
+        {
+          "from": "ui/screens/PauseMenu.gd",
+          "to": "ui/screens/settings/SettingsScreen.tscn",
+          "source_line": 7
+        },
+        {
+          "from": "ui/screens/PauseMenu.gd",
+          "to": "ui/components/ArcaneDialog.gd",
+          "source_line": 8
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/cinzel/Cinzel-Variable.ttf",
+          "source_line": 3
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf",
+          "source_line": 4
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Variable.ttf",
+          "source_line": 5
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf",
+          "source_line": 6
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_check_off.png",
+          "source_line": 7
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_check_on.png",
+          "source_line": 8
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_grabber.png",
+          "source_line": 9
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_grabber_hl.png",
+          "source_line": 10
+        },
+        {
+          "from": "ui/theme/ArcaneMenuTheme.tres",
+          "to": "assets/ui/menu/icon_chevron.png",
+          "source_line": 11
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.tscn",
+          "to": "ui/screens/settings/SettingsScreen.gd",
+          "source_line": 3
+        },
+        {
+          "from": "ui/components/ArcaneDialog.gd",
+          "to": "ui/components/ArcaneFrame.gd",
+          "source_line": 11
+        },
+        {
+          "from": "ui/components/ArcaneDialog.gd",
+          "to": "ui/components/ArcaneRule.gd",
+          "source_line": 12
+        },
+        {
+          "from": "ui/components/ArcaneDialog.gd",
+          "to": "ui/widgets/ArcaneMotion.gd",
+          "source_line": 13
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/screens/settings/BindingRow.tscn",
+          "source_line": 6
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/screens/settings/InputCaptureOverlay.tscn",
+          "source_line": 7
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/screens/settings/BindingConflictOverlay.tscn",
+          "source_line": 8
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/screens/settings/DisplayConfirmationOverlay.tscn",
+          "source_line": 9
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/theme/ArcaneMenuTheme.tres",
+          "source_line": 11
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/components/ArcaneMenuItem.gd",
+          "source_line": 12
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/components/ArcaneRule.gd",
+          "source_line": 13
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/components/ArcaneFrame.gd",
+          "source_line": 14
+        },
+        {
+          "from": "ui/screens/settings/SettingsScreen.gd",
+          "to": "ui/components/ArcaneDialog.gd",
+          "source_line": 15
+        },
+        {
+          "from": "ui/screens/settings/BindingRow.tscn",
+          "to": "ui/screens/settings/BindingRow.gd",
+          "source_line": 3
+        },
+        {
+          "from": "ui/screens/settings/InputCaptureOverlay.tscn",
+          "to": "ui/screens/settings/InputCaptureOverlay.gd",
+          "source_line": 3
+        },
+        {
+          "from": "ui/screens/settings/BindingConflictOverlay.tscn",
+          "to": "ui/screens/settings/BindingConflictOverlay.gd",
+          "source_line": 3
+        },
+        {
+          "from": "ui/screens/settings/DisplayConfirmationOverlay.tscn",
+          "to": "ui/screens/settings/DisplayConfirmationOverlay.gd",
+          "source_line": 3
+        },
+        {
+          "from": "ui/components/ArcaneMenuItem.gd",
+          "to": "assets/ui/menu/menu_highlight.png",
+          "source_line": 15
+        },
+        {
+          "from": "ui/components/ArcaneMenuItem.gd",
+          "to": "assets/ui/menu/flare_star.png",
+          "source_line": 16
+        },
+        {
+          "from": "ui/components/ArcaneMenuItem.gd",
+          "to": "assets/ui/menu/cloud_noise.png",
+          "source_line": 17
+        },
+        {
+          "from": "ui/components/ArcaneMenuItem.gd",
+          "to": "ui/shaders/menu_highlight.gdshader",
+          "source_line": 18
+        },
+        {
+          "from": "ui/components/ArcaneMenuItem.gd",
+          "to": "ui/widgets/ArcaneParticles.gd",
+          "source_line": 19
+        },
+        {
+          "from": "ui/components/ArcaneMenuItem.gd",
+          "to": "ui/widgets/ArcaneMotion.gd",
+          "source_line": 20
+        }
+      ]
+    }
+  },
+  "nodes": {
+    "ui/screens/Segment1NarrativeOverlay.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/Segment1NarrativeOverlay.tscn.remap",
+      "bytes": 117,
+      "sha256": "73ad98b6109d09fe72634c1b5cf1dd5e401e6fa6eb7e775a9537f0b908f0afef",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-32e897ae9285ea4b7902162be2c1a669-Segment1NarrativeOverlay.scn",
+          "present": true,
+          "bytes": 4001,
+          "sha256": "f1d646fe11f8b0f8c62ee0fee1bf55a637594101a2325a8bf28523dd45cacf25",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "5f2c9a275fddc9675b089ec345b01f4da0819de772446a01e23aa1a98c8baa6e"
+    },
+    "ui/screens/Segment1NarrativeOverlay.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/Segment1NarrativeOverlay.gd.remap",
+      "bytes": 62,
+      "sha256": "9a1ba5158f883ca1a94bd2b3b309d434c4439c7372006a514993ad01974e4789",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/Segment1NarrativeOverlay.gdc",
+          "present": true,
+          "bytes": 1777,
+          "sha256": "5a0bbe41cc47ff7d82b308380a5e4e29bb67d2ce87b6fa2c8c7e61bd6a2b4acb",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "36060efec52a330f3bd5980382883eba48ce2dd477a54a08025caa7fa7aa48b9"
+    },
+    "ui/theme/ArcaneMenuTheme.tres": {
+      "present": true,
+      "physical_path": "res://ui/theme/ArcaneMenuTheme.tres.remap",
+      "bytes": 108,
+      "sha256": "ed8b7e93d49ef62e80cae3cb8a8c895698f24b4cf23dadc3aa13c85edcdace01",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-b7ef424be7087bd8812b2e5f2844d7dc-ArcaneMenuTheme.res",
+          "present": true,
+          "bytes": 32977,
+          "sha256": "0f05d8f17347b82c33f2fe7d425023ab8049ed3aabfec102ac7bb299685db4b1",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "6b1b0de4b066efd0039379526d747c969512221915b8d1dd3a1d099665690aca"
+    },
+    "ui/components/ArcaneFrame.gd": {
+      "present": true,
+      "physical_path": "res://ui/components/ArcaneFrame.gd.remap",
+      "bytes": 52,
+      "sha256": "8cceadacda83c16c41594b202fa5338759162f8a073997cd2df3e7c20044a41a",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/components/ArcaneFrame.gdc",
+          "present": true,
+          "bytes": 3072,
+          "sha256": "119728437f5330debeff8d3bcec8e927d072b53f483aa7782d97e7db6788fb48",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "8661bd43d98b97eac34cc33c979269c16ed507620eb41d9cf270f243b2325510"
+    },
+    "ui/components/ArcaneRule.gd": {
+      "present": true,
+      "physical_path": "res://ui/components/ArcaneRule.gd.remap",
+      "bytes": 51,
+      "sha256": "7a02cebba3645997f9dc382b7d2377cd61de0e25805e10afbd7a4e74ba9dca17",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/components/ArcaneRule.gdc",
+          "present": true,
+          "bytes": 1941,
+          "sha256": "e032c86649fd3e8970980cf6e6ff1b3934b70c4692a619cccf08f44f4a2f83e6",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "a7ee68c24cb40a7e34856ea30b75472a963aabb4e6cd55409028138c01806bd7"
+    },
+    "ui/widgets/overlays/OverlayKit.gd": {
+      "present": true,
+      "physical_path": "res://ui/widgets/overlays/OverlayKit.gd.remap",
+      "bytes": 57,
+      "sha256": "733315b0d9c1dd9059e4e2e615c3c111b809c827d6b9f0d6bb8f105e8c7891f1",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/widgets/overlays/OverlayKit.gdc",
+          "present": true,
+          "bytes": 10251,
+          "sha256": "306588f26286c994b4e18c779299dc410959a62e4882a2a23de01a83d9885fb6",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "bd5cf643feb95c89fbf620bc932d55ad80e0cf14231a76f90b67a72799c60219"
+    },
+    "assets/fonts/cinzel/Cinzel-Variable.ttf": {
+      "present": true,
+      "physical_path": "res://assets/fonts/cinzel/Cinzel-Variable.ttf.import",
+      "bytes": 172,
+      "sha256": "d2214a82f1a4affbd18de78fbb07cf0f1f7b0b1d19636b444aec94644c0eba59",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/Cinzel-Variable.ttf-688818bfa0d5f8c8dedfd25a40f56837.fontdata",
+          "present": true,
+          "bytes": 68281,
+          "sha256": "5087c494cf9ae311e7d831cd049d487927004a8301fc00016e7a148370149255",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf": {
+      "present": true,
+      "physical_path": "res://assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf.import",
+      "bytes": 179,
+      "sha256": "003cb40e6d83c976a586efb88860ea72535e39f79df23234abd9cb6608ce580a",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/CinzelDecorative-Regular.ttf-64c8fe251dbbeabc1f3801e10d7e7bf3.fontdata",
+          "present": true,
+          "bytes": 35068,
+          "sha256": "8210d0ad9783c242719a7d2652d421ef98562542fd2ff43600c256b1e1900f58",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/fonts/eb_garamond/EBGaramond-Variable.ttf": {
+      "present": true,
+      "physical_path": "res://assets/fonts/eb_garamond/EBGaramond-Variable.ttf.import",
+      "bytes": 175,
+      "sha256": "f7b152927d002b796ee378acdb4e01efa751a9db7b0c389b8bf946fe2d27bc8e",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/EBGaramond-Variable.ttf-0f8eb3cd0c8765fceb154fed5bf45cce.fontdata",
+          "present": true,
+          "bytes": 476558,
+          "sha256": "da69b1432ac9015cd4b8ae539b0fbda44be19443fe63146ccc75868fbf10b7f5",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf": {
+      "present": true,
+      "physical_path": "res://assets/fonts/eb_garamond/EBGaramond-Italic-Variable.ttf.import",
+      "bytes": 183,
+      "sha256": "4751ba215a3ab8f00e6c230ed704b95abcf1ebfc1246d88b2e5478b4f731534e",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/EBGaramond-Italic-Variable.ttf-badf5fc43f4254145685ecc1934ebda5.fontdata",
+          "present": true,
+          "bytes": 456302,
+          "sha256": "64cb2a0b99a561f2eafe68d47f2f6809a50888c0ff93a7acb0b746b071079b02",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/ui/menu/icon_check_off.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/icon_check_off.png.import",
+      "bytes": 203,
+      "sha256": "483804cab7ec1acd36a5bd591b1b49445e3180d9c28694a654f278b0a207ca66",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/icon_check_off.png-190a954e877fd420fa461f9771797e98.ctex",
+          "present": true,
+          "bytes": 344,
+          "sha256": "a5c80987530469d9df7d5dfb1c69122366be7e630f18cce51309cccbf2502cff",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/ui/menu/icon_check_on.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/icon_check_on.png.import",
+      "bytes": 201,
+      "sha256": "76bb7a7ba9b29f7c09ab29b3990ebce3cc62408225d9e8ebd4c7150e78c0fa4f",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/icon_check_on.png-8a37cfa4fbeb1f32ae2abe9b8088f67b.ctex",
+          "present": true,
+          "bytes": 346,
+          "sha256": "80ff939cd5655ae30c463a8f40ec93b0eadea97cf2b5bcc43b6ce0109fc0c4b6",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/ui/menu/icon_grabber.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/icon_grabber.png.import",
+      "bytes": 200,
+      "sha256": "5eee36c22248020d0ea918a8e8c2c638152f3ab2e1f49bdf60f09b6085c9fe86",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/icon_grabber.png-1863e478454180de63a7de43c68cbb9f.ctex",
+          "present": true,
+          "bytes": 370,
+          "sha256": "c887e68a77a594f9578d213f12fbfb3a4cc072ea888b61c3b6f8f255f938e991",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/ui/menu/icon_grabber_hl.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/icon_grabber_hl.png.import",
+      "bytes": 204,
+      "sha256": "41843f3dac79dff2e47b780d9e46c033535c2c8031c45110b3fd01c9deee1431",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/icon_grabber_hl.png-e896d48febad93db2ac48e7affd1f140.ctex",
+          "present": true,
+          "bytes": 448,
+          "sha256": "489b275d31bd02258bc3ebccb0cd46432fc046d04f528c8439de00fd17cf0c0b",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/ui/menu/icon_chevron.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/icon_chevron.png.import",
+      "bytes": 201,
+      "sha256": "f77903a6f373bc9908f6568b07281602c3bbdb36665629c256d008140dd25947",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/icon_chevron.png-56e14ab3aadd66068fb19fe7d7bf225f.ctex",
+          "present": true,
+          "bytes": 356,
+          "sha256": "b45b5efabfe4d0256dc2fc8b936f7f2d99c37ac235b3bccb1117599b25f9b302",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "ui/theme/SyntheticHudTheme.tres": {
+      "present": true,
+      "physical_path": "res://ui/theme/SyntheticHudTheme.tres.remap",
+      "bytes": 110,
+      "sha256": "f0e70b4bd347b1496419bfa96abac5611c4954294f567ec73762a8ddf80b790d",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-8269ab40bdda256c5d97105060b9998e-SyntheticHudTheme.res",
+          "present": true,
+          "bytes": 14635,
+          "sha256": "34d77b5e554ddfff893e4a2b57b68f799cd24c5ed60150ae0d8369a91ca5a5d9",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "44d7e39df71c6bed144fbf527714079ee72bee656e87fd6d8485f1ff7c52052f"
+    },
+    "ui/widgets/ArcaneMotion.gd": {
+      "present": true,
+      "physical_path": "res://ui/widgets/ArcaneMotion.gd.remap",
+      "bytes": 50,
+      "sha256": "b6f4f42745a10aefca0b90fa55659c0525e5c3d5394f9883547155e4cec0ee4b",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/widgets/ArcaneMotion.gdc",
+          "present": true,
+          "bytes": 514,
+          "sha256": "85aa9edffb4479a84248ad00c2251d5e23d9ffefa2ad97833ffc96b8aaa8a168",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "5c65aea9bcc77856fc444fa1cd08762422c16fb55c13d323d67fdf4db56dce20"
+    },
+    "assets/fonts/cinzel_decorative/CinzelDecorative-Bold.ttf": {
+      "present": true,
+      "physical_path": "res://assets/fonts/cinzel_decorative/CinzelDecorative-Bold.ttf.import",
+      "bytes": 178,
+      "sha256": "6e88015f8acfa4e26785fc3a46753f9175d9ac533e0f171aa098f9eb5087e971",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/CinzelDecorative-Bold.ttf-9e1dc7cbc8effc12dde82a00ff1c2c63.fontdata",
+          "present": true,
+          "bytes": 37110,
+          "sha256": "aac147aff1ad33adef5614a9ce2bc3fed3cc9beee56e52d4218ddccc01e84128",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "core/systems/world/opening/OpeningSequenceController.tscn": {
+      "present": true,
+      "physical_path": "res://core/systems/world/opening/OpeningSequenceController.tscn.remap",
+      "bytes": 118,
+      "sha256": "e2c244c54283494095bb147a9cf56d913bdd570dd93f504f498372cc2c7ec074",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-821d1185f6b05609e0a576a0a2ba454f-OpeningSequenceController.scn",
+          "present": true,
+          "bytes": 769,
+          "sha256": "9a1c12342154a6c94bfcaca6b827e500ebbb43132126d7f55cb243293b6e73c1",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "7f8afda15a0b0bc3ae7736f1cf687729a20146218b57002b3f9bd9d8fcd5d957"
+    },
+    "core/systems/world/opening/OpeningSequenceController.gd": {
+      "present": true,
+      "physical_path": "res://core/systems/world/opening/OpeningSequenceController.gd.remap",
+      "bytes": 79,
+      "sha256": "6241e16c5ee7fb6a73251b38d1d2a10c167f3e78191f9ba72b1430513f172958",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://core/systems/world/opening/OpeningSequenceController.gdc",
+          "present": true,
+          "bytes": 15557,
+          "sha256": "66f1efa983893d5b2ed5439014a0d18f1efbbe67752552967c744d6e7e999618",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "334e760b073c7d587e1cbe47bb670b52d08dbff24bed9e4c41815584827e7267"
+    },
+    "core/settings/AccessibilityPresentation.gd": {
+      "present": true,
+      "physical_path": "res://core/settings/AccessibilityPresentation.gd.remap",
+      "bytes": 66,
+      "sha256": "b66bac265d68fec955498eba07251e641d4ed209249c5d40440fed77fc2fde27",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://core/settings/AccessibilityPresentation.gdc",
+          "present": true,
+          "bytes": 1095,
+          "sha256": "e95615bfed1d9397e70c5d115121dfa0a992291286a2ae9a03617268af9394d9",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "466a6adad5ab068fb2e088bfef068a991cbe0c89e4eb42d1b4a54c981249b15d"
+    },
+    "ui/controllers/TutorialInputLabels.gd": {
+      "present": true,
+      "physical_path": "res://ui/controllers/TutorialInputLabels.gd.remap",
+      "bytes": 61,
+      "sha256": "a38af9f8150b93794854858fb3d6a2b609bbc8f496b057183626264b7c628b3e",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/controllers/TutorialInputLabels.gdc",
+          "present": true,
+          "bytes": 687,
+          "sha256": "601d0d833e76c25518308b7f4f5fc6c6759bbb9c77ed7960e9934199c63f48b6",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "c32f60b4da48637461523854d45261351ef3d799272e61d7b48b4c18d39ffdb0"
+    },
+    "ui/screens/opening/OpeningPresentation.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/opening/OpeningPresentation.tscn.remap",
+      "bytes": 112,
+      "sha256": "7149977cc2b3d57981c418ed8e8b5058f50b67ff77628a8159d1309a33fc1f81",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-239bb07f29c9e33691bfc39001a57a2a-OpeningPresentation.scn",
+          "present": true,
+          "bytes": 723,
+          "sha256": "475688316dae1450f0865ed7c65bbef6caf0c2ab8c0906ea2da3ad558d808543",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "8ecc1dfcfbc06028015febefca1a2b215162f6254e7676de22d211c37ab09666"
+    },
+    "core/systems/world/opening/OpeningSequenceWorld.tscn": {
+      "present": true,
+      "physical_path": "res://core/systems/world/opening/OpeningSequenceWorld.tscn.remap",
+      "bytes": 113,
+      "sha256": "1bf27f0779fc21124d2ff011d7d6a1569e0457694b19412e4797718655d5ec1e",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-35366fa5f890a19c6b1c474661f8ef66-OpeningSequenceWorld.scn",
+          "present": true,
+          "bytes": 756,
+          "sha256": "a4a15f080eadae04f555aaa3a963585114bcfbc3ffdd830e6a38698a3a42d84e",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "ed7782ef0bbf05f428cd803c3795e720a5e4174bf14564f2ae260c2568b22091"
+    },
+    "core/systems/world/opening/OpeningActor.tscn": {
+      "present": true,
+      "physical_path": "res://core/systems/world/opening/OpeningActor.tscn.remap",
+      "bytes": 105,
+      "sha256": "2df945145a87382c17725c9ec92da75bcc4564d92e84beb3a69a3a4b96023290",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-c3a009c6e253173544d835beb123ed5e-OpeningActor.scn",
+          "present": true,
+          "bytes": 1175,
+          "sha256": "4763c166140358c6cc53e839009b38ef821d784d19a3648874cd7248c6ad7543",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "3ffb404ef24cc5bd992fbf21e6363cfedbcf65e65cbf4cb4cf79340ecc1151e1"
+    },
+    "core/actors/enemy/EnemySpec_ContainmentConstruct.tres": {
+      "present": true,
+      "physical_path": "res://core/actors/enemy/EnemySpec_ContainmentConstruct.tres.remap",
+      "bytes": 123,
+      "sha256": "bd8fe90766fc9957c00ebfbac6cbfcfcd1bc832432b707b9fbabf8e1b8ad51c0",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-e63f8b9baaf14a85b145913a0ab7ce8e-EnemySpec_ContainmentConstruct.res",
+          "present": true,
+          "bytes": 3108,
+          "sha256": "61e4e4c6ca45616d28f5600024395a334339600afb64e547bbb2c11ced10e274",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "3ac66326c760a7c541570efa793547d6c93371c0da5df70954879044f0a34f93"
+    },
+    "core/actors/enemy/EnemySpec_OpeningOfficer.tres": {
+      "present": true,
+      "physical_path": "res://core/actors/enemy/EnemySpec_OpeningOfficer.tres.remap",
+      "bytes": 117,
+      "sha256": "c1dacbe19d4d2553329f917feffcc106dd5177f1602d99da53f225030f3a206c",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-7db47e7a52ee6840efd1727150278062-EnemySpec_OpeningOfficer.res",
+          "present": true,
+          "bytes": 3098,
+          "sha256": "608720d86589cccaaf8ae01e1be1736de687bec49f2687495bb0c2c637ef936b",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "47c461902172d93f017964c76aeed8b50cad485206d168bccadf27cd109238bb"
+    },
+    "ui/screens/opening/OpeningPresentation.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/opening/OpeningPresentation.gd.remap",
+      "bytes": 65,
+      "sha256": "30f165ce7d48296ccfcb4833267ad504741c17a199bee499b8a42182887c643c",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/opening/OpeningPresentation.gdc",
+          "present": true,
+          "bytes": 20430,
+          "sha256": "50be09a31df4cd3588f9fcdf1f33e649f4a218dae9881a7e8e606cc3adc9b9da",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "a23e2fd69c5504175c1899e66f382d65f63dba6af72431d91c664d530a9709ce"
+    },
+    "core/systems/world/opening/OpeningSequenceWorld.gd": {
+      "present": true,
+      "physical_path": "res://core/systems/world/opening/OpeningSequenceWorld.gd.remap",
+      "bytes": 74,
+      "sha256": "cd6b40d429eea2955a3d4a1b4f658a19c1cf3cb3c112d03b5b5be74ec75f3605",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://core/systems/world/opening/OpeningSequenceWorld.gdc",
+          "present": true,
+          "bytes": 2657,
+          "sha256": "ef02d1509f0da74d3f13c7d1f3afe38e77f930dd695436c2b135264e9e6b72a2",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "914ee196ccced898403ddbd18884e9f525a77db80a4467361fa1d0f97c8e7bc3"
+    },
+    "core/systems/world/opening/OpeningActor.gd": {
+      "present": true,
+      "physical_path": "res://core/systems/world/opening/OpeningActor.gd.remap",
+      "bytes": 66,
+      "sha256": "8d90db1c0d60c6e36982c24386bcd9852013da819a4d2434d1e6178bd8a47b7e",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://core/systems/world/opening/OpeningActor.gdc",
+          "present": true,
+          "bytes": 5433,
+          "sha256": "007d4881938d48989aeeb996b4e29bdbd7faaaa6775a21b27b4f79edbf2ed9d8",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "e49a97b26b3d8d1c2462795706a84b82f31c4510fb055b61e55ac4c2a958b172"
+    },
+    "core/actors/enemy/EnemySpec.gd": {
+      "present": true,
+      "physical_path": "res://core/actors/enemy/EnemySpec.gd.remap",
+      "bytes": 54,
+      "sha256": "1e9ad9eaf47f99759ab5f4ee8f17984bc6174ff71f37ff2a67dd544d9e81d8da",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://core/actors/enemy/EnemySpec.gdc",
+          "present": true,
+          "bytes": 5915,
+          "sha256": "8bb452ab1cf810066141f45027317e3f7c086061f7a05c62ddf00d9701e211bd",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "997bc902c5967c5f409c9276fb1a24b3631c2fda713a66dbd4c920a9e96f7306"
+    },
+    "assets/textures/characters/generated/enemy_minion.tres": {
+      "present": true,
+      "physical_path": "res://assets/textures/characters/generated/enemy_minion.tres.remap",
+      "bytes": 105,
+      "sha256": "b528c091682531c5dc37ce7a1462fc7da3eadfa27435cae3410643a48364ec16",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-8e5ee6a7c8d1bccb23b0c77e3f6705b8-enemy_minion.res",
+          "present": true,
+          "bytes": 468,
+          "sha256": "b1818dc203f6f5524b2728cfe18237271d51e305b42128d4c09794e26e348c05",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "b03d5abe908eea8bc8cd365e170880e12a49c993f79e445a4668a957dc788884"
+    },
+    "assets/textures/characters/generated/enemy_warden.tres": {
+      "present": true,
+      "physical_path": "res://assets/textures/characters/generated/enemy_warden.tres.remap",
+      "bytes": 105,
+      "sha256": "13e56ff4e1e69559ad5368e797ae83e5fe5a624c4d22d70946d34742d90562b5",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-afd78184e4f33d938bb8fab9eceb5325-enemy_warden.res",
+          "present": true,
+          "bytes": 468,
+          "sha256": "07d69c2b3028c15abaeffa7b2468ef2bb3042df3721e87bb7a8538842f3bdd72",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "323d3c22b4efa9f9e79bfdbfa4ebf9a6254b8fe89a5de9b959cc282f61c05466"
+    },
+    "ui/screens/opening/opening_still.gdshader": {
+      "present": true,
+      "physical_path": "res://ui/screens/opening/opening_still.gdshader",
+      "bytes": 1772,
+      "sha256": "1a8f96d6e4ae1e36c7a52c41f7c6e36ade59e1aab5464eb404e26b356b7ef1aa",
+      "directory_md5_verified": true,
+      "source_sha256": "1a8f96d6e4ae1e36c7a52c41f7c6e36ade59e1aab5464eb404e26b356b7ef1aa"
+    },
+    "assets/textures/characters/generated/enemy_roles_v4.png": {
+      "present": true,
+      "physical_path": "res://assets/textures/characters/generated/enemy_roles_v4.png.import",
+      "bytes": 203,
+      "sha256": "3e6e1b34d722311d424d407d0d6b8cf74abbc8ca72707afca04f7c51d035c0ed",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/enemy_roles_v4.png-4bc2149130929848c5f882c04f8abaed.ctex",
+          "present": true,
+          "bytes": 1239960,
+          "sha256": "2001bed7dde38a1c093496e7af033eed43101a600d1b645a7a31c6b76dcbcc3a",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "scenes/world/dev_segment/DevSegment.tscn": {
+      "present": true,
+      "physical_path": "res://scenes/world/dev_segment/DevSegment.tscn.remap",
+      "bytes": 103,
+      "sha256": "704cc4f1fc13baed31a38af2c238d37baf4f93e4741e2fe3b1bb11f05ce33787",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-1463814e2b55de5ae8e837acdb06ae53-DevSegment.scn",
+          "present": true,
+          "bytes": 1196,
+          "sha256": "56dc761bc2baa1909c62ce10777a64e9f89f9fd2e61d0767576ece8323796476",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "e72757e8c6b0c0b29b2e3ff14357c448fda627ec14ef99921d22204b5a5dbbb7"
+    },
+    "scenes/world/dev_segment/pieces/EmptyOutdoor.tscn": {
+      "present": true,
+      "physical_path": "res://scenes/world/dev_segment/pieces/EmptyOutdoor.tscn.remap",
+      "bytes": 105,
+      "sha256": "add3db515fb58ddad0289c5ca0a1f6b58b64564af373735dfdaaa3e179375afa",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-9332cdd7954fccd94f1f3512db1fb1a9-EmptyOutdoor.scn",
+          "present": true,
+          "bytes": 846,
+          "sha256": "916fa83cbeb8f7b4f323d78aac5ca9c47ede2389e6e9b061373f5d67aa1bd837",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "c1ba77cd7f604151a055505eb77789af6f2dcba10d4ad1e902c31e8451946cf9"
+    },
+    "scenes/world/dev_segment/pieces/RoomCorner.tscn": {
+      "present": true,
+      "physical_path": "res://scenes/world/dev_segment/pieces/RoomCorner.tscn.remap",
+      "bytes": 103,
+      "sha256": "bdef5eebfde58341131a66915de67820df88147a6bcd0a63d621b4df681ee2dc",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-0eeb591691e2c42a1a49ea72cda555d9-RoomCorner.scn",
+          "present": true,
+          "bytes": 1455,
+          "sha256": "e029d9dc35291b2b047ca243a370276642c81f841dcb6d75247190b5846491ea",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "ba1b8008150151dd74b7bce868dc6613c1a369a31943aa16172a39d4ea5a7093"
+    },
+    "ui/screens/PauseMenu.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/PauseMenu.tscn.remap",
+      "bytes": 102,
+      "sha256": "a2dbec20dddbcb47eddc3d064c213a0ae09c16e57f6a613479b5653d6ae91bd4",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-940cf102daa3dc1323d8e64492dcdba9-PauseMenu.scn",
+          "present": true,
+          "bytes": 695,
+          "sha256": "459aa0f95535297bb7946d8e8a1c722ddd6b9e4255306a64b38c2a92f369ed0a",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "84884bc918fb883bc18ec60ebcee95b91f7e83932e5917fb177ccf67dc14b1ca"
+    },
+    "ui/screens/PauseMenu.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/PauseMenu.gd.remap",
+      "bytes": 47,
+      "sha256": "7a6d755d7858f12a0611fbeca621395a4d6c91c7335aa9249f5fb0223d216cd2",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/PauseMenu.gdc",
+          "present": true,
+          "bytes": 7186,
+          "sha256": "8450ea30079530f61d3a9916b95766e0008db824e8f05d530191c80f0cd5a874",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "3ae368697c7602be81036e9269780b1ae92a913a720b32af2754bdc197ada0f5"
+    },
+    "ui/screens/settings/SettingsScreen.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/SettingsScreen.tscn.remap",
+      "bytes": 107,
+      "sha256": "08e87d48c33fb5201f9ef2b82feeaef79205da4ba43c27e84cceb4d9e49cc974",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-3645629ad3c1769f13aa83d1330d0ddd-SettingsScreen.scn",
+          "present": true,
+          "bytes": 898,
+          "sha256": "6be5fe1dff63e274188da4244121ac76fb78740d5ffcf7ef4870b5c14b196bba",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "86e86a718274948e47e7d80cc3ee528b6ac026da12df67b815fb86dd4e24cbf4"
+    },
+    "ui/components/ArcaneDialog.gd": {
+      "present": true,
+      "physical_path": "res://ui/components/ArcaneDialog.gd.remap",
+      "bytes": 53,
+      "sha256": "924ead0f148da8cd5d1cd74a858da4d3a1dc72ddb43c2c02ee72653cda6ebc4b",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/components/ArcaneDialog.gdc",
+          "present": true,
+          "bytes": 5313,
+          "sha256": "19cdd1cbee1ea1de90c1f26185962b7f7723236ad2292a31c9afa8cc8c6167de",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "0bed507bc6f2756e275ba804420e2f87f374fa6299638956e01c42ecd3951a7b"
+    },
+    "ui/screens/settings/SettingsScreen.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/SettingsScreen.gd.remap",
+      "bytes": 61,
+      "sha256": "90f3c58d168114e90d42b178c5cb57c5304176b63e4f5459936d079a7c4ac239",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/settings/SettingsScreen.gdc",
+          "present": true,
+          "bytes": 16120,
+          "sha256": "62217e4089c88d6a34c4bacdba7cf2dc8808ec7ef37698b58bb746c49ff1c25c",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "e1766ef3b5f5da806940f28fedc5809fdb17bec6b4b6a6c05eaa79d48465bebf"
+    },
+    "ui/screens/settings/BindingRow.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/BindingRow.tscn.remap",
+      "bytes": 103,
+      "sha256": "ac70a16f71c8ad5031177446a08f17ad9e64016d705ab799d23b83a9566d0940",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-91fc8f358cabfb0f42fde9154763917d-BindingRow.scn",
+          "present": true,
+          "bytes": 708,
+          "sha256": "0a94af4f85a1a6c634a1018a5ebb5964c3bc0149226691d0ff7049e935a6f547",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "6c443885e7018369fe35620fc8b6c1ee857b52e20e52af5e02fafe5681196eab"
+    },
+    "ui/screens/settings/InputCaptureOverlay.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/InputCaptureOverlay.tscn.remap",
+      "bytes": 112,
+      "sha256": "ae4a0a929cc9c1455bddea1d8fefc2f0ddb264da6b2dd702a299a2970c63881c",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-513658c80e334232d5f1a43e637ab080-InputCaptureOverlay.scn",
+          "present": true,
+          "bytes": 908,
+          "sha256": "bd60888536473d0b872e514cc4fdfc5ac0bfd26cdee37fa311bd3601c90be87b",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "2402b12fbd8a59f20b9253fa8e1c57ffa9faecfb566eb01dee0dfbc60ea986cd"
+    },
+    "ui/screens/settings/BindingConflictOverlay.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/BindingConflictOverlay.tscn.remap",
+      "bytes": 115,
+      "sha256": "6e347fe9adf49fd9e0189b32950b3654db8e9c81b3057ef2a6f98776fb9ab544",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-f30bce2f339ed870414b6d5fb46c1515-BindingConflictOverlay.scn",
+          "present": true,
+          "bytes": 914,
+          "sha256": "9da738715cb6f6dce873970c6558ca8f9fe720f9c0f5e49b1d90a2f0ee506937",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "b11f967e6e0f51510990d159042120629886dfe82d121264e80f28da298a6f50"
+    },
+    "ui/screens/settings/DisplayConfirmationOverlay.tscn": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/DisplayConfirmationOverlay.tscn.remap",
+      "bytes": 119,
+      "sha256": "96549558fdf399d88563a24f2862d329a6a7b0541bd808d5af9f60e22f2c60e8",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/exported/133200997/export-0129c179e208d845868da78c60d4d8ee-DisplayConfirmationOverlay.scn",
+          "present": true,
+          "bytes": 922,
+          "sha256": "41f307a30fcba35997b8403c504c09e00595287bd697c4e370670b192600fdb3",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "3fceca34e60df4943dc102ddecaf78c52c5e5bfad1ceaa001cf84ff9d3d224e6"
+    },
+    "ui/components/ArcaneMenuItem.gd": {
+      "present": true,
+      "physical_path": "res://ui/components/ArcaneMenuItem.gd.remap",
+      "bytes": 55,
+      "sha256": "b962d6d20676ea9af7d3de5dae7f040c3b442d354532a1561f01b64a8f710f02",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/components/ArcaneMenuItem.gdc",
+          "present": true,
+          "bytes": 10555,
+          "sha256": "dfa0809f3f8b28dd6fc210186f80a7722e74a3d49bd8ecd536db8d5b7f4c5722",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "e81d205923745dbe5aa75fce9275c89fa63fee0268f17c7e8ce627cacc6d4d1c"
+    },
+    "ui/screens/settings/BindingRow.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/BindingRow.gd.remap",
+      "bytes": 57,
+      "sha256": "9408abaa000748e074e505bcc658fb0068f93c575c492a1cd78b9a5d816cb7d8",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/settings/BindingRow.gdc",
+          "present": true,
+          "bytes": 2537,
+          "sha256": "30fa8e7cd5ba552fdf2cbf56d2c2464206a714fbd6f91720a35fddfef00c683f",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "5795c23b504eadd7d3b4ad8526e099a8e16f3149df649f2f14419396cdf03246"
+    },
+    "ui/screens/settings/InputCaptureOverlay.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/InputCaptureOverlay.gd.remap",
+      "bytes": 66,
+      "sha256": "6b77681854e06d76268a2eb2ceb4cb1bde2547e666604d7ba1aecc5dd9bd0647",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/settings/InputCaptureOverlay.gdc",
+          "present": true,
+          "bytes": 2726,
+          "sha256": "f5644b661f92c73976918b44a878f88896030b5ba8ffa52aafae6defbb2ee789",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "c7eefca5cc3e91d64766a6029fefcb7b14d10f874ba2cbe4f5d8e17866e45ffc"
+    },
+    "ui/screens/settings/BindingConflictOverlay.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/BindingConflictOverlay.gd.remap",
+      "bytes": 69,
+      "sha256": "2799db5a424a8fe2dfbac0e412443e63cdebcb55bfa377e3d3279e9935051d2f",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/settings/BindingConflictOverlay.gdc",
+          "present": true,
+          "bytes": 2208,
+          "sha256": "0e9f2739615d1f54a57fa7d0a9d544457d0493037d104757d8d4fa390b42f4cb",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "0c6303d73533a41ce3a9ac5eefa8ae18eea90b402b29fb9af5c229139ddee049"
+    },
+    "ui/screens/settings/DisplayConfirmationOverlay.gd": {
+      "present": true,
+      "physical_path": "res://ui/screens/settings/DisplayConfirmationOverlay.gd.remap",
+      "bytes": 73,
+      "sha256": "99c62d66e3cac104fa79759a405af40f24450360f525fc2b67a3b2b47835337e",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/screens/settings/DisplayConfirmationOverlay.gdc",
+          "present": true,
+          "bytes": 2327,
+          "sha256": "1439130a4091ad051684773d5b862a6df1e2153296e96d72be84873fec37dcad",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "1e2f92fb0a49f345f8cf5b3df08f71e83c59ccca3631c41042e51876e5e5f3fb"
+    },
+    "assets/ui/menu/menu_highlight.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/menu_highlight.png.import",
+      "bytes": 203,
+      "sha256": "2bd4d62565b1562971955551a0f3022a4af35d955d49a10a39ec4d331695eb83",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/menu_highlight.png-b73088f97d412405cabc069c8f0f4e62.ctex",
+          "present": true,
+          "bytes": 80116,
+          "sha256": "f41a0ba45912315e8107066b9cd9620cdb56ccf82e1a5150e4766bef181640b2",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/ui/menu/flare_star.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/flare_star.png.import",
+      "bytes": 199,
+      "sha256": "3f2029d8e24a45fe058bfb560c618459f05485fabdbadf7686200a99237ec4f3",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/flare_star.png-20db9fe230d8df12aa837fe2409f29cc.ctex",
+          "present": true,
+          "bytes": 2412,
+          "sha256": "5836a32c1d71eb956f70f1184ea8d20135e117fed140e575d83483737127ca7f",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "assets/ui/menu/cloud_noise.png": {
+      "present": true,
+      "physical_path": "res://assets/ui/menu/cloud_noise.png.import",
+      "bytes": 200,
+      "sha256": "c3250c473e68b15a265c38a79acf80823c9d792bd97c8ad4cda8a4856af02c1a",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://.godot/imported/cloud_noise.png-ff7598e1ec2e3914b4f535f9656eb2d2.ctex",
+          "present": true,
+          "bytes": 51406,
+          "sha256": "9502d2a4204278de6bdc02d7d7500f2e669a11fe90658acc6e7389457e612f0f",
+          "directory_md5_verified": true
+        }
+      ]
+    },
+    "ui/shaders/menu_highlight.gdshader": {
+      "present": true,
+      "physical_path": "res://ui/shaders/menu_highlight.gdshader",
+      "bytes": 1376,
+      "sha256": "8f50a5b4b31063103cab2ab9f9e31bbd482f625409b7a973e2ef5f7907d7cca1",
+      "directory_md5_verified": true,
+      "source_sha256": "8f50a5b4b31063103cab2ab9f9e31bbd482f625409b7a973e2ef5f7907d7cca1"
+    },
+    "ui/widgets/ArcaneParticles.gd": {
+      "present": true,
+      "physical_path": "res://ui/widgets/ArcaneParticles.gd.remap",
+      "bytes": 53,
+      "sha256": "082e9899445a37b160ed406e7f6b9859ecdc4602a6e1b214f4a2ead65618d403",
+      "directory_md5_verified": true,
+      "targets": [
+        {
+          "path": "res://ui/widgets/ArcaneParticles.gdc",
+          "present": true,
+          "bytes": 3608,
+          "sha256": "4aac5211314a051eaaa770a6c8c3c75e4d5809c9141df2cd54330edc53a0e33b",
+          "directory_md5_verified": true
+        }
+      ],
+      "source_sha256": "8746ee7efdcb9258984a36ba1f8ae26b9f3c876a05efd77f9e8a18127147427a"
+    }
+  },
+  "missing_logical_resources": [],
+  "missing_remap_or_import_targets": []
+}

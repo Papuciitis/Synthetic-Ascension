@@ -1,0 +1,37 @@
+{
+  "status": "CHECKPOINT_COMMITTED_OWNER_EXPORT_QUEUE_RUNNING",
+  "base": "6bdd4cc0bdb9a3a85fae068cd84c0e9ef65fac11",
+  "project": "/var/tmp/sa-menu25",
+  "original_exe": "/home/user/Nauris/Synthetic-Ascension/build/playtest/SyntheticAscension-playtest.exe",
+  "original_exe_sha256": "e314d407876adef7e749168773b3c2806d96d0ed9d7860c88b2da55da4abc310",
+  "sources_before": {
+    "autoload/global.gd": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+    "core/systems/major_choice/MajorChoiceDB.gd": "c3643009dc5685419ce60cc54915c95c12c22a9146a8c8ef2fa82ba08a3662d5",
+    "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+    "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+  },
+  "new_exe_planned": "/home/user/Nauris/Synthetic-Ascension/build/playtest-20261025/SyntheticAscension-playtest.exe",
+  "scope": "Packaged data on Linux Godot4.7.2; actual Windows OS launch remains user playtest. Normal Begin/full-opening entry plus explicitly staged augment reward, not cinematic completion.",
+  "fix_commit": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+  "red": {
+    "label": "menu25-packed-red-r1",
+    "passed": 5,
+    "failed": 12,
+    "actual_exit": 1,
+    "diagnostics": 12,
+    "classification": "Expected catalogue/UI assertions; guard completed, no parse failure."
+  },
+  "source_frontend": {
+    "label": "menu25-frontend-source-r1",
+    "passed": 46,
+    "failed": 0,
+    "actual_exit": 0,
+    "diagnostics": 0
+  },
+  "sources_fixed": {
+    "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+    "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+    "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+    "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+  }
+}

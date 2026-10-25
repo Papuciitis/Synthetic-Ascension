@@ -1,0 +1,63 @@
+ERROR: FAIL: race_db contains the authored IDs; actual=[]
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _expect_ids (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:55)
+       [2] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:99)
+ERROR: FAIL: style_db contains the authored IDs; actual=[]
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _expect_ids (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:55)
+       [2] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:100)
+ERROR: FAIL: augment_db contains the authored IDs; actual=[]
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _expect_ids (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:55)
+       [2] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:101)
+ERROR: FAIL: spell_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: weapon_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: item_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: set_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: major-choice catalog is nonempty
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:106)
+ERROR: FAIL: packed New Chronicle shows four ancestry choices
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:125)
+ERROR: FAIL: packed New Chronicle shows three path choices
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:126)
+ERROR: FAIL: a named vessel can Begin in the exported game
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:134)
+ERROR: FAIL: nondefault Elf and Magic choices exist
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:137)

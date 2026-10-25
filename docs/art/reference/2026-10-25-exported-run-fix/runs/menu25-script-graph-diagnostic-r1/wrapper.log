@@ -1,0 +1,16 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-script-graph-diagnostic-r1-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "runtime_diagnostics",
+ "actual_exit": 0,
+ "elapsed_seconds": 91.281,
+ "peak_rss_mb": 738,
+ "diagnostic_count": 1,
+ "diagnostics_head": [
+  "ERROR: Parameter \"t\" is null."
+ ]
+}
+--- stdout tail (3/220 lines) ---
+PASS: closing the Binding restores the previously running world
+PASS: picking an augment does not enable developer bypasses
+PackedFrontEndFlowTest: 38 passed, 0 failed

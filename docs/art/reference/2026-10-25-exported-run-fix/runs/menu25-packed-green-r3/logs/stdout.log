@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: packed project autoloads initialize
+PACKED_FRONTEND scratch saves: /home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-green-r3-1/data/godot/app_userdata/Synthetic Ascension/packed_frontend_flow_37402282/
+PASS: race_db contains the authored IDs; actual=["dragonborn", "elf", "human", "warforged"]
+PASS: style_db contains the authored IDs; actual=["magic", "melee", "ranged"]
+PASS: augment_db contains the authored IDs; actual=["augment_blink_hex", "augment_corruption_engine", "augment_cult_of_personality", "augment_doctrine_of_burden", "augment_equilibrium_sigil", "augment_gamblers_rite", "augment_inversion_lens", "augment_litany_of_wounds", "augment_lucky_charm", "augment_magic_missile", "augment_reflect_shield", "augment_spirit_slash", "augment_sprint_servos", "augment_stamina_core", "augment_summon_spiderlings", "augment_tesla_aura"]
+PASS: spell_db is nonempty (count=1)
+PASS: weapon_db is nonempty (count=3)
+PASS: item_db is nonempty (count=40)
+PASS: set_db is nonempty (count=3)
+PASS: major-choice catalog is nonempty
+PASS: a scratch profile can be created
+PASS: normal run starts without developer flags
+PASS: packed New Chronicle scene loads
+[Base] commit selection race=human style=ranged weapon=ranged
+[Base] commit selection race=human style=ranged weapon=ranged
+PASS: packed New Chronicle shows four ancestry choices
+PASS: packed New Chronicle shows three path choices
+PASS: New Chronicle contains naming and Begin controls
+PASS: a named vessel can Begin in the exported game
+PASS: nondefault Elf and Magic choices exist
+[Base] commit selection race=elf style=ranged weapon=ranged
+[Base] commit selection race=elf style=magic weapon=magic
+PASS: real Elf tile commits ancestry
+PASS: real Magic tile commits path and starter weapon
+PACKED_FRONTEND stage 1: pressing normal Begin
+[Base] commit selection race=elf style=magic weapon=magic

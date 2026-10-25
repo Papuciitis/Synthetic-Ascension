@@ -1,0 +1,180 @@
+{
+  "method": "Runner omits *.cfg from source_hashes. Bind configuration using its recorded Git head and clean tracked-file status, plus direct source snapshot; these are not reconstructed runner hashes.",
+  "cases": [
+    {
+      "label": "menu25-packed-red-r1",
+      "recorded_git_head": "6bdd4cc0bdb9a3a85fae068cd84c0e9ef65fac11",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-frontend-source-r1",
+      "recorded_git_head": "6bdd4cc0bdb9a3a85fae068cd84c0e9ef65fac11",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-binding-source-r1",
+      "recorded_git_head": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-offer-source-r1",
+      "recorded_git_head": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-doctrine-source-r1",
+      "recorded_git_head": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-export-fixed-r1",
+      "recorded_git_head": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-green-r1",
+      "recorded_git_head": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-load-diagnostic-r1",
+      "recorded_git_head": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-script-warm-diagnostic-r1",
+      "recorded_git_head": "8e1ce712661031707ec898fc4fe06f5ce92755c6",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-export-fixed-r2",
+      "recorded_git_head": "3dd987cb4818960370ff1bbcf0973d1ecb841145",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-green-r2",
+      "recorded_git_head": "3dd987cb4818960370ff1bbcf0973d1ecb841145",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-progress-diagnostic-r2",
+      "recorded_git_head": "3dd987cb4818960370ff1bbcf0973d1ecb841145",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-scene-sync-diagnostic-r1",
+      "recorded_git_head": "3dd987cb4818960370ff1bbcf0973d1ecb841145",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-export-fixed-r3",
+      "recorded_git_head": "e104782d6919413675624658318bc725c0c3e6ec",
+      "git_object_cfg_sha256": "5c5d524e92e0848714d7e471b15077b8f515d326663b79f8a6ba91115b3e21b6",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-green-r3",
+      "recorded_git_head": "e104782d6919413675624658318bc725c0c3e6ec",
+      "git_object_cfg_sha256": "5c5d524e92e0848714d7e471b15077b8f515d326663b79f8a6ba91115b3e21b6",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-script-graph-diagnostic-r1",
+      "recorded_git_head": "e104782d6919413675624658318bc725c0c3e6ec",
+      "git_object_cfg_sha256": "5c5d524e92e0848714d7e471b15077b8f515d326663b79f8a6ba91115b3e21b6",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-frontend-source-r4",
+      "recorded_git_head": "5e3127451d2334f852eb7509ff3af92d3c6ac01c",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-interruption-source-r4",
+      "recorded_git_head": "5e3127451d2334f852eb7509ff3af92d3c6ac01c",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-preparation-menu-r4",
+      "recorded_git_head": "a910fcbb4ff1511e8c9f724c66b2ca21b238a947",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-preparation-menu-r4b",
+      "recorded_git_head": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-preparation-terminal-r4b",
+      "recorded_git_head": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-export-fixed-r4",
+      "recorded_git_head": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-green-r4",
+      "recorded_git_head": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-native-r4",
+      "recorded_git_head": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    },
+    {
+      "label": "menu25-packed-native-r4b",
+      "recorded_git_head": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+      "git_object_cfg_sha256": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+      "recorded_cfg_status": [],
+      "runner_hash_field_present": false
+    }
+  ]
+}

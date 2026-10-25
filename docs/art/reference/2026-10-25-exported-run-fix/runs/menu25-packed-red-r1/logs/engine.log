@@ -1,0 +1,72 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: packed project autoloads initialize
+PACKED_FRONTEND scratch saves: /home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-red-r1-1/data/godot/app_userdata/Synthetic Ascension/packed_frontend_flow_143834596/
+ERROR: FAIL: race_db contains the authored IDs; actual=[]
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _expect_ids (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:55)
+       [2] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:99)
+ERROR: FAIL: style_db contains the authored IDs; actual=[]
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _expect_ids (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:55)
+       [2] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:100)
+ERROR: FAIL: augment_db contains the authored IDs; actual=[]
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _expect_ids (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:55)
+       [2] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:101)
+ERROR: FAIL: spell_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: weapon_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: item_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: set_db is nonempty (count=0)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:104)
+ERROR: FAIL: major-choice catalog is nonempty
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:106)
+PASS: a scratch profile can be created
+PASS: normal run starts without developer flags
+PASS: packed New Chronicle scene loads
+ERROR: FAIL: packed New Chronicle shows four ancestry choices
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:125)
+ERROR: FAIL: packed New Chronicle shows three path choices
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:126)
+PASS: New Chronicle contains naming and Begin controls
+ERROR: FAIL: a named vessel can Begin in the exported game
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:134)
+ERROR: FAIL: nondefault Elf and Magic choices exist
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:137)
+PackedFrontEndFlowTest: 5 passed, 12 failed

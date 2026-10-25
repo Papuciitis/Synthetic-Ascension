@@ -493,6 +493,14 @@ func goto_scene(path: String) -> void:
 		scrim.show_for(_scene_title(path), get_tree().current_scene)
 	# The outgoing run must not continue fighting under a loading card.
 	get_tree().paused = true
+	# Keep references local until this request is collected, even if another
+	# transition supersedes it and clears the destination's retained assets.
+	var scene_scripts: Array[Resource] = []
+	if not await _prepare_scene_scripts(path, transition_id, scene_scripts):
+		if transition_id == _scene_transition_id and has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+			goto_scene(PATH_PEEP)
+		return
+	_scene_transition_assets.append_array(scene_scripts)
 	var destination: PackedScene = null
 	while destination == null:
 		var request_error := ResourceLoader.load_threaded_request(path, "PackedScene")
@@ -553,6 +561,52 @@ func goto_scene(path: String) -> void:
 		_fail_scene_transition(path, err, transition_id)
 		return
 	_scene_transition_active = false
+
+
+## A worker compiling a cold script can stall on a preload of another scripted
+## scene. Compile scene/resource script dependencies on the main thread first;
+## the scene request and world construction retain their asynchronous stages.
+func _prepare_scene_scripts(path: String, transition_id: int, retained: Array[Resource]) -> bool:
+	var pending: Array[String] = [path]
+	var seen: Dictionary = {}
+	var slice_started := Time.get_ticks_usec()
+	while not pending.is_empty():
+		if transition_id != _scene_transition_id:
+			return false
+		if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+			return false
+		var dependency: String = pending.pop_back()
+		if seen.has(dependency):
+			continue
+		seen[dependency] = true
+		var extension := dependency.get_extension()
+		if extension in ["gd", "gdc"]:
+			# Scripts are leaves: get_dependencies parses text and cannot inspect
+			# compiled .gdc payloads. Their own preloads resolve on this thread.
+			var was_cached := ResourceLoader.has_cached(dependency)
+			var script := ResourceLoader.load(dependency, "Script")
+			if not script is Script:
+				_fail_scene_transition(path, ERR_CANT_OPEN, transition_id)
+				return false
+			retained.append(script)
+			if not was_cached:
+				await get_tree().process_frame
+				slice_started = Time.get_ticks_usec()
+		elif extension in ["tscn", "scn", "tres", "res"]:
+			for entry: String in ResourceLoader.get_dependencies(dependency):
+				var parts := entry.split("::")
+				var child: String = parts[0]
+				if parts.size() == 3:
+					var uid := ResourceUID.text_to_id(parts[0])
+					child = ResourceUID.get_id_path(uid) if ResourceUID.has_id(uid) else parts[2]
+				if not child.is_empty() and not seen.has(child):
+					pending.append(child)
+		# Bound metadata discovery too; cached graphs should not add a frame
+		# for every texture or already compiled script.
+		if Time.get_ticks_usec() - slice_started >= 2000:
+			await get_tree().process_frame
+			slice_started = Time.get_ticks_usec()
+	return transition_id == _scene_transition_id and not (has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE])
 
 
 func _load_transition_asset(path: String, transition_id: int) -> Resource:
@@ -1155,33 +1209,13 @@ func load_sets_from_dir(path: String) -> void:
 		print("Set DB keys:", set_db.keys())
 
 func _scan_sets_dir_recursive(path: String) -> void:
-	var dir: DirAccess = DirAccess.open(path)
-	if dir == null:
-		push_warning("Set dir not found: " + path)
-		return
-
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
-		if fn.begins_with("."):
-			fn = dir.get_next()
-			continue
-
-		var full: String = path.path_join(fn)
-
-		if dir.current_is_dir():
-			_scan_sets_dir_recursive(full)
-		elif fn.ends_with(".tres") or fn.ends_with(".res"):
-			var res: Resource = ResourceLoader.load(full)
-			var sd: SetData = res as SetData
-			if sd != null and sd.id != StringName():
-				set_db[sd.id] = sd
-				if DEBUG_GLOBAL:
-					print("Loaded set:", sd.id, "from", full)
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+	_scan_dir_recursive(path, func(res: Resource) -> void:
+		var sd := res as SetData
+		if sd != null and sd.id != StringName():
+			set_db[sd.id] = sd
+			if DEBUG_GLOBAL:
+				print("Loaded set:", sd.id, "from", res.resource_path)
+	)
 
 
 # ============================================================
@@ -1193,32 +1227,11 @@ func load_items_from_dir(path: String) -> void:
 	_scan_items_dir_recursive(path)
 
 func _scan_items_dir_recursive(path: String) -> void:
-	var dir: DirAccess = DirAccess.open(path)
-	if dir == null:
-		push_warning("Item dir not found: " + path)
-		return
-
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
-		if fn.begins_with("."):
-			fn = dir.get_next()
-			continue
-
-		var full: String = path.path_join(fn)
-
-		if dir.current_is_dir():
-			_scan_items_dir_recursive(full)
-		elif fn.ends_with(".tres") or fn.ends_with(".res"):
-			var res: Resource = ResourceLoader.load(full)
-			if res != null:
-				var item: ItemData = res as ItemData
-				if item != null and item.id != "" and item.runtime_enabled:
-					item_db[item.id] = item
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+	_scan_dir_recursive(path, func(res: Resource) -> void:
+		var item := res as ItemData
+		if item != null and item.id != "" and item.runtime_enabled:
+			item_db[item.id] = item
+	)
 
 
 # ============================================================
@@ -2339,37 +2352,17 @@ func load_augments_from_dir(path: String) -> void:
 		print("Augment DB keys:", augment_db.keys())
 
 func _scan_augments_dir_recursive(path: String) -> void:
-	var dir: DirAccess = DirAccess.open(path)
-	if dir == null:
-		push_warning("Augment dir not found: " + path)
-		return
-
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
-		if fn.begins_with("."):
-			fn = dir.get_next()
-			continue
-
-		var full := path.path_join(fn)
-
-		if dir.current_is_dir():
-			_scan_augments_dir_recursive(full)
-		elif fn.ends_with(".tres") or fn.ends_with(".res"):
-			var res := ResourceLoader.load(full)
-			var ad := res as AugmentData
-			if ad != null and ad.id != StringName():
-				augment_db[ad.id] = ad
-				if DEBUG_GLOBAL:
-					print("[AUG] ", String(ad.id), " name=", ad.display_name,
-						" desc_len=", ad.description.length(),
-						" blurb_len=", ad.card_blurb.length(),
-						" details_len=", ad.details.length(),
-						" mods=", (ad.mods != null))
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+	_scan_dir_recursive(path, func(res: Resource) -> void:
+		var ad := res as AugmentData
+		if ad != null and ad.id != StringName():
+			augment_db[ad.id] = ad
+			if DEBUG_GLOBAL:
+				print("[AUG] ", String(ad.id), " name=", ad.display_name,
+					" desc_len=", ad.description.length(),
+					" blurb_len=", ad.card_blurb.length(),
+					" details_len=", ad.details.length(),
+					" mods=", (ad.mods != null))
+	)
 
 
 # ============================================================
@@ -2377,31 +2370,23 @@ func _scan_augments_dir_recursive(path: String) -> void:
 # ============================================================
 
 func _scan_dir_recursive(dir_path: String, on_loaded: Callable) -> void:
-	var dir: DirAccess = DirAccess.open(dir_path)
-	if dir == null:
+	if not DirAccess.dir_exists_absolute(dir_path):
 		push_warning("Dir not found: " + dir_path)
 		return
 
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
+	# Exported resources may be stored as .tres.remap plus a binary target.
+	# ResourceLoader lists their original names and resolves those remaps.
+	for fn: String in ResourceLoader.list_directory(dir_path):
 		if fn.begins_with("."):
-			fn = dir.get_next()
 			continue
 
 		var full: String = dir_path.path_join(fn)
-
-		if dir.current_is_dir():
+		if fn.ends_with("/"):
 			_scan_dir_recursive(full, on_loaded)
-		else:
-			if fn.ends_with(".tres") or fn.ends_with(".res"):
-				var res: Resource = ResourceLoader.load(full)
-				if res != null:
-					on_loaded.call(res)
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+		elif fn.ends_with(".tres") or fn.ends_with(".res"):
+			var res: Resource = ResourceLoader.load(full)
+			if res != null:
+				on_loaded.call(res)
 
 
 # ============================================================

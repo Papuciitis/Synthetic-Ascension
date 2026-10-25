@@ -1,0 +1,27 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-red-r1-1",
+ "queued_seconds": 5.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 171.455,
+ "peak_rss_mb": 447,
+ "diagnostic_count": 12,
+ "diagnostics_head": [
+  "ERROR: FAIL: race_db contains the authored IDs; actual=[]",
+  "ERROR: FAIL: style_db contains the authored IDs; actual=[]",
+  "ERROR: FAIL: augment_db contains the authored IDs; actual=[]",
+  "ERROR: FAIL: spell_db is nonempty (count=0)",
+  "ERROR: FAIL: weapon_db is nonempty (count=0)",
+  "ERROR: FAIL: item_db is nonempty (count=0)",
+  "ERROR: FAIL: set_db is nonempty (count=0)",
+  "ERROR: FAIL: major-choice catalog is nonempty",
+  "ERROR: FAIL: packed New Chronicle shows four ancestry choices",
+  "ERROR: FAIL: packed New Chronicle shows three path choices",
+  "ERROR: FAIL: a named vessel can Begin in the exported game",
+  "ERROR: FAIL: nondefault Elf and Magic choices exist"
+ ]
+}
+--- stdout tail (3/9 lines) ---
+PASS: packed New Chronicle scene loads
+PASS: New Chronicle contains naming and Begin controls
+PackedFrontEndFlowTest: 5 passed, 12 failed

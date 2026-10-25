@@ -10,32 +10,24 @@ func load_from_dir(path: String) -> void:
 	_scan_dir(path)
 
 func _scan_dir(path: String) -> void:
-	var dir := DirAccess.open(path)
-	if dir == null:
+	if not DirAccess.dir_exists_absolute(path):
 		push_warning("MajorChoiceDB: dir not found: " + path)
 		return
 
-	dir.list_dir_begin()
-	var fn := dir.get_next()
-	while fn != "":
+	# List logical resource names, including when exports use .tres.remap.
+	for fn: String in ResourceLoader.list_directory(path):
 		if fn.begins_with("."):
-			fn = dir.get_next()
 			continue
 
 		var full := path.path_join(fn)
-
-		if dir.current_is_dir():
+		if fn.ends_with("/"):
 			_scan_dir(full)
-		else:
-			if fn.ends_with(".tres") or fn.ends_with(".res"):
-				var res := ResourceLoader.load(full)
-				var def := res as MajorChoiceDef
-				if def != null and def.id != StringName():
-					defs.append(def)
-					defs_by_id[def.id] = def
-
-		fn = dir.get_next()
-	dir.list_dir_end()
+		elif fn.ends_with(".tres") or fn.ends_with(".res"):
+			var res := ResourceLoader.load(full)
+			var def := res as MajorChoiceDef
+			if def != null and def.id != StringName():
+				defs.append(def)
+				defs_by_id[def.id] = def
 
 func get_def(id: StringName) -> MajorChoiceDef:
 	return defs_by_id.get(id, null) as MajorChoiceDef

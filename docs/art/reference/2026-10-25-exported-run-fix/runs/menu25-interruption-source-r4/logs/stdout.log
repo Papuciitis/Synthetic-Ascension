@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: the interruption begins during genuine Game resource loading
+PASS: terminal continuation supersedes the in-flight normal-world route
+PASS: the terminal choice remains unresolved without starting another attempt
+PASS: the superseded resource finishes before its late-result assertion
+PASS: the superseded Game result cannot replace continuation after its resource load completes
+PASS: terminal presentation releases the temporary loading pause
+PASS: a genuine supplemental race-atlas failure emits exactly one failed-resource signal
+PASS: supplemental asset failure restores the outgoing scene and its pause/input state
+PASS: supplemental asset failure releases the transition and loading card
+PASS: a second route begins while Game genuinely owns an unfinished setup freeze
+[Game] ready seg=2 race=human style=ranged seed=732113
+PASS: the latest Game route replaces the partially constructed destination
+PASS: Game reload does not inherit the superseded destination's temporary pause or input hold
+PASS: terminal interruption also starts during genuine destination construction
+PASS: terminal reroute during destination construction releases the abandoned setup's input and pause
+[Game] ready seg=2 race=human style=ranged seed=732113
+PASS: menu interruption starts at the real final construction stage before Game readiness
+PASS: an outgoing Game completing during a menu route cannot reopen a gameplay capture
+[Game] ready seg=2 race=human style=ranged seed=732113
+PASS: failure interruption also begins immediately before old Game readiness
+[BalanceRecorder] Recording to /home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-interruption-source-r4-1/data/godot/app_userdata/Synthetic Ascension/late_transition_capture_test/2026-10-25/2026-10-25_20-18-09_28387_98290824_1
+PASS: old Game completion defers its recorder binding while the newer route is still pending
+PASS: failed replacement resumes and binds the now-ready outgoing Game exactly when the route fails
+[Game] ready seg=2 race=human style=ranged seed=732113
+PASS: failure-history control keeps an existing capture across another final-stage reload
+PASS: failure history retains the requested Game destination before deferred gameplay binding clears it
+SceneTransitionInterruptionTest: 21 passed, 0 failed
+[BalanceRecorder] application_closed — /home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-interruption-source-r4-1/data/godot/app_userdata/Synthetic Ascension/late_transition_capture_test/2026-10-25/2026-10-25_20-18-09_28387_98290824_1/report.md

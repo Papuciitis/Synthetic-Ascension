@@ -1,0 +1,790 @@
+{
+  "engine_queue_idle": true,
+  "source_checkpoint": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+  "sources_fixed": {
+    "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+    "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+    "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+    "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+    "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+    "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+    "export_presets.cfg": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+    "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+  },
+  "readme": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/packet-README-draft.md",
+  "baseline_files": {
+    "autoload/global.gd": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/baseline/global.gd",
+    "core/systems/major_choice/MajorChoiceDB.gd": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/baseline/MajorChoiceDB.gd"
+  },
+  "new_inspection": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/final-r4-playtest-pack-inspection.json",
+  "historical_inspections": [
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/rejected-r2-playtest-pack-inspection.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/rejected-r3-playtest-pack-inspection.json"
+  ],
+  "build_manifest": "/home/user/Nauris/Synthetic-Ascension/build/playtest-20261025-r4/BUILD.json",
+  "artifact_observations": [
+    {
+      "phase": "headless-completed; before native launch",
+      "role": "native-before",
+      "observed_utc": "2026-10-25T18:28:37.242556+00:00",
+      "sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+      "path": "/home/user/Nauris/Synthetic-Ascension/build/playtest-20261025-r4/SyntheticAscension-playtest.exe",
+      "bytes": 376358640,
+      "native_wrapper": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedNativeProof.gd",
+        "sha256": "e4399040596deea1117c4839e8a1e087d1bd10699670b888bf473052a08e7788"
+      }
+    },
+    {
+      "phase": "after first graphical run; capture rejected",
+      "role": "native-after-r4-rejected",
+      "observed_utc": "2026-10-25T18:34:11.142107+00:00",
+      "sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702"
+    },
+    {
+      "phase": "before second native launch, with capture-readiness fence",
+      "role": "native-before",
+      "observed_utc": "2026-10-25T18:34:11.149992+00:00",
+      "sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+      "native_wrapper": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedNativeProofR4b.gd",
+        "sha256": "09a8f25a2787f04a6294a31411c9ee3a07b770ba8508144452f52fb990ec18ea"
+      }
+    },
+    {
+      "phase": "after final graphical run",
+      "role": "native-after",
+      "observed_utc": "2026-10-25T18:38:39.253990+00:00",
+      "sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702"
+    }
+  ],
+  "cases": [
+    {
+      "label": "menu25-packed-red-r1",
+      "classification": "expected_red",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "0609cf60da071cd973de1aa815ad441c0ec6bf777ae585e98331d9a382593527",
+        "core/systems/major_choice/MajorChoiceDB.gd": "c3643009dc5685419ce60cc54915c95c12c22a9146a8c8ef2fa82ba08a3662d5",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 1,
+        "runner_exit": 1,
+        "stop_reason": "nonzero_exit",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 1,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "672b72e650add60e252b34151442a8f6837d5c59f9bf3846684ed219c29f11ca"
+      },
+      "artifact_sha256": "e314d407876adef7e749168773b3c2806d96d0ed9d7860c88b2da55da4abc310",
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd",
+        "sha256": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        5,
+        12
+      ]
+    },
+    {
+      "label": "menu25-frontend-source-r1",
+      "classification": "accepted",
+      "role": "focused",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "summary": [
+        "FrontEndFlowTest",
+        46,
+        0
+      ]
+    },
+    {
+      "label": "menu25-binding-source-r1",
+      "classification": "accepted",
+      "role": "focused",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "summary": [
+        "AugmentBindingTest",
+        64,
+        0
+      ]
+    },
+    {
+      "label": "menu25-offer-source-r1",
+      "classification": "accepted",
+      "role": "focused",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "summary": [
+        "AugmentOfferTest",
+        5,
+        0
+      ]
+    },
+    {
+      "label": "menu25-doctrine-source-r1",
+      "classification": "accepted",
+      "role": "focused",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "summary": [
+        "AscensionDoctrineTest",
+        36,
+        0
+      ]
+    },
+    {
+      "label": "menu25-export-fixed-r1",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "befb0582c2693734f155da28dcf75f806a6dac1ea8c647345f4e7c0b27731d17"
+    },
+    {
+      "label": "menu25-packed-green-r1",
+      "classification": "intermediate_failure",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 1,
+        "runner_exit": 1,
+        "stop_reason": "nonzero_exit",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 1,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4d110b88a5c5002bd43dc888c9d41e8b7dbb70d7f2f7f305e985941093e9a2c5"
+      },
+      "artifact_sha256": "befb0582c2693734f155da28dcf75f806a6dac1ea8c647345f4e7c0b27731d17",
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd",
+        "sha256": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        19,
+        1
+      ]
+    },
+    {
+      "label": "menu25-packed-load-diagnostic-r1",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": -15,
+        "runner_exit": 1,
+        "stop_reason": "interrupted",
+        "guard_reason": "external_sigint",
+        "guard_wrapper_exit": -15,
+        "guard_received_signal": 2,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "befb0582c2693734f155da28dcf75f806a6dac1ea8c647345f4e7c0b27731d17",
+      "script_pin": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedLoadDiagnostic.gd",
+        "sha256": "dca777ed71df71293d4bda8ca85619ee671350405ce91e004b0a5b6dbe451de3"
+      }
+    },
+    {
+      "label": "menu25-packed-script-warm-diagnostic-r1",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": -15,
+        "runner_exit": 1,
+        "stop_reason": "interrupted",
+        "guard_reason": "external_sigint",
+        "guard_wrapper_exit": -15,
+        "guard_received_signal": 2,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "befb0582c2693734f155da28dcf75f806a6dac1ea8c647345f4e7c0b27731d17",
+      "script_pin": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedScriptWarmDiagnostic.gd",
+        "sha256": "6c467371b3030d7e66b9f7896955d51017a838a25ae0179f586e3cbdf6f2bea7"
+      }
+    },
+    {
+      "label": "menu25-export-fixed-r2",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "42f1eef6fd08384ee155fdb93e41043628a00ba1667f6c2d9add0899b189401d"
+    },
+    {
+      "label": "menu25-packed-green-r2",
+      "classification": "intermediate_failure",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 1,
+        "runner_exit": 1,
+        "stop_reason": "nonzero_exit",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 1,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "cb600170530ed0b940e3b6d6148f8312d6139b44f8946a2d8f050bdc3bf1c611"
+      },
+      "artifact_sha256": "42f1eef6fd08384ee155fdb93e41043628a00ba1667f6c2d9add0899b189401d",
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd",
+        "sha256": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        19,
+        1
+      ]
+    },
+    {
+      "label": "menu25-packed-progress-diagnostic-r2",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": -15,
+        "runner_exit": 1,
+        "stop_reason": "interrupted",
+        "guard_reason": "external_sigint",
+        "guard_wrapper_exit": -15,
+        "guard_received_signal": 2,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "42f1eef6fd08384ee155fdb93e41043628a00ba1667f6c2d9add0899b189401d",
+      "script_pin": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedProgressDiagnostic.gd",
+        "sha256": "2f43161e3c977bbb6b81c75e52394a716eab364742823e013b33d2c5e92805a7"
+      }
+    },
+    {
+      "label": "menu25-packed-scene-sync-diagnostic-r1",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 1,
+        "stop_reason": "runtime_diagnostics",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 1,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "039f8af56fca9a52725826e3cc01c4ea60ededb1992e3575fcc74986ed15a49b"
+      },
+      "artifact_sha256": "befb0582c2693734f155da28dcf75f806a6dac1ea8c647345f4e7c0b27731d17",
+      "script_pin": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedSceneSyncDiagnostic.gd",
+        "sha256": "cec45596ca220fc42ff795c79d0d470931595876eb63a8095fffbb3c55fa79a4"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        38,
+        0
+      ]
+    },
+    {
+      "label": "menu25-export-fixed-r3",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "0751057567a8cf90f5d3b5414b8989a6461547aa9b341cfe9852a99a609863b0"
+    },
+    {
+      "label": "menu25-packed-green-r3",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": -15,
+        "runner_exit": 1,
+        "stop_reason": "interrupted",
+        "guard_reason": "external_sigint",
+        "guard_wrapper_exit": -15,
+        "guard_received_signal": 2,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "0751057567a8cf90f5d3b5414b8989a6461547aa9b341cfe9852a99a609863b0",
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd",
+        "sha256": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892"
+      }
+    },
+    {
+      "label": "menu25-script-graph-diagnostic-r1",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 1,
+        "stop_reason": "runtime_diagnostics",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 1,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "039f8af56fca9a52725826e3cc01c4ea60ededb1992e3575fcc74986ed15a49b"
+      },
+      "artifact_sha256": "befb0582c2693734f155da28dcf75f806a6dac1ea8c647345f4e7c0b27731d17",
+      "script_pin": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedScriptGraphDiagnostic.gd",
+        "sha256": "6f0af3233c37ebff39d44fa593924739d592a888d755accc770d10e1d9f1f294"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        38,
+        0
+      ]
+    },
+    {
+      "label": "menu25-frontend-source-r4",
+      "classification": "accepted",
+      "role": "focused",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd",
+        "sha256": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        38,
+        0
+      ]
+    },
+    {
+      "label": "menu25-interruption-source-r4",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 1,
+        "stop_reason": "runtime_diagnostics",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 1,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "e4f304f77a9f9cdcc8ad1fbcc26b0bcc0657ad3ed2249db715f4f4112611f20f"
+      },
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/SceneTransitionInterruptionTest.gd",
+        "sha256": "29bdcf04764d43cf3f71d5ecb650177b02a3438456f89b29a654356c8fa617f5"
+      },
+      "summary": [
+        "SceneTransitionInterruptionTest",
+        21,
+        0
+      ]
+    },
+    {
+      "label": "menu25-preparation-menu-r4",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "tools/tests/PreparationCancellationTest.gd": "e6c87683b0272fdb5edcfad94d1268a50ac7488dfc47059a72d6474bef9f0a67"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 1,
+        "stop_reason": "runtime_diagnostics",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 1,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "1d6679b84b0cb32420599d88416848aeab4d2fdd01ba9ad9cb07baac3bdfbbe6"
+      },
+      "summary": [
+        "PreparationCancellationTest[menu]",
+        21,
+        0
+      ]
+    },
+    {
+      "label": "menu25-preparation-menu-r4b",
+      "classification": "accepted",
+      "role": "focused",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PreparationCancellationTest.gd",
+        "sha256": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "summary": [
+        "PreparationCancellationTest[menu]",
+        21,
+        0
+      ]
+    },
+    {
+      "label": "menu25-preparation-terminal-r4b",
+      "classification": "accepted",
+      "role": "focused",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PreparationCancellationTest.gd",
+        "sha256": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "summary": [
+        "PreparationCancellationTest[terminal]",
+        22,
+        0
+      ]
+    },
+    {
+      "label": "menu25-export-fixed-r4",
+      "classification": "accepted",
+      "role": "export",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702"
+    },
+    {
+      "label": "menu25-packed-green-r4",
+      "classification": "accepted",
+      "role": "functional",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+      "script_pin": {
+        "path": "/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd",
+        "sha256": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        38,
+        0
+      ]
+    },
+    {
+      "label": "menu25-packed-native-r4",
+      "classification": "diagnostic",
+      "role": "historical",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+      "script_pin": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedNativeProof.gd",
+        "sha256": "e4399040596deea1117c4839e8a1e087d1bd10699670b888bf473052a08e7788"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        61,
+        0
+      ]
+    },
+    {
+      "label": "menu25-packed-native-r4b",
+      "classification": "accepted",
+      "role": "native",
+      "source_pins": {
+        "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+        "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+        "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+        "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+        "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+        "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+        "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+      },
+      "expected": {
+        "actual_exit": 0,
+        "runner_exit": 0,
+        "stop_reason": "completed",
+        "guard_reason": "completed",
+        "guard_wrapper_exit": 0,
+        "guard_received_signal": null,
+        "diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "artifact_sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+      "script_pin": {
+        "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedNativeProofR4b.gd",
+        "sha256": "09a8f25a2787f04a6294a31411c9ee3a07b770ba8508144452f52fb990ec18ea"
+      },
+      "summary": [
+        "PackedFrontEndFlowTest",
+        62,
+        0
+      ]
+    }
+  ],
+  "preparation_case_labels": [
+    "menu25-preparation-menu-r4b",
+    "menu25-preparation-terminal-r4b"
+  ],
+  "native_wrapper": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedNativeProofR4b.gd",
+    "sha256": "09a8f25a2787f04a6294a31411c9ee3a07b770ba8508144452f52fb990ec18ea"
+  },
+  "originals": {
+    "base-populated.png": "/var/tmp/sa-menu25-native-r4b/base-populated.png",
+    "augment-three-cards.png": "/var/tmp/sa-menu25-native-r4b/augment-three-cards.png"
+  },
+  "reviews": {
+    "root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/root-review-r4b.json",
+    "independent": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/independent-review-r4b.json"
+  },
+  "extra_metadata": [
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/execution-r4.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/checks-r4.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/checks-r4b.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/r4-cache-quarantine.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/r3-stop.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/artifact-native-before-r4.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/artifact-native-after-r4.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/artifact-native-before-r4b.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/artifact-native-after-r4b.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/delivery-artifact.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/independent-review.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/root-review-r4-rejected.json",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PreparationCancellationTest.gd",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/prepare_bindings.py",
+    "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/export-config-provenance.json",
+    "/var/tmp/sa-menu25-native-r4/base-populated.png",
+    "/var/tmp/sa-menu25-native-r4/augment-three-cards.png",
+    "/var/tmp/sa-menu25-native-r4/base-populated.png.json",
+    "/var/tmp/sa-menu25-native-r4/augment-three-cards.png.json"
+  ]
+}

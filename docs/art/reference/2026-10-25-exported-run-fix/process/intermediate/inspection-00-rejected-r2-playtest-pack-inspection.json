@@ -1,0 +1,2071 @@
+{
+  "schema": 1,
+  "inspected_utc": "2026-10-25T18:32:22.242104+00:00",
+  "method": "Python stdlib offline PCK4 directory and payload inspection; no engine or build mutation",
+  "limitations": [
+    "Pack path, payload, hash and remap-target evidence are direct observations.",
+    "Source IDs and expected DB counts come from separately hashed current-checkout .tres files and loader rules; exported Resource bodies are not deserialized.",
+    "File timestamps identify the artifact observed, not the time or exact copy the user executed."
+  ],
+  "build": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/build/playtest-20261025-r2/SyntheticAscension-playtest.exe",
+    "bytes": 376188688,
+    "mtime_ns": 1792950651379845347,
+    "mtime_utc": "2026-10-25T17:50:51.379845+00:00",
+    "ctime_ns": 1792950651380534055,
+    "ctime_utc": "2026-10-25T17:50:51.380534+00:00",
+    "sha256": "42f1eef6fd08384ee155fdb93e41043628a00ba1667f6c2d9add0899b189401d"
+  },
+  "inspector": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/inspect_embedded_pack.py",
+    "bytes": 8754,
+    "mtime_ns": 1792948584050288542,
+    "mtime_utc": "2026-10-25T17:16:24.050289+00:00",
+    "ctime_ns": 1792948584050288542,
+    "ctime_utc": "2026-10-25T17:16:24.050289+00:00",
+    "sha256": "095c60bd17d58201b425810464f3e7d5ffed56e1c5e43b63e2456199ffd842b5"
+  },
+  "project_source_root": "/var/tmp/sa-menu25",
+  "pack": {
+    "embedded": true,
+    "base_offset": 103176704,
+    "format_version": 4,
+    "godot_version": [
+      4,
+      7,
+      2
+    ],
+    "flags": 2,
+    "data_start_relative": 112,
+    "directory_offset_relative": 272712112,
+    "entry_count": 3209
+  },
+  "databases": {
+    "race_db": {
+      "root": "res://data/races/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "data/races/Dragonborn.tres",
+        "data/races/Elf.tres",
+        "data/races/Human.tres",
+        "data/races/Warforged.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 4,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 4,
+        "expected_db_count": 4,
+        "expected_db_ids": [
+          "dragonborn",
+          "elf",
+          "human",
+          "warforged"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://data/races/Dragonborn.tres",
+            "authored_id": "dragonborn",
+            "expected_loader_id": "dragonborn",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/races/Dragonborn.tres",
+              "bytes": 413,
+              "mtime_ns": 1792948426439883250,
+              "mtime_utc": "2026-10-25T17:13:46.439883+00:00",
+              "ctime_ns": 1792948426439883250,
+              "ctime_utc": "2026-10-25T17:13:46.439883+00:00",
+              "sha256": "bc7613c6557442f54e9f1e0c3a020fe0e1d7327448761c9286b1c7d590f25628"
+            }
+          },
+          {
+            "logical_resource": "res://data/races/Elf.tres",
+            "authored_id": "elf",
+            "expected_loader_id": "elf",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/races/Elf.tres",
+              "bytes": 398,
+              "mtime_ns": 1792948426440670542,
+              "mtime_utc": "2026-10-25T17:13:46.440670+00:00",
+              "ctime_ns": 1792948426440670542,
+              "ctime_utc": "2026-10-25T17:13:46.440670+00:00",
+              "sha256": "6abbdd765c5803d9e23aed26e546ec52430c680d75b4237e09eba80fec4bd78e"
+            }
+          },
+          {
+            "logical_resource": "res://data/races/Human.tres",
+            "authored_id": "human",
+            "expected_loader_id": "human",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/races/Human.tres",
+              "bytes": 416,
+              "mtime_ns": 1792948426440670542,
+              "mtime_utc": "2026-10-25T17:13:46.440670+00:00",
+              "ctime_ns": 1792948426440670542,
+              "ctime_utc": "2026-10-25T17:13:46.440670+00:00",
+              "sha256": "59f083ceced37ec8c370a10454744615313e172dcbe322686fb584189bd9c1f4"
+            }
+          },
+          {
+            "logical_resource": "res://data/races/Warforged.tres",
+            "authored_id": "warforged",
+            "expected_loader_id": "warforged",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/races/Warforged.tres",
+              "bytes": 411,
+              "mtime_ns": 1792948426440670542,
+              "mtime_utc": "2026-10-25T17:13:46.440670+00:00",
+              "ctime_ns": 1792948426440670542,
+              "ctime_utc": "2026-10-25T17:13:46.440670+00:00",
+              "sha256": "118f34f03c721b56be6eb76c9f8ac85ec79fd8692d7529a283a08a0e6c301073"
+            }
+          }
+        ]
+      }
+    },
+    "style_db": {
+      "root": "res://data/styles/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "data/styles/Magic.tres",
+        "data/styles/Melee.tres",
+        "data/styles/Ranged.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 3,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 3,
+        "expected_db_count": 3,
+        "expected_db_ids": [
+          "magic",
+          "melee",
+          "ranged"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://data/styles/Magic.tres",
+            "authored_id": "magic",
+            "expected_loader_id": "magic",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/styles/Magic.tres",
+              "bytes": 393,
+              "mtime_ns": 1792948426440819652,
+              "mtime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "ctime_ns": 1792948426440819652,
+              "ctime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "sha256": "040570f0516f106bdf03645b5273d31e4d6d3929952687d52af541fa72e4d24d"
+            }
+          },
+          {
+            "logical_resource": "res://data/styles/Melee.tres",
+            "authored_id": "melee",
+            "expected_loader_id": "melee",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/styles/Melee.tres",
+              "bytes": 412,
+              "mtime_ns": 1792948426441273257,
+              "mtime_utc": "2026-10-25T17:13:46.441273+00:00",
+              "ctime_ns": 1792948426441273257,
+              "ctime_utc": "2026-10-25T17:13:46.441273+00:00",
+              "sha256": "bc5d59817bc9e000354b9d0b5474221290e79d8747f4315cc781f6a4842cbb77"
+            }
+          },
+          {
+            "logical_resource": "res://data/styles/Ranged.tres",
+            "authored_id": "ranged",
+            "expected_loader_id": "ranged",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/styles/Ranged.tres",
+              "bytes": 399,
+              "mtime_ns": 1792948426441273257,
+              "mtime_utc": "2026-10-25T17:13:46.441273+00:00",
+              "ctime_ns": 1792948426441273257,
+              "ctime_utc": "2026-10-25T17:13:46.441273+00:00",
+              "sha256": "aaf63533fbb2859f39f13bdfc6c0059b3e6615bd464855039bcb2ccc75ca2207"
+            }
+          }
+        ]
+      }
+    },
+    "weapon_db": {
+      "root": "res://data/weapons/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "data/weapons/StarterMagic.tres",
+        "data/weapons/StarterMelee.tres",
+        "data/weapons/StarterRanged.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 3,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 3,
+        "expected_db_count": 3,
+        "expected_db_ids": [
+          "magic",
+          "melee",
+          "ranged"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://data/weapons/StarterMagic.tres",
+            "authored_id": "",
+            "expected_loader_id": "magic",
+            "id_rule": "Global._load_weapons filename fallback / prefix normalization",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/weapons/StarterMagic.tres",
+              "bytes": 77,
+              "mtime_ns": 1792948426441723179,
+              "mtime_utc": "2026-10-25T17:13:46.441723+00:00",
+              "ctime_ns": 1792948426441723179,
+              "ctime_utc": "2026-10-25T17:13:46.441723+00:00",
+              "sha256": "4d1731b6ee4fc36bacef18ce66e83daa4edb2080b87dc7439d293506a5ddfc9d"
+            }
+          },
+          {
+            "logical_resource": "res://data/weapons/StarterMelee.tres",
+            "authored_id": "",
+            "expected_loader_id": "melee",
+            "id_rule": "Global._load_weapons filename fallback / prefix normalization",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/weapons/StarterMelee.tres",
+              "bytes": 288,
+              "mtime_ns": 1792948426441872567,
+              "mtime_utc": "2026-10-25T17:13:46.441873+00:00",
+              "ctime_ns": 1792948426441872567,
+              "ctime_utc": "2026-10-25T17:13:46.441873+00:00",
+              "sha256": "5f6bb15e67a60edf773c9be339dee491ecdfe8deb20668deda1cdb7b76f33feb"
+            }
+          },
+          {
+            "logical_resource": "res://data/weapons/StarterRanged.tres",
+            "authored_id": "",
+            "expected_loader_id": "ranged",
+            "id_rule": "Global._load_weapons filename fallback / prefix normalization",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/weapons/StarterRanged.tres",
+              "bytes": 455,
+              "mtime_ns": 1792948426441872567,
+              "mtime_utc": "2026-10-25T17:13:46.441873+00:00",
+              "ctime_ns": 1792948426441872567,
+              "ctime_utc": "2026-10-25T17:13:46.441873+00:00",
+              "sha256": "814636f3fca25d1905c6a5f7da44cb082dac746e077446679660d843c200a0f3"
+            }
+          }
+        ]
+      }
+    },
+    "spell_db": {
+      "root": "res://spells/data/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "spells/data/MagicMissile.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 1,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 1,
+        "expected_db_count": 1,
+        "expected_db_ids": [
+          "spell_magic_missile"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://spells/data/MagicMissile.tres",
+            "authored_id": "spell_magic_missile",
+            "expected_loader_id": "spell_magic_missile",
+            "id_rule": "Global._load_spells id normalization",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/spells/data/MagicMissile.tres",
+              "bytes": 519,
+              "mtime_ns": 1792948438431483422,
+              "mtime_utc": "2026-10-25T17:13:58.431484+00:00",
+              "ctime_ns": 1792948438431483422,
+              "ctime_utc": "2026-10-25T17:13:58.431484+00:00",
+              "sha256": "40e120cb258f66adfafe45815d1725ff5db5d90ab28a633a2007a961a823667a"
+            }
+          }
+        ]
+      }
+    },
+    "item_db": {
+      "root": "res://data/items/defs/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "data/items/defs/accessories/acc_firestone.tres",
+        "data/items/defs/accessories/acc_oakheart.tres",
+        "data/items/defs/accessories/bazinga.tres",
+        "data/items/defs/accessories/beka.tres",
+        "data/items/defs/accessories/dignity.tres",
+        "data/items/defs/accessories/grandmas_bazooka.tres",
+        "data/items/defs/accessories/idfk.tres",
+        "data/items/defs/accessories/missing_palis.tres",
+        "data/items/defs/accessories/plot_armor.tres",
+        "data/items/defs/accessories/ring_crusher.tres",
+        "data/items/defs/accessories/ring_regeneration.tres",
+        "data/items/defs/accessories/second_breakfast.tres",
+        "data/items/defs/accessories/seven_mile_boots.tres",
+        "data/items/defs/accessories/trauma.tres",
+        "data/items/defs/conduit/conduit_actuators.tres",
+        "data/items/defs/conduit/conduit_charm.tres",
+        "data/items/defs/conduit/conduit_greaves.tres",
+        "data/items/defs/conduit/conduit_heart.tres",
+        "data/items/defs/conduit/conduit_lens.tres",
+        "data/items/defs/conduit/conduit_plating.tres",
+        "data/items/defs/curses/curse_ashen_ballast.tres",
+        "data/items/defs/curses/curse_hollow_reliquary.tres",
+        "data/items/defs/curses/curse_jinxed_coin.tres",
+        "data/items/defs/curses/curse_leadfoot_vigil.tres",
+        "data/items/defs/curses/curse_slow_heart.tres",
+        "data/items/defs/curses/curse_sour_providence.tres",
+        "data/items/defs/curses/curse_starving_crown.tres",
+        "data/items/defs/curses/curse_tithe_bones.tres",
+        "data/items/defs/gravemarch/gravemarch_bonekey.tres",
+        "data/items/defs/gravemarch/gravemarch_carapace.tres",
+        "data/items/defs/gravemarch/gravemarch_censer.tres",
+        "data/items/defs/gravemarch/gravemarch_clockjaw.tres",
+        "data/items/defs/gravemarch/gravemarch_stompers.tres",
+        "data/items/defs/gravemarch/gravemarch_vessel.tres",
+        "data/items/defs/item_test.tres",
+        "data/items/defs/lattice/lattice_fingerprint.tres",
+        "data/items/defs/lattice/lattice_focusnode.tres",
+        "data/items/defs/lattice/lattice_pulsecoil.tres",
+        "data/items/defs/lattice/lattice_shellplate.tres",
+        "data/items/defs/lattice/lattice_strideframe.tres",
+        "data/items/defs/lattice/lattice_tickspurs.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 41,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 41,
+        "expected_db_count": 40,
+        "expected_db_ids": [
+          "acc_firestone",
+          "acc_oakheart",
+          "bazinga",
+          "beka",
+          "conduit_actuators",
+          "conduit_charm",
+          "conduit_greaves",
+          "conduit_heart",
+          "conduit_lens",
+          "conduit_plating",
+          "curse_ashen_ballast",
+          "curse_hollow_reliquary",
+          "curse_jinxed_coin",
+          "curse_leadfoot_vigil",
+          "curse_slow_heart",
+          "curse_sour_providence",
+          "curse_starving_crown",
+          "curse_tithe_bones",
+          "dignity",
+          "grandmas_bazooka",
+          "gravemarch_bonekey",
+          "gravemarch_carapace",
+          "gravemarch_censer",
+          "gravemarch_clockjaw",
+          "gravemarch_stompers",
+          "gravemarch_vessel",
+          "idfk",
+          "lattice_fingerprint",
+          "lattice_focusnode",
+          "lattice_pulsecoil",
+          "lattice_shellplate",
+          "lattice_strideframe",
+          "lattice_tickspurs",
+          "missing_palis",
+          "plot_armor",
+          "ring_crusher",
+          "ring_regeneration",
+          "second_breakfast",
+          "seven_mile_boots",
+          "trauma"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://data/items/defs/accessories/acc_firestone.tres",
+            "authored_id": "acc_firestone",
+            "expected_loader_id": "acc_firestone",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/acc_firestone.tres",
+              "bytes": 1369,
+              "mtime_ns": 1792948426435333695,
+              "mtime_utc": "2026-10-25T17:13:46.435334+00:00",
+              "ctime_ns": 1792948426435333695,
+              "ctime_utc": "2026-10-25T17:13:46.435334+00:00",
+              "sha256": "1915d37acad84b140b2586203a08bccea376aa23bbc4e5463ec46baf3ec7ba27"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/acc_oakheart.tres",
+            "authored_id": "acc_oakheart",
+            "expected_loader_id": "acc_oakheart",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/acc_oakheart.tres",
+              "bytes": 1403,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "f0d2fea8633abf6211d0e4b2ebaf0e8ef358d6d57b03e61794ee97798ec86be4"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/bazinga.tres",
+            "authored_id": "bazinga",
+            "expected_loader_id": "bazinga",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/bazinga.tres",
+              "bytes": 1321,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "4a8e847fa796fb8d905a90d85725fcc1b44545308c431e4c808a8410b2ed5b8a"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/beka.tres",
+            "authored_id": "beka",
+            "expected_loader_id": "beka",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/beka.tres",
+              "bytes": 1441,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "5932bac2fc87713d66c38371212bf58ed3ab9aaa9222165c30f9bf6442e8e6c5"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/dignity.tres",
+            "authored_id": "dignity",
+            "expected_loader_id": "dignity",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/dignity.tres",
+              "bytes": 1325,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "87e31f08037e0dab7d924f9001ae2c92a9eda2ce12a5296e7e0dc3b73ecf15f8"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/grandmas_bazooka.tres",
+            "authored_id": "grandmas_bazooka",
+            "expected_loader_id": "grandmas_bazooka",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/grandmas_bazooka.tres",
+              "bytes": 1326,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "19e9d7927b4f916526e96776a48ca131820a8084dd37253a6cd31bf63cbb10cd"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/idfk.tres",
+            "authored_id": "idfk",
+            "expected_loader_id": "idfk",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/idfk.tres",
+              "bytes": 1233,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "34cb3165230f1cd4843fdf64d175410e24631723fc52c5ac847a0a66ee97e864"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/missing_palis.tres",
+            "authored_id": "missing_palis",
+            "expected_loader_id": "missing_palis",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/missing_palis.tres",
+              "bytes": 1402,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "72c33ad3a409b57f25478f63d77381b814a0e8108a63c972b80783ffd6d31b80"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/plot_armor.tres",
+            "authored_id": "plot_armor",
+            "expected_loader_id": "plot_armor",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/plot_armor.tres",
+              "bytes": 1377,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "da4f9ee8da76f981fa915ad378d7a239780ef5cf74cc46139e19f235e45ae25f"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/ring_crusher.tres",
+            "authored_id": "ring_crusher",
+            "expected_loader_id": "ring_crusher",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/ring_crusher.tres",
+              "bytes": 1336,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "cf37ba39ca419c6382f902981bfd175c121875a6cb3b2d052cfa359092a3b975"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/ring_regeneration.tres",
+            "authored_id": "ring_regeneration",
+            "expected_loader_id": "ring_regeneration",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/ring_regeneration.tres",
+              "bytes": 1341,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "c05d3c74bebc27ce41b53d8589c0928f41be6df132ce6911828d60f1cd5bde51"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/second_breakfast.tres",
+            "authored_id": "second_breakfast",
+            "expected_loader_id": "second_breakfast",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/second_breakfast.tres",
+              "bytes": 1365,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "72169ded10e1654816ec926643fdb2493d8bf8ccca057c28c87994e4c242529b"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/seven_mile_boots.tres",
+            "authored_id": "seven_mile_boots",
+            "expected_loader_id": "seven_mile_boots",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/seven_mile_boots.tres",
+              "bytes": 1366,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "9e81b3adf1b83aaff4a323a9c5404b46846e9742afc89f7e24ec15590b41dc61"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/accessories/trauma.tres",
+            "authored_id": "trauma",
+            "expected_loader_id": "trauma",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/accessories/trauma.tres",
+              "bytes": 1366,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "4ff27bb29b7fa4668b73aabca3dbdd57bef14eee17fba8e390ca554793338dc6"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/conduit/conduit_actuators.tres",
+            "authored_id": "conduit_actuators",
+            "expected_loader_id": "conduit_actuators",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/conduit/conduit_actuators.tres",
+              "bytes": 944,
+              "mtime_ns": 1792948426435414472,
+              "mtime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "ctime_ns": 1792948426435414472,
+              "ctime_utc": "2026-10-25T17:13:46.435415+00:00",
+              "sha256": "d97b340dbc6bac172389794c2a985e1ab714f3bd7918941558e8a25be76236f8"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/conduit/conduit_charm.tres",
+            "authored_id": "conduit_charm",
+            "expected_loader_id": "conduit_charm",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/conduit/conduit_charm.tres",
+              "bytes": 979,
+              "mtime_ns": 1792948426435902947,
+              "mtime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "ctime_ns": 1792948426435902947,
+              "ctime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "sha256": "116f252fa0e8fc79d3b9b6d39159bbf2fa9a4476a874d0240da413ed312a7cfe"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/conduit/conduit_greaves.tres",
+            "authored_id": "conduit_greaves",
+            "expected_loader_id": "conduit_greaves",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/conduit/conduit_greaves.tres",
+              "bytes": 951,
+              "mtime_ns": 1792948426435902947,
+              "mtime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "ctime_ns": 1792948426435902947,
+              "ctime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "sha256": "bd0d4b87851f76d9af19bd726fd4ec3b47dca95452ba94e3212360aa075e621c"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/conduit/conduit_heart.tres",
+            "authored_id": "conduit_heart",
+            "expected_loader_id": "conduit_heart",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/conduit/conduit_heart.tres",
+              "bytes": 990,
+              "mtime_ns": 1792948426435902947,
+              "mtime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "ctime_ns": 1792948426435902947,
+              "ctime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "sha256": "44d7106eef96c9377038aefb821ebefb80c36132e9629f372a2b5beec2a03562"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/conduit/conduit_lens.tres",
+            "authored_id": "conduit_lens",
+            "expected_loader_id": "conduit_lens",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/conduit/conduit_lens.tres",
+              "bytes": 926,
+              "mtime_ns": 1792948426435902947,
+              "mtime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "ctime_ns": 1792948426435902947,
+              "ctime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "sha256": "0f4402fdb07fb9aac3073980ca2eadf63d825e925bb571be222465407299aa5c"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/conduit/conduit_plating.tres",
+            "authored_id": "conduit_plating",
+            "expected_loader_id": "conduit_plating",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/conduit/conduit_plating.tres",
+              "bytes": 995,
+              "mtime_ns": 1792948426435902947,
+              "mtime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "ctime_ns": 1792948426435902947,
+              "ctime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "sha256": "1e1f4ebdc5a556e6bd6f9b9d7f5078bd9c0b5140ef91159a6e39eddd113a733f"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_ashen_ballast.tres",
+            "authored_id": "curse_ashen_ballast",
+            "expected_loader_id": "curse_ashen_ballast",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_ashen_ballast.tres",
+              "bytes": 1238,
+              "mtime_ns": 1792948426435902947,
+              "mtime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "ctime_ns": 1792948426435902947,
+              "ctime_utc": "2026-10-25T17:13:46.435903+00:00",
+              "sha256": "19ff673544ae00c3a4fd4eda097863fffa9bd898b627e0b26eaff51203f19c99"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_hollow_reliquary.tres",
+            "authored_id": "curse_hollow_reliquary",
+            "expected_loader_id": "curse_hollow_reliquary",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_hollow_reliquary.tres",
+              "bytes": 1210,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "caf2473c711e57fecd7c70792cace9c46faf979118559bd84b6f6c42b8a2b39c"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_jinxed_coin.tres",
+            "authored_id": "curse_jinxed_coin",
+            "expected_loader_id": "curse_jinxed_coin",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_jinxed_coin.tres",
+              "bytes": 1198,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "0f8b680c81ccabd944280bc929c1c8a938108e4c250937369398024b1f331e03"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_leadfoot_vigil.tres",
+            "authored_id": "curse_leadfoot_vigil",
+            "expected_loader_id": "curse_leadfoot_vigil",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_leadfoot_vigil.tres",
+              "bytes": 1225,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "ebacd6215c6ef769626ac77e61521f495bbb05d5fe07c344643e9d233538b63e"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_slow_heart.tres",
+            "authored_id": "curse_slow_heart",
+            "expected_loader_id": "curse_slow_heart",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_slow_heart.tres",
+              "bytes": 1406,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "d5365e5be376e0a7eb4f00897a837899330c6d749d2016446b0bede45d044d3a"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_sour_providence.tres",
+            "authored_id": "curse_sour_providence",
+            "expected_loader_id": "curse_sour_providence",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_sour_providence.tres",
+              "bytes": 1412,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "c39f7afb5292a31645ef1a728d6ad218e15213d58530bfc6787c9772e1d10961"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_starving_crown.tres",
+            "authored_id": "curse_starving_crown",
+            "expected_loader_id": "curse_starving_crown",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_starving_crown.tres",
+              "bytes": 1184,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "bcb914e4cd21aa78f66371d2c74192bb5aa8b8e1800caf8a82418fd99a306448"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/curses/curse_tithe_bones.tres",
+            "authored_id": "curse_tithe_bones",
+            "expected_loader_id": "curse_tithe_bones",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/curses/curse_tithe_bones.tres",
+              "bytes": 1392,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "30124a393e774ebee6e04e5936226e76c8125b00bc4dc4b3176759fbdc2e13f9"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/gravemarch/gravemarch_bonekey.tres",
+            "authored_id": "gravemarch_bonekey",
+            "expected_loader_id": "gravemarch_bonekey",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/gravemarch/gravemarch_bonekey.tres",
+              "bytes": 874,
+              "mtime_ns": 1792948426436160957,
+              "mtime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "ctime_ns": 1792948426436160957,
+              "ctime_utc": "2026-10-25T17:13:46.436161+00:00",
+              "sha256": "ea552c781ddb2c34543dd2c4d763b0f107020e8569158bd545c68a713d8ff658"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/gravemarch/gravemarch_carapace.tres",
+            "authored_id": "gravemarch_carapace",
+            "expected_loader_id": "gravemarch_carapace",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/gravemarch/gravemarch_carapace.tres",
+              "bytes": 872,
+              "mtime_ns": 1792948426436513443,
+              "mtime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "ctime_ns": 1792948426436513443,
+              "ctime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "sha256": "0a29900719c79d9eda8b5e17b87d127e9c06e7cbac9eb0dd11249a598f831714"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/gravemarch/gravemarch_censer.tres",
+            "authored_id": "gravemarch_censer",
+            "expected_loader_id": "gravemarch_censer",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/gravemarch/gravemarch_censer.tres",
+              "bytes": 861,
+              "mtime_ns": 1792948426436513443,
+              "mtime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "ctime_ns": 1792948426436513443,
+              "ctime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "sha256": "af15a977b3ae385c48002f6cd7680d1e8e45ac8107d5149cb2f98ec2ce1743f0"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/gravemarch/gravemarch_clockjaw.tres",
+            "authored_id": "gravemarch_clockjaw",
+            "expected_loader_id": "gravemarch_clockjaw",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/gravemarch/gravemarch_clockjaw.tres",
+              "bytes": 876,
+              "mtime_ns": 1792948426436513443,
+              "mtime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "ctime_ns": 1792948426436513443,
+              "ctime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "sha256": "3391d3be9e7395d3ca38ebeffe3eef061e856036131428c32f904efb2a7edc42"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/gravemarch/gravemarch_stompers.tres",
+            "authored_id": "gravemarch_stompers",
+            "expected_loader_id": "gravemarch_stompers",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/gravemarch/gravemarch_stompers.tres",
+              "bytes": 881,
+              "mtime_ns": 1792948426436513443,
+              "mtime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "ctime_ns": 1792948426436513443,
+              "ctime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "sha256": "f356e67dd84fdfdd9ab21f2d0e5dfb8a5166093fc068b0b4fc8638f79fd59887"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/gravemarch/gravemarch_vessel.tres",
+            "authored_id": "gravemarch_vessel",
+            "expected_loader_id": "gravemarch_vessel",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/gravemarch/gravemarch_vessel.tres",
+              "bytes": 858,
+              "mtime_ns": 1792948426436513443,
+              "mtime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "ctime_ns": 1792948426436513443,
+              "ctime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "sha256": "f09e4e1c2e36f05dcbf6c7b65469369f3b607b699522353c210efc3604e786fc"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/item_test.tres",
+            "authored_id": "item_test",
+            "expected_loader_id": "item_test",
+            "id_rule": "authored id",
+            "runtime_enabled": false,
+            "expected_loader_eligible": false,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/item_test.tres",
+              "bytes": 785,
+              "mtime_ns": 1792948426436513443,
+              "mtime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "ctime_ns": 1792948426436513443,
+              "ctime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "sha256": "52eabb4c574b96ef0dc3512fa8a0e2d2c128258cbdcc7a5783d06e4bb3bb6a9b"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/lattice/lattice_fingerprint.tres",
+            "authored_id": "lattice_fingerprint",
+            "expected_loader_id": "lattice_fingerprint",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/lattice/lattice_fingerprint.tres",
+              "bytes": 867,
+              "mtime_ns": 1792948426436513443,
+              "mtime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "ctime_ns": 1792948426436513443,
+              "ctime_utc": "2026-10-25T17:13:46.436513+00:00",
+              "sha256": "3df865a07cb884d45bf5f466e6447a1e64f96a9960de496cea5410c604d4de58"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/lattice/lattice_focusnode.tres",
+            "authored_id": "lattice_focusnode",
+            "expected_loader_id": "lattice_focusnode",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/lattice/lattice_focusnode.tres",
+              "bytes": 853,
+              "mtime_ns": 1792948426436800038,
+              "mtime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "ctime_ns": 1792948426436800038,
+              "ctime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "sha256": "15823409264a1ba47a1fc425258e6c143b76e70cdab5c9fa26210b9275d41bf4"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/lattice/lattice_pulsecoil.tres",
+            "authored_id": "lattice_pulsecoil",
+            "expected_loader_id": "lattice_pulsecoil",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/lattice/lattice_pulsecoil.tres",
+              "bytes": 859,
+              "mtime_ns": 1792948426436800038,
+              "mtime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "ctime_ns": 1792948426436800038,
+              "ctime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "sha256": "fe10dcc9c7d460b2451c59658396c4898c1e118bce8fe193d4cf64b712e703c0"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/lattice/lattice_shellplate.tres",
+            "authored_id": "lattice_shellplate",
+            "expected_loader_id": "lattice_shellplate",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/lattice/lattice_shellplate.tres",
+              "bytes": 863,
+              "mtime_ns": 1792948426436800038,
+              "mtime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "ctime_ns": 1792948426436800038,
+              "ctime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "sha256": "5c093ef7dc58ed605fc7825da45c5cd702c10ed533def8546da266e7f8ef16c3"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/lattice/lattice_strideframe.tres",
+            "authored_id": "lattice_strideframe",
+            "expected_loader_id": "lattice_strideframe",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/lattice/lattice_strideframe.tres",
+              "bytes": 872,
+              "mtime_ns": 1792948426436800038,
+              "mtime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "ctime_ns": 1792948426436800038,
+              "ctime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "sha256": "0a26f58fcae0360c2a544f6dc3f691081b427838c18a37d91160e68d2148bcb1"
+            }
+          },
+          {
+            "logical_resource": "res://data/items/defs/lattice/lattice_tickspurs.tres",
+            "authored_id": "lattice_tickspurs",
+            "expected_loader_id": "lattice_tickspurs",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/items/defs/lattice/lattice_tickspurs.tres",
+              "bytes": 861,
+              "mtime_ns": 1792948426436800038,
+              "mtime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "ctime_ns": 1792948426436800038,
+              "ctime_utc": "2026-10-25T17:13:46.436800+00:00",
+              "sha256": "f7402221bf68d0a961933cf946215516341c7b34349801bd1f0c7641c02c8e48"
+            }
+          }
+        ]
+      }
+    },
+    "set_db": {
+      "root": "res://data/sets/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "data/sets/SetData.tres",
+        "data/sets/conduit/Conduit.tres",
+        "data/sets/gravemarch/Gravemarch.tres",
+        "data/sets/lattice/Lattice.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 4,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 4,
+        "expected_db_count": 3,
+        "expected_db_ids": [
+          "conduit",
+          "gravemarch",
+          "lattice"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://data/sets/SetData.tres",
+            "authored_id": "",
+            "expected_loader_id": "",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": false,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/sets/SetData.tres",
+              "bytes": 448,
+              "mtime_ns": 1792948426440819652,
+              "mtime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "ctime_ns": 1792948426440819652,
+              "ctime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "sha256": "c9ef9a974018d9e61498fbf0d5809e3f39ce8715e2b8430539d7ee2dc144dd61"
+            }
+          },
+          {
+            "logical_resource": "res://data/sets/conduit/Conduit.tres",
+            "authored_id": "conduit",
+            "expected_loader_id": "conduit",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/sets/conduit/Conduit.tres",
+              "bytes": 3750,
+              "mtime_ns": 1792948426440819652,
+              "mtime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "ctime_ns": 1792948426440819652,
+              "ctime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "sha256": "32e2e0799e4a2a1a96404a173b5a6b40382761a3e17f3c3b7953b32061bfd057"
+            }
+          },
+          {
+            "logical_resource": "res://data/sets/gravemarch/Gravemarch.tres",
+            "authored_id": "gravemarch",
+            "expected_loader_id": "gravemarch",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/sets/gravemarch/Gravemarch.tres",
+              "bytes": 3825,
+              "mtime_ns": 1792948426440819652,
+              "mtime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "ctime_ns": 1792948426440819652,
+              "ctime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "sha256": "c3ca284da45652269f4017304e1289939284d1465f69372cee2f02c90e65bd09"
+            }
+          },
+          {
+            "logical_resource": "res://data/sets/lattice/Lattice.tres",
+            "authored_id": "lattice",
+            "expected_loader_id": "lattice",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/sets/lattice/Lattice.tres",
+              "bytes": 3388,
+              "mtime_ns": 1792948426440819652,
+              "mtime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "ctime_ns": 1792948426440819652,
+              "ctime_utc": "2026-10-25T17:13:46.440820+00:00",
+              "sha256": "2ab904b97a9a6ef42c74b6e1bd6826b276abd3662a8a790e14a61444d3745a84"
+            }
+          }
+        ]
+      }
+    },
+    "augment_db": {
+      "root": "res://data/augments/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "data/augments/Augment_CorruptionEngine.tres",
+        "data/augments/Augment_CultOfPersonality.tres",
+        "data/augments/Augment_DoctrineOfBurden.tres",
+        "data/augments/Augment_EquilibriumSigil.tres",
+        "data/augments/Augment_GamblersRite.tres",
+        "data/augments/Augment_HexBlinkMarkEffect.tres",
+        "data/augments/Augment_InversionLens.tres",
+        "data/augments/Augment_LitanyOfWounds.tres",
+        "data/augments/Augment_LuckyCharm.tres",
+        "data/augments/Augment_MagicMissile.tres",
+        "data/augments/Augment_ReflectShield.tres",
+        "data/augments/Augment_SpiritSlash.tres",
+        "data/augments/Augment_SprintServos.tres",
+        "data/augments/Augment_StaminaCore.tres",
+        "data/augments/Augment_SummonSpiderlings.tres",
+        "data/augments/Augment_TeslaAura.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 16,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 16,
+        "expected_db_count": 16,
+        "expected_db_ids": [
+          "augment_blink_hex",
+          "augment_corruption_engine",
+          "augment_cult_of_personality",
+          "augment_doctrine_of_burden",
+          "augment_equilibrium_sigil",
+          "augment_gamblers_rite",
+          "augment_inversion_lens",
+          "augment_litany_of_wounds",
+          "augment_lucky_charm",
+          "augment_magic_missile",
+          "augment_reflect_shield",
+          "augment_spirit_slash",
+          "augment_sprint_servos",
+          "augment_stamina_core",
+          "augment_summon_spiderlings",
+          "augment_tesla_aura"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://data/augments/Augment_CorruptionEngine.tres",
+            "authored_id": "augment_corruption_engine",
+            "expected_loader_id": "augment_corruption_engine",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_CorruptionEngine.tres",
+              "bytes": 1067,
+              "mtime_ns": 1792948426432883188,
+              "mtime_utc": "2026-10-25T17:13:46.432883+00:00",
+              "ctime_ns": 1792948426432883188,
+              "ctime_utc": "2026-10-25T17:13:46.432883+00:00",
+              "sha256": "db4065bdc6430f9c47952046a9b131a01479697be0ea89738933c77eeb70bee5"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_CultOfPersonality.tres",
+            "authored_id": "augment_cult_of_personality",
+            "expected_loader_id": "augment_cult_of_personality",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_CultOfPersonality.tres",
+              "bytes": 866,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "6420999b742544ba4ad8184aa23ca82c3f2f1c6c8cbd8bc37308572010262a32"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_DoctrineOfBurden.tres",
+            "authored_id": "augment_doctrine_of_burden",
+            "expected_loader_id": "augment_doctrine_of_burden",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_DoctrineOfBurden.tres",
+              "bytes": 1142,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "3c4b91e20dd5a70b520e11639ce41bd4c901d979966b22bcf00736f15b117fc8"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_EquilibriumSigil.tres",
+            "authored_id": "augment_equilibrium_sigil",
+            "expected_loader_id": "augment_equilibrium_sigil",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_EquilibriumSigil.tres",
+              "bytes": 1056,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "ad1f5ff1492bd8a0ebe73d7ab1718885abf4422166c2d4f69cfb6b374997f211"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_GamblersRite.tres",
+            "authored_id": "augment_gamblers_rite",
+            "expected_loader_id": "augment_gamblers_rite",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_GamblersRite.tres",
+              "bytes": 1082,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "d2738956ede0ccffe23f12daaa4fd28ae6fb958bc62275288bd6265ddbcce818"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_HexBlinkMarkEffect.tres",
+            "authored_id": "augment_blink_hex",
+            "expected_loader_id": "augment_blink_hex",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_HexBlinkMarkEffect.tres",
+              "bytes": 1104,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "8a5922b0dd2af684b9c7b7a10be9fe8f3e0eb4a5fa7ba563e756a0fda530089c"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_InversionLens.tres",
+            "authored_id": "augment_inversion_lens",
+            "expected_loader_id": "augment_inversion_lens",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_InversionLens.tres",
+              "bytes": 1131,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "7e1e6cf4d78a9f758684429da1401927b3e2300e3730dad9a5ca697fbaea17e7"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_LitanyOfWounds.tres",
+            "authored_id": "augment_litany_of_wounds",
+            "expected_loader_id": "augment_litany_of_wounds",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_LitanyOfWounds.tres",
+              "bytes": 1214,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "bb9b9233932bad1a261bd6bbc103bc7d945862af643715d3ac26776a47e976a5"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_LuckyCharm.tres",
+            "authored_id": "augment_lucky_charm",
+            "expected_loader_id": "augment_lucky_charm",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_LuckyCharm.tres",
+              "bytes": 1124,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "f910fb82078f5c006e5f0a5c1d99c6a5aeb24a69da3b6a155b5c6f6d53d70774"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_MagicMissile.tres",
+            "authored_id": "augment_magic_missile",
+            "expected_loader_id": "augment_magic_missile",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_MagicMissile.tres",
+              "bytes": 1097,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "3755cab17b1a54753228979ba78f21fcaf6897907f1f9c68f42a99924a61f192"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_ReflectShield.tres",
+            "authored_id": "augment_reflect_shield",
+            "expected_loader_id": "augment_reflect_shield",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_ReflectShield.tres",
+              "bytes": 1635,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "15312e5686a38680900d8e6bcb38ba45d69939ce0ecf9275905c07f314817082"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_SpiritSlash.tres",
+            "authored_id": "augment_spirit_slash",
+            "expected_loader_id": "augment_spirit_slash",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_SpiritSlash.tres",
+              "bytes": 1325,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "4f518933eae54201604faf0a7fc03d3fc5e9056d800758c349bbb9f1b71136fe"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_SprintServos.tres",
+            "authored_id": "augment_sprint_servos",
+            "expected_loader_id": "augment_sprint_servos",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_SprintServos.tres",
+              "bytes": 1079,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "a90ccb69ba3729956c7b39e160e301a3508bfa241e1893048a3480b1b9b36b4c"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_StaminaCore.tres",
+            "authored_id": "augment_stamina_core",
+            "expected_loader_id": "augment_stamina_core",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_StaminaCore.tres",
+              "bytes": 1410,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "03ce94b1c2b1303b3712772ddd434b8efee1ac6c85fd5098158baba4fd65f1f0"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_SummonSpiderlings.tres",
+            "authored_id": "augment_summon_spiderlings",
+            "expected_loader_id": "augment_summon_spiderlings",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_SummonSpiderlings.tres",
+              "bytes": 1715,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "4fb6f23680381f30a3bb631a5050b34d2528c3e9556f6b544a4f73f24e9f9cfd"
+            }
+          },
+          {
+            "logical_resource": "res://data/augments/Augment_TeslaAura.tres",
+            "authored_id": "augment_tesla_aura",
+            "expected_loader_id": "augment_tesla_aura",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/augments/Augment_TeslaAura.tres",
+              "bytes": 1401,
+              "mtime_ns": 1792948426434044042,
+              "mtime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "ctime_ns": 1792948426434044042,
+              "ctime_utc": "2026-10-25T17:13:46.434044+00:00",
+              "sha256": "bbc48ee5b8775272bf15f6eb967528a847405758f3e12c685c4b7d7e1a8814a0"
+            }
+          }
+        ]
+      }
+    },
+    "major_choice_db": {
+      "root": "res://data/major_choices/",
+      "physical_remap_count": 0,
+      "raw_tres_res_paths": [
+        "data/major_choices/doctrines/apotheosis_law_of_admission.tres",
+        "data/major_choices/doctrines/apotheosis_manufactured_witness.tres",
+        "data/major_choices/doctrines/apotheosis_mass_conversion.tres",
+        "data/major_choices/doctrines/apotheosis_perfected_engine.tres",
+        "data/major_choices/doctrines/apotheosis_second_revelation.tres",
+        "data/major_choices/doctrines/apotheosis_the_engine_prays.tres",
+        "data/major_choices/doctrines/doctrine_choir_of_recurrence.tres",
+        "data/major_choices/doctrines/doctrine_iron_liturgy.tres",
+        "data/major_choices/doctrines/doctrine_liturgy_of_overclock.tres",
+        "data/major_choices/doctrines/doctrine_pilgrim_engine.tres",
+        "data/major_choices/doctrines/doctrine_tithe_ledger.tres",
+        "data/major_choices/doctrines/doctrine_vessel_without_mercy.tres",
+        "data/major_choices/doctrines/method_black_archive.tres",
+        "data/major_choices/doctrines/method_census_of_souls.tres",
+        "data/major_choices/doctrines/method_frame_of_ash.tres",
+        "data/major_choices/doctrines/method_open_circuit.tres",
+        "data/major_choices/doctrines/method_second_hand.tres",
+        "data/major_choices/doctrines/method_twin_seal_protocol.tres",
+        "data/major_choices/major_augment_overclock.tres",
+        "data/major_choices/major_frame_reinforcement.tres",
+        "data/major_choices/major_magic_trisigil.tres",
+        "data/major_choices/major_melee_dual_slash.tres",
+        "data/major_choices/major_ranged_shotgun.tres",
+        "data/major_choices/major_relic_crusher_ring.tres",
+        "data/major_choices/major_resonant_focus.tres",
+        "data/major_choices/major_ritual.tres",
+        "data/major_choices/major_sanctum.tres",
+        "data/major_choices/major_satchel.tres"
+      ],
+      "old_DirAccess_suffix_scanner_accepted_count": 28,
+      "remaps": [],
+      "current_checkout_source_catalogue": {
+        "resource_count": 28,
+        "expected_db_count": 28,
+        "expected_db_ids": [
+          "doctrine_apotheosis_law_of_admission",
+          "doctrine_apotheosis_manufactured_witness",
+          "doctrine_apotheosis_mass_conversion",
+          "doctrine_apotheosis_perfected_engine",
+          "doctrine_apotheosis_second_revelation",
+          "doctrine_apotheosis_the_engine_prays",
+          "doctrine_choir_of_recurrence",
+          "doctrine_iron_liturgy",
+          "doctrine_liturgy_of_overclock",
+          "doctrine_method_black_archive",
+          "doctrine_method_census_of_souls",
+          "doctrine_method_frame_of_ash",
+          "doctrine_method_open_circuit",
+          "doctrine_method_second_hand",
+          "doctrine_method_twin_seal_protocol",
+          "doctrine_pilgrim_engine",
+          "doctrine_tithe_ledger",
+          "doctrine_vessel_without_mercy",
+          "major_augment_overclock",
+          "major_frame_reinforcement",
+          "major_magic_trisigil",
+          "major_melee_dual_slash",
+          "major_ranged_shotgun",
+          "major_relic_crusher_ring",
+          "major_resonant_focus",
+          "major_ritual",
+          "major_sanctum",
+          "major_satchel"
+        ],
+        "resources": [
+          {
+            "logical_resource": "res://data/major_choices/doctrines/apotheosis_law_of_admission.tres",
+            "authored_id": "doctrine_apotheosis_law_of_admission",
+            "expected_loader_id": "doctrine_apotheosis_law_of_admission",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/apotheosis_law_of_admission.tres",
+              "bytes": 1126,
+              "mtime_ns": 1792948426437047582,
+              "mtime_utc": "2026-10-25T17:13:46.437047+00:00",
+              "ctime_ns": 1792948426437047582,
+              "ctime_utc": "2026-10-25T17:13:46.437047+00:00",
+              "sha256": "58872c81dfeaa49fe1addd5ae4ae99b309b1d192d35ffe9019abf25532472af8"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/apotheosis_manufactured_witness.tres",
+            "authored_id": "doctrine_apotheosis_manufactured_witness",
+            "expected_loader_id": "doctrine_apotheosis_manufactured_witness",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/apotheosis_manufactured_witness.tres",
+              "bytes": 1078,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "73c384dfa116f6dd87d57994525f0622268caa4384c1286cc1d8968f88ed4c3a"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/apotheosis_mass_conversion.tres",
+            "authored_id": "doctrine_apotheosis_mass_conversion",
+            "expected_loader_id": "doctrine_apotheosis_mass_conversion",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/apotheosis_mass_conversion.tres",
+              "bytes": 1193,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "0aed4d9ee4b2737454e90c65937614906e69f91400eeafd3410f55a2fa7452f4"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/apotheosis_perfected_engine.tres",
+            "authored_id": "doctrine_apotheosis_perfected_engine",
+            "expected_loader_id": "doctrine_apotheosis_perfected_engine",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/apotheosis_perfected_engine.tres",
+              "bytes": 2004,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "b1efc8721b35aa58955df642a08a06d7971718d827d20f707b90bde74ed5c367"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/apotheosis_second_revelation.tres",
+            "authored_id": "doctrine_apotheosis_second_revelation",
+            "expected_loader_id": "doctrine_apotheosis_second_revelation",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/apotheosis_second_revelation.tres",
+              "bytes": 1035,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "b4ecbe12b2edc17fc49cbc7d72788418448bec49539b2cbc299825770db7f446"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/apotheosis_the_engine_prays.tres",
+            "authored_id": "doctrine_apotheosis_the_engine_prays",
+            "expected_loader_id": "doctrine_apotheosis_the_engine_prays",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/apotheosis_the_engine_prays.tres",
+              "bytes": 1295,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "6fcbdce62c5f433bfdba81122a54aeaadac13a1e3aa08b095252948699a69806"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/doctrine_choir_of_recurrence.tres",
+            "authored_id": "doctrine_choir_of_recurrence",
+            "expected_loader_id": "doctrine_choir_of_recurrence",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/doctrine_choir_of_recurrence.tres",
+              "bytes": 1631,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "e0a5af69d73a50d0d496c96a90ec88349c88263ae94fa3e20a6d4aa5a54645a0"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/doctrine_iron_liturgy.tres",
+            "authored_id": "doctrine_iron_liturgy",
+            "expected_loader_id": "doctrine_iron_liturgy",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/doctrine_iron_liturgy.tres",
+              "bytes": 1158,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "cc2966c8579e43361ab35522a9475b69d7fb0494a387a847f64e78ec5835082a"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/doctrine_liturgy_of_overclock.tres",
+            "authored_id": "doctrine_liturgy_of_overclock",
+            "expected_loader_id": "doctrine_liturgy_of_overclock",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/doctrine_liturgy_of_overclock.tres",
+              "bytes": 1471,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "9a5693b800964d9941401962bf47f99f62b482382cfc95cd68a40ab0dc4df944"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/doctrine_pilgrim_engine.tres",
+            "authored_id": "doctrine_pilgrim_engine",
+            "expected_loader_id": "doctrine_pilgrim_engine",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/doctrine_pilgrim_engine.tres",
+              "bytes": 1745,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "52e98a0664f685f07b300626d47b3885b78656bbd4bee5b079a05ec4735d2883"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/doctrine_tithe_ledger.tres",
+            "authored_id": "doctrine_tithe_ledger",
+            "expected_loader_id": "doctrine_tithe_ledger",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/doctrine_tithe_ledger.tres",
+              "bytes": 1143,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "5d033cf7e4b06f4b3c801cb4239ab2f3896adcbbce8e30b2f0d021a09fc6b546"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/doctrine_vessel_without_mercy.tres",
+            "authored_id": "doctrine_vessel_without_mercy",
+            "expected_loader_id": "doctrine_vessel_without_mercy",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/doctrine_vessel_without_mercy.tres",
+              "bytes": 1470,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "2fa0b2e8000c7759824b3e3c2453b744467895033ff5cb5d6e273838d3147a09"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/method_black_archive.tres",
+            "authored_id": "doctrine_method_black_archive",
+            "expected_loader_id": "doctrine_method_black_archive",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/method_black_archive.tres",
+              "bytes": 1836,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "a7e0e80f0204cab5647737076d8efd0ad21521eb7da1738fc6cae4e404f62e22"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/method_census_of_souls.tres",
+            "authored_id": "doctrine_method_census_of_souls",
+            "expected_loader_id": "doctrine_method_census_of_souls",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/method_census_of_souls.tres",
+              "bytes": 1413,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "18ead18e513ddd96a6ea6529149fe56bb592e839c272ceb9a715a3f9294b7d05"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/method_frame_of_ash.tres",
+            "authored_id": "doctrine_method_frame_of_ash",
+            "expected_loader_id": "doctrine_method_frame_of_ash",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/method_frame_of_ash.tres",
+              "bytes": 1315,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "fa25379953642446c36597757fa1777c84a8205670162e468b795d8c6b0f610c"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/method_open_circuit.tres",
+            "authored_id": "doctrine_method_open_circuit",
+            "expected_loader_id": "doctrine_method_open_circuit",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/method_open_circuit.tres",
+              "bytes": 1850,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "6e3db86a5855cf881ad2cd80d4fbe862d468199ca034072418028b3244d6ec41"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/method_second_hand.tres",
+            "authored_id": "doctrine_method_second_hand",
+            "expected_loader_id": "doctrine_method_second_hand",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/method_second_hand.tres",
+              "bytes": 1333,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "8574315d018bca2416dc0037f071297a82b0389244363185e6d7b269bb37d2f0"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/doctrines/method_twin_seal_protocol.tres",
+            "authored_id": "doctrine_method_twin_seal_protocol",
+            "expected_loader_id": "doctrine_method_twin_seal_protocol",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/doctrines/method_twin_seal_protocol.tres",
+              "bytes": 1318,
+              "mtime_ns": 1792948426437114340,
+              "mtime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "ctime_ns": 1792948426437114340,
+              "ctime_utc": "2026-10-25T17:13:46.437114+00:00",
+              "sha256": "68637dc73eff5ea0470793e2e7640f6cb551def1d98e20a173636fb5a28ed191"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_augment_overclock.tres",
+            "authored_id": "major_augment_overclock",
+            "expected_loader_id": "major_augment_overclock",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_augment_overclock.tres",
+              "bytes": 1138,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "c7d7506b36b61e5223660dd139710ca97b84f818d3262f8d9c87adc86300d549"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_frame_reinforcement.tres",
+            "authored_id": "major_frame_reinforcement",
+            "expected_loader_id": "major_frame_reinforcement",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_frame_reinforcement.tres",
+              "bytes": 802,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "79ead3a4bd153da8a7c6795123303510c28a2812c184563a94876e45ca30fba1"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_magic_trisigil.tres",
+            "authored_id": "major_magic_trisigil",
+            "expected_loader_id": "major_magic_trisigil",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_magic_trisigil.tres",
+              "bytes": 699,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "32288793b6ffedee586de85b8c2d113e5655ca74908fa16dbb1b29a2b2e5bb19"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_melee_dual_slash.tres",
+            "authored_id": "major_melee_dual_slash",
+            "expected_loader_id": "major_melee_dual_slash",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_melee_dual_slash.tres",
+              "bytes": 691,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "3db95a70adfb16eb91cf59c74e92a7590106a11ffcae0731a7d5a8183e6a9c13"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_ranged_shotgun.tres",
+            "authored_id": "major_ranged_shotgun",
+            "expected_loader_id": "major_ranged_shotgun",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_ranged_shotgun.tres",
+              "bytes": 703,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "e8aa6ad82110bf47c399e9969689269e2391a3d3e356c6f9e1a25e7e58878240"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_relic_crusher_ring.tres",
+            "authored_id": "major_relic_crusher_ring",
+            "expected_loader_id": "major_relic_crusher_ring",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_relic_crusher_ring.tres",
+              "bytes": 712,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "9567a1c3f40a1ee46f0bd229531916c8ffab347775c460ad9f77101cbb5b8700"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_resonant_focus.tres",
+            "authored_id": "major_resonant_focus",
+            "expected_loader_id": "major_resonant_focus",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_resonant_focus.tres",
+              "bytes": 810,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "e454acf8333a3dc27d6920e5178e8ad623681196d19289e3816ee6fa1b9d403a"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_ritual.tres",
+            "authored_id": "major_ritual",
+            "expected_loader_id": "major_ritual",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_ritual.tres",
+              "bytes": 680,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "63150fc7983e6e5e79a01af13c5d60efa7f9f95a2ac13a6af1527b7f0ef8e4d6"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_sanctum.tres",
+            "authored_id": "major_sanctum",
+            "expected_loader_id": "major_sanctum",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_sanctum.tres",
+              "bytes": 921,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "92954aa1dcb7dff6c83b1546f7ae64de5ba466ea22ff234899d84863f2dc8cdf"
+            }
+          },
+          {
+            "logical_resource": "res://data/major_choices/major_satchel.tres",
+            "authored_id": "major_satchel",
+            "expected_loader_id": "major_satchel",
+            "id_rule": "authored id",
+            "runtime_enabled": true,
+            "expected_loader_eligible": true,
+            "source_file": {
+              "path": "/var/tmp/sa-menu25/data/major_choices/major_satchel.tres",
+              "bytes": 620,
+              "mtime_ns": 1792948426437883233,
+              "mtime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "ctime_ns": 1792948426437883233,
+              "ctime_utc": "2026-10-25T17:13:46.437883+00:00",
+              "sha256": "2c295f6cbf6cf90fa4022076bd77843f7bcfed82898dc1ee4cf646923cbb4ab4"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
