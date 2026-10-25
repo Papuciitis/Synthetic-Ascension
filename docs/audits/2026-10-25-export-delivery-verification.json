@@ -1,0 +1,319 @@
+{
+  "schema": 1,
+  "status": "PASS",
+  "verified_utc": "2026-10-25T18:51:50.325955+00:00",
+  "verifier": "Codex independent reviewer /root/export_fix_review_25",
+  "packet": "/var/tmp/sa-menu25/docs/art/reference/2026-10-25-exported-run-fix",
+  "manifest_sha256": "6a9e99a63529666ac5455df2089fb88b7c3773eeacf579e6ef20c64d9c3973ce",
+  "payload_files": 257,
+  "total_files": 258,
+  "inventory_exact": true,
+  "all_payload_hashes_sizes_verified": true,
+  "source_payloads_verified": 256,
+  "source_current_origin_matches": 255,
+  "checkpoint_snapshot_exceptions": [
+    {
+      "path": "source/plan.md",
+      "checkpoint": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+      "sha256": "fa1940ce15f4153a601442c5cc76b927250794e72623259b10563037a80f715d",
+      "current_sha256": "7aa84cb68f1f65326389afd3fa721639db0d21d4c525b72413686676b4c51e0e",
+      "classification": "Exact committed plan snapshot; later live completion edit."
+    }
+  ],
+  "complete_gzip_source_round_trips": 25,
+  "no_exe_pck_zip_or_executable_magic_in_packet": true,
+  "classified_outcomes": 25,
+  "accepted_outcomes": [
+    "menu25-frontend-source-r1",
+    "menu25-binding-source-r1",
+    "menu25-offer-source-r1",
+    "menu25-doctrine-source-r1",
+    "menu25-frontend-source-r4",
+    "menu25-preparation-menu-r4b",
+    "menu25-preparation-terminal-r4b",
+    "menu25-export-fixed-r4",
+    "menu25-packed-green-r4",
+    "menu25-packed-native-r4b"
+  ],
+  "historical_outcomes": [
+    {
+      "label": "menu25-packed-red-r1",
+      "classification": "expected_red",
+      "actual_exit": 1,
+      "runner_exit": 1,
+      "assertions": [
+        5,
+        12
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: race_db contains the authored IDs; actual=[]",
+        "ERROR: FAIL: style_db contains the authored IDs; actual=[]",
+        "ERROR: FAIL: augment_db contains the authored IDs; actual=[]",
+        "ERROR: FAIL: spell_db is nonempty (count=0)",
+        "ERROR: FAIL: weapon_db is nonempty (count=0)",
+        "ERROR: FAIL: item_db is nonempty (count=0)",
+        "ERROR: FAIL: set_db is nonempty (count=0)",
+        "ERROR: FAIL: major-choice catalog is nonempty",
+        "ERROR: FAIL: packed New Chronicle shows four ancestry choices",
+        "ERROR: FAIL: packed New Chronicle shows three path choices",
+        "ERROR: FAIL: a named vessel can Begin in the exported game",
+        "ERROR: FAIL: nondefault Elf and Magic choices exist"
+      ]
+    },
+    {
+      "label": "menu25-export-fixed-r1",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "assertions": null,
+      "diagnostics": []
+    },
+    {
+      "label": "menu25-packed-green-r1",
+      "classification": "intermediate_failure",
+      "actual_exit": 1,
+      "runner_exit": 1,
+      "assertions": [
+        19,
+        1
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: normal Begin reaches a ready real Game",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://ui/screens/Segment1NarrativeOverlay.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"SEGMENT1_NARRATIVE_OVERLAY\" constant because the value doesn't have a set type.",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://core/systems/world/opening/OpeningSequenceController.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"OPENING_SEQUENCE_SCENE\" constant because the value doesn't have a set type.",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://scenes/world/dev_segment/DevSegment.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"DEV_SEGMENT_SCENE\" constant because the value doesn't have a set type.",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://ui/screens/PauseMenu.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"prototype\" variable because the value doesn't have a set type.",
+        "ERROR: Failed to load script \"res://scenes/game.gd\" with error \"Parse error\".",
+        "WARNING: 25 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+      ]
+    },
+    {
+      "label": "menu25-packed-load-diagnostic-r1",
+      "classification": "diagnostic",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "assertions": null,
+      "diagnostics": []
+    },
+    {
+      "label": "menu25-packed-script-warm-diagnostic-r1",
+      "classification": "diagnostic",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "assertions": null,
+      "diagnostics": []
+    },
+    {
+      "label": "menu25-export-fixed-r2",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "assertions": null,
+      "diagnostics": []
+    },
+    {
+      "label": "menu25-packed-green-r2",
+      "classification": "intermediate_failure",
+      "actual_exit": 1,
+      "runner_exit": 1,
+      "assertions": [
+        19,
+        1
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: normal Begin reaches a ready real Game",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://ui/screens/Segment1NarrativeOverlay.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"SEGMENT1_NARRATIVE_OVERLAY\" constant because the value doesn't have a set type.",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://core/systems/world/opening/OpeningSequenceController.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"OPENING_SEQUENCE_SCENE\" constant because the value doesn't have a set type.",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://scenes/world/dev_segment/DevSegment.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"DEV_SEGMENT_SCENE\" constant because the value doesn't have a set type.",
+        "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://ui/screens/PauseMenu.tscn\".",
+        "SCRIPT ERROR: Parse Error: Cannot infer the type of \"prototype\" variable because the value doesn't have a set type.",
+        "ERROR: Failed to load script \"res://scenes/game.gd\" with error \"Parse error\".",
+        "ERROR: Parse Error: Failed. [Resource file res://scenes/game.tscn:31]",
+        "ERROR: Failed loading resource: res://scenes/game.tscn.",
+        "ERROR: Parse Error: Failed. [Resource file res://ui/screens/Segment1NarrativeOverlay.tscn:17]",
+        "ERROR: Failed loading resource: res://ui/screens/Segment1NarrativeOverlay.tscn.",
+        "WARNING: 25 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+      ]
+    },
+    {
+      "label": "menu25-packed-progress-diagnostic-r2",
+      "classification": "diagnostic",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "assertions": null,
+      "diagnostics": []
+    },
+    {
+      "label": "menu25-packed-scene-sync-diagnostic-r1",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 1,
+      "assertions": [
+        38,
+        0
+      ],
+      "diagnostics": [
+        "ERROR: Parameter \"t\" is null."
+      ]
+    },
+    {
+      "label": "menu25-export-fixed-r3",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "assertions": null,
+      "diagnostics": []
+    },
+    {
+      "label": "menu25-packed-green-r3",
+      "classification": "diagnostic",
+      "actual_exit": -15,
+      "runner_exit": 1,
+      "assertions": null,
+      "diagnostics": []
+    },
+    {
+      "label": "menu25-script-graph-diagnostic-r1",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 1,
+      "assertions": [
+        38,
+        0
+      ],
+      "diagnostics": [
+        "ERROR: Parameter \"t\" is null."
+      ]
+    },
+    {
+      "label": "menu25-interruption-source-r4",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 1,
+      "assertions": [
+        21,
+        0
+      ],
+      "diagnostics": [
+        "ERROR: Cannot open file 'res://assets/textures/characters/baked/missing_transition_test_race_frames.tres'.",
+        "ERROR: Failed loading resource: res://assets/textures/characters/baked/missing_transition_test_race_frames.tres.",
+        "ERROR: [Global] scene change failed: path=res://assets/textures/characters/baked/missing_transition_test_race_frames.tres err=Can't open"
+      ]
+    },
+    {
+      "label": "menu25-preparation-menu-r4",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 1,
+      "assertions": [
+        21,
+        0
+      ],
+      "diagnostics": [
+        "ERROR: Lambda capture at index 1 was freed. Passed \"null\" instead."
+      ]
+    },
+    {
+      "label": "menu25-packed-native-r4",
+      "classification": "diagnostic",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "assertions": [
+        61,
+        0
+      ],
+      "diagnostics": []
+    }
+  ],
+  "preserved_empty_wrappers_for_interrupted_diagnostics": [
+    "menu25-packed-load-diagnostic-r1",
+    "menu25-packed-script-warm-diagnostic-r1",
+    "menu25-packed-progress-diagnostic-r2",
+    "menu25-packed-green-r3"
+  ],
+  "final_cold_packed": {
+    "actual_exit": 0,
+    "assertions": [
+      38,
+      0
+    ],
+    "diagnostics": []
+  },
+  "final_native_packed": {
+    "actual_exit": 0,
+    "assertions": [
+      62,
+      0
+    ],
+    "diagnostics": []
+  },
+  "originals": {
+    "base-populated.png": "766d7695853a963e89bf51b472bfb76434ffd3133aad5a5b489108c66ad107f2",
+    "augment-three-cards.png": "b88287cd569300adc820e2c13216f5cc8cbafcc4d48dc8b4b1da6048adfd2726"
+  },
+  "accepted_reviews_bound": true,
+  "rejected_r4_images_review_preserved": true,
+  "actual_image_dimensions": [
+    1280,
+    720
+  ],
+  "source_checkpoint": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+  "configuration_provenance": {
+    "runner_cfg_hash_absent": true,
+    "all25_heads_cfg_statuses_verified": true,
+    "committed_cfg_bodies_verified_from_hash_checked_loose_or_packed_git_objects": true,
+    "final_project_presets_equal_baseline": true,
+    "limits": "No raw export_presets.cfg hash is claimed. Binding uses recorded heads, absence of cfg changes and verified committed bodies/direct snapshots."
+  },
+  "referenced_artifacts_verified": 5,
+  "final_exe_sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+  "zip": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/build/SyntheticAscension-playtest-20261025.zip",
+    "bytes": 308491100,
+    "sha256": "3ff8c42ebfae2f60bcea0ca3d92155ce6d131cec7cc9d9d5422a77d899deb691",
+    "all6_members_crc_verified": true,
+    "members": {
+      "SyntheticAscension-playtest-20261025/BUILD.json": {
+        "bytes": 2489,
+        "sha256": "6b4d6ca4a522dc6df41b13f5711053502778408d626b7399413137085c4465a5",
+        "crc_verified": true
+      },
+      "SyntheticAscension-playtest-20261025/README.txt": {
+        "bytes": 1025,
+        "sha256": "8eff1cc9216914390f0a39128cf8441ff130fd1218169266fd9509a0147f8c85",
+        "crc_verified": true
+      },
+      "SyntheticAscension-playtest-20261025/SHA256SUMS.txt": {
+        "bytes": 448,
+        "sha256": "fb0806c17722984baa734b91268dab0cf2d623c659138d10fe7bc3ea61fe19d7",
+        "crc_verified": true
+      },
+      "SyntheticAscension-playtest-20261025/SyntheticAscension-playtest.console.exe": {
+        "bytes": 188928,
+        "sha256": "5514c7645ee897a01f540d3cf22ede5badf92394521a08bfab66a54d7369e6e6",
+        "crc_verified": true
+      },
+      "SyntheticAscension-playtest-20261025/SyntheticAscension-playtest.exe": {
+        "bytes": 376358640,
+        "sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+        "crc_verified": true
+      },
+      "SyntheticAscension-playtest-20261025/THIRD_PARTY_NOTICES.txt": {
+        "bytes": 3626,
+        "sha256": "4aa63ee27b73bb6dbed922c760b0a91959d91717f20274a8fcda3f04f1dab9ba",
+        "crc_verified": true
+      }
+    },
+    "contained_exe_matches_tested_artifact": true,
+    "BUILD_json_matches_packet": true,
+    "SHA256SUMS_verified": true
+  },
+  "scope": "Linux Godot4.7.2 executes Windows package; normal full-opening entry plus separate staged reward. No actual Windows OS execution, full cinematic/store traversal or performance claim. No packet edits, engine or Git mutation; read-only git cat-file accessed packed object bodies."
+}

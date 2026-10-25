@@ -1,8 +1,19 @@
 # Windows art direction ↔ Linux production handoff
 
-Updated 21 October 2026. This is a working checkpoint, not visual acceptance of
+Updated 25 October 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
+
+**Latest functional update, 25 October:** the exported Windows playtest's empty
+character/augment choices and cold Begin loading stall are fixed and
+normal-merged at `26a5152b`. The corrected local delivery is
+`build/SyntheticAscension-playtest-20261025.zip`; build binaries are ignored and
+do not update through Git pulls. The package passes cold flow 38/0 and native
+flow 62/0 on Linux. An actual Windows launch remains the human playtest. Read
+[current Linux status](docs/handoff/LINUX_STATUS.md) for the exact hashes,
+verified scope and remaining city work, and the
+[export-fix evidence](docs/art/reference/2026-10-25-exported-run-fix/README.md).
+The art-direction records below remain historical context.
 
 **New segment art packet, 21 October:** the human requested colour, shader,
 weathering and atmosphere direction plus existing and missing usable assets.

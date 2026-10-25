@@ -1,7 +1,69 @@
 # Linux production status
 
-Owner: Linux production worker. Updated 23 October 2026.
+Owner: Linux production worker. Updated 25 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
+
+## 25 October — Exported Windows run blockers fixed and packaged
+
+The human confirmed that the empty ancestry/path screen and empty augment picker
+came from the exported Windows EXE. The package contained all authored resources,
+but filesystem suffix scanners skipped their exported `.tres.remap` entries.
+Global and MajorChoiceDB now enumerate logical resources with ResourceLoader,
+retaining recursion, type/ID filters, disabled-item exclusion and starter weapon
+IDs. All eight startup catalogues populate in the corrected package.
+
+Pressing the real Begin button then exposed a cold background scene-loading
+stall. The router now prepares and retains script dependencies on the main
+thread before requesting the scene in the background, yielding between scripts
+and budgeting metadata traversal. Cold menu cancellation and terminal priority
+are covered. Scene loading and progressive world construction remain
+asynchronous; individual script compilation/preloads can still hitch. A
+headless-only augment-flight viewport read uses the existing icon fallback.
+Both export presets and `project.godot` retain their original contents.
+
+Normal-merged the reviewed source/evidence branch at `26a5152b`. The tested build
+checkpoint is `ee6ff2f8164c447645f9bdef7fe62171092fcf45`; production runtime sources
+and all eight recorded source pins match it. No separate merged-main engine
+replay is claimed. Source flow and cold packed flow each pass 38/0; final native
+packed flow passes 62/0, including selection, normal opening entry, then a
+separately staged Binding, equipping and pause restoration. Both final 1280×720
+originals pass root and independent review: four ancestries, three paths, enabled
+Begin and three fully revealed augment cards. Cold preparation cancellation
+passes menu 21/0 and terminal 22/0, all zero diagnostics. The existing late
+interruption suite passes 21/0 with exactly three intentional missing-atlas
+diagnostics; those controls are not zero-diagnostic results.
+
+Use the **separate local delivery ZIP**:
+`build/SyntheticAscension-playtest-20261025.zip` (308,491,100 bytes), SHA256
+`3ff8c42ebfae2f60bcea0ca3d92155ce6d131cec7cc9d9d5422a77d899deb691`.
+Its six members pass CRC checks and contain the exact tested EXE, SHA256
+`30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702`
+(376,358,640 bytes). Extract the ZIP and launch its EXE on Windows. Build outputs
+are ignored: **a Git pull does not replace the old EXE**. The original broken
+build and rejected intermediate artifacts remain separate and unchanged.
+
+The [export-fix evidence packet](../art/reference/2026-10-25-exported-run-fix/README.md)
+contains 257 indexed payloads plus its manifest, 25 complete raw gzip records,
+source snapshots, final and rejected native originals, and separately classified
+failed experiments. Linux Godot ran the Windows EXE's embedded package; actual
+Windows OS execution remains the human playtest. Full cinematic completion,
+evidence-store traversal, combat quality and performance are not established by
+these checks. Final guarded functional runs used one CPU, 25% duty and 20 FPS,
+with a 65 C launch gate, optional 98 C instantaneous cutoff and 85 C three-sample
+sustained stop; this is a recorded protocol, not a hardware-safety claim.
+
+The independent [delivery audit](../audits/2026-10-25-export-delivery-verification.json)
+passes exact inventory/hashes, all 25 raw outcomes, preserved rejected captures
+and the ZIP's tested EXE. The separate
+[production equivalence receipt](../audits/2026-10-25-export-production-equivalence.json)
+binds the tested sources to the normal merge. The evidence packet's plan is an
+immutable historical snapshot at the tested checkpoint; live completion notes
+were added afterward.
+
+No engine, queue or timing hold remains. City visual continuation was parked
+for this functional repair. Its next ground priority remains actual-use
+yard/courtyard support shapes, including the broad rectangles recorded below.
+Human handles Git push and transfers the local ZIP separately.
 
 ## 23 October — Outer Wall paving calibration verified and merged
 

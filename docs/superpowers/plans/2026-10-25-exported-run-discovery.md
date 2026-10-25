@@ -57,9 +57,9 @@ Files: `autoload/global.gd`,
   correct catalogues, populated menus and functional selection, with exit 0.
 - [x] Run a native packed UI check and inspect original populated Base/augment
   views. Do not equate staged opening completion with a full human playtest.
-- [ ] Independently review source and actual results, then commit and normal
+- [x] Independently review source and actual results, then commit and normal
   merge. Confirm production runtime sources equal the tested sources.
-- [ ] Supply a separate corrected ZIP/README with exact build/source hashes;
+- [x] Supply a separate corrected ZIP/README with exact build/source hashes;
   publish concise evidence and update Linux handoff. Human handles Git push.
 
 Checkpoint: original EXE regression is actual 5/12 with exactly twelve expected
@@ -107,5 +107,14 @@ The exact EXE30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702
 passes native62/0, zero diagnostics. Root and independent review accept both
 final1280×720 originals. The first61/0 native run's early image remains rejected
 and preserved. The ZIP CRCs and contained EXE hash verify. Evidence packet has
-257indexed payloads plus manifest and25complete gzip records. Integration and
-final handoff closure follow without changing runtime sources.
+257indexed payloads plus manifest and25complete gzip records. Normal merge
+`26a5152b` integrates source checkpoint `ee6ff2f8` and evidence `cc8ddde0`.
+Production runtime bytes and all eight build source pins equal the tested
+checkpoint; no merged-main engine replay is claimed. The dated local ZIP and
+updated Linux/HANDOFF records complete delivery. Binaries travel separately
+from Git; the human pushes and performs the actual Windows OS playtest.
+The packet's plan snapshot remains the historical version at `ee6ff2f8`,
+before these live completion updates.
+Independent delivery audit passes all 258 files, 25 complete raw round trips,
+outcome classifications, configuration provenance and exact ZIP/member hashes;
+its receipt and production-equivalence receipt are published in `docs/audits`.
