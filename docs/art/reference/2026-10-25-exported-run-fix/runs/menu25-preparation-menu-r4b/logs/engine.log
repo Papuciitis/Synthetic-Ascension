@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: case is menu or terminal (use separate cold invocations)
+PASS: real project autoloads initialize
+PREPARATION_CANCELLATION case=menu scratch=/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-preparation-menu-r4b-1/data/godot/app_userdata/Synthetic Ascension/preparation_cancel_menu_39743518/
+PASS: scratch profile is created before normal routing
+PASS: the actual Main Menu is ready
+PASS: initial menu loading card finishes normally
+PASS: real Menu begins with usable pause and input state
+PASS: the complete Game PackedScene starts cold
+PASS: no Game threaded request predates the case
+PASS: case uses the normal Game route
+PASS: real Game transition yields while paused before requesting the cold PackedScene
+PASS: loading card remains visible during real preparation
+PASS: latest menu destination replaces the preparing Game route
+PASS: the newer destination owns the transition generation
+PASS: latest destination completes its real loading-card lifecycle
+PASS: late old preparation preserves the latest scene
+PASS: late old preparation preserves usable pause and input state
+PASS: no abandoned Game instance ever enters the root
+PASS: no abandoned Game threaded request is observed (statuses=[])
+PASS: cancellation never warms the complete Game PackedScene
+PASS: cancellation starts no extra attempt
+PASS: menu supersession invents no terminal outcome
+PreparationCancellationTest[menu]: 21 passed, 0 failed

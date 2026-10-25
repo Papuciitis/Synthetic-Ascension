@@ -1,0 +1,18 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-interruption-source-r4-1",
+ "queued_seconds": 5.1,
+ "stop_reason": "runtime_diagnostics",
+ "actual_exit": 0,
+ "elapsed_seconds": 108.982,
+ "peak_rss_mb": 852,
+ "diagnostic_count": 3,
+ "diagnostics_head": [
+  "ERROR: Cannot open file 'res://assets/textures/characters/baked/missing_transition_test_race_frames.tres'.",
+  "ERROR: Failed loading resource: res://assets/textures/characters/baked/missing_transition_test_race_frames.tres.",
+  "ERROR: [Global] scene change failed: path=res://assets/textures/characters/baked/missing_transition_test_race_frames.tres err=Can't open"
+ ]
+}
+--- stdout tail (3/30 lines) ---
+PASS: failure history retains the requested Game destination before deferred gameplay binding clears it
+SceneTransitionInterruptionTest: 21 passed, 0 failed
+[BalanceRecorder] application_closed — /home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-interruption-source-r4-1/data/godot/app_userdata/Synthetic Ascension/late_transition_capture_test/2026-10-25/2026-10-25_20-18-09_28387_98290824_1/report.md

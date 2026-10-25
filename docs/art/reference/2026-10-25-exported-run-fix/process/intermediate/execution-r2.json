@@ -1,0 +1,19 @@
+{
+  "updated_utc": "2026-10-25T17:50:17.411440+00:00",
+  "status": "R2_TEXT_EXPORT_AND_FROZEN_PACKED_QUEUE_RUNNING",
+  "source_checkpoint": "3dd987cb4818960370ff1bbcf0973d1ecb841145",
+  "candidate": "Retain authored text resources on export; no script warming in shipping sources.",
+  "sources_fixed": {
+    "autoload/global.gd": "3e06f010c1908de0048441d0af52cf183c8f6e51f5df582c0dcdc4be14c1ca9a",
+    "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+    "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+    "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+    "project.godot": "ff034f21673887daa2528024e3fd3e1c7b386e0a9b37691417e7416421cb8fb2"
+  },
+  "r1_outcome": "catalogues and Base populated; actual Begin timeout19/1. Shutdown preload errors do not establish missing files.",
+  "rejected_diagnostics": [
+    "menu25-packed-load-diagnostic-r1",
+    "menu25-packed-script-warm-diagnostic-r1"
+  ],
+  "r2_exe": "/home/user/Nauris/Synthetic-Ascension/build/playtest-20261025-r2/SyntheticAscension-playtest.exe"
+}

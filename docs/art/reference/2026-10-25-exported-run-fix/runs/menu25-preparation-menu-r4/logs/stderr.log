@@ -1,0 +1,4 @@
+ERROR: Lambda capture at index 1 was freed. Passed "null" instead.
+   at: call (modules/gdscript/gdscript_lambda_callable.cpp:242)
+   GDScript backtrace (most recent call first):
+       [0] _wait_until (res://tools/tests/PreparationCancellationTest.gd:48)

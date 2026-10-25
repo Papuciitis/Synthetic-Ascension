@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "reviewer": "Codex independent reviewer /root/export_fix_review_25",
+  "reviewed_utc": "2026-10-25T18:38:31.352904+00:00",
+  "accepted": true,
+  "artifact_sha256": "30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702",
+  "artifact_path": "/home/user/Nauris/Synthetic-Ascension/build/playtest-20261025-r4/SyntheticAscension-playtest.exe",
+  "artifact_bytes": 376358640,
+  "artifact_current_hash_independently_verified": true,
+  "run_label": "menu25-packed-native-r4b",
+  "source_checkpoint": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+  "source_tracked_status": "",
+  "originals": {
+    "base-populated.png": "766d7695853a963e89bf51b472bfb76434ffd3133aad5a5b489108c66ad107f2",
+    "augment-three-cards.png": "b88287cd569300adc820e2c13216f5cc8cbafcc4d48dc8b4b1da6048adfd2726"
+  },
+  "images": {
+    "base-populated.png": {
+      "path": "/var/tmp/sa-menu25-native-r4b/base-populated.png",
+      "sha256": "766d7695853a963e89bf51b472bfb76434ffd3133aad5a5b489108c66ad107f2",
+      "actual_png_dimensions": [
+        1280,
+        720
+      ],
+      "requested_launch_dimensions": [
+        1280,
+        720
+      ],
+      "metadata_path": "/var/tmp/sa-menu25-native-r4b/base-populated.png.json",
+      "metadata_sha256": "231eebb3b957fe0bcbc1c1bf4ff05b8ef41b897c8c150af3d0f2f80d09c32b75",
+      "metadata": {
+        "catalogues": {
+          "augment_db": 16,
+          "item_db": 40,
+          "major_choices": 28,
+          "race_db": 4,
+          "set_db": 3,
+          "spell_db": 1,
+          "style_db": 3,
+          "weapon_db": 3
+        },
+        "file": "base-populated.png",
+        "image_size_from_png": "(1280, 720)",
+        "limits": "Original native viewport capture of the exported Windows package using Linux Godot. No Windows OS execution, full cinematic traversal or performance claim.",
+        "logical_view": "[P: (0.0, 0.0), S: (1920.0, 1080.0)]",
+        "normal_flags": true,
+        "physics_hz": 60,
+        "render_fps_cap": 20,
+        "stage": "normal Base selection",
+        "window_size": "(1280, 756)"
+      },
+      "visual_accepted": true
+    },
+    "augment-three-cards.png": {
+      "path": "/var/tmp/sa-menu25-native-r4b/augment-three-cards.png",
+      "sha256": "b88287cd569300adc820e2c13216f5cc8cbafcc4d48dc8b4b1da6048adfd2726",
+      "actual_png_dimensions": [
+        1280,
+        720
+      ],
+      "requested_launch_dimensions": [
+        1280,
+        720
+      ],
+      "metadata_path": "/var/tmp/sa-menu25-native-r4b/augment-three-cards.png.json",
+      "metadata_sha256": "ed0bf0f3f9614363cf0abaf4092e503405b49fafec05ecb85a347d0a4edbe24e",
+      "metadata": {
+        "catalogues": {
+          "augment_db": 16,
+          "item_db": 40,
+          "major_choices": 28,
+          "race_db": 4,
+          "set_db": 3,
+          "spell_db": 1,
+          "style_db": 3,
+          "weapon_db": 3
+        },
+        "file": "augment-three-cards.png",
+        "image_size_from_png": "(1280, 720)",
+        "limits": "Original native viewport capture of the exported Windows package using Linux Godot. No Windows OS execution, full cinematic traversal or performance claim.",
+        "logical_view": "[P: (0.0, 0.0), S: (1920.0, 1080.0)]",
+        "normal_flags": true,
+        "physics_hz": 60,
+        "render_fps_cap": 20,
+        "stage": "staged opening-completed S1 reward",
+        "window_size": "(1280, 756)"
+      },
+      "visual_accepted": true
+    }
+  },
+  "actual_receipts": {
+    "raw": {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-native-r4b-1/run-results.json",
+      "sha256": "7d36994bf45aef7bd298d3dd01bac9d47d02d0221650383cc2064104f2f4fdb3",
+      "actual_exit": 0,
+      "runner_exit": 0,
+      "stop_reason": "completed",
+      "diagnostics": [],
+      "other_godot_pids": []
+    },
+    "guard": {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/menu25-packed-native-r4b-thermal.json",
+      "sha256": "094ab87cb51ba82fae9a4062d11d40694120e97697112aa991d61d948760222c",
+      "reason": "completed",
+      "wrapper_exit": 0,
+      "received_signal": null
+    },
+    "stdout": {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-native-r4b-1/logs/stdout.log",
+      "sha256": "773640e5eaaa2ae3d7a433dfa1a26845663a4feaf77aada2dcb417ba9e1642f3",
+      "assertions": {
+        "passed": 62,
+        "failed": 0
+      }
+    },
+    "launcher": {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-native-r4b-1.launcher.json",
+      "sha256": "7d36994bf45aef7bd298d3dd01bac9d47d02d0221650383cc2064104f2f4fdb3",
+      "command_matches_raw": true,
+      "actual_exit": 0
+    },
+    "wrapper_log": {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261022/menu25-packed-native-r4b-wrapper.log",
+      "sha256": "961df161fbb1c5728386b170c6ec416b1c0df7b6c0af4db027b5002888db7baf",
+      "actual_exit": 0,
+      "diagnostic_count": 0
+    },
+    "capture_wrapper": {
+      "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/PackedNativeProofR4b.gd",
+      "sha256": "09a8f25a2787f04a6294a31411c9ee3a07b770ba8508144452f52fb990ec18ea"
+    },
+    "frozen_functional_test_sha256": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+    "observed_catalogue_counts": {
+      "race_db": 4,
+      "style_db": 3,
+      "weapon_db": 3,
+      "spell_db": 1,
+      "item_db": 40,
+      "set_db": 3,
+      "augment_db": 16,
+      "major_choices": 28
+    }
+  },
+  "visual_findings": [
+    "Base original clearly shows all four ancestry choices (Dragonborn, Elf, Human, Warforged), all three path choices (Magic, Melee, Ranged), selected Elf/Magic, the name Packed Vey and a visible Begin the Run control. Portraits and path symbols are present, with no blocker covering selection.",
+    "Augment original clearly shows three fully revealed illustrated cards (Stamina Core, Litany of Wounds, Corruption Engine), including names, grade/rank badges and descriptions. Cards fit within the viewport, and no loading overlay covers them.",
+    "Actual native receipts verify real Base tile selection and normal Begin, the full-opening entry, a separate staged real Game reward, selecting Stamina Core, its equipment/rank, picker teardown and pause restoration."
+  ],
+  "scope": {
+    "execution": "Linux Godot 4.7.2 reads the Windows EXE embedded PCK; no actual Windows OS execution is claimed.",
+    "normal_flow": "Real Base tile selection and normal Begin reach an active Segment 1 full-opening entry without developer flags.",
+    "staged_reward": "A separate explicitly staged opening-completed Segment 1 invokes the real evidence-store picker API; this is not cinematic completion or walking to the store.",
+    "actual_capture_dimensions": [
+      1280,
+      720
+    ],
+    "logical_view_dimensions": [
+      1920,
+      1080
+    ],
+    "limits": [
+      "No full cinematic completion, evidence-store traversal, combat traversal, performance, hardware safety, or same-seed loot equivalence claim.",
+      "Metadata window_size(1280,756) is recorded separately from actual PNG IHDR1280x720; actual image dimensions govern this visual review."
+    ]
+  },
+  "preserved_previous_rejection": {
+    "path": "/home/user/Nauris/Synthetic-Ascension/.superpowers/continuation-20261025-menu/independent-review.json",
+    "sha256": "bc4198af6c8996c7ebaffabd9e3d67f9844efbe4dbb054d19486e03a4f933d73",
+    "accepted": false,
+    "run_label": "menu25-packed-native-r4",
+    "reason": "LoadingScrim obscured incompletely revealed augment cards; original r4 images and review remain unchanged."
+  }
+}

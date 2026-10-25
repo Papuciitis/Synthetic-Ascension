@@ -1,0 +1,35 @@
+ERROR: FAIL: normal Begin reaches a ready real Game
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:45)
+       [1] _run (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:166)
+       [2] _wait_scene (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:68)
+       [3] _wait_until (/var/tmp/sa-menu25/tools/tests/PackedFrontEndFlowTest.gd:62)
+SCRIPT ERROR: Parse Error: Could not preload resource file "res://ui/screens/Segment1NarrativeOverlay.tscn".
+   at: GDScript::reload (res://scenes/game.gd:4)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "SEGMENT1_NARRATIVE_OVERLAY" constant because the value doesn't have a set type.
+   at: GDScript::reload (res://scenes/game.gd:4)
+SCRIPT ERROR: Parse Error: Could not preload resource file "res://core/systems/world/opening/OpeningSequenceController.tscn".
+   at: GDScript::reload (res://scenes/game.gd:6)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "OPENING_SEQUENCE_SCENE" constant because the value doesn't have a set type.
+   at: GDScript::reload (res://scenes/game.gd:6)
+SCRIPT ERROR: Parse Error: Could not preload resource file "res://scenes/world/dev_segment/DevSegment.tscn".
+   at: GDScript::reload (res://scenes/game.gd:7)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "DEV_SEGMENT_SCENE" constant because the value doesn't have a set type.
+   at: GDScript::reload (res://scenes/game.gd:7)
+SCRIPT ERROR: Parse Error: Could not preload resource file "res://ui/screens/PauseMenu.tscn".
+   at: GDScript::reload (res://scenes/game.gd:131)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "prototype" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://scenes/game.gd:363)
+ERROR: Failed to load script "res://scenes/game.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+ERROR: Parse Error: Failed. [Resource file res://scenes/game.tscn:31]
+   at: _parse_node_tag (scene/resources/resource_format_text.cpp:293)
+ERROR: Failed loading resource: res://scenes/game.tscn.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Parse Error: Failed. [Resource file res://ui/screens/Segment1NarrativeOverlay.tscn:17]
+   at: _parse_node_tag (scene/resources/resource_format_text.cpp:293)
+ERROR: Failed loading resource: res://ui/screens/Segment1NarrativeOverlay.tscn.
+   at: _load (core/io/resource_loader.cpp:317)
+WARNING: 25 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

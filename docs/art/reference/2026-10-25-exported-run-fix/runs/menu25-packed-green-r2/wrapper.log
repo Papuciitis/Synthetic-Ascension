@@ -1,0 +1,30 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-green-r2-1",
+ "queued_seconds": 0.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 331.889,
+ "peak_rss_mb": 483,
+ "diagnostic_count": 15,
+ "diagnostics_head": [
+  "ERROR: FAIL: normal Begin reaches a ready real Game",
+  "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://ui/screens/Segment1NarrativeOverlay.tscn\".",
+  "SCRIPT ERROR: Parse Error: Cannot infer the type of \"SEGMENT1_NARRATIVE_OVERLAY\" constant because the value doesn't have a set type.",
+  "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://core/systems/world/opening/OpeningSequenceController.tscn\".",
+  "SCRIPT ERROR: Parse Error: Cannot infer the type of \"OPENING_SEQUENCE_SCENE\" constant because the value doesn't have a set type.",
+  "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://scenes/world/dev_segment/DevSegment.tscn\".",
+  "SCRIPT ERROR: Parse Error: Cannot infer the type of \"DEV_SEGMENT_SCENE\" constant because the value doesn't have a set type.",
+  "SCRIPT ERROR: Parse Error: Could not preload resource file \"res://ui/screens/PauseMenu.tscn\".",
+  "SCRIPT ERROR: Parse Error: Cannot infer the type of \"prototype\" variable because the value doesn't have a set type.",
+  "ERROR: Failed to load script \"res://scenes/game.gd\" with error \"Parse error\".",
+  "ERROR: Parse Error: Failed. [Resource file res://scenes/game.tscn:31]",
+  "ERROR: Failed loading resource: res://scenes/game.tscn.",
+  "ERROR: Parse Error: Failed. [Resource file res://ui/screens/Segment1NarrativeOverlay.tscn:17]",
+  "ERROR: Failed loading resource: res://ui/screens/Segment1NarrativeOverlay.tscn.",
+  "WARNING: 25 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+ ]
+}
+--- stdout tail (3/29 lines) ---
+PACKED_FRONTEND stage 1: pressing normal Begin
+[Base] commit selection race=elf style=magic weapon=magic
+PackedFrontEndFlowTest: 19 passed, 1 failed

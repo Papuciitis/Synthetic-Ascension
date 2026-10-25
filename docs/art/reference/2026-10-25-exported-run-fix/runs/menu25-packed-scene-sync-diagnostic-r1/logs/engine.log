@@ -1,0 +1,62 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SCENE_SYNC_DIAGNOSTIC before game.tscn
+SCENE_SYNC_DIAGNOSTIC after game.tscn loaded=true
+PASS: packed project autoloads initialize
+PACKED_FRONTEND scratch saves: /home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/menu25-packed-scene-sync-diagnostic-r1-1/data/godot/app_userdata/Synthetic Ascension/packed_frontend_flow_46689991/
+PASS: race_db contains the authored IDs; actual=["dragonborn", "elf", "human", "warforged"]
+PASS: style_db contains the authored IDs; actual=["magic", "melee", "ranged"]
+PASS: augment_db contains the authored IDs; actual=["augment_blink_hex", "augment_corruption_engine", "augment_cult_of_personality", "augment_doctrine_of_burden", "augment_equilibrium_sigil", "augment_gamblers_rite", "augment_inversion_lens", "augment_litany_of_wounds", "augment_lucky_charm", "augment_magic_missile", "augment_reflect_shield", "augment_spirit_slash", "augment_sprint_servos", "augment_stamina_core", "augment_summon_spiderlings", "augment_tesla_aura"]
+PASS: spell_db is nonempty (count=1)
+PASS: weapon_db is nonempty (count=3)
+PASS: item_db is nonempty (count=40)
+PASS: set_db is nonempty (count=3)
+PASS: major-choice catalog is nonempty
+PASS: a scratch profile can be created
+PASS: normal run starts without developer flags
+PASS: packed New Chronicle scene loads
+[Base] commit selection race=human style=ranged weapon=ranged
+[Base] commit selection race=human style=ranged weapon=ranged
+PASS: packed New Chronicle shows four ancestry choices
+PASS: packed New Chronicle shows three path choices
+PASS: New Chronicle contains naming and Begin controls
+PASS: a named vessel can Begin in the exported game
+PASS: nondefault Elf and Magic choices exist
+[Base] commit selection race=elf style=ranged weapon=ranged
+[Base] commit selection race=elf style=magic weapon=magic
+PASS: real Elf tile commits ancestry
+PASS: real Magic tile commits path and starter weapon
+PACKED_FRONTEND stage 1: pressing normal Begin
+[Base] commit selection race=elf style=magic weapon=magic
+[Game] ready seg=1 race=elf style=magic seed=1794072971371
+PASS: normal Begin reaches a ready real Game
+PASS: Begin creates an active Segment 1 attempt
+PASS: real Game retains normal-run flags
+PASS: Game receives the named Elf/Magic vessel
+PASS: normal authored world and spawner are installed
+PASS: a fresh profile enters its full normal opening
+PACKED_FRONTEND stage 2: STAGED opening-completed Segment 1; no cinematic/store traversal claim
+PASS: normal opening tears down through the real menu transition
+[Game] ready seg=1 race=elf style=magic seed=1794072971371
+PASS: staged real Game loads with its normal world
+PASS: staged Binding still uses normal Game rather than a developer world
+PASS: Begin's first Binding remains pending until chosen
+PASS: staged world is running before the Binding
+PASS: the real Game opens its augment picker
+PASS: the exported first Binding displays three actual offer cards
+PASS: Game owns the pause while choosing
+PASS: the first offer is a usable real augment card
+AUGMENT PICKED:augment_lucky_charm { "kind": "new", "id": "augment_lucky_charm", "grade": 0 }
+ERROR: Parameter "t" is null.
+   at: texture_2d_get (./servers/rendering/dummy/storage/texture_storage.h:110)
+   GDScript backtrace (most recent call first):
+       [0] _capture_rect_texture (res://assets/vfx/ui/AugmentFlyVfx.gd:184)
+       [1] fly_card_to_slot (res://assets/vfx/ui/AugmentFlyVfx.gd:40)
+[AUG] Player received permanent_augments_changed:[&"augment_lucky_charm", &"", &""]
+[AUG] Player received permanent_augments_changed:[&"augment_lucky_charm", &"", &""]
+[Game] augment received id=augment_lucky_charm
+PASS: choosing a card consumes the Binding and closes the real picker
+PASS: the selected augment is actually equipped and ranked
+PASS: closing the Binding restores the previously running world
+PASS: picking an augment does not enable developer bypasses
+PackedFrontEndFlowTest: 38 passed, 0 failed

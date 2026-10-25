@@ -52,10 +52,10 @@ Files: `autoload/global.gd`,
 
 ## Task 2: Verify and deliver the corrected playtest
 
-- [ ] Export a separate Windows Playtest EXE from the corrected checkout.
-- [ ] Run the same frozen packed regression against its embedded PCK; require
+- [x] Export a separate Windows Playtest EXE from the corrected checkout.
+- [x] Run the same frozen packed regression against its embedded PCK; require
   correct catalogues, populated menus and functional selection, with exit 0.
-- [ ] Run a native packed UI check and inspect original populated Base/augment
+- [x] Run a native packed UI check and inspect original populated Base/augment
   views. Do not equate staged opening completion with a full human playtest.
 - [ ] Independently review source and actual results, then commit and normal
   merge. Confirm production runtime sources equal the tested sources.
@@ -100,3 +100,12 @@ Source code candidate: frozen flow passes 38/0 with zero diagnostics. Existing
 SceneTransitionInterruptionTest passes 21/0 with exactly three intentional
 missing-atlas control diagnostics. Add two cold preparation-cancellation cases
 (menu supersession and terminal priority) before the final export/native proof.
+
+Final verification: corrected preparation cases are menu21/0 and terminal22/0,
+zero diagnostics. Source flow38/0 and final exported-package flow38/0 are clean.
+The exact EXE30f5aa224258abdf56bd0e4477e06a1ba67a140ff8e7907c69481c8388053702
+passes native62/0, zero diagnostics. Root and independent review accept both
+final1280×720 originals. The first61/0 native run's early image remains rejected
+and preserved. The ZIP CRCs and contained EXE hash verify. Evidence packet has
+257indexed payloads plus manifest and25complete gzip records. Integration and
+final handoff closure follow without changing runtime sources.

@@ -1,0 +1,27 @@
+{
+  "updated_utc": "2026-10-25T18:23:21.173503+00:00",
+  "status": "CORRECTED_CANCELLATION_CASES_EXPORT_PACKED_QUEUE_RUNNING",
+  "source_checkpoint": "ee6ff2f8164c447645f9bdef7fe62171092fcf45",
+  "sources_fixed": {
+    "autoload/global.gd": "65b104d1ecbb0d56f38b3f2c6b6eb1940e5383dee7f56178b4a3e670874554da",
+    "core/systems/major_choice/MajorChoiceDB.gd": "78212f93f46c87e2690fc2fca80e6b6229acef6d068e8c703ab87d09e4cd02c7",
+    "tools/tests/FrontEndFlowTest.gd": "563828cd4d5ba3987c74eeb820619843baf045381b172760cbf6372bcaee7cdf",
+    "tools/tests/PackedFrontEndFlowTest.gd": "21b0e0aff690ef81d2e271ef36fe8389144842e495bcfc36077b7e7b5ebd3892",
+    "assets/vfx/ui/AugmentFlyVfx.gd": "86f82f93c8c05f920da25cafe327b4163df5f62bd53fca4047f0e1024dd69266",
+    "project.godot": "46713b6ec35b5e2bbeb460c2bfd99e096499518cb8cc0d135ca8e9b2665b2f79",
+    "export_presets.cfg": "834ea03606d73a6fcc7320154170fbf08b5811723dabb02af8ab3c66c2e08391",
+    "tools/tests/PreparationCancellationTest.gd": "09e6cd09b5aa99efcb87846ebd63fed57c41bdd0116ff06d48a37f8d46c12ea6"
+  },
+  "shipping_changes": "Resource-aware catalogue enumeration; main-thread scene script preparation; headless VFX icon fallback. No export-format override or synchronous full-scene load.",
+  "prototype_label": "menu25-script-graph-diagnostic-r1",
+  "source_flow_label": "menu25-frontend-source-r4",
+  "source_flow_outcome": "actual0,38/0,zero diagnostics",
+  "rejected_variants": [
+    "r1 cold threaded load",
+    "r2 text resources",
+    "r3 text scripts"
+  ],
+  "limits": "Native package proof still pending; no performance acceptance from guarded functional runs.",
+  "interruption_source_outcome": "actual0,21/0,exactly3 intentional missing-atlas diagnostics",
+  "first_preparation_test_outcome": "actual0,21/0,one test closure capture diagnostic; stable integer scene ID correction applied, raw failure retained"
+}
