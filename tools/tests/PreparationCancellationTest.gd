@@ -112,14 +112,14 @@ func _run() -> void:
 	if _failures > 0:
 		_finish()
 		return
-	var outgoing := current_scene
+	var outgoing_id := current_scene.get_instance_id()
 	var runs_before := int(save.get("total_runs"))
 	process_frame.connect(_observe)
 	root.child_entered_tree.connect(_on_root_child_entered)
 	_watching = true
 	_global.call("goto_game")
 	var preparation_seen := await _wait_until(func() -> bool:
-		return bool(_global.call("is_scene_transition_active")) and paused and current_scene == outgoing \
+		return bool(_global.call("is_scene_transition_active")) and paused and current_scene != null and current_scene.get_instance_id() == outgoing_id \
 			and ResourceLoader.load_threaded_get_status(GAME_PATH) == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE
 	)
 	if not _check(preparation_seen, "real Game transition yields while paused before requesting the cold PackedScene"):
@@ -137,7 +137,7 @@ func _run() -> void:
 	else:
 		_global.call("goto_main_menu")
 	if not _check(await _wait_until(func() -> bool:
-		return _scene_ready(target) and current_scene != outgoing
+		return _scene_ready(target) and current_scene.get_instance_id() != outgoing_id
 	), "latest %s destination replaces the preparing Game route" % _case):
 		_finish()
 		return
