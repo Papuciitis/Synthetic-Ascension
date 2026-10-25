@@ -493,6 +493,14 @@ func goto_scene(path: String) -> void:
 		scrim.show_for(_scene_title(path), get_tree().current_scene)
 	# The outgoing run must not continue fighting under a loading card.
 	get_tree().paused = true
+	# Keep references local until this request is collected, even if another
+	# transition supersedes it and clears the destination's retained assets.
+	var scene_scripts: Array[Resource] = []
+	if not await _prepare_scene_scripts(path, transition_id, scene_scripts):
+		if transition_id == _scene_transition_id and has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+			goto_scene(PATH_PEEP)
+		return
+	_scene_transition_assets.append_array(scene_scripts)
 	var destination: PackedScene = null
 	while destination == null:
 		var request_error := ResourceLoader.load_threaded_request(path, "PackedScene")
@@ -553,6 +561,52 @@ func goto_scene(path: String) -> void:
 		_fail_scene_transition(path, err, transition_id)
 		return
 	_scene_transition_active = false
+
+
+## A worker compiling a cold script can stall on a preload of another scripted
+## scene. Compile scene/resource script dependencies on the main thread first;
+## the scene request and world construction retain their asynchronous stages.
+func _prepare_scene_scripts(path: String, transition_id: int, retained: Array[Resource]) -> bool:
+	var pending: Array[String] = [path]
+	var seen: Dictionary = {}
+	var slice_started := Time.get_ticks_usec()
+	while not pending.is_empty():
+		if transition_id != _scene_transition_id:
+			return false
+		if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+			return false
+		var dependency: String = pending.pop_back()
+		if seen.has(dependency):
+			continue
+		seen[dependency] = true
+		var extension := dependency.get_extension()
+		if extension in ["gd", "gdc"]:
+			# Scripts are leaves: get_dependencies parses text and cannot inspect
+			# compiled .gdc payloads. Their own preloads resolve on this thread.
+			var was_cached := ResourceLoader.has_cached(dependency)
+			var script := ResourceLoader.load(dependency, "Script")
+			if not script is Script:
+				_fail_scene_transition(path, ERR_CANT_OPEN, transition_id)
+				return false
+			retained.append(script)
+			if not was_cached:
+				await get_tree().process_frame
+				slice_started = Time.get_ticks_usec()
+		elif extension in ["tscn", "scn", "tres", "res"]:
+			for entry: String in ResourceLoader.get_dependencies(dependency):
+				var parts := entry.split("::")
+				var child: String = parts[0]
+				if parts.size() == 3:
+					var uid := ResourceUID.text_to_id(parts[0])
+					child = ResourceUID.get_id_path(uid) if ResourceUID.has_id(uid) else parts[2]
+				if not child.is_empty() and not seen.has(child):
+					pending.append(child)
+		# Bound metadata discovery too; cached graphs should not add a frame
+		# for every texture or already compiled script.
+		if Time.get_ticks_usec() - slice_started >= 2000:
+			await get_tree().process_frame
+			slice_started = Time.get_ticks_usec()
+	return transition_id == _scene_transition_id and not (has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE])
 
 
 func _load_transition_asset(path: String, transition_id: int) -> Resource:

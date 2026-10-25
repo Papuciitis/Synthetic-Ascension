@@ -80,10 +80,18 @@ first nested scene-script load. A separate retained synchronous full-Game scene
 diagnostic reaches 38/0, with one headless-only viewport-read diagnostic in the
 augment flight effect. This is attribution evidence, not a shipping pass.
 
-The next candidate uses `script_export_mode=0` (TEXT) in both Windows presets.
-Keep authored `.gd` paths instead of remapped `.gdc` paths while retaining binary
-scene/resource conversion and the existing asynchronous router. This packages
-readable scripts and can affect package size/parse cost; no performance claim.
-The existing icon fallback also handles headless viewport capture explicitly.
-Require the same frozen cold packed flow without any diagnostic warming, then
-native proof of the real UI and selection. No direct synchronous Game load ships.
+The script-format candidate also stalls and is rejected. Both Windows presets
+and `project.godot` are restored exactly to production. All diagnostic artifacts
+remain separate. A script-graph preparation prototype against the same r1 binary
+package reaches the full 38/0 flow; its one headless viewport diagnostic is
+already addressed by the icon fallback guard.
+
+The code candidate prepares scene/resource script dependencies on the main
+thread, yielding between cold scripts and budgeting metadata traversal. Scripts
+are traversal leaves; UID-first resolution matches the loader. References belong
+to each transition until its threaded result is collected, with cancellation and
+terminal continuation checks. Scene resources still load in the background and
+world setup remains progressive. No direct synchronous Game load ships. Require
+fresh source interruption coverage and a newly exported cold packed flow, then
+native proof. Per-script preload cost can still cause a loading-card hitch; no
+performance acceptance is inferred from throttled functional checks.
