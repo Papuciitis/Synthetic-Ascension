@@ -1155,33 +1155,13 @@ func load_sets_from_dir(path: String) -> void:
 		print("Set DB keys:", set_db.keys())
 
 func _scan_sets_dir_recursive(path: String) -> void:
-	var dir: DirAccess = DirAccess.open(path)
-	if dir == null:
-		push_warning("Set dir not found: " + path)
-		return
-
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
-		if fn.begins_with("."):
-			fn = dir.get_next()
-			continue
-
-		var full: String = path.path_join(fn)
-
-		if dir.current_is_dir():
-			_scan_sets_dir_recursive(full)
-		elif fn.ends_with(".tres") or fn.ends_with(".res"):
-			var res: Resource = ResourceLoader.load(full)
-			var sd: SetData = res as SetData
-			if sd != null and sd.id != StringName():
-				set_db[sd.id] = sd
-				if DEBUG_GLOBAL:
-					print("Loaded set:", sd.id, "from", full)
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+	_scan_dir_recursive(path, func(res: Resource) -> void:
+		var sd := res as SetData
+		if sd != null and sd.id != StringName():
+			set_db[sd.id] = sd
+			if DEBUG_GLOBAL:
+				print("Loaded set:", sd.id, "from", res.resource_path)
+	)
 
 
 # ============================================================
@@ -1193,32 +1173,11 @@ func load_items_from_dir(path: String) -> void:
 	_scan_items_dir_recursive(path)
 
 func _scan_items_dir_recursive(path: String) -> void:
-	var dir: DirAccess = DirAccess.open(path)
-	if dir == null:
-		push_warning("Item dir not found: " + path)
-		return
-
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
-		if fn.begins_with("."):
-			fn = dir.get_next()
-			continue
-
-		var full: String = path.path_join(fn)
-
-		if dir.current_is_dir():
-			_scan_items_dir_recursive(full)
-		elif fn.ends_with(".tres") or fn.ends_with(".res"):
-			var res: Resource = ResourceLoader.load(full)
-			if res != null:
-				var item: ItemData = res as ItemData
-				if item != null and item.id != "" and item.runtime_enabled:
-					item_db[item.id] = item
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+	_scan_dir_recursive(path, func(res: Resource) -> void:
+		var item := res as ItemData
+		if item != null and item.id != "" and item.runtime_enabled:
+			item_db[item.id] = item
+	)
 
 
 # ============================================================
@@ -2339,37 +2298,17 @@ func load_augments_from_dir(path: String) -> void:
 		print("Augment DB keys:", augment_db.keys())
 
 func _scan_augments_dir_recursive(path: String) -> void:
-	var dir: DirAccess = DirAccess.open(path)
-	if dir == null:
-		push_warning("Augment dir not found: " + path)
-		return
-
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
-		if fn.begins_with("."):
-			fn = dir.get_next()
-			continue
-
-		var full := path.path_join(fn)
-
-		if dir.current_is_dir():
-			_scan_augments_dir_recursive(full)
-		elif fn.ends_with(".tres") or fn.ends_with(".res"):
-			var res := ResourceLoader.load(full)
-			var ad := res as AugmentData
-			if ad != null and ad.id != StringName():
-				augment_db[ad.id] = ad
-				if DEBUG_GLOBAL:
-					print("[AUG] ", String(ad.id), " name=", ad.display_name,
-						" desc_len=", ad.description.length(),
-						" blurb_len=", ad.card_blurb.length(),
-						" details_len=", ad.details.length(),
-						" mods=", (ad.mods != null))
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+	_scan_dir_recursive(path, func(res: Resource) -> void:
+		var ad := res as AugmentData
+		if ad != null and ad.id != StringName():
+			augment_db[ad.id] = ad
+			if DEBUG_GLOBAL:
+				print("[AUG] ", String(ad.id), " name=", ad.display_name,
+					" desc_len=", ad.description.length(),
+					" blurb_len=", ad.card_blurb.length(),
+					" details_len=", ad.details.length(),
+					" mods=", (ad.mods != null))
+	)
 
 
 # ============================================================
@@ -2377,31 +2316,23 @@ func _scan_augments_dir_recursive(path: String) -> void:
 # ============================================================
 
 func _scan_dir_recursive(dir_path: String, on_loaded: Callable) -> void:
-	var dir: DirAccess = DirAccess.open(dir_path)
-	if dir == null:
+	if not DirAccess.dir_exists_absolute(dir_path):
 		push_warning("Dir not found: " + dir_path)
 		return
 
-	dir.list_dir_begin()
-	var fn: String = dir.get_next()
-	while fn != "":
+	# Exported resources may be stored as .tres.remap plus a binary target.
+	# ResourceLoader lists their original names and resolves those remaps.
+	for fn: String in ResourceLoader.list_directory(dir_path):
 		if fn.begins_with("."):
-			fn = dir.get_next()
 			continue
 
 		var full: String = dir_path.path_join(fn)
-
-		if dir.current_is_dir():
+		if fn.ends_with("/"):
 			_scan_dir_recursive(full, on_loaded)
-		else:
-			if fn.ends_with(".tres") or fn.ends_with(".res"):
-				var res: Resource = ResourceLoader.load(full)
-				if res != null:
-					on_loaded.call(res)
-
-		fn = dir.get_next()
-
-	dir.list_dir_end()
+		elif fn.ends_with(".tres") or fn.ends_with(".res"):
+			var res: Resource = ResourceLoader.load(full)
+			if res != null:
+				on_loaded.call(res)
 
 
 # ============================================================

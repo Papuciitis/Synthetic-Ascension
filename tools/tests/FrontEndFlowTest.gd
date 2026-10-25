@@ -281,6 +281,8 @@ func _check_new_chronicle() -> void:
 	var was_race := String(global.get("selected_race_id"))
 	var was_style := String(global.get("selected_style_id"))
 	var was_name := String(global.get("mortal_name"))
+	_check((global.get("race_db") as Dictionary).size() == 4, "startup loads all four authored races")
+	_check((global.get("style_db") as Dictionary).size() == 3, "startup loads all three authored paths")
 	var screen := (load("res://ui/screens/base.tscn") as PackedScene).instantiate() as Control
 	root.add_child(screen)
 	await process_frame
@@ -289,6 +291,7 @@ func _check_new_chronicle() -> void:
 	_check(races != null and races.get_child_count() == (global.get("race_db") as Dictionary).size(), "New Chronicle offers every race")
 	_check(styles != null and styles.get_child_count() == (global.get("style_db") as Dictionary).size(), "and every path")
 	var elf := screen.find_child("Race_elf", true, false) as BaseButton
+	_check(elf != null, "the selectable Elf tile exists")
 	if elf != null:
 		elf.emit_signal("pressed")
 		await process_frame
