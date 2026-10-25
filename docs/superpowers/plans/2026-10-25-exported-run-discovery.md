@@ -63,6 +63,19 @@ Files: `autoload/global.gd`,
   publish concise evidence and update Linux handoff. Human handles Git push.
 
 Checkpoint: original EXE regression is actual 5/12 with exactly twelve expected
-assertion diagnostics and exit 1. Source FrontEndFlowTest is actual 46/0, exit 0
-and zero diagnostics after the loader change. Independent runtime diff review
-is clear. Packed GREEN, additional owner checks and corrected build are pending.
+assertion diagnostics and exit 1. Source FrontEndFlowTest is actual 46/0;
+AugmentBinding 64/0, AugmentOffer 5/0 and AscensionDoctrine 36/0, all exit 0
+and zero diagnostics. Independent loader diff review is clear.
+
+The first rebuilt EXE fixes all catalogues but its frozen packed flow stalls
+after Begin (19/1). Shutdown then reports preload failures. Offline inspection
+verifies those scenes and 57 literal dependencies are present. Separate direct
+scene and Game-script warmup diagnostics load successfully but do not resolve
+the stall; both are preserved as interrupted diagnostics, and no warmup ships.
+
+The next bounded candidate disables `editor/export/convert_text_resources_to_binary`
+in `project.godot`. Keep scenes/resources in their authored format while retaining
+the export-aware catalogue loaders. This affects all export presets; texture,
+audio and script imports still use their normal exported forms. The same frozen
+cold packed flow must pass without diagnostic warming before this is accepted.
+Possible package size/loading differences are not performance acceptance.

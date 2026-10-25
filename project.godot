@@ -53,6 +53,12 @@ window/size/viewport_height=1080
 window/size/mode=2
 window/stretch/mode="canvas_items"
 
+[editor]
+
+; Keep runtime-loaded scenes in their authored format. With binary conversion,
+; the cold exported Game route stalls while resolving nested script preloads.
+export/convert_text_resources_to_binary=false
+
 [file_customization]
 
 folder_colors={
