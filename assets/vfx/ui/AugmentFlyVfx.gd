@@ -176,6 +176,9 @@ func _target_pop(target: Control) -> void:
 # ---------------------------------------------------------
 
 func _capture_rect_texture(global_rect: Rect2) -> Texture2D:
+	# A headless viewport has no readable render target; use the icon fallback.
+	if DisplayServer.get_name() == "headless":
+		return null
 	var vp: Viewport = get_viewport()
 	var vp_tex: ViewportTexture = vp.get_texture()
 	if vp_tex == null:

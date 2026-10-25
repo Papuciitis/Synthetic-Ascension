@@ -73,9 +73,17 @@ verifies those scenes and 57 literal dependencies are present. Separate direct
 scene and Game-script warmup diagnostics load successfully but do not resolve
 the stall; both are preserved as interrupted diagnostics, and no warmup ships.
 
-The next bounded candidate disables `editor/export/convert_text_resources_to_binary`
-in `project.godot`. Keep scenes/resources in their authored format while retaining
-the export-aware catalogue loaders. This affects all export presets; texture,
-audio and script imports still use their normal exported forms. The same frozen
-cold packed flow must pass without diagnostic warming before this is accepted.
-Possible package size/loading differences are not performance acceptance.
+The text-resource-format candidate also fails 19/1 and is rejected. Restore
+`project.godot` exactly. The verbose progress diagnostic locates the stall at
+Game threaded status IN_PROGRESS / 0%, before world construction, during the
+first nested scene-script load. A separate retained synchronous full-Game scene
+diagnostic reaches 38/0, with one headless-only viewport-read diagnostic in the
+augment flight effect. This is attribution evidence, not a shipping pass.
+
+The next candidate uses `script_export_mode=0` (TEXT) in both Windows presets.
+Keep authored `.gd` paths instead of remapped `.gdc` paths while retaining binary
+scene/resource conversion and the existing asynchronous router. This packages
+readable scripts and can affect package size/parse cost; no performance claim.
+The existing icon fallback also handles headless viewport capture explicitly.
+Require the same frozen cold packed flow without any diagnostic warming, then
+native proof of the real UI and selection. No direct synchronous Game load ships.
