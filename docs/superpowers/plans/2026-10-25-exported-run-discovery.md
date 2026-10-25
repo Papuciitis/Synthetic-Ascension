@@ -47,7 +47,7 @@ Files: `autoload/global.gd`,
 - [x] Change the shared Global scanner to logical resource enumeration. Route
   sets/items/augments through that helper, retaining their exact filters/logs.
 - [x] Update MajorChoiceDB's independent scan in the same way.
-- [ ] Run focused checkout front-end, augment and major-choice regressions;
+- [x] Run focused checkout front-end, augment and major-choice regressions;
   retain results and repair relevant failures before claiming completion.
 
 ## Task 2: Verify and deliver the corrected playtest
@@ -95,3 +95,8 @@ world setup remains progressive. No direct synchronous Game load ships. Require
 fresh source interruption coverage and a newly exported cold packed flow, then
 native proof. Per-script preload cost can still cause a loading-card hitch; no
 performance acceptance is inferred from throttled functional checks.
+
+Source code candidate: frozen flow passes 38/0 with zero diagnostics. Existing
+SceneTransitionInterruptionTest passes 21/0 with exactly three intentional
+missing-atlas control diagnostics. Add two cold preparation-cancellation cases
+(menu supersession and terminal priority) before the final export/native proof.
