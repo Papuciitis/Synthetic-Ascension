@@ -27,9 +27,21 @@ shader_type canvas_item;
 // carriageway meets other paving. The noise warp stays only where paving
 // meets soil or grass. Policy off = the original raw palette (S1, Hub).
 //
+// Court support (2026-10-31): a district-fill court is stamped as one full
+// rectangle of court setts. support_map (GroundSplatRenderer, CityCourtSupport)
+// says per cell how strongly that paving presents, from actual use: along the
+// meandering walking lines from its passages and doorways and in its working
+// middle it does; where the theme releases unused cells (court_release) the
+// pixel presents as the district yard, and the setts that stay end in a
+// narrow darker course. The court is flush paving:
+// G switches the kerb, its top and gutter off in and around it. Paved stays
+// paved, so the ground_air mirror (paved = never damp) is unaffected.
+//
 // Budget: 7 filtered fetches and one material sample per pixel (the legacy
 // lip probe and the policy's smoothed coverage are the same two fetches);
-// stain, cared lawn, verge and yard-patch samples are conditional.
+// the support read is one more, only on court/lane winners and near kerbed
+// edges; stain, cared lawn (a paved bed also reads its diagonal neighbours'
+// care), verge and yard-patch samples are conditional.
 // Register pressure matters as much as fetches on the target Intel UHD 620
 // (Gen9): a first policy version carried three coverage gradients and two
 // fwidths through the whole fragment, failed SIMD16 register allocation and
@@ -116,6 +128,17 @@ uniform vec4 yard_patch_mid = vec4(0.5, 0.5, 0.5, 1.0);
 // 0.05 soft, 0.006 crisp); w = fine-grain raggedness of that edge. The
 // default is the free noise field with a soft edge.
 uniform vec4 yard_patch_place = vec4(0.0, 0.0, 0.05, 0.0);
+// Presentation support: R = how strongly a court's own paving presents,
+// G = whether kerb relief may draw; 1/1 where untouched. Slots whose paving
+// follows R (road and lane roles), and the slot released pixels present as
+// (the district yard; -1 = off).
+uniform sampler2D support_map : filter_linear, repeat_enable;
+uniform vec4 support_a = vec4(0.0);
+uniform vec4 support_b = vec4(0.0);
+uniform int support_fallback_slot = -1;
+// DistrictGroundPolicy.COURT_*: 0 keep the setts (flush court only), 1 release
+// unused cells to the district yard.
+uniform int court_release = 0;
 // Diagnostics only (GroundSplatRenderer reads SA_GROUND_DEBUG_VIEW in debug
 // builds): 1 = presentation roles, 2 = occlusion (grey) and care (green).
 uniform int debug_view = 0;
@@ -160,11 +183,11 @@ float slot_value(vec4 a, vec4 b, int slot) {
 // flags (a dropped kerb, no step); and a short lip shadow below grass that
 // lies up-right of the paving. Inputs are smoothed coverages and their screen
 // derivatives (taken by the caller in uniform control flow); dp = cells per
-// pixel along x and y.
-float paving_relief(float road_s, float lane_s, float hard_s, vec2 road_d, vec2 lane_d, float og_w, vec2 og_d, vec2 dp) {
+// pixel along x and y; kerb_allow = 0 in and around a flush court.
+float paving_relief(float road_s, float lane_s, float hard_s, vec2 road_d, vec2 lane_d, float og_w, vec2 og_d, vec2 dp, float kerb_allow) {
 	float relief = 1.0;
 	float paved_zone = smoothstep(0.60, 0.85, hard_s);
-	float kerb_zone = paved_zone * (1.0 - smoothstep(0.12, 0.35, lane_s));
+	float kerb_zone = paved_zone * (1.0 - smoothstep(0.12, 0.35, lane_s)) * kerb_allow;
 	vec2 road_grad = road_d / dp;
 	float gl = length(road_grad);
 	if (kerb_zone > 0.0 && gl > 0.08) {
@@ -228,6 +251,8 @@ void fragment() {
 	bool paved = false;
 	float relief = 1.0;
 	float hard_w = 0.0;
+	float kerb_allow = 1.0;
+	float court_edge = 0.0;
 	if (policy_enabled) {
 		paved = slot_value(hard_a, hard_b, slot) > 0.5;
 		hard_w = dot(ca, hard_a) + dot(cb, hard_b);
@@ -245,13 +270,31 @@ void fragment() {
 			if (dot(ma, vec4(1.0)) + dot(mb, vec4(1.0)) > 0.001) {
 				out_slot = argmax8(ma, mb);
 			}
+			// A court's setts follow its use; a released pixel presents as the
+			// district yard, its edge meandering on the broad warp. Read only
+			// where it can matter: a court/lane winner, or near a kerbed edge.
+			bool follows = slot_value(support_a, support_b, out_slot) > 0.5;
+			if (follows || road_s > 0.02) {
+				vec2 sup = textureLod(support_map, p / map_size, 0.0).rg;
+				kerb_allow = sup.g;
+				if (follows && court_release > 0 && support_fallback_slot >= 0 && sup.r < 0.995) {
+					float edge = sup.r + (n.g - 0.5) * 0.6 + (n.b - 0.5) * 0.18 - 0.5;
+					if (edge < 0.0) {
+						out_slot = support_fallback_slot;
+					} else {
+						court_edge = 1.0 - smoothstep(0.0, 0.06, edge);
+					}
+				}
+			}
 		}
 		vec2 road_d = vec2(dFdx(road_s), dFdy(road_s));
 		vec2 lane_d = vec2(dFdx(lane_s), dFdy(lane_s));
 		vec2 og_d = vec2(dFdx(og_w), dFdy(og_w));
 		if (paved) {
 			vec2 dp = max(abs(vec2(ddx.x, ddy.y)) / cell_px, vec2(1e-6));
-			relief = paving_relief(road_s, lane_s, hard_s, road_d, lane_d, og_w, og_d, dp);
+			relief = paving_relief(road_s, lane_s, hard_s, road_d, lane_d, og_w, og_d, dp, kerb_allow);
+			// The setts that stay end in a narrow, darker laid course.
+			relief *= 1.0 - 0.16 * court_edge;
 		}
 	} else if (slot_value(overgrowth_a, overgrowth_b, slot) < 0.5) {
 		vec2 puv = uv + vec2(0.2, -0.3) / map_size;
@@ -325,6 +368,14 @@ void fragment() {
 							if (texelFetch(light_map, ivec2(cell.x == last ? 0 : cell.x + 1, cell.y), 0).b <= 0.0) { side = min(side, 1.0 - f.x); }
 							if (texelFetch(light_map, ivec2(cell.x, cell.y == 0 ? last : cell.y - 1), 0).b <= 0.0) { side = min(side, f.y); }
 							if (texelFetch(light_map, ivec2(cell.x, cell.y == last ? 0 : cell.y + 1), 0).b <= 0.0) { side = min(side, 1.0 - f.y); }
+							// Inner corners: measure to a missing diagonal cell too, so an L or
+							// stepped bed rounds into its notch instead of leaving a square bite.
+							// Outer corners and wall sides are unchanged (the diagonal is never
+							// nearer there). map_size is a power of two, so & wraps.
+							if (texelFetch(light_map, ivec2((cell.x - 1) & last, (cell.y - 1) & last), 0).b <= 0.0) { side = min(side, length(f)); }
+							if (texelFetch(light_map, ivec2((cell.x + 1) & last, (cell.y - 1) & last), 0).b <= 0.0) { side = min(side, length(vec2(1.0 - f.x, f.y))); }
+							if (texelFetch(light_map, ivec2((cell.x - 1) & last, (cell.y + 1) & last), 0).b <= 0.0) { side = min(side, length(vec2(f.x, 1.0 - f.y))); }
+							if (texelFetch(light_map, ivec2((cell.x + 1) & last, (cell.y + 1) & last), 0).b <= 0.0) { side = min(side, length(vec2(1.0) - f)); }
 							vec3 plant = textureGrad(materials, vec3(world_pos / cared_lawn_repeat_px, cared_lawn_layer), ddx / cared_lawn_repeat_px, ddy / cared_lawn_repeat_px).rgb;
 							plant = mix(vec3(0.38, 0.45, 0.28), plant * vec3(1.14, 1.20, 1.02), 0.85);
 							vec3 soil = role_mid[6].rgb * (0.88 + (n.b - 0.5) * 0.10);

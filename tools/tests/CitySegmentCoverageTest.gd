@@ -126,8 +126,9 @@ func _run() -> void:
 				_check(baseline.kits == 0,"Original-material production fixture remains unstyled")
 				_check(styled.roofs > 0 and styled.kits == styled.roofs,"Every actual ordinary parcel receives style segment=%d theme=%s role=%s" % [segment,theme.id,role])
 				_check(styled.snapshot == baseline.snapshot,"Style preserves geometry, doors, floors, keepouts, IDs, rewards and security segment=%d role=%s" % [segment,role])
-				if segment != 2: _check(styled.paving == 0,"Later city theme keeps shared terrain/road ownership, including reward parcels")
-				elif role == &"secondary_reward_building": _check(styled.paving > 0,"S2 accepted reward-block composed paving remains")
+				# Since ca10bd7c every reward street, S2's included, keeps the shared
+				# city ground; no theme composes its own parcel paving.
+				_check(styled.paving == 0,"Every city theme keeps shared terrain/road ownership, including reward parcels segment=%d role=%s" % [segment,role])
 				samples.append({"segment":segment,"attempt_seed":seed_value,"theme":String(theme.id),"role":String(role),"coord":str(coord),"kits":styled.kits,"paving":styled.paving,"physical_equal":styled.snapshot == baseline.snapshot})
 			break
 		_check(found,"Natural production plan found for %s" % target.theme)

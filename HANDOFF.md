@@ -1,10 +1,20 @@
 # Windows art direction ↔ Linux production handoff
 
-Updated 25 October 2026. This is a working checkpoint, not visual acceptance of
+Updated 31 October 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
 
-**Latest functional update, 25 October:** the exported Windows playtest's empty
+**Latest visual update, 31 October:** district-fill courts (the most common
+city chunk) are now flush paving without the stamped kerb/gutter ring, and in
+Outer Wall (S9A) their setts follow the walking lines from passages and
+doorways while unused corners return to the grassy cobble yard. Other families
+keep their court setts until each is reviewed on the new theme sheet; household
+beds only gained an inner-corner fillet. An independent review rejected the
+first all-family pass for S7 and the reworked beds, and both were narrowed.
+Read the 31 October entry in [current Linux status](docs/handoff/LINUX_STATUS.md)
+and the [court-support evidence](docs/art/reference/2026-10-31-court-support/README.md).
+
+**Functional update, 25 October:** the exported Windows playtest's empty
 character/augment choices and cold Begin loading stall are fixed and
 normal-merged at `26a5152b`. The corrected local delivery is
 `build/SyntheticAscension-playtest-20261025.zip`; build binaries are ignored and

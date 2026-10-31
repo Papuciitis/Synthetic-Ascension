@@ -1,0 +1,23 @@
+GroundCourtSupportRenderTest [native]: "stop_reason":"completed", GroundCourtSupportRenderTest: 9 passed, 0 failed THERMAL c31reg-GroundCourtSupportRenderTest-155126 completed peak 87.0
+CityGroundCareRenderTest [native]: "stop_reason":"completed", CityGroundCareRenderTest: 49 passed, 0 failed THERMAL c31reg-CityGroundCareRenderTest-155234 completed peak 82.0
+ThemeAtmosphereReceiversTest [native]: "stop_reason":"completed", ThemeAtmosphereReceiversTest: 43 passed, 0 failed THERMAL c31reg-ThemeAtmosphereReceiversTest-155340 completed peak 78.0
+ThemeAtmosphereDryReceiverTest [native]: "stop_reason":"completed", ThemeAtmosphereDryReceiverTest: 6 passed, 0 failed THERMAL c31reg-ThemeAtmosphereDryReceiverTest-155440 completed peak 75.0
+GroundCourtSupportTest [headless]: "stop_reason":"completed", GroundCourtSupportTest: 70 passed, 0 failed THERMAL c31reg-GroundCourtSupportTest-155538 completed peak 85.0
+WorldGroundSplatTest [headless]: "stop_reason":"completed", WorldGroundSplatTest: 63 passed, 0 failed THERMAL c31reg-WorldGroundSplatTest-155641 completed peak 76.0
+CityGroundCareTest [headless]: "stop_reason":"completed", CityGroundCareTest: 150 passed, 0 failed THERMAL c31reg-CityGroundCareTest-155738 completed peak 78.0
+CityGroundCareNaturalTest [headless]: "stop_reason":"completed", CityGroundCareNaturalTest: chunks=8 failures=0 THERMAL c31reg-CityGroundCareNaturalTest-155844 completed peak 84.0
+DistrictGroundPolicyTest [headless]: "stop_reason":"completed", DistrictGroundPolicyTest: 298 passed, 0 failed THERMAL c31reg-DistrictGroundPolicyTest-155953 completed peak 73.0
+PlazaBedUnderlayTest [headless]: "stop_reason":"nonzero_exit", PlazaBedUnderlayTest: 35 passed, 4 failed THERMAL c31reg-PlazaBedUnderlayTest-160204 completed peak 72.0
+      1 "ERROR: FAIL: real generated bed topology and empty centrepiece match the rejected native image",
+      1 "ERROR: FAIL: state0 bed underlay keeps tended urban ground only in state0; worn states use own plaza paving",
+      1 "ERROR: FAIL: state0 tended care is1 only in state0 and0 under every worn bed"
+      1 "ERROR: FAIL: unmodified generator island reproduces native urban6 care1 in all six bed cells",
+CityDoorApproachGroundTest [headless]: "stop_reason":"completed", CityDoorApproachGroundTest: fixtures=8 checks=64 failures=0 THERMAL c31reg-CityDoorApproachGroundTest-160303 completed peak 80.0
+DistrictFamilyVisualTest [headless]: "stop_reason":"completed", DistrictFamilyVisualTest: 143 passed, 0 failed THERMAL c31reg-DistrictFamilyVisualTest-160400 completed peak 83.0
+CityGenerationMaterialTest [headless]: "stop_reason":"completed", CityGenerationMaterialTest: failures=0 THERMAL c31reg-CityGenerationMaterialTest-160509 completed peak 86.0
+SiteWallContinuityTest [headless]:   THERMAL c31reg-SiteWallContinuityTest-160559 thermal_limit peak 96.0
+CitySegmentCoverageTest [headless]: "stop_reason":"nonzero_exit", CitySegmentCoverageTest: 164 passed, 1 failed THERMAL c31reg-CitySegmentCoverageTest-160630 completed peak 76.0
+      1 "ERROR: S2 accepted reward-block composed paving remains"
+PlazaPresentationTest [headless]: "stop_reason":"completed", PlazaPresentationTest: 28124 passed, 0 failed; elapsed 275855ms THERMAL c31reg-PlazaPresentationTest-160755 completed peak 76.0
+c31reg done
+exit 0

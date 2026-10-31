@@ -1,0 +1,16 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c31v2green-GroundCourtSupportRenderTest-171404-1",
+ "queued_seconds": 0.1,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 62.325,
+ "peak_rss_mb": 380,
+ "diagnostic_count": 1,
+ "diagnostics_head": [
+  "ERROR: FAIL: a family that keeps its court keeps the setts in every corner (1.90)"
+ ]
+}
+--- stdout tail (3/16 lines) ---
+PASS: control: the canal court draws a kerb top too (147.5 vs 126.9)
+PASS: and its flush court draws no kerb ring (0.00)
+GroundCourtSupportRenderTest: 11 passed, 1 failed

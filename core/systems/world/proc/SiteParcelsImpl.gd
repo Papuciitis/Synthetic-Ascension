@@ -1070,6 +1070,7 @@ func decorate_urban_fill(
 		passage_dirs = _pick_courtyard_passage_dirs(chunk_manager, coord, rng)
 	var passage_w: int = 3
 	var edge_center: int = int(cpc / 2.0) - int(passage_w / 2.0)
+	var passages: Array[Rect2i] = []
 	for passage_dir in passage_dirs:
 		var passage := Rect2i()
 		if passage_dir == Vector2i(0, -1):
@@ -1085,6 +1086,10 @@ func decorate_urban_fill(
 		if passage.size.x > 0 and passage.size.y > 0:
 			keepouts.append(passage.grow(1).intersection(chunk_rect))
 			chunk_manager._stamp_floor_rect_cells_patchy(chunk, passage, int(cfg.get("passage_floor_tex", 4)), floor_rng, 0.80, -94)
+			passages.append(passage)
+	# Presentation only (ChunkManager._activate_ground_care): the court's setts
+	# follow the use entering it through these passages and its doorways.
+	chunk.set_meta(&"_ground_court", {"rect": courtyard, "passages": passages})
 
 	var clear_cells: Dictionary = ChunkShapeGen.rect_cells(courtyard.grow(-3))
 	for passage_keepout in keepouts.slice(1):

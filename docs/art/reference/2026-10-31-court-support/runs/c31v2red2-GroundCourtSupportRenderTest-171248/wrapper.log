@@ -1,0 +1,19 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c31v2red2-GroundCourtSupportRenderTest-171248-1",
+ "queued_seconds": 0.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 60.554,
+ "peak_rss_mb": 374,
+ "diagnostic_count": 4,
+ "diagnostics_head": [
+  "ERROR: FAIL: a released corner draws exactly the district yard (19.51)",
+  "ERROR: FAIL: no kerb draws beside a flush court (20.01)",
+  "ERROR: FAIL: the released edge wanders instead of following a straight cell line",
+  "ERROR: FAIL: and its flush court draws no kerb ring (19.84)"
+ ]
+}
+--- stdout tail (3/13 lines) ---
+PASS: control: the canal court draws a kerb top too (147.5 vs 126.9)
+PASS: a family that keeps its court keeps the setts in every corner (0.00)
+GroundCourtSupportRenderTest: 8 passed, 4 failed

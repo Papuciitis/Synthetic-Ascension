@@ -1,0 +1,48 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: weather owns actual wet-ground and environment direct/fill receivers
+PASS: no matching ground host means no mist receiver
+PASS: a live matching GroundSplat enables its physical receiver
+PASS: low air samples the actual ground coverage textures
+PASS: low air samples the actual stain G texture
+PASS: receiver fixture retains dry1, wet5, moss12 and stained dry1 semantic ownership
+PASS: actual first-allocated dry/wet/moss slots receive only physical damp eligibility
+PASS: a ground without a district family mirrors the raw winner logic
+PASS: low air mirrors the district policy's paved slots
+PASS: low air mirrors the policy's lighter stains on paving
+PASS: paving never becomes damp; wet and moss eligibility is unchanged by the policy
+PASS: removing the local host disables air instead of borrowing another world's ground
+PASS: another canvas cannot supply a ground receiver
+PASS: default regression uses a real pure-wet host without an assigned stain uniform
+PASS: a pure wet host renders wet receivers without inventing a stain or converting null
+PASS: unset ground uniforms submit actual source defaults to the air shader
+PASS: explicit receiver uniform overrides remain owned by the ground material
+PASS: clearing a source override restores the actual shader default instead of retaining the old value
+PASS: default roof regression retains a genuinely unset source uniform
+PASS: an overcast theme leaves unset actual roof uniforms at their source defaults
+PASS: clear daylight keeps the raw unset roof baseline exactly
+PASS: authored-space reset keeps raw unset roof uniform state exactly
+PASS: the selected theme's sun shade reaches the shared cast material
+PASS: overcast theme light never flattens actual roof-plane contrast
+PASS: attached plane material keeps its own ridge light under every theme
+PASS: theme light leaves each cast's own strength and cutaway modulation untouched
+PASS: lighting preserves partition host draw alpha, geometry and roof coverage owner
+PASS: ordinary actor/item/unowned materials receive no plane multiplier
+PASS: actual roof materials on another world/canvas retain their own lighting
+PASS: clear daylight casts a deeper shade than sheltered overcast air
+PASS: clear daylight leaves per-instance roof/shadow factors exact
+PASS: authored-space bypass keeps exact baseline environment materials
+PASS: authored-space bypass restores the neutral daylight shade
+PASS: a detached plane keeps its baseline instead of another environment's light
+PASS: native canal air leaves actual outdoor dry-earth1 untouched
+PASS: native canal air reaches actual wet5 and moss12 ground receivers
+NativeReceiverDeltas dry/wet/moss/stain-centre=[0.0, 0.00784313678741, 0.00784313678741, 0.00392156839371]; isolated-stain-max=0.007843 at=(196, 16) samples=225
+PASS: native canal air reaches an actual visible mud-stain patch without replacing its dry-earth material
+PASS: rendered stained receiver keeps semantic dry ownership
+PASS: native overcast keeps the actual roof-plane hierarchy instead of flattening it
+PASS: native overcast lightens the shared sun shade without a global grade
+PASS: native clear-daylight cast multiplies the ground by the shared shade ratio
+PASS: receiver adaptation consumes no gameplay RNG
+PASS: receiver adaptation performs no save writes
+ThemeAtmosphereReceiversTest: 43 passed, 0 failed

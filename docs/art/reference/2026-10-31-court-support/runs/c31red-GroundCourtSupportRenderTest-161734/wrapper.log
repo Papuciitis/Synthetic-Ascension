@@ -1,0 +1,18 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c31red-GroundCourtSupportRenderTest-161734-1",
+ "queued_seconds": 0.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 50.515,
+ "peak_rss_mb": 370,
+ "diagnostic_count": 3,
+ "diagnostics_head": [
+  "ERROR: FAIL: a released corner draws exactly the district yard (18.59)",
+  "ERROR: FAIL: no kerb draws beside a flush court (20.01)",
+  "ERROR: FAIL: the released edge wanders instead of following a straight cell line"
+ ]
+}
+--- stdout tail (3/11 lines) ---
+PASS: ground beyond the support ring is byte-identical
+Released edge columns: [703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703]
+GroundCourtSupportRenderTest: 6 passed, 3 failed

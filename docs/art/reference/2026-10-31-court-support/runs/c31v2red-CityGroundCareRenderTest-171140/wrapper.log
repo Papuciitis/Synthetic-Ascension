@@ -1,0 +1,16 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c31v2red-CityGroundCareRenderTest-171140-1",
+ "queued_seconds": 0.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 53.071,
+ "peak_rss_mb": 371,
+ "diagnostic_count": 1,
+ "diagnostics_head": [
+  "ERROR: FAIL: an L-shaped bed rounds into its inner corner instead of a square bite (corner 0.421, middle 0.509)"
+ ]
+}
+--- stdout tail (3/61 lines) ---
+PASS: the real reserved door approach retains its original native pixels
+PASS: public household care leaves road and lane pixels unchanged
+CityGroundCareRenderTest: 53 passed, 1 failed
