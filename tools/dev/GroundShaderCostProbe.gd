@@ -16,7 +16,7 @@ extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ## <godot> --path . --rendering-driver opengl3 --audio-driver Dummy res://tools/dev/GroundShaderCostProbe.tscn --
 ##   --segment=2 [--theme=service_courtyards] [--world-seed=16102026]
 ##   --variants=none,current,pre_policy=/abs/old.gdshader,phase1=/abs/p1.gdshader
-##   [--rounds=5] [--frames=180] [--warmup=45] [--size=1920x1080] [--points=start,route1]
+##   [--rounds=5] [--frames=180] [--warmup=45] [--size=1920x1080] [--points=start,route1,at=<x>:<y>]
 ##   [--full] (keep the whole scene visible; only the ground variant changes)
 ##   [--compile-only] (draw each variant a few frames, print markers, no timing)
 ##   [--cooldown-seconds=3] (cap setup at30FPS, cool at10FPS between variants)
@@ -146,6 +146,10 @@ func _run() -> void:
 	for name: String in _point_names:
 		if name == "start":
 			cameras.append({"name": name, "world": _player.global_position})
+		elif name.begins_with("at="):
+			var xy := name.trim_prefix("at=").split(":")
+			if xy.size() == 2:
+				cameras.append({"name": name, "world": Vector2(float(xy[0]), float(xy[1]))})
 		elif name.begins_with("route"):
 			var route: Array = plan.get("main_route", [])
 			var index := clampi(int(name.trim_prefix("route")), 1, 8)
