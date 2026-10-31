@@ -1,6 +1,8 @@
 extends Node2D
 ## Native pixel regression for fractional household care on district paving.
-## Only the test light-map blue channel changes between matched readbacks.
+## Only the test light-map blue channel changes between matched readbacks. An
+## L-shaped bed rounds into its inner corner instead of a square bite
+## (2026-10-31).
 ## This tiny fixture does not establish whole-city appearance or performance.
 
 const SPLAT := preload("res://core/systems/world/ground/GroundSplatRenderer.gd")
@@ -60,6 +62,7 @@ func _run() -> void:
 	_splat.get_shader_material().set_shader_parameter("debug_view", 0)
 	_reset_ground()
 	await _fractional_sweep()
+	await _inner_corner_control()
 	await _household_access_control()
 	_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	_splat.clear()
@@ -154,6 +157,31 @@ func _fractional_sweep() -> void:
 	var restored: Image = await _pixels("care-restored-zero")
 	if restored != null and restored.get_size() == VIEW_SIZE:
 		_check(_max_delta(bare, restored, Rect2i(Vector2i.ZERO, VIEW_SIZE)) <= 2.0 / 255.0, "clearing care restores every original rendered ground pixel")
+
+
+## An L-shaped bed (the support without its bottom-right cell) rounds into its
+## inner corner instead of leaving a square bite: right at the corner the
+## paving shows through, while the same cell's middle is planted.
+func _inner_corner_control() -> void:
+	_set_weight(0.0)
+	var bare: Image = await _pixels("inner-corner-bare")
+	_set_weight(1.0)
+	var light: Image = _splat.get("_light") as Image
+	var missing: Vector2i = SUPPORT.end - Vector2i.ONE
+	var value: Color = light.get_pixelv(missing)
+	value.b = 0.0
+	light.set_pixelv(missing, value)
+	_splat.set("_dirty", true)
+	var cared: Image = await _pixels("inner-corner-cared")
+	_set_weight(0.0)
+	if bare == null or cared == null or bare.get_size() != VIEW_SIZE or cared.get_size() != VIEW_SIZE:
+		return
+	var corner_point: Vector2i = missing * CELL
+	var near: Rect2i = Rect2i(corner_point - Vector2i(5, 5), Vector2i(4, 4))
+	var middle: Rect2i = Rect2i(corner_point - Vector2i(CELL / 2 + 8, CELL / 2 + 8), Vector2i(16, 16))
+	var near_delta: float = (_mean_rgb(cared, near) - _mean_rgb(bare, near)).length()
+	var middle_delta: float = (_mean_rgb(cared, middle) - _mean_rgb(bare, middle)).length()
+	_check(middle_delta > 0.05 and near_delta < middle_delta * 0.5, "an L-shaped bed rounds into its inner corner instead of a square bite (corner %.3f, middle %.3f)" % [near_delta, middle_delta])
 
 
 func _household_access_control() -> void:

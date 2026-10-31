@@ -40,7 +40,8 @@ shader_type canvas_item;
 // Budget: 7 filtered fetches and one material sample per pixel (the legacy
 // lip probe and the policy's smoothed coverage are the same two fetches);
 // the support read is one more, only on court/lane winners and near kerbed
-// edges; stain, cared lawn, verge and yard-patch samples are conditional.
+// edges; stain, cared lawn (a paved bed also reads its diagonal neighbours'
+// care), verge and yard-patch samples are conditional.
 // Register pressure matters as much as fetches on the target Intel UHD 620
 // (Gen9): a first policy version carried three coverage gradients and two
 // fwidths through the whole fragment, failed SIMD16 register allocation and
@@ -367,6 +368,14 @@ void fragment() {
 							if (texelFetch(light_map, ivec2(cell.x == last ? 0 : cell.x + 1, cell.y), 0).b <= 0.0) { side = min(side, 1.0 - f.x); }
 							if (texelFetch(light_map, ivec2(cell.x, cell.y == 0 ? last : cell.y - 1), 0).b <= 0.0) { side = min(side, f.y); }
 							if (texelFetch(light_map, ivec2(cell.x, cell.y == last ? 0 : cell.y + 1), 0).b <= 0.0) { side = min(side, 1.0 - f.y); }
+							// Inner corners: measure to a missing diagonal cell too, so an L or
+							// stepped bed rounds into its notch instead of leaving a square bite.
+							// Outer corners and wall sides are unchanged (the diagonal is never
+							// nearer there). map_size is a power of two, so & wraps.
+							if (texelFetch(light_map, ivec2((cell.x - 1) & last, (cell.y - 1) & last), 0).b <= 0.0) { side = min(side, length(f)); }
+							if (texelFetch(light_map, ivec2((cell.x + 1) & last, (cell.y - 1) & last), 0).b <= 0.0) { side = min(side, length(vec2(1.0 - f.x, f.y))); }
+							if (texelFetch(light_map, ivec2((cell.x - 1) & last, (cell.y + 1) & last), 0).b <= 0.0) { side = min(side, length(vec2(f.x, 1.0 - f.y))); }
+							if (texelFetch(light_map, ivec2((cell.x + 1) & last, (cell.y + 1) & last), 0).b <= 0.0) { side = min(side, length(vec2(1.0) - f)); }
 							vec3 plant = textureGrad(materials, vec3(world_pos / cared_lawn_repeat_px, cared_lawn_layer), ddx / cared_lawn_repeat_px, ddy / cared_lawn_repeat_px).rgb;
 							plant = mix(vec3(0.38, 0.45, 0.28), plant * vec3(1.14, 1.20, 1.02), 0.85);
 							vec3 soil = role_mid[6].rgb * (0.88 + (n.b - 0.5) * 0.10);
