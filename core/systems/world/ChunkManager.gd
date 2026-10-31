@@ -60,6 +60,7 @@ var district_common_base_preview: bool = false
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const _GROUND_POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
 const _CITY_GROUND_CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
+const _CITY_COURT_SUPPORT := preload("res://core/systems/world/ground/CityCourtSupport.gd")
 const _SITE_MGR: Script = preload("res://core/systems/world/proc/SiteManager.gd")
 const _GEN_IMPL: Script = preload("res://core/systems/world/proc/ChunkGenImpl.gd")
 const _TILE_RENDERER: Script = preload("res://core/systems/world/ChunkTileRenderer.gd")
@@ -1299,9 +1300,10 @@ func _activate_floor_stamps(data: ChunkBuildData, chunk: Node2D) -> void:
 
 
 ## The ground presentation pass after a chunk's floors, in every procedural
-## district: broad occlusion from the chunk's walls and props, then household
-## care pockets beside homes. Presentation only (light-map alpha and blue), no
-## RNG, idempotent, so a streamed rebuild repaints identical bytes.
+## district: broad occlusion from the chunk's walls and props, a district-fill
+## court's use support, then household care pockets beside homes.
+## Presentation only (light-map alpha and blue, the support map), no RNG,
+## idempotent, so a streamed rebuild repaints identical bytes.
 func _activate_ground_care(coord: Vector2i, chunk: Node2D) -> void:
 	if not generation_enabled or not ground_enabled or not ground_splat_enabled:
 		return
@@ -1311,6 +1313,9 @@ func _activate_ground_care(coord: Vector2i, chunk: Node2D) -> void:
 	var data := get_chunk_build_data(coord)
 	if data != null:
 		splat.paint_occlusion(coord, data)
+	var court: Dictionary = chunk.get_meta(&"_ground_court", {})
+	if not court.is_empty():
+		splat.paint_court_support(coord, court.rect, _CITY_COURT_SUPPORT.entrances(chunk, court.rect, court.passages, float(cell_size_px)))
 	for rect: Rect2i in chunk.get_meta(&"_ground_planting_rects", []):
 		splat.paint_planting(coord, rect)
 	var specs: Array[Dictionary] = []

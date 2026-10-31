@@ -21,6 +21,7 @@ class_name GroundSplatRenderer
 const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const SHADER := preload("res://core/systems/world/ground/ground_splat.gdshader")
 const _CITY_GROUND_CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
+const _CITY_COURT_SUPPORT := preload("res://core/systems/world/ground/CityCourtSupport.gd")
 const _POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
 
 ## Cells, wrapped. 256 cells = 8 chunks at 32 cells/chunk = 16384 px: larger than any streamed
@@ -49,6 +50,11 @@ var _light: Image
 var _cover_a_texture: ImageTexture
 var _cover_b_texture: ImageTexture
 var _light_texture: ImageTexture
+## Presentation support (CityCourtSupport): R = how strongly a court's own
+## paving presents, G = whether kerb relief may draw; 1/1 where untouched.
+var _support: Image
+var _support_texture: ImageTexture
+var _support_dirty := false
 ## Authored worlds (Segment 1) stamp once, before the streamed chunks that
 ## carry the base ground exist; those stamps are kept here and laid back over
 ## each base as it arrives.
@@ -80,6 +86,9 @@ func _init() -> void:
 	_cover_a_texture = ImageTexture.create_from_image(_mipmapped(_cover_a))
 	_cover_b_texture = ImageTexture.create_from_image(_mipmapped(_cover_b))
 	_light_texture = ImageTexture.create_from_image(_light)
+	_support = Image.create(MAP_SIZE, MAP_SIZE, false, Image.FORMAT_RG8)
+	_support.fill(Color.WHITE)
+	_support_texture = ImageTexture.create_from_image(_support)
 	_slot_material.resize(SLOTS)
 	_slot_material.fill(-1)
 	var white := Image.create(2, 2, false, Image.FORMAT_RGBA8)
@@ -90,6 +99,7 @@ func _init() -> void:
 	_material.set_shader_parameter("cover_a", _cover_a_texture)
 	_material.set_shader_parameter("cover_b", _cover_b_texture)
 	_material.set_shader_parameter("light_map", _light_texture)
+	_material.set_shader_parameter("support_map", _support_texture)
 	_material.set_shader_parameter("noise_tex", noise_texture())
 	_material.set_shader_parameter("map_size", float(MAP_SIZE))
 	if OS.is_debug_build() and OS.has_environment("SA_GROUND_DEBUG_VIEW"):
@@ -191,6 +201,8 @@ func get_shader_material() -> ShaderMaterial:
 func set_chunk_base(coord: Vector2i, ground_index: int, brightness: float = 1.0) -> void:
 	var block := Rect2i(coord * cells_per_chunk, Vector2i(cells_per_chunk, cells_per_chunk))
 	_fill(block, ground_index, brightness, false)
+	_for_wrapped_spans(block, func(span: Rect2i) -> void: _support.fill_rect(span, Color.WHITE))
+	_support_dirty = true
 	if _authored_mask != null:
 		_for_wrapped_spans(block, func(span: Rect2i) -> void:
 			_cover_a.blit_rect_mask(_authored[0], _authored_mask, span, span.position)
@@ -408,6 +420,26 @@ func paint_planting(coord: Vector2i, rect: Rect2i) -> void:
 			_dirty = true
 
 
+## A district-fill court's use support (CityCourtSupport.plan): `court` in
+## chunk-local cells, `entrances` its passage mouths and doorways. Writes only
+## the support map over the court and its one-cell ring: the setts present
+## along the walking lines and in the working middle, hand unused corners
+## back to the district (as its policy's court_release decides), and no kerb
+## draws around the flush court. Presentation only, deterministic, reset with
+## the chunk base.
+func paint_court_support(coord: Vector2i, court: Rect2i, entrances: Array[Vector2]) -> void:
+	var origin := coord*cells_per_chunk
+	var plan := _CITY_COURT_SUPPORT.plan(court, entrances, cells_per_chunk, origin)
+	var region: Rect2i = plan.region
+	var support: PackedByteArray = plan.support
+	for y in range(region.position.y, region.end.y):
+		for x in range(region.position.x, region.end.x):
+			var cell := origin+Vector2i(x,y)
+			var amount := float(support[(y-region.position.y)*region.size.x+(x-region.position.x)])/255.0
+			_support.set_pixel(posmod(cell.x,MAP_SIZE), posmod(cell.y,MAP_SIZE), Color(amount, 0.0, 0.0))
+	_support_dirty = true
+
+
 ## Loaded neighbours for the occlusion pass: a Callable(coord) returning
 ## {Vector2i offset (-1..1, -1..1): ChunkBuildData} for the streamed chunks
 ## around `coord` (ChunkManager sets it). Without it occlusion stays
@@ -585,6 +617,27 @@ func care_at(cell: Vector2i) -> float:
 	return _light.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).b
 
 
+func support_at(cell: Vector2i) -> float:
+	return _support.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).r
+
+
+func kerb_allowed_at(cell: Vector2i) -> float:
+	return _support.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE)).g
+
+
+## A chunk's support bytes, R and G interleaved (stream determinism checks).
+func support_signature(coord: Vector2i) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	var origin := coord*cells_per_chunk
+	for y in cells_per_chunk:
+		for x in cells_per_chunk:
+			var cell := origin+Vector2i(x,y)
+			var value := _support.get_pixel(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
+			bytes.append(value.r8)
+			bytes.append(value.g8)
+	return bytes
+
+
 func care_signature(coord: Vector2i) -> PackedByteArray:
 	var bytes := PackedByteArray()
 	bytes.resize(cells_per_chunk*cells_per_chunk)
@@ -599,6 +652,8 @@ func care_signature(coord: Vector2i) -> PackedByteArray:
 func clear() -> void:
 	for image in [_cover_a, _cover_b, _light]:
 		(image as Image).fill(Color(0, 0, 0, 0))
+	_support.fill(Color.WHITE)
+	_support_dirty = true
 	_authored.clear()
 	_authored_mask = null
 	_slot_material.fill(-1)
@@ -648,6 +703,9 @@ func _process(_delta: float) -> void:
 
 ## Upload changed maps (once per frame at most; also called by tests).
 func flush() -> void:
+	if _support_dirty:
+		_support_dirty = false
+		_support_texture.update(_support)
 	if not _dirty:
 		return
 	_dirty = false
@@ -726,6 +784,8 @@ func _push_slot_uniforms() -> void:
 	var hard := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	var road := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	var lane := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var supported := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	var fallback := -1
 	var enabled := ground_policy_enabled()
 	for slot in SLOTS:
 		var ground_index := maxi(0, _slot_material[slot])
@@ -744,6 +804,12 @@ func _push_slot_uniforms() -> void:
 			road[slot] = 1.0
 		elif role == _POLICY.ROLE_LANE:
 			lane[slot] = 1.0
+		# Court and access paving may follow the support map; released
+		# pixels present as the district's own yard.
+		if role == _POLICY.ROLE_ROAD or role == _POLICY.ROLE_LANE:
+			supported[slot] = 1.0
+		if enabled and _slot_material[slot] == _POLICY.DISTRICT_GROUND_INDEX:
+			fallback = slot
 	_material.set_shader_parameter("slot_layer", layers)
 	_material.set_shader_parameter("slot_index", indices)
 	_material.set_shader_parameter("slot_repeat_px", repeats)
@@ -757,6 +823,9 @@ func _push_slot_uniforms() -> void:
 	_material.set_shader_parameter("road_b", Vector4(road[4], road[5], road[6], road[7]))
 	_material.set_shader_parameter("lane_a", Vector4(lane[0], lane[1], lane[2], lane[3]))
 	_material.set_shader_parameter("lane_b", Vector4(lane[4], lane[5], lane[6], lane[7]))
+	_material.set_shader_parameter("support_a", Vector4(supported[0], supported[1], supported[2], supported[3]))
+	_material.set_shader_parameter("support_b", Vector4(supported[4], supported[5], supported[6], supported[7]))
+	_material.set_shader_parameter("support_fallback_slot", fallback)
 
 
 ## The policy's per-role sources and grades (a disabled policy draws raw).
@@ -786,6 +855,7 @@ func _push_role_uniforms() -> void:
 	_material.set_shader_parameter("paving_variation", float(_policy.get("paving_variation", 0.0)) if enabled else 0.0)
 	_material.set_shader_parameter("paved_stain_strength", float(_policy.get("paved_stain_strength", 1.0)) if enabled else 1.0)
 	_material.set_shader_parameter("wet_patches", float(_policy.get("wet_patches", 0.0)) if enabled else 0.0)
+	_material.set_shader_parameter("court_release", int(_policy.get("court_release", _POLICY.COURT_KEEP)) if enabled else _POLICY.COURT_KEEP)
 	var yard_patch: Dictionary = _policy.get("yard_patch", {}) if enabled else {}
 	if yard_patch.is_empty():
 		_material.set_shader_parameter("yard_patch", Vector4(-1.0, 0.0, 384.0, 0.5))

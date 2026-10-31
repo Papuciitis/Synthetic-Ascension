@@ -81,6 +81,14 @@ const FAMILIES: Array[StringName] = [
 	&"military_staging", &"outer_wall", &"siege_services", &"gate_district",
 ]
 
+## What a district-fill court's unused cells present as (CityCourtSupport,
+## ground_splat's support map): its own setts (the court is only made flush,
+## without a kerb ring), or the district yard. Release suits a yard that
+## reads as distinct, plausible unused ground beside setts; it is enabled per
+## family only after native review (CourtReleaseThemeSheet, 2026-10-31).
+const COURT_KEEP := 0
+const COURT_TO_YARD := 1
+
 ## Array layers used as alternative sources (WorldArt._GROUND_TEX_PATHS).
 const LAYER_DIRT := 1
 const LAYER_COBBLE := 2
@@ -136,7 +144,7 @@ static func signature(policy: Dictionary) -> String:
 	for role in range(ROLE_COUNT):
 		var entry: Dictionary = roles.get(role, {})
 		parts.append("%d:%s:%s:%s:%s:%s" % [role, str(entry.get("source", SOURCE_OWN)), str(entry.get("layer", -1)), str(entry.get("repeat_px", 0.0)), str(entry.get("mid", Color.BLACK)), str(entry.get("tint", Color.WHITE))])
-	for key: String in ["kerb", "gutter", "joint", "ao", "lawn_mottle", "paving_variation", "verge_layer", "verge_strength", "wet_patches", "yard_patch"]:
+	for key: String in ["kerb", "gutter", "joint", "ao", "lawn_mottle", "paving_variation", "verge_layer", "verge_strength", "wet_patches", "yard_patch", "court_release"]:
 		parts.append("%s=%s" % [key, str(policy.get(key, 0.0))])
 	return ";".join(parts).sha256_text()
 
@@ -175,6 +183,7 @@ static func _service_courtyards() -> Dictionary:
 		"paved_stain_strength": 0.45,
 		"wet_patches": 0.0,
 		"yard_patch": {},
+		"court_release": COURT_KEEP,
 		"verge_layer": -1,
 		"verge_strength": 0.0,
 		"kerb_lod": 0.5,
@@ -378,6 +387,9 @@ static func _outer_wall() -> Dictionary:
 	# Keep grassy outskirts cobbles at walking scale. The old whole-tile grade
 	# neutralized its green joints by pushing the stones themselves lavender.
 	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 192.0, Color(0.573, 0.586, 0.543), 0.52, Color(1.34, 1.37, 1.43), LAYER_ROUND_COBBLE)
+	# Court setts along the walking lines, grassy outskirts cobbles in the
+	# corners nobody crosses (reviewed in S9, 2026-10-31).
+	p.court_release = COURT_TO_YARD
 	p.kerb = 0.70
 	p.verge_layer = LAYER_SCRUB
 	p.verge_strength = 0.70
