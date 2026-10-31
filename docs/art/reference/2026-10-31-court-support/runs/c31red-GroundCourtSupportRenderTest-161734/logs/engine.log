@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Intel - Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+
+PASS: finite native evidence directory is writable
+PASS: control: the stamped court's corner draws setts, not yard (18.59)
+PASS: control: the stamped court draws a kerb top on the yard beside it (166.6 vs 145.8)
+ERROR: FAIL: a released corner draws exactly the district yard (18.59)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportRenderTest.gd:43)
+       [1] _run (res://tools/tests/GroundCourtSupportRenderTest.gd:68)
+       [2] _render (res://tools/tests/GroundCourtSupportRenderTest.gd:99)
+ERROR: FAIL: no kerb draws beside a flush court (20.01)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportRenderTest.gd:43)
+       [1] _run (res://tools/tests/GroundCourtSupportRenderTest.gd:69)
+       [2] _render (res://tools/tests/GroundCourtSupportRenderTest.gd:99)
+PASS: the court's working middle keeps its setts (0.00)
+PASS: the walking line in from the passage keeps its setts (0.00)
+PASS: ground beyond the support ring is byte-identical
+Released edge columns: [703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703, 703]
+ERROR: FAIL: the released edge wanders instead of following a straight cell line
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportRenderTest.gd:43)
+       [1] _run (res://tools/tests/GroundCourtSupportRenderTest.gd:73)
+       [2] _render (res://tools/tests/GroundCourtSupportRenderTest.gd:99)
+GroundCourtSupportRenderTest: 6 passed, 3 failed

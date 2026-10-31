@@ -1,0 +1,19 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c31reg-PlazaBedUnderlayTest-160204-1",
+ "queued_seconds": 0.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 44.245,
+ "peak_rss_mb": 512,
+ "diagnostic_count": 4,
+ "diagnostics_head": [
+  "ERROR: FAIL: real generated bed topology and empty centrepiece match the rejected native image",
+  "ERROR: FAIL: unmodified generator island reproduces native urban6 care1 in all six bed cells",
+  "ERROR: FAIL: state0 bed underlay keeps tended urban ground only in state0; worn states use own plaza paving",
+  "ERROR: FAIL: state0 tended care is1 only in state0 and0 under every worn bed"
+ ]
+}
+--- stdout tail (3/4 lines) ---
+
+NATURAL_S6_UNDERLAY material=7 care=0.000 repave=7
+PlazaBedUnderlayTest: 35 passed, 4 failed

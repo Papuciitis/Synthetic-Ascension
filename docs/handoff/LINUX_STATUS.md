@@ -1,7 +1,97 @@
 # Linux production status
 
-Owner: Linux production worker. Updated 25 October 2026.
+Owner: Linux production worker. Updated 31 October 2026.
 Read [HANDOFF](../../HANDOFF.md) and [ART_STATUS](ART_STATUS.md) before working.
+
+## 31 October — District-fill courts made flush; S9 courts follow their use
+
+Claude took over the named ground priority at the human's request (Codex had been
+idle since 25 October; production `d7cfb52f` was already pushed). Attribution
+came first: a new headless map of the real district plans
+(`tools/dev/CityGroundRoleMapProbe`) shows the broad grey rectangle in the
+accepted S9 view, and the court in the S7 view, is the district-fill court.
+District fill is the most common chunk (40 of 91 in S9, 55 of 103 in S7), and
+every one stamps a centred 9–13 cell court of kerbed court setts. The same map
+shows 56 of 126 S9 household care pockets are perfect rectangles.
+
+The court stays that rectangle semantically (material, slots, walkability,
+doors, navigation and generator RNG unchanged). `decorate_urban_fill` now
+records its existing court and passage rects as metadata, and the
+presentation pass plans per-cell use support with `CityCourtSupport`. Walking
+lines run from every passage mouth and doorway into the court's working
+middle; they meander on a hashed field, and every entrance keeps a full
+landing. A small RG8 support map carries this to `ground_splat`.
+
+Every family's fill court is now flush paving: no kerb, top or gutter ring.
+Where a family's `court_release` allows it, released court pixels draw as the
+district yard on a meandering edge, and the setts that stay end in a narrow
+darker course. Paved stays paved, so `ground_air` is unaffected.
+
+Release is enabled only for **Outer Wall (S9A)**. The first pass released
+courts in every family, and the independent review accepted S9 but rejected
+S7: canal's coarse pale flags and a straight diagonal edge read as a mask
+wipe. Several families use setts or flags for both court and yard, so release
+there would draw two stone scales meeting on a mask. The new
+`tools/dev/CourtReleaseThemeSheet` renders every family's court both ways for
+the next decision. A moss-patch release was tried and dropped because it
+retraced the court rectangle.
+
+Household beds keep their square, wall-facing shape. They only gained an
+inner-corner fillet, so an L-shaped bed no longer leaves a square bite. A
+rounded, inward-wobbled bed was tried and reverted after review: it read as a
+blob and pulled the bed off the wall.
+
+Checks, all through the guard:
+
+- **GroundCourtSupportTest** 72/0 (planner, renderer contract, uniforms, six real S9 courts; stream rebuilds repeat support and care bytes).
+- **GroundCourtSupportRenderTest:** RED 8/4 on the old shader, GREEN 12/0.
+- **CityGroundCareRenderTest:** RED 53/1 without the fillet, GREEN 54/0.
+- **Owner suites:** DistrictGroundPolicy 298/0, WorldGroundSplat 63/0,
+  CityGenerationMaterial 0 failures, CitySegmentCoverage 166/0,
+  ThemeAtmosphereReceivers 43/0, ThemeAtmosphereDryReceiver 6/0.
+- **Earlier owners** on the first pass: CityGroundCare 150/0, CityGroundCareNatural
+  0 failures, PlazaPresentation 28124/0, CityDoorApproachGround 64/0,
+  DistrictFamilyVisual 143/0 and SiteWallContinuity 21547/0. None of these
+  reads the shader, the planner values or the new policy key.
+
+Two owner failures predate this work and fail identically on production
+`d7cfb52f`:
+
+- **CitySegmentCoverageTest 164/1.** Its S2 assertion still expected composed
+  reward-block paving, which `ca10bd7c` deliberately replaced with shared city
+  ground. The assertion is corrected.
+- **PlazaBedUnderlayTest 35/4.** Its pinned S6 seed-4 entry-court bed no longer
+  generates at (23,19); the cell now holds material 7 with no care. That is
+  generation drift after the plaza fixture was pinned, most likely from the
+  later street integration. It stays open, because re-pinning needs the plaza
+  lane's native reference.
+
+Native originals use Codex's GroundPavingPreview harness: production
+`d7cfb52f` before, the branch after. In both the S9 and S7 views, the plan,
+camera, material counts and care-mask hashes are identical before and after,
+with 0 failures and 0 save writes, and only court and bed pixels change.
+
+- **S9:** the setts now run from the north doorway into the middle and along
+  the passages; grassy cobbles fill the corners nobody crosses, and the kerb
+  ring is gone.
+- **S7:** keeps its setts in a flush court without the gutter ring.
+- **GPU cost** (GroundShaderCostProbe at the reviewed S9 view, 1920×1080,
+  ground only, UHD 620): 4.57 ms against 4.26 ms for production, **+0.31 ms** (the first pass measured +0.33 to +0.36 ms at three points; loader parity between variants was not separately controlled). This is a real cost to weigh: a breakdown run (court read against bed fillet) was stopped and remains to be done.
+- **Independent re-review of the final images:** ACCEPT WITH NOTES. S9, S7 and the beds are accepted. In S9 the release edge still runs straight along cell lines in places and cuts through stones, and the darker course is too faint to see. The next step is snapping to whole setts, or a visible contact course, before enabling release for more families.
+
+The [evidence packet](../art/reference/2026-10-31-court-support/README.md)
+holds every native original, map, sheet, run record and review, including
+the rejected first pass.
+
+Next:
+
+- Enable release family by family from the theme sheet, with native review.
+- Snap release edges to whole stones (needs a per-stone map of the sett art).
+- Give beds wall-aware contact and planting.
+- Formal plazas, objective/arena courts and broad building-lot rectangles
+  (S7's mossy yard between lots) remain open.
+
+These static views do not establish combat, motion or whole-game performance.
 
 ## 25 October — Exported Windows run blockers fixed and packaged
 

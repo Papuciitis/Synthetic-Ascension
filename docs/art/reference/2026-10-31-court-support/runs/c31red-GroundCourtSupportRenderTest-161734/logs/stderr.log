@@ -1,0 +1,18 @@
+ERROR: FAIL: a released corner draws exactly the district yard (18.59)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportRenderTest.gd:43)
+       [1] _run (res://tools/tests/GroundCourtSupportRenderTest.gd:68)
+       [2] _render (res://tools/tests/GroundCourtSupportRenderTest.gd:99)
+ERROR: FAIL: no kerb draws beside a flush court (20.01)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportRenderTest.gd:43)
+       [1] _run (res://tools/tests/GroundCourtSupportRenderTest.gd:69)
+       [2] _render (res://tools/tests/GroundCourtSupportRenderTest.gd:99)
+ERROR: FAIL: the released edge wanders instead of following a straight cell line
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportRenderTest.gd:43)
+       [1] _run (res://tools/tests/GroundCourtSupportRenderTest.gd:73)
+       [2] _render (res://tools/tests/GroundCourtSupportRenderTest.gd:99)

@@ -1,0 +1,101 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: support covers the court and its one-cell ring ([P: (9, 9), S: (13, 13)])
+PASS: one support byte per region cell
+PASS: the court's working middle keeps its setts
+PASS: the walking line from the passage mouth keeps its setts
+PASS: the walking line from the doorway keeps its setts
+PASS: unused far corners hand their ground back (0, 0)
+PASS: ring cells mirror the court cell beside them, so used edges never recede
+ERROR: FAIL: a two-entrance court releases some, not most, of its ground (94 cells)
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportTest.gd:34)
+       [1] _test_planner (res://tools/tests/GroundCourtSupportTest.gd:70)
+       [2] _run (res://tools/tests/GroundCourtSupportTest.gd:41)
+PASS: the plan is deterministic
+PASS: the ring is clipped to the chunk
+PASS: an empty court plans nothing
+PASS: untouched ground presents fully and may draw kerbs
+PASS: the support pass writes no coverage, brightness, stain, care or occlusion byte
+PASS: every semantic material is unchanged
+PASS: the court middle presents fully
+PASS: an unused court corner is released
+PASS: no kerb draws in the court or its ring
+PASS: ground beyond the ring is untouched
+PASS: repainting the same court is idempotent
+PASS: a new chunk base forgets the old court support
+PASS: clear() resets the support map
+PASS: no district yard slot: support stays off
+PASS: the fallback is the district yard's slot
+PASS: only road and lane slots follow support ([0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+PASS: the legacy palette keeps support off
+PASS: the reviewed S9 chunk (-2,-1) is district fill
+PASS: (-2, -1) records its court for presentation
+ERROR: FAIL: (-2, -1) court stays a full semantic rectangle of court setts
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportTest.gd:34)
+       [1] _test_real_district_fill (res://tools/tests/GroundCourtSupportTest.gd:208)
+       [2] _run (res://tools/tests/GroundCourtSupportTest.gd:44)
+PASS: (-2, -1) court has passage and doorway entrances (5)
+PASS: (-2, -1) every passage mouth and doorway keeps its setts
+PASS: (-2, -1) keeps most of its court (23 of 110 released)
+PASS: (-2, -1) streams back with identical support and care bytes
+PASS: (-18, 3) records its court for presentation
+ERROR: FAIL: (-18, 3) court stays a full semantic rectangle of court setts
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportTest.gd:34)
+       [1] _test_real_district_fill (res://tools/tests/GroundCourtSupportTest.gd:208)
+       [2] _run (res://tools/tests/GroundCourtSupportTest.gd:44)
+PASS: (-18, 3) court has passage and doorway entrances (4)
+PASS: (-18, 3) every passage mouth and doorway keeps its setts
+PASS: (-18, 3) keeps most of its court (17 of 81 released)
+PASS: (-18, 3) streams back with identical support and care bytes
+PASS: (-17, 0) records its court for presentation
+ERROR: FAIL: (-17, 0) court stays a full semantic rectangle of court setts
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportTest.gd:34)
+       [1] _test_real_district_fill (res://tools/tests/GroundCourtSupportTest.gd:208)
+       [2] _run (res://tools/tests/GroundCourtSupportTest.gd:44)
+PASS: (-17, 0) court has passage and doorway entrances (5)
+PASS: (-17, 0) every passage mouth and doorway keeps its setts
+PASS: (-17, 0) keeps most of its court (22 of 110 released)
+PASS: (-17, 0) streams back with identical support and care bytes
+PASS: (-17, 4) records its court for presentation
+ERROR: FAIL: (-17, 4) court stays a full semantic rectangle of court setts
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportTest.gd:34)
+       [1] _test_real_district_fill (res://tools/tests/GroundCourtSupportTest.gd:208)
+       [2] _run (res://tools/tests/GroundCourtSupportTest.gd:44)
+PASS: (-17, 4) court has passage and doorway entrances (5)
+PASS: (-17, 4) every passage mouth and doorway keeps its setts
+PASS: (-17, 4) keeps most of its court (41 of 144 released)
+PASS: (-17, 4) streams back with identical support and care bytes
+PASS: (-17, 5) records its court for presentation
+ERROR: FAIL: (-17, 5) court stays a full semantic rectangle of court setts
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportTest.gd:34)
+       [1] _test_real_district_fill (res://tools/tests/GroundCourtSupportTest.gd:208)
+       [2] _run (res://tools/tests/GroundCourtSupportTest.gd:44)
+PASS: (-17, 5) court has passage and doorway entrances (4)
+PASS: (-17, 5) every passage mouth and doorway keeps its setts
+PASS: (-17, 5) keeps most of its court (40 of 121 released)
+PASS: (-17, 5) streams back with identical support and care bytes
+PASS: (-15, 5) records its court for presentation
+ERROR: FAIL: (-15, 5) court stays a full semantic rectangle of court setts
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/GroundCourtSupportTest.gd:34)
+       [1] _test_real_district_fill (res://tools/tests/GroundCourtSupportTest.gd:208)
+       [2] _run (res://tools/tests/GroundCourtSupportTest.gd:44)
+PASS: (-15, 5) court has passage and doorway entrances (7)
+PASS: (-15, 5) every passage mouth and doorway keeps its setts
+PASS: (-15, 5) keeps most of its court (13 of 143 released)
+PASS: (-15, 5) streams back with identical support and care bytes
+PASS: real courts release unused corners (156 of 709 cells)
+GroundCourtSupportTest: 56 passed, 7 failed

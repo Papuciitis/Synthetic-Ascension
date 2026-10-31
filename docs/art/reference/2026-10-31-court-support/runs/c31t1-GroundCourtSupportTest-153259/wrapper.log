@@ -1,0 +1,22 @@
+{
+ "run_root": "/home/user/Nauris/Synthetic-Ascension/.superpowers/claude-city-20261021/runs/c31t1-GroundCourtSupportTest-153259-1",
+ "queued_seconds": 0.0,
+ "stop_reason": "nonzero_exit",
+ "actual_exit": 1,
+ "elapsed_seconds": 54.619,
+ "peak_rss_mb": 625,
+ "diagnostic_count": 7,
+ "diagnostics_head": [
+  "ERROR: FAIL: a two-entrance court releases some, not most, of its ground (94 cells)",
+  "ERROR: FAIL: (-2, -1) court stays a full semantic rectangle of court setts",
+  "ERROR: FAIL: (-18, 3) court stays a full semantic rectangle of court setts",
+  "ERROR: FAIL: (-17, 0) court stays a full semantic rectangle of court setts",
+  "ERROR: FAIL: (-17, 4) court stays a full semantic rectangle of court setts",
+  "ERROR: FAIL: (-17, 5) court stays a full semantic rectangle of court setts",
+  "ERROR: FAIL: (-15, 5) court stays a full semantic rectangle of court setts"
+ ]
+}
+--- stdout tail (3/59 lines) ---
+PASS: (-15, 5) streams back with identical support and care bytes
+PASS: real courts release unused corners (156 of 709 cells)
+GroundCourtSupportTest: 56 passed, 7 failed

@@ -1,0 +1,37 @@
+CityGroundCareRenderTest [native]: "stop_reason":"nonzero_exit", CityGroundCareRenderTest: 53 passed, 1 failed THERMAL c31v2red-CityGroundCareRenderTest-171140 completed peak 77.0
+      1 "ERROR: FAIL: an L-shaped bed rounds into its inner corner instead of a square bite (corner 0.421, middle 0.509)"
+c31v2red done
+GroundCourtSupportRenderTest [native]: "stop_reason":"nonzero_exit", GroundCourtSupportRenderTest: 8 passed, 4 failed THERMAL c31v2red2-GroundCourtSupportRenderTest-171248 completed peak 79.0
+      1 "ERROR: FAIL: and its flush court draws no kerb ring (19.84)"
+      1 "ERROR: FAIL: a released corner draws exactly the district yard (19.51)",
+      1 "ERROR: FAIL: no kerb draws beside a flush court (20.01)",
+      1 "ERROR: FAIL: the released edge wanders instead of following a straight cell line",
+c31v2red2 done
+5d70e54e990b162aff7bd799d0ef9358d4bb450c0dcca04b6d61d7335cf80dc9  /var/tmp/sa-c31-yards/core/systems/world/ground/ground_splat.gdshader
+GroundCourtSupportRenderTest [native]: "stop_reason":"nonzero_exit", GroundCourtSupportRenderTest: 11 passed, 1 failed THERMAL c31v2green-GroundCourtSupportRenderTest-171404 completed peak 83.0
+      1 "ERROR: FAIL: a family that keeps its court keeps the setts in every corner (1.90)"
+CityGroundCareRenderTest [native]: "stop_reason":"completed", CityGroundCareRenderTest: 54 passed, 0 failed THERMAL c31v2green-CityGroundCareRenderTest-171522 completed peak 74.0
+ThemeAtmosphereReceiversTest [native]: "stop_reason":"completed", ThemeAtmosphereReceiversTest: 43 passed, 0 failed THERMAL c31v2green-ThemeAtmosphereReceiversTest-171634 completed peak 79.0
+ThemeAtmosphereDryReceiverTest [native]: "stop_reason":"completed", ThemeAtmosphereDryReceiverTest: 6 passed, 0 failed THERMAL c31v2green-ThemeAtmosphereDryReceiverTest-171737 completed peak 74.0
+GroundCourtSupportTest [headless]: "stop_reason":"completed", GroundCourtSupportTest: 72 passed, 0 failed THERMAL c31v2green-GroundCourtSupportTest-171838 completed peak 83.0
+DistrictGroundPolicyTest [headless]: "stop_reason":"completed", DistrictGroundPolicyTest: 298 passed, 0 failed THERMAL c31v2green-DistrictGroundPolicyTest-171947 completed peak 74.0
+WorldGroundSplatTest [headless]: "stop_reason":"completed", WorldGroundSplatTest: 63 passed, 0 failed THERMAL c31v2green-WorldGroundSplatTest-172201 completed peak 72.0
+c31v2green done
+ "stop_reason": "completed",
+CityGroundReview: segment=9 seed=16102026 context=true frames=0 fires=0 hits=0 failures=0
+THERMAL c31v2-after-s9 completed peak 72.0
+c31v2-after-s9 done
+ "stop_reason": "completed",
+CityGroundReview: segment=7 seed=16102028 context=true frames=0 fires=0 hits=0 failures=0
+THERMAL c31v2-after-s7 completed peak 76.0
+c31v2-after-s7 done
+CourtReleaseThemeSheet [preview]: "stop_reason":"completed",  THERMAL c31v2sheet-CourtReleaseThemeSheet-173308 completed peak 76.0
+c31v2sheet done
+ "stop_reason": "completed",
+THERMAL c31v2-cost-s9 completed peak 81.0
+CityGenerationMaterialTest [headless]: "stop_reason":"completed", CityGenerationMaterialTest: failures=0 THERMAL c31v2owners-CityGenerationMaterialTest-173955 completed peak 86.0
+CitySegmentCoverageTest [headless]: "stop_reason":"completed", CitySegmentCoverageTest: 166 passed, 0 failed THERMAL c31v2owners-CitySegmentCoverageTest-174052 completed peak 72.0
+GroundCourtSupportRenderTest [native]: "stop_reason":"completed", GroundCourtSupportRenderTest: 12 passed, 0 failed THERMAL c31v2owners-GroundCourtSupportRenderTest-174220 completed peak 78.0
+c31v2owners done
+v2 chain done
+chain exit 0
