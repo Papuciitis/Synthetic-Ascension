@@ -66,3 +66,7 @@ Use [capture readiness](../audits/2026-11-04-trailer-capture-readiness.md) for p
 staging, retained-frame memory and offline clock traps; do not turn guarded 20-FPS
 stills into smooth-footage claims. Stop at these six shots; fourteen-district
 coverage and a full late-run climax are outside this first capture session.
+
+- HUD framing: keep UI Scale **1.0**. Its [application](../../core/settings/SettingsRuntimeApplier.gd) changes the whole root viewport's content scale; it is not a HUD-only compact setting.
+- With [default bindings](../../core/settings/InputActionCatalog.gd), **H** temporarily expands the [Exit Rite checklist](../../ui/controllers/HudGateChecklistController.gd); release it and let its three-second expansion settle. **Tab/I** toggles [inventory/Run Sheet management](../../ui/controllers/HudBagController.gd), which pauses gameplay through [HUD](../../ui/screens/hud.gd). Neither collapses the left equipment/augment dashboard.
+- Rehearse genuine equipped, mid-run combat so the dashboard carries the build rather than a blank opening loadout. Log actual gear, preserve the causal before/after rule, and never stage impossible equipment. The newer export-fix capture still shows the dashboard behind its cards; it does not establish a smaller combat HUD.
