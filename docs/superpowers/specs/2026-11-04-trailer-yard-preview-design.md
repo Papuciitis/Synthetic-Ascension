@@ -35,6 +35,14 @@ formal courts are unaffected. Coverage maps, slots and all light-map channels
 remain byte-identical. A separate single-channel wrapped texture carries the
 trial and resets with its chunk. Repainting max-composites deterministically.
 
+The wrapped mask has a small data owner, `CityYardSupportMap.gd`, independent
+of Game, texture loaders and the renderer. It accepts one already-composited
+row-major proposed field plus semantic IDs and care bytes. Replacing a chunk
+clears stale bytes before clipping to index 6 / zero care; the caller combines
+all household proposals by maximum before replacement. This split lets the
+state/reset contract be tested with actual Godot byte arrays and Images without
+loading the city. It does not replace the renderer or native acceptance tests.
+
 Use only S7's already available subdued damp-moss material for this first trial.
 Do not change scale, grade, actors, pickups or the accepted fractional care
 blend at the same time. The new path defaults off, enabled only by

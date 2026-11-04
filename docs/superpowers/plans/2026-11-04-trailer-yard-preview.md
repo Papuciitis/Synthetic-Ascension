@@ -44,14 +44,38 @@ cells_per_chunk: int) -> PackedByteArray`, using `footprint_px`, `doors`,
 - [ ] Add independent edge-case fixtures and verify input/RNG preservation.
 - [ ] Commit helper/tests with actual results; do not claim native visual fit.
 
-## Task 2: separate opt-in presentation mask
+## Task 2a: independent wrapped mask data
+
+**Files:** create `core/systems/world/ground/CityYardSupportMap.gd`,
+`tools/tests/CityYardSupportMapTest.gd` and a reproducible Windows data-only
+launcher `tools/tests/run_yard_support_data_tests.ps1`.
+
+**Interfaces:** fixed 256x256 byte buffer; `replace_chunk(coord: Vector2i,
+cells_per_chunk: int, proposed: PackedByteArray, semantic: PackedInt32Array,
+care: PackedByteArray) -> bool`; `clear_rect(rect: Rect2i)`, `clear()`,
+`signature(coord: Vector2i, cells_per_chunk: int) -> PackedByteArray`, and
+`snapshot_image() -> Image` for the future L8 texture upload. Proposed input is
+already the maximum of every household field. Return false on malformed input;
+clear a valid target chunk on malformed fields so stale preview cannot survive.
+
+- [ ] Write standalone tests first and run a real absent-owner RED assertion.
+- [ ] Implement index-6/zero-care clipping, bounded clear/reset, negative and
+  nondivisor wrapping, idempotent replacement, and independent snapshots.
+- [ ] Prove input arrays unchanged and old aliased chunks cleared. Run GREEN.
+- [ ] Add a Windows launcher copying only explicitly named data helper/test
+  files into a fresh project with no autoloads/assets, preserving hashes/logs,
+  refusing another engine and propagating native/guard/diagnostic failures.
+- [ ] Test real launcher success plus no-overwrite behavior, then review/commit.
+
+## Task 2b: separate opt-in presentation mask
 
 **Files:** modify `GroundSplatRenderer.gd`, `ground_splat.gdshader` and
 `ChunkManager.gd`; create a focused renderer regression scene/test.
 
 **Interface:** `paint_yard_support(coord: Vector2i, specs: Array[Dictionary])`
-uses Task 1 weights after household care; probes expose a byte signature for
-verification. Default-off texture sampling must not alter the existing path.
+uses Task 1 weights and Task 2a storage after household care; probes expose a
+byte signature for verification. Default-off texture sampling must not alter
+the existing path.
 
 - [ ] Write/run RED for independent mask, semantic/care vetoes, idempotence,
   chunk reset, wrap, and unchanged coverage/light/slot signatures.
