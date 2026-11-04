@@ -18,6 +18,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          sparse-checkout: |
+            assets
+            autoload
+            core
+            data
+            effects
+            scenes
+            spells
+            tools
+            ui
 
       - name: Install Godot 4.7.2 and matching export templates
         run: |
@@ -44,7 +54,6 @@ jobs:
 
       - name: Import clean source and run district policy and parse tests
         run: |
-          touch docs/.gdignore
           # A fresh editor starts its theme and autoload scan before generated imports exist.
           timeout 12m godot --headless --path "$GITHUB_WORKSPACE" --import 2>&1 | tee "$RUNNER_TEMP/bootstrap-import.log"
           sed -E 's/\x1b\[[0-?]*[ -/]*[@-~]//g' "$RUNNER_TEMP/bootstrap-import.log" \
@@ -106,7 +115,7 @@ jobs:
               grep -E '^PackedFrontEndFlowTest: [1-9][0-9]* passed, 0 failed$' "$log"
             else
               timeout 2m "$linux" --headless --verbose --quit-after 180 2>&1 | tee "$log"
-              grep -F 'Loading resource: res://ui/screens/MainMenu.tscn' "$log"
+              grep -F "Completed load for: 'res://ui/screens/MainMenu.tscn' remapped " "$log"
             fi
             if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$log"; then exit 1; fi
           done
