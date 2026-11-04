@@ -32,6 +32,7 @@ for review in normal small; do
         --audio-driver Dummy --fixed-fps 20 --flush-output \
         res://tools/dev/CityBlockPlayablePreview.tscn -- \
         --visible --segment=7 --world-seed=16102028 --ground-context=-1632,1304 \
+        --ground-player=-1184,1312 \
         "--review=$review" "--out=$case_dir" >"$case_dir/stdout.log" 2>&1; then
         :
     else
@@ -59,7 +60,10 @@ for review, size in (("normal", (1280, 720)), ("small", (960, 540))):
 
     log = (case_dir / "stdout.log").read_text(encoding="utf-8", errors="replace")
     log = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", log)
-    require(not re.search(r"^\s*(?:(?:SCRIPT|USER) )?(?:ERROR|WARNING):", log, re.MULTILINE),
+    # The Xvfb driver cannot switch V-Sync. The still probe uses fixed steps.
+    expected_vsync = "WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver."
+    other_lines = [line for line in log.splitlines() if line.strip() != expected_vsync]
+    require(not any(re.match(r"\s*(?:(?:SCRIPT|SHADER|USER) )?(?:ERROR|WARNING):", line) for line in other_lines),
             "engine diagnostics in stdout.log")
     summary = "CityGroundReview: segment=7 seed=16102028 context=true frames=0 fires=0 hits=0 failures=0"
     require(log.splitlines().count(summary) == 1, "missing clean staged-ground completion summary")
@@ -72,6 +76,9 @@ for review, size in (("normal", (1280, 720)), ("small", (960, 540))):
             and info["ground_context_world_px"] == [-1632, 1304]
             and info["camera"]["position"] == "(-1632.0, 1304.0)"
             and info["camera"]["window"] == str(size), "wrong scene, location or window size")
+    player_x, player_y = info["player_world_px"]
+    require(abs(player_x + 1184) <= 64 and abs(player_y - 1312) <= 64,
+            "player did not stage on the selected street")
     require(info["save_writes"] == 0 and info["failures"] == 0 and info["scripted_input"]
             and not info["ambient_spawner"] and not info["occupied_comparison"] and not info["reduced_motion"],
             "unexpected save write, failure or capture mode")

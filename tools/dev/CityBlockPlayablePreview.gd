@@ -3,6 +3,7 @@ extends "res://tools/dev/EliteCrowdFightPreview.gd"
 ## -- --review=normal|small|reduced|before [--segment=2] [--world-seed=16102026] [--visible] [--playable]
 ## L2: --ground-review [--ground-fight] for an explicit home, or
 ## --ground-context=<world-px-x>,<world-px-y> for real wild/S7 ground.
+## --ground-player=<world-px-x>,<world-px-y> stages the actor separately from the ground camera.
 
 const KIT := preload("res://scenes/world/buildings/CityBlockKit.gd")
 const GROUND_ART := preload("res://core/systems/world/WorldArt.gd")
@@ -18,6 +19,8 @@ var _ground_review := false
 var _ground_fight := false
 var _has_ground_context := false
 var _ground_context := Vector2.ZERO
+var _has_ground_player := false
+var _ground_player := Vector2.ZERO
 var _target_building_id := 0
 var _target_chunk := Vector2i.ZERO
 var _has_target_chunk := false
@@ -57,6 +60,12 @@ func _enter_tree() -> void:
 				_ground_context = Vector2(float(point_parts[0]),float(point_parts[1]))
 				_has_ground_context = true
 			else: _fail("Ground context requires two explicit world-pixel coordinates")
+		if arg.begins_with("--ground-player="):
+			var player_parts := arg.trim_prefix("--ground-player=").split(",")
+			if player_parts.size() == 2 and player_parts[0].is_valid_float() and player_parts[1].is_valid_float():
+				_ground_player = Vector2(float(player_parts[0]), float(player_parts[1]))
+				_has_ground_player = true
+			else: _fail("Ground player requires two explicit world-pixel coordinates")
 		if arg.begins_with("--target-building-id="): _target_building_id = int(arg.trim_prefix("--target-building-id="))
 		if arg.begins_with("--target-chunk="):
 			var parts := arg.trim_prefix("--target-chunk=").split(",")
@@ -68,6 +77,8 @@ func _enter_tree() -> void:
 	KIT.preview_original_materials = _review == "before"
 
 func _run() -> void:
+	if _has_ground_player and not _has_ground_context:
+		_fail("Ground player requires an explicit ground camera")
 	if _ground_review and (_hide_district_details or _district_common_base or _playable):
 		_fail("Ground review requires normal optional props, the production district and scripted capture mode")
 	if _ground_review and not _has_ground_context and _target_building_id <= 0:
@@ -123,7 +134,7 @@ func _run() -> void:
 				break
 	# Initial staging only. All recorded traversal uses production input,
 	# CharacterBody2D collision, and the actual Area2D entry/exit signals.
-	_player.global_position = destination if _has_ground_context else destination + Vector2(0, 600)
+	_player.global_position = _ground_start() if _has_ground_context else destination + Vector2(0, 600)
 	if _has_ground_context:
 		_camera.global_position = destination
 		_camera.reset_smoothing()
@@ -300,6 +311,9 @@ func _matches_volume(volume: IndoorVolume, secondary_id: int) -> bool:
 		return volume.building_id == _target_building_id and float(volume.get("_presentation_width")) > 0.0
 	return volume.secondary_objective_id == secondary_id
 
+func _ground_start() -> Vector2:
+	return _ground_player if _has_ground_player else _ground_context
+
 func _reload_ground_context() -> void:
 	var coord := _chunks._world_to_chunk(_ground_context)
 	if not _chunks._chunks.has(coord):
@@ -332,7 +346,7 @@ func _capture_ground_review() -> void:
 		await _shutdown()
 		return
 	if _has_ground_context:
-		_player.global_position = _free_spawn_position(_ground_context)
+		_player.global_position = _free_spawn_position(_ground_start())
 		_camera.global_position = _ground_context
 		_connect_evidence_events()
 	else:
@@ -387,6 +401,7 @@ func _capture_ground_review() -> void:
 	if security_remaining != 0: _fail("Ground-review context activated unexpected local security")
 	var info := {"review":_review,"capture_scene":"res://tools/dev/CityBlockPlayablePreview.tscn","scene":"res://scenes/game.tscn","args":OS.get_cmdline_user_args(),"seed":_city_world_seed,"attempt_seed":_city_world_seed,"segment":_city_segment,"theme":String(SegmentThemePicker.get_theme(_city_segment,_city_world_seed).id),"ground_review":true,"ground_context_world_px":[_ground_context.x,_ground_context.y] if _has_ground_context else [],"occupied_comparison":_ground_fight,"player_god_mode":true,"scripted_input":true,"ambient_spawner":false,"controlled_enemies":_ground_fight,"local_security":0,"fixed_camera":true,"normal_hud":true,"optional_details_hidden":false,"image_size":str(get_window().size),"reduced_motion":_reduced_motion,"simulation_fight_seconds":_combat_time,"requested_simulation_seconds":5.0 if _ground_fight else 0.0,"initial_fight_population":_initial_population,"weapon_fires":_weapon_fires,"hits":_player_hits,"deaths":_deaths,"max_projectiles":_max_projectiles,"frames":_capture_info,"captured_frames":_pixels.size(),"wall_seconds":wall_seconds,"route":_route_notes,"save_writes":writes,"failures":_failures,"limits":"Scripted native ground review: player god mode, ambient spawner/encounter beats disabled, controlled real enemies, production attacks/AI/projectiles/HUD, and streaming frozen after the explicit reload. Initial placement is staged at a free cell. Not continuous human play, a balance/performance test or whole-street/roof-depth acceptance."}
 	info.merge(_district_evidence(),true)
+	info["player_world_px"] = [_player.global_position.x, _player.global_position.y]
 	info["local_security"] = security_remaining
 	var file := FileAccess.open(_out.path_join("capture-info.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify(info,"\t"))
