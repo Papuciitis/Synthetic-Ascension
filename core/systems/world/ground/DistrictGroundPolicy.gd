@@ -330,7 +330,7 @@ static func _canal_services() -> Dictionary:
 	# Quay yards: smaller, darker mossy flags (the first pass's big pale tiles
 	# competed with the actor and lost the damp green setting), damp moss
 	# settled along the wall feet and in enclosed corners.
-	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 224.0, Color(0.50, 0.535, 0.485), 0.40, Color(1.32, 1.31, 1.55), LAYER_MOSSY_FLAGS)
+	p.roles[ROLE_YARD] = _role(SOURCE_LAYER, 192.0, Color(0.50, 0.535, 0.485), 0.40, Color(1.32, 1.31, 1.55), LAYER_MOSSY_FLAGS)
 	p.roles[ROLE_SOIL] = _role(SOURCE_OWN, 384.0, Color(0.355, 0.36, 0.31), 0.50, Color(1.04, 1.08, 1.02))
 	p.yard_patch = _placed_patch(LAYER_DAMP_MOSS, 0.49, 320.0, 0.55, Color(1.38, 1.62, 2.27), Color(0.43, 0.47, 0.37), -0.9, 0.8, 0.0, 0.03, 0.26)
 	p.ao = 0.28
