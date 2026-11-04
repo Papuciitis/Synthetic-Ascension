@@ -449,6 +449,11 @@ func _ground_evidence(coord: Vector2i) -> Dictionary:
 	for key: StringName in [&"slot_index",&"slot_layer",&"slot_repeat_px",&"cared_lawn_layer",&"cared_lawn_repeat_px",&"policy_enabled",&"slot_role",&"ao_strength",&"world_tint",&"overgrowth_a",&"overgrowth_b"]:
 		var value: Variant = shader.get_shader_parameter(key)
 		uniforms[String(key)] = Array(value) if value is PackedFloat32Array else str(value)
+	var role_samples: PackedVector4Array = shader.get_shader_parameter("role_sample")
+	var role_sample_rows: Array = []
+	for sample: Vector4 in role_samples:
+		role_sample_rows.append([sample.x, sample.y, sample.z, sample.w])
+	uniforms["role_sample"] = role_sample_rows
 	var source_records: Array = []
 	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(GROUND_ART.GROUND_ARRAY_MANIFEST_PATH)) if FileAccess.file_exists(GROUND_ART.GROUND_ARRAY_MANIFEST_PATH) else null
 	if manifest is Dictionary:
