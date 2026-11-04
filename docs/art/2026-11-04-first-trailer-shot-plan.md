@@ -16,14 +16,22 @@ how the player fights. Follow [the game vision](../SYNTHETIC_ASCENSION_VISION.md
 | 23–32 | Move into one real active objective beat: Ward Vigil, District Relay or Breach Seal, whichever is visually strongest in the captured run. Hold an actual tell, evasive response and impact. | Pressure escalates and the build meets a concrete problem. Completion is optional; never imply it from unrelated cuts. |
 | 32–36 | Finish on the clearest earned payoff from that run; cut on impact to the existing game title or plain “Synthetic Ascension” text. | Leave the game's name and the changed build in memory. No invented release date, store status or CTA. |
 
-Candidate for shots 08–23: movement banking Momentum followed by a Manifestation
-spending it. Existing rules include [Pilgrim's Momentum](../../effects/manifestations/logic/PilgrimsMomentum.gd)
-and [Sunder Wake](../../data/manifestations/ManifestationCatalog.gd); the
-[HUD resource owner](../../ui/controllers/HudManifestationController.gd) can expose the change.
-This is a source-backed candidate, not verified trailer-ready build footage.
-Choose the actual earned item after a short rehearsal; no full multi-rule engine
-is assumed ready. If the rule cannot be shown clearly, capture another genuine
-rule rather than labelling ordinary weapon damage as its result.
+Preferred candidate for shots 08–23: one genuinely acquired
+[Sunder Wake](../../effects/manifestations/logic/SunderWake.gd). Shared Momentum
+already fills from travel with this rule alone. Release attack while banking,
+then click once while still moving, aiming at enemies on clear visible ground:
+show the [HUD resource spend](../../ui/controllers/HudManifestationController.gd)
+and immediate tear at the aim point together. Prefer a full bank for the take;
+do not describe this as a projectile-impact trigger.
+
+[Pilgrim's Momentum](../../effects/manifestations/logic/PilgrimsMomentum.gd)
+alone is a fallback: show travel, full bank, TWICE and the delayed echo. The two
+rules compete for the same bank in equipment-slot order; do not promise an echo
+and tear together. A merge preserves one rule and can bank the other as an
+imprint, so inspect what actually became active. See the
+[source-backed acquisition and capture recipe](../audits/2026-11-04-trailer-build-feasibility.md).
+Neither named roll nor readable footage is verified. Choose the actual earned
+item after rehearsal; if it cannot be shown clearly, film another genuine rule.
 
 ## Capture conditions and editorial controls
 

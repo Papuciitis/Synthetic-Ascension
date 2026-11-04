@@ -83,7 +83,7 @@ static func _ensure_built() -> void:
 		ManifestationDef.new(
 			&"sunder_wake",
 			"Sunder Wake",
-			"Attacking spends all Momentum and tears a shockwave out of the ground where it lands.",
+			"Attacking spends all Momentum and tears a shockwave out of the ground at your aim point.",
 			[&"momentum"] as Array[StringName],
 			[SLOT_MOVE, SLOT_OFFHAND, SLOT_RING] as Array[int],
 			preload("res://effects/manifestations/logic/SunderWake.gd"),
