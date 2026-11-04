@@ -8,7 +8,11 @@ Linux to take the heavier implementation, testing and native capture work.
 under overnight delegation, committed a default-off, single-household S7 yard
 presentation trial at `6de56bed`. Small data/native fixture checks pass; actual
 generated Game appearance/traversal/cost and whole-project parse remain open.
-The full-project startup gate refused the parse run before engine launch.
+The latest [Windows checks](docs/audits/2026-11-04-trailer-resume/README.md)
+stopped the isolated house import at its memory cap and refused the full-project
+parse before engine launch. The first trailer pilot uses ordinary gameplay with
+the yard preview off, so it can be recorded separately on a machine that can
+run the game.
 Read [Windows status](docs/handoff/ART_STATUS.md) for scope, proof and the next
 native decision, plus the [first-trailer shot plan](docs/art/2026-11-04-first-trailer-shot-plan.md).
 Work stays on local `codex/overnight-ground-verification`; no push, shared merge

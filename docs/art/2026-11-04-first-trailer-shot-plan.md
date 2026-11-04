@@ -5,6 +5,23 @@ autonomous work, not a newly approved human vision or a claim that footage exist
 Promise: an inhabited city under horde pressure, with equipment choices changing
 how the player fights. Follow [the game vision](../SYNTHETIC_ASCENSION_VISION.md).
 
+## Record one pilot first
+
+Open the current source project in Godot and run the main scene on a machine
+with enough memory. The [project README](../../README.md) has the Linux launch
+and import commands. Leave `SA_YARD_SUPPORT_PREVIEW` unset for the ordinary run.
+The [Windows playtest repair](../handoff/LINUX_STATUS.md#25-october--exported-windows-run-blockers-fixed-and-packaged)
+describes a separate, older ZIP; pulling this branch does not replace a local
+EXE. The current Windows source run still needs its launch check.
+
+Record the game window and game audio for 8–15 seconds of ordinary street
+combat. Check the file is 1920×1080. Pick a street where the player, enemy
+wind-up and escape lane read in one frame.
+Play the recording back at full size and at 960×540. Check that the player and
+the enemy tell stay easy to track, the image moves evenly, and a hit is audible
+over the music. Keep that setup for the remaining takes if it passes. Choose a
+clearer location or steadier recording rate if it does not.
+
 ## Six shots to collect in the first practical session
 
 | Edit time | Capture and framing | What the cut communicates |
@@ -66,10 +83,13 @@ provide scoped street/interior/collection composition references, not approved
 support readable ancestry/path and three-card UI; use a card insert only if that
 actual choice belongs to the filmed build. Do not spend this first trailer explaining every menu.
 
-Ground helper 82/0, map 69/0 and renderer-subset 60/0 checks are data evidence;
-the helper/map remain unwired at this plan's authoring and no new Game pixels are accepted.
-Fresh normal/small Game review of the target yard, memory headroom, real-time
-capture pacing, audio and a genuinely readable before/after build remain gates.
+The [yard preview](reference/2026-11-04-yard-support-fixture/README.md) now has
+an opt-in S7 path. The isolated material test showed that the treatment changes
+the intended yard pixels and leaves road, footway and indoor floor
+controls alone. It does not establish how the yard reads in the generated city.
+Review the target in the actual game at both sizes before filming with it.
+The ordinary-run pilot can be judged with the preview off. Real-time pacing,
+audio and a readable before/after build still need to be checked in footage.
 Use [capture readiness](../audits/2026-11-04-trailer-capture-readiness.md) for probe
 staging, retained-frame memory and offline clock traps; do not turn guarded 20-FPS
 stills into smooth-footage claims. Stop at these six shots; fourteen-district

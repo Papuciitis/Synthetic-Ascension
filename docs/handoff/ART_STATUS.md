@@ -35,11 +35,18 @@ The next visual decision needs one real generated S7 household, its recorded
 chunk/visual seed, matched1280×720 and960×540 originals, mask view and real
 door/passage/reload controls. Do not change material scale/grade at the same time.
 
-The [36-second first-trailer plan](../art/2026-11-04-first-trailer-shot-plan.md)
-uses genuine combat, a real equipment decision and its visible consequence.
-Keep UI Scale1.0 and actual resource feedback; existing probes' staging and
-wall-clock capture limits remain explicit. No new trailer footage, export,
-push or shared-branch merge was produced by this local checkpoint.
+The resumed check started the isolated household texture import, but the
+engine reached 410 MiB private memory against its 384 MiB cap before any
+textures were produced. Whole-project parse was refused again at 1387 MiB
+available RAM against its unchanged 1536 MiB launch floor. The
+[receipts](../audits/2026-11-04-trailer-resume/README.md) preserve both outcomes.
+
+The [first-trailer plan](../art/2026-11-04-first-trailer-shot-plan.md) now starts
+with an ordinary street-combat pilot on a machine that can run the game. Keep
+the yard trial off for that take. Once the recording reads clearly with audio
+at full and small sizes, collect the six shots for the 36-second edit. The
+equipment decision and its payoff need to come from the actual run. No new
+trailer footage, export, push or shared-branch merge was produced here.
 
 ## Current packet
 
