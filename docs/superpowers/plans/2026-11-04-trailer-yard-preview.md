@@ -11,6 +11,14 @@ presentation texture. Only S7 urban-yard pixels use it, behind an opt-in switch.
 
 **Spec:** `docs/superpowers/specs/2026-11-04-trailer-yard-preview-design.md`
 
+**4 November checkpoint:** Tasks1/2a and the bounded Task2b implementation are
+committed/reviewed through `6de56bed`; proof/handoff `5976de88`. Actual current
+results are renderer75/0, helper82/0, mask69/0, retained ground subset60/0 and
+native material fixture46/0. Whole-project parse was refused before launch;
+actual generated S7 visual/traversal/reload/cost acceptance remains open.
+See `docs/audits/2026-11-04-overnight-trailer-checkpoint.md`. The broader eight-hour
+goal is still active. Read-only feasibility of a real isolated household is next.
+
 ## Global constraints
 
 - Preserve coverage, slots, light/care bytes, terrain, doors, navigation and RNG.
@@ -36,13 +44,13 @@ presentation texture. Only S7 urban-yard pixels use it, behind an opt-in switch.
 cells_per_chunk: int) -> PackedByteArray`, using `footprint_px`, `doors`,
 `garden_contact_px` and `visual_seed` like CityGroundCare.
 
-- [ ] Write standalone SceneTree tests requiring positive, nonrectangular
+- [x] Write standalone SceneTree tests requiring positive, nonrectangular
   support outside one actual corner and no footprint/door/garden coverage.
-- [ ] Run RED against the absent helper with an explicit failed assertion.
-- [ ] Implement bounded deterministic geometry, zero-on-invalid behavior and
+- [x] Run RED against the absent helper with an explicit failed assertion.
+- [x] Implement bounded deterministic geometry, zero-on-invalid behavior and
   four-direction access protection; rerun to GREEN in a minimal data project.
-- [ ] Add independent edge-case fixtures and verify input/RNG preservation.
-- [ ] Commit helper/tests with actual results; do not claim native visual fit.
+- [x] Add independent edge-case fixtures and verify input/RNG preservation.
+- [x] Commit helper/tests with actual results; do not claim native visual fit.
 
 ## Task 2a: independent wrapped mask data
 
@@ -58,14 +66,14 @@ care: PackedByteArray) -> bool`; `clear_rect(rect: Rect2i)`, `clear()`,
 already the maximum of every household field. Return false on malformed input;
 clear a valid target chunk on malformed fields so stale preview cannot survive.
 
-- [ ] Write standalone tests first and run a real absent-owner RED assertion.
-- [ ] Implement index-6/zero-care clipping, bounded clear/reset, negative and
+- [x] Write standalone tests first and run a real absent-owner RED assertion.
+- [x] Implement index-6/zero-care clipping, bounded clear/reset, negative and
   nondivisor wrapping, idempotent replacement, and independent snapshots.
-- [ ] Prove input arrays unchanged and old aliased chunks cleared. Run GREEN.
-- [ ] Add a Windows launcher copying only explicitly named data helper/test
+- [x] Prove input arrays unchanged and old aliased chunks cleared. Run GREEN.
+- [x] Add a Windows launcher copying only explicitly named data helper/test
   files into a fresh project with no autoloads/assets, preserving hashes/logs,
   refusing another engine and propagating native/guard/diagnostic failures.
-- [ ] Test real launcher success plus no-overwrite behavior, then review/commit.
+- [x] Test real launcher success plus no-overwrite behavior, then review/commit.
 
 ## Task 2b: separate opt-in presentation mask
 
@@ -85,18 +93,18 @@ only the two asset-loader leaves. Native tests bind the original baseline shader
 separately and compare identical world coordinates. See the execution brief in
 this plan's scratch directory for the complete interfaces and fixture contracts.
 
-- [ ] Write/run RED for independent mask, semantic/care vetoes, idempotence,
+- [x] Write/run RED for independent mask, semantic/care vetoes, idempotence,
   chunk reset, wrap, and unchanged coverage/light/slot signatures.
-- [ ] Implement only if the regression can run under resource guards.
+- [x] Implement only if the regression can run under resource guards.
 - [ ] Run GREEN plus relevant existing ground-care, splat and parse suites.
 - [ ] Capture native fixture and matching S7 before/after only if guarded runs
   fit; otherwise leave this task pending, never label untested code complete.
-- [ ] Commit a qualified preview only after its code checks pass. Native visual
+- [x] Commit a qualified preview only after its code checks pass. Native visual
   acceptance remains a separate explicit finding.
 
 ## Task 3: visual review and handoff
 
-- [ ] Review source range independently and address concrete blocking findings.
-- [ ] Record actual commands/results, original images if any, and memory stops.
-- [ ] Update the overnight audit with committed work and exact remaining gates.
+- [x] Review source range independently and address concrete blocking findings.
+- [x] Record actual commands/results, original images if any, and memory stops.
+- [x] Update the overnight audit with committed work and exact remaining gates.
 - [ ] Continue the next justified trailer task while time/tokens remain.
