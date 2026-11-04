@@ -45,6 +45,13 @@ jobs:
       - name: Import clean source and run district policy and parse tests
         run: |
           touch docs/.gdignore
+          # A fresh editor starts its theme and autoload scan before generated imports exist.
+          timeout 12m godot --headless --path "$GITHUB_WORKSPACE" --import 2>&1 | tee "$RUNNER_TEMP/bootstrap-import.log"
+          sed -E 's/\x1b\[[0-?]*[ -/]*[@-~]//g' "$RUNNER_TEMP/bootstrap-import.log" \
+            | awk '/^\[ DONE \] first_scan_filesystem$/ { scanned=1 } scanned' > "$RUNNER_TEMP/asset-import.log"
+          grep -Fx '[ DONE ] reimport' "$RUNNER_TEMP/asset-import.log"
+          if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$RUNNER_TEMP/asset-import.log"; then exit 1; fi
+          # A separate process must now load the same project with its populated cache.
           timeout 12m godot --headless --path "$GITHUB_WORKSPACE" --import 2>&1 | tee "$RUNNER_TEMP/import.log"
           if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$RUNNER_TEMP/import.log"; then exit 1; fi
           for suite in DistrictGroundPolicyTest ScriptParseAuditTest; do
@@ -158,6 +165,8 @@ jobs:
         with:
           name: trailer-build-diagnostics
           path: |
+            ${{ runner.temp }}/bootstrap-import.log
+            ${{ runner.temp }}/asset-import.log
             ${{ runner.temp }}/import.log
             ${{ runner.temp }}/DistrictGroundPolicyTest.log
             ${{ runner.temp }}/ScriptParseAuditTest.log
