@@ -2957,3 +2957,22 @@ S1/Hub retain authored ownership; S11+ remains unresolved beyond the current
 Service Courtyards fallback. Linux should acknowledge the received art hash and
 use the brief to review its parked mood/weathering work, with current-source
 native readability and performance evidence before integration acceptance.
+
+## 2026-11-04 — First-trailer preparation; bounded local yard preview
+
+Received Linux `d7cfb52f`, including the export repair and scoped grass-edge/S9
+paving corrections. Under overnight delegation, local `6de56bed` adds a
+default-off presentation trial for one explicitly selected S7 household corner.
+Its independent geometry/mask preserve actual door/garden constraints and
+semantic coverage, light/care bytes and RNG. The normal shader stays unchanged.
+
+Current isolated renderer/helper/mask/retained-ground checks pass75/82/69/60;
+the small native actual-material fixture passes46/0 with zero diagnostics and
+unchanged semantic/care/off/reset controls. This is functional fixture evidence,
+not a current generated-city visual decision. Whole-project parse was held
+before launch by the unchanged full-project memory gate. Actual S7 normal/small
+views, doorway/passage traversal, streamed reload and cost remain open; keep
+the trial off. Broad yard/courtyard outlines and full concept fidelity remain
+unfinished. See [Windows status](handoff/ART_STATUS.md) and the
+[provisional first-trailer shot plan](art/2026-11-04-first-trailer-shot-plan.md).
+The branch is local; no publication or updated EXE is claimed.

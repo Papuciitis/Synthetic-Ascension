@@ -1,0 +1,53 @@
+{
+	"controls": {
+		"care": {
+			"cell": "(18, 8)",
+			"material": 6
+		},
+		"courtyard": {
+			"cell": "(17, 7)",
+			"material": 8
+		},
+		"footway": {
+			"cell": "(19, 6)",
+			"material": 2
+		},
+		"indoor": {
+			"cell": "(18, 7)",
+			"material": 9
+		},
+		"lane": {
+			"cell": "(17, 6)",
+			"material": 4
+		},
+		"road": {
+			"cell": "(19, 5)",
+			"material": 7
+		}
+	},
+	"failures": 1,
+	"fixture_only": true,
+	"passes": 43,
+	"pixels": {
+		"alpha_changed": 0,
+		"controls": {
+			"care": 0,
+			"courtyard": 0,
+			"footway": 0,
+			"indoor": 0,
+			"lane": 0,
+			"road": 0
+		},
+		"default_off_changed": 0,
+		"disabled_changed": 0,
+		"enabled_empty_changed": 0,
+		"late_care_changed": 0,
+		"late_floor_changed": 0,
+		"positive_yard_changed": 3299,
+		"reset_changed": 0,
+		"zero_mask_changed": 0
+	},
+	"viewport": 512,
+	"visual_seed": 944996572,
+	"world_coord": "(-2, 3)"
+}

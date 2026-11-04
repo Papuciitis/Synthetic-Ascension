@@ -1,0 +1,19 @@
+{
+  "suite": "native",
+  "success": false,
+  "launched": false,
+  "failure": "Capture not started: available RAM 549 MB, commit headroom 3071 MB.",
+  "exit_code": null,
+  "stop_reason": "",
+  "engine_sha256": "323F9C4CC5DB674E98815CDD8E69DA007D5EFC779ABEDC8C0E42883B7FDEA12A",
+  "arguments": [],
+  "launcher_sha256": "2c047b78e36e1fbc27f30df641f37723ccc56fb771c5b57402a47cf27d205058",
+  "profile": {
+    "startup_available_mb": 704,
+    "startup_commit_mb": 1536,
+    "maximum_private_mb": 256,
+    "timeout_seconds": 120,
+    "running_available_mb": 384,
+    "running_commit_mb": 768
+  }
+}

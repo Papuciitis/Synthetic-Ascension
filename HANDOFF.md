@@ -1,8 +1,19 @@
 # Windows art direction ↔ Linux production handoff
 
-Updated 25 October 2026. This is a working checkpoint, not visual acceptance of
+Updated 4 November 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
+
+**Latest local checkpoint, 4 November:** Windows received Linux `d7cfb52f` and,
+under overnight delegation, committed a default-off, single-household S7 yard
+presentation trial at `6de56bed`. Small data/native fixture checks pass; actual
+generated Game appearance/traversal/cost and whole-project parse remain open.
+The full-project startup gate refused the parse run before engine launch.
+Read [Windows status](docs/handoff/ART_STATUS.md) for scope, proof and the next
+native decision, plus the [first-trailer shot plan](docs/art/2026-11-04-first-trailer-shot-plan.md).
+Work stays on local `codex/overnight-ground-verification`; no push, shared merge
+or rebuilt EXE is implied. Earlier production/art records below retain their
+original dates and acceptance limits.
 
 **Latest functional update, 25 October:** the exported Windows playtest's empty
 character/augment choices and cold Begin loading stall are fixed and

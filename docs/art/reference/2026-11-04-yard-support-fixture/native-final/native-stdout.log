@@ -1,0 +1,51 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics
+
+PLANNED CELLS ABOVE 60: 10
+PASS: planner supports six unique controls plus an uncontrolled positive yard cell
+PASS: all six semantic/care control cells are distinct
+PASS: positive uncontrolled yard support remains after selecting six controls
+PASS: baseline binds separately pinned original shader resource
+PASS: default current shader source equals original d7cfb52f source
+PASS: native fixture loads actual fourteen-layer material cache
+PASS: original-before readback dimensions
+PASS: original-before original PNG saved
+PASS: default-off readback dimensions
+PASS: default-off original PNG saved
+PASS: default-off native RGBA equals original at identical world coordinates
+PASS: explicit S7 preview activates natively
+PASS: enabled-empty readback dimensions
+PASS: enabled-empty original PNG saved
+PASS: enabled-empty native RGBA equals original
+PASS: preview-after readback dimensions
+PASS: preview-after original PNG saved
+PASS: real mask changes positive yard pixels using actual art
+PASS: zero-centre controls and alpha remain byte-identical
+PASS: native control unchanged: road
+PASS: native control unchanged: lane
+PASS: native control unchanged: footway
+PASS: native control unchanged: courtyard
+PASS: native control unchanged: indoor
+PASS: native control unchanged: care
+PASS: mask-debug3 readback dimensions
+PASS: mask-debug3 original PNG saved
+PASS: late-care fixture selected a real positive support cell
+PASS: original-late-care readback dimensions
+PASS: original-late-care original PNG saved
+PASS: preview-late-care readback dimensions
+PASS: preview-late-care original PNG saved
+PASS: care painted after preview retains original native cell pixels
+PASS: original-late-floor readback dimensions
+PASS: original-late-floor original PNG saved
+PASS: preview-late-floor readback dimensions
+PASS: preview-late-floor original PNG saved
+PASS: floor replacing later care cannot revive stale preview pixels
+PASS: disabled-restored readback dimensions
+PASS: disabled-restored original PNG saved
+PASS: disable restores original native RGBA after painted preview
+PASS: original-reset readback dimensions
+PASS: original-reset original PNG saved
+PASS: enabled-reset readback dimensions
+PASS: enabled-reset original PNG saved
+PASS: enabled world reset equals original native RGBA
+YardSupportNativeTest: 46 passed, 0 failed

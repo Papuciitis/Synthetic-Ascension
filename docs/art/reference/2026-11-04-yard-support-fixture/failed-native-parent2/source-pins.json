@@ -1,0 +1,218 @@
+[
+  {
+    "path": "core/systems/world/ground/GroundSplatRenderer.gd",
+    "role": "unchanged repository source",
+    "sha256": "f74134fd9f5cf0a4b0b0ff87ab39faaebb38e7328aa5570d8c180328c3bd591b",
+    "source_sha256": "f74134fd9f5cf0a4b0b0ff87ab39faaebb38e7328aa5570d8c180328c3bd591b"
+  },
+  {
+    "path": "core/systems/world/ground/ground_splat.gdshader",
+    "role": "unchanged repository source",
+    "sha256": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9",
+    "source_sha256": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9"
+  },
+  {
+    "path": "core/systems/world/ground/DistrictGroundPolicy.gd",
+    "role": "unchanged repository source",
+    "sha256": "63b872201358bb718bce0daae7cc387c10b604e62fb1c1fcd0c7432515c78738",
+    "source_sha256": "63b872201358bb718bce0daae7cc387c10b604e62fb1c1fcd0c7432515c78738"
+  },
+  {
+    "path": "core/systems/world/ground/CityGroundCare.gd",
+    "role": "unchanged repository source",
+    "sha256": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688",
+    "source_sha256": "0f0ff730bee3283cae02bf77d812276ca8090a0c4c6e8d84a5b2947286a80688"
+  },
+  {
+    "path": "core/systems/world/ground/CityYardSupport.gd",
+    "role": "unchanged repository source",
+    "sha256": "041bc99da8a6e9a7f3d29cf96748cd3f7bd7b1130cc3c06108d8f6cc352c5645",
+    "source_sha256": "041bc99da8a6e9a7f3d29cf96748cd3f7bd7b1130cc3c06108d8f6cc352c5645"
+  },
+  {
+    "path": "core/systems/world/ground/CityYardSupportMap.gd",
+    "role": "unchanged repository source",
+    "sha256": "82940452760fda0995c30712c1d71e5706f6f48feb4b9d8af2fa1311d7f29dcf",
+    "source_sha256": "82940452760fda0995c30712c1d71e5706f6f48feb4b9d8af2fa1311d7f29dcf"
+  },
+  {
+    "path": "core/systems/world/chunks/ChunkBuildData.gd",
+    "role": "unchanged repository source",
+    "sha256": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618",
+    "source_sha256": "517ccd6eeca2f9c713073fb939d748778a636993e790f9e56aa3f120f3b51618"
+  },
+  {
+    "path": "core/systems/world/WorldBlockerGeometry.gd",
+    "role": "unchanged repository source",
+    "sha256": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d",
+    "source_sha256": "0f6d557fc514b399bfe58be07e771e3a1ff7110b8c0960b416eb23d04d97a21d"
+  },
+  {
+    "path": "tools/tests/YardSupportRendererTest.gd",
+    "role": "unchanged repository source",
+    "sha256": "17a94c4f7ea6543d5e51a38e81823236b0b1cb8a2807f8da4bf4e8a77d8b1ec6",
+    "source_sha256": "17a94c4f7ea6543d5e51a38e81823236b0b1cb8a2807f8da4bf4e8a77d8b1ec6"
+  },
+  {
+    "path": "tools/tests/YardSupportRendererTest.tscn",
+    "role": "unchanged repository source",
+    "sha256": "7b9f754d2b5aad7ca3ef7b9293e4c90d2c75f523d5cae2422403eb38fdd0e18f",
+    "source_sha256": "7b9f754d2b5aad7ca3ef7b9293e4c90d2c75f523d5cae2422403eb38fdd0e18f"
+  },
+  {
+    "path": "tools/tests/WorldGroundSplatTest.tscn",
+    "role": "unchanged repository source",
+    "sha256": "320cb4a8336896b876777777af415b653e9ed917c1139cdef8e85be5016dc4b2",
+    "source_sha256": "320cb4a8336896b876777777af415b653e9ed917c1139cdef8e85be5016dc4b2"
+  },
+  {
+    "path": "tools/tests/YardSupportGroundDataSubsetTest.gd",
+    "role": "unchanged repository source",
+    "sha256": "ca95626216f3a4d399dff88887a59511fbc346463860dd4bcc5ef06e9f955711",
+    "source_sha256": "ca95626216f3a4d399dff88887a59511fbc346463860dd4bcc5ef06e9f955711"
+  },
+  {
+    "path": "tools/tests/YardSupportGroundDataSubsetTest.tscn",
+    "role": "unchanged repository source",
+    "sha256": "918e30a27347d9451b8473230d4c56144645245b4fa5770ff14500311344caa3",
+    "source_sha256": "918e30a27347d9451b8473230d4c56144645245b4fa5770ff14500311344caa3"
+  },
+  {
+    "path": "tools/tests/CityYardSupportTest.gd",
+    "role": "unchanged repository source",
+    "sha256": "7e045423665fe408f47b1fb75390ec1cf27928aafb76a4dbe338fa6a01de4ad6",
+    "source_sha256": "7e045423665fe408f47b1fb75390ec1cf27928aafb76a4dbe338fa6a01de4ad6"
+  },
+  {
+    "path": "tools/tests/CityYardSupportMapTest.gd",
+    "role": "unchanged repository source",
+    "sha256": "cf09395e749bbf6a4306cfe67c66daa77a08c3f85b0396215c75d7d83deb79dd",
+    "source_sha256": "cf09395e749bbf6a4306cfe67c66daa77a08c3f85b0396215c75d7d83deb79dd"
+  },
+  {
+    "path": "core/systems/world/ground/YardSupportPreviewShader.gd",
+    "role": "unchanged repository source",
+    "sha256": "f535a599ff996283002f25efc6308184ae1d4bfdb3b21b074eaa1019af189423",
+    "source_sha256": "f535a599ff996283002f25efc6308184ae1d4bfdb3b21b074eaa1019af189423"
+  },
+  {
+    "path": "tools/tests/WorldGroundSplatTest.gd",
+    "role": "omit ONLY three manager assertions/method+call; retain cleanup frames; distinct data subset summary",
+    "sha256": "17e7e9c4de66e73900243250c9d21c1929c02972a7301ab16cd43320ed773a34",
+    "source_sha256": "92b2c4826a897e629828fde8d080d2d4de0933e6b2f6f7d3a50dab6f8689d66e"
+  },
+  {
+    "path": "assets/world/ground/baked/ground_materials.res",
+    "role": "unchanged repository source",
+    "sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7",
+    "source_sha256": "14a57921e0351de7a7ddbe343e783d7341cda75b6a8e774079e866dcb960d8b7"
+  },
+  {
+    "path": "assets/world/city_block/worn_setts.png",
+    "role": "unchanged repository source",
+    "sha256": "2261ea102d04bf5fe714842f0209a9fa5540c373b3968fdbac153b2b6d3e045f",
+    "source_sha256": "2261ea102d04bf5fe714842f0209a9fa5540c373b3968fdbac153b2b6d3e045f"
+  },
+  {
+    "path": "assets/world/city_block/worn_setts.png.import",
+    "role": "unchanged repository source",
+    "sha256": "e374558859e8c8f4f83fcbd1115087bd59819d08c75e41f35e46388178f7921c",
+    "source_sha256": "e374558859e8c8f4f83fcbd1115087bd59819d08c75e41f35e46388178f7921c"
+  },
+  {
+    "path": ".godot/imported/worn_setts.png-d3eb924254c520800569a6c5a95afe9a.ctex",
+    "role": "unchanged repository source",
+    "sha256": "b5d20c5f78a8109c0a41acaf0d64c9352af53abdc8a0b8eddfa7bf644a40eb92",
+    "source_sha256": "b5d20c5f78a8109c0a41acaf0d64c9352af53abdc8a0b8eddfa7bf644a40eb92"
+  },
+  {
+    "path": "assets/world/city_block/paving.png",
+    "role": "unchanged repository source",
+    "sha256": "5e0db453ec02930531475eb2e4873bdfe9c04fd1571faabe65807d3f5fc03316",
+    "source_sha256": "5e0db453ec02930531475eb2e4873bdfe9c04fd1571faabe65807d3f5fc03316"
+  },
+  {
+    "path": "assets/world/city_block/paving.png.import",
+    "role": "unchanged repository source",
+    "sha256": "e2eb49d9a2c64edc59767e372df6f86524850ae2490e1df23e441cce993fc111",
+    "source_sha256": "e2eb49d9a2c64edc59767e372df6f86524850ae2490e1df23e441cce993fc111"
+  },
+  {
+    "path": ".godot/imported/paving.png-1544c2e8ed91d9a8fbd44898491e0252.ctex",
+    "role": "unchanged repository source",
+    "sha256": "8c76356f60ddd03246a6bf67ff6d992624203753f709c835108375f96ad0201e",
+    "source_sha256": "8c76356f60ddd03246a6bf67ff6d992624203753f709c835108375f96ad0201e"
+  },
+  {
+    "path": "core/systems/world/ground/baseline_ground_splat.gdshader",
+    "role": "original d7cfb52f shader; no changes",
+    "sha256": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9",
+    "source_sha256": "64c8d2fa214bc30e1d58d3dfea5ea0719113f6ae09689f6ebe1b3d403f1314b9"
+  },
+  {
+    "path": "core/systems/world/ground/BaselineGroundSplatRenderer.gd",
+    "role": "original d7cfb52f renderer: remove sole class_name; redirect sole shader preload to original shader copy",
+    "sha256": "248d31e18131e29842c2dc535c859e261a61025bc94473717b33f0eff54cd223",
+    "source_sha256": "22ce00dc5ca55dbfac5138b4cfc8b598a91c403ddd15c8c57ce0e666f10b4c4f"
+  },
+  {
+    "path": "tools/tests/YardSupportNativeTest.gd",
+    "role": "unchanged repository source",
+    "sha256": "520e66052bc216158b43cc37f01b00eec013d724fb9c1d6024fddd8451d61d59",
+    "source_sha256": "520e66052bc216158b43cc37f01b00eec013d724fb9c1d6024fddd8451d61d59"
+  },
+  {
+    "path": "tools/tests/YardSupportNativeTest.tscn",
+    "role": "unchanged repository source",
+    "sha256": "47ec4a860fae12d767eff1bae6009b5e92f050dc5a249713123ba90468c388b2",
+    "source_sha256": "47ec4a860fae12d767eff1bae6009b5e92f050dc5a249713123ba90468c388b2"
+  },
+  {
+    "path": "tools/tests/YardSupportNativeParseTest.gd",
+    "role": "unchanged repository source",
+    "sha256": "27f38492793e1a082fde64968e07d5e962ef4f9fabbe6ade4d421cc1938017ff",
+    "source_sha256": "27f38492793e1a082fde64968e07d5e962ef4f9fabbe6ade4d421cc1938017ff"
+  },
+  {
+    "path": "core/systems/world/WorldArt.gd",
+    "role": "explicit asset-loader leaf double",
+    "sha256": "da32f633f920cc613ed36314cf7889c381b4ca2e80de585c5c60c9b1d1d1063a",
+    "source_sha256": null
+  },
+  {
+    "path": "scenes/world/buildings/CityBlockKit.gd",
+    "role": "explicit asset-loader leaf double",
+    "sha256": "de79f8ee5eab3f4d6aed47436f7be1fcdb4964dbb70d75a03b85d2760350980b",
+    "source_sha256": null
+  },
+  {
+    "path": ".godot/global_script_class_cache.cfg",
+    "role": "minimal normal GDScript class metadata; not full project import",
+    "sha256": "d6de93c09d9bb8f972da61b22ff6dbab83361f002cceaf43891214431e5faff4",
+    "source_sha256": null
+  },
+  {
+    "path": "project.godot",
+    "role": "isolated minimal project; no autoloads or Game",
+    "sha256": "d15794bc54213baf2a281a16bedafa535370f34785f429e06649b9caa3de90a0",
+    "source_sha256": null
+  },
+  {
+    "path": "launcher-sources/build_yard_support_renderer_fixture.py",
+    "role": "exact launcher/guard snapshot",
+    "sha256": "2d429782f1cff3cb5141f57fcab5e3f36a4917f605ec33c9eb8e32801d88139b",
+    "source_sha256": "2d429782f1cff3cb5141f57fcab5e3f36a4917f605ec33c9eb8e32801d88139b"
+  },
+  {
+    "path": "launcher-sources/run_yard_support_renderer_fixture.ps1",
+    "role": "exact launcher/guard snapshot",
+    "sha256": "2c047b78e36e1fbc27f30df641f37723ccc56fb771c5b57402a47cf27d205058",
+    "source_sha256": "2c047b78e36e1fbc27f30df641f37723ccc56fb771c5b57402a47cf27d205058"
+  },
+  {
+    "path": "launcher-sources/city_resource_guard.ps1",
+    "role": "exact launcher/guard snapshot",
+    "sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382",
+    "source_sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382"
+  }
+]
