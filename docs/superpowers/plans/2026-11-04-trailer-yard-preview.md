@@ -69,13 +69,21 @@ clear a valid target chunk on malformed fields so stale preview cannot survive.
 
 ## Task 2b: separate opt-in presentation mask
 
-**Files:** modify `GroundSplatRenderer.gd`, `ground_splat.gdshader` and
-`ChunkManager.gd`; create a focused renderer regression scene/test.
+**Files:** modify `GroundSplatRenderer.gd` and `ChunkManager.gd`; create
+`YardSupportPreviewShader.gd`, a focused renderer regression, and a tiny fixture
+builder/guarded runner. Keep `ground_splat.gdshader` unchanged.
 
 **Interface:** `paint_yard_support(coord: Vector2i, specs: Array[Dictionary])`
 uses Task 1 weights and Task 2a storage after household care; probes expose a
 byte signature for verification. Default-off texture sampling must not alter
 the existing path.
+
+Use a separately generated preview shader only for the explicitly selected S7
+target. Validate source hooks and fail closed; restore the original shader
+resource/shared uniforms when off. The tiny actual-renderer fixture substitutes
+only the two asset-loader leaves. Native tests bind the original baseline shader
+separately and compare identical world coordinates. See the execution brief in
+this plan's scratch directory for the complete interfaces and fixture contracts.
 
 - [ ] Write/run RED for independent mask, semantic/care vetoes, idempotence,
   chunk reset, wrap, and unchanged coverage/light/slot signatures.

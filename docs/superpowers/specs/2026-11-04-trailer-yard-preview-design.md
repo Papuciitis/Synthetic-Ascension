@@ -46,8 +46,18 @@ loading the city. It does not replace the renderer or native acceptance tests.
 Use only S7's already available subdued damp-moss material for this first trial.
 Do not change scale, grade, actors, pickups or the accepted fractional care
 blend at the same time. The new path defaults off, enabled only by
-`SA_YARD_SUPPORT_PREVIEW=1`; native acceptance is required before considering a
-production default. Authored S1/Hub retain their existing presentation.
+`SA_YARD_SUPPORT_PREVIEW=1` plus an explicit
+`SA_YARD_SUPPORT_TARGET=chunk_x,chunk_y,visual_seed`. Native acceptance is required
+before considering a production default. Authored S1/Hub retain their existing
+presentation.
+
+Keep the production ground shader unchanged. A small preview factory builds a
+separate Shader resource from uniquely validated hooks in its original code,
+only when requested in S7. Unsupported source disables the preview. Switching
+back restores the original resource and all shared parameters. This keeps the
+normal GPU program unchanged despite the base shader's documented register
+budget. It trades source-hook maintenance in the opt-in prototype for a smaller
+normal-mode risk; a general templating framework is not needed.
 
 ## Verification and acceptance
 
