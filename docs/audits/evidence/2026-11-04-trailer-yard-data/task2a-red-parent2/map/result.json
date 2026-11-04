@@ -1,0 +1,23 @@
+{
+  "name": "map",
+  "launched": true,
+  "success": false,
+  "exit_code": 1,
+  "stop_reason": "",
+  "diagnostics": [],
+  "failure": "native_exit_guard_diagnostic_or_summary_failure",
+  "arguments": [
+    "--headless",
+    "--flush-output",
+    "--path",
+    "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\task2a-red-parent2\\map\\fixture\"",
+    "--script",
+    "res://tools/tests/CityYardSupportMapTest.gd"
+  ],
+  "pid": 25492,
+  "peak_private_mb": 36.0,
+  "minimum_available_mb": 903.0,
+  "minimum_commit_headroom_mb": 2984.0,
+  "elapsed_seconds": 0.82,
+  "summary": "CityYardSupportMapTest: 0 passed, 1 failed"
+}

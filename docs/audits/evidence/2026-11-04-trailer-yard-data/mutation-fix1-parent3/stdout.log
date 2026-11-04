@@ -1,0 +1,85 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: yard support helper exists
+PASS: yard support helper loads independently
+PASS: rectangle: chunk-local byte field
+PASS: rectangle: useful bounded patch
+PASS: rectangle: soft falloff with a useful core
+PASS: rectangle: outline is nonrectangular
+PASS: rectangle: no indoor footprint coverage
+PASS: rectangle: planted contact remains clear
+PASS: rectangle: patch meets actual corner surroundings
+PASS: rectangle: support stays near one corner, never a ring
+PASS: concave footprint: chunk-local byte field
+PASS: concave footprint: useful bounded patch
+PASS: concave footprint: soft falloff with a useful core
+PASS: concave footprint: outline is nonrectangular
+PASS: concave footprint: no indoor footprint coverage
+PASS: concave footprint: planted contact remains clear
+PASS: concave footprint: patch meets actual corner surroundings
+PASS: concave footprint: support stays near one corner, never a ring
+PASS: planner preserves global RNG state
+PASS: planner preserves nested input values
+PASS: negative chunk coordinates are deterministic
+PASS: negative coordinates retain useful local support
+PASS: visual seed varies support
+PASS: rotated access (0, -1): no-door control reaches literal protected region
+PASS: rotated access (0, -1): door-equipped patch keeps useful support outside approach
+FAIL: rotated access (0, -1): per-cell clipping clears every protected cell
+PASS: rotated access (1, 0): no-door control reaches literal protected region
+PASS: rotated access (1, 0): door-equipped patch keeps useful support outside approach
+FAIL: rotated access (1, 0): per-cell clipping clears every protected cell
+PASS: rotated access (0, 1): no-door control reaches literal protected region
+PASS: rotated access (0, 1): door-equipped patch keeps useful support outside approach
+FAIL: rotated access (0, 1): per-cell clipping clears every protected cell
+PASS: rotated access (-1, 0): no-door control reaches literal protected region
+PASS: rotated access (-1, 0): door-equipped patch keeps useful support outside approach
+FAIL: rotated access (-1, 0): per-cell clipping clears every protected cell
+PASS: doors at every corner reject all patch candidates: (0, -1)
+PASS: signed doorway corridor stays clear: (0, -1)
+PASS: doors at every corner reject all patch candidates: (1, 0)
+PASS: signed doorway corridor stays clear: (1, 0)
+PASS: doors at every corner reject all patch candidates: (0, 1)
+PASS: signed doorway corridor stays clear: (0, 1)
+PASS: doors at every corner reject all patch candidates: (-1, 0)
+PASS: signed doorway corridor stays clear: (-1, 0)
+PASS: one practical entrance leaves a useful corner: (0, -1)
+PASS: one practical entrance leaves a useful corner: (1, 0)
+PASS: one practical entrance leaves a useful corner: (0, 1)
+PASS: one practical entrance leaves a useful corner: (-1, 0)
+PASS: reversed winding: chunk-local byte field
+PASS: reversed winding: useful bounded patch
+PASS: reversed winding: soft falloff with a useful core
+PASS: reversed winding: outline is nonrectangular
+PASS: reversed winding: no indoor footprint coverage
+PASS: reversed winding: planted contact remains clear
+PASS: reversed winding: patch meets actual corner surroundings
+PASS: reversed winding: support stays near one corner, never a ring
+PASS: invalid footprint yields zero: {  }
+PASS: invalid footprint yields zero: { "footprint_px": 42 }
+PASS: invalid footprint yields zero: { "footprint_px": [(0.0, 0.0), (1.0, 1.0)] }
+PASS: invalid footprint yields zero: { "footprint_px": [(0.0, 0.0), (64.0, 0.0), (128.0, 0.0)] }
+PASS: invalid footprint yields zero: { "footprint_px": [(512.0, 512.0), (1152.0, 1152.0), (512.0, 1152.0), (1152.0, 512.0)] }
+PASS: invalid footprint yields zero: { "footprint_px": [(512.0, 512.0), (1152.0, 512.0), (1152.0, 512.0), (512.0, 1152.0)] }
+PASS: malformed doors yields zero
+PASS: malformed garden_contact_px yields zero
+PASS: malformed visual_seed yields zero
+PASS: invalid access metadata fails closed: { "pos": (0, 0), "dir": (1, 1) }
+PASS: invalid access metadata fails closed: { "pos": (0, 0), "dir": (0, 0) }
+PASS: invalid access metadata fails closed: { "pos": "wrong", "dir": (0, -1) }
+PASS: invalid access metadata fails closed: { "pos": (0, 0), "dir": (0, -1), "width": 1000000000 }
+PASS: invalid access metadata fails closed: 42
+PASS: nonfinite or extreme geometry fails closed: (inf, 0.0)
+PASS: nonfinite or extreme geometry fails closed: (nan, 0.0)
+PASS: nonfinite or extreme geometry fails closed: (100000002004087730000.0, 0.0)
+PASS: excessive polygon vertex count is bounded
+PASS: missing garden uses the actual southwest footprint corner
+PASS: extreme chunk coordinates fail closed
+PASS: invalid cell dimension is bounded: 0
+PASS: invalid cell dimension is bounded: -1
+PASS: invalid cell dimension is bounded: 2147483647
+PASS: invalid grid dimension cannot allocate: 0
+PASS: invalid grid dimension cannot allocate: -1
+PASS: invalid grid dimension cannot allocate: 2147483647
+PASS: off-chunk footprint produces zero
+CityYardSupportTest: 78 passed, 4 failed

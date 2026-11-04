@@ -1,0 +1,40 @@
+{
+  "suite": "map",
+  "success": false,
+  "failure": "Data suite failed: map",
+  "engine": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64.exe",
+  "engine_sha256": "323F9C4CC5DB674E98815CDD8E69DA007D5EFC779ABEDC8C0E42883B7FDEA12A",
+  "profile": {
+    "startup_available_mb": 512,
+    "startup_commit_mb": 1536,
+    "maximum_private_mb": 64,
+    "timeout_seconds": 30,
+    "running_available_mb": 384,
+    "running_commit_mb": 768
+  },
+  "suites": [
+    {
+      "name": "map",
+      "launched": true,
+      "success": false,
+      "exit_code": 1,
+      "stop_reason": "",
+      "diagnostics": [],
+      "failure": "native_exit_guard_diagnostic_or_summary_failure",
+      "arguments": [
+        "--headless",
+        "--flush-output",
+        "--path",
+        "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\task2a-red-parent2\\map\\fixture\"",
+        "--script",
+        "res://tools/tests/CityYardSupportMapTest.gd"
+      ],
+      "pid": 25492,
+      "peak_private_mb": 36.0,
+      "minimum_available_mb": 903.0,
+      "minimum_commit_headroom_mb": 2984.0,
+      "elapsed_seconds": 0.82,
+      "summary": "CityYardSupportMapTest: 0 passed, 1 failed"
+    }
+  ]
+}

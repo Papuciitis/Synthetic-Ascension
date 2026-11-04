@@ -1,0 +1,25 @@
+﻿{
+    "name":  "support",
+    "launched":  true,
+    "success":  false,
+    "exit_code":  7,
+    "stop_reason":  "",
+    "diagnostics":  [
+
+                    ],
+    "failure":  "native_exit_guard_diagnostic_or_summary_failure",
+    "arguments":  [
+                      "--headless",
+                      "--flush-output",
+                      "--path",
+                      "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\task2a-launcher-controls-parent4\\native\\run\\support\\fixture\"",
+                      "--script",
+                      "res://tools/tests/CityYardSupportTest.gd"
+                  ],
+    "pid":  28508,
+    "peak_private_mb":  0,
+    "minimum_available_mb":  498,
+    "minimum_commit_headroom_mb":  2948,
+    "elapsed_seconds":  0.8,
+    "summary":  "CityYardSupportTest: 1 passed, 0 failed"
+}
