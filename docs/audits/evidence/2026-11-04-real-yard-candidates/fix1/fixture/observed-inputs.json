@@ -1,0 +1,185 @@
+{
+  "theme": {
+    "generation_attempt": 1,
+    "id": "canal_services",
+    "plan_seed": 1208827904,
+    "seed": 16102028,
+    "segment": 7
+  },
+  "sample": {
+    "buildings": [
+      {
+        "civic": false,
+        "doors": [
+          [
+            25,
+            20,
+            0,
+            -1
+          ]
+        ],
+        "infill": false,
+        "irregular": false,
+        "rect": [
+          21,
+          20,
+          8,
+          8
+        ],
+        "step": 0,
+        "usage": "row_house"
+      },
+      {
+        "civic": false,
+        "doors": [
+          [
+            25,
+            13,
+            0,
+            1
+          ]
+        ],
+        "infill": false,
+        "irregular": false,
+        "rect": [
+          21,
+          7,
+          8,
+          7
+        ],
+        "step": 0,
+        "usage": "row_house"
+      },
+      {
+        "civic": false,
+        "doors": [
+          [
+            8,
+            20,
+            0,
+            -1
+          ]
+        ],
+        "infill": false,
+        "irregular": false,
+        "rect": [
+          3,
+          20,
+          11,
+          7
+        ],
+        "step": 0,
+        "usage": "shop"
+      },
+      {
+        "civic": false,
+        "doors": [
+          [
+            7,
+            13,
+            0,
+            1
+          ]
+        ],
+        "infill": false,
+        "irregular": false,
+        "rect": [
+          3,
+          6,
+          8,
+          8
+        ],
+        "step": 0,
+        "usage": "row_house"
+      }
+    ],
+    "coord": [
+      -8,
+      -4
+    ],
+    "framed_square": false,
+    "original_count": 4,
+    "passages": [],
+    "plan_seed": 1208827904,
+    "role": "dangerous_alley",
+    "segment": 7,
+    "theme": "canal_services"
+  },
+  "candidates": [
+    {
+      "observed_historical": {
+        "civic": false,
+        "doors": [
+          [
+            25,
+            13,
+            0,
+            1
+          ]
+        ],
+        "infill": false,
+        "irregular": false,
+        "rect": [
+          21,
+          7,
+          8,
+          7
+        ],
+        "step": 0,
+        "usage": "row_house"
+      },
+      "host_expected_id": 1910440753,
+      "host_expected_variant": 1
+    },
+    {
+      "observed_historical": {
+        "civic": false,
+        "doors": [
+          [
+            7,
+            13,
+            0,
+            1
+          ]
+        ],
+        "infill": false,
+        "irregular": false,
+        "rect": [
+          3,
+          6,
+          8,
+          8
+        ],
+        "step": 0,
+        "usage": "row_house"
+      },
+      "host_expected_id": 2052381668,
+      "host_expected_variant": 0
+    },
+    {
+      "observed_historical": {
+        "civic": false,
+        "doors": [
+          [
+            25,
+            20,
+            0,
+            -1
+          ]
+        ],
+        "infill": false,
+        "irregular": false,
+        "rect": [
+          21,
+          20,
+          8,
+          8
+        ],
+        "step": 0,
+        "usage": "row_house"
+      },
+      "host_expected_id": 1928485795,
+      "host_expected_variant": 3
+    }
+  ]
+}

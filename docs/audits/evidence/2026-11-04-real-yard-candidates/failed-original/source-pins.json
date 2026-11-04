@@ -1,0 +1,156 @@
+[
+  {
+    "original": "docs/art/reference/2026-10-22-linux-streets/sources/blobs/43938c18fa45cbc8ca3248d4bdbcf3bf22922c23789e5bcd10ff5a193c60390b-city22-street-continuity-part-08-part08-v1.json",
+    "packet": "source-payloads/00-json",
+    "sha256": "43938c18fa45cbc8ca3248d4bdbcf3bf22922c23789e5bcd10ff5a193c60390b",
+    "historical_launch_sha256": null,
+    "historical_launch_equal": false
+  },
+  {
+    "original": "docs/art/reference/2026-10-22-linux-streets/sources/run-bindings/city22-street-continuity-part-08-part08-v1-1.json",
+    "packet": "source-payloads/01-json",
+    "sha256": "f2abbe70c7e2e34a8ce7b373052c4b78ee614558253127574513ab89cd23c179",
+    "historical_launch_sha256": null,
+    "historical_launch_equal": false
+  },
+  {
+    "original": "docs/art/reference/2026-10-22-linux-streets/runs/city22-street-continuity-part-08-part08-v1-1/run-results.json.gz",
+    "packet": "source-payloads/02-gz",
+    "sha256": "73769e1806a46ee5ae27292e3851211814854b7d5e5d84fd53ce2a937dd80c3f",
+    "historical_launch_sha256": null,
+    "historical_launch_equal": false
+  },
+  {
+    "original": "core/systems/world/proc/SiteParcelsImpl.gd",
+    "packet": "source-payloads/03-gd",
+    "sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+    "historical_launch_sha256": "fa31541044a4da8d11d6e3d57cea654bc0ea0cc0911de880f04ac3828b3e7503",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/proc/RectFacilityCarver.gd",
+    "packet": "source-payloads/04-gd",
+    "sha256": "19831055637b899d146f9e3b67cf8867ff990fead39663deb30efaf57991f6c5",
+    "historical_launch_sha256": "19831055637b899d146f9e3b67cf8867ff990fead39663deb30efaf57991f6c5",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/proc/DonjonCarver.gd",
+    "packet": "source-payloads/05-gd",
+    "sha256": "42850a329b0d2ee8250fbe7ee01c6858c271c4f65f80ca9aa6964d03f551e688",
+    "historical_launch_sha256": "42850a329b0d2ee8250fbe7ee01c6858c271c4f65f80ca9aa6964d03f551e688",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/proc/ChunkGenImpl.gd",
+    "packet": "source-payloads/06-gd",
+    "sha256": "2f8a2decc34505f12c7cab09fee817f8117685a762ad69e7308b03b2e3c8cfe5",
+    "historical_launch_sha256": "2f8a2decc34505f12c7cab09fee817f8117685a762ad69e7308b03b2e3c8cfe5",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/proc/chunkgen/ChunkGenDistrict.gd",
+    "packet": "source-payloads/07-gd",
+    "sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66",
+    "historical_launch_sha256": "b3d8a7e3bbd32c9b5efb26ebfb4bd696e6cd14397ecdfc4557d555bde2611a66",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/proc/SegmentThemeData.gd",
+    "packet": "source-payloads/08-gd",
+    "sha256": "73b2559a579188bd5998b990f23f95edcb0ac2509c27547c22173f7482d0360c",
+    "historical_launch_sha256": "73b2559a579188bd5998b990f23f95edcb0ac2509c27547c22173f7482d0360c",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/proc/SegmentThemePicker.gd",
+    "packet": "source-payloads/09-gd",
+    "sha256": "94faa6cdf7f587cdb5c6ad2317aa9e4b5523ea95bb46b601df254a4c35bbabaa",
+    "historical_launch_sha256": "94faa6cdf7f587cdb5c6ad2317aa9e4b5523ea95bb46b601df254a4c35bbabaa",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/SegmentProcBuilder.gd",
+    "packet": "source-payloads/10-gd",
+    "sha256": "cdf017d7c576e59836962e97fc4ddfa805c99e7878f8d0cf04518ae53a05dfd2",
+    "historical_launch_sha256": "cdf017d7c576e59836962e97fc4ddfa805c99e7878f8d0cf04518ae53a05dfd2",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "core/systems/world/ChunkManager.gd",
+    "packet": "source-payloads/11-gd",
+    "sha256": "d753fc81d2e41697fd85e196b12b8fbf151802086d08c3862e7a83ade296aabc",
+    "historical_launch_sha256": "354d2dfcd8addba0b7d759d4cf28441c867af0aa6dab0422b99625694056ee15",
+    "historical_launch_equal": false
+  },
+  {
+    "original": "tools/tests/CityStreetContinuityTest.gd",
+    "packet": "source-payloads/12-gd",
+    "sha256": "4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209",
+    "historical_launch_sha256": "4e696d66596cb63514281254db820b3ea5ec7322796995027d10f1e9b3be8209",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "tools/tests/ProcChunkReachabilityTest.gd",
+    "packet": "source-payloads/13-gd",
+    "sha256": "ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258",
+    "historical_launch_sha256": "ddb5960e600bb6afc184d8e0df306fdb1b89026601f943aac8e5fdcf6d491258",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "scenes/world/buildings/CityBlockKit.gd",
+    "packet": "source-payloads/14-gd",
+    "sha256": "8c1d11fd92266e62f994a3e8043e72c5e112a641aedbcedb74b82b3437af8ffd",
+    "historical_launch_sha256": "8c1d11fd92266e62f994a3e8043e72c5e112a641aedbcedb74b82b3437af8ffd",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "tools/capture/city_resource_guard.ps1",
+    "packet": "source-payloads/15-ps1",
+    "sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382",
+    "historical_launch_sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382",
+    "historical_launch_equal": true
+  },
+  {
+    "original": "method extraction",
+    "packet": "source-payloads/extracted_mix_seed.gd.txt",
+    "sha256": "7a508e56eca823288cba76cec91934acefd931191e0bd72bbb2299dc5448c81f",
+    "extraction_count": 1,
+    "verbatim": true
+  },
+  {
+    "original": "fixture",
+    "packet": "fixture/.gdignore",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "original": "fixture",
+    "packet": "fixture/core/systems/world/proc/DonjonCarver.gd",
+    "sha256": "42850a329b0d2ee8250fbe7ee01c6858c271c4f65f80ca9aa6964d03f551e688"
+  },
+  {
+    "original": "fixture",
+    "packet": "fixture/core/systems/world/proc/RectFacilityCarver.gd",
+    "sha256": "19831055637b899d146f9e3b67cf8867ff990fead39663deb30efaf57991f6c5"
+  },
+  {
+    "original": "fixture",
+    "packet": "fixture/observed-inputs.json",
+    "sha256": "df364c3ecc47ecffe664ebf7e381e47330f91852e23532870650fb045fb3c390"
+  },
+  {
+    "original": "fixture",
+    "packet": "fixture/project.godot",
+    "sha256": "76a6fa4cc68f7bb5732f0769a1c3455ab8186f8970604b589c8dae5893322f2a"
+  },
+  {
+    "original": "fixture",
+    "packet": "fixture/verify.gd",
+    "sha256": "f64da4efef765ffafa387d4cc650baee2414d9189684c0a4ec663f094234f53d"
+  },
+  {
+    "original": "tools/capture/city_resource_guard.ps1",
+    "packet": "guard.ps1",
+    "sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382"
+  }
+]

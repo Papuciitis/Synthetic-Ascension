@@ -1,0 +1,41 @@
+{
+  "success": false,
+  "launched": true,
+  "failure": "Native exit, stop, diagnostics, positive-count or result gate failed",
+  "exit_code": 1,
+  "stop_reason": "",
+  "started_utc": "2026-11-04T01:48:34.5622713Z",
+  "profile": {
+    "startup_available_mb": 512,
+    "startup_commit_mb": 1536,
+    "maximum_private_mb": 64,
+    "timeout_seconds": 30,
+    "running_available_mb": 384,
+    "running_commit_mb": 768
+  },
+  "runner_sha256": "6d564cc59efb46afd1d2fc0f4c6ebb680ccb169505c5b364e97091fd87b225c1",
+  "engine_sha256": "323f9c4cc5db674e98815cdd8e69da007d5efc779abedc8c0e42883b7fdea12a",
+  "guard_preloaded": true,
+  "guard_sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382",
+  "arguments": [
+    "--headless",
+    "--flush-output",
+    "--path",
+    "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\real-candidate-verify\\fixture\"",
+    "--script",
+    "res://verify.gd"
+  ],
+  "startup_available_mb": 765.93,
+  "startup_commit_mb": 3654.41,
+  "pid": 21536,
+  "peak_private_mb": 35.0,
+  "minimum_available_mb": 801.0,
+  "minimum_commit_headroom_mb": 3618.0,
+  "elapsed_seconds": 0.76,
+  "cpu_seconds": 0.375,
+  "diagnostics": [
+    "SCRIPT ERROR: Parse Error: Used tab character for indentation instead of space as used before in the file.\r",
+    "ERROR: Failed to load script \"res://verify.gd\" with error \"Parse error\".\r"
+  ],
+  "ended_utc": "2026-11-04T01:48:37.0139929Z"
+}

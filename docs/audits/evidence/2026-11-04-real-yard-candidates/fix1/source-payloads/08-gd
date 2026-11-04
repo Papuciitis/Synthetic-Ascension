@@ -1,0 +1,174 @@
+@tool
+extends Resource
+class_name SegmentThemeData
+
+@export var id: StringName = &""
+@export var label: String = ""
+
+@export_group("District Identity")
+@export var district_family: StringName = &"service_courtyards"
+@export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var base_terrain: String = "grass"
+@export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var exploration_terrain: String = "grass"
+## The built district's ground: street, court and envelope chunks. "urban" is
+## the continuous hard surface that DistrictGroundPolicy presents as this
+## family's yard/court paving; exploration chunks and the wilderness beyond the
+## plan keep exploration_terrain. base_terrain remains the theme's wild soil.
+@export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var district_terrain: String = "urban"
+## How much city sits OFF the streets.
+##
+## The urban envelope - the ring of courtyard blocks around every road chunk -
+## used to be hardcoded to the one theme that happened to introduce it, so nine
+## of the ten segments generated `chunk_set == road_chunk_set`: routes laid
+## across an empty field, with decorate_urban_fill() never called once. It is
+## the single thing that stops a district reading as a road drawn on grass, and
+## it was switched off almost everywhere.
+##
+## Now it is a theme knob, which also gives themes their first real silhouette
+## lever: a dense inner district at 0.9 and a sparse outskirt at 0.35 are
+## visibly different places built from the same generator.
+## The district's colour.
+##
+## SegmentThemeData had thirty-five knobs and not one of them was a colour, so
+## the ONLY channel a theme had to change how a place looks was picking one of
+## three ground textures - which is why two themes with the same base terrain
+## were indistinguishable at a glance. This tints the ground and the floor
+## stamps together, so a canal district and a military staging yard read as
+## different places before you have identified a single object in them.
+##
+## Kept gentle on purpose: this is a wash over authored art, not a filter.
+@export var district_tint: Color = Color(1, 1, 1, 1)
+
+@export_range(0.0, 1.0, 0.01) var urban_envelope_cardinal_chance: float = 0.88
+
+## Diagonals only fill in where a cardinal block already bridges back to a
+## street, so the envelope can never strand a block behind itself.
+@export_range(0.0, 1.0, 0.01) var urban_envelope_diagonal_chance: float = 0.42
+
+@export_range(1, 4, 1) var landmark_count: int = 2
+
+@export_group("Decoration")
+## Vegetation and floor decals per streamed chunk: overgrown themes scatter
+## more, yards and staging grounds less.
+@export_range(0, 40, 1) var veg_per_chunk_max: int = 20
+@export_range(0, 40, 1) var decals_per_chunk_max: int = 13
+
+@export_group("World Gen (ChunkManager)")
+@export var weight_empty: float = 0.50
+@export var weight_building: float = 0.30
+@export var weight_ruins: float = 0.20
+
+@export var district_lane_width_cells: int = 12
+@export var district_plaza_size_cells: int = 16
+@export var district_gap_chance: float = 0.10
+@export var district_window_chance: float = 0.12
+
+@export var donjon_strength: float = 0.50
+@export var donjon_room_attempts: int = 18
+@export var donjon_fill_wall_chance: float = 0.50
+@export var donjon_ca_steps: int = 4
+
+@export_group("Macro Layout (DistrictPlan)")
+@export var goal_dist_offset: int = 0
+@export var ortho_limit: int = 3
+@export var ortho_guard_bonus: int = 0
+@export var waypoint_chance: float = 0.80
+@export var meander_chance: float = 0.22
+
+@export var branch_count_min: int = 1
+@export var branch_count_max: int = 2
+@export var max_branch_len: int = 2
+
+@export var loop_budget_min: int = 0
+@export var loop_budget_max: int = 1
+
+@export_group("Exploration Web")
+@export var exploration_branch_count_min: int = 2
+@export var exploration_branch_count_max: int = 4
+@export var exploration_branch_len_min: int = 2
+@export var exploration_branch_len_max: int = 4
+@export_range(0.0, 1.0, 0.01) var exploration_turn_chance: float = 0.35
+@export_range(0.0, 1.0, 0.01) var exploration_reconnect_chance: float = 0.40
+@export var exploration_band_bonus: int = 3
+
+@export_group("Special Beats")
+@export var has_miniboss_arena: bool = false
+@export var has_boss_arena: bool = false
+@export_enum("EXIT_RITE", "MINIBOSS_GATE", "BOSS_GATE") var end_mode: String = "EXIT_RITE"
+@export var arena_branch_len: int = 2
+
+static func blend(a: SegmentThemeData, b: SegmentThemeData, t: float) -> SegmentThemeData:
+	var out := SegmentThemeData.new()
+	t = clampf(t, 0.0, 1.0)
+
+	out.district_family = a.district_family if t < 0.5 else b.district_family
+	out.base_terrain = a.base_terrain if t < 0.5 else b.base_terrain
+	out.exploration_terrain = a.exploration_terrain if t < 0.5 else b.exploration_terrain
+	out.district_terrain = a.district_terrain if t < 0.5 else b.district_terrain
+	out.landmark_count = int(round(lerpf(float(a.landmark_count), float(b.landmark_count), t)))
+	out.district_tint = a.district_tint.lerp(b.district_tint, t)
+	out.urban_envelope_cardinal_chance = lerpf(a.urban_envelope_cardinal_chance, b.urban_envelope_cardinal_chance, t)
+	out.urban_envelope_diagonal_chance = lerpf(a.urban_envelope_diagonal_chance, b.urban_envelope_diagonal_chance, t)
+
+	out.weight_empty = lerpf(a.weight_empty, b.weight_empty, t)
+	out.weight_building = lerpf(a.weight_building, b.weight_building, t)
+	out.weight_ruins = lerpf(a.weight_ruins, b.weight_ruins, t)
+
+	out.district_lane_width_cells = int(round(lerpf(float(a.district_lane_width_cells), float(b.district_lane_width_cells), t)))
+	out.district_plaza_size_cells = int(round(lerpf(float(a.district_plaza_size_cells), float(b.district_plaza_size_cells), t)))
+	out.district_gap_chance = lerpf(a.district_gap_chance, b.district_gap_chance, t)
+	out.district_window_chance = lerpf(a.district_window_chance, b.district_window_chance, t)
+
+	out.donjon_strength = lerpf(a.donjon_strength, b.donjon_strength, t)
+	out.donjon_room_attempts = int(round(lerpf(float(a.donjon_room_attempts), float(b.donjon_room_attempts), t)))
+	out.donjon_fill_wall_chance = lerpf(a.donjon_fill_wall_chance, b.donjon_fill_wall_chance, t)
+	out.donjon_ca_steps = int(round(lerpf(float(a.donjon_ca_steps), float(b.donjon_ca_steps), t)))
+
+	out.goal_dist_offset = int(round(lerpf(float(a.goal_dist_offset), float(b.goal_dist_offset), t)))
+	out.ortho_limit = int(round(lerpf(float(a.ortho_limit), float(b.ortho_limit), t)))
+	out.ortho_guard_bonus = int(round(lerpf(float(a.ortho_guard_bonus), float(b.ortho_guard_bonus), t)))
+	out.waypoint_chance = lerpf(a.waypoint_chance, b.waypoint_chance, t)
+	out.meander_chance = lerpf(a.meander_chance, b.meander_chance, t)
+
+	out.branch_count_min = int(round(lerpf(float(a.branch_count_min), float(b.branch_count_min), t)))
+	out.branch_count_max = int(round(lerpf(float(a.branch_count_max), float(b.branch_count_max), t)))
+	out.max_branch_len = int(round(lerpf(float(a.max_branch_len), float(b.max_branch_len), t)))
+	out.loop_budget_min = int(round(lerpf(float(a.loop_budget_min), float(b.loop_budget_min), t)))
+	out.loop_budget_max = int(round(lerpf(float(a.loop_budget_max), float(b.loop_budget_max), t)))
+
+	out.exploration_branch_count_min = int(round(lerpf(float(a.exploration_branch_count_min), float(b.exploration_branch_count_min), t)))
+	out.exploration_branch_count_max = int(round(lerpf(float(a.exploration_branch_count_max), float(b.exploration_branch_count_max), t)))
+	out.exploration_branch_len_min = int(round(lerpf(float(a.exploration_branch_len_min), float(b.exploration_branch_len_min), t)))
+	out.exploration_branch_len_max = int(round(lerpf(float(a.exploration_branch_len_max), float(b.exploration_branch_len_max), t)))
+	out.exploration_turn_chance = lerpf(a.exploration_turn_chance, b.exploration_turn_chance, t)
+	out.exploration_reconnect_chance = lerpf(a.exploration_reconnect_chance, b.exploration_reconnect_chance, t)
+	out.exploration_band_bonus = int(round(lerpf(float(a.exploration_band_bonus), float(b.exploration_band_bonus), t)))
+	out.arena_branch_len = int(round(lerpf(float(a.arena_branch_len), float(b.arena_branch_len), t)))
+
+	out.has_miniboss_arena = false
+	out.has_boss_arena = false
+	out.end_mode = "EXIT_RITE"
+	return out
+
+func apply_to_chunk_manager(cm: ChunkManager) -> void:
+	if cm == null:
+		return
+	cm.district_family = district_family
+	cm.weight_empty = weight_empty
+	cm.weight_building = weight_building
+	cm.weight_ruins = weight_ruins
+
+	cm.district_lane_width_cells = district_lane_width_cells
+	cm.district_plaza_size_cells = district_plaza_size_cells
+	cm.district_gap_chance = district_gap_chance
+	cm.district_window_chance = district_window_chance
+
+	cm.donjon_strength = donjon_strength
+	cm.donjon_room_attempts = donjon_room_attempts
+	cm.donjon_fill_wall_chance = donjon_fill_wall_chance
+	cm.donjon_ca_steps = donjon_ca_steps
+	cm.set_fallback_terrain(StringName(exploration_terrain))
+	cm.district_tint = district_tint
+	cm.veg_per_chunk_max = veg_per_chunk_max
+	cm.veg_per_chunk_min = mini(cm.veg_per_chunk_min, veg_per_chunk_max)
+	cm.decals_per_chunk_max = decals_per_chunk_max
+	cm.decals_per_chunk_min = mini(cm.decals_per_chunk_min, decals_per_chunk_max)

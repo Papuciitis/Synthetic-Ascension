@@ -1,0 +1,31 @@
+{
+  "success": false,
+  "launched": false,
+  "failure": "Capture not started: available RAM 470 MB, commit headroom 3954 MB.",
+  "exit_code": null,
+  "stop_reason": "",
+  "started_utc": "2026-11-04T01:49:43.6788364Z",
+  "profile": {
+    "startup_available_mb": 512,
+    "startup_commit_mb": 1536,
+    "maximum_private_mb": 64,
+    "timeout_seconds": 30,
+    "running_available_mb": 384,
+    "running_commit_mb": 768
+  },
+  "runner_sha256": "f0ef58441f1a2dcddcc687e38c8a9dad26083a6a853330721541e46bf8a872db",
+  "engine_sha256": "323f9c4cc5db674e98815cdd8e69da007d5efc779abedc8c0e42883b7fdea12a",
+  "guard_preloaded": true,
+  "guard_sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382",
+  "arguments": [
+    "--headless",
+    "--flush-output",
+    "--path",
+    "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\real-candidate-verify-fix1\\fixture\"",
+    "--script",
+    "res://verify.gd"
+  ],
+  "startup_available_mb": 475.46,
+  "startup_commit_mb": 3955.38,
+  "ended_utc": "2026-11-04T01:49:45.2440314Z"
+}
