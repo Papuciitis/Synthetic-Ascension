@@ -1,0 +1,597 @@
+{
+	"args": [
+		"--take=vigil",
+		"--log=/var/tmp/sa-trailer-takes/vigil2/log.json"
+	],
+	"capture_scene": "res://tools/capture/trailer/TrailerDirector.tscn",
+	"clock": "1,2173,36222352439,0",
+	"counters": {
+		"hits": 219,
+		"kills": 182,
+		"player_hits_absorbed": 0,
+		"weapon_fired": 126
+	},
+	"failures": 0,
+	"god_mode": true,
+	"marks": [
+		{
+			"counters": {
+				"hits": 0,
+				"kills": 0,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 0
+			},
+			"mark": "objective",
+			"player": [
+				-1024.0,
+				-1024.0
+			],
+			"process_frame": 25,
+			"take_frame": -1,
+			"title": "Hold the Ward Vigil",
+			"world": [
+				-9216.0,
+				3072.0
+			]
+		},
+		{
+			"counters": {
+				"hits": 26,
+				"kills": 26,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 75
+			},
+			"mark": "take_start",
+			"player": [
+				-9216.0,
+				4072.0
+			],
+			"process_frame": 204,
+			"take_frame": 0
+		},
+		{
+			"counters": {
+				"hits": 26,
+				"kills": 26,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 75
+			},
+			"mark": "approach",
+			"player": [
+				-9216.0,
+				4072.0
+			],
+			"process_frame": 204,
+			"take_frame": 0
+		},
+		{
+			"counters": {
+				"hits": 27,
+				"kills": 27,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 77
+			},
+			"mark": "vigil_woken",
+			"player": [
+				-9216.0,
+				3785.3
+			],
+			"process_frame": 233,
+			"take_frame": 29
+		},
+		{
+			"counters": {
+				"hits": 32,
+				"kills": 31,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 85
+			},
+			"from": "EnemySpec_Runner.tres",
+			"mark": "dodge",
+			"player": [
+				-9211.1,
+				2977.6
+			],
+			"process_frame": 603,
+			"take_frame": 399,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 32,
+				"kills": 31,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 85
+			},
+			"mark": "charger_wedge_called",
+			"placed": true,
+			"player": [
+				-9205.6,
+				3086.1
+			],
+			"process_frame": 733,
+			"take_frame": 529
+		},
+		{
+			"aim": [
+				-9093.1,
+				3033.0
+			],
+			"counters": {
+				"hits": 32,
+				"kills": 31,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 85
+			},
+			"held": false,
+			"mark": "sunder_click",
+			"player": [
+				-9334.3,
+				3072.9
+			],
+			"process_frame": 769,
+			"take_frame": 565
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9276.8,
+				3146.8
+			],
+			"process_frame": 1129,
+			"take_frame": 925,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9257.1,
+				2979.1
+			],
+			"process_frame": 1149,
+			"take_frame": 945,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9297.8,
+				3078.3
+			],
+			"process_frame": 1182,
+			"take_frame": 978,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9327.3,
+				3102.6
+			],
+			"process_frame": 1198,
+			"take_frame": 994,
+			"windup_left": 0.08
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9295.9,
+				3114.9
+			],
+			"process_frame": 1214,
+			"take_frame": 1010,
+			"windup_left": 0.12
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9292.1,
+				3069.8
+			],
+			"process_frame": 1298,
+			"take_frame": 1094,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9125.3,
+				3097.4
+			],
+			"process_frame": 1318,
+			"take_frame": 1114,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9113.6,
+				3091.8
+			],
+			"process_frame": 1351,
+			"take_frame": 1147,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9158.8,
+				3111.5
+			],
+			"process_frame": 1367,
+			"take_frame": 1163,
+			"windup_left": 0.08
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9155.2,
+				3092.0
+			],
+			"process_frame": 1383,
+			"take_frame": 1179,
+			"windup_left": 0.12
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9155.0,
+				3110.4
+			],
+			"process_frame": 1467,
+			"take_frame": 1263,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9289.3,
+				3220.7
+			],
+			"process_frame": 1487,
+			"take_frame": 1283,
+			"windup_left": 0.13
+		},
+		{
+			"aim": [
+				-9074.8,
+				3081.1
+			],
+			"counters": {
+				"hits": 71,
+				"kills": 69,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 98
+			},
+			"held": false,
+			"mark": "sunder_click",
+			"player": [
+				-9265.1,
+				3202.9
+			],
+			"process_frame": 1503,
+			"take_frame": 1299
+		},
+		{
+			"counters": {
+				"hits": 130,
+				"kills": 120,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 100
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9309.1,
+				3104.9
+			],
+			"process_frame": 1520,
+			"take_frame": 1316,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 133,
+				"kills": 120,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 102
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9339.4,
+				2990.3
+			],
+			"process_frame": 1541,
+			"take_frame": 1337,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 142,
+				"kills": 128,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 109
+			},
+			"from": "EnemySpec_Runner.tres",
+			"mark": "dodge",
+			"player": [
+				-9205.8,
+				2976.0
+			],
+			"process_frame": 1613,
+			"take_frame": 1409,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 146,
+				"kills": 130,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 112
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9216.9,
+				3101.1
+			],
+			"process_frame": 1638,
+			"take_frame": 1434,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 151,
+				"kills": 133,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 114
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9312.5,
+				3072.6
+			],
+			"process_frame": 1789,
+			"take_frame": 1585,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 151,
+				"kills": 133,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 114
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9245.0,
+				3218.1
+			],
+			"process_frame": 1810,
+			"take_frame": 1606,
+			"windup_left": 0.12
+		},
+		{
+			"counters": {
+				"hits": 151,
+				"kills": 133,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 114
+			},
+			"mark": "vigil_held",
+			"player": [
+				-9315.4,
+				3067.8
+			],
+			"process_frame": 1854,
+			"take_frame": 1650
+		},
+		{
+			"aim": [
+				-8902.2,
+				3103.5
+			],
+			"counters": {
+				"hits": 151,
+				"kills": 133,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 114
+			},
+			"held": true,
+			"mark": "sunder_click",
+			"player": [
+				-9136.0,
+				3016.9
+			],
+			"process_frame": 1906,
+			"take_frame": 1702
+		},
+		{
+			"counters": {
+				"hits": 187,
+				"kills": 167,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 120
+			},
+			"from": "EnemySpec_Charger.tres",
+			"mark": "dodge",
+			"player": [
+				-9159.4,
+				3173.9
+			],
+			"process_frame": 1960,
+			"take_frame": 1756,
+			"windup_left": 0.13
+		},
+		{
+			"counters": {
+				"hits": 219,
+				"kills": 182,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 126
+			},
+			"mark": "take_end",
+			"player": [
+				-9207.0,
+				3167.9
+			],
+			"process_frame": 2174,
+			"take_frame": 1970,
+			"vigil_finished": true
+		}
+	],
+	"movie": "/var/tmp/sa-trailer-takes/vigil2/vigil.avi",
+	"segment": 7,
+	"slates_process_frames": [
+		203
+	],
+	"staging": [
+		{
+			"kind": "onboarding tips marked seen (returning-player profile)"
+		},
+		{
+			"items": {
+				"0": [
+					"conduit_heart",
+					3
+				],
+				"1": [
+					"conduit_plating",
+					3
+				],
+				"2": [
+					"gravemarch_stompers",
+					3
+				],
+				"3": [
+					"conduit_lens",
+					3
+				],
+				"4": [
+					"gravemarch_clockjaw",
+					2
+				],
+				"5": [
+					"conduit_charm",
+					2
+				],
+				"6": [
+					"acc_oakheart",
+					3
+				],
+				"7": [
+					"ring_crusher",
+					3
+				]
+			},
+			"kind": "equipped loadout without Manifestations"
+		},
+		{
+			"kind": "found Sunder Wake Strideframe already worn (the find take's choice)"
+		},
+		{
+			"kind": "player warp 1000 px from the Vigil",
+			"world": [
+				-9216.0,
+				4072.0
+			]
+		},
+		{
+			"enemies_after": 2,
+			"game_seconds": 10.0,
+			"kind": "pre-roll before the slate at 4x time scale"
+		}
+	],
+	"style": "ranged",
+	"take": "vigil",
+	"take_frame0": 204,
+	"window": "(1920, 1080)",
+	"world_seed": 16102028
+}
