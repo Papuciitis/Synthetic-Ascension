@@ -1,0 +1,106 @@
+{
+  "title": "The Ascension of Syn'Tek",
+  "source_commit": "439f3be5fe3044ab9b94963c464326db03f136af",
+  "notes": "The intro recreates the reveal using the shipped title asset and timing map. Hub, Beka and Augment beats use archived native stills. Gameplay footage mixes the original S7 trailer with earlier captured encounters. Staged takes and frame sampling vary by source. The two soundtrack stems are the exact menu and normal gameplay tracks.",
+  "audio": {
+    "menu": "repo:assets/audio/music/main_menu.mp3",
+    "game_start": 0,
+    "game": "repo:assets/audio/music/in_game.mp3",
+    "crossfade_seconds": 0.7,
+    "menu_seconds": 4.45
+  },
+  "cuts": [
+    {
+      "beat": "Original logo reveal and menu theme",
+      "duration": 4.1,
+      "still": false,
+      "source": "inputs/main-menu-title-asset-animation.mp4",
+      "start": 0
+    },
+    {
+      "beat": "Cold strike on the Ward Vigil",
+      "duration": 2.3,
+      "still": false,
+      "source": "@cut-one",
+      "start": 0.15
+    },
+    {
+      "beat": "Hub and Ascension dais",
+      "duration": 1.5,
+      "still": true,
+      "source": "repo:docs/art/reference/2026-10-20-linux-theme-atmosphere/authored-contexts/hub-authored-dusk.png",
+      "start": 0
+    },
+    {
+      "beat": "Beka at the Quiet Alcove",
+      "duration": 1.7,
+      "still": true,
+      "source": "repo:docs/art/reference/2026-10-18-hub-camera-cursor/beka-interaction-1280x720.png",
+      "start": 0
+    },
+    {
+      "beat": "Choose an Augment",
+      "duration": 2.6,
+      "still": true,
+      "source": "repo:docs/art/reference/2026-10-25-exported-run-fix/originals/augment-three-cards.png",
+      "start": 0
+    },
+    {
+      "beat": "Hold the arch against the guard wave",
+      "duration": 3.3,
+      "still": false,
+      "source": "repo:docs/art/reference/2026-10-19-s3-guard-loggia-v2/final/native-south-normal/fight.mp4",
+      "start": 0.6
+    },
+    {
+      "beat": "Melee under the S5 slam and Fault Line",
+      "duration": 3.9,
+      "still": false,
+      "source": "repo:docs/art/reference/2026-10-16-s5-teaching-fights/live-tank-1280.mp4",
+      "start": 4.3
+    },
+    {
+      "beat": "Ranged counter under elite pressure",
+      "duration": 3.3,
+      "still": false,
+      "source": "repo:docs/art/reference/2026-10-16-elite-crowd-fight/elite-crowd-fight.mp4",
+      "start": 0.6
+    },
+    {
+      "beat": "Cut through the roof into the find",
+      "duration": 2.4,
+      "still": false,
+      "source": "@cut-one",
+      "start": 6.7
+    },
+    {
+      "beat": "Lattice Strideframe and Sunder Wake equip",
+      "duration": 3.37,
+      "still": false,
+      "source": "@cut-one",
+      "start": 13.53
+    },
+    {
+      "beat": "Momentum fills, spend it at the aim point",
+      "duration": 4.17,
+      "still": false,
+      "source": "@cut-one",
+      "start": 17.16
+    },
+    {
+      "beat": "Dodge the Charger wave and hold the Vigil",
+      "duration": 8.27,
+      "still": false,
+      "source": "@cut-one",
+      "start": 26.6
+    },
+    {
+      "beat": "Official wordmark",
+      "duration": 3.2,
+      "still": true,
+      "source": "inputs/official-wordmark.png",
+      "start": 0
+    }
+  ],
+  "cut_one_sha256": "4b895178a1bce03efb88cf986ade9052fda0971959e06fcc4e70a24818e22ae3"
+}
