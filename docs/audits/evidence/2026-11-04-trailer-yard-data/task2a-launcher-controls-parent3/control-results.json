@@ -1,0 +1,33 @@
+[
+  {
+    "control": "native",
+    "verified": true,
+    "runner_exit": 1,
+    "native_exit": 7,
+    "stop_reason": "",
+    "diagnostic_count": 0
+  },
+  {
+    "control": "diagnostic",
+    "verified": true,
+    "runner_exit": 1,
+    "native_exit": 0,
+    "stop_reason": "",
+    "diagnostic_count": 1
+  },
+  {
+    "control": "timeout",
+    "verified": true,
+    "runner_exit": 1,
+    "native_exit": -1,
+    "stop_reason": "timeout",
+    "diagnostic_count": 0
+  },
+  {
+    "control": "no-overwrite",
+    "verified": true,
+    "runner_exit": 1,
+    "before_sha256": "BFD65C34ED164239B8D983600DB0D0C9535473E441E180A7DC495192D19F27CD",
+    "after_sha256": "BFD65C34ED164239B8D983600DB0D0C9535473E441E180A7DC495192D19F27CD"
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "suite": "native",
+  "success": true,
+  "launched": true,
+  "failure": "",
+  "exit_code": 0,
+  "stop_reason": "",
+  "engine_sha256": "323F9C4CC5DB674E98815CDD8E69DA007D5EFC779ABEDC8C0E42883B7FDEA12A",
+  "arguments": [
+    "--flush-output",
+    "--path",
+    "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\task2b-native-final\\fixture\"",
+    "--resolution",
+    "512x512",
+    "res://tools/tests/YardSupportNativeTest.tscn"
+  ],
+  "launcher_sha256": "2c047b78e36e1fbc27f30df641f37723ccc56fb771c5b57402a47cf27d205058",
+  "profile": {
+    "startup_available_mb": 704,
+    "startup_commit_mb": 1536,
+    "maximum_private_mb": 256,
+    "timeout_seconds": 120,
+    "running_available_mb": 384,
+    "running_commit_mb": 768
+  },
+  "pid": 32304,
+  "peak_private_mb": 241.0,
+  "minimum_available_mb": 470.0,
+  "minimum_commit_headroom_mb": 2589.0,
+  "elapsed_seconds": 8.5,
+  "cpu_seconds": 5.688,
+  "generated_shader_sha256": "98C0B162C874EA50A7FB3F0B60127E97CC82A1FADE8B9833C7DCD7D89F211702",
+  "diagnostics": [],
+  "passed": 46,
+  "failed": 0
+}

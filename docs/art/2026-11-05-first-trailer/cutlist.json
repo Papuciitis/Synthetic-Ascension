@@ -1,0 +1,154 @@
+{
+  "fps": 60,
+  "ffmpeg": "/home/user/Nauris/Synthetic-Ascension/.superpowers/handoff-linux/video-tool/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2",
+  "sources": {
+    "find": "/var/tmp/sa-trailer-takes/find1/find.avi",
+    "vigil": "/var/tmp/sa-trailer-takes/vigil2/vigil.avi"
+  },
+  "cuts": [
+    {
+      "id": "H1",
+      "source": "vigil",
+      "in": 648,
+      "out": 800,
+      "section": "Hook",
+      "what": "Swarm closes on the Ward Vigil; a full Momentum bank tears the ground at the aim point"
+    },
+    {
+      "id": "C1",
+      "source": "find",
+      "in": 382,
+      "out": 530,
+      "section": "City",
+      "what": "Canal Services street fight beside the frontage"
+    },
+    {
+      "id": "C2",
+      "source": "find",
+      "in": 530,
+      "out": 779,
+      "section": "City",
+      "what": "Along the frontages to a real door; roof cuts away; item picked up inside"
+    },
+    {
+      "id": "K1",
+      "source": "find",
+      "in": 779,
+      "out": 870,
+      "section": "Choice",
+      "what": "Bag opens (game pauses); pointer onto the found item"
+    },
+    {
+      "id": "K2",
+      "source": "find",
+      "in": 870,
+      "out": 1105,
+      "section": "Choice",
+      "what": "Item card held: Lattice Strideframe, Manifestation Sunder Wake (1.5x punch-in)",
+      "crop": [
+        640,
+        0,
+        1280,
+        720
+      ]
+    },
+    {
+      "id": "K3",
+      "source": "find",
+      "in": 1105,
+      "out": 1245,
+      "section": "Choice",
+      "what": "Click to equip; comparison flips; bag closes"
+    },
+    {
+      "id": "P1",
+      "source": "find",
+      "in": 1245,
+      "out": 1510,
+      "section": "Payoff",
+      "what": "Walking out fills Momentum; attack spends it: two tears at the aim point"
+    },
+    {
+      "id": "E1",
+      "source": "vigil",
+      "in": 214,
+      "out": 330,
+      "section": "Escalation",
+      "what": "Approach wakes the Ward Vigil"
+    },
+    {
+      "id": "E2",
+      "source": "vigil",
+      "in": 440,
+      "out": 640,
+      "section": "Escalation",
+      "what": "The horde converges on the ward"
+    },
+    {
+      "id": "E3",
+      "source": "vigil",
+      "in": 1100,
+      "out": 1240,
+      "section": "Escalation",
+      "what": "Charger wedge winds up; dash dodges while holding the ring"
+    },
+    {
+      "id": "E4",
+      "source": "vigil",
+      "in": 1330,
+      "out": 1560,
+      "section": "Escalation",
+      "what": "The ring tightens; one Sunder clears it (VIOLENCE x3.6)"
+    },
+    {
+      "id": "E5",
+      "source": "vigil",
+      "in": 1848,
+      "out": 1974,
+      "section": "Escalation",
+      "what": "VIGIL HELD, the district shifts; final Sunder into the wave; cut on the impact",
+      "tail": 1.6
+    }
+  ],
+  "title": {
+    "card": "/var/tmp/sa-trailer-takes/cards/title.png",
+    "seconds": 6.0,
+    "fade_in": 0.12
+  },
+  "music": [
+    {
+      "file": "/var/tmp/sa-trailer/assets/audio/music/s10/main_phase_1.wav",
+      "start": 0.0,
+      "end": 16.917,
+      "loop_seconds": 16.0,
+      "fade_in": 0.4
+    },
+    {
+      "file": "/var/tmp/sa-trailer/assets/audio/music/s10/main_phase_2.wav",
+      "start": 16.917,
+      "end": 21.333,
+      "loop_seconds": 16.0,
+      "gain_db": -3.0
+    },
+    {
+      "file": "/var/tmp/sa-trailer/assets/audio/music/s10/main_phase_3.wav",
+      "start": 21.333,
+      "end": 34.866,
+      "loop_seconds": 16.0,
+      "gain_db": -3.0
+    },
+    {
+      "file": "/var/tmp/sa-trailer/assets/audio/music/s10/defeat_release.wav",
+      "start": 34.866,
+      "end": 38.066,
+      "gain_db": 2.0,
+      "fade_out": 0.6
+    }
+  ],
+  "mix": {
+    "music_gain_db": -8.0,
+    "duck": true,
+    "target_lufs": -14.0,
+    "true_peak": -1.0
+  }
+}

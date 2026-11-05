@@ -1,0 +1,8 @@
+func _mix_seed(a: int, b: int, c: int, d: int) -> int:
+	var x: int = a * 1103515245 + 12345
+	x = int(x ^ (b * 374761393))
+	x = int(x ^ (c * 668265263))
+	x = int(x ^ (d * 2246822519))
+	x = int((x ^ (x >> 13)) * 1274126177)
+	x = int(x ^ (x >> 16))
+	return x

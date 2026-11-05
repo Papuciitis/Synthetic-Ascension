@@ -1,0 +1,29 @@
+{
+  "scope": "whole-project ScriptParseAuditTest",
+  "launched": false,
+  "success": false,
+  "failure": "Capture not started: available RAM 324 MB, commit headroom 2126 MB.",
+  "exit_code": null,
+  "arguments": [
+    "--headless",
+    "--flush-output",
+    "--path",
+    "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\"",
+    "--audio-driver",
+    "Dummy",
+    "res://tools/tests/ScriptParseAuditTest.tscn"
+  ],
+  "profile": {
+    "startup_commit_mb": 3072,
+    "maximum_private_mb": 1200,
+    "running_available_mb": 384,
+    "startup_available_mb": 1536,
+    "running_commit_mb": 768,
+    "timeout_seconds": 120
+  },
+  "wrapper_sha256": "C1EB9FD581C7711C89F342B4A221B229C62186757068C6E3B24F72D0299F5DB3",
+  "guard_sha256": "DFE25730C5E24AC0E4ED6031AF387C5FA2038EF30C37C1C7AC087856C19E7382",
+  "engine_sha256": "323F9C4CC5DB674E98815CDD8E69DA007D5EFC779ABEDC8C0E42883B7FDEA12A",
+  "startup_available_mb": 328.0,
+  "startup_commit_headroom_mb": 2125.0
+}

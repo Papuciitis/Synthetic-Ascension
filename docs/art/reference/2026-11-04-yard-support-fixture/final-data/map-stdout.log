@@ -1,0 +1,72 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: yard support map owner exists
+PASS: owner loads with no autoloads or assets
+PASS: new owner starts entirely clear
+PASS: valid row-major inputs accepted
+PASS: only exact index 6 and care byte 0 survive
+PASS: all caller arrays untouched
+PASS: identical replacement accepted
+PASS: replacement idempotent
+PASS: later caller mutations cannot change stored bytes
+PASS: lower replacement accepted
+PASS: replacement lowers old bytes rather than maxing stale data
+PASS: signature is an independent copy
+PASS: malformed field rejected: 0/3
+PASS: malformed field clears stale valid target
+PASS: malformed field preserves unrelated target
+PASS: malformed field rejected: 0/5
+PASS: malformed field clears stale valid target
+PASS: malformed field preserves unrelated target
+PASS: malformed field rejected: 1/3
+PASS: malformed field clears stale valid target
+PASS: malformed field preserves unrelated target
+PASS: malformed field rejected: 1/5
+PASS: malformed field clears stale valid target
+PASS: malformed field preserves unrelated target
+PASS: malformed field rejected: 2/3
+PASS: malformed field clears stale valid target
+PASS: malformed field preserves unrelated target
+PASS: malformed field rejected: 2/5
+PASS: malformed field clears stale valid target
+PASS: malformed field preserves unrelated target
+PASS: invalid dimensions rejected before allocation: 0
+PASS: invalid signature bounded: 0
+PASS: invalid dimensions leave existing data intact
+PASS: invalid dimensions rejected before allocation: -1
+PASS: invalid signature bounded: -1
+PASS: invalid dimensions leave existing data intact
+PASS: invalid dimensions rejected before allocation: 257
+PASS: invalid signature bounded: 257
+PASS: invalid dimensions leave existing data intact
+PASS: invalid dimensions rejected before allocation: 2147483647
+PASS: invalid signature bounded: 2147483647
+PASS: invalid dimensions leave existing data intact
+PASS: invalid dimensions rejected before allocation: 9223372036854775807
+PASS: invalid signature bounded: 9223372036854775807
+PASS: invalid dimensions leave existing data intact
+PASS: negative nondivisor chunk accepted
+PASS: negative origin maps to literal wrapped image coordinates
+PASS: nondivisor chunk crosses both wrapped edges
+PASS: edge crossing preserves local row-major order
+PASS: wrapped signature reconstructs local field
+PASS: aliased chunk replacement accepted
+PASS: aliased old chunk bytes cleared completely
+PASS: extreme coordinates accepted without multiplication overflow
+PASS: extreme coordinate wrapping has literal origin and extent
+PASS: clear resets the complete fixed buffer
+PASS: divisor chunk accepted
+PASS: wrapped divisor alias replaced
+PASS: divisor wrapped reuse clears old bytes
+PASS: maximum bounded chunk accepted
+PASS: snapshot is fixed single-channel L8 without mipmaps
+PASS: rect clear wraps across both edges
+PASS: rect clear preserves neighboring bytes
+PASS: snapshot retains bytes after owner clears
+PASS: editing snapshot cannot mutate owner
+PASS: empty and negative-size rectangles do nothing
+PASS: huge rectangle clears once per wrapped cell with bounded CPU
+PASS: negative single-cell rect wraps without expanding
+PASS: huge width and one-row height preserve other rows
+PASS: owner reset leaves caller-edited old snapshot independent
+CityYardSupportMapTest: 69 passed, 0 failed

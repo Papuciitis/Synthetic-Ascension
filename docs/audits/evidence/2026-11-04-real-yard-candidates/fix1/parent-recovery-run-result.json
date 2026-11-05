@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "launched": true,
+  "failure": "",
+  "exit_code": 0,
+  "stop_reason": "",
+  "started_utc": "2026-11-04T01:50:15.3714219Z",
+  "profile": {
+    "startup_available_mb": 512,
+    "startup_commit_mb": 1536,
+    "maximum_private_mb": 64,
+    "timeout_seconds": 30,
+    "running_available_mb": 384,
+    "running_commit_mb": 768
+  },
+  "runner_sha256": "f0ef58441f1a2dcddcc687e38c8a9dad26083a6a853330721541e46bf8a872db",
+  "engine_sha256": "323f9c4cc5db674e98815cdd8e69da007d5efc779abedc8c0e42883b7fdea12a",
+  "guard_preloaded": true,
+  "guard_sha256": "dfe25730c5e24ac0e4ed6031af387c5fa2038ef30c37c1c7ac087856c19e7382",
+  "arguments": [
+    "--headless",
+    "--flush-output",
+    "--path",
+    "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\real-candidate-verify-fix1\\fixture\"",
+    "--script",
+    "res://verify.gd"
+  ],
+  "startup_available_mb": 879.57,
+  "startup_commit_mb": 3863.3,
+  "pid": 40076,
+  "peak_private_mb": 0.0,
+  "minimum_available_mb": 910.0,
+  "minimum_commit_headroom_mb": 3808.0,
+  "elapsed_seconds": 0.58,
+  "cpu_seconds": 0.359,
+  "diagnostics": [],
+  "passed": 14,
+  "failed": 0,
+  "derived_results_sha256": "d114555c681e5bd770ce7ecddf3fff72afc2715fe88b0f4455f5a61f0f394ec4",
+  "ended_utc": "2026-11-04T01:50:16.9972826Z"
+}

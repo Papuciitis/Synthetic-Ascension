@@ -1,10 +1,32 @@
 # Windows art direction ↔ Linux production handoff
 
-Updated 31 October 2026. This is a working checkpoint, not visual acceptance of
+Updated 5 November 2026. This is a working checkpoint, not visual acceptance of
 the game. The user asked Windows to lead art direction and provide assets, and
 Linux to take the heavier implementation, testing and native capture work.
 
-**Latest visual update, 31 October:** district-fill courts (the most common
+**Latest update, 5 November:** the first gameplay trailer cut (0:40.87,
+1080p60) was recorded offline from the actual Game at `codex/trailer-build`
+`a2720c2d`. The video is kept outside Git on the Linux machine
+(`~/Videos/Synthetic-Ascension-first-trailer.mp4`). Its cut list, take logs,
+staging, checks and pickups for a 75–90 s cut are in the
+[first-trailer notes](docs/art/2026-11-05-first-trailer/README.md); the capture
+and edit tools are in `tools/capture/trailer/`. `codex/trailer-build`, with its
+default-off S7 yard preview, is now merged into this branch alongside the
+31 October court work. The yard preview stays off.
+
+**Windows checkpoint, 4 November:** Windows received Linux `d7cfb52f` and,
+under overnight delegation, committed a default-off, single-household S7 yard
+presentation trial at `6de56bed`. Small data/native fixture checks pass; actual
+generated Game appearance/traversal/cost and whole-project parse remain open.
+The latest [Windows checks](docs/audits/2026-11-04-trailer-resume/README.md)
+stopped the isolated house import at its memory cap and refused the full-project
+parse before engine launch. The first trailer pilot uses ordinary gameplay with
+the yard preview off, so it can be recorded separately on a machine that can
+run the game.
+Read [Windows status](docs/handoff/ART_STATUS.md) for scope, proof and the next
+native decision, plus the [first-trailer shot plan](docs/art/2026-11-04-first-trailer-shot-plan.md).
+
+**Visual update, 31 October:** district-fill courts (the most common
 city chunk) are now flush paving without the stamped kerb/gutter ring, and in
 Outer Wall (S9A) their setts follow the walking lines from passages and
 doorways while unused corners return to the grassy cobble yard. Other families

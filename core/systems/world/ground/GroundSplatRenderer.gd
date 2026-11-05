@@ -23,6 +23,9 @@ const SHADER := preload("res://core/systems/world/ground/ground_splat.gdshader")
 const _CITY_GROUND_CARE := preload("res://core/systems/world/ground/CityGroundCare.gd")
 const _CITY_COURT_SUPPORT := preload("res://core/systems/world/ground/CityCourtSupport.gd")
 const _POLICY := preload("res://core/systems/world/ground/DistrictGroundPolicy.gd")
+const _YARD_SUPPORT := preload("res://core/systems/world/ground/CityYardSupport.gd")
+const _YARD_SUPPORT_MAP := preload("res://core/systems/world/ground/CityYardSupportMap.gd")
+const _YARD_SUPPORT_SHADER := preload("res://core/systems/world/ground/YardSupportPreviewShader.gd")
 
 ## Cells, wrapped. 256 cells = 8 chunks at 32 cells/chunk = 16384 px: larger than any streamed
 ## window, and the whole of Segment 1 fits without wrapping onto itself.
@@ -71,6 +74,14 @@ var _material: ShaderMaterial
 var _quad_texture: ImageTexture
 var _quads: Dictionary = {}
 var _dirty := false
+## Lazily allocated opt-in presentation state; never owns cover/light/slots.
+var _yard_support_requested := false
+var _yard_support_coord := Vector2i.ZERO
+var _yard_support_seed := 0
+var _yard_support_map: _YARD_SUPPORT_MAP = null
+var _yard_support_texture: ImageTexture = null
+var _yard_support_shader: Shader = null
+var _yard_support_dirty := false
 
 static var _noise_texture: ImageTexture = null
 
@@ -106,6 +117,7 @@ func _init() -> void:
 		_material.set_shader_parameter("debug_view", int(OS.get_environment("SA_GROUND_DEBUG_VIEW")))
 	_push_role_uniforms()
 	_push_slot_uniforms()
+	_sync_yard_support_preview()
 
 
 func configure(p_cell_px: int, p_cells_per_chunk: int) -> void:
@@ -181,6 +193,7 @@ func set_ground_policy(policy: Dictionary) -> void:
 		_material.set_shader_parameter("city_limestone", kit._texture("paving.png"))
 	_push_role_uniforms()
 	_push_slot_uniforms()
+	_sync_yard_support_preview()
 
 
 func ground_policy() -> Dictionary:
@@ -189,6 +202,115 @@ func ground_policy() -> Dictionary:
 
 func ground_policy_enabled() -> bool:
 	return bool(_policy.get("enabled", false))
+
+
+## Canonical decimal fields prevent overflow/truncation and accidental all-home
+## trials. Whitespace is allowed around fields, not inside an integer.
+static func parse_yard_support_target(value: String) -> Dictionary:
+	var fields := value.split(",", true)
+	if fields.size() != 3:
+		return {}
+	var numbers: Array[int] = []
+	for field: String in fields:
+		var text := field.strip_edges()
+		if not text.is_valid_int():
+			return {}
+		var number := text.to_int()
+		if str(number) != text:
+			return {}
+		numbers.append(number)
+	if numbers[0] < -_YARD_SUPPORT.MAX_COORD or numbers[0] > _YARD_SUPPORT.MAX_COORD or numbers[1] < -_YARD_SUPPORT.MAX_COORD or numbers[1] > _YARD_SUPPORT.MAX_COORD:
+		return {}
+	return {"coord":Vector2i(numbers[0],numbers[1]),"seed":numbers[2]}
+
+
+## Returns whether the request is currently active. An inactive district keeps
+## the request, so setup order cannot silently lose an explicit target.
+func configure_yard_support_preview(enabled: bool, target_coord: Vector2i, target_seed: int) -> bool:
+	if _yard_support_coord != target_coord or _yard_support_seed != target_seed or not enabled:
+		_clear_yard_support()
+	_yard_support_coord = target_coord
+	_yard_support_seed = target_seed
+	_yard_support_requested = enabled and absi(target_coord.x) <= _YARD_SUPPORT.MAX_COORD and absi(target_coord.y) <= _YARD_SUPPORT.MAX_COORD
+	return _sync_yard_support_preview()
+
+
+func _sync_yard_support_preview() -> bool:
+	var active := _yard_support_requested and ground_policy_enabled() and _policy_family in [&"underpass_veins", &"canal_services"]
+	if active and _yard_support_shader == null:
+		_yard_support_shader = _YARD_SUPPORT_SHADER.build(SHADER)
+	active = active and _yard_support_shader != null
+	if active:
+		if _yard_support_map == null:
+			_yard_support_map = _YARD_SUPPORT_MAP.new()
+			_yard_support_texture = ImageTexture.create_from_image(_yard_support_map.snapshot_image())
+		_switch_yard_support_shader(_yard_support_shader)
+		_material.set_shader_parameter("yard_support_map", _yard_support_texture)
+	else:
+		_clear_yard_support()
+		_switch_yard_support_shader(SHADER)
+	return active
+
+
+func _switch_yard_support_shader(shader: Shader) -> void:
+	if _material.shader == shader:
+		return
+	var shared := {}
+	for uniform: Dictionary in SHADER.get_shader_uniform_list():
+		shared[uniform.name] = _material.get_shader_parameter(uniform.name)
+	_material.shader = shader
+	for key in shared:
+		_material.set_shader_parameter(key, shared[key])
+
+
+func _clear_yard_support() -> void:
+	if _yard_support_map != null:
+		_yard_support_map.clear()
+		_yard_support_dirty = true
+
+
+func _clear_yard_support_rect(rect: Rect2i) -> void:
+	if _yard_support_map != null:
+		_yard_support_map.clear_rect(rect)
+		_yard_support_dirty = true
+
+
+## Only one unambiguous household seed in one explicit chunk. Max composition
+## occurs before Map replacement; the Map alone owns the wrapped output bytes.
+func paint_yard_support(coord: Vector2i, specs: Array[Dictionary]) -> void:
+	if coord != _yard_support_coord or _material.shader != _yard_support_shader or _yard_support_map == null:
+		return
+	var selected: Array[Dictionary] = []
+	for spec: Dictionary in specs:
+		if typeof(spec.get("visual_seed")) == TYPE_INT and spec.visual_seed == _yard_support_seed:
+			selected.append(spec)
+	var n := cells_per_chunk
+	if n <= 0 or n > MAP_SIZE:
+		return
+	var proposed := PackedByteArray()
+	proposed.resize(n*n)
+	if selected.size() == 1:
+		for spec: Dictionary in selected:
+			var weights := _YARD_SUPPORT.plan(coord, spec, cell_px, n)
+			if weights.size() == proposed.size():
+				for index in proposed.size():
+					proposed[index] = maxi(proposed[index], weights[index])
+	var semantic := PackedInt32Array()
+	semantic.resize(n*n)
+	for y in n:
+		for x in n:
+			semantic[y*n+x] = material_at(coord*n+Vector2i(x,y))
+	_yard_support_map.replace_chunk(coord,n,proposed,semantic,care_signature(coord))
+	_yard_support_dirty = true
+
+
+func yard_support_signature(coord: Vector2i) -> PackedByteArray:
+	if _yard_support_map != null:
+		return _yard_support_map.signature(coord,cells_per_chunk)
+	var empty := PackedByteArray()
+	if cells_per_chunk > 0 and cells_per_chunk <= MAP_SIZE:
+		empty.resize(cells_per_chunk*cells_per_chunk)
+	return empty
 
 
 func get_shader_material() -> ShaderMaterial:
@@ -393,6 +515,7 @@ func paint_domestic_care(coord: Vector2i, spec: Dictionary, eligible: PackedByte
 			var cell := origin+Vector2i(x,y)
 			var at := Vector2i(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
 			var current := _light.get_pixelv(at)
+			_clear_yard_support_rect(Rect2i(cell,Vector2i.ONE))
 			if amount <= current.b:
 				continue
 			current.b = amount
@@ -413,6 +536,7 @@ func paint_planting(coord: Vector2i, rect: Rect2i) -> void:
 				continue
 			var at := Vector2i(posmod(cell.x,MAP_SIZE),posmod(cell.y,MAP_SIZE))
 			var current := _light.get_pixelv(at)
+			_clear_yard_support_rect(Rect2i(cell,Vector2i.ONE))
 			if current.b >= 1.0:
 				continue
 			current.b = 1.0
@@ -650,6 +774,7 @@ func care_signature(coord: Vector2i) -> PackedByteArray:
 
 
 func clear() -> void:
+	_clear_yard_support()
 	for image in [_cover_a, _cover_b, _light]:
 		(image as Image).fill(Color(0, 0, 0, 0))
 	_support.fill(Color.WHITE)
@@ -706,6 +831,9 @@ func flush() -> void:
 	if _support_dirty:
 		_support_dirty = false
 		_support_texture.update(_support)
+	if _yard_support_dirty and _yard_support_texture != null:
+		_yard_support_texture.update(_yard_support_map.snapshot_image())
+		_yard_support_dirty = false
 	if not _dirty:
 		return
 	_dirty = false
@@ -715,6 +843,7 @@ func flush() -> void:
 
 
 func _fill(rect: Rect2i, ground_index: int, brightness: float, authored: bool) -> void:
+	_clear_yard_support_rect(rect)
 	var slot := _slot_for(ground_index)
 	var a := Color(0, 0, 0, 0)
 	var b := Color(0, 0, 0, 0)

@@ -1,0 +1,34 @@
+[
+  {
+    "control": "empty",
+    "verified": true,
+    "runner_exit": 1,
+    "native_exit": 0,
+    "stop_reason": "",
+    "diagnostic_count": 0
+  },
+  {
+    "control": "native",
+    "verified": true,
+    "runner_exit": 1,
+    "native_exit": 7,
+    "stop_reason": "",
+    "diagnostic_count": 0
+  },
+  {
+    "control": "diagnostic",
+    "verified": true,
+    "runner_exit": 1,
+    "native_exit": 0,
+    "stop_reason": "",
+    "diagnostic_count": 1
+  },
+  {
+    "control": "timeout",
+    "verified": false,
+    "runner_exit": 1,
+    "native_exit": -1,
+    "stop_reason": "system_memory_headroom",
+    "diagnostic_count": 0
+  }
+]

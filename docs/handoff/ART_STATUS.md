@@ -1,7 +1,52 @@
 # Windows art lead status
 
-Owner: Windows lead-design chat. Updated 21 October 2026.
-Integration branch: `enemy-world-work`. Read [HANDOFF](../../HANDOFF.md) first.
+Owner: Windows lead-design chat. Updated 4 November 2026.
+Shared integration branch: `enemy-world-work`. Overnight local branch:
+`codex/overnight-ground-verification`. Read [HANDOFF](../../HANDOFF.md) first.
+
+## 4 November — first-trailer preparation and local yard trial
+
+Received Linux `d7cfb52f`, fast-forwarding sixteen commits from `67728a93`.
+The export repair, fractional care-edge blend and bounded S9 paving correction
+are present. The checked runtime matches the recorded export test checkpoint
+`ee6ff2f8`; retain the published evidence's original scope. The corrected ZIP is
+an ignored, separately transferred build: this pull does not replace an old EXE.
+
+Under the user's overnight delegation, local implementation `6de56bed` adds a
+**default-off** trial for one explicitly selected S7 household corner. A separate
+mask uses actual footprint/door/garden records and existing damp material;
+semantic coverage, care/light bytes, navigation and RNG remain authoritative.
+The ordinary renderer retains the exact original shader resource and source.
+This is a bounded experiment, not acceptance of the broad property outlines.
+
+Current isolated checks pass renderer75/0, helper82/0, mask69/0 and the retained
+ground-data subset60/0. The small native material fixture passes46/0 with zero
+diagnostics:3299 permitted yard pixels change and all semantic/care/off/reset
+controls stay identical. Root and scoped reviewer viewed its originals. See
+[fixture proof and limits](../art/reference/2026-11-04-yard-support-fixture/README.md)
+and the earlier [data verification](../audits/2026-11-04-trailer-yard-data-verification.md).
+The empty fixture is not an actual generated street or aesthetic approval.
+
+Whole-project parse was refused before engine launch at324MB available RAM and
+2126MB commit headroom, below the unchanged1536/3072MB full-project startup gate.
+No actual Game normal/small view, doorway/passage traversal, streamed reload or
+changed-path cost result is claimed. Keep the trial off until those checks fit.
+The next visual decision needs one real generated S7 household, its recorded
+chunk/visual seed, matched1280×720 and960×540 originals, mask view and real
+door/passage/reload controls. Do not change material scale/grade at the same time.
+
+The resumed check started the isolated household texture import, but the
+engine reached 410 MiB private memory against its 384 MiB cap before any
+textures were produced. Whole-project parse was refused again at 1387 MiB
+available RAM against its unchanged 1536 MiB launch floor. The
+[receipts](../audits/2026-11-04-trailer-resume/README.md) preserve both outcomes.
+
+The [first-trailer plan](../art/2026-11-04-first-trailer-shot-plan.md) now starts
+with an ordinary street-combat pilot on a machine that can run the game. Keep
+the yard trial off for that take. Once the recording reads clearly with audio
+at full and small sizes, collect the six shots for the 36-second edit. The
+equipment decision and its payoff need to come from the actual run. No new
+trailer footage, export, push or shared-branch merge was produced here.
 
 ## Current packet
 

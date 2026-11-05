@@ -1,0 +1,777 @@
+{
+  "derived_verified": [
+    {
+      "care_eligibility_from_id_only": true,
+      "carve": {
+        "classification": "current actual source geometry replay; normal width2 DERIVED, not historically observed",
+        "door_cells": [
+          [
+            25,
+            13
+          ],
+          [
+            26,
+            13
+          ]
+        ],
+        "floor_stamps": [
+          {
+            "alpha": 0.98,
+            "rect": [
+              22,
+              8,
+              6,
+              5
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              25,
+              12,
+              1,
+              1
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              25,
+              10,
+              1,
+              3
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              25,
+              10,
+              1,
+              1
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              25,
+              10,
+              1,
+              3
+            ],
+            "tex": 2,
+            "z": -93
+          }
+        ],
+        "half_cover_cells": [
+          [
+            22,
+            8
+          ],
+          [
+            27,
+            9
+          ],
+          [
+            22,
+            10
+          ],
+          [
+            27,
+            10
+          ],
+          [
+            22,
+            11
+          ],
+          [
+            27,
+            11
+          ]
+        ],
+        "partition_cells": [],
+        "rng_state_after_signed64": "-8687586686976478507",
+        "source_parameters": {
+          "corridor_width": 1,
+          "door_width": 2,
+          "floor_corr_tex": 2,
+          "floor_room_tex": 2,
+          "rng_seed_signed64": "7701479269626763827",
+          "room_attempts": 12,
+          "room_max": [
+            6,
+            5
+          ],
+          "room_min": [
+            4,
+            4
+          ],
+          "room_padding": 1,
+          "window_chance": 0.22
+        },
+        "wall_cells": [
+          [
+            21,
+            7
+          ],
+          [
+            22,
+            7
+          ],
+          [
+            23,
+            7
+          ],
+          [
+            24,
+            7
+          ],
+          [
+            25,
+            7
+          ],
+          [
+            26,
+            7
+          ],
+          [
+            27,
+            7
+          ],
+          [
+            28,
+            7
+          ],
+          [
+            21,
+            8
+          ],
+          [
+            28,
+            8
+          ],
+          [
+            21,
+            9
+          ],
+          [
+            28,
+            9
+          ],
+          [
+            21,
+            10
+          ],
+          [
+            28,
+            10
+          ],
+          [
+            21,
+            11
+          ],
+          [
+            28,
+            11
+          ],
+          [
+            21,
+            12
+          ],
+          [
+            28,
+            12
+          ],
+          [
+            21,
+            13
+          ],
+          [
+            22,
+            13
+          ],
+          [
+            23,
+            13
+          ],
+          [
+            24,
+            13
+          ],
+          [
+            27,
+            13
+          ],
+          [
+            28,
+            13
+          ]
+        ],
+        "window_cells": [
+          [
+            23,
+            7
+          ],
+          [
+            28,
+            9
+          ],
+          [
+            28,
+            10
+          ],
+          [
+            21,
+            12
+          ],
+          [
+            28,
+            12
+          ]
+        ]
+      },
+      "footprint_before_roof_inset_px": [
+        [
+          1344,
+          448
+        ],
+        [
+          1856,
+          448
+        ],
+        [
+          1856,
+          896
+        ],
+        [
+          1344,
+          896
+        ]
+      ],
+      "global_interior_tl_cells": [
+        -234,
+        -120
+      ],
+      "rect": [
+        21.0,
+        7.0,
+        8.0,
+        7.0
+      ],
+      "signed64_mixed": "3519723295800754992",
+      "variant": 1,
+      "visual_seed": 1910440753
+    },
+    {
+      "care_eligibility_from_id_only": true,
+      "carve": {
+        "classification": "current actual source geometry replay; normal width2 DERIVED, not historically observed",
+        "door_cells": [
+          [
+            7,
+            13
+          ],
+          [
+            8,
+            13
+          ]
+        ],
+        "floor_stamps": [
+          {
+            "alpha": 0.98,
+            "rect": [
+              4,
+              7,
+              6,
+              6
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              7,
+              12,
+              1,
+              1
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              7,
+              10,
+              1,
+              3
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              7,
+              10,
+              1,
+              1
+            ],
+            "tex": 2,
+            "z": -93
+          },
+          {
+            "alpha": 0.92,
+            "rect": [
+              7,
+              10,
+              1,
+              3
+            ],
+            "tex": 2,
+            "z": -93
+          }
+        ],
+        "half_cover_cells": [
+          [
+            8,
+            7
+          ],
+          [
+            8,
+            7
+          ],
+          [
+            8,
+            7
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            9,
+            9
+          ],
+          [
+            4,
+            12
+          ]
+        ],
+        "partition_cells": [],
+        "rng_state_after_signed64": "-8557149413311061381",
+        "source_parameters": {
+          "corridor_width": 1,
+          "door_width": 2,
+          "floor_corr_tex": 2,
+          "floor_room_tex": 2,
+          "rng_seed_signed64": "6765106841434776422",
+          "room_attempts": 12,
+          "room_max": [
+            6,
+            6
+          ],
+          "room_min": [
+            4,
+            4
+          ],
+          "room_padding": 1,
+          "window_chance": 0.22
+        },
+        "wall_cells": [
+          [
+            3,
+            6
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            8,
+            6
+          ],
+          [
+            9,
+            6
+          ],
+          [
+            10,
+            6
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            10,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            10,
+            8
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            10,
+            9
+          ],
+          [
+            3,
+            10
+          ],
+          [
+            10,
+            10
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            10,
+            11
+          ],
+          [
+            3,
+            12
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            5,
+            13
+          ],
+          [
+            6,
+            13
+          ],
+          [
+            9,
+            13
+          ],
+          [
+            10,
+            13
+          ]
+        ],
+        "window_cells": [
+          [
+            7,
+            6
+          ],
+          [
+            10,
+            7
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            10,
+            11
+          ]
+        ]
+      },
+      "footprint_before_roof_inset_px": [
+        [
+          192,
+          384
+        ],
+        [
+          704,
+          384
+        ],
+        [
+          704,
+          896
+        ],
+        [
+          192,
+          896
+        ]
+      ],
+      "global_interior_tl_cells": [
+        -252,
+        -121
+      ],
+      "rect": [
+        3.0,
+        6.0,
+        8.0,
+        8.0
+      ],
+      "signed64_mixed": "5556449076785241059",
+      "variant": 0,
+      "visual_seed": 2052381668
+    },
+    {
+      "care_eligibility_from_id_only": false,
+      "carve": "omitted for third candidate",
+      "footprint_before_roof_inset_px": [
+        [
+          1344,
+          1280
+        ],
+        [
+          1856,
+          1280
+        ],
+        [
+          1856,
+          1792
+        ],
+        [
+          1344,
+          1792
+        ]
+      ],
+      "global_interior_tl_cells": [
+        -234,
+        -107
+      ],
+      "rect": [
+        21.0,
+        20.0,
+        8.0,
+        8.0
+      ],
+      "signed64_mixed": "4193459259170773922",
+      "variant": 3,
+      "visual_seed": 1928485795
+    }
+  ],
+  "failed": 0,
+  "method": "verbatim _mix_seed extraction plus actual unchanged RectFacilityCarver/DonjonCarver",
+  "missing_fields": {
+    "care_spec": "unknown; no kit created",
+    "garden_contact": "unknown; no kit created",
+    "native_game": "pending; no Game, district regeneration or activated target",
+    "semantic_and_care_bytes": "unknown; no ground planner created"
+  },
+  "observed_historical": {
+    "candidates": [
+      {
+        "host_expected_id": 1910440753.0,
+        "host_expected_variant": 1.0,
+        "observed_historical": {
+          "civic": false,
+          "doors": [
+            [
+              25.0,
+              13.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "infill": false,
+          "irregular": false,
+          "rect": [
+            21.0,
+            7.0,
+            8.0,
+            7.0
+          ],
+          "step": 0.0,
+          "usage": "row_house"
+        }
+      },
+      {
+        "host_expected_id": 2052381668.0,
+        "host_expected_variant": 0.0,
+        "observed_historical": {
+          "civic": false,
+          "doors": [
+            [
+              7.0,
+              13.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "infill": false,
+          "irregular": false,
+          "rect": [
+            3.0,
+            6.0,
+            8.0,
+            8.0
+          ],
+          "step": 0.0,
+          "usage": "row_house"
+        }
+      },
+      {
+        "host_expected_id": 1928485795.0,
+        "host_expected_variant": 3.0,
+        "observed_historical": {
+          "civic": false,
+          "doors": [
+            [
+              25.0,
+              20.0,
+              0.0,
+              -1.0
+            ]
+          ],
+          "infill": false,
+          "irregular": false,
+          "rect": [
+            21.0,
+            20.0,
+            8.0,
+            8.0
+          ],
+          "step": 0.0,
+          "usage": "row_house"
+        }
+      }
+    ],
+    "sample": {
+      "buildings": [
+        {
+          "civic": false,
+          "doors": [
+            [
+              25.0,
+              20.0,
+              0.0,
+              -1.0
+            ]
+          ],
+          "infill": false,
+          "irregular": false,
+          "rect": [
+            21.0,
+            20.0,
+            8.0,
+            8.0
+          ],
+          "step": 0.0,
+          "usage": "row_house"
+        },
+        {
+          "civic": false,
+          "doors": [
+            [
+              25.0,
+              13.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "infill": false,
+          "irregular": false,
+          "rect": [
+            21.0,
+            7.0,
+            8.0,
+            7.0
+          ],
+          "step": 0.0,
+          "usage": "row_house"
+        },
+        {
+          "civic": false,
+          "doors": [
+            [
+              8.0,
+              20.0,
+              0.0,
+              -1.0
+            ]
+          ],
+          "infill": false,
+          "irregular": false,
+          "rect": [
+            3.0,
+            20.0,
+            11.0,
+            7.0
+          ],
+          "step": 0.0,
+          "usage": "shop"
+        },
+        {
+          "civic": false,
+          "doors": [
+            [
+              7.0,
+              13.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "infill": false,
+          "irregular": false,
+          "rect": [
+            3.0,
+            6.0,
+            8.0,
+            8.0
+          ],
+          "step": 0.0,
+          "usage": "row_house"
+        }
+      ],
+      "coord": [
+        -8.0,
+        -4.0
+      ],
+      "framed_square": false,
+      "original_count": 4.0,
+      "passages": [],
+      "plan_seed": 1208827904.0,
+      "role": "dangerous_alley",
+      "segment": 7.0,
+      "theme": "canal_services"
+    },
+    "theme": {
+      "generation_attempt": 1.0,
+      "id": "canal_services",
+      "plan_seed": 1208827904.0,
+      "seed": 16102028.0,
+      "segment": 7.0
+    }
+  },
+  "passed": 14
+}

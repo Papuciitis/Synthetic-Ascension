@@ -1,0 +1,42 @@
+﻿{
+    "suite":  "map",
+    "success":  false,
+    "failure":  "Data suite failed: map",
+    "engine":  "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\task2a-launcher-controls-parent4\\empty\\SilentLauncherControl.exe",
+    "engine_sha256":  "F0DE34AE09D32529E3C0A3E99247AB51C390B45A3CA8FC3AF694953F40589AD3",
+    "profile":  {
+                    "startup_available_mb":  512,
+                    "startup_commit_mb":  1536,
+                    "maximum_private_mb":  64,
+                    "timeout_seconds":  30,
+                    "running_available_mb":  384,
+                    "running_commit_mb":  768
+                },
+    "suites":  [
+                   {
+                       "name":  "map",
+                       "launched":  true,
+                       "success":  false,
+                       "exit_code":  0,
+                       "stop_reason":  "",
+                       "diagnostics":  [
+
+                                       ],
+                       "failure":  "native_exit_guard_diagnostic_or_summary_failure",
+                       "arguments":  [
+                                         "--headless",
+                                         "--flush-output",
+                                         "--path",
+                                         "\"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.superpowers\\sdd\\2026-11-04-trailer-yard-preview\\task2a-launcher-controls-parent4\\empty\\run\\map\\fixture\"",
+                                         "--script",
+                                         "res://tools/tests/CityYardSupportMapTest.gd"
+                                     ],
+                       "pid":  21808,
+                       "peak_private_mb":  0,
+                       "minimum_available_mb":  605,
+                       "minimum_commit_headroom_mb":  3036,
+                       "elapsed_seconds":  0.76,
+                       "summary":  ""
+                   }
+               ]
+}

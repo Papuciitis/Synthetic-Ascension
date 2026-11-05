@@ -1,0 +1,360 @@
+{
+	"args": [
+		"--take=find",
+		"--log=/var/tmp/sa-trailer-takes/find1/log.json"
+	],
+	"capture_scene": "res://tools/capture/trailer/TrailerDirector.tscn",
+	"clock": "1,1553,25899475641,0",
+	"counters": {
+		"hits": 63,
+		"kills": 63,
+		"player_hits_absorbed": 0,
+		"weapon_fired": 146
+	},
+	"failures": 0,
+	"god_mode": true,
+	"marks": [
+		{
+			"counters": {
+				"hits": 32,
+				"kills": 32,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 103
+			},
+			"mark": "take_start",
+			"player": [
+				-1248.0,
+				824.0
+			],
+			"process_frame": 290,
+			"take_frame": 0
+		},
+		{
+			"counters": {
+				"hits": 32,
+				"kills": 32,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 103
+			},
+			"mark": "street_fight",
+			"player": [
+				-1248.0,
+				824.0
+			],
+			"process_frame": 290,
+			"take_frame": 0
+		},
+		{
+			"counters": {
+				"hits": 41,
+				"kills": 41,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 133
+			},
+			"mark": "to_doorway",
+			"player": [
+				-1349.9,
+				765.5
+			],
+			"process_frame": 530,
+			"take_frame": 240
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "doorway",
+			"player": [
+				-1089.6,
+				1381.1
+			],
+			"process_frame": 647,
+			"take_frame": 357
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "inside",
+			"player": [
+				-1088.1,
+				1544.7
+			],
+			"process_frame": 688,
+			"roof_open": true,
+			"take_frame": 398
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"in_bag": true,
+			"mark": "collected",
+			"player": [
+				-1088.0,
+				1612.7
+			],
+			"process_frame": 708,
+			"take_frame": 418
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "bag_open",
+			"player": [
+				-1088.0,
+				1612.7
+			],
+			"process_frame": 779,
+			"take_frame": 489
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "card_hover",
+			"player": [
+				-1088.0,
+				1612.7
+			],
+			"process_frame": 841,
+			"slot_rect": "[P: (1706.0, 102.0), S: (44.0, 44.0)]",
+			"take_frame": 551
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "equip_click",
+			"player": [
+				-1088.0,
+				1612.7
+			],
+			"process_frame": 1111,
+			"take_frame": 821
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"manifestation": "sunder_wake",
+			"mark": "equipped",
+			"player": [
+				-1088.0,
+				1612.7
+			],
+			"process_frame": 1209,
+			"slot": 2,
+			"take_frame": 919,
+			"worn": true
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "bag_closed",
+			"player": [
+				-1088.0,
+				1612.7
+			],
+			"process_frame": 1235,
+			"take_frame": 945
+		},
+		{
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "bank_0",
+			"momentum": 0.47,
+			"player": [
+				-1090.3,
+				1324.4
+			],
+			"process_frame": 1292,
+			"take_frame": 1002
+		},
+		{
+			"aim": [
+				-935.8,
+				1184.3
+			],
+			"counters": {
+				"hits": 43,
+				"kills": 43,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 144
+			},
+			"mark": "sunder_click_0",
+			"momentum": 1.0,
+			"player": [
+				-1073.2,
+				1540.9
+			],
+			"process_frame": 1342,
+			"take_frame": 1052
+		},
+		{
+			"counters": {
+				"hits": 52,
+				"kills": 52,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 145
+			},
+			"mark": "bank_1",
+			"momentum": 1.0,
+			"player": [
+				-1233.4,
+				1191.2
+			],
+			"process_frame": 1442,
+			"take_frame": 1152
+		},
+		{
+			"aim": [
+				-1270.1,
+				1394.5
+			],
+			"counters": {
+				"hits": 52,
+				"kills": 52,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 145
+			},
+			"mark": "sunder_click_1",
+			"momentum": 1.0,
+			"player": [
+				-1144.7,
+				1123.7
+			],
+			"process_frame": 1454,
+			"take_frame": 1164
+		},
+		{
+			"counters": {
+				"hits": 63,
+				"kills": 63,
+				"player_hits_absorbed": 0,
+				"weapon_fired": 146
+			},
+			"mark": "take_end",
+			"player": [
+				-1073.7,
+				1549.0
+			],
+			"process_frame": 1554,
+			"take_frame": 1264
+		}
+	],
+	"movie": "/var/tmp/sa-trailer-takes/find1/find.avi",
+	"segment": 7,
+	"slates_process_frames": [
+		289
+	],
+	"staging": [
+		{
+			"kind": "onboarding tips marked seen (returning-player profile)"
+		},
+		{
+			"items": {
+				"0": [
+					"conduit_heart",
+					3
+				],
+				"1": [
+					"conduit_plating",
+					3
+				],
+				"2": [
+					"gravemarch_stompers",
+					3
+				],
+				"3": [
+					"conduit_lens",
+					3
+				],
+				"4": [
+					"gravemarch_clockjaw",
+					2
+				],
+				"5": [
+					"conduit_charm",
+					2
+				],
+				"6": [
+					"acc_oakheart",
+					3
+				],
+				"7": [
+					"ring_crusher",
+					3
+				]
+			},
+			"kind": "equipped loadout without Manifestations"
+		},
+		{
+			"building_id": 25772870,
+			"door": [
+				-1088.0,
+				1504.0
+			],
+			"kind": "player warp onto the street in front of an enterable building",
+			"outward": [
+				0.0,
+				-1.0
+			],
+			"passage": "none nearby",
+			"world": [
+				-1248.0,
+				824.0
+			]
+		},
+		{
+			"enemies_after": 7,
+			"game_seconds": 14.0,
+			"kind": "pre-roll before the slate at 4x time scale"
+		},
+		{
+			"item": "lattice_strideframe",
+			"kind": "item placed inside the building",
+			"manifestation": "sunder_wake",
+			"rarity": 4,
+			"world": [
+				-1088.0,
+				1619.2
+			]
+		}
+	],
+	"style": "ranged",
+	"take": "find",
+	"take_frame0": 290,
+	"window": "(1920, 1080)",
+	"world_seed": 16102028
+}

@@ -1,0 +1,187 @@
+name: Trailer playtest builds
+
+on:
+  push:
+    branches: [codex/trailer-build]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            assets
+            autoload
+            core
+            data
+            effects
+            scenes
+            spells
+            tools
+            ui
+
+      - name: Install Godot 4.7.2 and matching export templates
+        run: |
+          release=https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable
+          editor=Godot_v4.7.2-stable_linux.x86_64.zip
+          templates=Godot_v4.7.2-stable_export_templates.tpz
+          cd "$RUNNER_TEMP"
+          for asset in "$editor" "$templates"; do
+            curl --fail --silent --show-error --location --retry 3 --max-time 360 \
+              --output "$asset" "$release/$asset"
+          done
+          sha256sum --check <<EOF
+          cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4  $editor
+          f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011  $templates
+          EOF
+          unzip -q "$editor"
+          install -m 755 "${editor%.zip}" "$RUNNER_TEMP/godot"
+          export_dir="$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          mkdir -p "$export_dir"
+          unzip -jq "$templates" templates/version.txt templates/linux_release.x86_64 \
+            templates/windows_release_x86_64.exe -d "$export_dir"
+          printf '%s\n' "$RUNNER_TEMP" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/godot" --version | grep -E '^4\.7\.2\.stable\.'
+
+      - name: Import clean source and run district policy and parse tests
+        run: |
+          # A fresh editor starts its theme and autoload scan before generated imports exist.
+          timeout 12m godot --headless --path "$GITHUB_WORKSPACE" --import 2>&1 | tee "$RUNNER_TEMP/bootstrap-import.log"
+          sed -E 's/\x1b\[[0-?]*[ -/]*[@-~]//g' "$RUNNER_TEMP/bootstrap-import.log" \
+            | awk '/^\[ DONE \] first_scan_filesystem$/ { scanned=1 } scanned' > "$RUNNER_TEMP/asset-import.log"
+          grep -Fx '[ DONE ] reimport' "$RUNNER_TEMP/asset-import.log"
+          if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$RUNNER_TEMP/asset-import.log"; then exit 1; fi
+          # A separate process must now load the same project with its populated cache.
+          timeout 12m godot --headless --path "$GITHUB_WORKSPACE" --import 2>&1 | tee "$RUNNER_TEMP/import.log"
+          if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$RUNNER_TEMP/import.log"; then exit 1; fi
+          for suite in DistrictGroundPolicyTest ScriptParseAuditTest; do
+            log="$RUNNER_TEMP/$suite.log"
+            timeout 5m godot --headless --path "$GITHUB_WORKSPACE" "res://tools/tests/$suite.tscn" 2>&1 | tee "$log"
+            grep -E "^$suite: [1-9][0-9]* passed, 0 failed( |$)" "$log"
+            if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$log"; then exit 1; fi
+          done
+
+      - name: Export Windows and Linux x86-64 releases
+        run: |
+          version=$(sed -n 's/^config\/version="\([^"]*\)"$/\1/p' project.godot)
+          test -n "$version"
+          jq -n --arg git_commit "$GITHUB_SHA" --arg git_branch "$GITHUB_REF_NAME" \
+            --arg game_version "$version" --arg godot_version "$(godot --version)" \
+            '{git_commit: $git_commit, git_branch: $git_branch, game_version: $game_version, godot_version: $godot_version}' \
+            > build_info.json
+          mkdir -p "$RUNNER_TEMP/builds/"{windows,linux}
+          for platform in windows linux; do
+            if [[ "$platform" == windows ]]; then
+              preset='Windows Playtest'
+              executable=SyntheticAscension.exe
+            else
+              preset='Linux Playtest'
+              executable=SyntheticAscension.x86_64
+            fi
+            output="$RUNNER_TEMP/builds/$platform/$executable"
+            log="$RUNNER_TEMP/$platform-export.log"
+            timeout 8m godot --headless --path "$GITHUB_WORKSPACE" --export-release "$preset" "$output" 2>&1 | tee "$log"
+            if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$log"; then exit 1; fi
+            test -s "$output"
+          done
+
+      - name: Verify executable formats and packaged game startup
+        run: |
+          windows="$RUNNER_TEMP/builds/windows/SyntheticAscension.exe"
+          linux="$RUNNER_TEMP/builds/linux/SyntheticAscension.x86_64"
+          file -b "$windows" | grep -E 'PE32\+.*x86-64.*Windows'
+          file -b "$linux" | grep -E 'ELF 64-bit.*x86-64'
+          test -x "$linux"
+          # Run from outside the checkout so resource loads use the shipped packs.
+          cd "$RUNNER_TEMP"
+          for platform in windows linux; do
+            export XDG_DATA_HOME="$RUNNER_TEMP/boot-$platform/data"
+            export XDG_CONFIG_HOME="$RUNNER_TEMP/boot-$platform/config"
+            export XDG_CACHE_HOME="$RUNNER_TEMP/boot-$platform/cache"
+            mkdir -p "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME"
+            log="$RUNNER_TEMP/$platform-boot.log"
+            if [[ "$platform" == windows ]]; then
+              timeout 8m godot --headless --main-pack "$windows" \
+                --script "$GITHUB_WORKSPACE/tools/tests/PackedFrontEndFlowTest.gd" 2>&1 | tee "$log"
+              grep -E '^PackedFrontEndFlowTest: [1-9][0-9]* passed, 0 failed$' "$log"
+            else
+              timeout 2m "$linux" --headless --verbose --quit-after 180 2>&1 | tee "$log"
+              grep -F "Completed load for: 'res://ui/screens/MainMenu.tscn' remapped " "$log"
+            fi
+            if grep -E '(^|[[:space:]])(SCRIPT )?ERROR:' "$log"; then exit 1; fi
+          done
+
+      - name: Package and verify both archives
+        run: |
+          for platform in windows linux; do
+            (
+              cd "$RUNNER_TEMP/builds/$platform"
+              cp "$GITHUB_WORKSPACE/THIRD_PARTY_NOTICES.txt" .
+              cp "$GITHUB_WORKSPACE/build_info.json" BUILD.json
+              sha256sum SyntheticAscension.* BUILD.json THIRD_PARTY_NOTICES.txt > SHA256SUMS.txt
+              sha256sum --check SHA256SUMS.txt
+              if [[ "$platform" == windows ]]; then
+                archive="$RUNNER_TEMP/SyntheticAscension-windows-x86_64.zip"
+                zip -q "$archive" SyntheticAscension.exe BUILD.json THIRD_PARTY_NOTICES.txt SHA256SUMS.txt
+                unzip -tq "$archive"
+              else
+                archive="$RUNNER_TEMP/SyntheticAscension-linux-x86_64.tar.gz"
+                tar -czf "$archive" SyntheticAscension.x86_64 BUILD.json THIRD_PARTY_NOTICES.txt SHA256SUMS.txt
+                tar -tzf "$archive"
+              fi
+            )
+          done
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: SyntheticAscension-windows-x86_64
+          path: ${{ runner.temp }}/SyntheticAscension-windows-x86_64.zip
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+      - name: Upload Linux build
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: SyntheticAscension-linux-x86_64
+          path: ${{ runner.temp }}/SyntheticAscension-linux-x86_64.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+      - name: Capture generated S7 in normal and small windows
+        run: |
+          if ! command -v xvfb-run >/dev/null || ! command -v xauth >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y xvfb xauth
+          fi
+          LIBGL_ALWAYS_SOFTWARE=1 bash tools/capture/check_trailer_city.sh \
+            "$RUNNER_TEMP/godot" "$RUNNER_TEMP/trailer-city"
+
+      - name: Upload test logs and S7 captures
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: trailer-build-diagnostics
+          path: |
+            ${{ runner.temp }}/bootstrap-import.log
+            ${{ runner.temp }}/asset-import.log
+            ${{ runner.temp }}/import.log
+            ${{ runner.temp }}/DistrictGroundPolicyTest.log
+            ${{ runner.temp }}/ScriptParseAuditTest.log
+            ${{ runner.temp }}/*-export.log
+            ${{ runner.temp }}/*-boot.log
+            ${{ runner.temp }}/trailer-city/*/ground-before.png
+            ${{ runner.temp }}/trailer-city/*/capture-info.json
+            ${{ runner.temp }}/trailer-city/*/stdout.log
+          retention-days: 7

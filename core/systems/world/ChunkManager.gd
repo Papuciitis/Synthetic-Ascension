@@ -1336,6 +1336,7 @@ func _activate_ground_care(coord: Vector2i, chunk: Node2D) -> void:
 	var ground := splat.care_ground(coord, reach)
 	for spec: Dictionary in specs:
 		splat.paint_domestic_care(coord, spec, ground.eligible, ground.paving)
+	splat.paint_yard_support(coord, specs)
 
 
 func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, texture_index: int, alpha: float, z: int) -> void:
@@ -1424,6 +1425,11 @@ func _ensure_ground_splat() -> GroundSplatRenderer:
 	if _ground_splat == null or not is_instance_valid(_ground_splat):
 		_ground_splat = GroundSplatRenderer.new()
 		_ground_splat.configure(cell_size_px, _cells_per_chunk())
+		# Developer-only trial: read once for this splat; no implicit all-home target.
+		if OS.get_environment("SA_YARD_SUPPORT_PREVIEW") == "1":
+			var yard_target := GroundSplatRenderer.parse_yard_support_target(OS.get_environment("SA_YARD_SUPPORT_TARGET"))
+			if not yard_target.is_empty():
+				_ground_splat.configure_yard_support_preview(true, yard_target.coord, yard_target.seed)
 		# Occlusion reads the loaded neighbours' blockers so its ramps run
 		# across chunk lines (GroundSplatRenderer.paint_occlusion).
 		_ground_splat.occlusion_neighbours = _occlusion_neighbours

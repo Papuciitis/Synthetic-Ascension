@@ -2,10 +2,10 @@ extends ManifestationEffect
 
 ## Sunder Wake - a CONSUMER of the shared `momentum` resource.
 ##
-## Pilgrim's Momentum banks the metres, this rule cashes them at the point of
-## impact. Neither needs the other: on its own Sunder Wake still claims the pool
-## (so the HUD meter exists) but nothing fills it, which is exactly the "half an
-## engine" a lone roll is supposed to feel like.
+## Shared state fills the claimed pool from travel even when Sunder is carried
+## alone. Pilgrim's Momentum accelerates that fill, but can also spend the same
+## bank first depending on equipment-slot order. This rule tears at the aim
+## position when the attack fires; it does not wait for a projectile impact.
 
 const VFX_TEAR := preload("res://assets/vfx/world/manifestations/VFX_SunderTear.gd")
 
@@ -67,7 +67,7 @@ func stat_effects() -> Array[Dictionary]:
 
 
 func describe() -> String:
-	return "Attacking spends all Momentum (needs %d%%) and tears the ground open where it lands: up to a %.1f m rip for %d%% weapon damage, both scaled by the Momentum spent." % [
+	return "Attacking spends all Momentum (needs %d%%) and tears the ground open at your aim point: up to a %.1f m rip for %d%% weapon damage, both scaled by the Momentum spent." % [
 		int(round(MOMENTUM_FLOOR * 100.0)),
 		(RADIUS_MAX * _radius_potency()) / PIXELS_PER_METRE,
 		int(round(DAMAGE_MULT * potency() * 100.0)),

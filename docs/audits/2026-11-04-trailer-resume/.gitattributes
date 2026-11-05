@@ -1,0 +1,3 @@
+# Preserve the exact receipt and log bytes emitted on Windows.
+*.json -text -whitespace
+*.log -text -whitespace

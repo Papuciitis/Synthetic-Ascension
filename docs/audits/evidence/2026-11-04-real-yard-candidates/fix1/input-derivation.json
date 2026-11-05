@@ -1,0 +1,18 @@
+{
+  "extraction_count": 1,
+  "method_sha256": "7a508e56eca823288cba76cec91934acefd931191e0bd72bbb2299dc5448c81f",
+  "notes": [
+    "No complete district regeneration. Actual historical generated lot records replayed.",
+    "Door width2 is derived through historical manager export2 -> generator copy -> district cfg -> parcel max2. Historical recorder omits width.",
+    "Window0.22 follows historical manager export -> generator copy -> district cfg. SegmentThemeData.apply_to_chunk_manager and test do not override these two fields.",
+    "Room attempts12/min4/max from lot dimensions/padding1/corridor1/floor2 are from SiteParcelsImpl._spawn_building_rect.",
+    "Carver scripts copied unchanged; source hash comparison with historical launch is recorded, not assumed.",
+    "Seed extraction never changes inputs or consumes RNG. Carve RNG newly seeded exactly by source formula; actual carver consumes it unchanged."
+  ],
+  "source_bindings": {
+    "sample": "docs/art/reference/2026-10-22-linux-streets/sources/blobs/43938c18fa45cbc8ca3248d4bdbcf3bf22922c23789e5bcd10ff5a193c60390b-city22-street-continuity-part-08-part08-v1.json",
+    "binding": "docs/art/reference/2026-10-22-linux-streets/sources/run-bindings/city22-street-continuity-part-08-part08-v1-1.json",
+    "run": "docs/art/reference/2026-10-22-linux-streets/runs/city22-street-continuity-part-08-part08-v1-1/run-results.json.gz",
+    "historical_git": "b298202447a5b3a0cf2b0e8c55c46bf507a7f1c9"
+  }
+}

@@ -1,0 +1,11 @@
+Copy-Item : Cannot find path 'C:\Users\NaurisKrišjānis\Desktop\code_project\SA_proj\.worktrees\enemy-world\.superpowers
+\sdd\2026-11-04-trailer-yard-preview\task2a-marker-green\harness-repo\tools\tests\run_yard_support_data_tests.ps1' beca
+use it does not exist.
+At C:\Users\NaurisKrišjānis\Desktop\code_project\SA_proj\.worktrees\enemy-world\.superpowers\sdd\2026-11-04-trailer-yar
+d-preview\task2a-marker-green\harness-repo\tools\tests\test_yard_support_launcher.ps1:59 char:9
++         Copy-Item -LiteralPath (Join-Path $root $relative) -Destinati ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\Nauris..._data_tests.ps1:String) [Copy-Item], ItemNotFoundExce 
+   ption
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand
+ 
